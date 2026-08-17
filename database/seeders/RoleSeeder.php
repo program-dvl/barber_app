@@ -11,13 +11,6 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $roles = [
-            'admin',
-            'user',
-        ];
-
-        foreach ($roles as $role) {
-            \Spatie\Permission\Models\Role::create(['name' => $role]);
-        }
+        $this->command?->warn('Business roles are provisioned per Business; global User roles are intentionally not seeded.');
     }
 }

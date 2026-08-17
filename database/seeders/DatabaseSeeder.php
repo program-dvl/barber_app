@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        \App\Models\User::factory(100)->create(
+        User::factory(100)->create(
             [
                 'created_at' => fake()->dateTimeBetween('-7 days', 'now'),
             ]

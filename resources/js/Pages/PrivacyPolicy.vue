@@ -1,6 +1,7 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
-import AuthenticationCardLogo from '@/Components/Profile/AuthenticationCardLogo.vue';
+import PublicContainer from '@/Components/Marketing/PublicContainer.vue';
+import HomeLayout from '@/Layouts/HomeLayout.vue';
 
 defineProps({
     policy: String,
@@ -10,15 +11,5 @@ defineProps({
 <template>
     <Head title="Privacy Policy" />
 
-    <div class="font-sans text-gray-900 antialiased">
-        <div class="pt-4 bg-gray-100">
-            <div class="min-h-screen flex flex-col items-center pt-6 sm:pt-0">
-                <div>
-                    <AuthenticationCardLogo />
-                </div>
-
-                <div class="w-full sm:max-w-2xl mt-6 p-6 bg-white shadow-md overflow-hidden sm:rounded-lg prose" v-html="policy" />
-            </div>
-        </div>
-    </div>
+    <HomeLayout><main class="gh-public-section"><PublicContainer><div class="mx-auto max-w-3xl"><div class="mb-8 rounded-lg border-l-4 border-[var(--brand-rust)] bg-[var(--surface-subtle)] p-5 font-bold text-[var(--text-strong)]">Legal review draft — not approved for public launch.</div><article class="prose max-w-none prose-headings:font-display prose-headings:text-[var(--text-strong)] prose-p:leading-8" v-html="policy" /></div></PublicContainer></main></HomeLayout>
 </template>

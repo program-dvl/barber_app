@@ -1,267 +1,153 @@
 <script setup>
+import { computed, onMounted, ref } from 'vue';
+import { Link, router, usePage } from '@inertiajs/vue3';
+import {
+    AdjustmentsHorizontalIcon,
+    CalendarDaysIcon,
+    CheckCircleIcon,
+    ChevronRightIcon,
+    ExclamationTriangleIcon,
+    QueueListIcon,
+    Squares2X2Icon,
+} from '@heroicons/vue/24/outline';
+import AppButton from '@/Components/Product/AppButton.vue';
+import StatePanel from '@/Components/Product/StatePanel.vue';
+import SurfaceCard from '@/Components/Product/SurfaceCard.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import Plans from '@/Components/Plans.vue';
 
-defineProps({
-    totalUsers: Number,
-    activeSubscriptions: Number,
+const props = defineProps({
+    businessLabel: String,
+    location: Object,
+    locations: Array,
+    date: String,
+    calendar: Object,
+    readiness: Object,
+    permissions: Object,
+    todayMetrics: Object,
+});
+
+const page = usePage();
+const firstName = computed(() => page.props.auth.user.name?.trim().split(/\s+/)[0] || 'there');
+const views = [
+    { id: 'command', label: 'Command desk', icon: AdjustmentsHorizontalIcon },
+    { id: 'rhythm', label: 'Rhythm board', icon: Squares2X2Icon },
+    { id: 'guided', label: 'Guided front desk', icon: QueueListIcon },
+];
+const activeView = ref('command');
+const preferenceKey = computed(() => `good-hours:dashboard-view:${page.props.auth.user.id}`);
+const appointments = computed(() => (props.calendar.events || []).filter(event => event.type === 'appointment'));
+const walkIns = computed(() => (props.calendar.events || []).filter(event => event.type === 'walk_in'));
+const currentInstant = computed(() => new Date(props.calendar.currentTime || Date.now()));
+const dateLabel = computed(() => new Intl.DateTimeFormat(undefined, {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: props.calendar.timeZone,
+}).format(new Date(`${props.date}T12:00:00`)));
+const timeLabel = value => new Intl.DateTimeFormat(undefined, {
+    hour: '2-digit', minute: '2-digit', timeZone: props.calendar.timeZone,
+}).format(new Date(value));
+const durationLabel = event => `${Math.max(0, Math.round((new Date(event.endsAt) - new Date(event.startsAt)) / 60000))} min`;
+const serviceLabel = event => event.services?.map(service => service.name).join(' + ') || 'Appointment';
+const staffLabel = event => event.staff?.map(person => person.name).join(', ') || 'Staff not assigned';
+const actionLabel = status => ({ confirmed: 'Mark arrived', late: 'Mark arrived', arrived: 'Check in', checked_in: 'Start service', in_service: 'Complete' }[status] || 'View details');
+const calendarHref = (extra = {}) => route('business.calendar', {
+    business: page.props.tenant.public_id,
+    location: props.location?.public_id,
+    date: props.date,
+    ...extra,
+});
+const groupedByTime = computed(() => {
+    const groups = { now: [], next: [], later: [] };
+    appointments.value.forEach(event => {
+        const start = new Date(event.startsAt);
+        const end = new Date(event.endsAt);
+        const minutesUntil = (start - currentInstant.value) / 60000;
+        if (start <= currentInstant.value && end > currentInstant.value) groups.now.push(event);
+        else if (minutesUntil >= 0 && minutesUntil <= 120) groups.next.push(event);
+        else if (minutesUntil > 120) groups.later.push(event);
+    });
+    return groups;
+});
+const staffColumns = computed(() => {
+    const people = new Map();
+    appointments.value.forEach(event => {
+        const eventStaff = event.staff?.length ? event.staff : [{ id: 'unassigned', name: 'Unassigned' }];
+        eventStaff.forEach(person => {
+            if (!people.has(person.id)) people.set(person.id, { ...person, events: [] });
+            people.get(person.id).events.push(event);
+        });
+    });
+    return [...people.values()];
+});
+const attention = computed(() => [
+    ...appointments.value
+        .filter(event => ['pending_confirmation', 'late'].includes(event.status) || event.forms?.pending)
+        .map(event => ({ id: event.id, title: event.status === 'late' ? `${event.title} is running late` : event.forms?.pending ? `${event.title} has an incomplete form` : `${event.title} needs confirmation`, detail: `${timeLabel(event.startsAt)} · ${serviceLabel(event)}`, href: calendarHref() })),
+    ...walkIns.value.map(event => ({ id: `walk-${event.id}`, title: `${event.title} is waiting`, detail: `Queue ${event.queuePosition} · about ${event.estimatedWaitMinutes || 0} min`, href: route('business.walk-ins.index', page.props.tenant.public_id) })),
+]);
+
+const setView = view => {
+    activeView.value = view;
+    localStorage.setItem(preferenceKey.value, view);
+};
+const changeLocation = event => router.get(route('business.dashboard', page.props.tenant.public_id), {
+    location: event.target.value,
+    date: props.date,
+}, { preserveState: true, replace: true });
+
+onMounted(() => {
+    const saved = localStorage.getItem(preferenceKey.value);
+    if (views.some(view => view.id === saved)) activeView.value = saved;
 });
 </script>
 
 <template>
-    <AppLayout title="Dashboard">
-        <template #header>
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-2xl font-bold text-base-content">
-                        {{ $t('Dashboard') }}
-                    </h2>
-                    <p class="mt-1 text-sm text-base-content/70">
-                        {{ $t('Welcome back, :name!', { name: $page.props.auth.user.name }) }}
-                    </p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="flex items-center gap-2 rounded-full border border-base-300 bg-base-100 px-4 py-2">
-                        <div class="h-2 w-2 animate-pulse rounded-full bg-success"></div>
-                        <span class="text-sm font-medium text-base-content">{{ $t('Active') }}</span>
-                    </div>
+    <AppLayout title="Dashboard" :business-label="businessLabel">
+        <header class="flex flex-col gap-5 border-b border-[var(--border-subtle)] pb-5 md:flex-row md:items-end md:justify-between">
+            <div class="min-w-0">
+                <p class="text-sm font-semibold text-[var(--brand-pine)]">{{ dateLabel }}</p>
+                <h1 class="gh-display mt-1 text-3xl leading-tight text-[var(--text-strong)] sm:text-4xl">Good {{ new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening' }}, {{ firstName }}</h1>
+                <div class="mt-3 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]">
+                    <label v-if="locations.length > 1" class="inline-flex items-center gap-2"><span class="font-semibold text-[var(--text-strong)]">Location</span><select class="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 py-2" :value="location?.public_id" @change="changeLocation"><option v-for="item in locations" :key="item.public_id" :value="item.public_id">{{ item.name }}</option></select></label>
+                    <span v-else>{{ location?.name || 'No active location' }}</span><span v-if="location" aria-hidden="true">·</span><span v-if="location">{{ location.time_zone.replace('_', ' ') }}</span>
                 </div>
             </div>
-        </template>
+            <div v-if="permissions.calendar" class="flex flex-wrap gap-2"><AppButton variant="secondary" :href="calendarHref()"><CalendarDaysIcon class="size-5" aria-hidden="true" />Open calendar</AppButton><AppButton v-if="permissions.createAppointment" :href="calendarHref({ create: 1 })">New booking</AppButton></div>
+        </header>
 
-        <div class="py-8">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <!-- Stats Grid -->
-                <div class="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    <!-- Total Users -->
-                    <div class="group overflow-hidden rounded-2xl border border-base-300 bg-gradient-to-br from-primary/5 to-primary/10 p-6 transition-all hover:shadow-lg">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-base-content/70">{{ $t('Total Users') }}</p>
-                                <p class="mt-2 text-3xl font-bold text-base-content">{{ totalUsers || 0 }}</p>
-                                <p class="mt-1 text-xs text-success">
-                                    <span class="inline-flex items-center gap-1">
-                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                                        </svg>
-                                        12% {{ $t('this month') }}
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 transition-transform group-hover:scale-110">
-                                <svg class="h-7 w-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
+        <section v-if="todayMetrics" class="mt-5" aria-labelledby="today-metrics-title">
+            <div class="mb-3 flex flex-wrap items-end justify-between gap-2">
+                <div><h2 id="today-metrics-title" class="font-semibold text-[var(--text-strong)]">Today’s trusted totals</h2><p class="mt-1 text-xs text-[var(--text-muted)]">Fresh {{ new Date(todayMetrics.fresh_at).toLocaleTimeString() }} · {{ todayMetrics.time_zone }}</p></div>
+                <Link :href="route('business.reports.index', page.props.tenant.public_id)" class="text-sm font-semibold text-[var(--action-primary)]">Open reports</Link>
+            </div>
+            <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <Link v-for="(card, key) in todayMetrics.cards" v-show="card.visible" :key="key" :href="card.drill" class="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4 hover:border-[var(--brand-pine)]">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">{{ key.replaceAll('_', ' ').replace(' minor', '') }}</p>
+                    <p class="mt-2 text-2xl font-bold text-[var(--text-strong)]">{{ key.endsWith('_minor') ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format((card.value || 0) / 100) : (card.value ?? 0) }}</p>
+                </Link>
+            </div>
+        </section>
 
-                    <!-- Active Subscriptions -->
-                    <div class="group overflow-hidden rounded-2xl border border-base-300 bg-gradient-to-br from-success/5 to-success/10 p-6 transition-all hover:shadow-lg">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-base-content/70">{{ $t('Subscriptions') }}</p>
-                                <p class="mt-2 text-3xl font-bold text-base-content">{{ activeSubscriptions || 0 }}</p>
-                                <p class="mt-1 text-xs text-success">
-                                    <span class="inline-flex items-center gap-1">
-                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                                        </svg>
-                                        8% {{ $t('this month') }}
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-success/10 transition-transform group-hover:scale-110">
-                                <svg class="h-7 w-7 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Revenue -->
-                    <div class="group overflow-hidden rounded-2xl border border-base-300 bg-gradient-to-br from-warning/5 to-warning/10 p-6 transition-all hover:shadow-lg">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-base-content/70">{{ $t('Revenue') }}</p>
-                                <p class="mt-2 text-3xl font-bold text-base-content">$12,345</p>
-                                <p class="mt-1 text-xs text-success">
-                                    <span class="inline-flex items-center gap-1">
-                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                                        </svg>
-                                        23% {{ $t('this month') }}
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-warning/10 transition-transform group-hover:scale-110">
-                                <svg class="h-7 w-7 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Growth -->
-                    <div class="group overflow-hidden rounded-2xl border border-base-300 bg-gradient-to-br from-secondary/5 to-secondary/10 p-6 transition-all hover:shadow-lg">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-base-content/70">{{ $t('Growth') }}</p>
-                                <p class="mt-2 text-3xl font-bold text-base-content">+45%</p>
-                                <p class="mt-1 text-xs text-success">
-                                    <span class="inline-flex items-center gap-1">
-                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                                        </svg>
-                                        5% {{ $t('this month') }}
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 transition-transform group-hover:scale-110">
-                                <svg class="h-7 w-7 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Main Content Grid -->
-                <div class="grid gap-8 lg:grid-cols-3">
-                    <!-- Left Column - 2/3 width -->
-                    <div class="space-y-8 lg:col-span-2">
-                        <!-- Welcome Card -->
-                        <div class="overflow-hidden rounded-2xl border border-base-300 bg-gradient-to-br from-primary to-secondary p-8 text-white shadow-xl">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h3 class="text-2xl font-bold">{{ $t('Welcome back, :name!', { name: $page.props.auth.user.name }) }}</h3>
-                                    <p class="mt-2 text-white/90">{{ $t('Here\'s what\'s happening with your account today.') }}</p>
-                                    <div class="mt-6 flex gap-3">
-                                        <a :href="route('profile.show')" class="btn btn-sm border-white bg-white text-primary hover:bg-white/90">
-                                            {{ $t('View Profile') }}
-                                        </a>
-                                        <a v-if="!$page.props.auth.user.subscribed" href="#pricing" class="btn btn-sm border-white bg-transparent text-white hover:bg-white/10">
-                                            {{ $t('Upgrade Plan') }}
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="hidden sm:block">
-                                    <svg class="h-32 w-32 opacity-20" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Recent Activity -->
-                        <div class="overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow-sm">
-                            <div class="border-b border-base-300 p-6">
-                                <h3 class="text-lg font-bold text-base-content">{{ $t('Recent Activity') }}</h3>
-                                <p class="mt-1 text-sm text-base-content/70">{{ $t('Your latest actions and updates') }}</p>
-                            </div>
-                            <div class="divide-y divide-base-300">
-                                <div v-for="i in 5" :key="i" class="flex items-center gap-4 p-6 transition-colors hover:bg-base-200">
-                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                                        <svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                        </svg>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="font-medium text-base-content">{{ $t('Activity item :number', { number: i }) }}</p>
-                                        <p class="text-sm text-base-content/60">{{ $t(':time minutes ago', { time: i * 5 }) }}</p>
-                                    </div>
-                                    <svg class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column - 1/3 width -->
-                    <div class="space-y-8">
-                        <!-- Subscription Status -->
-                        <div v-if="$page.props.auth.user.subscribed" class="overflow-hidden rounded-2xl border border-success/30 bg-gradient-to-br from-success/10 to-success/5 p-6 shadow-sm">
-                            <div class="mb-4 flex items-center gap-3">
-                                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-success/20">
-                                    <svg class="h-6 w-6 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-base-content">{{ $t('Pro Plan') }}</h3>
-                                    <p class="text-xs text-success">{{ $t('Active') }}</p>
-                                </div>
-                            </div>
-                            <p class="text-sm text-base-content/70">{{ $t('You\'re enjoying all premium features!') }}</p>
-                            <div class="mt-4 flex gap-2">
-                                <a :href="route('profile.show')" class="btn btn-outline btn-sm flex-1">
-                                    {{ $t('Manage') }}
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Quick Actions -->
-                        <div class="overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow-sm">
-                            <div class="border-b border-base-300 p-6">
-                                <h3 class="font-bold text-base-content">{{ $t('Quick Actions') }}</h3>
-                            </div>
-                            <div class="p-6">
-                                <div class="space-y-3">
-                                    <a :href="route('profile.show')" class="flex items-center gap-3 rounded-lg border border-base-300 p-3 transition-all hover:border-primary/30 hover:bg-primary/5">
-                                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                            <svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                            </svg>
-                                        </div>
-                                        <span class="text-sm font-medium text-base-content">{{ $t('Edit Profile') }}</span>
-                                    </a>
-                                    <a :href="route('profile.show')" class="flex items-center gap-3 rounded-lg border border-base-300 p-3 transition-all hover:border-primary/30 hover:bg-primary/5">
-                                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10">
-                                            <svg class="h-5 w-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                        </div>
-                                        <span class="text-sm font-medium text-base-content">{{ $t('Settings') }}</span>
-                                    </a>
-                                    <a :href="route('blog.index')" class="flex items-center gap-3 rounded-lg border border-base-300 p-3 transition-all hover:border-primary/30 hover:bg-primary/5">
-                                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-info/10">
-                                            <svg class="h-5 w-5 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                            </svg>
-                                        </div>
-                                        <span class="text-sm font-medium text-base-content">{{ $t('View Blog') }}</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Help Card -->
-                        <div class="overflow-hidden rounded-2xl border border-base-300 bg-gradient-to-br from-base-100 to-base-200 p-6 shadow-sm">
-                            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-info/10">
-                                <svg class="h-6 w-6 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                            <h3 class="font-bold text-base-content">{{ $t('Need help?') }}</h3>
-                            <p class="mt-2 text-sm text-base-content/70">{{ $t('Our support team is here to help you succeed.') }}</p>
-                            <button class="btn btn-outline btn-sm mt-4 w-full">
-                                {{ $t('Contact Support') }}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pricing Section for Non-Subscribers -->
-                <div v-if="!$page.props.auth.user.subscribed" class="mt-12">
-                    <div class="mb-8 text-center">
-                        <h2 class="text-3xl font-bold text-base-content">{{ $t('Unlock Premium Features') }}</h2>
-                        <p class="mt-2 text-base-content/70">{{ $t('Upgrade your plan to access all features') }}</p>
-                    </div>
-                    <Plans />
-                </div>
+        <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div><h2 class="font-semibold text-[var(--text-strong)]">Choose your working view</h2><p class="mt-1 text-sm text-[var(--text-muted)]">Good Hours remembers this choice on this device.</p></div>
+            <div class="inline-flex max-w-full gap-1 overflow-x-auto rounded-xl bg-[var(--surface-subtle)] p-1" role="group" aria-label="Dashboard view">
+                <button v-for="view in views" :key="view.id" type="button" :aria-pressed="activeView === view.id" :class="['inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-3 text-sm font-semibold', activeView === view.id ? 'bg-[var(--surface-raised)] text-[var(--brand-pine)] shadow-sm' : 'text-[var(--text-muted)] hover:text-[var(--text-strong)]']" @click="setView(view.id)"><component :is="view.icon" class="size-4" aria-hidden="true" />{{ view.label }}</button>
             </div>
         </div>
+
+        <section v-if="activeView === 'command'" class="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_20rem]" aria-labelledby="command-title">
+            <SurfaceCard :padding="false"><div class="border-b border-[var(--border-subtle)] px-5 py-4"><div class="flex items-center justify-between gap-3"><h2 id="command-title" class="font-semibold text-[var(--text-strong)]">Today’s appointments</h2><span class="text-sm text-[var(--text-muted)]">{{ appointments.length }} scheduled</span></div></div>
+                <StatePanel v-if="!appointments.length" compact title="Nothing scheduled yet" :description="permissions.createAppointment ? 'Create a booking or move to another date in Calendar.' : 'Your access does not include the calendar. Ask an owner to update your role if you need scheduling access.'"><template v-if="permissions.calendar && permissions.createAppointment" #actions><AppButton :href="calendarHref({ create: 1 })">New booking</AppButton></template></StatePanel>
+                <div v-else class="divide-y divide-[var(--border-subtle)]"><article v-for="event in appointments" :key="event.id" class="grid gap-3 px-5 py-4 sm:grid-cols-[5rem_minmax(0,1fr)_10rem_auto] sm:items-center"><div><p class="font-semibold text-[var(--text-strong)]">{{ timeLabel(event.startsAt) }}</p><p class="mt-0.5 text-xs text-[var(--text-muted)]">{{ durationLabel(event) }}</p></div><div class="min-w-0"><p class="truncate font-semibold text-[var(--text-strong)]">{{ event.title }}</p><p class="mt-0.5 truncate text-sm text-[var(--text-muted)]">{{ serviceLabel(event) }}</p></div><div class="text-sm"><p class="truncate text-[var(--text-strong)]">{{ staffLabel(event) }}</p><span :class="['gh-status mt-1', event.tone === 'danger' ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)]' : event.tone === 'warning' ? 'bg-[var(--status-warning-soft)] text-[var(--status-warning)]' : 'bg-[var(--status-info-soft)] text-[var(--status-info)]']">{{ event.statusLabel }}</span></div><Link :href="calendarHref()" class="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--border-strong)] px-3 text-sm font-semibold text-[var(--text-strong)] hover:bg-[var(--surface-subtle)]">{{ actionLabel(event.status) }}</Link></article></div>
+            </SurfaceCard>
+            <aside class="space-y-5"><SurfaceCard title="Attention" compact><ul v-if="attention.length" class="divide-y divide-[var(--border-subtle)]"><li v-for="item in attention.slice(0, 5)" :key="item.id" class="py-3 first:pt-0 last:pb-0"><Link :href="item.href" class="group block"><p class="font-semibold text-[var(--text-strong)] group-hover:text-[var(--action-primary)]">{{ item.title }}</p><p class="mt-1 text-xs leading-5 text-[var(--text-muted)]">{{ item.detail }}</p></Link></li></ul><p v-else class="flex gap-2 text-sm text-[var(--text-muted)]"><CheckCircleIcon class="size-5 shrink-0 text-[var(--status-success)]" aria-hidden="true" />No urgent items right now.</p></SurfaceCard><SurfaceCard title="At a glance" compact><dl class="divide-y divide-[var(--border-subtle)] text-sm"><div class="flex justify-between gap-4 py-2 first:pt-0"><dt>Appointments</dt><dd class="font-semibold text-[var(--text-strong)]">{{ calendar.counts.appointments }}</dd></div><div class="flex justify-between gap-4 py-2"><dt>Walk-ins waiting</dt><dd class="font-semibold text-[var(--text-strong)]">{{ calendar.counts.walkInsWaiting }}</dd></div><div class="flex justify-between gap-4 py-2 last:pb-0"><dt>Unassigned</dt><dd class="font-semibold text-[var(--text-strong)]">{{ calendar.counts.unassigned }}</dd></div></dl></SurfaceCard></aside>
+        </section>
+
+        <section v-else-if="activeView === 'rhythm'" class="mt-5" aria-labelledby="rhythm-title">
+            <SurfaceCard :padding="false"><div class="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border-subtle)] px-5 py-4"><div><h2 id="rhythm-title" class="font-semibold text-[var(--text-strong)]">Studio rhythm board</h2><p class="mt-1 text-sm text-[var(--text-muted)]">See each person’s day and where capacity remains.</p></div><span class="gh-status bg-[var(--status-success-soft)] text-[var(--status-success)]">{{ staffColumns.length }} staff lanes</span></div><StatePanel v-if="!staffColumns.length" compact title="No staff schedule to show" description="Appointments assigned to staff will appear here." /><div v-else class="overflow-x-auto p-4"><div class="grid min-w-[56rem] gap-3" :style="{ gridTemplateColumns: `repeat(${staffColumns.length}, minmax(15rem, 1fr))` }"><section v-for="person in staffColumns" :key="person.id" class="rounded-xl bg-[var(--surface-subtle)] p-3"><div class="mb-3 flex items-center gap-2"><span class="grid size-8 place-items-center rounded-full bg-[var(--brand-pine)] text-xs font-bold text-white">{{ person.name.split(' ').map(value => value[0]).join('').slice(0, 2) }}</span><div><h3 class="font-semibold text-[var(--text-strong)]">{{ person.name }}</h3><p class="text-xs text-[var(--text-muted)]">{{ person.events.length }} appointment{{ person.events.length === 1 ? '' : 's' }}</p></div></div><div class="space-y-2"><Link v-for="event in person.events" :key="event.id" :href="calendarHref({ view: 'staff' })" class="block rounded-lg border-l-4 border-[var(--brand-pine)] bg-[var(--surface-raised)] p-3 hover:border-[var(--action-primary)]"><p class="text-xs font-semibold text-[var(--text-muted)]">{{ timeLabel(event.startsAt) }}–{{ timeLabel(event.endsAt) }}</p><p class="mt-1 font-semibold text-[var(--text-strong)]">{{ event.title }}</p><p class="mt-1 text-xs text-[var(--text-muted)]">{{ serviceLabel(event) }}</p></Link></div></section></div></div></SurfaceCard>
+        </section>
+
+        <section v-else class="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]" aria-labelledby="guided-title">
+            <SurfaceCard :padding="false"><div class="border-b border-[var(--border-subtle)] px-5 py-4"><h2 id="guided-title" class="font-semibold text-[var(--text-strong)]">Your next hours</h2><p class="mt-1 text-sm text-[var(--text-muted)]">One recommended action for each visit.</p></div><StatePanel v-if="!appointments.length" compact title="Your day is clear" description="New appointments will be organized into now, next, and later." /><div v-else class="p-5"><section v-for="group in [{ id: 'now', label: 'Now' }, { id: 'next', label: 'Next' }, { id: 'later', label: 'Later' }]" :key="group.id" class="mb-6 last:mb-0"><div class="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2"><h3 class="font-semibold text-[var(--text-strong)]">{{ group.label }}</h3><span class="text-xs text-[var(--text-muted)]">{{ groupedByTime[group.id].length }}</span></div><p v-if="!groupedByTime[group.id].length" class="py-3 text-sm text-[var(--text-muted)]">Nothing {{ group.id === 'now' ? 'in progress' : group.id === 'next' ? 'starting soon' : 'else scheduled' }}.</p><article v-for="event in groupedByTime[group.id]" :key="event.id" class="gh-list-row"><div class="w-16 shrink-0"><p class="font-semibold text-[var(--text-strong)]">{{ timeLabel(event.startsAt) }}</p><p class="text-xs text-[var(--text-muted)]">{{ durationLabel(event) }}</p></div><div class="min-w-0 flex-1"><p class="truncate font-semibold text-[var(--text-strong)]">{{ event.title }}</p><p class="truncate text-sm text-[var(--text-muted)]">{{ serviceLabel(event) }} · {{ staffLabel(event) }}</p></div><Link :href="calendarHref()" class="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-[var(--border-strong)] px-3 text-sm font-semibold">{{ actionLabel(event.status) }}</Link></article></section></div></SurfaceCard>
+            <aside class="space-y-5"><SurfaceCard v-if="!readiness.publishable" compact><div class="flex gap-3"><span class="grid size-10 shrink-0 place-items-center rounded-full bg-[var(--status-warning-soft)] text-[var(--status-warning)]"><ExclamationTriangleIcon class="size-5" aria-hidden="true" /></span><div><h2 class="font-semibold text-[var(--text-strong)]">Finish your setup</h2><p class="mt-1 text-sm leading-6 text-[var(--text-muted)]">{{ readiness.blockers[0]?.message }}</p></div></div><AppButton class="mt-4 w-full" :href="route('business.configuration.show', page.props.tenant.public_id)">Continue setup<ChevronRightIcon class="size-4" aria-hidden="true" /></AppButton></SurfaceCard><SurfaceCard title="Today at a glance" compact><dl class="divide-y divide-[var(--border-subtle)] text-sm"><div class="flex justify-between py-2 first:pt-0"><dt>Appointments</dt><dd class="font-semibold">{{ calendar.counts.appointments }}</dd></div><div class="flex justify-between py-2"><dt>Waiting</dt><dd class="font-semibold">{{ calendar.counts.walkInsWaiting }}</dd></div><div class="flex justify-between py-2 last:pb-0"><dt>Blocked periods</dt><dd class="font-semibold">{{ calendar.counts.blocks }}</dd></div></dl></SurfaceCard></aside>
+        </section>
     </AppLayout>
 </template>

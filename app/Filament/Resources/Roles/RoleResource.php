@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Roles;
 
+use App\Filament\Resources\Concerns\DisablesUnapprovedPlatformResource;
 use App\Filament\Resources\Roles\Pages\CreateRole;
 use App\Filament\Resources\Roles\Pages\EditRole;
 use App\Filament\Resources\Roles\Pages\ListRoles;
@@ -19,6 +20,8 @@ use Spatie\Permission\Models\Role;
 
 class RoleResource extends Resource
 {
+    use DisablesUnapprovedPlatformResource;
+
     protected static ?string $model = Role::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';

@@ -2,33 +2,26 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Domain\PlatformAccess\Enums\PlatformRole;
+use App\Domain\PlatformAccess\Models\Membership;
+use App\Domain\PlatformAccess\Models\PlatformRoleAssignment;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Cashier\Billable; // Use this for Stripe
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
 
-// Use this for LemonSqueezy
-// use LemonSqueezy\Laravel\Billable;
-
-// Use this for Paddle
-// use Laravel\Paddle\Billable;
-
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
-    use Billable;
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
-    use HasRoles;
     use HasTeams;
     use Notifiable;
     use TwoFactorAuthenticatable;
@@ -85,17 +78,39 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(SocialAccount::class);
     }
 
+    public function memberships(): HasMany
+    {
+        return $this->hasMany(Membership::class);
+    }
+
+    public function platformRoleAssignments(): HasMany
+    {
+        return $this->hasMany(PlatformRoleAssignment::class);
+    }
+
+    public function activePlatformRoles(): HasMany
+    {
+        return $this->platformRoleAssignments()->active();
+    }
+
+    public function hasPlatformRole(PlatformRole $role): bool
+    {
+        return $this->activePlatformRoles()->where('role', $role->value)->exists();
+    }
+
     // End Relations
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // Check if user can access panel,
-        // return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
+        return $panel->getId() === 'admin'
+            && $this->hasVerifiedEmail()
+            && filled($this->two_factor_confirmed_at)
+            && $this->hasPlatformRole(PlatformRole::Administrator);
+    }
 
-        // $this->is_admin is deprecated and not used in Larafast after September 1, 2024
-        // Instead use role admin
-
-        return $this->hasRole('admin') || $this->is_admin;
+    public function hasAnyActivePlatformRole(): bool
+    {
+        return $this->activePlatformRoles()->exists();
     }
 
     public function trialIsUsed()

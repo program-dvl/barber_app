@@ -12,7 +12,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('billing:advance-lifecycle')->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command('billing:reconcile-provider-events')->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command('billing:send-notices')->everyMinute()->withoutOverlapping();
+        $schedule->command('communications:process-events')->everyMinute()->withoutOverlapping();
     }
 
     /**

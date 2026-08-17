@@ -62,6 +62,7 @@ class InvoiceTest extends TestCase
     {
         $user = User::factory()->create();
         $invoice = Invoice::create([
+            'user_id' => $user->id,
             'customer_name' => $user->name,
             'customer_email' => $user->email,
             'issued_at' => now(),
@@ -85,5 +86,22 @@ class InvoiceTest extends TestCase
         $response->assertOk();
         $response->assertHeader('Content-Type', 'application/pdf');
         $this->assertStringContainsString('%PDF-1.4', $response->getContent());
+    }
+
+    public function test_invoice_download_denies_another_authenticated_user(): void
+    {
+        $owner = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $invoice = Invoice::create([
+            'user_id' => $owner->id,
+            'customer_name' => $owner->name,
+            'customer_email' => $owner->email,
+            'issued_at' => now(),
+            'currency' => 'usd',
+        ]);
+
+        $this->actingAs($otherUser)
+            ->get(route('invoices.download', $invoice))
+            ->assertForbidden();
     }
 }

@@ -2,13 +2,14 @@
 
 namespace Database\Factories;
 
+use App\Models\Model;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use LemonSqueezy\Laravel\Order;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends Factory<Model>
  */
 class OrdersFactory extends Factory
 {

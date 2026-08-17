@@ -2,11 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Domain\PlatformAccess\Enums\PlatformRole;
+use App\Domain\PlatformAccess\Models\PlatformRoleAssignment;
 use App\Models\User;
 use Filament\Commands\MakeUserCommand;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
@@ -48,14 +50,17 @@ class MakeAdmin extends MakeUserCommand
     }
 
     /**
-     * Create admin user and assign admin role
+     * Create a platform user and a separate platform role assignment.
      */
-    protected function createUser(): Authenticatable&\Illuminate\Database\Eloquent\Model
+    protected function createUser(): Authenticatable&Model
     {
         $user = $this->getUserModel()::create($this->getUserData());
 
-        $role = Role::firstOrCreate(['name' => 'admin']);
-        $user->assignRole($role);
+        PlatformRoleAssignment::query()->create([
+            'user_id' => $user->getKey(),
+            'role' => PlatformRole::Administrator,
+            'reason' => 'Created through the make:admin bootstrap command.',
+        ]);
 
         return $user;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products;
 
+use App\Filament\Resources\Concerns\DisablesLegacyBillingResource;
 use App\Filament\Resources\Products\Pages\CreateProduct;
 use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
@@ -21,6 +22,8 @@ use Filament\Tables\Table;
 
 class ProductResource extends Resource
 {
+    use DisablesLegacyBillingResource;
+
     protected static ?string $model = Product::class;
 
     protected static ?string $navigationLabel = 'Stripe Products';

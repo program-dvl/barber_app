@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\StripeSubscriptions;
 
+use App\Filament\Resources\Concerns\DisablesLegacyBillingResource;
 use App\Filament\Resources\Invoices\InvoiceResource;
 use App\Filament\Resources\StripeSubscriptions\Pages\CreateStripeSubscription;
 use App\Filament\Resources\StripeSubscriptions\Pages\EditStripeSubscription;
@@ -24,6 +25,8 @@ use Laravel\Cashier\Subscription;
 
 class StripeSubscriptionResource extends Resource
 {
+    use DisablesLegacyBillingResource;
+
     protected static ?string $model = Subscription::class;
 
     protected static ?string $modelLabel = 'Stripe Subscriptions';

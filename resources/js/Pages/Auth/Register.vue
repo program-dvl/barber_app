@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/Profile/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/Profile/AuthenticationCardLogo.vue';
 import Checkbox from '@/Components/Profile/Checkbox.vue';
@@ -7,15 +7,19 @@ import InputError from '@/Components/Profile/InputError.vue';
 import InputLabel from '@/Components/Profile/InputLabel.vue';
 import PrimaryButton from '@/Components/Profile/PrimaryButton.vue';
 import TextInput from '@/Components/Profile/TextInput.vue';
-import SocialButtons from "@/Components/Social/SocialButtons.vue";
-import HomeLayout from "@/Layouts/HomeLayout.vue";
+import AuthLayout from '@/Layouts/AuthLayout.vue';
 
+const page = usePage();
+const selection = page.props.signupIntent ?? null;
 const form = useForm({
     name: '',
+    business_name: '',
     email: '',
     password: '',
     password_confirmation: '',
     terms: false,
+    selected_plan: selection?.plan ?? null,
+    selected_interval: selection?.interval ?? null,
 });
 
 const submit = () => {
@@ -26,8 +30,8 @@ const submit = () => {
 </script>
 
 <template>
-    <HomeLayout>
-        <AuthenticationCard>
+    <AuthLayout title="Create account">
+        <AuthenticationCard embedded>
             <template #logo>
                 <AuthenticationCardLogo />
             </template>
@@ -35,10 +39,28 @@ const submit = () => {
             <!-- Header -->
             <div class="mb-8 text-center">
                 <h2 class="text-2xl font-bold text-base-content">{{ $t('Create your account') }}</h2>
-                <p class="mt-2 text-sm text-base-content/70">{{ $t('Start your journey with us today') }}</p>
+                <p class="mt-2 text-sm text-base-content/70">Create your owner account, verify your email, and start a guided business setup.</p>
             </div>
 
             <form @submit.prevent="submit" class="space-y-6">
+                <div v-if="selection" class="rounded-lg border border-success/30 bg-success/10 p-4 text-sm text-base-content" role="status">
+                    Your {{ selection.plan }} {{ selection.interval }} preference is saved for the subscription review after your trial starts. You will not be charged at registration.
+                </div>
+                <InputError class="mt-2" :message="form.errors.selected_plan" />
+                <div>
+                    <InputLabel for="business_name" :value="$t('Business name')" />
+                    <TextInput
+                        id="business_name"
+                        v-model="form.business_name"
+                        type="text"
+                        class="mt-2 block w-full"
+                        required
+                        autocomplete="organization"
+                        placeholder="Your shop or salon"
+                    />
+                    <InputError class="mt-2" :message="form.errors.business_name" />
+                </div>
+
                 <div>
                     <InputLabel for="name" :value="$t('Full name')" />
                     <TextInput
@@ -123,5 +145,5 @@ const submit = () => {
                 </Link>
             </form>
         </AuthenticationCard>
-    </HomeLayout>
+    </AuthLayout>
 </template>

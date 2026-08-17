@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\LemonSqueezySubscriptions;
 
+use App\Filament\Resources\Concerns\DisablesLegacyBillingResource;
 use App\Filament\Resources\Invoices\InvoiceResource;
 use App\Filament\Resources\LemonSqueezySubscriptions\Pages\CreateLemonSqueezySubscription;
 use App\Filament\Resources\LemonSqueezySubscriptions\Pages\EditLemonSqueezySubscription;
@@ -20,6 +21,8 @@ use LemonSqueezy\Laravel\Subscription;
 
 class LemonSqueezySubscriptionResource extends Resource
 {
+    use DisablesLegacyBillingResource;
+
     protected static ?string $model = Subscription::class;
 
     protected static ?string $modelLabel = 'LemonSqueezy Subscriptions';

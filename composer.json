@@ -28,7 +28,7 @@
         "spatie/laravel-permission": "^6.7",
         "spatie/laravel-sitemap": "^7.2",
         "spatie/schema-org": "^3.23",
-        "tightenco/ziggy": "^1.0"
+        "tightenco/ziggy": "^2.6.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -45,7 +45,8 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/lmsqueezy/laravel"
+            "url": "https://github.com/lmsqueezy/laravel",
+            "no-api": true
         }
     ],
     "autoload": {

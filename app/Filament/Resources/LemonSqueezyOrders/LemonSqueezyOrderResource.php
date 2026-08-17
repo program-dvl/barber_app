@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\LemonSqueezyOrders;
 
+use App\Filament\Resources\Concerns\DisablesLegacyBillingResource;
 use App\Filament\Resources\Invoices\InvoiceResource;
 use App\Filament\Resources\LemonSqueezyOrders\Pages\ListOrders;
 use App\Filament\Resources\LemonSqueezyOrders\Widgets\OrdersStats;
@@ -18,6 +19,8 @@ use LemonSqueezy\Laravel\Order;
 //
 class LemonSqueezyOrderResource extends Resource
 {
+    use DisablesLegacyBillingResource;
+
     protected static ?string $model = Order::class;
 
     protected static ?string $modelLabel = 'LemonSqueezy Orders';

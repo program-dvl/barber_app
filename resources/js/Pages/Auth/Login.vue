@@ -1,5 +1,6 @@
 <script setup>
-import {Link, useForm} from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
+import { CheckCircleIcon } from '@heroicons/vue/24/outline';
 import AuthenticationCard from '@/Components/Profile/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/Profile/AuthenticationCardLogo.vue';
 import Checkbox from '@/Components/Profile/Checkbox.vue';
@@ -7,8 +8,7 @@ import InputError from '@/Components/Profile/InputError.vue';
 import InputLabel from '@/Components/Profile/InputLabel.vue';
 import PrimaryButton from '@/Components/Profile/PrimaryButton.vue';
 import TextInput from '@/Components/Profile/TextInput.vue';
-import SocialButtons from "@/Components/Social/SocialButtons.vue";
-import HomeLayout from "@/Layouts/HomeLayout.vue";
+import AuthLayout from '@/Layouts/AuthLayout.vue';
 
 defineProps({
     canResetPassword: Boolean,
@@ -32,8 +32,8 @@ const submit = () => {
 </script>
 
 <template>
-    <HomeLayout>
-        <AuthenticationCard>
+    <AuthLayout title="Sign in">
+        <AuthenticationCard embedded>
             <template #logo>
                 <AuthenticationCardLogo/>
             </template>
@@ -46,15 +46,10 @@ const submit = () => {
 
             <div v-if="status" class="mb-6 rounded-lg border border-success/20 bg-success/10 p-4 text-sm text-success">
                 <div class="flex items-center gap-2">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <CheckCircleIcon class="size-5" aria-hidden="true" />
                     {{ status }}
                 </div>
             </div>
-
-            <SocialButtons/>
-            <div class="divider text-base-content/50">{{ $t('or continue with email') }}</div>
 
             <form @submit.prevent="submit" class="space-y-6">
                 <div>
@@ -116,5 +111,5 @@ const submit = () => {
                 </Link>
             </form>
         </AuthenticationCard>
-    </HomeLayout>
+    </AuthLayout>
 </template>

@@ -1,5 +1,12 @@
 <?php
 
+use App\Domain\PlatformAccess\Enums\StarterRole;
+use App\Domain\PlatformAccess\Models\Business;
+use App\Domain\PlatformAccess\Models\Membership;
+use App\Domain\PlatformAccess\Services\MembershipAccessManager;
+use App\Models\User;
+use Tests\TestCase;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -12,7 +19,7 @@
 */
 
 uses(
-    Tests\TestCase::class,
+    TestCase::class,
     // Illuminate\Foundation\Testing\RefreshDatabase::class,
 )->in('Feature');
 
@@ -45,4 +52,24 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+/**
+ * Create one unambiguous active User-to-Business membership with a starter role.
+ *
+ * @return array{0: User, 1: Business, 2: Membership}
+ */
+function createTenantMembership(StarterRole $role = StarterRole::Owner): array
+{
+    $business = Business::factory()->create();
+    $user = User::factory()->create();
+    $membership = Membership::factory()->create([
+        'business_id' => $business->getKey(),
+        'user_id' => $user->getKey(),
+    ]);
+
+    app(MembershipAccessManager::class)
+        ->assignStarterRole($membership, $role, $user, 'Test fixture role assignment.');
+
+    return [$user, $business, $membership->fresh()];
 }

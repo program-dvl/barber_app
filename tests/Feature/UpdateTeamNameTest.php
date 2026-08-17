@@ -4,11 +4,21 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Jetstream\Features;
 use Tests\TestCase;
 
 class UpdateTeamNameTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (! Features::hasTeamFeatures()) {
+            $this->markTestSkipped('Jetstream Team is intentionally superseded by Business memberships.');
+        }
+    }
 
     public function test_team_names_can_be_updated(): void
     {

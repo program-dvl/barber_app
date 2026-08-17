@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Invoices;
 
+use App\Filament\Resources\Concerns\DisablesLegacyBillingResource;
 use App\Filament\Resources\Invoices\Pages\CreateInvoice;
 use App\Filament\Resources\Invoices\Pages\EditInvoice;
 use App\Filament\Resources\Invoices\Pages\ListInvoices;
@@ -30,6 +31,8 @@ use Illuminate\Support\Facades\Notification as NotificationFacade;
 
 class InvoiceResource extends Resource
 {
+    use DisablesLegacyBillingResource;
+
     protected static ?string $model = Invoice::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';

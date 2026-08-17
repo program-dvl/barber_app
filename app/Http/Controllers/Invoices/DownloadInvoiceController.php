@@ -11,6 +11,8 @@ class DownloadInvoiceController extends Controller
 {
     public function __invoke(Invoice $invoice, InvoicePdfService $pdf): Response
     {
+        $this->authorize('view', $invoice);
+
         return response($pdf->render($invoice), 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="'.$pdf->filename($invoice).'"',

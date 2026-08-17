@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Prices;
 
+use App\Filament\Resources\Concerns\DisablesLegacyBillingResource;
 use App\Filament\Resources\Prices\Pages\CreatePrice;
 use App\Filament\Resources\Prices\Pages\EditPrice;
 use App\Filament\Resources\Prices\Pages\ListPrices;
@@ -22,6 +23,8 @@ use Filament\Tables\Table;
 
 class PriceResource extends Resource
 {
+    use DisablesLegacyBillingResource;
+
     protected static ?string $model = Price::class;
 
     protected static ?string $navigationLabel = 'Stripe Prices';

@@ -2,13 +2,11 @@
 
 namespace App\Providers;
 
-use App\Listeners\LemonSqueezyEventListener;
-use App\Listeners\StripeEventListener;
+use App\Listeners\CompleteVerifiedOwnerOnboarding;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Laravel\Cashier\Events\WebhookReceived;
-use LemonSqueezy\Laravel\Events\WebhookHandled;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -21,11 +19,8 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        WebhookReceived::class => [
-            StripeEventListener::class,
-        ],
-        WebhookHandled::class => [
-            LemonSqueezyEventListener::class,
+        Verified::class => [
+            CompleteVerifiedOwnerOnboarding::class,
         ],
     ];
 

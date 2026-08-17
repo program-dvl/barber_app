@@ -2,7 +2,10 @@
 
 namespace App\Exceptions;
 
+use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +29,31 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    /**
+     * Scheduling rules are expected operational feedback, never an error page.
+     */
+    public function render($request, Throwable $exception): Response
+    {
+        if ($exception instanceof BookingRuleViolation) {
+            if ($request->expectsJson()) {
+                return response()->json($exception->toDomainError(), 422);
+            }
+
+            return back()->withErrors([
+                'booking' => $exception->getMessage(),
+                'booking_rule' => $exception->ruleCode,
+            ]);
+        }
+
+        $response = parent::render($request, $exception);
+        if (! $request->expectsJson() && in_array($response->getStatusCode(), [404, 410, 500, 503], true)) {
+            $request->attributes->set('force_noindex', true);
+
+            return Inertia::render('Error', ['status' => $response->getStatusCode()])->toResponse($request)->setStatusCode($response->getStatusCode());
+        }
+
+        return $response;
     }
 }

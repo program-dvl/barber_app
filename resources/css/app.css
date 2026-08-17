@@ -3,50 +3,432 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 @plugin "daisyui" {
-    themes: all;
+    themes: light;
 }
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../vendor/laravel/jetstream/**/*.blade.php';
 
-@theme {
-  --font-sans:
-    Figtree, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+@font-face {
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/good-hours/manrope-400.ttf') format('truetype');
 }
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+@font-face {
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('/fonts/good-hours/manrope-500.ttf') format('truetype');
+}
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
+@font-face {
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('/fonts/good-hours/manrope-600.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('/fonts/good-hours/manrope-700.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Newsreader';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('/fonts/good-hours/newsreader-500.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Newsreader';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('/fonts/good-hours/newsreader-600.ttf') format('truetype');
+}
+
+@theme {
+    --font-sans: Manrope, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --font-display: Newsreader, Georgia, 'Times New Roman', serif;
+}
+
+/* Good Hours identity. Components continue to consume semantic roles. */
+:root,
+[data-theme='good-hours'] {
+    color-scheme: light;
+    --brand-pine: #173f3a;
+    --brand-pine-deep: #0d332f;
+    --brand-poppy: #e56a4d;
+    --brand-apricot: #f2b880;
+    --brand-sun: #dda13a;
+    --brand-oat: #f6f1e8;
+    --surface-canvas: #f6f1e8;
+    --surface-subtle: #efe8de;
+    --surface-raised: #fffcf7;
+    --surface-inverse: #173f3a;
+    --text-strong: #19201f;
+    --text-default: #3f4643;
+    --text-muted: #6a6761;
+    --text-inverse: #ffffff;
+    --border-subtle: #ddd5ca;
+    --border-strong: #aaa197;
+    --action-primary: #c13f28;
+    --action-primary-hover: #a93422;
+    --action-primary-contrast: #ffffff;
+    --focus-ring: #0b6ead;
+    --status-info: #275e88;
+    --status-info-soft: #e5eff5;
+    --status-success: #176b4f;
+    --status-success-soft: #e2f1e9;
+    --status-warning: #8a5514;
+    --status-warning-soft: #fbedd2;
+    --status-danger: #b42318;
+    --status-danger-soft: #fff0ee;
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --shadow-raised: 0 1px 2px rgb(25 32 31 / 0.05), 0 12px 30px rgb(25 32 31 / 0.07);
+    --shadow-overlay: 0 24px 64px rgb(13 51 47 / 0.24);
+
+    /* DaisyUI compatibility for retained Larafast surfaces. */
+    --color-base-100: var(--surface-raised);
+    --color-base-200: var(--surface-subtle);
+    --color-base-300: var(--border-subtle);
+    --color-base-content: var(--text-strong);
+    --color-primary: var(--action-primary);
+    --color-primary-content: var(--action-primary-contrast);
+    --color-success: var(--status-success);
+    --color-warning: var(--status-warning);
+    --color-error: var(--status-danger);
+    --color-info: var(--status-info);
+}
+
 @layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
-  }
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--border-subtle, currentColor);
+    }
+
+    html {
+        min-width: 20rem;
+        background: var(--surface-canvas);
+        color: var(--text-default);
+        font-family: var(--font-sans);
+        text-rendering: optimizeLegibility;
+        scroll-padding-top: 6rem;
+    }
+
+    body {
+        min-height: 100vh;
+        background: var(--surface-canvas);
+        overflow-wrap: anywhere;
+    }
+
+    :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+        outline: 3px solid var(--focus-ring);
+        outline-offset: 3px;
+    }
+
+    :where(button, input, select, textarea) {
+        font: inherit;
+    }
+
+    :where(button, [role='button'], a) {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    ::selection {
+        background: #f7c9b8;
+        color: var(--text-strong);
+    }
+}
+
+@media print {
+    header,
+    footer,
+    .gh-skip-link,
+    .gh-button { display: none !important; }
+
+    body,
+    .gh-public-section { background: white !important; color: #111 !important; }
+    .gh-public-section { padding-block: 1.5rem !important; }
+    a { color: #111 !important; text-decoration: underline; }
+}
+
+@layer components {
+    .gh-public-container {
+        width: min(100% - 2rem, 76rem);
+        margin-inline: auto;
+    }
+
+    .gh-public-section {
+        padding-block: clamp(4rem, 8vw, 7rem);
+    }
+
+    .gh-skip-link {
+        position: fixed;
+        top: 0.75rem;
+        left: 0.75rem;
+        z-index: 100;
+        transform: translateY(-180%);
+        border-radius: var(--radius-sm);
+        background: var(--brand-pine-deep);
+        color: white;
+        padding: 0.75rem 1rem;
+        font-weight: 700;
+    }
+
+    .gh-skip-link:focus {
+        transform: translateY(0);
+    }
+
+    .gh-button {
+        display: inline-flex;
+        min-height: 2.75rem;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        padding: 0.7rem 1.15rem;
+        font-size: 0.875rem;
+        font-weight: 800;
+        line-height: 1.25;
+        text-align: center;
+        transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, transform 150ms ease;
+    }
+
+    .gh-button:hover { transform: translateY(-1px); }
+    .gh-button-compact { padding-inline: 1rem; }
+    .gh-button-primary { background: var(--action-primary); color: white; }
+    .gh-button-primary:hover { background: var(--action-primary-hover); }
+    .gh-button-secondary { border-color: var(--border-strong); background: var(--surface-raised); color: var(--brand-pine); }
+    .gh-button-secondary:hover { border-color: var(--brand-pine); }
+    .gh-button-quiet { color: var(--brand-pine); }
+    .gh-button-quiet:hover { background: var(--surface-subtle); }
+
+    .gh-marketing-header {
+        border-color: var(--border-subtle);
+        background: rgb(255 252 247 / 0.94);
+        box-shadow: 0 8px 24px rgb(25 32 31 / 0.06);
+    }
+
+    .gh-icon-button {
+        display: inline-flex;
+        min-width: 2.75rem;
+        min-height: 2.75rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        color: var(--brand-pine);
+    }
+
+    .gh-icon-button:hover { background: var(--surface-subtle); }
+
+    .gh-nav-link,
+    .gh-mobile-nav-link {
+        display: inline-flex;
+        min-height: 2.75rem;
+        align-items: center;
+        border-radius: var(--radius-sm);
+        padding: 0.65rem 0.8rem;
+        color: var(--text-default);
+        font-size: 0.875rem;
+        font-weight: 700;
+    }
+
+    .gh-nav-link:hover,
+    .gh-mobile-nav-link:hover,
+    .gh-nav-link[aria-current='page'],
+    .gh-mobile-nav-link[aria-current='page'] {
+        background: var(--surface-subtle);
+        color: var(--brand-pine-deep);
+    }
+
+    .gh-mobile-nav-link { font-size: 1rem; }
+
+    .gh-eyebrow {
+        color: var(--action-primary);
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .gh-section-title {
+        margin-top: 0.75rem;
+        color: var(--text-strong);
+        font-family: var(--font-display);
+        font-size: clamp(2.1rem, 5vw, 3.75rem);
+        font-weight: 600;
+        letter-spacing: -0.035em;
+        line-height: 1.03;
+        text-wrap: balance;
+    }
+
+    .gh-marketing-card {
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        background: var(--surface-raised);
+        padding: clamp(1.25rem, 3vw, 2rem);
+        box-shadow: var(--shadow-raised);
+    }
+
+    .gh-menu-open { overflow: hidden; }
+
+    .ds-control {
+        min-height: 2.75rem;
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-sm);
+        background: var(--surface-raised);
+        color: var(--text-strong);
+    }
+
+    .gh-input {
+        min-height: 2.75rem;
+        width: 100%;
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-sm);
+        background: var(--surface-raised);
+        color: var(--text-strong);
+        padding: 0.625rem 0.75rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+
+    textarea.gh-input {
+        min-height: 6rem;
+        resize: vertical;
+    }
+
+    .gh-input::placeholder {
+        color: var(--text-muted);
+    }
+
+    .gh-input:disabled {
+        cursor: not-allowed;
+        background: var(--surface-subtle);
+        color: var(--text-muted);
+    }
+
+    .gh-section-nav {
+        display: flex;
+        gap: 0.25rem;
+        overflow-x: auto;
+        border-bottom: 1px solid var(--border-subtle);
+        scrollbar-width: thin;
+    }
+
+    .gh-section-nav-item {
+        position: relative;
+        display: inline-flex;
+        min-height: 2.75rem;
+        flex: 0 0 auto;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 0.875rem;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .gh-section-nav-item[aria-current='step'],
+    .gh-section-nav-item[aria-selected='true'] {
+        color: var(--brand-pine);
+    }
+
+    .gh-section-nav-item[aria-current='step']::after,
+    .gh-section-nav-item[aria-selected='true']::after {
+        position: absolute;
+        right: 0.75rem;
+        bottom: -1px;
+        left: 0.75rem;
+        height: 2px;
+        background: var(--action-primary);
+        content: '';
+    }
+
+    .gh-list-row {
+        display: flex;
+        min-height: 3.5rem;
+        align-items: center;
+        gap: 0.875rem;
+        border-bottom: 1px solid var(--border-subtle);
+        padding: 0.75rem 0;
+    }
+
+    .gh-list-row:last-child {
+        border-bottom: 0;
+    }
+
+    .gh-status {
+        display: inline-flex;
+        min-height: 1.75rem;
+        align-items: center;
+        border-radius: 999px;
+        padding: 0.25rem 0.625rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        line-height: 1.25;
+    }
+
+    .ds-control[aria-invalid='true'] {
+        border-color: var(--status-danger);
+    }
+
+    .gh-display {
+        font-family: var(--font-display);
+        font-optical-sizing: auto;
+        font-weight: 600;
+        letter-spacing: -0.025em;
+    }
+
+    .ds-sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gh-button,
+    .gh-skip-link { transition: none; }
+
+    .gh-button:hover { transform: none; }
 }
 
 @layer utilities {
-  [x-cloak] {
-    display: none;
-  }
-
-  .font-inter {
-    font-family:
-      Inter, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
-      'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  }
+    [x-cloak] {
+        display: none;
+    }
 }
 
-@layer base {
-    html {
-        font-family: "Poppins", sans-serif;
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }

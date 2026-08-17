@@ -1,289 +1,262 @@
 <script setup>
-import { ref } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import ApplicationMark from '@/Components/Profile/ApplicationMark.vue';
-import Banner from '@/Components/Profile/Banner.vue';
-import Dropdown from '@/Components/Profile/Dropdown.vue';
-import DropdownLink from '@/Components/Profile/DropdownLink.vue';
-import NavLink from '@/Components/Profile/NavLink.vue';
-import ResponsiveNavLink from '@/Components/Profile/ResponsiveNavLink.vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import {
+    ArchiveBoxIcon,
+    BanknotesIcon,
+    Bars3Icon,
+    CalendarDaysIcon,
+    ChartBarIcon,
+    ClipboardDocumentListIcon,
+    Cog6ToothIcon,
+    CreditCardIcon,
+    HomeIcon,
+    QueueListIcon,
+    Squares2X2Icon,
+    UserGroupIcon,
+    UsersIcon,
+    XMarkIcon,
+} from '@heroicons/vue/24/outline';
+import ProductMark from '@/Components/Product/ProductMark.vue';
 
-defineProps({
+const props = defineProps({
     title: String,
+    businessLabel: {
+        type: String,
+        default: 'Your shop',
+    },
+    navigationVisibility: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
-const showingNavigationDropdown = ref(false);
+const page = usePage();
+const businessRouteParameter = computed(() => page.props.tenant?.public_id);
+const isBusinessWorkspace = computed(() => Boolean(businessRouteParameter.value));
+const accountWorkspaces = computed(() => page.props.account?.workspaces ?? []);
+const primaryWorkspace = computed(() => accountWorkspaces.value.length === 1 ? accountWorkspaces.value[0] : null);
+const billingWorkspaces = computed(() => accountWorkspaces.value.filter(workspace => workspace.can_manage_billing));
+const tenantSubscription = computed(() => page.props.tenant?.subscription);
+const subscriptionStatusLabel = computed(() => ({
+    trialing: 'Trial',
+    active: 'Active',
+    past_due: 'Past due',
+    grace: 'Payment retry',
+    restricted: 'Restricted',
+    cancel_scheduled: 'Cancels soon',
+    canceled: 'Canceled',
+    terminated: 'Closed',
+}[tenantSubscription.value?.status] || tenantSubscription.value?.status?.replaceAll('_', ' ')));
+const subscriptionStatusTone = computed(() => ['past_due', 'grace', 'restricted'].includes(tenantSubscription.value?.status)
+    ? 'bg-[var(--status-warning-soft)] text-[var(--status-warning)]'
+    : ['canceled', 'terminated'].includes(tenantSubscription.value?.status)
+        ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)]'
+        : 'bg-[var(--status-success-soft)] text-[var(--status-success)]');
+const navigationOpen = ref(false);
+const menuButton = ref(null);
+const drawer = ref(null);
 
-const switchToTeam = (team) => {
-    router.put(route('current-team.update'), {
-        team_id: team.id,
-    }, {
-        preserveState: false,
-    });
+const navigation = computed(() => {
+    if (!businessRouteParameter.value) return [];
+
+    return [
+    { key: 'dashboard', label: 'Dashboard', href: route('business.dashboard', businessRouteParameter.value), icon: HomeIcon },
+    { key: 'calendar', label: 'Calendar', href: route('business.calendar', businessRouteParameter.value), icon: CalendarDaysIcon },
+    { key: 'walk-in-queue', label: 'Walk-in queue', href: route('business.walk-ins.index', businessRouteParameter.value), icon: QueueListIcon },
+    { key: 'clients', label: 'Clients', href: route('business.clients.index', businessRouteParameter.value), icon: UsersIcon },
+    { key: 'checkout-sales', label: 'Checkout & sales', href: route('shop.module', [businessRouteParameter.value, 'checkout-sales']), icon: BanknotesIcon },
+    { key: 'staff', label: 'Staff', href: route('shop.module', [businessRouteParameter.value, 'staff']), icon: UserGroupIcon },
+    { key: 'services', label: 'Services', href: route('shop.module', [businessRouteParameter.value, 'services']), icon: ClipboardDocumentListIcon },
+    { key: 'inventory', label: 'Inventory', href: route('shop.module', [businessRouteParameter.value, 'inventory']), icon: ArchiveBoxIcon },
+    { key: 'reports', label: 'Reports', href: route('shop.module', [businessRouteParameter.value, 'reports']), icon: ChartBarIcon },
+    { key: 'settings', label: 'Settings', href: route('business.configuration.show', businessRouteParameter.value), icon: Cog6ToothIcon },
+    { key: 'subscription-billing', label: 'Subscription & billing', href: route('business.billing.show', businessRouteParameter.value), icon: CreditCardIcon },
+    ].filter(item => props.navigationVisibility[item.key] !== false);
+});
+
+const primaryMobileNavigation = computed(() => navigation.value.filter(item => ['dashboard', 'calendar', 'walk-in-queue', 'clients'].includes(item.key)));
+const normalizedPath = computed(() => page.url.split('?')[0]);
+const isActive = item => new URL(item.href, 'http://app.local').pathname === normalizedPath.value;
+const currentLabel = computed(() => navigation.value.find(isActive)?.label || props.title || 'Shop application');
+
+const openNavigation = async () => {
+    navigationOpen.value = true;
+    await nextTick();
+    drawer.value?.querySelector('a')?.focus();
 };
 
-const logout = () => {
-    router.post(route('logout'));
+const closeNavigation = ({ restoreFocus = false } = {}) => {
+    navigationOpen.value = false;
+    if (restoreFocus) nextTick(() => menuButton.value?.focus());
 };
+
+const handleKeydown = event => {
+    if (event.key === 'Escape' && navigationOpen.value) closeNavigation({ restoreFocus: true });
+    if (event.key === 'Tab' && navigationOpen.value) {
+        const focusable = [...(drawer.value?.querySelectorAll('a[href], button:not([disabled]), summary, [tabindex]:not([tabindex="-1"])') ?? [])];
+        const first = focusable[0];
+        const last = focusable.at(-1);
+
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first?.focus();
+        }
+    }
+};
+
+onMounted(() => document.addEventListener('keydown', handleKeydown));
+onBeforeUnmount(() => document.removeEventListener('keydown', handleKeydown));
+
+const logout = () => router.post(route('logout'));
 </script>
 
 <template>
-    <div>
+    <div class="min-h-screen bg-[var(--surface-canvas)] text-[var(--text-default)]">
         <Head :title="title" />
 
-        <Banner />
+        <a href="#main-content" class="fixed left-3 top-3 z-[70] -translate-y-24 rounded-lg bg-[var(--surface-raised)] px-4 py-3 font-semibold text-[var(--text-strong)] shadow-[var(--shadow-overlay)] transition-transform focus:translate-y-0">
+            Skip to main content
+        </a>
 
-        <div class="min-h-screen">
-            <nav class="border-b border-base-content/20">
-                <!-- Primary Navigation Menu -->
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex">
-                            <!-- Logo -->
-                            <div class="shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
-                                    <ApplicationMark class="block h-9 w-auto" />
-                                </Link>
-                            </div>
-
-                            <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    {{ $t('Dashboard') }}
-                                </NavLink>
-                            </div>
-                        </div>
-
-                        <div class="hidden sm:flex sm:items-center sm:ms-6">
-                            <div class="ms-3 relative">
-                                <!-- Teams Dropdown -->
-                                <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="right" width="60">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md transition ease-in-out duration-150">
-                                                {{ $page.props.auth.user.current_team.name }}
-
-                                                <svg class="ms-2 -me-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <div class="w-60">
-                                            <!-- Team Management -->
-                                            <div class="block px-4 py-2 text-xs">
-                                                {{ $t('Manage Team') }}
-                                            </div>
-
-                                            <!-- Team Settings -->
-                                            <DropdownLink :href="route('teams.show', $page.props.auth.user.current_team)">
-                                                {{ $t('Team Settings') }}
-                                            </DropdownLink>
-
-                                            <DropdownLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')">
-                                                {{ $t('Create New Team') }}
-                                            </DropdownLink>
-
-                                            <!-- Team Switcher -->
-                                            <template v-if="$page.props.auth.user.all_teams.length > 1">
-                                                <div class="border-t border-base-content/20" />
-
-                                                <div class="block px-4 py-2 text-xs">
-                                                    {{ $t('Switch Teams') }}
-                                                </div>
-
-                                                <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
-                                                    <form @submit.prevent="switchToTeam(team)">
-                                                        <DropdownLink as="button">
-                                                            <div class="flex items-center">
-                                                                <svg v-if="team.id == $page.props.auth.user.current_team_id" class="me-2 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                                </svg>
-
-                                                                <div>{{ team.name }}</div>
-                                                            </div>
-                                                        </DropdownLink>
-                                                    </form>
-                                                </template>
-                                            </template>
-                                        </div>
-                                    </template>
-                                </Dropdown>
-                            </div>
-
-                            <!-- Settings Dropdown -->
-                            <div class="ms-3 relative">
-                                <Dropdown align="right" width="48">
-                                    <template #trigger>
-                                        <button v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm border-2 border-transparent rounded-full focus:outline-hidden focus:border-gray-300 transition">
-                                            <img class="h-8 w-8 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
-                                        </button>
-
-                                        <span v-else class="inline-flex rounded-md">
-                                            <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-hidden focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
-                                                {{ $page.props.auth.user.name }}
-
-                                                <svg class="ms-2 -me-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <!-- Account Management -->
-                                        <div class="block px-4 py-2 text-xs">
-                                            {{ $t('Manage Account') }}
-                                        </div>
-
-                                        <DropdownLink :href="route('profile.show')">
-                                            {{ $t('Profile') }}
-                                        </DropdownLink>
-
-                                        <DropdownLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')">
-                                            {{ $t('API Tokens') }}
-                                        </DropdownLink>
-
-                                        <div class="border-t border-base-content/20" />
-
-                                        <!-- Authentication -->
-                                        <form @submit.prevent="logout">
-                                            <DropdownLink as="button">
-                                                {{ $t('Log Out') }}
-                                            </DropdownLink>
-                                        </form>
-                                    </template>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <!-- Hamburger -->
-                        <div class="-me-2 flex items-center sm:hidden">
-                            <button class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out" @click="showingNavigationDropdown = ! showingNavigationDropdown">
-                                <svg
-                                    class="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        :class="{'hidden': showingNavigationDropdown, 'inline-flex': ! showingNavigationDropdown }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        :class="{'hidden': ! showingNavigationDropdown, 'inline-flex': showingNavigationDropdown }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Responsive Navigation Menu -->
-                <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
-                    <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            {{ $t('Dashboard') }}
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-base-content/20">
-                        <div class="flex items-center px-4">
-                            <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 me-3">
-                                <img class="h-10 w-10 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
-                            </div>
-
-                            <div>
-                                <div class="font-medium text-base text-gray-800">
-                                    {{ $page.props.auth.user.name }}
-                                </div>
-                                <div class="font-medium text-sm text-gray-500">
-                                    {{ $page.props.auth.user.email }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.show')" :active="route().current('profile.show')">
-                                {{ $t('Profile') }}
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')" :active="route().current('api-tokens.index')">
-                                {{ $t('API Tokens') }}
-                            </ResponsiveNavLink>
-
-                            <!-- Authentication -->
-                            <form method="POST" @submit.prevent="logout">
-                                <ResponsiveNavLink as="button">
-                                    {{ $t('Log Out') }}
-                                </ResponsiveNavLink>
-                            </form>
-
-                            <!-- Team Management -->
-                            <template v-if="$page.props.jetstream.hasTeamFeatures">
-                                <div class="border-t border-gray-200" />
-
-                                <div class="block px-4 py-2 text-xs">
-                                    {{ $t('Manage Team') }}
-                                </div>
-
-                                <!-- Team Settings -->
-                                <ResponsiveNavLink :href="route('teams.show', $page.props.auth.user.current_team)" :active="route().current('teams.show')">
-                                    {{ $t('Team Settings') }}
-                                </ResponsiveNavLink>
-
-                                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')" :active="route().current('teams.create')">
-                                    {{ $t('Create New Team') }}
-                                </ResponsiveNavLink>
-
-                                <!-- Team Switcher -->
-                                <template v-if="$page.props.auth.user.all_teams.length > 1">
-                                    <div class="border-t border-base-content/20" />
-
-                                    <div class="block px-4 py-2 text-xs ">
-                                        {{ $t('Switch Teams') }}
-                                    </div>
-
-                                    <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
-                                        <form @submit.prevent="switchToTeam(team)">
-                                            <ResponsiveNavLink as="button">
-                                                <div class="flex items-center">
-                                                    <svg v-if="team.id == $page.props.auth.user.current_team_id" class="me-2 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                    <div>{{ team.name }}</div>
-                                                </div>
-                                            </ResponsiveNavLink>
-                                        </form>
-                                    </template>
-                                </template>
-                            </template>
-                        </div>
-                    </div>
-                </div>
+        <aside v-if="isBusinessWorkspace" class="fixed inset-y-0 left-0 z-30 hidden w-[17rem] flex-col border-r border-white/10 bg-[var(--surface-inverse)] text-white lg:flex" aria-label="Shop navigation">
+            <div class="flex h-20 items-center px-5">
+                <ProductMark inverse large />
+            </div>
+            <div class="mx-4 mb-3 rounded-xl border border-white/10 bg-white/5 px-3 py-3">
+                <p class="text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-white/55">Working in</p>
+                <p class="mt-1 truncate text-sm font-semibold text-white">{{ businessLabel }}</p>
+                <p v-if="tenantSubscription" class="mt-1 truncate text-xs text-white/60">{{ tenantSubscription.plan_name }} · {{ subscriptionStatusLabel }}</p>
+            </div>
+            <nav class="min-h-0 flex-1 overflow-y-auto px-3 pb-4" aria-label="Primary">
+                <ul class="space-y-1">
+                    <li v-for="item in navigation" :key="item.key">
+                        <Link
+                            :href="item.href"
+                            preserve-scroll
+                            :aria-current="isActive(item) ? 'page' : undefined"
+                            :class="[
+                                'flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                                isActive(item) ? 'bg-white/15 text-white shadow-sm ring-1 ring-white/10' : 'text-white/75 hover:bg-white/10 hover:text-white',
+                            ]"
+                        >
+                            <component :is="item.icon" class="size-5 shrink-0" aria-hidden="true" />
+                            <span>{{ item.label }}</span>
+                        </Link>
+                    </li>
+                </ul>
             </nav>
+            <div class="border-t border-white/10 p-3">
+                <Link :href="route('profile.show')" class="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white">
+                    <span class="grid size-8 place-items-center rounded-full bg-white/10 font-semibold" aria-hidden="true">{{ $page.props.auth.user.name?.charAt(0) }}</span>
+                    <span class="min-w-0 flex-1 truncate">{{ $page.props.auth.user.name }}</span>
+                    <span class="ds-sr-only">Open account profile</span>
+                </Link>
+            </div>
+        </aside>
 
-            <!-- Page Heading -->
-            <header v-if="$slots.header" class="shadow-sm border-b border-base-content/20">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <slot name="header" />
+        <div :class="{ 'lg:pl-[17rem]': isBusinessWorkspace }">
+            <header class="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-[var(--border-subtle)] bg-[var(--surface-raised)]/95 px-4 backdrop-blur sm:px-6 lg:px-8">
+                <div class="flex min-w-0 items-center gap-3">
+                    <button v-if="isBusinessWorkspace" ref="menuButton" type="button" class="grid size-11 shrink-0 place-items-center rounded-lg text-[var(--text-default)] hover:bg-[var(--surface-subtle)] lg:hidden" aria-label="Open navigation" aria-controls="mobile-navigation" :aria-expanded="navigationOpen" @click="openNavigation">
+                        <Bars3Icon class="size-6" aria-hidden="true" />
+                    </button>
+                    <ProductMark v-else class="hidden shrink-0 sm:block" />
+                    <p class="truncate text-sm font-semibold text-[var(--text-strong)]">{{ currentLabel }}</p>
+                    <Link v-if="tenantSubscription && $page.props.tenant.can_manage_billing" :href="route('business.billing.show', businessRouteParameter)" :class="['hidden min-h-8 items-center gap-1.5 rounded-full px-3 text-xs font-semibold md:inline-flex', subscriptionStatusTone]" :aria-label="`${tenantSubscription.plan_name} subscription: ${subscriptionStatusLabel}`">
+                        <span class="size-1.5 rounded-full bg-current" aria-hidden="true" /> {{ tenantSubscription.plan_name }} · {{ subscriptionStatusLabel }}
+                    </Link>
+                    <span v-else-if="tenantSubscription" :class="['hidden min-h-8 items-center gap-1.5 rounded-full px-3 text-xs font-semibold md:inline-flex', subscriptionStatusTone]">
+                        <span class="size-1.5 rounded-full bg-current" aria-hidden="true" /> {{ tenantSubscription.plan_name }} · {{ subscriptionStatusLabel }}
+                    </span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <Link v-if="primaryWorkspace" :href="route('business.dashboard', primaryWorkspace.public_id)" class="hidden min-h-11 items-center rounded-lg px-3 text-sm font-semibold text-[var(--text-strong)] hover:bg-[var(--surface-subtle)] sm:flex">
+                        Open {{ primaryWorkspace.name }}
+                    </Link>
+                    <Link v-if="primaryWorkspace?.can_manage_billing" :href="route('business.billing.show', primaryWorkspace.public_id)" class="hidden min-h-11 items-center rounded-lg bg-[var(--brand-pine)] px-3 text-sm font-semibold text-white hover:opacity-90 sm:flex">
+                        Subscription & billing
+                    </Link>
+                    <details class="relative">
+                        <summary class="flex min-h-11 cursor-pointer list-none items-center rounded-lg px-3 text-sm font-semibold text-[var(--text-strong)] hover:bg-[var(--surface-subtle)]" aria-label="Account menu">
+                            <span class="grid size-7 place-items-center rounded-full bg-[var(--surface-subtle)] text-xs" aria-hidden="true">{{ $page.props.auth.user.name?.charAt(0) }}</span>
+                            <span class="hidden sm:inline">Account</span>
+                        </summary>
+                        <div class="absolute right-0 mt-2 w-64 overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-1 shadow-[var(--shadow-overlay)]">
+                            <Link :href="route('profile.show')" class="flex min-h-11 items-center rounded-lg px-3 text-sm hover:bg-[var(--surface-subtle)]">Profile & security</Link>
+                            <template v-if="billingWorkspaces.length">
+                                <p class="px-3 pt-3 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Subscription & billing</p>
+                                <Link v-for="workspace in billingWorkspaces" :key="workspace.public_id" :href="route('business.billing.show', workspace.public_id)" class="flex min-h-11 items-center rounded-lg px-3 text-sm hover:bg-[var(--surface-subtle)]">
+                                    {{ workspace.name }}
+                                </Link>
+                            </template>
+                            <button type="button" class="flex min-h-11 w-full items-center rounded-lg px-3 text-left text-sm hover:bg-[var(--surface-subtle)]" @click="logout">Log out</button>
+                        </div>
+                    </details>
                 </div>
             </header>
 
-            <!-- Page Content -->
-            <main>
+            <div v-for="session in $page.props.supportAccessBanner" :key="`${session.operator}-${session.expires_at}`" class="border-b border-amber-300 bg-amber-100 px-4 py-3 text-sm text-amber-950 sm:px-6 lg:px-8" role="status">
+                <strong>{{ session.operator }} from Good Hours Support is viewing this account.</strong>
+                Ticket {{ session.ticket_reference }} · {{ session.reason }} · access expires {{ new Date(session.expires_at).toLocaleString() }}.
+            </div>
+            <div v-for="notice in $page.props.platformNotices" :key="notice.public_id" class="border-b border-[var(--border-subtle)] bg-[var(--surface-subtle)] px-4 py-3 text-sm sm:px-6 lg:px-8" role="status">
+                <strong>{{ notice.title }}</strong> {{ notice.message }}
+            </div>
+
+            <main id="main-content" tabindex="-1" class="mx-auto w-full max-w-[96rem] px-4 py-6 pb-28 sm:px-6 sm:py-7 lg:px-8 lg:pb-8">
+                <div v-if="$page.props.flash?.status" role="status" class="mb-5 rounded-xl border border-[var(--status-success)]/30 bg-[var(--status-success-soft)] p-4 text-sm">
+                    <p class="font-semibold text-[var(--text-strong)]">{{ $page.props.flash.status }}</p>
+                    <a v-if="$page.props.flash.secure_url" :href="$page.props.flash.secure_url" class="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--action-primary)]">Open secure link</a>
+                </div>
                 <slot />
             </main>
         </div>
+
+        <div v-if="isBusinessWorkspace && navigationOpen" class="fixed inset-0 z-50 lg:hidden">
+            <button type="button" class="absolute inset-0 bg-black/50" aria-label="Close navigation" @click="closeNavigation({ restoreFocus: true })" />
+            <aside id="mobile-navigation" ref="drawer" role="dialog" aria-modal="true" aria-label="Shop navigation" class="absolute inset-y-0 left-0 flex w-[min(21rem,88vw)] flex-col bg-[var(--surface-raised)] shadow-[var(--shadow-overlay)]">
+                <div class="flex h-16 items-center justify-between border-b border-[var(--border-subtle)] px-4">
+                    <ProductMark />
+                    <button type="button" class="grid size-11 place-items-center rounded-lg hover:bg-[var(--surface-subtle)]" aria-label="Close navigation" @click="closeNavigation({ restoreFocus: true })">
+                        <XMarkIcon class="size-6" aria-hidden="true" />
+                    </button>
+                </div>
+                <div class="border-b border-[var(--border-subtle)] px-4 py-3">
+                    <p class="text-xs font-medium text-[var(--text-muted)]">Working in</p>
+                    <p class="font-semibold text-[var(--text-strong)]">{{ businessLabel }}</p>
+                </div>
+                <nav class="min-h-0 flex-1 overflow-y-auto p-3" aria-label="Mobile primary">
+                    <ul class="space-y-1">
+                        <li v-for="item in navigation" :key="item.key">
+                            <Link :href="item.href" preserve-scroll :aria-current="isActive(item) ? 'page' : undefined" :class="['flex min-h-12 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium', isActive(item) ? 'bg-[var(--status-success-soft)] text-[var(--action-primary)]' : 'hover:bg-[var(--surface-subtle)]']" @click="closeNavigation()">
+                                <component :is="item.icon" class="size-5" aria-hidden="true" />
+                                {{ item.label }}
+                            </Link>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+        </div>
+
+        <nav v-if="isBusinessWorkspace" class="fixed inset-x-0 bottom-0 z-20 border-t border-[var(--border-subtle)] bg-[var(--surface-raised)] px-1 pb-[max(0.25rem,env(safe-area-inset-bottom))] lg:hidden" aria-label="Quick navigation">
+            <ul class="grid grid-cols-5">
+                <li v-for="item in primaryMobileNavigation" :key="item.key">
+                    <Link :href="item.href" preserve-scroll :aria-current="isActive(item) ? 'page' : undefined" :class="['flex min-h-16 flex-col items-center justify-center gap-1 rounded-lg px-1 text-[0.6875rem] font-medium', isActive(item) ? 'text-[var(--action-primary)]' : 'text-[var(--text-muted)]']">
+                        <component :is="item.icon" class="size-5" aria-hidden="true" />
+                        <span class="max-w-full truncate">{{ item.key === 'walk-in-queue' ? 'Queue' : item.label }}</span>
+                    </Link>
+                </li>
+                <li>
+                    <button type="button" class="flex min-h-16 w-full flex-col items-center justify-center gap-1 rounded-lg px-1 text-[0.6875rem] font-medium text-[var(--text-muted)]" aria-label="Open all navigation" @click="openNavigation">
+                        <Squares2X2Icon class="size-5" aria-hidden="true" />
+                        More
+                    </button>
+                </li>
+            </ul>
+        </nav>
     </div>
 </template>

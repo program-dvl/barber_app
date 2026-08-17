@@ -3,6 +3,7 @@
 use App\Models\Roadmap;
 use App\Models\RoadmapVote;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -104,7 +105,7 @@ it('prevents duplicate votes from the same user', function () {
         'roadmap_id' => $roadmap->id,
     ]);
 
-    $this->expectException(\Illuminate\Database\QueryException::class);
+    $this->expectException(QueryException::class);
 
     RoadmapVote::create([
         'user_id' => $user->id,

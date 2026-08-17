@@ -4,11 +4,21 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Jetstream\Features;
 use Tests\TestCase;
 
 class RemoveTeamMemberTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (! Features::hasTeamFeatures()) {
+            $this->markTestSkipped('Jetstream Team is intentionally superseded by Business memberships.');
+        }
+    }
 
     public function test_team_members_can_be_removed_from_teams(): void
     {

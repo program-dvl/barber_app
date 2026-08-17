@@ -1,3 +1,33 @@
+## Barber Shop and Salon Management SaaS
+
+This repository is a Larafast-based foundation for a new multi-tenant salon
+operations product. Product implementation is being developed against the
+source-of-truth documentation in [docs/README.md](docs/README.md).
+
+The existing Larafast features are boilerplate reuse candidates and must not be
+treated as completed salon functionality. See
+[docs/project-status.md](docs/project-status.md) for the verified current state
+and [docs/roadmap.md](docs/roadmap.md) for the staged delivery plan.
+
+## Local frontend development
+
+The current Vite toolchain requires Node 22.12 or newer; Node 24 is the
+recommended baseline and is pinned in `.nvmrc`. With nvm installed, run
+`nvm install`, `nvm use`, `npm install`, and then `npm run dev`. The npm scripts
+stop with a readable version message before Vite starts when the active Node
+runtime is too old.
+
+## Local email testing
+
+Local verification, invitation, and password-reset messages can be captured by
+[Mailpit](https://mailpit.axllent.org/). On macOS, install and start it with
+`brew install mailpit` and `brew services start mailpit`, then use `smtp`,
+`127.0.0.1`, and port `1025` in the mail environment settings. The inbox is
+available at [http://127.0.0.1:8025](http://127.0.0.1:8025). No domain or
+external email credentials are required, and messages never leave the local
+machine. The repository environment example defaults to the `log` mailer when
+Mailpit is not running.
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
