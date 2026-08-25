@@ -1,6 +1,6 @@
 # Prompt 19 — Use-Case and Problem SEO Pages
 
-Execute after Prompt 18. Build only high-intent problem/solution pages that provide practical, verified answers and a natural route into Good Hours.
+Execute after Prompt 18. Build only hicd-intent problem/solution pages that provide practical, verified answers and a natural route into Good Hours.
 
 ## 1. Mission
 

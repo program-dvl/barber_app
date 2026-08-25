@@ -1,19 +1,19 @@
-# Good Hours UI/UX standards and product design system
+# ClipperDesk UI/UX standards and product design system
 
-Status: Canonical standard; the Good Hours visual and component foundation is
+Status: Canonical standard; the ClipperDesk visual and component foundation is
 implemented, while individual product surfaces may still require review against
 this document.
 
-Last standards review: 2026-08-16
+Last standards review: 2026-08-25
 
-Last verified foundation evidence: 2026-08-15
+Last verified foundation evidence: 2026-08-25
 
 Related requirements: FR-01 through FR-20, especially FR-02, FR-06, FR-08,
 FR-09, FR-18, FR-19, and PRD Sections 3, 4, 10, and 12.
 
 ## Purpose, authority, and scope
 
-This is the central UI/UX standard for Good Hours. Developers, designers,
+This is the central UI/UX standard for ClipperDesk. Developers, designers,
 reviewers, and coding agents must use it before creating or modifying any page,
 feature, form, dashboard, modal, drawer, workflow, or reusable component.
 
@@ -54,15 +54,14 @@ The public booking journey remains a single focused step flow. Multiple public
 views would add choice without helping the client complete the booking and are
 therefore outside this pattern.
 
-The public acquisition shell uses a warm, lightly elevated cream sticky header
-over the oat editorial canvas. This keeps navigation distinct without creating
-a heavy color bar above page content. Standard ink/pine navigation, the poppy
-conversion action, and the default blue focus indicator retain their semantic
-roles. The footer remains the deep-pine closing frame.
+The public acquisition shell uses a white, lightly elevated sticky header over
+the cool-gray product canvas. Navy establishes trust and structure, indigo is
+reserved for primary actions, and cyan is a sparse identifying accent. The
+footer and authenticated navigation use the same deep-navy closing frame.
 
 ## Experience standard: premium through clarity
 
-Good Hours aims to be one of the world's best service-business software
+ClipperDesk aims to be one of the world's best service-business software
 experiences. Here, “premium” means calm, deliberate, fast, dependable, and
 beautifully resolved. It does not mean ornamental, fashion-led, visually loud,
 or black-and-gold luxury. The product must feel credible while a receptionist
@@ -109,7 +108,7 @@ shape unless the user genuinely needs them.
 
 Owners, branch managers, receptionists, stylists, beauticians, therapists,
 cashiers, inventory managers, accountants, and platform operators have
-different priorities and permissions. Many shop users will operate Good Hours
+different priorities and permissions. Many shop users will operate ClipperDesk
 while speaking with a client or delivering a service. The most frequent
 workflows—booking, finding availability, check-in, staff assignment, payment,
 schedule review, client lookup, stock updates, and today's performance—should
@@ -269,7 +268,7 @@ central, versioned sources. Do not copy option arrays into individual pages.
 Domain-owned lists such as roles, service categories, and valid status
 transitions must also be tenant-scoped and permission-aware where applicable.
 
-Once Good Hours has a compliant selector or field pattern for a shared value,
+Once ClipperDesk has a compliant selector or field pattern for a shared value,
 reuse it everywhere. Variation is acceptable only when the user context changes
 the interaction materially, not because a page was built separately.
 
@@ -455,7 +454,7 @@ accessible name. Tooltips cannot hold information needed to complete the task.
 
 ## Time, money, language, and location
 
-Good Hours operates across Locations and potentially across time zones. Show
+ClipperDesk operates across Locations and potentially across time zones. Show
 local dates and times using the governing Location's IANA time zone, and name
 the time zone where ambiguity or consequence exists. Preserve original local
 intent where the domain requires it and handle daylight-saving gaps and repeats
@@ -500,8 +499,8 @@ filtered to named routes that currently exist so sequential delivery never
 creates a public dead link. As approved hubs land, the same config exposes
 Product, Solutions, Use cases, Pricing and Resources.
 
-Public components use the existing Good Hours semantic palette, Manrope and
-selective Newsreader display style. They do not introduce a second token set,
+Public components use the ClipperDesk semantic palette and Manrope type system.
+They do not introduce a second token set,
 theme switcher, animation framework, social links, announcement, newsletter or
 third-party tracker.
 
@@ -556,17 +555,20 @@ action-oriented where appropriate.
 
 ## Brand posture
 
-The product is **Good Hours**. Its brand promise is **Make every hour count.**
-The identity should feel credible for payments, staffing, and reports while
-remaining warm enough for a client's first booking. It is not barber-only,
-fashion-led, or luxury-coded.
+The product is **ClipperDesk**. Its brand promise is **Run the day. Grow the
+business.** The identity should feel operational, dependable, modern, and
+approachable. It is not barber-only, fashion-led, childish, or luxury-coded.
 
-The mark in `resources/images/brand/good-hours-mark.png` combines an open
-doorway, sunrise, and clock arc. Use the supplied raster asset; do not redraw,
-trace, recolour, stretch, or replace it with a text glyph, CSS shape, or inline
-SVG. Preserve clear space equal to at least one quarter of the mark width. Use
-the full ProductMark lockup above 180px of available width and the mark-only
-form where the product name is already announced.
+The geometric mark is a restrained, interlocking **C** and **D** monogram with
+no enclosing app tile. It remains legible in compact navigation and signals a
+software product without relying on generic scissors, barber poles, or clip
+art. Approved SVG assets live under
+`public/images/brand/`; the source mark is
+`resources/images/brand/clipperdesk-mark.svg`. Do not redraw, stretch, or
+substitute the mark with a text glyph. Preserve clear space equal to at least
+one quarter of the mark width. Use the horizontal lockup above 180px of
+available width and the mark-only form where the product name is already
+announced.
 
 The voice is calm, capable, human, and clear:
 
@@ -587,52 +589,48 @@ raw palette names.
 
 | Role | Token | Implemented value |
 | --- | --- | --- |
-| Brand pine | `--brand-pine` | `#173f3a` |
-| Expressive poppy | `--brand-poppy` | `#e56a4d` (decoration, not white-text buttons) |
-| Brand apricot | `--brand-apricot` | `#f2b880` |
-| Canvas / brand oat | `--surface-canvas` / `--brand-oat` | `#f6f1e8` |
-| Subtle surface | `--surface-subtle` | `#efe8de` |
-| Raised surface | `--surface-raised` | `#fffcf7` |
-| Inverse surface | `--surface-inverse` | `#173f3a` |
-| Strong text | `--text-strong` | `#19201f` |
-| Default text | `--text-default` | `#3f4643` |
-| Muted text | `--text-muted` | `#6a6761` |
-| Accessible primary action | `--action-primary` | `#c13f28` |
-| Primary hover | `--action-primary-hover` | `#a93422` |
-| Focus ring | `--focus-ring` | `#0b6ead` |
-| Information | `--status-info` / `--status-info-soft` | `#275e88` / `#e5eff5` |
-| Success | `--status-success` / `--status-success-soft` | `#176b4f` / `#e2f1e9` |
-| Warning | `--status-warning` / `--status-warning-soft` | `#8a5514` / `#fbedd2` |
-| Danger | `--status-danger` / `--status-danger-soft` | `#b42318` / `#fff0ee` |
-| Radius | `--radius-sm`, `--radius-md`, `--radius-lg` | `8px`, `12px`, `16px` |
-| Raised elevation | `--shadow-raised` | two-layer low-contrast shadow |
+| Brand primary | `--brand-primary` / `--brand-primary-strong` | `#172554` / `#0f172a` |
+| Brand secondary | `--brand-secondary` / `--brand-secondary-hover` | `#4f46e5` / `#4338ca` |
+| Brand accent | `--brand-accent` / `--brand-accent-soft` | `#0e7490` / `#cffafe` |
+| Primary canvas | `--surface-canvas` | `#f5f7fb` |
+| Subtle surface | `--surface-subtle` | `#eef2f7` |
+| Raised surface | `--surface-raised` | `#ffffff` |
+| Inverse surface | `--surface-inverse` | `#0f172a` |
+| Strong text | `--text-strong` | `#0f172a` |
+| Default text | `--text-default` | `#334155` |
+| Muted text | `--text-muted` | `#64748b` |
+| Accessible primary action | `--action-primary` | `#4338ca` |
+| Primary hover / active | `--action-primary-hover` / `--action-primary-active` | `#3730a3` / `#312e81` |
+| Focus ring | `--focus-ring` | `#0369a1` |
+| Information | `--status-info` / `--status-info-soft` | `#0369a1` / `#e0f2fe` |
+| Success | `--status-success` / `--status-success-soft` | `#047857` / `#d1fae5` |
+| Warning | `--status-warning` / `--status-warning-soft` | `#a16207` / `#fef3c7` |
+| Danger | `--status-danger` / `--status-danger-soft` | `#b91c1c` / `#fee2e2` |
+| Disabled | `--surface-disabled` / `--text-disabled` | `#e2e8f0` / `#64748b` |
+| Radius | `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-xl` | `6px`, `10px`, `14px`, `20px` |
+| Raised elevation | `--shadow-raised` | two-layer cool-neutral shadow |
 | Overlay elevation | `--shadow-overlay` | high-separation overlay shadow |
 
-Typography uses self-hosted Manrope at 400, 500, 600, and 700 for product UI,
-booking, tables, forms, and outbound messages. Newsreader at 500 and 600 is
-reserved for the Good Hours wordmark and selected editorial page headings; it
-must not reduce scan speed in tables or dense operations screens. Font files
-and their SIL Open Font License texts live under `public/fonts/good-hours/`.
-The operative scale is 12px for eyebrows and supporting labels, 14-16px for
-product content and controls, 24-48px for page titles, and 500-700 weight for
-hierarchy. The shell uses a 4px spacing base expressed through Tailwind
-utilities, with 44px as the minimum control height and 48-64px for primary
-mobile navigation targets.
+Typography uses self-hosted Manrope at 400, 500, 600, and 700 for display,
+product UI, booking, tables, forms, and outbound messages. A single family
+keeps the public and authenticated experiences related while weight, tracking,
+size, and line height provide hierarchy. Font files and their SIL Open Font
+License live under `public/fonts/clipperdesk/`. The operative scale is 12px for
+eyebrows and supporting labels, 14-16px for product content and controls,
+18px for lead copy, and a responsive 32-56px range for public section titles.
+Authenticated page titles remain deliberately smaller. The shell uses a 4px
+spacing base, 44px minimum control height, and 48-64px primary mobile targets.
 
 ## Domain and message identity
 
-The preferred domain structure is `getgoodhours.com`,
-`app.getgoodhours.com`, and `book.getgoodhours.com`. This is a selected naming
-system, not proof of purchase. Do not publish links or send production mail
-until acquisition and DNS verification are complete.
-
-Use `Good Hours <account@getgoodhours.com>` for account and billing mail,
-`[Business name] via Good Hours <appointments@getgoodhours.com>` for booking
-and client messages, `Good Hours Support <support@getgoodhours.com>` for human
-support, and `Good Hours Security <security@getgoodhours.com>` for sensitive
-security notices. Appointment messages should use a verified tenant reply-to
-where supported. SPF, DKIM, DMARC, aligned return-path, bounce handling, and
-provider verification are required before activation.
+Product name, company name, asset paths, public description, website URL,
+booking host, support address, and the small server-to-client brand projection
+live in `config/brand.php`. Environment-specific production domains and sender
+addresses remain configuration, not component copy. The local booking-host
+default is `book.clipperdesk.com`; it is a naming placeholder and does not
+assert domain ownership. Do not publish links or send production mail until
+trademark clearance, acquisition, DNS, SPF, DKIM, DMARC, return-path, bounce
+handling, reply handling, and provider verification are complete.
 
 ## Shell rules
 
@@ -663,8 +661,9 @@ provider verification are required before activation.
 
 ### Platform administration
 
-- The charcoal/amber treatment and persistent `Platform admin` label deliberately
-  separate platform operations from tenant work.
+- Deep navy navigation, cyan accent, and the persistent `Platform admin` label
+  distinguish platform operations from tenant work without introducing a
+  separate brand palette.
 - The shell uses the existing global `admin` role gate. Ordinary users receive
   HTTP 403.
 - Platform role does not grant tenant entry. The persistent warning states that
@@ -717,7 +716,7 @@ prevent:
 - many business identity, regional, contact, legal, booking, availability,
   import, preview, and publishing concerns appear in one long page;
 - country code, locale, currency, and time zone are unrestricted text inputs
-  even though Good Hours knows or can centrally source valid values;
+  even though ClipperDesk knows or can centrally source valid values;
 - technical representations such as codes, minutes, and price in minor units
   are exposed directly to normal users;
 - an aggregate “check the highlighted fields” notice is detached from the
@@ -767,7 +766,7 @@ experience brief in the task plan, design note, or pull-request description:
 
 For a significant new page, multi-step workflow, or redesign, create or select
 a visual target before production implementation. The target may be a reviewed
-wireframe, mockup, prototype, or established Good Hours pattern. It must cover
+wireframe, mockup, prototype, or established ClipperDesk pattern. It must cover
 the information hierarchy and primary responsive behavior; prose or a database
 schema alone is not a visual target.
 
@@ -798,7 +797,7 @@ Before considering a UI task complete, confirm:
   contrast, non-colour cues, zoom/reflow, and reduced motion were checked.
 - [ ] Loading and interaction behavior meet the perceived and measured
   performance expectations.
-- [ ] Microcopy uses Good Hours language and does not expose implementation
+- [ ] Microcopy uses ClipperDesk language and does not expose implementation
   terminology.
 - [ ] Relevant automated, browser, and visual evidence is recorded before
   `project-status.md` claims the behavior verified.
@@ -838,6 +837,6 @@ behavior, authorization, or state recovery works.
 Browser screenshots are stored under `docs/evidence/product-shell/` for public
 booking at 360px, the shop dashboard at 360px, 768px, and 1440px, and platform
 administration plus the reusable interface-pattern reference at 1440px. The
-Good Hours refresh adds same-viewport evidence and a project-root
-`design-qa.md`. Exact automated and browser verification results are recorded
-in `project-status.md`.
+ClipperDesk rebranding adds representative desktop and mobile evidence at the
+same location. Exact automated and browser verification results are recorded in
+`project-status.md` and the dated rebranding audit.

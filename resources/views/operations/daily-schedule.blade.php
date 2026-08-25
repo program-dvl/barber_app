@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $business->name }} daily schedule</title>
     <style>
-        body { color: #19201f; font-family: Arial, sans-serif; margin: 2rem; }
-        h1 { margin-bottom: .25rem; } .meta { color: #4b5d59; margin-top: 0; }
-        table { border-collapse: collapse; width: 100%; } th, td { border-bottom: 1px solid #cbd5d1; padding: .6rem; text-align: left; }
+        @include('brand.document-styles')
+        body { margin: 2rem; }
+        h1 { margin-bottom: .25rem; } .meta { color: #64748b; margin-top: 0; }
         .cue { font-weight: 700; } @media print { button { display: none; } body { margin: 0; } }
     </style>
 </head>
 <body>
     <button type="button" onclick="window.print()">Print schedule</button>
+    <div class="cd-document-label">{{ config('brand.product_name') }} daily schedule</div>
     <h1>{{ $business->name }}</h1>
     <p class="meta">{{ $location->name }} · {{ $date->format('l, j F Y') }} · {{ $location->time_zone }}</p>
     <table>

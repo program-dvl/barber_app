@@ -69,7 +69,7 @@ classes, an AI receptionist/chatbot, dynamic pricing or forecasting.
 | Product/features/use cases/industries/pricing | Product + Engineering | Claim ledger, implemented status/tests, current catalogue |
 | Security/trust | Security + Engineering | Specific control evidence and current external gaps |
 | Company/entity facts | Product + Legal | Approved identity fields; OPEN-11 remains visible internally |
-| Terms/privacy/cookies | Named Indian counsel/DPO + Product | Approved version, effective date, contact/controller identity, retention/consent review |
+| Terms/privacy/refunds/cookies | Named Indian counsel/DPO + Finance + Operations + Product | Approved versions, effective dates, legal operator and contact identity, retention/consent review, and certified provider refund execution |
 | Blog/guides | Editorial owner + subject reviewer | Sanitized source, author, date, excerpt, image rights, claim links, related pages |
 | Analytics/attribution notice | Privacy + Product + Engineering | Accepted consent/retention/provider decision |
 
@@ -80,5 +80,5 @@ positioning, fabricated proof, unsupported integration/customer/review claim,
 Phase 2 promotion, or placeholder schema. Current price and trial values remain
 server-owned. Provider, legal, identity, global-availability, medical,
 certification, support, uptime, and security statements remain qualified.
-Terms/privacy are visibly incomplete and noindex rather than presented as
+Terms/privacy/refund policies are visibly incomplete and noindex rather than presented as
 approved. No claim in this ledger is promoted by the final audit.

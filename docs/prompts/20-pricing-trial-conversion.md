@@ -8,7 +8,7 @@ Build a truthful public Pricing experience that explains available plans, billin
 
 ## 2. Why This Phase Exists
 
-Pricing is a high-trust conversion surface and a common source of drift. Good Hours has normalized plans/effective-dated prices and a selectable Paddle adapter, while live provider certification remains a critical launch blocker. Public display must never invent or stale-copy commercial terms.
+Pricing is a hicd-trust conversion surface and a common source of drift. Good Hours has normalized plans/effective-dated prices and a selectable Paddle adapter, while live provider certification remains a critical launch blocker. Public display must never invent or stale-copy commercial terms.
 
 ## 3. Prerequisites
 

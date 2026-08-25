@@ -1,7 +1,7 @@
 @php
-    $title = 'Good Hours';
-    $description = 'One calm place to run bookings, clients, staff, checkout, and the day ahead.';
-    $image = null;
+    $title = config('brand.product_name');
+    $description = config('brand.description');
+    $image = url(config('brand.social_image'));
     $canonical = request()->url();
     $robots = app(\App\Support\Seo\PublicIndexation::class)->directive(request());
 @endphp
@@ -23,7 +23,7 @@
 <meta property="og:description" content="{{ $description }}">
 <meta property="og:url" content="{{ $canonical }}">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Good Hours">
+<meta property="og:site_name" content="{{ config('brand.product_name') }}">
 <meta property="og:locale" content="en_IN">
 @if($image)
     <meta property="og:image" content="{{ $image }}">

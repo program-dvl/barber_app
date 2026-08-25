@@ -22,7 +22,7 @@ class PublicIndexation
         if (in_array($name, self::INDEXABLE, true)) {
             return 'index, follow, max-image-preview:large';
         }
-        if ($request->is('book', 'book/*') || in_array($name, ['login', 'register', 'terms.show', 'policy.show'], true)) {
+        if ($request->is('book', 'book/*') || in_array($name, ['login', 'register', 'terms.show', 'policy.show', 'refund.show'], true)) {
             return 'noindex, follow, noarchive';
         }
 

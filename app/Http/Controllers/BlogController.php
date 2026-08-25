@@ -19,8 +19,8 @@ class BlogController extends Controller
         return Inertia::render('Blog', [
             'articles' => $articles,
             'seo' => [
-                'title' => 'Good Hours salon operations blog',
-                'description' => 'Reviewed Good Hours editorial articles about practical salon and barbershop operations.',
+                'title' => 'ClipperDesk salon operations blog',
+                'description' => 'Reviewed ClipperDesk editorial articles about practical salon and barbershop operations.',
                 'canonical' => route('blog.index'),
             ],
         ]);

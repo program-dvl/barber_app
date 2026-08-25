@@ -123,7 +123,7 @@ Evidence or follow-up: Implemented tokens and component rules are recorded in
 
 ### ADR-011: Adopt Good Hours as the product identity
 
-- Status: Accepted
+- Status: Superseded by ADR-027
 - Date: 2026-08-11
 - Owners: Product, Design, and Engineering
 - Related requirements: PRD Sections 3, 4, 10, and 12
@@ -888,11 +888,109 @@ production reliability, or field-performance evidence. The final gate and
 owner/evidence matrix are in
 `docs/audits/2026-08-16-frontsite-final-launch-audit.md`.
 
+### ADR-027: Adopt ClipperDesk and one semantic enterprise design system
+
+- Status: Accepted
+- Date: 2026-08-25
+- Owners: Product, Design, and Engineering
+- Related requirements: PRD Sections 3, 4, 10, and 12; FR-01 through FR-20
+- Supersedes: ADR-011 for current product identity, palette, typography, assets,
+  domain direction, and message identity
+
+Context: The product has been renamed from Good Hours to ClipperDesk. The prior
+cream, pine, poppy, and editorial-serif identity no longer represents the
+desired operational, premium SaaS position. The repository already had a useful
+semantic CSS layer, but the implementation still mixed legacy palette utilities,
+duplicated Jetstream controls, component-local colors, and repeated brand copy.
+
+Decision: The current product name is **ClipperDesk** and the brand promise is
+**Run the day. Grow the business.** The approved identity uses deep navy for
+trust and structure, indigo for primary action, restrained cyan for recognition,
+cool gray canvases, white working surfaces, and Manrope throughout. The mark is
+a restrained interlocking C/D monogram without a heavy enclosing app tile. It
+communicates software identity without generic salon clip art.
+
+`config/brand.php` is the server-side source of truth for product/company names,
+description, asset paths, public URLs, support identity, and the small public
+palette projection. `resources/css/app.css` is the source of truth for semantic
+color, typography, spacing, radius, elevation, focus, status, navigation, and
+control tokens. Vue, Blade, Filament, PDFs, email, and SEO adapters consume those
+sources rather than defining an independent theme.
+
+Historical database columns, integration metadata, event identities, schema
+versions, migration history, cache keys, and durable provider contracts that
+contain `good_hours` or equivalent values are compatibility identifiers, not
+visible brand. They remain stable unless a separately reviewed migration or
+provider transition requires a change. Visible billing plan display names are
+migrated with an exact-match, forward-only data migration so financial history
+and external provider identifiers are not rewritten.
+
+Consequences: Public acquisition, authentication, public booking, tenant work,
+platform administration, billing, generated documents, email, browser metadata,
+and icons share one ClipperDesk identity while retaining layouts appropriate to
+their jobs. Production domain ownership, trademark clearance, sender
+authentication, and formal legal operator approval remain external launch gates;
+the configurable local defaults are not evidence those gates are closed.
+
+Evidence or follow-up: The normative token and component rules are in
+`docs/design-system.md`. The implementation and residual-identifier audit are in
+`docs/audits/2026-08-25-clipperdesk-design-system-rebrand.md`; browser evidence
+is stored under `docs/evidence/product-shell/`.
+
+### ADR-028: Permit one verified, stateful Google authentication path
+
+- Status: Accepted
+- Date: 2026-08-25
+- Owners: Product, Engineering, and Security
+- Related requirements: FR-01, FR-05, FR-19, and FR-20
+- Supersedes: ADR-013 only for the reviewed Google authentication path; magic
+  links, generic Socialite drivers, and every other social provider remain disabled
+
+Context: ClipperDesk needs lower-friction owner signup and returning-user access,
+but the Larafast Socialite controller accepted an arbitrary provider, linked by
+unverified email, created incomplete accounts, and retained provider access
+tokens. A Google identity also cannot supply the Business name and legal
+acceptance required by the approved owner-onboarding flow.
+
+Decision: ClipperDesk exposes explicit, guest-only, rate-limited Google redirect,
+callback, and signup-completion routes. Socialite remains stateful so its OAuth
+state is validated. The callback accepts only a non-empty Google subject and a
+Google-asserted verified email. An existing provider subject authenticates its
+linked User; an unlinked subject may attach to an exact normalized email only
+when that User has no different Google identity. Database constraints enforce
+one User per provider and one User per provider subject. ClipperDesk stores the
+provider subject but no OAuth access or refresh token.
+
+A new identity receives a server-side, ten-minute registration continuation.
+Only display name and verified email are shared with the page; provider subject
+and selection evidence remain in the session. The owner must still provide a
+Business name and accept the current terms. Completion creates the User,
+registration intent, provider link, verified-email evidence, Business, Owner
+Membership, and trial through the existing idempotent onboarding path. The
+account receives an unguessable local password so the existing verified-email
+password-reset path remains an independent recovery option. Google sign-in does
+not bypass an already configured Fortify TOTP challenge.
+
+Consequences: Google can be used for both sign-in and owner signup without
+reintroducing generic drivers, silent tenant creation, provider-token retention,
+or a two-factor bypass. A Google account already linked to another local identity
+is rejected with a recovery-safe message. Provider-console consent-screen,
+redirect-domain, key-rotation, outage, and production security review remain
+operational launch responsibilities; enabled local credentials are not evidence
+those controls are complete.
+
+Evidence: `GoogleAuthenticationTest` covers the explicit redirect, existing
+identity linking, token minimisation, verified-email enforcement, short owner
+completion, exactly-once tenant bootstrap, conflicting-link rejection, and TOTP
+challenge preservation. `TenantIsolationTest` proves generic Socialite and
+magic-link route names remain absent while the three reviewed Google routes exist.
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |
 | --- | --- | --- | --- | --- |
 | OPEN-09 | Approve the Prompt 00 remove/replace inventory for Larafast marketing, roadmap, AI, content, and superseded provider surfaces | Reduces dead code and prevents confusing product ownership | Before cleanup is authorized | **Retained.** Legacy surfaces remain quarantined; no destructive cleanup was silently assumed. Medium launch risk owned by Product/Engineering; named owner and date unassigned. |
 | OPEN-10 | Final data retention and anonymisation schedule plus destructive executor authorization | Client privacy, attachments, audit events, financial records, and closure are safely bounded by ADR-018 but cannot complete destructive requests | Before destructive processing or paid public launch | **Retained; Critical blocker.** Requires named Indian privacy counsel/DPO and Product approval. No waiver or expiry exists. |
-| OPEN-11 | Complete counsel-led trademark clearance and acquire `getgoodhours.com` | ADR-011 selects the identity, but naming rights, domain ownership, sender authentication, and defensive domains are external launch controls | Before public launch, outbound production mail, or printed collateral | **Retained; Critical/High blocker.** Requires named counsel and Product/Operations owner. No waiver or expiry exists. |
+| OPEN-11 | Complete counsel-led ClipperDesk trademark clearance and acquire the approved production domains | ADR-027 selects the identity, but naming rights, domain ownership, sender authentication, and defensive domains are external launch controls | Before public launch, outbound production mail, or printed collateral | **Retained; Critical/High blocker.** Product/Operations and counsel must approve and acquire the final public, app, and booking domains; configuration defaults do not establish ownership. No waiver or expiry exists. |
 | OPEN-12 | Approve marketing attribution/analytics provider, consent class, retention, and accountable privacy owner | Phase 1.5 can implement a bounded first-party event contract, but cannot load a tracker, advertising pixel, fingerprinting, session replay, or claim consent/retention approval | Before enabling any third-party marketing measurement or paid acquisition | **Open; bounded by ADR-024.** Product, Privacy/DPO, and Engineering must name the provider/purpose, allowed properties, consent behavior, retention and deletion process. |
+| OPEN-13 | Approve the legal operator/contact suite and live refund responsibility for subscription and appointment payments | Stripe India website review expects public Terms, Privacy and Return/Refund/Cancellation URLs plus customer-service details and processing timelines; the current appointment adapter records internal refunds but has no certified provider refund executor or approved live merchant-of-record/connected-account allocation | Before legal documents become effective or any live payment is accepted | **Open; Critical/High blocker.** Legal/Product must approve operator, address, governing/dispute/liability terms and version acceptance; Finance/Operations must own direct support, request/decision/submission timelines, Paddle escalation and the live Stripe merchant/refund/reconciliation path. The 2026-08-25 drafts remain `noindex` and non-effective. |

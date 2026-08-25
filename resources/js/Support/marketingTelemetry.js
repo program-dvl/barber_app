@@ -1,7 +1,7 @@
-const installedKey = '__goodHoursMarketingTelemetryInstalled';
+const installedKey = '__clipperDeskMarketingTelemetryInstalled';
 
 export const emitMarketingEvent = (name, properties = {}) => {
-    window.dispatchEvent(new CustomEvent('good-hours:marketing', {
+    window.dispatchEvent(new CustomEvent('clipperdesk:marketing', {
         detail: { name, properties: { ...properties, path: window.location.pathname } },
     }));
 };

@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $business->name }} — {{ str($report['report_key'])->headline() }}</title>
     <style>
-        body { color: #19201f; font: 13px/1.45 system-ui, sans-serif; margin: 32px; }
-        h1 { margin-bottom: 4px; } .meta { color: #59625f; margin-bottom: 24px; }
-        table { border-collapse: collapse; width: 100%; } th, td { border-bottom: 1px solid #d8d4cc; padding: 7px; text-align: left; vertical-align: top; }
-        th { background: #f6f1e8; } .totals { margin-top: 20px; } @media print { body { margin: 12mm; } }
+        @include('brand.document-styles')
+        body { margin: 32px; }
+        h1 { margin-bottom: 4px; } .meta { color: #64748b; margin-bottom: 24px; }
+        .totals { margin-top: 20px; } @media print { body { margin: 12mm; } }
     </style>
 </head>
 <body>
+<div class="cd-document-label">{{ config('brand.product_name') }} report</div>
 <h1>{{ str($report['report_key'])->headline() }}</h1>
 <div class="meta">{{ $business->name }} · {{ $report['filters']['start_date'] }} to {{ $report['filters']['end_date'] }} · {{ $report['time_zone'] }} · Fresh {{ $report['fresh_at'] }} · Definition {{ $report['metric_version'] }}</div>
 <table>

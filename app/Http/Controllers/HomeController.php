@@ -16,7 +16,7 @@ class HomeController extends Controller
             'canRegister' => Route::has('register'),
             'seo' => [
                 'title' => 'Salon and barbershop software from booking to checkout',
-                'description' => 'Good Hours connects online booking, the daily calendar, clients, checkout and clear reporting for salons and barbershops.',
+                'description' => 'ClipperDesk connects online booking, the daily calendar, clients, checkout and clear reporting for salons and barbershops.',
                 'canonical' => route('marketing.home'),
             ],
         ]);

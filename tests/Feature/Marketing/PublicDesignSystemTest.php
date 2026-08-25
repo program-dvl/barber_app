@@ -28,7 +28,7 @@ it('keeps marketing navigation on real named routes with accessible mobile behav
     $footer = file_get_contents(resource_path('js/Components/Marketing/MarketingFooter.vue'));
 
     expect($header)
-        ->toContain('gh-marketing-header')
+        ->toContain('cd-marketing-header')
         ->toContain('<ProductMark />')
         ->not->toContain('<ProductMark inverse />')
         ->toContain('aria-controls="marketing-mobile-menu"')
@@ -40,8 +40,8 @@ it('keeps marketing navigation on real named routes with accessible mobile behav
         ->not->toContain('newsletter');
 
     expect(file_get_contents(resource_path('css/app.css')))
-        ->toContain('.gh-marketing-header')
-        ->toContain('background: rgb(255 252 247 / 0.94)');
+        ->toContain('.cd-marketing-header')
+        ->toContain('background: rgb(255 255 255 / 0.92)');
 
     expect($footer)
         ->not->toContain('href="#"')

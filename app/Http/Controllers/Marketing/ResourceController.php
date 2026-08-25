@@ -16,7 +16,7 @@ class ResourceController extends Controller
                 'slug' => $slug, 'title' => $guide['title'], 'description' => $guide['description'], 'topic' => $guide['topic'],
             ])->values(),
             'articleCount' => Article::query()->publishable()->count(),
-            'seo' => ['title' => 'Good Hours resources for a clearer salon day', 'description' => 'Durable operating guides and reviewed editorial articles for salons, barbershops, stylists and small spas.', 'canonical' => route('marketing.resources')],
+            'seo' => ['title' => 'ClipperDesk resources for a clearer salon day', 'description' => 'Durable operating guides and reviewed editorial articles for salons, barbershops, stylists and small spas.', 'canonical' => route('marketing.resources')],
         ]);
     }
 
@@ -28,7 +28,7 @@ class ResourceController extends Controller
 
         return Inertia::render('Marketing/Resources/Guide', [
             'guide' => [...$content, 'slug' => $guide],
-            'seo' => ['title' => $content['title'].' | Good Hours', 'description' => $content['description'], 'canonical' => route('marketing.guides.show', $guide)],
+            'seo' => ['title' => $content['title'].' | ClipperDesk', 'description' => $content['description'], 'canonical' => route('marketing.guides.show', $guide)],
         ]);
     }
 }

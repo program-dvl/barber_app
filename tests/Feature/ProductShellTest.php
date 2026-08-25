@@ -144,7 +144,7 @@ it('defines semantic focus and reduced-motion foundations', function () {
         ->toContain('--status-success:');
 });
 
-it('uses the accepted Good Hours product identity', function () {
+it('uses the accepted ClipperDesk product identity', function () {
     $css = file_get_contents(resource_path('css/app.css'));
     $markComponent = file_get_contents(resource_path('js/Components/Product/ProductMark.vue'));
     $clientEntry = file_get_contents(resource_path('js/app.js'));
@@ -153,20 +153,20 @@ it('uses the accepted Good Hours product identity', function () {
 
     expect($css)
         ->toContain("font-family: 'Manrope'")
-        ->toContain("font-family: 'Newsreader'")
-        ->toContain('--brand-pine: #173f3a')
-        ->toContain('--brand-oat: #f6f1e8')
-        ->toContain('--action-primary: #c13f28');
+        ->toContain('--brand-primary: #172554')
+        ->toContain('--brand-secondary: #4f46e5')
+        ->toContain('--surface-canvas: var(--background-primary)')
+        ->toContain('--action-primary: #4338ca');
 
     expect($markComponent)
-        ->toContain('Good Hours')
-        ->toContain('Make every hour count.')
-        ->toContain('good-hours-mark.png');
+        ->toContain('ClipperDesk')
+        ->toContain('Run the day. Grow the business.')
+        ->toContain('clipperdesk-mark.svg');
 
-    expect($clientEntry)->toContain("const appName = 'Good Hours'");
-    expect($appView)->toContain('data-theme="good-hours"');
+    expect($clientEntry)->toContain("'ClipperDesk'");
+    expect($appView)->toContain('data-theme="clipperdesk"');
     expect($authLayout)->not->toContain("route('home')");
-    expect(file_exists(resource_path('images/brand/good-hours-mark.png')))->toBeTrue();
-    expect(file_exists(public_path('fonts/good-hours/manrope-600.ttf')))->toBeTrue();
-    expect(file_exists(public_path('fonts/good-hours/newsreader-600.ttf')))->toBeTrue();
+    expect(file_exists(resource_path('images/brand/clipperdesk-mark.svg')))->toBeTrue();
+    expect(file_exists(public_path('fonts/clipperdesk/manrope-600.ttf')))->toBeTrue();
+    expect(file_exists(public_path('images/brand/clipperdesk-logo.svg')))->toBeTrue();
 });

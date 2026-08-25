@@ -81,10 +81,13 @@ they need, enforce plan entitlements, and provide safe platform support.
 - Tenant-aware conventions exist for jobs, private files, cache keys, search
   envelopes, and export filenames. See
   [`../tenant-isolation-matrix.md`](../tenant-isolation-matrix.md) for coverage.
-- Launch authentication is verified email/password plus Fortify/Jetstream TOTP
-  and recovery codes. Boilerplate magic-link and unrestricted Socialite routes
-  are disabled. Platform administration requires verified email and confirmed
-  TOTP.
+- Launch authentication supports verified email/password plus the explicit
+  Google-only path accepted in ADR-028, with Fortify/Jetstream TOTP and recovery
+  codes preserved. Boilerplate magic-link, arbitrary Socialite drivers,
+  unverified-email linking, and provider-token retention remain disabled.
+  New Google owners complete a ten-minute server-side Business-details step
+  before the existing idempotent verified-owner bootstrap runs. Platform
+  administration still requires verified email and confirmed TOTP.
 - Verified owner registration records a pending Business name but creates no
   tenant until email verification. The verified event completes one locked,
   unique registration intent, one Business, Owner Membership, and dated trial;
@@ -92,7 +95,7 @@ they need, enforce plan entitlements, and provide safe platform support.
 - Business-owned plans, effective prices, subscriptions, immutable changes,
   invoices, payments, coupons, provider events, notices, usage, and
   effective-dated entitlement records form the application billing contract.
-- Paddle Billing is the accepted Good Hours subscription provider behind
+- Paddle Billing is the accepted ClipperDesk subscription provider behind
   `SubscriptionProvider`. Legacy User/Cashier and Lemon Squeezy runtime
   paths are disabled; their stored boilerplate is retained for reviewed cleanup.
 - Owner billing endpoints and the responsive subscription page expose trial and
@@ -114,13 +117,14 @@ they need, enforce plan entitlements, and provide safe platform support.
   owners can remove the scheduled cancellation before it takes effect. Staff
   without `billing.manage` do not receive subscription details in shared page
   properties.
-- A Paddle account may contain another SaaS catalog, but Good Hours products,
-  customers, transactions, and subscriptions carry an `application=good_hours`
+- A Paddle account may contain another SaaS catalog, but ClipperDesk products,
+  customers, transactions, and subscriptions carry the retained compatibility
+  marker `application=good_hours`
   marker. Signed events explicitly marked for another application are discarded
   before their payload is persisted. Unmarked legacy events are accepted only
-  when an existing Good Hours provider customer/subscription can be resolved.
+  when an existing ClipperDesk provider customer/subscription can be resolved.
 - Paddle's customer-visible seller identity is shared by the seller account.
-  Good Hours does not attempt to override the hosted checkout's legal/display
+  ClipperDesk does not attempt to override the hosted checkout's legal/display
   name; a neutral Stylnexa identity requires a reviewed account-wide Paddle
   change or a separate seller account.
 - Entitlement checks are reusable for HTTP middleware, domain actions, jobs,
@@ -270,7 +274,7 @@ disabled; its discovered legacy widgets are removed.
 4. Account summary, billing, communications, webhook failures, invitations,
    and exports are separately grantable scopes. An identifier from another
    Business or an ungranted operation fails closed.
-5. Active entry appears to tenant users as a named Good Hours Support banner
+5. Active entry appears to tenant users as a named ClipperDesk Support banner
    with ticket, reason, and expiry. Exit, expiry, supersession, or revocation
    ends access; revocation ends every open session immediately.
 6. Grant, entry, exit, replay, and revocation evidence is append-only. No

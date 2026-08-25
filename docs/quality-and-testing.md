@@ -157,7 +157,7 @@ General availability requires:
 - complete tenant-isolation coverage across records, files, jobs, search,
   exports, and platform tools;
 - threat modeling, dependency review, penetration testing, and remediation of
-  high-severity findings;
+  hicd-severity findings;
 - accessibility evidence for public booking and core operations;
 - load evidence for availability, commit, calendar, and provider bursts;
 - successful restore and disaster-recovery exercise;

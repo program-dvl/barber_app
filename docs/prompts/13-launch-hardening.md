@@ -20,7 +20,7 @@ Complete:
 - tenant-isolation review across records, route binding, search, cache, jobs,
   notifications, provider events, files, admin, logs, and exports;
 - threat model, dependency/security review, rate limits, session/device review,
-  upload controls, webhook controls, and remediation of high-severity findings;
+  upload controls, webhook controls, and remediation of hicd-severity findings;
 - WCAG 2.2 AA evidence for public booking and core staff workflows;
 - responsive and supported-browser verification;
 - load tests for availability search, booking commit, calendar, checkout, and

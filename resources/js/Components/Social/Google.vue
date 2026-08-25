@@ -1,18 +1,30 @@
 <script setup>
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 
+const props = defineProps({
+    intent: { type: String, default: 'login', validator: value => ['login', 'register'].includes(value) },
+    plan: { type: String, default: null },
+    interval: { type: String, default: null },
+});
+
+const page = usePage();
+const enabled = computed(() => Boolean(page.props.googleAuth?.enabled));
+const href = computed(() => route('auth.google.redirect', {
+    intent: props.intent,
+    ...(props.plan ? { plan: props.plan } : {}),
+    ...(props.interval ? { interval: props.interval } : {}),
+}));
 </script>
 
 <template>
-    <a
-        :href="route('socialite.redirect', 'google')"
-        class="justify-center mb-2 flex rounded-md px-6 py-2.5 text-xs font-medium uppercase leading-normal text-grey border input-bordered shadow-sm transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-hidden focus:ring-0 active:shadow-lg">
-          <span class="[&>svg]:h-4 [&>svg]:w-4 mr-4">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.64 9.20443C17.64 8.56625 17.5827 7.95262 17.4764 7.36353H9V10.8449H13.8436C13.635 11.9699 13.0009 12.9231 12.0477 13.5613V15.8194H14.9564C16.6582 14.2526 17.64 11.9453 17.64 9.20443Z" fill="#4285F4"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M8.99976 18C11.4298 18 13.467 17.1941 14.9561 15.8195L12.0475 13.5613C11.2416 14.1013 10.2107 14.4204 8.99976 14.4204C6.65567 14.4204 4.67158 12.8372 3.96385 10.71H0.957031V13.0418C2.43794 15.9831 5.48158 18 8.99976 18Z" fill="#34A853"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M3.96409 10.7101C3.78409 10.1701 3.68182 9.59325 3.68182 9.00007C3.68182 8.40689 3.78409 7.83007 3.96409 7.29007V4.95825H0.957273C0.347727 6.17325 0 7.5478 0 9.00007C0 10.4523 0.347727 11.8269 0.957273 13.0419L3.96409 10.7101Z" fill="#FBBC05"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M8.99976 3.57955C10.3211 3.57955 11.5075 4.03364 12.4402 4.92545L15.0216 2.34409C13.4629 0.891818 11.4257 0 8.99976 0C5.48158 0 2.43794 2.01682 0.957031 4.95818L3.96385 7.29C4.67158 5.16273 6.65567 3.57955 8.99976 3.57955Z" fill="#EA4335"></path></svg>
-          </span>
-        <span>Continue with Google</span>
+    <a v-if="enabled" :href="href" class="group flex min-h-12 w-full items-center justify-center gap-3 rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--surface-raised)] px-4 py-3 text-sm font-bold text-[var(--text-strong)] shadow-sm transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-subtle)]">
+        <svg class="size-5 shrink-0" viewBox="0 0 18 18" aria-hidden="true">
+            <path fill="#4285F4" d="M17.64 9.205c0-.639-.057-1.253-.164-1.842H9v3.482h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.874 2.684-6.615Z"/>
+            <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A9 9 0 0 0 9 18Z"/>
+            <path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A9 9 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z"/>
+            <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.453 3.44 1.345l2.582-2.581C13.463.892 11.426 0 9 0A9 9 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z"/>
+        </svg>
+        <span>{{ intent === 'register' ? 'Sign up with Google' : 'Continue with Google' }}</span>
     </a>
 </template>
-
-<style scoped>
-
-</style>

@@ -10,17 +10,17 @@ import { Head, Link } from '@inertiajs/vue3';
 
 <template>
     <HomeLayout>
-        <Head title="About Good Hours" />
-        <section class="gh-public-section border-b border-[var(--border-subtle)]">
+        <Head title="About ClipperDesk" />
+        <section class="cd-public-section border-b border-[var(--border-subtle)]">
             <PublicContainer>
                 <Breadcrumbs :items="[{ label: 'Home', href: route('marketing.home') }, { label: 'Company' }]" />
-                <p class="gh-eyebrow mt-10">Company</p>
-                <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.05em] text-[var(--text-strong)] text-balance">Good Hours is being built for the whole working salon day.</h1>
+                <p class="cd-eyebrow mt-10">Company</p>
+                <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.05em] text-[var(--text-strong)] text-balance">ClipperDesk is being built for the whole working salon day.</h1>
                 <p class="mt-7 max-w-3xl text-lg leading-8 text-[var(--text-muted)] sm:text-xl">It is a web-first operating system for independent salons, barbershops, stylists and small non-medical spas—from guided setup and booking through client history, checkout and explainable reporting.</p>
             </PublicContainer>
         </section>
 
-        <section class="gh-public-section">
+        <section class="cd-public-section">
             <PublicContainer>
                 <SectionHeading eyebrow="What guides the product" title="Calm operation, explicit rules and honest evidence" />
                 <div class="mt-10 grid gap-5 md:grid-cols-3">
@@ -31,15 +31,15 @@ import { Head, Link } from '@inertiajs/vue3';
             </PublicContainer>
         </section>
 
-        <section class="gh-public-section bg-[var(--surface-subtle)]">
+        <section class="cd-public-section bg-[var(--surface-subtle)]">
             <PublicContainer class="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
                 <div>
                     <h2 class="font-display text-4xl font-semibold text-[var(--text-strong)]">Operator and identity status</h2>
-                    <p class="mt-5 max-w-2xl leading-8 text-[var(--text-muted)]">Good Hours is the selected product identity. Trademark clearance, the `getgoodhours.com` domain and the final legal operator/contact details are not yet approved evidence. They will not be invented here; OPEN-11 blocks public launch until named Product, Operations and counsel owners resolve them.</p>
+                    <p class="mt-5 max-w-2xl leading-8 text-[var(--text-muted)]">ClipperDesk is the selected product identity. Trademark clearance, the production domain and the final legal operator/contact details are not yet approved evidence. They will not be invented here; OPEN-11 blocks public launch until named Product, Operations and counsel owners resolve them.</p>
                 </div>
                 <div class="rounded-[var(--radius-xl)] border border-[var(--border-strong)] bg-white p-7">
                     <h2 class="text-xl font-extrabold text-[var(--text-strong)]">Review the current evidence</h2>
-                    <div class="mt-5 flex flex-col gap-3"><Link :href="route('marketing.security')" class="gh-button gh-button-secondary">Security approach</Link><Link :href="route('marketing.features')" class="gh-button gh-button-secondary">Product features</Link><PublicCta context="company_final" /></div>
+                    <div class="mt-5 flex flex-col gap-3"><Link :href="route('marketing.security')" class="cd-button cd-button-secondary">Security approach</Link><Link :href="route('marketing.features')" class="cd-button cd-button-secondary">Product features</Link><PublicCta context="company_final" /></div>
                 </div>
             </PublicContainer>
         </section>

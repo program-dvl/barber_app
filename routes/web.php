@@ -3,6 +3,7 @@
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
 use App\Http\Controllers\Access\StaffInvitationController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Billing\BusinessBillingController;
 use App\Http\Controllers\Billing\PaddleWebhookController;
 use App\Http\Controllers\Billing\PlatformBillingSupportController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\CommunicationActionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Invoices\DownloadInvoiceController;
 use App\Http\Controllers\Marketing\FeatureController;
+use App\Http\Controllers\Marketing\LegalDocumentController;
 use App\Http\Controllers\Marketing\PricingController;
 use App\Http\Controllers\Marketing\ResourceController;
 use App\Http\Controllers\Marketing\SolutionController;
@@ -142,6 +144,14 @@ Route::get('/features', [FeatureController::class, 'index'])->name('marketing.fe
 Route::get('/pricing', PricingController::class)->name('marketing.pricing');
 Route::get('/company', [TrustController::class, 'company'])->name('marketing.company');
 Route::get('/security', [TrustController::class, 'security'])->name('marketing.security');
+Route::get('/terms-of-service', [LegalDocumentController::class, 'terms'])->name('terms.show');
+Route::get('/privacy-policy', [LegalDocumentController::class, 'privacy'])->name('policy.show');
+Route::get('/refund-policy', [LegalDocumentController::class, 'refund'])->name('refund.show');
+Route::middleware(['guest', 'throttle:10,1'])->group(function (): void {
+    Route::get('/auth/google/redirect', [SocialiteController::class, 'redirect'])->name('auth.google.redirect');
+    Route::get('/auth/callback/google', [SocialiteController::class, 'callback'])->name('auth.google.callback');
+    Route::post('/auth/google/register', [SocialiteController::class, 'completeRegistration'])->name('auth.google.register');
+});
 Route::get('/resources', [ResourceController::class, 'index'])->name('marketing.resources');
 Route::get('/guides/{guide}', [ResourceController::class, 'guide'])->where('guide', '[a-z0-9-]+')->name('marketing.guides.show');
 Route::get('/features/{feature}', [FeatureController::class, 'show'])
@@ -162,6 +172,7 @@ Route::middleware('throttle:30,1')->prefix('/book/{slug}')->where(['slug' => '[a
     Route::post('/flows', [PublicBookingFlowController::class, 'start'])->name('public.booking.start');
     Route::post('/availability', [PublicBookingFlowController::class, 'search'])->name('public.booking.search');
 });
+
 Route::middleware('throttle:10,1')->prefix('/book/{slug}')->where(['slug' => '[a-z0-9-]+'])->group(function (): void {
     Route::post('/hold', [PublicBookingFlowController::class, 'hold'])->name('public.booking.hold');
     Route::post('/confirm', [PublicBookingFlowController::class, 'confirm'])->name('public.booking.confirm');
@@ -201,7 +212,7 @@ Route::get('/roadmap', [RoadmapController::class, 'index'])->name('roadmap.index
 
 if (app()->environment('local')) {
     Route::get('og-image/{title?}/{description?}', OgImageController::class)->name('og-image');
-    Route::get('og-image-testing', fn () => view('seo.image', ['title' => 'Good Hours preview', 'description' => 'Local preview only.']));
+    Route::get('og-image-testing', fn () => view('seo.image', ['title' => config('brand.product_name').' preview', 'description' => 'Local preview only.']));
 }
 
 Route::post('billing/webhooks/stripe', StripeWebhookController::class)->name('billing.webhooks.stripe');

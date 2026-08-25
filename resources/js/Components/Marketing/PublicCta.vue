@@ -26,7 +26,7 @@ const label = computed(() => authenticated.value ? 'Open dashboard' : 'Start you
 <template>
     <Link
         :href="destination"
-        :class="['gh-button', secondary ? 'gh-button-secondary' : 'gh-button-primary', compact && 'gh-button-compact']"
+        :class="['cd-button', secondary ? 'cd-button-secondary' : 'cd-button-primary', compact && 'cd-button-compact']"
         :data-cta-context="context"
         :data-cta-action="authenticated ? 'dashboard' : 'trial'"
     >

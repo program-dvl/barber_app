@@ -12,12 +12,12 @@ it('keeps the shared public accessibility foundations present', function () {
 });
 
 it('keeps public font and evidence-image files within component budgets', function () {
-    foreach (glob(public_path('fonts/good-hours/*.{ttf,woff2}'), GLOB_BRACE) as $font) {
+    foreach (glob(public_path('fonts/clipperdesk/*.{ttf,woff2}'), GLOB_BRACE) as $font) {
         expect(filesize($font))->toBeLessThanOrEqual(130 * 1024);
     }
     foreach ([
-        base_path('docs/evidence/product-shell/good-hours-shop-dashboard-desktop-1488.png'),
-        base_path('docs/evidence/product-shell/good-hours-public-booking-360.png'),
+        base_path('docs/evidence/product-shell/clipperdesk-shop-dashboard-desktop-1488.png'),
+        base_path('docs/evidence/product-shell/clipperdesk-public-booking-360.png'),
     ] as $image) {
         expect(filesize($image))->toBeLessThanOrEqual(550 * 1024);
     }

@@ -16,7 +16,7 @@ const submit = () => router.get(route('platform.businesses.index'), { search: qu
         <form class="mt-6 flex max-w-2xl gap-2" role="search" @submit.prevent="submit">
             <label class="ds-sr-only" for="platform-business-search">Search businesses</label>
             <input id="platform-business-search" v-model="query" class="min-h-11 flex-1 rounded-lg border border-[var(--border-default)] bg-white px-3" placeholder="Business name, slug, or exact public ID" />
-            <button class="min-h-11 rounded-lg bg-[var(--brand-pine)] px-5 font-semibold text-white" type="submit">Search</button>
+            <button class="min-h-11 rounded-lg bg-[var(--brand-primary)] px-5 font-semibold text-white" type="submit">Search</button>
         </form>
         <SurfaceCard class="mt-6" :padding="false" title="Safe business summaries" description="No client notes, message bodies, authentication data, or provider secrets are included.">
             <ul class="divide-y divide-[var(--border-subtle)]">

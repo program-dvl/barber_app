@@ -14,7 +14,7 @@ defineProps({ grants: Array });
                 <li v-for="grant in grants" :key="grant.public_id" class="grid gap-3 px-5 py-5 lg:grid-cols-[minmax(0,1fr)_14rem_10rem]">
                     <div><p class="font-semibold text-[var(--text-strong)]">{{ grant.business.name }} · {{ grant.ticket_reference }}</p><p class="mt-1 text-sm text-[var(--text-muted)]">{{ grant.operator.name }} · {{ grant.reason }}</p><p class="mt-2 text-xs text-[var(--text-muted)]">Scopes: {{ grant.scopes.join(', ') }}</p></div>
                     <p class="text-sm">Expires<br><span class="font-semibold">{{ grant.expires_at }}</span></p>
-                    <span :class="['gh-status h-fit w-fit', grant.active ? 'bg-[var(--status-success-soft)] text-[var(--status-success)]' : 'bg-[var(--surface-muted)] text-[var(--text-muted)]']">{{ grant.active ? 'Active' : 'Inactive' }}</span>
+                    <span :class="['cd-status h-fit w-fit', grant.active ? 'bg-[var(--status-success-soft)] text-[var(--status-success)]' : 'bg-[var(--surface-muted)] text-[var(--text-muted)]']">{{ grant.active ? 'Active' : 'Inactive' }}</span>
                 </li>
                 <li v-if="!grants.length" class="px-5 py-10 text-center text-sm text-[var(--text-muted)]">No support access grants have been issued.</li>
             </ul>

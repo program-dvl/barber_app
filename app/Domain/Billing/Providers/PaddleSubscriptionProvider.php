@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use LogicException;
 
-/** Paddle Billing edge adapter for Good Hours SaaS subscriptions only. */
+/** Paddle Billing edge adapter for ClipperDesk SaaS subscriptions only. */
 class PaddleSubscriptionProvider implements SubscriptionProvider
 {
     public function createCheckout(Business $business, BillingPlanPrice $price, string $successUrl, string $cancelUrl, ?string $couponCode = null): array

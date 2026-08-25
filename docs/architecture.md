@@ -118,7 +118,7 @@ and expiring downloads remain provider/topology work.
 
 ## Implemented subscription and entitlement foundation
 
-ADR-021 selects Paddle Billing for Good Hours subscription billing, behind the
+ADR-021 selects Paddle Billing for the ClipperDesk subscription boundary, behind the
 application-owned `SubscriptionProvider` interface. Controllers coordinate the
 provider request, normalized domain services own transitions, and signed
 provider events confirm external state. Browser redirects are never payment
@@ -275,7 +275,7 @@ successful charge terminal. A booking Hold is extended while the intent is
 pending; only webhook success may confirm the Hold. A failed confirmation opens
 a `payment_reconciliation_tasks` item rather than retrying an unknown charge.
 
-Paddle is deliberately limited to Good Hours SaaS subscriptions. It is not
+Paddle is deliberately limited to ClipperDesk SaaS subscriptions. It is not
 used for appointment deposits, retail, or in-person salon services; those stay
 as manual/local tender records until a separate customer-payment provider is
 approved. The separate appointment-payment adapter never reuses Paddle billing
@@ -337,7 +337,7 @@ surface cannot manufacture a second capacity winner.
 
 ### Audit and policy history
 
-- High-risk changes record tenant, actor, role, action, target, source, time,
+- Hicd-risk changes record tenant, actor, role, action, target, source, time,
   reason, and a safe before/after summary.
 - Critical policies and calculation rules have effective dates.
 - Historical forms, prices, durations, taxes, commissions, and policy
@@ -467,17 +467,18 @@ primitives rather than defining new button, form, table, card, modal, toast, or
 state semantics. Stable URL parameters should own future location, date, view,
 and filter context so responsive navigation does not silently discard it.
 
-The Good Hours identity is an outer presentation layer rather than a domain
-dependency. `ProductMark.vue` owns the reusable lockup, the generated mark
-lives under `resources/images/brand/`, self-hosted licensed fonts live under
-`public/fonts/good-hours/`, and the three shells consume the same semantic
-tokens. Tenant-specific booking-page branding must remain data-driven and must
-not fork shared component behavior or override accessibility tokens without
-validated contrast.
+The ClipperDesk identity is an outer presentation layer rather than a domain
+dependency. `config/brand.php` owns shared identity values, `ProductMark.vue`
+owns the reusable lockup, approved SVG assets live under `public/images/brand/`,
+self-hosted licensed fonts live under `public/fonts/clipperdesk/`, and every
+shell consumes the semantic tokens in `resources/css/app.css`. Tenant-specific
+booking-page branding must remain data-driven and must not fork shared component
+behavior or override accessibility tokens without validated contrast.
 
 See `design-system.md` for the concrete token, voice, domain, outbound-message,
-and component contract. ADR-011 accepts Good Hours and supersedes the temporary
-neutral identity in ADR-010.
+and component contract. ADR-027 accepts ClipperDesk, supersedes ADR-011 for the
+current identity, and preserves the neutral semantic-shell architecture from
+ADR-010.
 
 ## Data migration strategy
 

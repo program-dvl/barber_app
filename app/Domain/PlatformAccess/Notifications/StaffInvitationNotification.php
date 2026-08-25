@@ -25,7 +25,7 @@ class StaffInvitationNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("You're invited to {$this->businessName} on Good Hours")
+            ->subject("You're invited to {$this->businessName} on ".config('brand.product_name'))
             ->line("You've been invited to join {$this->businessName}.")
             ->action('Review invitation', route('staff-invitations.show', $this->plainTextToken))
             ->line('This single-use invitation expires '.$this->expiresAt->utc()->toDayDateTimeString().' UTC.');

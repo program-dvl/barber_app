@@ -123,7 +123,7 @@ Do not solve speed by publicly caching private/signed/tenant-specific responses.
 
 ## 25. Validation / Testing
 
-Run production SSR build, route-bundle and asset-size comparison, Lighthouse/performance tooling under recorded conditions, query/cache/header tests, image/font audit, automated accessibility scan, manual keyboard/screen-reader/reduced-motion/zoom/high-contrast checks, cross-browser smoke tests, visual screenshots at required widths, pseudo-locale/long-string and locale format tests, crawl/schema/canonical regression, console/hydration review and `git diff --check`.
+Run production SSR build, route-bundle and asset-size comparison, Lighthouse/performance tooling under recorded conditions, query/cache/header tests, image/font audit, automated accessibility scan, manual keyboard/screen-reader/reduced-motion/zoom/hicd-contrast checks, cross-browser smoke tests, visual screenshots at required widths, pseudo-locale/long-string and locale format tests, crawl/schema/canonical regression, console/hydration review and `git diff --check`.
 
 ## 26. Completion Report
 

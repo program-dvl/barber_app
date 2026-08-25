@@ -177,7 +177,7 @@ const logout = () => router.post(route('logout'));
                     <Link v-if="primaryWorkspace" :href="route('business.dashboard', primaryWorkspace.public_id)" class="hidden min-h-11 items-center rounded-lg px-3 text-sm font-semibold text-[var(--text-strong)] hover:bg-[var(--surface-subtle)] sm:flex">
                         Open {{ primaryWorkspace.name }}
                     </Link>
-                    <Link v-if="primaryWorkspace?.can_manage_billing" :href="route('business.billing.show', primaryWorkspace.public_id)" class="hidden min-h-11 items-center rounded-lg bg-[var(--brand-pine)] px-3 text-sm font-semibold text-white hover:opacity-90 sm:flex">
+                    <Link v-if="primaryWorkspace?.can_manage_billing" :href="route('business.billing.show', primaryWorkspace.public_id)" class="hidden min-h-11 items-center rounded-lg bg-[var(--brand-primary)] px-3 text-sm font-semibold text-white hover:opacity-90 sm:flex">
                         Subscription & billing
                     </Link>
                     <details class="relative">
@@ -199,8 +199,8 @@ const logout = () => router.post(route('logout'));
                 </div>
             </header>
 
-            <div v-for="session in $page.props.supportAccessBanner" :key="`${session.operator}-${session.expires_at}`" class="border-b border-amber-300 bg-amber-100 px-4 py-3 text-sm text-amber-950 sm:px-6 lg:px-8" role="status">
-                <strong>{{ session.operator }} from Good Hours Support is viewing this account.</strong>
+            <div v-for="session in $page.props.supportAccessBanner" :key="`${session.operator}-${session.expires_at}`" class="border-b border-[var(--status-warning)]/30 bg-[var(--status-warning-soft)] px-4 py-3 text-sm text-[var(--status-warning)] sm:px-6 lg:px-8" role="status">
+                <strong>{{ session.operator }} from ClipperDesk Support is viewing this account.</strong>
                 Ticket {{ session.ticket_reference }} · {{ session.reason }} · access expires {{ new Date(session.expires_at).toLocaleString() }}.
             </div>
             <div v-for="notice in $page.props.platformNotices" :key="notice.public_id" class="border-b border-[var(--border-subtle)] bg-[var(--surface-subtle)] px-4 py-3 text-sm sm:px-6 lg:px-8" role="status">

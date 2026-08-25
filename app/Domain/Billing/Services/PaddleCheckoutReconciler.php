@@ -144,7 +144,7 @@ class PaddleCheckoutReconciler
     /** @param array<string, mixed> $transaction */
     private function validateTransaction(Business $business, BusinessSubscription $subscription, BillingCheckoutAttempt $attempt, array $transaction): void
     {
-        abort_unless(data_get($transaction, 'custom_data.application') === 'good_hours', 409, 'This checkout does not belong to Good Hours.');
+        abort_unless(data_get($transaction, 'custom_data.application') === 'good_hours', 409, 'This checkout does not belong to '.config('brand.product_name').'.');
         abort_unless(data_get($transaction, 'custom_data.business_public_id') === $business->public_id, 409, 'This checkout belongs to another billing account.');
         abort_unless((string) data_get($transaction, 'custom_data.plan_price_id') === (string) $attempt->billing_plan_price_id, 409, 'The checkout plan does not match the selected plan.');
         abort_unless(($transaction['customer_id'] ?? null) === $subscription->provider_customer_id, 409, 'The checkout customer does not match this billing account.');
@@ -157,7 +157,7 @@ class PaddleCheckoutReconciler
     {
         abort_unless(($providerSubscription['id'] ?? null) === ($transaction['subscription_id'] ?? null), 409, 'The Paddle subscription does not match the checkout.');
         abort_unless(($providerSubscription['customer_id'] ?? null) === $subscription->provider_customer_id, 409, 'The Paddle subscription customer does not match this billing account.');
-        abort_unless(data_get($providerSubscription, 'custom_data.application') === 'good_hours', 409, 'This subscription does not belong to Good Hours.');
+        abort_unless(data_get($providerSubscription, 'custom_data.application') === 'good_hours', 409, 'This subscription does not belong to '.config('brand.product_name').'.');
         abort_unless(data_get($providerSubscription, 'custom_data.business_public_id') === $business->public_id, 409, 'This subscription belongs to another billing account.');
         abort_unless(data_get($providerSubscription, 'items.0.price.id') === $attempt->price->provider_price_id, 409, 'The Paddle subscription price does not match the checkout.');
     }

@@ -176,7 +176,7 @@ return [
          * The cache key used to store all permissions.
          */
 
-        'key' => 'good-hours.business-permission.cache',
+        'key' => 'clipperdesk.business-permission.cache',
 
         /*
          * You may optionally indicate a specific cache driver to use for permission and

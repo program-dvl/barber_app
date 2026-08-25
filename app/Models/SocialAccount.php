@@ -10,6 +10,12 @@ class SocialAccount extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'provider',
+        'account_id',
+        'token',
+    ];
+
     protected $casts = [
         'token' => 'encrypted',
     ];

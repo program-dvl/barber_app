@@ -23,7 +23,7 @@ class FeatureController extends Controller
         return Inertia::render('Marketing/Features/Index', [
             'features' => $features,
             'seo' => [
-                'title' => 'Good Hours features for the complete salon day',
+                'title' => 'ClipperDesk features for the complete salon day',
                 'description' => 'Explore connected online booking, calendar and walk-ins, client management, checkout and reporting for salons and barbershops.',
                 'canonical' => route('marketing.features'),
             ],
@@ -48,7 +48,7 @@ class FeatureController extends Controller
             'feature' => [...$content, 'slug' => $feature],
             'related' => $related,
             'seo' => [
-                'title' => $content['title'].' | Good Hours',
+                'title' => $content['title'].' | ClipperDesk',
                 'description' => $content['description'],
                 'canonical' => route('marketing.features.show', $feature),
             ],

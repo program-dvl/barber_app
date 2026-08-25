@@ -27,7 +27,7 @@ const progress = computed(() => props.currentStep <= 0 ? 0 : Math.round((props.c
 
         <header class="border-b border-[var(--border-subtle)] bg-[var(--surface-raised)]">
             <div class="mx-auto flex min-h-16 max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
-                <Link :href="route('booking.welcome')" class="inline-flex min-h-11 items-center rounded-lg" aria-label="Good Hours booking home"><ProductMark /></Link>
+                <Link :href="route('booking.welcome')" class="inline-flex min-h-11 items-center rounded-lg" aria-label="ClipperDesk booking home"><ProductMark /></Link>
                 <Link v-if="mode === 'booking'" :href="route('booking.manage')" aria-label="Manage appointment" class="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-[var(--text-strong)] hover:bg-[var(--surface-subtle)]">
                     <LockClosedIcon class="size-4" aria-hidden="true" />
                     <span class="hidden sm:inline">Manage appointment</span><span class="sm:hidden">Manage</span>

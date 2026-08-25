@@ -83,7 +83,7 @@ const plans = [
             <div class="mx-auto mt-16 grid max-w-6xl grid-cols-1 gap-8 lg:grid-cols-3">
                 <div v-for="plan in plans" :key="plan.slug" class="group relative flex flex-col overflow-hidden rounded-3xl border transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
                     :class="plan.bestseller ? 'border-primary shadow-2xl shadow-primary/10' : 'border-base-300'"
-                    style="background-color: var(--fallback-b1,oklch(var(--b1)/1))">
+                    style="background-color: var(--surface-raised)">
                     <!-- Bestseller Badge -->
                     <div v-if="plan.bestseller" class="absolute -right-12 top-6 rotate-45 bg-gradient-to-r from-warning to-warning/80 px-12 py-1.5 text-xs font-bold uppercase tracking-wide text-white shadow-lg">
                         {{ $t('Bestseller') }}

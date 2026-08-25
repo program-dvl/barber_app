@@ -9,7 +9,7 @@ Status: Implemented and locally verified in Prompt 18 (2026-08-16)
 | Independent stylist | Owner-performer guided readiness, one calendar, client history and local-day close (FR-01/02/09/11/14/18) | Distinct operating responsibility | `/solutions/independent-stylists` |
 | Small spa | Physical rooms/equipment, multi-segment service and versioned forms (FR-03–FR-12) | Explicitly non-medical | `/solutions/spas` |
 | Nail salon | Potential service/add-on/resource fit but no distinct research/proof brief | Risks keyword substitution with salon/spa | Deferred |
-| Medical spa | Requires compliance and workflow evidence outside Phase 1 | Unsupported and high-risk | Rejected |
+| Medical spa | Requires compliance and workflow evidence outside Phase 1 | Unsupported and hicd-risk | Rejected |
 
 Each published page has a distinct fit statement, three specific operational
 pressures, a four-step representative day, three relevant feature links, two

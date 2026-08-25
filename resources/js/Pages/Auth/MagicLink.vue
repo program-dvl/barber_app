@@ -40,7 +40,7 @@ const submit = () => {
                 <p class="text-2xl font-bold">{{ $t('Sign in to your account') }}</p>
             </div>
         </template>
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
+        <div v-if="status" class="mb-4 text-sm font-medium text-[var(--status-success)]">
             {{ status }}
         </div>
         <form @submit.prevent="submit">

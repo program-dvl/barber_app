@@ -27,7 +27,7 @@ class BillingLifecycleNotice extends Notification implements ShouldQueue
         };
 
         return (new MailMessage)
-            ->subject('Good Hours subscription payment needs attention')
+            ->subject(config('brand.product_name').' subscription payment needs attention')
             ->greeting('Hello '.$notifiable->name.',')
             ->line($message)
             ->line('Grace period ends: '.($this->subscription->grace_ends_at?->utc()->format('Y-m-d H:i').' UTC' ?? 'not scheduled'))

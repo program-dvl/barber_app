@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">ClipperDesk</title>
+  <desc id="desc">Run the day. Grow the business.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1220"/>
+      <stop offset="1" stop-color="#172554"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(1040 30) rotate(135) scale(550 500)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4F46E5" stop-opacity=".36"/>
+      <stop offset="1" stop-color="#4F46E5" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <path d="M326 190H263c-55 0-99 44-99 99s44 99 99 99h63" fill="none" stroke="#FFFFFF" stroke-width="38" stroke-linecap="round"/>
+  <path d="M275 232h36c40 0 72 25 72 57s-32 57-72 57h-36V232Z" fill="#1E1B4B" stroke="#A5B4FC" stroke-width="28" stroke-linejoin="round"/>
+  <text x="456" y="282" fill="#FFFFFF" font-family="Manrope, Inter, Arial, sans-serif" font-size="76" font-weight="750" letter-spacing="-3">ClipperDesk</text>
+  <text x="460" y="354" fill="#CBD5E1" font-family="Manrope, Inter, Arial, sans-serif" font-size="31" font-weight="500">Run the day. Grow the business.</text>
+  <text x="460" y="408" fill="#94A3B8" font-family="Manrope, Inter, Arial, sans-serif" font-size="22">Salon and barbershop management software</text>
+</svg>

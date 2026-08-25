@@ -5,7 +5,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
 
-it('renders a truthful Good Hours homepage with unique metadata', function () {
+it('renders a truthful ClipperDesk homepage with unique metadata', function () {
     $this->get(route('marketing.home'))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page

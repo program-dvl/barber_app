@@ -269,7 +269,7 @@ dialog initial/return focus and Escape close, representative contrast above
 - Search is intentionally bounded to 31 local days and 200 returned slots. It
   currently performs repeated authoritative rule reads (746 statements for the
   measured 20-slot case); caching/batched read projections are required before
-  high-volume public launch, without weakening commit revalidation.
+  hicd-volume public launch, without weakening commit revalidation.
 - Deterministic locking includes every candidate Staff member for an
   any-qualified service. Popular broad services can therefore serialize more
   commits than the final chosen allocation alone would require.

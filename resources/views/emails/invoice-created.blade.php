@@ -8,5 +8,5 @@ Your invoice is attached to this email.
 **Total:** {{ strtoupper($invoice->currency) }} {{ number_format($invoice->total / 100, 2) }}
 
 Thanks,<br>
-{{ config('app.name') }}
+{{ config('brand.product_name') }}
 </x-mail::message>

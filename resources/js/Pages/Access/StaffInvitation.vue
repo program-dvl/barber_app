@@ -22,7 +22,7 @@ const accept = () => {
         <Head title="Staff invitation" />
         <main class="mx-auto max-w-xl">
             <div class="mb-8 flex justify-center"><ProductMark large /></div>
-            <SurfaceCard title="Join this workspace" :description="`${businessName} invited you to work with them in Good Hours.`">
+            <SurfaceCard title="Join this workspace" :description="`${businessName} invited you to work with them in ClipperDesk.`">
                 <p class="text-sm leading-6 text-[var(--text-muted)]">
                     Your access will use this signed-in email identity and the role and locations chosen by the business. This invitation expires {{ new Date(expiresAt).toLocaleString() }}.
                 </p>

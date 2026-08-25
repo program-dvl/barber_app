@@ -101,7 +101,7 @@ class PublicAppointmentController extends Controller
         $appointment = $links->resolve($token, 'view')->appointment->loadMissing(['business', 'location', 'serviceLines']);
         $escape = fn (string $value) => str_replace(['\\', ';', ',', "\n"], ['\\\\', '\\;', '\\,', '\\n'], $value);
         $body = implode("\r\n", [
-            'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Good Hours//Booking//EN', 'BEGIN:VEVENT',
+            'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ClipperDesk//Booking//EN', 'BEGIN:VEVENT',
             'UID:'.$appointment->public_id.'@good-hours.local',
             'DTSTAMP:'.now()->utc()->format('Ymd\THis\Z'),
             'DTSTART:'.$appointment->starts_at_utc->utc()->format('Ymd\THis\Z'),

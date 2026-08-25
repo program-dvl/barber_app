@@ -24,10 +24,10 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Good Hours'),
+    'name' => env('APP_NAME', 'ClipperDesk'),
 
     // add domain without host, used for Browsershot Dynamic Open Graph Images
-    'app_domain' => env('APP_DOMAIN', 'getgoodhours.com'),
+    'app_domain' => env('APP_DOMAIN', 'clipperdesk.local'),
     /*
     |--------------------------------------------------------------------------
     | Application Environment

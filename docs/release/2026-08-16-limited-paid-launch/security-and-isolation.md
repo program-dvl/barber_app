@@ -68,6 +68,6 @@ This is point-in-time advisory evidence, not an SBOM review or penetration test.
 
 Resolved: known dependency advisories, missing HTTP request correlation and
 baseline response protections, demo billing 404, and checkout shell/title.
-Open high-severity items: external penetration test, malware scanning,
+Open hicd-severity items: external penetration test, malware scanning,
 production secret/cookie/TLS review, live provider certification, and
 production-topology load/abuse testing. None is waived.

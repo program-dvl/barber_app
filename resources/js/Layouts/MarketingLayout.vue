@@ -12,8 +12,8 @@ defineProps({
 </script>
 
 <template>
-    <div class="gh-marketing min-h-screen bg-[var(--surface-canvas)] text-[var(--text-default)]">
-        <a class="gh-skip-link" href="#main-content">Skip to main content</a>
+    <div class="cd-marketing min-h-screen bg-[var(--surface-canvas)] text-[var(--text-default)]">
+        <a class="cd-skip-link" href="#main-content">Skip to main content</a>
         <Banner />
         <MarketingHeader />
         <main id="main-content" :class="pageClass" tabindex="-1">

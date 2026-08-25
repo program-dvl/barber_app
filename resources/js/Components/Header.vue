@@ -38,7 +38,7 @@ onMounted(() => {
                     </ul>
                 </div>
                 <a href="/" class="flex items-center gap-3 font-bold text-xl transition-opacity hover:opacity-80">
-                    <img class="h-10 w-10" src="/images/logo.svg" :alt="$page.props.appName">
+                    <img class="h-10 w-10" :src="$page.props.brand.logo_mark" :alt="$page.props.brand.product_name">
                     <span class="hidden sm:block text-lg font-semibold tracking-tight">{{ $page.props.appName }}</span>
                 </a>
             </div>

@@ -163,13 +163,13 @@ before implementation.
 | `daisyui` | 5.1.27 | Adapt | Useful primitives, but all themes are currently compiled. |
 | `@vitejs/plugin-vue` | 5.2.4 | Keep | Vue build integration. |
 | `laravel-vite-plugin` | 1.3.0 | Keep | Laravel asset build integration. |
-| `vite` | 5.1.6 | Keep/Update | Build passes, but the locked version has high-risk advisories. |
+| `vite` | 5.1.6 | Keep/Update | Build passes, but the locked version has hicd-risk advisories. |
 | `postcss` | 8.5.14 | Keep/Update | Active build dependency with advisories. |
 | `axios` | 1.16.0 | Keep/Update | Used by security/profile flows; audit reports high risk. |
 | `@heroicons/vue` | 2.1.3 | Keep | Used by components. |
 | `laravel-vue-i18n` | 2.7.7 | Keep/Adapt | Useful localization foundation; locale ownership remains unimplemented. |
 | `moment` | 2.30.1 | Replace | Used only for display in content pages; salon time logic must use explicit location-zone services and modern browser formatting. |
-| `puppeteer` | 22.7.1 | Adapt/Update | Browsershot runtime; audit reports high-risk transitive dependencies. |
+| `puppeteer` | 22.7.1 | Adapt/Update | Browsershot runtime; audit reports hicd-risk transitive dependencies. |
 | `autoprefixer` | 10.4.21 | Remove | Not configured in the current PostCSS pipeline. |
 | `theme-change` | 2.5.0 | Remove | No source import found. |
 
@@ -460,7 +460,7 @@ Guidance:
   second framework or a custom repository abstraction for ordinary Eloquent
   access.
 - Controllers and Filament/Inertia actions call application/domain actions.
-  High-risk rules do not live only in controllers, Vue components, or model
+  Hicd-risk rules do not live only in controllers, Vue components, or model
   observers.
 - Cross-module communication uses explicit actions, contracts, events, and
   read models; cross-module writes may share database transactions under

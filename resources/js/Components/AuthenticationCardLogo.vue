@@ -4,7 +4,7 @@ import ProductMark from '@/Components/Product/ProductMark.vue';
 </script>
 
 <template>
-    <Link :href="'/'" class="inline-flex min-h-11 items-center justify-center rounded-lg" aria-label="Good Hours home">
+    <Link :href="'/'" class="inline-flex min-h-11 items-center justify-center rounded-lg" aria-label="ClipperDesk home">
         <ProductMark />
     </Link>
 </template>

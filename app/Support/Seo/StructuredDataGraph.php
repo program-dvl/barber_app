@@ -16,12 +16,12 @@ class StructuredDataGraph
         $organizationId = $root.'/#organization';
         $websiteId = $root.'/#website';
         $graph = [
-            ['@type' => 'Organization', '@id' => $organizationId, 'name' => 'Good Hours', 'url' => $root],
-            ['@type' => 'WebSite', '@id' => $websiteId, 'name' => 'Good Hours', 'url' => $root, 'publisher' => ['@id' => $organizationId], 'inLanguage' => 'en-IN'],
-            ['@type' => 'WebPage', '@id' => $canonical.'#webpage', 'url' => $canonical, 'name' => data_get($props, 'seo.title', 'Good Hours'), 'description' => data_get($props, 'seo.description', 'One calm place to run bookings, clients, staff, checkout and the day ahead.'), 'isPartOf' => ['@id' => $websiteId], 'inLanguage' => 'en-IN'],
+            ['@type' => 'Organization', '@id' => $organizationId, 'name' => config('brand.company_name'), 'url' => $root, 'logo' => url(config('brand.logo'))],
+            ['@type' => 'WebSite', '@id' => $websiteId, 'name' => config('brand.product_name'), 'url' => $root, 'publisher' => ['@id' => $organizationId], 'inLanguage' => 'en-IN'],
+            ['@type' => 'WebPage', '@id' => $canonical.'#webpage', 'url' => $canonical, 'name' => data_get($props, 'seo.title', config('brand.product_name')), 'description' => data_get($props, 'seo.description', config('brand.description')), 'isPartOf' => ['@id' => $websiteId], 'inLanguage' => 'en-IN'],
         ];
         if ($request->routeIs('marketing.home', 'marketing.pricing')) {
-            $software = ['@type' => 'SoftwareApplication', '@id' => $root.'/#software', 'name' => 'Good Hours', 'applicationCategory' => 'BusinessApplication', 'operatingSystem' => 'Web', 'url' => $root, 'description' => 'The daily operating system for salons and barbershops, helping run work from booking to checkout.', 'publisher' => ['@id' => $organizationId]];
+            $software = ['@type' => 'SoftwareApplication', '@id' => $root.'/#software', 'name' => config('brand.product_name'), 'applicationCategory' => 'BusinessApplication', 'operatingSystem' => 'Web', 'url' => $root, 'description' => config('brand.description'), 'publisher' => ['@id' => $organizationId]];
             if ($request->routeIs('marketing.pricing') && data_get($props, 'catalog.available') === true) {
                 $software['offers'] = collect(data_get($props, 'catalog.plans', []))->flatMap(fn (array $plan) => collect($plan['prices'])->map(fn (array $price, string $interval) => ['@type' => 'Offer', 'name' => $plan['name'].' '.ucfirst($interval), 'price' => number_format($price['amount_minor'] / 100, 2, '.', ''), 'priceCurrency' => $price['currency'], 'availability' => 'https://schema.org/InStock', 'url' => route('marketing.pricing')]))->values()->all();
             }

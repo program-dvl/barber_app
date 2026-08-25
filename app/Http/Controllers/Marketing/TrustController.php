@@ -12,8 +12,8 @@ class TrustController extends Controller
     {
         return Inertia::render('Marketing/Company', [
             'seo' => [
-                'title' => 'About Good Hours',
-                'description' => 'What Good Hours is, who it is for and which operator and brand facts remain pending before public launch.',
+                'title' => 'About ClipperDesk',
+                'description' => 'What ClipperDesk is, who it is for and which operator and brand facts remain pending before public launch.',
                 'canonical' => route('marketing.company'),
             ],
         ]);
@@ -31,8 +31,8 @@ class TrustController extends Controller
                 ['title' => 'Recovery and independent review', 'body' => 'Production backup/restore, disaster recovery, on-call monitoring, penetration testing and independent accessibility/security review are not yet evidenced.', 'state' => 'Open launch controls'],
             ],
             'seo' => [
-                'title' => 'Good Hours security approach and current limits',
-                'description' => 'Review implemented Good Hours security boundaries alongside the operational, provider and independent-assurance work still required.',
+                'title' => 'ClipperDesk security approach and current limits',
+                'description' => 'Review implemented ClipperDesk security boundaries alongside the operational, provider and independent-assurance work still required.',
                 'canonical' => route('marketing.security'),
             ],
         ]);

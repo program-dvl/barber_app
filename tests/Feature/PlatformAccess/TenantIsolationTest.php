@@ -344,14 +344,17 @@ it('keeps platform roles separate from tenant access and requires verified TOTP 
     $this->actingAs($expiredAdministrator)->get(route('platform.overview'))->assertForbidden();
 });
 
-it('enforces verified launch identities and leaves unsafe magic and social routes disabled', function () {
+it('enforces verified launch identities and exposes only the reviewed Google social routes', function () {
     [$user, $business] = createTenantMembership(StarterRole::Owner);
     $user->forceFill(['email_verified_at' => null])->save();
 
     expect(Route::has('magic.link'))->toBeFalse()
         ->and(Route::has('magic.link.login'))->toBeFalse()
         ->and(Route::has('socialite.redirect'))->toBeFalse()
-        ->and(Route::has('socialite.callback'))->toBeFalse();
+        ->and(Route::has('socialite.callback'))->toBeFalse()
+        ->and(Route::has('auth.google.redirect'))->toBeTrue()
+        ->and(Route::has('auth.google.callback'))->toBeTrue()
+        ->and(Route::has('auth.google.register'))->toBeTrue();
 
     $this->actingAs($user)
         ->get(route('business.dashboard', $business))

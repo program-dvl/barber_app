@@ -16,7 +16,7 @@ Status: Accepted Prompt 24 factual contract (reviewed 2026-08-16)
 ## Question ownership
 
 - Home owns the definition, audience, booking-to-checkout relationship and
-  high-level “not booking-only” answer.
+  hicd-level “not booking-only” answer.
 - Feature details own product mechanics. Solution pages own business-type fit.
   Use cases own practical problem diagnosis. They link rather than restating
   commercial or company facts.

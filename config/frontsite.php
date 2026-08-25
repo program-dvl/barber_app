@@ -5,8 +5,8 @@ return [
         'online-booking' => [
             'label' => 'Online booking',
             'title' => 'Online booking that respects the working calendar',
-            'description' => 'Give clients a focused mobile path while Good Hours keeps staff, service, resource and policy decisions in the same scheduling engine.',
-            'definition' => 'Online booking in Good Hours is the client-facing use of the same availability, capacity-hold and booking-commit rules used by the front desk.',
+            'description' => 'Give clients a focused mobile path while ClipperDesk keeps staff, service, resource and policy decisions in the same scheduling engine.',
+            'definition' => 'Online booking in ClipperDesk is the client-facing use of the same availability, capacity-hold and booking-commit rules used by the front desk.',
             'requirements' => ['FR-03', 'FR-04', 'FR-05', 'FR-06', 'FR-07', 'FR-09', 'FR-10'],
             'workflow' => [
                 ['title' => 'Show current choices', 'body' => 'Published locations, services, add-ons, eligible staff and policy are resolved from the Business configuration without exposing private schedules.'],
@@ -21,7 +21,7 @@ return [
             ],
             'limitations' => [
                 'Live deposit collection requires an approved and certified appointment-payment provider configuration.',
-                'A booking Business must be published and reached with its specific slug; Good Hours does not operate a marketplace directory.',
+                'A booking Business must be published and reached with its specific slug; ClipperDesk does not operate a marketplace directory.',
             ],
             'related' => ['calendar-and-walk-ins', 'client-management'],
         ],
@@ -29,7 +29,7 @@ return [
             'label' => 'Calendar and walk-ins',
             'title' => 'Run booked appointments and walk-ins in one operational day',
             'description' => 'Coordinate staff time, required resources, appointment changes, blocks and the walk-in queue without bypassing the scheduling rules.',
-            'definition' => 'The Good Hours calendar is an operational view over governed Appointment lifecycle and capacity commands, not a free-form grid that writes times directly.',
+            'definition' => 'The ClipperDesk calendar is an operational view over governed Appointment lifecycle and capacity commands, not a free-form grid that writes times directly.',
             'requirements' => ['FR-03', 'FR-05', 'FR-06', 'FR-07', 'FR-08'],
             'workflow' => [
                 ['title' => 'See the day in useful views', 'body' => 'Today, day, week and staff-column views keep location, staff, service and status context available to the front desk.'],
@@ -52,7 +52,7 @@ return [
             'label' => 'Client management',
             'title' => 'Keep useful client context without weakening consent or access',
             'description' => 'Bring visits, preferences, protected notes, forms, consent and attachments together with permission-aware history.',
-            'definition' => 'Client management in Good Hours is a Business-owned service record linked to booking, communication and commerce history, with narrower access for sensitive context.',
+            'definition' => 'Client management in ClipperDesk is a Business-owned service record linked to booking, communication and commerce history, with narrower access for sensitive context.',
             'requirements' => ['FR-11', 'FR-12', 'FR-13', 'FR-19'],
             'workflow' => [
                 ['title' => 'Create or match conservatively', 'body' => 'Exact normalized identity can reuse a profile; spelling variations become review candidates rather than automatic fuzzy merges.'],
@@ -67,7 +67,7 @@ return [
             ],
             'limitations' => [
                 'Destructive deletion/anonymisation is policy-blocked until OPEN-10 approves the final retention schedule and executor.',
-                'Good Hours does not claim medical-record or healthcare regulatory compliance.',
+                'ClipperDesk does not claim medical-record or healthcare regulatory compliance.',
             ],
             'related' => ['online-booking', 'checkout-and-reporting'],
         ],
@@ -75,7 +75,7 @@ return [
             'label' => 'Checkout and reporting',
             'title' => 'Close the service and keep the numbers explainable',
             'description' => 'Carry completed work into checkout, receipts, stock, commission and reports with append-only corrections and source-level drill-down.',
-            'definition' => 'Checkout and reporting in Good Hours use completed Sale and Payment evidence as the common source for revenue, inventory, commission, tip and export projections.',
+            'definition' => 'Checkout and reporting in ClipperDesk use completed Sale and Payment evidence as the common source for revenue, inventory, commission, tip and export projections.',
             'requirements' => ['FR-14', 'FR-15', 'FR-16', 'FR-17', 'FR-18'],
             'workflow' => [
                 ['title' => 'Build checkout from the appointment', 'body' => 'Service, add-on and product lines carry explicit tax, discount, tip, deposit and balance context into one Sale.'],
@@ -100,7 +100,7 @@ return [
             'label' => 'Barbershops',
             'title' => 'Barbershop software for booked clients and the walk-in line',
             'description' => 'Keep fast services, walk-ins, staff columns, client context and checkout in one front-desk day.',
-            'fit' => 'Good Hours fits barbershops that need to balance appointments with walk-in demand without treating the queue as a separate spreadsheet or whiteboard.',
+            'fit' => 'ClipperDesk fits barbershops that need to balance appointments with walk-in demand without treating the queue as a separate spreadsheet or whiteboard.',
             'requirements' => ['FR-04', 'FR-05', 'FR-06', 'FR-08', 'FR-11', 'FR-14', 'FR-15'],
             'challenges' => [
                 ['title' => 'The next walk-in cannot break the next booking', 'body' => 'Queue estimates and assignment use current staff and appointment evidence before a walk-in becomes service work.'],
@@ -109,13 +109,13 @@ return [
             ],
             'day' => ['Capture a walk-in with the requested service', 'Estimate and order the queue with a recorded reason', 'Assign staff without colliding with booked work', 'Start service, check out and retain actual wait history'],
             'features' => ['calendar-and-walk-ins', 'checkout-and-reporting', 'client-management'],
-            'limits' => ['Good Hours does not promise a wait time before current operating evidence exists.', 'No marketplace or local barbershop directory is included.'],
+            'limits' => ['ClipperDesk does not promise a wait time before current operating evidence exists.', 'No marketplace or local barbershop directory is included.'],
         ],
         'salons' => [
             'label' => 'Salons',
             'title' => 'Salon software that carries multi-service work through the day',
             'description' => 'Coordinate service timing, staff handoffs, client preferences, booking policy and checkout without splitting the visit into disconnected records.',
-            'fit' => 'Good Hours fits appointment-led hair and beauty salons whose services can include different staff, add-ons, processing time and durable client context.',
+            'fit' => 'ClipperDesk fits appointment-led hair and beauty salons whose services can include different staff, add-ons, processing time and durable client context.',
             'requirements' => ['FR-04', 'FR-05', 'FR-06', 'FR-07', 'FR-09', 'FR-11', 'FR-12', 'FR-14'],
             'challenges' => [
                 ['title' => 'One visit can contain more than one service', 'body' => 'Service lines retain their own duration, staff eligibility, processing and cleanup segments inside one Appointment.'],
@@ -130,7 +130,7 @@ return [
             'label' => 'Independent stylists',
             'title' => 'A simpler operating system for an independent stylist',
             'description' => 'Move from guided setup to booking, the working calendar, client history and checkout without needing a separate admin team.',
-            'fit' => 'Good Hours fits an independent professional who owns the Business and performs the work, while keeping the same permissions and history ready for a future team.',
+            'fit' => 'ClipperDesk fits an independent professional who owns the Business and performs the work, while keeping the same permissions and history ready for a future team.',
             'requirements' => ['FR-01', 'FR-02', 'FR-04', 'FR-05', 'FR-09', 'FR-11', 'FR-14', 'FR-18'],
             'challenges' => [
                 ['title' => 'Setup needs to show what is truly missing', 'body' => 'Readiness names blocking details, hours, services, availability and policy instead of hiding them behind a percentage.'],
@@ -139,13 +139,13 @@ return [
             ],
             'day' => ['Complete guided readiness and preview the booking page', 'Share the Business-specific booking link', 'Work from one calendar and client record', 'Close the Sale and review the local-day totals'],
             'features' => ['online-booking', 'client-management', 'checkout-and-reporting'],
-            'limits' => ['Good Hours does not provide a marketing marketplace or guarantee new client demand.', 'The launch profile is web-first; there is no native mobile app.'],
+            'limits' => ['ClipperDesk does not provide a marketing marketplace or guarantee new client demand.', 'The launch profile is web-first; there is no native mobile app.'],
         ],
         'spas' => [
             'label' => 'Small spas',
             'title' => 'Spa scheduling that reserves the room as well as the practitioner',
             'description' => 'Coordinate qualified staff, rooms or equipment, multi-segment treatments and consultation evidence with explicit limits.',
-            'fit' => 'Good Hours fits small non-medical spas that need appointment and physical-resource capacity to be committed together.',
+            'fit' => 'ClipperDesk fits small non-medical spas that need appointment and physical-resource capacity to be committed together.',
             'requirements' => ['FR-03', 'FR-04', 'FR-05', 'FR-06', 'FR-07', 'FR-11', 'FR-12'],
             'challenges' => [
                 ['title' => 'A free practitioner is not enough', 'body' => 'Configured rooms or equipment can have quantities, opening hours and maintenance that participate in the same capacity decision.'],
@@ -154,7 +154,7 @@ return [
             ],
             'day' => ['Resolve current treatment duration and required resources', 'Offer only capacity that fits staff and the room', 'Collect a versioned pre-appointment form when configured', 'Preserve the visit, submission and checkout context together'],
             'features' => ['online-booking', 'calendar-and-walk-ins', 'client-management'],
-            'limits' => ['Good Hours does not claim HIPAA, medical-device or healthcare regulatory compliance.', 'Complex medical workflows, classes and facility-wide resource optimisation are not Phase 1.'],
+            'limits' => ['ClipperDesk does not claim HIPAA, medical-device or healthcare regulatory compliance.', 'Complex medical workflows, classes and facility-wide resource optimisation are not Phase 1.'],
         ],
     ],
     'use_cases' => [
@@ -162,7 +162,7 @@ return [
             'label' => 'Reduce scheduling conflicts',
             'title' => 'Reduce scheduling conflicts by checking the same capacity twice',
             'description' => 'Use one availability model for client booking and front-desk changes, then revalidate staff, service and resource capacity before committing the appointment.',
-            'answer' => 'Scheduling conflicts are best reduced by making every booking path use the same working hours, staff eligibility, service duration and resource rules. Good Hours searches those rules, places a short capacity hold and checks them again at confirmation; it helps prevent conflicts but cannot eliminate incorrect configuration or real-world disruption.',
+            'answer' => 'Scheduling conflicts are best reduced by making every booking path use the same working hours, staff eligibility, service duration and resource rules. ClipperDesk searches those rules, places a short capacity hold and checks them again at confirmation; it helps prevent conflicts but cannot eliminate incorrect configuration or real-world disruption.',
             'requirements' => ['FR-03', 'FR-04', 'FR-05', 'FR-06', 'FR-07'],
             'symptoms' => ['A client sees a time the front desk believes is unavailable.', 'A room or piece of equipment is promised to two services.', 'A late edit silently overwrites a newer calendar change.'],
             'practice' => [
@@ -180,7 +180,7 @@ return [
             'label' => 'Manage walk-ins and appointments',
             'title' => 'Manage walk-ins without losing sight of booked appointments',
             'description' => 'Capture the queue, explain the estimate and revalidate capacity before a walk-in becomes an appointment on the working calendar.',
-            'answer' => 'Booked appointments and walk-ins can share one operating view when the queue remains a request—not a hidden calendar reservation—until staff and time are assigned. Good Hours keeps queue evidence beside the calendar and validates capacity when the walk-in is converted.',
+            'answer' => 'Booked appointments and walk-ins can share one operating view when the queue remains a request—not a hidden calendar reservation—until staff and time are assigned. ClipperDesk keeps queue evidence beside the calendar and validates capacity when the walk-in is converted.',
             'requirements' => ['FR-06', 'FR-08'],
             'symptoms' => ['A verbal queue estimate competes with the next booked client.', 'The team cannot tell why one walk-in moved ahead of another.', 'Actual waits disappear, leaving future estimates to guess.'],
             'practice' => [
@@ -198,7 +198,7 @@ return [
             'label' => 'Protect time with deposits',
             'title' => 'Use deposits as one part of a clear booking policy',
             'description' => 'Show the current deposit and cancellation terms before confirmation, preserve the accepted policy version and apply completed payment evidence at checkout.',
-            'answer' => 'A deposit can help protect reserved time when the amount, due point, cancellation terms and refund handling are clear. Good Hours can calculate and snapshot configured policy, but live collection depends on an approved payment provider and no deposit guarantees attendance.',
+            'answer' => 'A deposit can help protect reserved time when the amount, due point, cancellation terms and refund handling are clear. ClipperDesk can calculate and snapshot configured policy, but live collection depends on an approved payment provider and no deposit guarantees attendance.',
             'requirements' => ['FR-09', 'FR-10', 'FR-14'],
             'symptoms' => ['Clients do not see the cancellation terms until after booking.', 'A policy edit appears to change an older appointment.', 'The front desk cannot trace a deposit into the final balance or refund.'],
             'practice' => [
@@ -208,7 +208,7 @@ return [
                 ['title' => 'Reconcile the money', 'body' => 'Link successful, failed, refunded or waived deposit evidence to the appointment and final Sale without deleting corrections.'],
             ],
             'product_steps' => ['Resolve the published policy for the booking context.', 'Display and snapshot the deposit requirement before confirmation.', 'Accept provider callbacks idempotently when live collection is enabled.', 'Apply completed deposit evidence to checkout and record later corrections.'],
-            'limitations' => ['Live appointment payment collection is not launch-ready until Stripe provider approval, webhook and settlement certification are complete.', 'Good Hours does not guarantee that deposits reduce no-shows or supply legal advice about cancellation terms.'],
+            'limitations' => ['Live appointment payment collection is not launch-ready until Stripe provider approval, webhook and settlement certification are complete.', 'ClipperDesk does not guarantee that deposits reduce no-shows or supply legal advice about cancellation terms.'],
             'feature' => 'online-booking',
             'solution' => 'independent-stylists',
         ],
@@ -216,7 +216,7 @@ return [
             'label' => 'Keep client history together',
             'title' => 'Keep useful client history connected to the service record',
             'description' => 'Connect visits, preferences, protected notes, forms, consent, messages and purchases while keeping sensitive context permission-aware.',
-            'answer' => 'A useful client history connects service and commerce records without turning every note into public team context. Good Hours keeps one Business-owned profile with authored, permission-aware records and conservative matching rather than silently merging similar people.',
+            'answer' => 'A useful client history connects service and commerce records without turning every note into public team context. ClipperDesk keeps one Business-owned profile with authored, permission-aware records and conservative matching rather than silently merging similar people.',
             'requirements' => ['FR-11', 'FR-12', 'FR-13', 'FR-14', 'FR-19'],
             'symptoms' => ['Preferences and formulas live in personal notes that the next authorised professional cannot find.', 'Duplicate profiles split visits and receipts across identities.', 'A contact update loses the earlier audit trail or weakens secure links.'],
             'practice' => [
@@ -226,7 +226,7 @@ return [
                 ['title' => 'Preserve requests and changes', 'body' => 'Track consent, contact changes and privacy cases with authorship and deadlines rather than erasing the evidence.'],
             ],
             'product_steps' => ['Open the Business-owned client profile from the appointment.', 'Review visits, forms and protected notes within current permission scope.', 'Carry completed service and Sale context into history.', 'Audit identity changes, merges and privacy-request outcomes.'],
-            'limitations' => ['Final destructive deletion and anonymisation remain blocked until OPEN-10 approves the retention schedule and executor.', 'Good Hours is not a medical-record system and does not claim healthcare regulatory compliance.'],
+            'limitations' => ['Final destructive deletion and anonymisation remain blocked until OPEN-10 approves the retention schedule and executor.', 'ClipperDesk is not a medical-record system and does not claim healthcare regulatory compliance.'],
             'feature' => 'client-management',
             'solution' => 'spas',
         ],
@@ -235,7 +235,7 @@ return [
         'booking-policy-basics' => [
             'title' => 'Booking policy basics for a clearer client decision',
             'description' => 'A practical framework for making booking, deposit, cancellation and change terms visible and operable.',
-            'topic' => 'Booking policy', 'published_at' => '2026-08-16', 'reviewed_by' => 'Good Hours Product and Engineering',
+            'topic' => 'Booking policy', 'published_at' => '2026-08-16', 'reviewed_by' => 'ClipperDesk Product and Engineering',
             'intro' => 'A useful booking policy tells clients what is reserved, what may be charged, when changes are allowed and how exceptions are handled. It should match the team’s actual operating process and receive appropriate legal review.',
             'sections' => [
                 ['title' => 'Start with the operating decision', 'body' => 'List which services, staff or lead times need special handling. Avoid copying a stricter policy that the team cannot apply consistently.'],
@@ -244,13 +244,13 @@ return [
                 ['title' => 'Design the exception path', 'body' => 'Define who may waive a deposit or policy warning, which reason is recorded and how a refund or checkout correction remains traceable.'],
             ],
             'checklist' => ['Services and circumstances covered', 'Deposit calculation and due point', 'Cancellation/reschedule window', 'Late/no-show handling', 'Refund/waiver authority and reason', 'Client-visible contact or recovery path', 'Legal and operations approval date'],
-            'limitation' => 'This guide is general operating guidance, not legal advice. Live deposit collection in Good Hours remains provider-qualified.',
+            'limitation' => 'This guide is general operating guidance, not legal advice. Live deposit collection in ClipperDesk remains provider-qualified.',
             'feature' => 'online-booking',
         ],
         'salon-opening-checklist' => [
             'title' => 'A salon opening checklist grounded in the working day',
             'description' => 'Prepare the minimum business, location, service, staff and booking rules needed before sharing an online booking link.',
-            'topic' => 'Salon setup', 'published_at' => '2026-08-16', 'reviewed_by' => 'Good Hours Product and Engineering',
+            'topic' => 'Salon setup', 'published_at' => '2026-08-16', 'reviewed_by' => 'ClipperDesk Product and Engineering',
             'intro' => 'Opening readiness is clearer when it names each blocking operating fact instead of hiding the work behind a percentage. Complete the facts your calendar and clients depend on first.',
             'sections' => [
                 ['title' => 'Define the Business and location day', 'body' => 'Confirm display name, time zone, currency, address/contact context and the local opening intervals that determine bookable time.'],

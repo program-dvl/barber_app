@@ -7,6 +7,7 @@ use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\PlatformNotice;
 use App\Domain\PlatformAccess\Models\SupportAccessSession;
 use App\Domain\PlatformAccess\Services\MembershipAccessManager;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -41,13 +42,35 @@ class HandleInertiaRequests extends Middleware
 
         return [
             ...parent::share($request),
-            'appName' => config('app.name'),
+            'appName' => config('brand.product_name'),
+            'brand' => fn () => [
+                'product_name' => config('brand.product_name'),
+                'company_name' => config('brand.company_name'),
+                'tagline' => config('brand.tagline'),
+                'description' => config('brand.description'),
+                'logo' => config('brand.logo'),
+                'logo_inverse' => config('brand.logo_inverse'),
+                'logo_mark' => config('brand.logo_mark'),
+                'logo_mark_inverse' => config('brand.logo_mark_inverse'),
+                'favicon' => config('brand.favicon'),
+                'website_url' => config('brand.website_url'),
+                'booking_host' => config('brand.booking_host'),
+                'support_email' => config('brand.support_email'),
+            ],
             'signupIntent' => fn () => $request->routeIs('register')
                 ? app(PublicPricingCatalog::class)->validSelection(
                     $request->query('plan'),
                     $request->query('interval')
                 )
                 : null,
+            'googleAuth' => fn () => [
+                'enabled' => filled(config('services.google.client_id'))
+                    && filled(config('services.google.client_secret'))
+                    && filled(config('services.google.redirect')),
+                'pending_registration' => $request->routeIs('register')
+                    ? SocialiteController::sharedPendingRegistration($request)
+                    : null,
+            ],
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

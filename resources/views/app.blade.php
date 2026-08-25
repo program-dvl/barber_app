@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html lang="en-IN" data-theme="good-hours" class="scroll-smooth">
+<html lang="en-IN" data-theme="clipperdesk" class="scroll-smooth">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="application-name" content="{{ config('brand.product_name') }}">
+        <meta name="theme-color" content="#0f172a">
+        <link rel="icon" href="{{ config('brand.favicon') }}" type="image/svg+xml">
 
         @include('seo.metatags', ['seo' => $page['props']['seo'] ?? null])
         <!-- Scripts -->

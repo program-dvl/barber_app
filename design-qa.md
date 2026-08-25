@@ -70,7 +70,7 @@ No actionable P0, P1, or P2 visual or interaction findings remain.
 - Colors and visual tokens: pine, oat, raised ivory, poppy action, apricot
   accent, semantic status colors, borders, and focus ring use the canonical
   design tokens. State meaning is never communicated by color alone.
-- Image quality and asset fidelity: the accepted raster Good Hours mark is used
+- Image quality and asset fidelity: the approved ClipperDesk SVG mark is used
   at native-quality sizes. The target dashboards contain no required photos or
   illustration assets. Heroicons supply standard UI icons; no new inline SVG,
   CSS drawing, emoji, or placeholder asset was introduced.

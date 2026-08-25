@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use RuntimeException;
 
-/** Synchronizes the only approved Good Hours SaaS catalog with Paddle. */
+/** Synchronizes the only approved ClipperDesk SaaS catalog with Paddle. */
 class SyncPaddleCatalog extends Command
 {
     /**
@@ -29,7 +29,7 @@ class SyncPaddleCatalog extends Command
                             {--apply : Create or synchronize the Paddle catalog and local effective-dated mappings}
                             {--dry-run : Show the intended changes without writing to Paddle or the database}';
 
-    protected $description = 'Create or safely synchronize Good Hours Starter and Pro recurring Paddle prices.';
+    protected $description = 'Create or safely synchronize ClipperDesk Starter and Pro recurring Paddle prices.';
 
     public function handle(): int
     {
@@ -233,7 +233,7 @@ class SyncPaddleCatalog extends Command
         return [
             'product_id' => $productId,
             'name' => $definition['name'].' '.str($interval)->headline(),
-            'description' => $definition['name'].' '.$interval.' Good Hours subscription.',
+            'description' => $definition['name'].' '.$interval.' ClipperDesk subscription.',
             'billing_cycle' => ['interval' => $interval === 'annual' ? 'year' : 'month', 'frequency' => 1],
             'unit_price' => ['amount' => (string) $amountMinor, 'currency_code' => 'USD'],
             'tax_mode' => 'account_setting',
@@ -249,7 +249,7 @@ class SyncPaddleCatalog extends Command
     {
         return [
             'name' => $definition['name'].' '.str($interval)->headline(),
-            'description' => $definition['name'].' '.$interval.' Good Hours subscription.',
+            'description' => $definition['name'].' '.$interval.' ClipperDesk subscription.',
             'custom_data' => ['good_hours_plan_code' => $definition['code'], 'good_hours_interval' => $interval],
         ];
     }
@@ -260,7 +260,7 @@ class SyncPaddleCatalog extends Command
         return [
             [
                 'code' => 'starter',
-                'name' => 'Good Hours Starter',
+                'name' => 'ClipperDesk Starter',
                 'description' => 'For solo and small shops ready to run their day with confidence.',
                 // Update these values, then run: php artisan billing:sync-paddle-catalog --apply
                 'prices' => ['monthly' => 5000, 'annual' => 50000],
@@ -279,7 +279,7 @@ class SyncPaddleCatalog extends Command
             ],
             [
                 'code' => 'pro',
-                'name' => 'Good Hours Pro',
+                'name' => 'ClipperDesk Pro',
                 'description' => 'For growing salons that need deeper operational control and insight.',
                 // Update these values, then run: php artisan billing:sync-paddle-catalog --apply
                 'prices' => ['monthly' => 10000, 'annual' => 100000],

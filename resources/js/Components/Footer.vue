@@ -9,7 +9,7 @@
                 <!-- Brand Section -->
                 <div class="lg:col-span-2">
                     <a href="/" class="flex items-center gap-3 font-bold text-xl">
-                        <img class="h-10 w-10" src="/images/logo.svg" :alt="$page.props.appName">
+                        <img class="h-10 w-10" :src="$page.props.brand.logo_mark" :alt="$page.props.brand.product_name">
                         <span class="text-lg font-semibold tracking-tight">{{ $page.props.appName }}</span>
                     </a>
                     <p class="mt-6 max-w-md text-sm leading-relaxed text-base-content/70">

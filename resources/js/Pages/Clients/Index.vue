@@ -22,11 +22,11 @@ const runSearch = () => router.get(route('business.clients.index', page.props.te
                 <form class="flex flex-col gap-3 sm:flex-row" @submit.prevent="runSearch">
                     <label class="min-w-0 flex-1">
                         <span class="ds-sr-only">Search clients</span>
-                        <input v-model="search" type="search" class="gh-input" :placeholder="canContact ? 'Name, mobile number, or email' : 'Client name'" autocomplete="off">
+                        <input v-model="search" type="search" class="cd-input" :placeholder="canContact ? 'Name, mobile number, or email' : 'Client name'" autocomplete="off">
                     </label>
                     <AppButton type="submit">Search</AppButton>
                 </form>
-                <p v-if="duplicateCount" class="mt-4 rounded-lg bg-[var(--status-warning-soft)] px-3 py-2 text-sm text-[var(--status-warning)]"><strong>{{ duplicateCount }}</strong> possible duplicate{{ duplicateCount === 1 ? '' : 's' }} need review. Good Hours never merges client records automatically.</p>
+                <p v-if="duplicateCount" class="mt-4 rounded-lg bg-[var(--status-warning-soft)] px-3 py-2 text-sm text-[var(--status-warning)]"><strong>{{ duplicateCount }}</strong> possible duplicate{{ duplicateCount === 1 ? '' : 's' }} need review. ClipperDesk never merges client records automatically.</p>
             </SurfaceCard>
         </div>
 
@@ -39,7 +39,7 @@ const runSearch = () => router.get(route('business.clients.index', page.props.te
                             <p class="truncate font-semibold text-[var(--text-strong)]">{{ client.name }}</p>
                             <p v-if="canContact" class="truncate text-sm text-[var(--text-muted)]">{{ client.mobile || client.email || 'No contact details yet' }}</p>
                         </div>
-                        <p class="text-sm text-[var(--text-muted)]"><span v-if="client.marketing_status !== 'unknown'" class="gh-status bg-[var(--surface-subtle)] text-[var(--text-default)]">Marketing {{ client.marketing_status.replace('_', ' ') }}</span></p>
+                        <p class="text-sm text-[var(--text-muted)]"><span v-if="client.marketing_status !== 'unknown'" class="cd-status bg-[var(--surface-subtle)] text-[var(--text-default)]">Marketing {{ client.marketing_status.replace('_', ' ') }}</span></p>
                         <p class="text-sm font-medium sm:text-right">{{ client.visit_count }} {{ client.visit_count === 1 ? 'visit' : 'visits' }}</p>
                     </Link>
                 </li>

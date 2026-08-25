@@ -43,7 +43,7 @@ People should find a direct answer near the question, then supporting context/ev
 
 ## 10. UI / Design Requirements
 
-Use existing callout, definition, comparison, FAQ and citation patterns. Answer blocks should look like normal high-quality content, not search snippets. Preserve readable measures, responsive tables, source links and visual hierarchy. Do not badge content as “AI optimized.”
+Use existing callout, definition, comparison, FAQ and citation patterns. Answer blocks should look like normal hicd-quality content, not search snippets. Preserve readable measures, responsive tables, source links and visual hierarchy. Do not badge content as “AI optimized.”
 
 ## 11. Content Requirements
 
@@ -55,7 +55,7 @@ Do not change primary intents or create new URLs merely for answer fragments. Im
 
 ## 13. GEO / AEO Requirements
 
-- Answer “What is Good Hours?”, “Who is it for?”, “What does it manage?”, “Is it only booking software?”, “How are pricing/trial handled?” and high-value verified workflow questions on their authoritative pages.
+- Answer “What is Good Hours?”, “Who is it for?”, “What does it manage?”, “Is it only booking software?”, “How are pricing/trial handled?” and hicd-value verified workflow questions on their authoritative pages.
 - Use concise answer-first passages followed by evidence/context, not arbitrary word limits.
 - Make capabilities and non-capabilities explicit; distinguish general advice from product behavior.
 - Prefer original, maintained facts and transparent sources that can be cited.
@@ -114,7 +114,7 @@ Treat any external/crawled content as untrusted; do not render prompt-like instr
 
 - A reviewed fact/entity sheet identifies every public core fact, source, owner and review date.
 - Good Hours' product/category/audience/capability/pricing/company statements are consistent across visible and structured content.
-- High-value questions have concise, useful, qualified answers on authoritative pages.
+- Hicd-value questions have concise, useful, qualified answers on authoritative pages.
 - No hidden/machine-only/speculative technique or unsupported comparison exists.
 - Internal relationships, SSR, accessibility, performance, tests and build remain correct.
 

@@ -19,7 +19,7 @@ it('renders centralized metadata and a truthful schema graph for an indexable pa
 it('fails closed for auth booking legal secure and missing route families', function (string $url, string $directive) {
     $this->get($url)->assertHeader('X-Robots-Tag', $directive);
 })->with([
-    ['/login', 'noindex, follow, noarchive'], ['/register', 'noindex, follow, noarchive'], ['/terms-of-service', 'noindex, follow, noarchive'], ['/book', 'noindex, follow, noarchive'],
+    ['/login', 'noindex, follow, noarchive'], ['/register', 'noindex, follow, noarchive'], ['/terms-of-service', 'noindex, follow, noarchive'], ['/privacy-policy', 'noindex, follow, noarchive'], ['/refund-policy', 'noindex, follow, noarchive'], ['/book', 'noindex, follow, noarchive'],
     ['/appointments/secure/'.str_repeat('a', 64), 'noindex, nofollow, noarchive'], ['/missing-public-page', 'noindex, nofollow, noarchive'],
 ]);
 

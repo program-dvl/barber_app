@@ -21,8 +21,8 @@ class SolutionController extends Controller
         return Inertia::render('Marketing/Solutions/Index', [
             'solutions' => $solutions,
             'seo' => [
-                'title' => 'Good Hours for salons, barbershops and independent professionals',
-                'description' => 'See how Good Hours supports distinct daily workflows for barbershops, salons, independent stylists and small non-medical spas.',
+                'title' => 'ClipperDesk for salons, barbershops and independent professionals',
+                'description' => 'See how ClipperDesk supports distinct daily workflows for barbershops, salons, independent stylists and small non-medical spas.',
                 'canonical' => route('marketing.solutions'),
             ],
         ]);
@@ -43,7 +43,7 @@ class SolutionController extends Controller
                 'title' => $features[$slug]['title'],
             ])->values(),
             'seo' => [
-                'title' => $content['title'].' | Good Hours',
+                'title' => $content['title'].' | ClipperDesk',
                 'description' => $content['description'],
                 'canonical' => route('marketing.solutions.show', $solution),
             ],

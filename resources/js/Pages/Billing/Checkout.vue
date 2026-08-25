@@ -217,7 +217,7 @@ onMounted(() => {
             <div class="mt-3 flex flex-col gap-4 border-b border-[var(--border-subtle)] pb-7 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--action-primary)]">Secure subscription checkout</p>
-                    <h1 class="mt-2 text-3xl font-semibold tracking-tight text-[var(--text-strong)] sm:text-4xl">Complete your Good Hours subscription</h1>
+                    <h1 class="mt-2 text-3xl font-semibold tracking-tight text-[var(--text-strong)] sm:text-4xl">Complete your ClipperDesk subscription</h1>
                     <p class="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-muted)]">Review the account and plan, then pay in the protected Paddle form embedded below. You will not be sent to another website.</p>
                 </div>
                 <div class="flex items-center gap-2 rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 py-2 text-xs font-semibold text-[var(--text-muted)] shadow-sm">
@@ -228,7 +228,7 @@ onMounted(() => {
             <ol class="mt-6 grid gap-3 text-sm sm:grid-cols-3" aria-label="Checkout progress">
                 <li class="flex items-center gap-3 rounded-xl border border-[var(--status-success)] bg-[var(--status-success-soft)] px-4 py-3 font-semibold text-[var(--text-strong)]"><span class="grid size-7 place-items-center rounded-full bg-[var(--status-success)] text-xs text-white">1</span> Plan selected</li>
                 <li class="flex items-center gap-3 rounded-xl border border-[var(--status-success)] bg-[var(--status-success-soft)] px-4 py-3 font-semibold text-[var(--text-strong)]"><span class="grid size-7 place-items-center rounded-full bg-[var(--status-success)] text-xs text-white">2</span> Account confirmed</li>
-                <li class="flex items-center gap-3 rounded-xl border border-[var(--border-strong)] bg-[var(--surface-raised)] px-4 py-3 font-semibold text-[var(--text-strong)]"><span class="grid size-7 place-items-center rounded-full bg-[var(--brand-pine)] text-xs text-white">3</span> Secure payment</li>
+                <li class="flex items-center gap-3 rounded-xl border border-[var(--border-strong)] bg-[var(--surface-raised)] px-4 py-3 font-semibold text-[var(--text-strong)]"><span class="grid size-7 place-items-center rounded-full bg-[var(--brand-primary)] text-xs text-white">3</span> Secure payment</li>
             </ol>
 
             <p v-if="error && !completed" class="mt-6 rounded-xl border border-[var(--status-danger)] bg-[var(--status-danger-soft)] p-4 text-sm text-[var(--status-danger)]" role="alert">{{ error }}</p>
@@ -246,7 +246,7 @@ onMounted(() => {
                             </span>
                             <p class="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--action-primary)]">{{ confirmationState === 'confirmed' ? 'Purchase confirmed' : 'Payment accepted' }}</p>
                             <h3 class="mt-2 text-2xl font-semibold tracking-tight text-[var(--text-strong)]">{{ confirmationState === 'confirmed' ? `${price.plan.name} is now active` : `Confirming your ${price.plan.name} subscription` }}</h3>
-                            <p class="mt-3 text-sm leading-6 text-[var(--text-muted)]">{{ confirmationState === 'confirmed' ? 'Your plan, renewal details, and Paddle invoice are now recorded in Good Hours.' : 'Paddle accepted the checkout. Good Hours is securely verifying the transaction and subscription; you can safely keep this page open.' }}</p>
+                            <p class="mt-3 text-sm leading-6 text-[var(--text-muted)]">{{ confirmationState === 'confirmed' ? 'Your plan, renewal details, and Paddle invoice are now recorded in ClipperDesk.' : 'Paddle accepted the checkout. ClipperDesk is securely verifying the transaction and subscription; you can safely keep this page open.' }}</p>
                             <p v-if="error && confirmationState === 'processing'" class="mt-4 rounded-xl bg-[var(--status-warning-soft)] p-3 text-sm text-[var(--status-warning)]">{{ error }}</p>
                             <AppButton v-if="confirmationState === 'confirmed'" :href="`${billingUrl()}?checkout=success`" class="mt-7">View active plan and invoice</AppButton>
                         </div>
@@ -254,20 +254,20 @@ onMounted(() => {
 
                     <div v-else-if="!checkoutStarted" class="p-5 sm:p-7">
                         <div class="grid gap-4 sm:grid-cols-2">
-                            <label class="text-sm font-semibold text-[var(--text-strong)]">Account owner<input :value="billingContact.name" disabled class="gh-input mt-2 block w-full disabled:cursor-not-allowed disabled:bg-[var(--surface-subtle)] disabled:text-[var(--text-muted)]" /></label>
-                            <label class="text-sm font-semibold text-[var(--text-strong)]">Billing email<input :value="billingContact.email" disabled type="email" class="gh-input mt-2 block w-full disabled:cursor-not-allowed disabled:bg-[var(--surface-subtle)] disabled:text-[var(--text-muted)]" /></label>
+                            <label class="text-sm font-semibold text-[var(--text-strong)]">Account owner<input :value="billingContact.name" disabled class="cd-input mt-2 block w-full disabled:cursor-not-allowed disabled:bg-[var(--surface-subtle)] disabled:text-[var(--text-muted)]" /></label>
+                            <label class="text-sm font-semibold text-[var(--text-strong)]">Billing email<input :value="billingContact.email" disabled type="email" class="cd-input mt-2 block w-full disabled:cursor-not-allowed disabled:bg-[var(--surface-subtle)] disabled:text-[var(--text-muted)]" /></label>
                         </div>
-                        <label class="mt-5 block text-sm font-semibold text-[var(--text-strong)]">Promotion code <span class="font-normal text-[var(--text-muted)]">(optional)</span><input v-model="coupon" class="gh-input mt-2 block w-full" maxlength="64" autocomplete="off" placeholder="Enter a valid code" /></label>
+                        <label class="mt-5 block text-sm font-semibold text-[var(--text-strong)]">Promotion code <span class="font-normal text-[var(--text-muted)]">(optional)</span><input v-model="coupon" class="cd-input mt-2 block w-full" maxlength="64" autocomplete="off" placeholder="Enter a valid code" /></label>
 
                         <div class="mt-6 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-subtle)] p-4 text-sm leading-6 text-[var(--text-muted)]">
-                            <div class="flex gap-3"><LockClosedIcon class="mt-0.5 size-5 shrink-0 text-[var(--action-primary)]" aria-hidden="true" /><p>Card information never touches Good Hours servers. Paddle calculates applicable tax and shows the final total before you confirm.</p></div>
+                            <div class="flex gap-3"><LockClosedIcon class="mt-0.5 size-5 shrink-0 text-[var(--action-primary)]" aria-hidden="true" /><p>Card information never touches ClipperDesk servers. Paddle calculates applicable tax and shows the final total before you confirm.</p></div>
                         </div>
 
-                        <button class="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--brand-pine)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--action-primary-hover)] disabled:cursor-wait disabled:opacity-65" type="button" :disabled="loading || !paddle.configured" :aria-busy="loading" @click="startCheckout">
+                        <button class="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--brand-primary)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--action-primary-hover)] disabled:cursor-wait disabled:opacity-65" type="button" :disabled="loading || !paddle.configured" :aria-busy="loading" @click="startCheckout">
                             <CreditCardIcon class="size-5" aria-hidden="true" /> {{ loading ? 'Preparing secure form…' : 'Continue to payment details' }}
                         </button>
                         <p v-if="!paddle.configured" class="mt-3 text-center text-sm text-[var(--status-danger)]">Paddle checkout is not configured for this environment.</p>
-                        <p class="mt-4 text-center text-xs leading-5 text-[var(--text-muted)]">By continuing, you agree to the <a :href="termsUrl" target="_blank" rel="noopener" class="font-semibold text-[var(--action-primary)] hover:underline">Terms</a> and acknowledge the <a :href="privacyUrl" target="_blank" rel="noopener" class="font-semibold text-[var(--action-primary)] hover:underline">Privacy Policy</a>.</p>
+                        <p class="mt-4 text-center text-xs leading-5 text-[var(--text-muted)]">By continuing, you agree to the <a :href="termsUrl" target="_blank" rel="noopener" class="font-semibold text-[var(--action-primary)] hover:underline">Terms</a>, acknowledge the <a :href="privacyUrl" target="_blank" rel="noopener" class="font-semibold text-[var(--action-primary)] hover:underline">Privacy Policy</a>, and confirm you reviewed the <a :href="route('refund.show')" target="_blank" rel="noopener" class="font-semibold text-[var(--action-primary)] hover:underline">Refund Policy</a>.</p>
                     </div>
 
                     <div v-else class="relative min-h-[35rem] px-2 py-4 sm:px-5">
@@ -278,7 +278,7 @@ onMounted(() => {
 
                 <aside class="space-y-5 lg:sticky lg:top-6">
                     <section class="overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-[var(--shadow-raised)]">
-                        <div class="bg-[var(--brand-pine)] px-6 py-6 text-white"><div class="flex items-center gap-2 text-sm font-semibold text-white/75"><SparklesIcon class="size-4" aria-hidden="true" /> Selected plan</div><h2 class="mt-3 text-2xl font-semibold">{{ price.plan.name }}</h2><p class="mt-2 text-sm leading-5 text-white/75">{{ price.plan.description }}</p></div>
+                        <div class="bg-[var(--brand-primary)] px-6 py-6 text-white"><div class="flex items-center gap-2 text-sm font-semibold text-white/75"><SparklesIcon class="size-4" aria-hidden="true" /> Selected plan</div><h2 class="mt-3 text-2xl font-semibold">{{ price.plan.name }}</h2><p class="mt-2 text-sm leading-5 text-white/75">{{ price.plan.description }}</p></div>
                         <div class="p-6"><div class="flex items-end justify-between gap-4"><span class="text-sm text-[var(--text-muted)]">Subscription</span><div class="text-right"><strong class="text-2xl font-semibold text-[var(--text-strong)]">{{ displayTotal }}</strong><span class="block text-xs text-[var(--text-muted)]">per {{ intervalLabel }}</span></div></div><div v-if="totals" class="mt-5 space-y-2 border-t border-[var(--border-subtle)] pt-4 text-sm"><div class="flex justify-between"><span class="text-[var(--text-muted)]">Subtotal</span><span>{{ moneyFromPaddle(totals.subtotal, totals.currency) }}</span></div><div class="flex justify-between"><span class="text-[var(--text-muted)]">Tax</span><span>{{ moneyFromPaddle(totals.tax, totals.currency) }}</span></div><div v-if="Number(totals.discount) > 0" class="flex justify-between text-[var(--status-success)]"><span>Discount</span><span>−{{ moneyFromPaddle(totals.discount, totals.currency) }}</span></div></div><ul class="mt-5 space-y-3 border-t border-[var(--border-subtle)] pt-5 text-sm"><li v-for="feature in includedFeatures" :key="feature" class="flex gap-3"><CheckCircleIcon class="mt-0.5 size-5 shrink-0 text-[var(--status-success)]" aria-hidden="true" />{{ feature }}</li></ul></div>
                     </section>
 

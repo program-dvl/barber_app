@@ -22,11 +22,10 @@
         </div>
     @endif
     <div class="absolute bottom-24 left-12">
-        <img class="w-[100px]" src="{{ asset('images/logo.svg') }}" alt="">
+        <img class="w-[100px]" src="{{ asset(ltrim(config('brand.logo_mark'), '/')) }}" alt="">
     </div>
 {{--    Uncomment the following code to add the background logo to the bottom right corner of the image.--}}
 {{--    <div class="absolute -bottom-[560px] -right-[200px] opacity-5">--}}
-{{--        <img class="w-[1200px]" src="{{ asset('images/logo.svg') }}" alt="">--}}
 {{--    </div>--}}
 </div>
 </body>

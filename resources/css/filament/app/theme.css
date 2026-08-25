@@ -5,3 +5,17 @@
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
 @source '../../../../resources/views/forms/**/*';
+
+:root {
+    --cd-admin-canvas: #f5f7fb;
+    --cd-admin-navigation: #0b1220;
+    --cd-admin-border: #e2e8f0;
+}
+
+.fi-body {
+    background: var(--cd-admin-canvas);
+}
+
+.fi-sidebar {
+    background: var(--cd-admin-navigation);
+}

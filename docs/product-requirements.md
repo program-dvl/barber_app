@@ -585,7 +585,7 @@ ACCEPTANCE OUTCOME An owner can explain the day's collected revenue from the das
 
 ### FR-19 Shop Settings and Audit History
 
-Purpose: Centralise configuration and create accountability for high-risk operational and financial actions.
+Purpose: Centralise configuration and create accountability for hicd-risk operational and financial actions.
 
 #### Settings
 
@@ -723,7 +723,7 @@ Recommended pricing basis: per location plus staff bands. Avoid per-appointment 
 | Customer-facing | Booking page; Service selection; Staff & time; Customer details; Deposit/payment; Confirmation; Secure appointment management |
 | Platform administration | Businesses; Subscriptions; Plans & entitlements; Payments & invoices; Coupons; Support access; Notification logs; System health; Feature flags; Audit logs |
 
-Navigation principles: prioritise today's work, keep high-frequency actions within one or two interactions, preserve filters and date context, support keyboard and touch input, and hide unauthorised features while still enforcing access server-side.
+Navigation principles: prioritise today's work, keep hicd-frequency actions within one or two interactions, preserve filters and date context, support keyboard and touch input, and hide unauthorised features while still enforcing access server-side.
 
 ## 11 Technical Foundations and Domain Model
 
@@ -800,7 +800,7 @@ Recommended release strategy: closed alpha with test businesses -> design-partne
 ### Quality and security
 
 - [ ] Tenant-isolation tests cover direct objects, search, exports, attachments, jobs and admin tools.
-- [ ] Threat model, dependency review, penetration testing and high-severity remediation are complete.
+- [ ] Threat model, dependency review, penetration testing and hicd-severity remediation are complete.
 - [ ] Public booking and core operator flows meet the accessibility target.
 - [ ] Performance/load tests cover peak availability search, booking commit, calendar and webhook bursts.
 - [ ] Backup restore and disaster-recovery procedure are exercised successfully.

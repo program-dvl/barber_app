@@ -1,7 +1,12 @@
 <script setup>
-import goodHoursMark from '../../../images/brand/good-hours-mark.png';
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import clipperDeskMark from '../../../images/brand/clipperdesk-mark.svg';
+
+const page = usePage();
+const productName = computed(() => page.props.brand?.product_name ?? 'ClipperDesk');
 </script>
 
 <template>
-    <img :src="goodHoursMark" alt="Good Hours" class="h-10 w-10 object-contain">
+    <img :src="clipperDeskMark" :alt="productName" class="h-10 w-10 object-contain">
 </template>

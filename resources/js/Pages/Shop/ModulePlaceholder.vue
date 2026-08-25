@@ -20,7 +20,7 @@ defineProps({
             <StatePanel
                 tone="info"
                 title="This area is coming later"
-                description="The navigation is reserved so the workspace remains familiar as Good Hours grows. No unfinished controls or sample records are exposed here."
+                description="The navigation is reserved so the workspace remains familiar as ClipperDesk grows. No unfinished controls or sample records are exposed here."
             >
                 <template #actions><AppButton :href="route('business.dashboard', $page.props.tenant.public_id)" variant="secondary">Return to dashboard</AppButton></template>
             </StatePanel>

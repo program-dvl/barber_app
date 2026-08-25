@@ -42,7 +42,7 @@ function editorialArticle(array $overrides = []): Article
     return Article::withoutEvents(fn () => Article::query()->create(array_merge([
         'user_id' => $user->id, 'title' => 'A reviewed operating note', 'slug' => 'reviewed-operating-note',
         'content' => 'Useful reviewed content.', 'excerpt' => 'A concise reviewed answer for salon operators.', 'topic' => 'Operations',
-        'thumbnail' => 'articles/synthetic.webp', 'seo_title' => 'A reviewed operating note', 'seo_description' => 'A reviewed Good Hours operating article.',
-        'active' => true, 'status' => 'published', 'content_owner' => 'Good Hours Product', 'published_at' => now()->subDay(), 'reviewed_at' => now()->subDay(),
+        'thumbnail' => 'articles/synthetic.webp', 'seo_title' => 'A reviewed operating note', 'seo_description' => 'A reviewed ClipperDesk operating article.',
+        'active' => true, 'status' => 'published', 'content_owner' => 'ClipperDesk Product', 'published_at' => now()->subDay(), 'reviewed_at' => now()->subDay(),
     ], $overrides)));
 }

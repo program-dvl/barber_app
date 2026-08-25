@@ -35,9 +35,9 @@ const localDateLabel = computed(() => new Intl.DateTimeFormat(undefined, { dateS
 const localTime = value => new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit', timeZone: props.calendar.timeZone }).format(new Date(value));
 const localHour = value => Number(new Intl.DateTimeFormat('en-GB', { hour: '2-digit', hour12: false, timeZone: props.calendar.timeZone }).format(new Date(value)));
 const statusStyle = tone => ({
-    warning: 'border-amber-300 bg-amber-50', info: 'border-sky-300 bg-sky-50', success: 'border-emerald-300 bg-emerald-50',
-    strong: 'border-[var(--brand-pine)] bg-[var(--status-success-soft)]', danger: 'border-red-300 bg-red-50', neutral: 'border-slate-300 bg-slate-50',
-}[tone] || 'border-slate-300 bg-white');
+    warning: 'border-[var(--status-warning)] bg-[var(--status-warning-soft)]', info: 'border-[var(--status-info)] bg-[var(--status-info-soft)]', success: 'border-[var(--status-success)] bg-[var(--status-success-soft)]',
+    strong: 'border-[var(--brand-secondary)] bg-[var(--action-secondary-hover)]', danger: 'border-[var(--status-danger)] bg-[var(--status-danger-soft)]', neutral: 'border-[var(--border-default)] bg-[var(--surface-subtle)]',
+}[tone] || 'border-[var(--border-default)] bg-[var(--surface-raised)]');
 
 const applyFilters = overrides => router.get(route('business.calendar', route().params.business), { ...props.filters, ...overrides }, { preserveState: true, replace: true });
 const shiftDate = amount => {
@@ -211,11 +211,11 @@ onMounted(() => {
                         <div class="border-r border-[var(--border-subtle)] p-3 text-xs font-semibold text-[var(--text-muted)]">{{ String(hour).padStart(2, '0') }}:00</div>
                         <div class="grid gap-2 p-2 sm:grid-cols-2 lg:grid-cols-3">
                             <article v-for="event in appointments.filter(item => localHour(item.startsAt) === hour)" :key="event.id" tabindex="0" draggable="true" :class="['cursor-pointer rounded-xl border-l-4 p-3 shadow-sm', statusStyle(event.tone), activeEvent?.id === event.id ? 'ring-2 ring-[var(--focus-ring)] ring-offset-2' : '']" @click="activeEvent = event" @focus="activeEvent = event" @dragstart="$event.dataTransfer.setData('text/calendar-event', event.id)">
-                                <div class="flex items-start justify-between gap-2"><div><p class="text-xs font-bold uppercase tracking-wide">{{ event.statusCue }}</p><h3 class="mt-1 font-semibold text-[var(--text-strong)]">{{ event.title }}</h3></div><span class="gh-status bg-white/70 text-[var(--text-default)]">{{ event.statusLabel }}</span></div>
+                                <div class="flex items-start justify-between gap-2"><div><p class="text-xs font-bold uppercase tracking-wide">{{ event.statusCue }}</p><h3 class="mt-1 font-semibold text-[var(--text-strong)]">{{ event.title }}</h3></div><span class="cd-status bg-white/70 text-[var(--text-default)]">{{ event.statusLabel }}</span></div>
                                 <p class="mt-2 text-sm">{{ event.services.map(item => item.name).join(', ') }}</p><p class="mt-1 flex items-center gap-1 text-xs text-[var(--text-muted)]"><ClockIcon class="size-4" aria-hidden="true" />{{ localTime(event.startsAt) }}–{{ localTime(event.endsAt) }}</p>
-                                <p v-if="event.forms.requested" :class="['mt-2 rounded-md px-2 py-1 text-xs font-semibold', event.forms.pending ? 'bg-amber-100 text-amber-900' : 'bg-emerald-100 text-emerald-900']">Forms {{ event.forms.completed }}/{{ event.forms.requested }} complete</p>
+                                <p v-if="event.forms.requested" :class="['mt-2 rounded-md px-2 py-1 text-xs font-semibold', event.forms.pending ? 'bg-[var(--status-warning-soft)] text-[var(--status-warning)]' : 'bg-[var(--status-success-soft)] text-[var(--status-success)]']">Forms {{ event.forms.completed }}/{{ event.forms.requested }} complete</p>
                                 <div v-if="permissions.manage" class="mt-3 flex items-start gap-2" @click.stop>
-                                    <button v-if="nextStatus(event.status)" type="button" class="min-h-11 flex-1 rounded-lg bg-[var(--brand-pine)] px-3 text-xs font-semibold text-white hover:bg-[var(--brand-pine-deep)]" @click="transition(event, nextStatus(event.status))">{{ statusLabel(nextStatus(event.status)) }}</button>
+                                    <button v-if="nextStatus(event.status)" type="button" class="min-h-11 flex-1 rounded-lg bg-[var(--brand-primary)] px-3 text-xs font-semibold text-white hover:bg-[var(--brand-primary-strong)]" @click="transition(event, nextStatus(event.status))">{{ statusLabel(nextStatus(event.status)) }}</button>
                                     <button v-else type="button" class="min-h-11 flex-1 rounded-lg border border-[var(--border-strong)] bg-white px-3 text-xs font-semibold" @click="activeEvent = event">View details</button>
                                     <details class="min-w-0">
                                         <summary class="grid size-11 cursor-pointer list-none place-items-center rounded-lg border border-[var(--border-strong)] bg-white" aria-label="More appointment actions"><EllipsisVerticalIcon class="size-5" aria-hidden="true" /></summary>

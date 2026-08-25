@@ -8,11 +8,10 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/index.js';
 import { i18nVue } from 'laravel-vue-i18n';
 import { installMarketingTelemetryContract } from './Support/marketingTelemetry';
 
-const appName = 'Good Hours';
 installMarketingTelemetryContract();
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
+    title: (title) => `${title} - ${document.querySelector('meta[name="application-name"]')?.content || 'ClipperDesk'}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
@@ -27,6 +26,6 @@ createInertiaApp({
             .mount(el);
     },
     progress: {
-        color: '#C13F28',
+        color: '#4338CA',
     },
 });

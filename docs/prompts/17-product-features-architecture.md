@@ -4,7 +4,7 @@ Execute after the homepage is verified. Build a focused product/feature architec
 
 ## 1. Mission
 
-Create `/features` and the smallest set of high-value feature detail pages that accurately explain Good Hours as a connected operating system, using topic clusters that are useful for evaluation, search discovery and internal linking.
+Create `/features` and the smallest set of hicd-value feature detail pages that accurately explain Good Hours as a connected operating system, using topic clusters that are useful for evaluation, search discovery and internal linking.
 
 ## 2. Why This Phase Exists
 

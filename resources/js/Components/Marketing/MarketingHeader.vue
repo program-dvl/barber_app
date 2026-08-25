@@ -51,7 +51,7 @@ const onPointerDown = (event) => {
 };
 
 watch(() => page.url, () => closeMenu());
-watch(menuOpen, (open) => document.body.classList.toggle('gh-menu-open', open));
+watch(menuOpen, (open) => document.body.classList.toggle('cd-menu-open', open));
 
 onMounted(() => {
     document.addEventListener('keydown', onKeydown);
@@ -59,16 +59,16 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-    document.body.classList.remove('gh-menu-open');
+    document.body.classList.remove('cd-menu-open');
     document.removeEventListener('keydown', onKeydown);
     document.removeEventListener('pointerdown', onPointerDown);
 });
 </script>
 
 <template>
-    <header class="gh-marketing-header sticky top-0 z-40 border-b backdrop-blur">
-        <div class="gh-public-container flex min-h-18 items-center justify-between gap-4 py-3">
-            <Link :href="route('marketing.home')" class="inline-flex min-h-11 items-center rounded-lg" aria-label="Good Hours home">
+    <header class="cd-marketing-header sticky top-0 z-40 border-b backdrop-blur">
+        <div class="cd-public-container flex min-h-18 items-center justify-between gap-4 py-3">
+            <Link :href="route('marketing.home')" class="inline-flex min-h-11 items-center rounded-lg" aria-label="ClipperDesk home">
                 <ProductMark />
             </Link>
 
@@ -77,7 +77,7 @@ onBeforeUnmount(() => {
                     v-for="item in navigation"
                     :key="item.label"
                     :href="route(item.route)"
-                    class="gh-nav-link"
+                    class="cd-nav-link"
                     :aria-current="isCurrent(item) ? 'page' : undefined"
                 >
                     {{ item.label }}
@@ -88,7 +88,7 @@ onBeforeUnmount(() => {
                 <Link
                     v-if="!page.props.auth?.user"
                     :href="route('login')"
-                    class="gh-button gh-button-quiet"
+                    class="cd-button cd-button-quiet"
                 >
                     Log in
                 </Link>
@@ -98,7 +98,7 @@ onBeforeUnmount(() => {
             <button
                 ref="menuButton"
                 type="button"
-                class="gh-icon-button lg:hidden"
+                class="cd-icon-button lg:hidden"
                 :aria-expanded="menuOpen"
                 aria-controls="marketing-mobile-menu"
                 :aria-label="menuOpen ? 'Close navigation' : 'Open navigation'"
@@ -115,18 +115,18 @@ onBeforeUnmount(() => {
             ref="menuPanel"
             class="max-h-[calc(100dvh-4.5rem)] overflow-y-auto border-t border-[var(--border-subtle)] bg-[var(--surface-raised)] lg:hidden"
         >
-            <nav aria-label="Mobile primary" class="gh-public-container flex flex-col gap-1 py-5">
+            <nav aria-label="Mobile primary" class="cd-public-container flex flex-col gap-1 py-5">
                 <Link
                     v-for="item in navigation"
                     :key="item.label"
                     :href="route(item.route)"
-                    class="gh-mobile-nav-link"
+                    class="cd-mobile-nav-link"
                     :aria-current="isCurrent(item) ? 'page' : undefined"
                 >
                     {{ item.label }}
                 </Link>
                 <div class="mt-4 grid gap-2 border-t border-[var(--border-subtle)] pt-4">
-                    <Link v-if="!page.props.auth?.user" :href="route('login')" class="gh-button gh-button-secondary">Log in</Link>
+                    <Link v-if="!page.props.auth?.user" :href="route('login')" class="cd-button cd-button-secondary">Log in</Link>
                     <PublicCta context="mobile_navigation" />
                 </div>
             </nav>

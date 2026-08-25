@@ -5,9 +5,9 @@ defineProps({ title: { type: String, required: true }, description: { type: Stri
 </script>
 
 <template>
-    <section class="gh-public-section">
-        <div class="gh-public-container">
-            <div class="overflow-hidden rounded-[1.5rem] bg-[var(--brand-pine)] px-6 py-10 text-white shadow-[var(--shadow-raised)] sm:px-10 lg:flex lg:items-center lg:justify-between lg:gap-12">
+    <section class="cd-public-section">
+        <div class="cd-public-container">
+            <div class="overflow-hidden rounded-[var(--radius-xl)] bg-[var(--brand-primary)] px-6 py-10 text-white shadow-[var(--shadow-raised)] sm:px-10 lg:flex lg:items-center lg:justify-between lg:gap-12">
                 <div class="max-w-2xl">
                     <h2 class="font-display text-3xl leading-tight sm:text-4xl">{{ title }}</h2>
                     <p class="mt-4 leading-7 text-white/78">{{ description }}</p>

@@ -1,10 +1,11 @@
 <?php
 
-it('keeps the canonical Good Hours definition aligned in visible and machine-readable content', function () {
+it('keeps the canonical ClipperDesk definition aligned in visible and machine-readable content', function () {
     $home = file_get_contents(resource_path('js/Pages/Home.vue'));
     $schema = file_get_contents(app_path('Support/Seo/StructuredDataGraph.php'));
-    expect($home)->toContain('Good Hours is the daily operating system for salons and barbershops')
-        ->and($schema)->toContain('daily operating system for salons and barbershops');
+    expect($home)->toContain('ClipperDesk is the daily operating system for salons and barbershops')
+        ->and(config('brand.description'))->toContain('daily operating system for salons and barbershops')
+        ->and($schema)->toContain("config('brand.description')");
 });
 
 it('contains no machine-only or unsupported answer-engine tactics', function () {

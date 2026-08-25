@@ -1,11 +1,11 @@
 # Project status
 
-Status date: 2026-08-16
+Status date: 2026-08-25
 
 ## Current state
 
-The repository is a Larafast boilerplate being adopted as the base for Good
-Hours, a barber shop and salon management SaaS. The Phase 1 product is
+The repository is a Larafast boilerplate being adopted as the base for
+ClipperDesk, a barber shop and salon management SaaS. The Phase 1 product is
 documented and its reusable product-shell, permanent identity, and tenant/access
 foundation plus FR-01 subscription/entitlement, FR-02 through FR-05 business
 configuration, the FR-06/FR-07 availability/hold/booking-commit core, and the
@@ -19,6 +19,41 @@ FR-14/FR-15 commerce and FR-16 through FR-18 Inventory, Commission/Tip,
 dashboard, reporting, export, and Phase 1 metric instrumentation are implemented
 and locally verified. FR-20 platform administration and the support-grant
 workflow are implemented and locally verified.
+
+## ClipperDesk design-system and identity overhaul (2026-08-25)
+
+- [x] ADR-027 supersedes the former Good Hours presentation identity with
+  ClipperDesk while preserving durable provider, migration, schema, cache, seed,
+  and calendar identifiers where changing them would break compatibility or
+  historical evidence.
+- [x] `config/brand.php` now centralizes public product/company identity, copy,
+  asset paths, support identity, URLs, booking host, and a server-to-client brand
+  projection. Inertia titles, SEO metadata/schema, email, notifications, PDFs,
+  public booking, auth, billing, Filament, and application shell surfaces consume
+  shared values where practical.
+- [x] `resources/css/app.css` now defines the ClipperDesk semantic system for
+  brand, canvas, surface, text, border, action, navigation, focus, status,
+  disabled, typography, spacing, radius, shadow, and DaisyUI compatibility roles.
+- [x] The identity uses deep navy, indigo action, restrained cyan accent,
+  cool-gray canvases, white working surfaces, and self-hosted Manrope. The
+  revised SVG identity is a flat interlocking C/D monogram with no enclosing app
+  tile; horizontal, inverse, mark, favicon, and social-preview variants exist.
+- [x] The public footer is a light neutral continuation of the page. Public
+  acquisition, auth, booking, tenant work, platform administration, billing,
+  configuration, generated documents, and error surfaces share the same tokens
+  without forcing the same layout.
+- [x] Representative in-app browser checks covered the homepage, pricing, login,
+  registration, booking, 404, dashboard, calendar, Clients, Staff, billing,
+  configuration, platform administration, and mobile navigation. Every checked
+  page had no horizontal overflow or visible Good Hours copy; controls were
+  labelled. Mobile billing interval, invoice-document, and dashboard-report
+  targets discovered during QA were raised to the 44px interaction target.
+- [x] Final verification: Pint passed, the client and SSR production builds
+  passed, and front-site budgets passed for 17 route entries. The PHP suite
+  reported 255 passed / 2,296 assertions / 28 intentional skips; its sole
+  unrelated failure is the existing fixed-date scheduling case at
+  `CalendarWalkInOperationsTest.php:274`, which tries to create an August 17
+  appointment after that date has passed.
 
 ## Prompt 13 launch-readiness decision
 
@@ -53,8 +88,9 @@ Documentation foundation:
 - [x] Product, architecture, domain, quality, module, and roadmap documents
   initialized
 - [x] Dependency-aware implementation prompts prepared
-- [x] Good Hours name, mark, voice, palette, typography, domain direction, and
-  outbound-message identity accepted in ADR-011
+- [x] ClipperDesk name, mark, voice, palette, typography, and configurable
+  message identity accepted in ADR-027; trademark/domain/sender approval remains
+  OPEN-11
 - [ ] Launch country, currency, tax posture, and privacy regime confirmed
 - [x] Communications locale and mobile channel resolved by ADR-019 as
   India/`en-IN`, Resend email, and Twilio WhatsApp; broader India tax/privacy/
@@ -72,8 +108,9 @@ Implemented product-shell foundation:
 - [x] Focus-visible, reduced-motion, labelled landmarks, mobile focus-managed
   navigation, and 44px touch-target conventions
 - [x] Honest requirement-linked placeholders with no fake salon workflow data
-- [x] Good Hours mark, Manrope/Newsreader type system, pine/oat/poppy palette,
-  product voice, auth identity, shell branding, and public booking language
+- [x] ClipperDesk SVG mark/lockups, Manrope type system, navy/indigo/cyan
+  semantic palette, product voice, auth identity, shell branding, and public
+  booking language
   integrated without changing domain workflow scope
 - [x] Prompt 01–09 UI/UX adoption review completed against the canonical design
   guide: all existing user-facing Vue pages were reviewed; shared shells,
@@ -86,7 +123,7 @@ Implemented product-shell foundation:
 - [ ] Prompt 09 has no dedicated business-facing communications settings or
   delivery-log Vue page; its implemented HTTP diagnostics and provider behavior
   remain backend/operations capabilities until a requirement promotes that UI
-- [x] Preferred `getgoodhours.com` domain and sender-address system selected;
+- [x] Brand domains and sender addresses are configuration-driven; final domain
   acquisition, trademark clearance, and authenticated sending remain OPEN-11
 
 Implemented tenancy, identity, access, and audit foundation:
@@ -113,9 +150,10 @@ Implemented tenancy, identity, access, and audit foundation:
 - [x] Separate expiring platform roles; platform administration requires
   verified email plus confirmed TOTP and cannot enter a tenant without
   Membership
-- [x] Magic-link and unrestricted social-login routes disabled; verified
-  password identities, reset, session management, TOTP, and recovery codes
-  retained
+- [x] Magic-link and unrestricted social-login routes remain disabled; ADR-028
+  enables only a stateful, verified-email Google path with short owner signup
+  continuation, unique account binding, no retained OAuth token, password-reset
+  recovery, and the existing TOTP challenge
 - [x] Plain test execution isolated to SQLite `:memory:`; legacy disabled Team
   tests now skip instead of failing
 - [x] Tenant-isolation evidence matrix recorded in
@@ -123,7 +161,7 @@ Implemented tenancy, identity, access, and audit foundation:
 
 Implemented FR-01 subscription and entitlement foundation:
 
-- [x] Paddle Billing is selectable for Good Hours SaaS subscriptions through
+- [x] Paddle Billing is selectable for ClipperDesk SaaS subscriptions through
   the application-owned provider contract (ADR-021); Stripe historical
   evidence and adapter remain retained, not deleted
 - [x] Product-approved Paddle sandbox catalog maps Starter (USD 50 monthly /
@@ -156,10 +194,10 @@ Implemented FR-01 subscription and entitlement foundation:
   scopes the owner lookup to the correct Business, and presents a selected-plan
   loading/error state without exposing raw provider responses
 - [x] Shared Paddle-account traffic is application-marked; signed events for a
-  different SaaS are discarded before payload persistence, while Good Hours
+  different SaaS are discarded before payload persistence, while ClipperDesk
   renewal events retain Business correlation through copied custom data.
   Paddle's QRxpress seller text is confirmed as account-level hosted checkout
-  identity, not Good Hours application copy; changing it to Stylnexa requires
+  identity, not ClipperDesk application copy; changing it to Stylnexa requires
   an account-wide Paddle change or a separate seller account
 - [x] Failed-renewal warning, retry/grace, read-only restriction, safe payment
   recovery, termination, and dated export-availability behavior
@@ -419,7 +457,7 @@ Implemented FR-16 through FR-18 management foundation:
 - `npm run build` passes both client and SSR builds (1,194 client modules and 98
   SSR modules). CSS optimization emits two warnings for the `@property` rule.
 - `composer audit --locked --no-dev --format=plain` reports 45 advisories
-  affecting 19 packages, including high-severity findings.
+  affecting 19 packages, including hicd-severity findings.
 - `npm audit --json` reports 19 vulnerable packages: 2 critical, 14 high, and 3
   moderate. Fixes are reported available.
 - Full evidence and classifications are in
@@ -460,11 +498,11 @@ Implemented FR-16 through FR-18 management foundation:
   platform administration at 1440px, and the interface-pattern reference at
   1440px.
 
-### Good Hours identity verification (2026-08-11)
+### Superseded Good Hours identity verification (2026-08-11)
 
 - `DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan test
   tests/Feature/ProductShellTest.php`: 18 passed, 207 assertions in 0.88s.
-  Coverage now includes the Good Hours name, tagline, real mark, public and
+  This historical coverage included the Good Hours name, tagline, mark, public and
   authenticated identity, platform distinction, and permanent brand tokens.
 - `npm run build`: client and SSR builds passed after the brand integration;
   client transformed 1,210 modules and SSR transformed 113 modules. The build
@@ -882,7 +920,7 @@ Implemented FR-16 through FR-18 management foundation:
   reserved for the footer so the page is not visually top-heavy.
 - [x] Footer boilerplate, fake social/service/newsletter links and theme control
   were removed from the active marketing shell. Global language now identifies
-  Good Hours and its salon/barbershop booking-to-checkout purpose.
+  ClipperDesk and its salon/barbershop booking-to-checkout purpose.
 - [x] Reusable public container, section heading, CTA, card, proof frame,
   comparison table, FAQ/disclosure, breadcrumb and conversion-band contracts
   are implemented in one marketing namespace and documented in the design
@@ -901,7 +939,7 @@ Implemented FR-16 through FR-18 management foundation:
 
 ### Prompt 16 homepage positioning and conversion
 
-- [x] The root page is now a complete Good Hours narrative led by “Run your
+- [x] The root page is now a complete ClipperDesk narrative led by “Run your
   salon or barbershop from booking to checkout,” one working trial action and
   an explicit existing-customer Login path in the shared shell.
 - [x] Six verified outcome groups cover getting booked, protecting the
@@ -913,7 +951,7 @@ Implemented FR-16 through FR-18 management foundation:
   dimensions, eager hero proof and lazy below-fold booking proof. No customer
   logo, testimonial, rating, usage count, integration logo or fabricated metric
   remains.
-- [x] Visible answers define Good Hours, its audience, managed work, difference
+- [x] Visible answers define ClipperDesk, its audience, managed work, difference
   from booking-only tools, import support, and live provider qualifications.
 - [x] Home metadata now has a unique natural title, description and configured
   canonical. Core copy and links are SSR-compatible; Prompt 23 still owns the
@@ -988,7 +1026,7 @@ Implemented FR-16 through FR-18 management foundation:
   [`frontsite/use-case-pages.md`](frontsite/use-case-pages.md).
 - [x] Every page provides an early direct answer, three diagnostic symptoms,
   four useful operating steps that stand without the product, four verified
-  Good Hours steps, requirement evidence, two visible limitations and exact
+  ClipperDesk steps, requirement evidence, two visible limitations and exact
   feature/business-fit links. No unsupported statistic, migration-service,
   guaranteed no-show, regulatory or AI claim was introduced.
 - [x] Prompt 19 route/content regression verification passed 18 tests / 344
@@ -1024,12 +1062,27 @@ Implemented FR-16 through FR-18 management foundation:
   and control summaries without inventing an operator, address, certification,
   security mailbox, SLA, uptime history, customer proof, or support workflow.
 - [x] Terms and privacy use the public shell but are visibly marked as review
-  drafts and remain `noindex`. Contact, status, cookie, accessibility-statement,
-  and security-reporting pages were not fabricated without an accountable
-  intake or approval process.
+  drafts and remain `noindex`. On 2026-08-25 they were expanded into
+  substantive, versioned, owner-labelled counsel-review documents with a shared
+  responsive/printable legal layout, table of contents, metadata and stable
+  canonicals. Registration route names remain unchanged.
+- [x] `/refund-policy` now provides a separate `noindex` review draft covering
+  subscription cancellation/refunds, appointment deposits, Stripe refund
+  eligibility and initiation, original-method handling, provider/bank timing,
+  no-shipping disclosure, disputes and the Paddle-versus-Stripe payment
+  boundary. Pricing, subscription checkout and the public footer link to it.
+- [x] The 2026-08-25 provider-policy review is recorded in
+  [`audits/2026-08-25-legal-policy-review.md`](audits/2026-08-25-legal-policy-review.md).
+  It confirms the page structure addresses Stripe's published website fields,
+  but the site is not eligible for provider/legal sign-off while the operator,
+  direct customer-service contact, approved timelines and end-to-end Stripe
+  refund executor remain unavailable.
+- [x] Contact, status, standalone cookie, accessibility-statement, and
+  security-reporting pages were not fabricated without an accountable intake
+  or approval process.
 - [x] The accountable-owner, approval, and indexation matrix is recorded in
   [`frontsite/trust-and-legal-matrix.md`](frontsite/trust-and-legal-matrix.md).
-  OPEN-10 and OPEN-11 remain critical production-publication blockers.
+  OPEN-10, OPEN-11 and OPEN-13 remain production-publication blockers.
 
 ### Prompt 22 resources, guides, and editorial system
 
@@ -1061,7 +1114,7 @@ Implemented FR-16 through FR-18 management foundation:
 ### Prompt 24 GEO, AEO, and AI-assisted search
 
 - [x] Visible answers, metadata, and schema share one canonical definition:
-  “Good Hours is the daily operating system for salons and barbershops.” Page
+  “ClipperDesk is the daily operating system for salons and barbershops.” Page
   ownership prevents thin duplicate answers across Home, features, solutions,
   use cases, pricing, company, security, and resources.
 - [x] The entity and question authority sheet is in
@@ -1132,7 +1185,7 @@ Implemented FR-16 through FR-18 management foundation:
 - Jetstream Team is superseded by accepted ADR-006 and is no longer created at
   registration, but legacy Team models/tables/actions remain preserved pending
   a separately reviewed cleanup/backfill decision.
-- Paddle is selected for Good Hours SaaS subscriptions; Stripe is separately
+- Paddle is selected for ClipperDesk SaaS subscriptions; Stripe is separately
   selected for appointment payments. Overlapping legacy provider tables,
   resources, and packages remain quarantined until a separately reviewed
   cleanup/backfill proves they contain no data requiring preservation.

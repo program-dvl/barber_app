@@ -12,16 +12,16 @@ defineProps({ features: Array });
 
 <template>
     <HomeLayout>
-        <Head title="Good Hours features for the complete salon day" />
-        <section class="gh-public-section border-b border-[var(--border-subtle)]">
+        <Head title="ClipperDesk features for the complete salon day" />
+        <section class="cd-public-section border-b border-[var(--border-subtle)]">
             <PublicContainer>
-                <p class="gh-eyebrow">Product</p>
+                <p class="cd-eyebrow">Product</p>
                 <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.3rem)] font-semibold leading-[0.98] tracking-[-0.05em] text-[var(--text-strong)] text-balance">One operating system for the work around every appointment.</h1>
                 <p class="mt-7 max-w-2xl text-lg leading-8 text-[var(--text-muted)]">Explore the four connected jobs that carry a salon or barbershop from public demand through the day, client history and explainable numbers.</p>
             </PublicContainer>
         </section>
 
-        <section class="gh-public-section">
+        <section class="cd-public-section">
             <PublicContainer>
                 <SectionHeading eyebrow="Four evidence-rich clusters" title="Follow the customer journey, not a software module list." />
                 <div class="mt-12 grid gap-5 md:grid-cols-2">
@@ -30,7 +30,7 @@ defineProps({ features: Array });
                         <h2 class="mt-4 text-2xl font-extrabold leading-tight text-[var(--text-strong)]">{{ feature.title }}</h2>
                         <p class="mt-4 flex-1 leading-7 text-[var(--text-muted)]">{{ feature.description }}</p>
                         <p class="mt-5 text-xs font-semibold text-[var(--text-muted)]">Evidence: {{ feature.requirements.join(', ') }}</p>
-                        <Link :href="route('marketing.features.show', feature.slug)" class="mt-6 inline-flex min-h-11 items-center gap-2 rounded-lg font-extrabold text-[var(--brand-pine)] underline-offset-4 hover:underline">
+                        <Link :href="route('marketing.features.show', feature.slug)" class="mt-6 inline-flex min-h-11 items-center gap-2 rounded-lg font-extrabold text-[var(--brand-primary)] underline-offset-4 hover:underline">
                             Explore {{ feature.label.toLowerCase() }}
                             <ArrowRightIcon class="size-4" aria-hidden="true" />
                         </Link>

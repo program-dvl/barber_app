@@ -18,7 +18,7 @@ class StripeAppointmentPaymentProvider implements AppointmentPaymentProvider
             throw new DomainException('Online card payments are not configured.');
         }
         $client = new StripeClient($secret);
-        $remote = $client->paymentIntents->create(['amount' => $intent->amount_minor, 'currency' => strtolower($intent->currency_code), 'metadata' => ['good_hours_intent' => $intent->public_id, 'business_id' => (string) $intent->business_id, 'purpose' => $intent->purpose], 'description' => 'Good Hours appointment deposit'], ['idempotency_key' => $intent->idempotency_key]);
+        $remote = $client->paymentIntents->create(['amount' => $intent->amount_minor, 'currency' => strtolower($intent->currency_code), 'metadata' => ['good_hours_intent' => $intent->public_id, 'business_id' => (string) $intent->business_id, 'purpose' => $intent->purpose], 'description' => config('brand.product_name').' appointment deposit'], ['idempotency_key' => $intent->idempotency_key]);
 
         return ['provider_intent_id' => $remote->id, 'client_payload' => ['provider' => 'stripe', 'client_secret' => $remote->client_secret, 'return_url' => $returnUrl], 'expires_at' => null];
     }

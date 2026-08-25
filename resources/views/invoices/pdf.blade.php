@@ -4,25 +4,22 @@
     <meta charset="utf-8">
     <title>{{ $invoice->number }}</title>
     <style>
-        * { box-sizing: border-box; }
-        body { color: #111827; font-family: DejaVu Sans, Arial, sans-serif; font-size: 13px; line-height: 1.45; margin: 0; }
-        h1, h2, p { margin: 0; }
+        @include('brand.document-styles')
+        h1, h2, p { margin-bottom: 0; }
         .header { align-items: flex-start; display: flex; justify-content: space-between; margin-bottom: 44px; }
-        .brand { font-size: 22px; font-weight: 700; }
-        .muted { color: #6b7280; }
+        .brand { color: #172554; font-size: 22px; font-weight: 700; }
+        .muted { color: #64748b; }
         .invoice-title { font-size: 34px; font-weight: 700; text-align: right; }
         .grid { display: grid; gap: 24px; grid-template-columns: 1fr 1fr; margin-bottom: 32px; }
-        .label { color: #6b7280; font-size: 11px; font-weight: 700; letter-spacing: .04em; margin-bottom: 6px; text-transform: uppercase; }
-        .box { border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px; }
+        .label { color: #475569; font-size: 11px; font-weight: 700; letter-spacing: .04em; margin-bottom: 6px; text-transform: uppercase; }
+        .box { border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; }
         table { border-collapse: collapse; margin-top: 8px; width: 100%; }
-        th { background: #f9fafb; color: #374151; font-size: 11px; letter-spacing: .04em; text-align: left; text-transform: uppercase; }
-        th, td { border-bottom: 1px solid #e5e7eb; padding: 10px; vertical-align: top; }
         .right { text-align: right; }
         .totals { margin-left: auto; margin-top: 24px; width: 280px; }
         .totals-row { display: flex; justify-content: space-between; padding: 8px 0; }
-        .grand-total { border-top: 2px solid #111827; font-size: 18px; font-weight: 700; margin-top: 6px; padding-top: 12px; }
+        .grand-total { border-top: 2px solid #0f172a; font-size: 18px; font-weight: 700; margin-top: 6px; padding-top: 12px; }
         .notes { margin-top: 32px; }
-        .status { border: 1px solid #d1d5db; border-radius: 999px; display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 10px; text-transform: uppercase; }
+        .status { border: 1px solid #cbd5e1; border-radius: 999px; display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 10px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -32,8 +29,8 @@
 
     <div class="header">
         <div>
-            <div class="brand">{{ config('app.name') }}</div>
-            <p class="muted">{{ config('app.url') }}</p>
+            <div class="brand">{{ config('brand.product_name') }}</div>
+            <p class="muted">{{ config('brand.website_url') }}</p>
         </div>
         <div>
             <div class="invoice-title">Invoice</div>

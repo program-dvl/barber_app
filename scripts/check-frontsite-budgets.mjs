@@ -13,8 +13,8 @@ for (const css of core.css ?? []) if (await size(css) > limits.css) failures.pus
 const publicEntries = Object.entries(manifest).filter(([key]) => /resources\/js\/Pages\/(Home|Blog|Article|Error|TermsOfService|PrivacyPolicy|Marketing\/)/.test(key));
 for (const [key, entry] of publicEntries) if (entry.file && await size(entry.file) > limits.routeJs) failures.push(`${key} exceeds the route JS budget`);
 
-for (const file of await readdir(join(root, 'public/fonts/good-hours'))) {
-    if (/\.(ttf|woff2)$/.test(file) && (await stat(join(root, 'public/fonts/good-hours', file))).size > limits.font) failures.push(`${file} exceeds the font-file budget`);
+for (const file of await readdir(join(root, 'public/fonts/clipperdesk'))) {
+    if (/\.(ttf|woff2)$/.test(file) && (await stat(join(root, 'public/fonts/clipperdesk', file))).size > limits.font) failures.push(`${file} exceeds the font-file budget`);
 }
 for (const entry of publicEntries.map(([, value]) => value)) for (const asset of entry.assets ?? []) if (await size(asset) > limits.image) failures.push(`${asset} exceeds the public image budget`);
 

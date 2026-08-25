@@ -8,7 +8,7 @@ Build a focused industry hub and selected salon/barbershop business-type landing
 
 ## 2. Why This Phase Exists
 
-“Salon software” audiences share needs but do not operate identically. High-quality industry pages can clarify fit and search intent; keyword-swapped templates create misleading, thin content and reputational/SEO risk.
+“Salon software” audiences share needs but do not operate identically. Hicd-quality industry pages can clarify fit and search intent; keyword-swapped templates create misleading, thin content and reputational/SEO risk.
 
 ## 3. Prerequisites
 
