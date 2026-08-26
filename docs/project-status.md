@@ -1,6 +1,6 @@
 # Project status
 
-Status date: 2026-08-25
+Status date: 2026-08-26
 
 ## Current state
 
@@ -50,10 +50,32 @@ workflow are implemented and locally verified.
   targets discovered during QA were raised to the 44px interaction target.
 - [x] Final verification: Pint passed, the client and SSR production builds
   passed, and front-site budgets passed for 17 route entries. The PHP suite
-  reported 255 passed / 2,296 assertions / 28 intentional skips; its sole
+  reported 262 passed / 2,371 assertions / 28 intentional skips after the
+  Google authentication delivery; its sole
   unrelated failure is the existing fixed-date scheduling case at
   `CalendarWalkInOperationsTest.php:274`, which tries to create an August 17
   appointment after that date has passed.
+
+## Google authentication and enterprise auth screens (2026-08-26)
+
+- [x] ADR-028 replaces the unsafe arbitrary-driver Larafast Socialite path with
+  three explicit, guest-only, rate-limited Google routes using OAuth state and
+  Google-asserted verified email.
+- [x] Existing accounts link safely by normalized verified email, conflicting
+  Google links are rejected, provider tokens are not retained, database
+  uniqueness prevents identity drift, and configured TOTP challenges remain in
+  the login path.
+- [x] New Google owners complete a ten-minute server-side Business-details and
+  legal-acceptance step before the existing exactly-once verified-owner tenant,
+  membership, and trial bootstrap runs. Password reset remains an independent
+  recovery path.
+- [x] Login and registration now use an enterprise two-panel auth shell on
+  desktop, a focused single-column mobile shell, Google-first action hierarchy,
+  visible secure-access context, semantic error/status treatments, labelled
+  controls, appropriate autocomplete, and no horizontal overflow at 390px.
+- [x] The local MySQL hardening migration ran successfully. Seven focused Google
+  authentication tests and the 17-case tenant-isolation suite passed; production
+  client/SSR builds and the 17-route front-site budget check passed.
 
 ## Prompt 13 launch-readiness decision
 

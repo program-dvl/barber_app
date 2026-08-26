@@ -6,7 +6,6 @@ use App\Domain\Billing\Models\OwnerRegistrationIntent;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\RedirectResponse;
 use Inertia\Testing\AssertableInertia as Assert;
 use Laravel\Jetstream\Jetstream;
 use Laravel\Socialite\Facades\Socialite;
@@ -25,21 +24,21 @@ class GoogleAuthenticationTest extends TestCase
         config([
             'services.google.client_id' => 'google-client-id',
             'services.google.client_secret' => 'google-client-secret',
-            'services.google.redirect' => '/auth/callback/google',
+            'services.google.redirect' => 'https://clipperdesk.example/auth/callback/google',
         ]);
     }
 
     public function test_google_redirect_is_stateful_google_only_and_remembers_signup_intent(): void
     {
-        $provider = Mockery::mock();
-        $provider->shouldReceive('with')->once()->with(['prompt' => 'select_account'])->andReturnSelf();
-        $provider->shouldReceive('redirect')->once()->andReturn(new RedirectResponse('https://accounts.google.test/oauth'));
-        Socialite::shouldReceive('driver')->once()->with('google')->andReturn($provider);
+        $response = $this->get(route('auth.google.redirect', ['intent' => 'register']));
+        $location = (string) $response->headers->get('Location');
+        parse_str((string) parse_url($location, PHP_URL_QUERY), $query);
 
-        $this->get(route('auth.google.redirect', ['intent' => 'register']))
-            ->assertRedirect('https://accounts.google.test/oauth')
+        $response->assertRedirectContains('accounts.google.com/o/oauth2/auth')
             ->assertSessionHas('auth.google.context.intent', 'register');
 
+        $this->assertSame('https://clipperdesk.example/auth/callback/google', $query['redirect_uri']);
+        $this->assertNotEmpty($query['state']);
     }
 
     public function test_existing_user_can_sign_in_and_google_identity_is_linked_without_storing_oauth_token(): void
