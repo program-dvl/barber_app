@@ -1,6 +1,6 @@
 # Project status
 
-Status date: 2026-08-26
+Status date: 2026-08-27
 
 ## Current state
 
@@ -19,6 +19,28 @@ FR-14/FR-15 commerce and FR-16 through FR-18 Inventory, Commission/Tip,
 dashboard, reporting, export, and Phase 1 metric instrumentation are implemented
 and locally verified. FR-20 platform administration and the support-grant
 workflow are implemented and locally verified.
+
+## Enterprise public homepage (2026-08-27)
+
+- [x] The public homepage now presents ClipperDesk as one connected salon and
+  barbershop operating system through a detailed product-led hero, five-step
+  operating loop, booking-to-reporting journey, three alternating product-proof
+  sections, audience fit, trial/pricing bridge, FAQ, and closing conversion band.
+- [x] The final visual combines the selected clean enterprise composition with
+  a custom orbital operating-system model and three matching conceptual 3D
+  illustrations for scheduling, client context, and checkout/reporting. These
+  replace literal product screenshots and device frames, sit directly on the
+  white canvas without grey stage panels, and use compressed WebP delivery.
+  Restrained ambient float, pointer depth, module hover/focus state, and a
+  reduced-motion fallback provide professional movement without adding a heavy
+  3D runtime.
+- [x] In-app browser verification covered the 1440 px desktop homepage and
+  390 px mobile layout, CTA destinations, image loading, mobile navigation,
+  FAQ disclosure, horizontal overflow, and browser console output. The final
+  design comparison is recorded in `design-qa.md` with a passed result.
+- [x] The focused homepage tests passed with 41 assertions; the complete
+  marketing suite passed 55 tests / 857 assertions. The 17-route front-site
+  budget check and client/SSR production builds also passed.
 
 ## ClipperDesk design-system and identity overhaul (2026-08-25)
 

@@ -302,6 +302,218 @@
         box-shadow: var(--shadow-raised);
     }
 
+    .cd-orbit-scene {
+        --tilt-x: 0deg;
+        --tilt-y: 0deg;
+        --drift-x: 0px;
+        --drift-y: 0px;
+        position: relative;
+        min-height: clamp(31rem, 48vw, 39rem);
+        perspective: 75rem;
+        isolation: isolate;
+    }
+
+    .cd-orbit-art {
+        position: absolute;
+        inset: 1rem -8% 2rem -6%;
+        transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translate3d(var(--drift-x), var(--drift-y), 0);
+        transform-style: preserve-3d;
+        transition: transform 240ms ease-out;
+        animation: cd-orbit-breathe 8s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    .cd-orbit-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        user-select: none;
+    }
+
+    .cd-orbit-label {
+        position: absolute;
+        z-index: 3;
+        display: grid;
+        min-width: 6.8rem;
+        gap: 0.1rem;
+        border: 1px solid rgb(199 210 254 / 0.9);
+        border-radius: 0.8rem;
+        background: rgb(255 255 255 / 0.92);
+        padding: 0.65rem 0.75rem;
+        color: var(--brand-primary-strong);
+        box-shadow: 0 12px 36px rgb(49 46 129 / 0.12);
+        font-size: 0.75rem;
+        font-weight: 800;
+        line-height: 1.2;
+        text-align: left;
+        backdrop-filter: blur(0.75rem);
+        transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    .cd-orbit-label:hover,
+    .cd-orbit-label:focus-visible,
+    .cd-orbit-label.is-active {
+        border-color: var(--brand-secondary);
+        box-shadow: 0 16px 42px rgb(49 46 129 / 0.2);
+        transform: translateY(-3px);
+    }
+
+    .cd-orbit-label-state {
+        color: var(--text-muted);
+        font-size: 0.6rem;
+        font-weight: 600;
+    }
+
+    .cd-orbit-label-calendar { top: 4%; left: 45%; }
+    .cd-orbit-label-clients { top: 24%; left: 0; }
+    .cd-orbit-label-booking { bottom: 18%; left: 2%; }
+    .cd-orbit-label-checkout { top: 25%; right: 0; }
+    .cd-orbit-label-reporting { right: 3%; bottom: 17%; }
+
+    .cd-orbit-status {
+        position: absolute;
+        z-index: 4;
+        right: 50%;
+        bottom: 0.5rem;
+        display: inline-flex;
+        min-height: 2.2rem;
+        translate: 50% 0;
+        align-items: center;
+        gap: 0.5rem;
+        border: 1px solid var(--border-subtle);
+        border-radius: 999px;
+        background: white;
+        padding: 0.5rem 0.8rem;
+        color: var(--text-muted);
+        box-shadow: var(--shadow-raised);
+        font-size: 0.7rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .cd-orbit-status-dot {
+        width: 0.45rem;
+        height: 0.45rem;
+        border-radius: 999px;
+        background: var(--brand-accent);
+        box-shadow: 0 0 0 0.25rem rgb(207 250 254 / 0.75);
+        animation: cd-status-pulse 2.4s ease-out infinite;
+    }
+
+    .cd-home-signal-grid {
+        display: grid;
+        border-top: 1px solid var(--border-subtle);
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .cd-home-signal {
+        min-width: 0;
+        padding: 1.4rem 0;
+    }
+
+    .cd-home-signal + .cd-home-signal {
+        border-top: 1px solid var(--border-subtle);
+    }
+
+    .cd-home-signal-icon {
+        display: inline-flex;
+        width: 2.5rem;
+        height: 2.5rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: var(--action-primary);
+    }
+
+    .cd-home-loop-grid {
+        display: grid;
+        overflow: hidden;
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-xl);
+        background: var(--surface-raised);
+        box-shadow: var(--shadow-raised);
+    }
+
+    .cd-home-loop-step {
+        min-width: 0;
+        border-bottom: 1px solid var(--border-subtle);
+        padding: 1.25rem;
+    }
+
+    .cd-home-loop-step:last-child { border-bottom: 0; }
+
+    .cd-home-loop-icon {
+        display: inline-flex;
+        width: 2.75rem;
+        height: 2.75rem;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: var(--action-primary);
+    }
+
+    .cd-home-journey {
+        background: var(--brand-primary-strong);
+        color: white;
+        padding-block: clamp(4.5rem, 8vw, 8rem);
+    }
+
+    .cd-home-journey-step {
+        min-height: 15.5rem;
+        border: 1px solid rgb(103 232 249 / 0.2);
+        border-radius: var(--radius-xl);
+        background: rgb(23 37 84 / 0.72);
+        padding: 1.25rem;
+    }
+
+    .cd-home-journey-icon {
+        display: inline-flex;
+        width: 3rem;
+        height: 3rem;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgb(103 232 249 / 0.38);
+        border-radius: 999px;
+        background: rgb(14 116 144 / 0.24);
+        color: #a5f3fc;
+    }
+
+    .cd-home-feature {
+        position: relative;
+    }
+
+    .cd-home-feature + .cd-home-feature {
+        border-top: 1px solid var(--border-subtle);
+        padding-top: clamp(5rem, 8vw, 7rem);
+    }
+
+    .cd-system-visual {
+        --tilt-x: 0deg;
+        --tilt-y: 0deg;
+        --drift-x: 0px;
+        --drift-y: 0px;
+        position: relative;
+        min-width: 0;
+        overflow: clip;
+        perspective: 70rem;
+    }
+
+    .cd-system-visual-image {
+        width: 100%;
+        transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translate3d(var(--drift-x), var(--drift-y), 0);
+        transform-style: preserve-3d;
+        transition: transform 240ms ease-out, filter 240ms ease-out;
+        filter: drop-shadow(0 18px 28px rgb(49 46 129 / 0.08));
+        will-change: transform;
+    }
+
+    .cd-system-visual:hover .cd-system-visual-image {
+        filter: drop-shadow(0 24px 34px rgb(49 46 129 / 0.13));
+    }
+
     .cd-menu-open { overflow: hidden; }
 
     .ds-control {
@@ -439,11 +651,54 @@
     }
 }
 
+@media (min-width: 48rem) {
+    .cd-home-loop-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .cd-home-loop-step { border-right: 1px solid var(--border-subtle); border-bottom: 0; }
+    .cd-home-loop-step:last-child { border-right: 0; }
+}
+
+@media (min-width: 64rem) {
+    .cd-home-signal-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .cd-home-signal { padding: 1.5rem 1.35rem; }
+    .cd-home-signal:first-child { padding-left: 0; }
+    .cd-home-signal:last-child { padding-right: 0; }
+    .cd-home-signal + .cd-home-signal { border-top: 0; border-left: 1px solid var(--border-subtle); }
+}
+
+@media (max-width: 47.99rem) {
+    .cd-orbit-scene { min-height: 27rem; }
+    .cd-orbit-art { inset: 1.75rem -18% 2rem -18%; }
+    .cd-orbit-label { min-width: 5rem; padding: 0.48rem 0.55rem; font-size: 0.65rem; }
+    .cd-orbit-label-state { display: none; }
+    .cd-orbit-label-calendar { top: 2%; left: 40%; }
+    .cd-orbit-label-clients { top: 23%; left: 0; }
+    .cd-orbit-label-booking { bottom: 17%; left: 0; }
+    .cd-orbit-label-checkout { top: 23%; right: 0; }
+    .cd-orbit-label-reporting { right: 0; bottom: 16%; }
+    .cd-orbit-status { bottom: 0; max-width: calc(100% - 1rem); white-space: normal; text-align: center; }
+    .cd-system-visual-image { width: 100%; max-width: 100%; translate: 0 0; }
+}
+
+@keyframes cd-orbit-breathe {
+    0%, 100% { margin-top: 0; }
+    50% { margin-top: -0.45rem; }
+}
+
+@keyframes cd-status-pulse {
+    0% { box-shadow: 0 0 0 0 rgb(103 232 249 / 0.45); }
+    70%, 100% { box-shadow: 0 0 0 0.5rem rgb(103 232 249 / 0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .cd-button,
-    .cd-skip-link { transition: none; }
+    .cd-skip-link,
+    .cd-orbit-art,
+    .cd-system-visual-image,
+    .cd-orbit-label { transition: none; }
 
     .cd-button:hover { transform: none; }
+    .cd-orbit-art,
+    .cd-orbit-status-dot { animation: none; }
 }
 
 @layer utilities {
