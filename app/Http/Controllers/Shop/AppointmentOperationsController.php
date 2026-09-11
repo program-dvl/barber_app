@@ -13,6 +13,7 @@ use App\Domain\SchedulingOperations\Data\BookingLineRequest;
 use App\Domain\SchedulingOperations\Data\BookingRequest;
 use App\Domain\SchedulingOperations\Services\SchedulingRecordLookup;
 use App\Http\Controllers\Controller;
+use App\Rules\E164Phone;
 use App\Support\Audit\AuditWriter;
 use App\Support\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
@@ -27,7 +28,7 @@ class AppointmentOperationsController extends Controller
         abort_unless($membership && ($membership->hasPermissionTo(PermissionName::AppointmentsManageAll->value, 'web') || $membership->hasPermissionTo(PermissionName::AppointmentsManageOwn->value, 'web')), 403);
         $data = $request->validate([
             'location' => ['required', 'string'], 'starts_at' => ['required', 'date'], 'source' => ['required', 'in:phone,reception,recurring,consultation'],
-            'client_name' => ['nullable', 'string', 'max:255'], 'client_mobile' => ['nullable', 'string', 'max:32'], 'internal_notes' => ['nullable', 'string', 'max:5000'],
+            'client_name' => ['nullable', 'string', 'max:255'], 'client_mobile' => ['nullable', 'string', 'max:32', new E164Phone], 'internal_notes' => ['nullable', 'string', 'max:5000'],
             'lines' => ['required', 'array', 'min:1', 'max:12'], 'lines.*.service' => ['required', 'string'],
             'lines.*.staff' => ['nullable', 'string'], 'lines.*.duration_minutes' => ['nullable', 'integer', 'min:5', 'max:720'],
             'idempotency_key' => ['required', 'string', 'max:128'], 'override_rule_codes' => ['array'], 'override_rule_codes.*' => ['in:NOTICE_WINDOW,ADVANCE_WINDOW'],
@@ -70,7 +71,7 @@ class AppointmentOperationsController extends Controller
             'lines.*.duration_minutes' => ['nullable', 'integer', 'min:5', 'max:720'], 'version' => ['required', 'integer', 'min:1'],
             'reason' => ['required', 'string', 'max:1000'], 'confirmed' => ['accepted'], 'idempotency_key' => ['required', 'string', 'max:128'],
             'override_rule_codes' => ['array'], 'override_rule_codes.*' => ['in:NOTICE_WINDOW,ADVANCE_WINDOW'], 'override_reason' => ['nullable', 'string', 'max:1000'], 'override_confirmed' => ['nullable', 'boolean'],
-            'client_name' => ['nullable', 'string', 'max:255'], 'client_mobile' => ['nullable', 'string', 'max:32'], 'internal_notes' => ['nullable', 'string', 'max:5000'],
+            'client_name' => ['nullable', 'string', 'max:255'], 'client_mobile' => ['nullable', 'string', 'max:32', new E164Phone], 'internal_notes' => ['nullable', 'string', 'max:5000'],
         ]);
         $data['source'] = 'reception';
         $bookingRequest = $this->bookingRequest($request, $business, $data, $context);

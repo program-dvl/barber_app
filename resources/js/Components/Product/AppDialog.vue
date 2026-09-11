@@ -2,7 +2,7 @@
 import { nextTick, ref } from 'vue';
 import AppButton from '@/Components/Product/AppButton.vue';
 
-defineProps({
+const props = defineProps({
     title: {
         type: String,
         required: true,
@@ -13,6 +13,8 @@ defineProps({
         default: 'Confirm',
     },
     destructive: Boolean,
+    closeOnConfirm: { type: Boolean, default: true },
+    confirmDisabled: Boolean,
 });
 
 const emit = defineEmits(['confirm', 'cancel']);
@@ -38,8 +40,9 @@ const cancel = () => {
 };
 
 const confirm = () => {
+    if (props.confirmDisabled) return;
     emit('confirm');
-    close();
+    if (props.closeOnConfirm) close();
 };
 
 defineExpose({ open, close });
@@ -62,7 +65,7 @@ defineExpose({ open, close });
             <div class="mt-4"><slot /></div>
             <div class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                 <AppButton ref="cancelButton" variant="secondary" @click="cancel">Cancel</AppButton>
-                <AppButton :variant="destructive ? 'danger' : 'primary'" @click="confirm">{{ confirmLabel }}</AppButton>
+                <AppButton :variant="destructive ? 'danger' : 'primary'" :disabled="confirmDisabled" @click="confirm">{{ confirmLabel }}</AppButton>
             </div>
         </div>
     </dialog>

@@ -15,8 +15,8 @@ class HomeController extends Controller
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
             'seo' => [
-                'title' => 'Salon and barbershop software from booking to checkout',
-                'description' => 'ClipperDesk connects online booking, the daily calendar, clients, checkout and clear reporting for salons and barbershops.',
+                'title' => 'Salon, barber and wellness business software | ClipperDesk',
+                'description' => 'ClipperDesk connects booking, scheduling, clients, staff, checkout and reporting for modern beauty, wellness and appointment-led businesses.',
                 'canonical' => route('marketing.home'),
             ],
         ]);

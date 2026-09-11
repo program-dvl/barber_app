@@ -21,7 +21,7 @@ class BookingBusinessController extends Controller
 
         return Inertia::render('Booking/Welcome', [
             'business' => [
-                ...$business->only(['name', 'booking_slug', 'phone', 'email', 'address', 'map_url']),
+                ...$business->only(['name', 'booking_slug', 'country_code', 'currency_code', 'phone', 'email', 'address', 'map_url']),
                 'has_logo' => filled($business->logo_path),
                 'has_cover_image' => filled($business->cover_image_path),
             ],

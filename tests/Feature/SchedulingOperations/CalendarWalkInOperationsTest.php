@@ -40,6 +40,7 @@ uses(RefreshDatabase::class);
 function operationalPath(StarterRole $role = StarterRole::Owner, int $noticeMinutes = 0): array
 {
     $business = Business::factory()->create(['appointment_interval_minutes' => 15, 'time_zone' => 'Asia/Kolkata', 'currency_code' => 'INR']);
+    activateTestSubscription($business);
     $location = Location::factory()->create(['business_id' => $business->id, 'time_zone' => 'Asia/Kolkata']);
     for ($day = 1; $day <= 7; $day++) {
         LocationHour::query()->create(['business_id' => $business->id, 'location_id' => $location->id, 'day_of_week' => $day, 'opens_at' => '09:00', 'closes_at' => '18:00', 'sequence' => 1]);
@@ -252,6 +253,7 @@ it('records late overrun staff-unavailable and unexpected-closure recovery evide
 });
 
 it('enforces calendar and queue permissions, assigned locations, and cross-tenant identifiers through HTTP', function () {
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-16 09:00', 'Asia/Kolkata')->utc());
     $owner = operationalPath();
     $other = operationalPath();
     app(TenantContext::class)->clear();
@@ -279,6 +281,7 @@ it('enforces calendar and queue permissions, assigned locations, and cross-tenan
     app(TenantContext::class)->clear();
     $this->actingAs($accountant['user'])->get(route('business.calendar', $accountant['business']))->assertForbidden();
     $this->actingAs($accountant['user'])->get(route('business.walk-ins.index', $accountant['business']))->assertForbidden();
+    CarbonImmutable::setTestNow();
 });
 
 it('runs an idempotent production-like front-desk day simulation', function () {

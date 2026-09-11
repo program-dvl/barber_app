@@ -39,25 +39,25 @@ const groups = computed(() => [
 </script>
 
 <template>
-    <footer class="cd-marketing-footer border-t border-[var(--border-subtle)] bg-[var(--surface-subtle)] text-[var(--text-default)]">
+    <footer class="cd-marketing-footer border-t border-white/10 bg-[#090d1a] text-white">
         <div class="cd-public-container py-14 sm:py-18">
             <div class="grid gap-12 lg:grid-cols-[1.35fr_2fr]">
                 <div>
                     <Link :href="route('marketing.home')" class="inline-flex min-h-11 items-center rounded-lg" aria-label="ClipperDesk home">
-                        <ProductMark />
+                        <ProductMark inverse />
                     </Link>
-                    <p class="mt-6 max-w-md text-sm leading-7 text-[var(--text-muted)]">
-                        ClipperDesk is a calm operating system for salons and barbershops—from booking to checkout.
+                    <p class="mt-6 max-w-md text-sm leading-7 text-slate-400">
+                        ClipperDesk is the polished operating system for people-powered beauty, wellness and appointment-led businesses.
                     </p>
-                    <p class="mt-3 font-display text-xl font-semibold text-[var(--brand-primary)]">Run the day. Grow the business.</p>
+                    <p class="mt-3 font-display text-xl font-semibold text-yellow-300">Your whole day, beautifully run.</p>
                 </div>
 
                 <div class="grid gap-9 sm:grid-cols-3">
                     <nav v-for="group in groups" :key="group.label" :aria-label="`${group.label} links`">
-                        <h2 class="text-xs font-bold uppercase tracking-[0.16em] text-[var(--text-muted)]">{{ group.label }}</h2>
+                        <h2 class="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">{{ group.label }}</h2>
                         <ul class="mt-4 space-y-2">
                             <li v-for="[label, routeName] in group.links" :key="routeName">
-                                <Link :href="route(routeName)" class="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-[var(--text-default)] underline-offset-4 hover:text-[var(--brand-secondary)] hover:underline">
+                                <Link :href="route(routeName)" class="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-slate-300 underline-offset-4 hover:text-white hover:underline">
                                     {{ label }}
                                 </Link>
                             </li>
@@ -66,7 +66,7 @@ const groups = computed(() => [
                 </div>
             </div>
 
-            <div class="mt-12 flex flex-col gap-3 border-t border-[var(--border-default)] pt-6 text-xs leading-6 text-[var(--text-muted)] sm:flex-row sm:items-center sm:justify-between">
+            <div class="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs leading-6 text-slate-500 sm:flex-row sm:items-center sm:justify-between">
                 <p>© {{ new Date().getFullYear() }} ClipperDesk. Product identity remains subject to OPEN-11 clearance.</p>
                 <p>Built for clear, accessible work on the web.</p>
             </div>

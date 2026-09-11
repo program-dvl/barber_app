@@ -16,13 +16,16 @@ class SolutionController extends Controller
                 'label' => $solution['label'],
                 'title' => $solution['title'],
                 'description' => $solution['description'],
+                'image' => $solution['image'],
+                'image_alt' => $solution['image_alt'],
+                'accent' => $solution['accent'],
             ])->values();
 
         return Inertia::render('Marketing/Solutions/Index', [
             'solutions' => $solutions,
             'seo' => [
-                'title' => 'ClipperDesk for salons, barbershops and independent professionals',
-                'description' => 'See how ClipperDesk supports distinct daily workflows for barbershops, salons, independent stylists and small non-medical spas.',
+                'title' => 'Business software for beauty, wellness and appointment-led teams',
+                'description' => 'Explore how ClipperDesk supports the daily workflow of salons, barbershops, spas, studios and appointment-led service businesses.',
                 'canonical' => route('marketing.solutions'),
             ],
         ]);

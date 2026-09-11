@@ -198,6 +198,7 @@ it('rejects cross-tenant identifiers while issuing invitations', function () {
 it('denies invitation issuance to a role without staff-management permission', function () {
     Notification::fake();
     [$receptionist, $business, $membership] = createTenantMembership(StarterRole::Receptionist);
+    activateTestSubscription($business);
     $role = BusinessRole::query()
         ->where('business_id', $business->id)
         ->where('name', StarterRole::Receptionist->value)

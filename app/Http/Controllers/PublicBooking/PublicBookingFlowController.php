@@ -6,6 +6,7 @@ use App\Domain\BusinessConfiguration\Services\BookingSlugManager;
 use App\Domain\PublicBooking\Services\PublicBookingService;
 use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
 use App\Http\Controllers\Controller;
+use App\Rules\E164Phone;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -58,7 +59,7 @@ class PublicBookingFlowController extends Controller
     {
         $data = $request->validate([
             'flow' => ['required', 'string'], 'secret' => ['required', 'string', 'size:64'], 'idempotency_key' => ['required', 'string', 'max:128'],
-            'client_name' => ['required', 'string', 'max:255'], 'client_mobile' => ['required', 'string', 'max:32'],
+            'client_name' => ['required', 'string', 'max:255'], 'client_mobile' => ['required', 'string', 'max:32', new E164Phone],
             'client_email' => ['required', 'email', 'max:255'], 'client_date_of_birth' => ['nullable', 'date', 'before:today'],
             'referral_source' => ['nullable', 'string', 'max:255'], 'special_request' => ['nullable', 'string', 'max:2000'],
             'communication_preferences' => ['array'], 'communication_preferences.*' => ['in:email,whatsapp'],

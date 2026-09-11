@@ -10,6 +10,7 @@ use App\Domain\PublicBooking\Services\SecureAppointmentLinkService;
 use App\Domain\PublicBooking\Services\WaitlistService;
 use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
 use App\Http\Controllers\Controller;
+use App\Rules\E164Phone;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -23,7 +24,7 @@ class PublicWaitlistController extends Controller
         abort_unless($business && $business->booking_slug === $slug && $business->online_booking_enabled, 404);
         $data = $request->validate([
             'location' => ['required', 'string'], 'service' => ['required', 'string'], 'staff' => ['nullable', 'string'],
-            'client_name' => ['required', 'string', 'max:255'], 'client_mobile' => ['required', 'string', 'max:32'], 'client_email' => ['nullable', 'email'],
+            'client_name' => ['required', 'string', 'max:255'], 'client_mobile' => ['required', 'string', 'max:32', new E164Phone], 'client_email' => ['nullable', 'email'],
             'acceptable_from' => ['required', 'date', 'after_or_equal:today'], 'acceptable_until' => ['required', 'date', 'after_or_equal:acceptable_from'],
             'time_from' => ['required', 'date_format:H:i'], 'time_until' => ['required', 'date_format:H:i', 'after:time_from'],
             'notification_method' => ['required', 'in:email,whatsapp'], 'notes' => ['nullable', 'string', 'max:1000'],

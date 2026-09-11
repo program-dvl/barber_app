@@ -45,6 +45,7 @@ function publicBookingPath(bool $deposit = false): array
         'terms_url' => 'https://example.test/terms', 'privacy_url' => 'https://example.test/privacy',
         'online_booking_enabled' => true, 'cancellation_cutoff_minutes' => 60, 'waitlist_offer_batch_size' => 2,
     ]);
+    activateTestSubscription($business);
     $location = Location::factory()->create(['business_id' => $business->id, 'name' => 'Indiranagar Studio', 'time_zone' => 'Asia/Kolkata', 'is_active' => true, 'status' => 'active']);
     for ($day = 1; $day <= 7; $day++) {
         LocationHour::query()->create(['business_id' => $business->id, 'location_id' => $location->id, 'day_of_week' => $day, 'opens_at' => '09:00', 'closes_at' => '18:00', 'sequence' => 1]);

@@ -2,6 +2,7 @@
 
 namespace App\Domain\Billing\Services;
 
+use App\Domain\Billing\Models\BillingCheckoutAttempt;
 use App\Domain\Billing\Models\BillingInvoice;
 use App\Domain\Billing\Models\BillingPayment;
 use App\Domain\Billing\Models\BillingPlanPrice;
@@ -16,6 +17,29 @@ class StripeWebhookProcessor
 {
     public function __construct(private readonly SubscriptionLifecycleManager $lifecycle) {}
 
+    /**
+     * Project a Checkout snapshot retrieved directly through authenticated Stripe API access.
+     * Signed webhooks remain the primary event stream; this closes redirect/delivery gaps safely.
+     *
+     * @param  array<string, mixed>  $object
+     */
+    public function synchronizeCheckoutSnapshot(array $object, Carbon $observedAt): bool
+    {
+        return $this->checkoutCompleted($object, $observedAt);
+    }
+
+    /** @param array<string, mixed> $object */
+    public function synchronizeSubscriptionSnapshot(array $object, Carbon $observedAt): bool
+    {
+        return $this->subscriptionUpdated($object, $observedAt);
+    }
+
+    /** @param array<string, mixed> $object */
+    public function synchronizeInvoiceSnapshot(array $object, string $eventType, Carbon $observedAt): bool
+    {
+        return $this->invoiceUpdated($object, $eventType, $observedAt);
+    }
+
     /** @param array<string, mixed> $payload */
     public function receiveVerified(array $payload): BillingProviderEvent
     {
@@ -24,7 +48,7 @@ class StripeWebhookProcessor
         $encoded = json_encode($payload, JSON_THROW_ON_ERROR);
 
         $event = BillingProviderEvent::query()->firstOrCreate(
-            ['provider_event_id' => $providerEventId],
+            ['provider' => 'stripe', 'provider_event_id' => $providerEventId],
             [
                 'provider' => 'stripe',
                 'event_type' => (string) ($payload['type'] ?? 'unknown'),
@@ -36,7 +60,7 @@ class StripeWebhookProcessor
             ]
         );
 
-        if (! hash_equals($event->payload_hash, hash('sha256', $encoded))) {
+        if ($event->provider !== 'stripe' || ! hash_equals($event->payload_hash, hash('sha256', $encoded))) {
             abort(409, 'Provider event ID was reused with different content.');
         }
 
@@ -56,7 +80,11 @@ class StripeWebhookProcessor
                 $locked->update(['business_id' => $businessId ?? $locked->business_id, 'status' => $handled ? 'processed' : 'ignored', 'processed_at' => now(), 'last_error' => null]);
             });
         } catch (Throwable $exception) {
-            $event->update(['status' => 'failed', 'last_error' => str($exception->getMessage())->limit(4000)]);
+            BillingProviderEvent::query()->whereKey($event->getKey())->update([
+                'status' => 'failed',
+                'attempts' => DB::raw('attempts + 1'),
+                'last_error' => str($exception->getMessage())->limit(4000),
+            ]);
             throw $exception;
         }
 
@@ -68,12 +96,17 @@ class StripeWebhookProcessor
     {
         $type = (string) ($payload['type'] ?? '');
         $object = $payload['data']['object'] ?? [];
+        $application = $this->metadata($object, 'application');
+        if ($application !== null && $application !== 'clipperdesk') {
+            return false;
+        }
 
         return match ($type) {
             'checkout.session.completed' => $this->checkoutCompleted($object, $occurredAt),
+            'checkout.session.expired', 'checkout.session.async_payment_failed' => $this->checkoutFailed($object, $type),
             'customer.subscription.created', 'customer.subscription.updated' => $this->subscriptionUpdated($object, $occurredAt),
             'customer.subscription.deleted' => $this->subscriptionDeleted($object, $occurredAt),
-            'invoice.created', 'invoice.finalized', 'invoice.updated', 'invoice.paid', 'invoice.payment_failed' => $this->invoiceUpdated($object, $type, $occurredAt),
+            'invoice.created', 'invoice.finalized', 'invoice.updated', 'invoice.paid', 'invoice.payment_succeeded', 'invoice.payment_failed' => $this->invoiceUpdated($object, $type, $occurredAt),
             default => false,
         };
     }
@@ -81,16 +114,62 @@ class StripeWebhookProcessor
     /** @param array<string, mixed> $object */
     private function checkoutCompleted(array $object, Carbon $occurredAt): bool
     {
-        $subscription = $this->findSubscription($object);
+        if (($object['mode'] ?? null) !== 'subscription') {
+            return false;
+        }
+        $subscription = $this->findSubscription($object, allowUnboundCheckout: true);
         if (! $subscription) {
             return false;
         }
-        if ($subscription->provider_state_at && $occurredAt->lessThanOrEqualTo($subscription->provider_state_at)) {
-            return true;
+        $attempt = $this->checkoutAttempt($object);
+        if (! $attempt
+            || $attempt->business_id !== $subscription->business_id
+            || (string) $attempt->billing_plan_price_id !== (string) $this->metadata($object, 'plan_price_id')
+            || ($object['client_reference_id'] ?? null) !== $subscription->business->public_id) {
+            return false;
         }
+        if (! in_array($attempt->status, ['pending', 'processing', 'confirmed'], true)) {
+            $attempt->update([
+                'last_checked_at' => now(),
+                'last_error' => 'completed_after_checkout_was_closed',
+            ]);
+
+            return false;
+        }
+        $providerSubscriptionId = $object['subscription'] ?? $subscription->provider_subscription_id;
         $subscription->update([
             'provider_customer_id' => $object['customer'] ?? $subscription->provider_customer_id,
-            'provider_subscription_id' => $object['subscription'] ?? $subscription->provider_subscription_id,
+            'provider_subscription_id' => $providerSubscriptionId,
+        ]);
+        $alreadyActivated = filled($providerSubscriptionId)
+            && $subscription->provider_subscription_id === $providerSubscriptionId
+            && in_array($subscription->status->value, ['active', 'cancel_scheduled'], true);
+        $attempt->update([
+            'provider_subscription_id' => $providerSubscriptionId,
+            'status' => $attempt->status === 'confirmed' || $alreadyActivated ? 'confirmed' : 'processing',
+            'confirmed_at' => $attempt->status === 'confirmed' || $alreadyActivated
+                ? ($attempt->confirmed_at ?? now())
+                : null,
+            'last_checked_at' => now(),
+            'last_error' => null,
+        ]);
+
+        return true;
+    }
+
+    /** @param array<string, mixed> $object */
+    private function checkoutFailed(array $object, string $eventType): bool
+    {
+        $attempt = $this->checkoutAttempt($object);
+        if (! $attempt) {
+            return false;
+        }
+
+        $attempt->update([
+            'status' => $eventType === 'checkout.session.expired' ? 'expired' : 'failed',
+            'expires_at' => now(),
+            'last_checked_at' => now(),
+            'last_error' => $eventType === 'checkout.session.expired' ? 'checkout_expired' : 'payment_failed',
         ]);
 
         return true;
@@ -104,9 +183,28 @@ class StripeWebhookProcessor
             return false;
         }
         $status = (string) ($object['status'] ?? '');
-        if (in_array($status, ['past_due', 'unpaid'], true)) {
+        if ($status === 'past_due') {
             $attempt = in_array($subscription->status->value, ['past_due', 'grace'], true) ? 2 : 1;
             $this->lifecycle->renewalFailed($subscription, $attempt, $occurredAt);
+
+            return true;
+        }
+        if (in_array($status, ['unpaid', 'paused'], true)) {
+            $this->lifecycle->providerRestricted($subscription, $occurredAt, $status);
+
+            return true;
+        }
+        if (in_array($status, ['incomplete', 'incomplete_expired'], true)) {
+            BillingCheckoutAttempt::query()
+                ->where('business_subscription_id', $subscription->getKey())
+                ->where('provider', 'stripe')
+                ->where('provider_subscription_id', $object['id'] ?? null)
+                ->whereIn('status', ['pending', 'processing'])
+                ->update([
+                    'status' => $status === 'incomplete_expired' ? 'failed' : 'processing',
+                    'last_checked_at' => now(),
+                    'last_error' => $status === 'incomplete_expired' ? 'incomplete_expired' : null,
+                ]);
 
             return true;
         }
@@ -120,17 +218,43 @@ class StripeWebhookProcessor
         }
 
         $providerPriceId = data_get($object, 'items.data.0.price.id');
-        $price = BillingPlanPrice::query()->where('provider_price_id', $providerPriceId)->first();
+        $price = BillingPlanPrice::query()->where('provider', 'stripe')->where('provider_price_id', $providerPriceId)->first();
         if (! $price) {
             return false;
         }
         $periodStart = Carbon::createFromTimestampUTC((int) data_get($object, 'items.data.0.current_period_start', $object['current_period_start'] ?? $occurredAt->timestamp));
         $periodEnd = Carbon::createFromTimestampUTC((int) data_get($object, 'items.data.0.current_period_end', $object['current_period_end'] ?? $occurredAt->copy()->addMonth()->timestamp));
-        $this->lifecycle->activate(
+        $cancelAtTimestamp = ($object['cancel_at_period_end'] ?? false)
+            ? ($object['cancel_at'] ?? $periodEnd->timestamp)
+            : ($object['cancel_at'] ?? null);
+        $cancelAt = $cancelAtTimestamp ? Carbon::createFromTimestampUTC((int) $cancelAtTimestamp) : null;
+        $updated = $this->lifecycle->activate(
             $subscription, $price, $periodStart, $periodEnd, $occurredAt,
             $object['customer'] ?? null, $object['id'] ?? null,
-            data_get($object, 'default_payment_method.card.brand'), data_get($object, 'default_payment_method.card.last4')
+            null, null, $cancelAt,
         );
+        if (filled($object['id'] ?? null)) {
+            $attempt = $this->checkoutAttempt($object);
+            if ($attempt
+                && $attempt->business_subscription_id === $updated->getKey()
+                && $attempt->billing_plan_price_id === $price->getKey()
+                && in_array($attempt->status, ['pending', 'processing', 'confirmed'], true)) {
+                $attempt->update([
+                    'provider_subscription_id' => $object['id'],
+                    'status' => 'confirmed',
+                    'confirmed_at' => $attempt->confirmed_at ?? now(),
+                    'last_checked_at' => now(),
+                    'last_error' => null,
+                ]);
+            }
+
+            BillingCheckoutAttempt::query()
+                ->where('business_subscription_id', $updated->getKey())
+                ->where('provider', 'stripe')
+                ->where('provider_subscription_id', $object['id'])
+                ->whereIn('status', ['pending', 'processing'])
+                ->update(['status' => 'confirmed', 'confirmed_at' => now(), 'last_checked_at' => now(), 'last_error' => null]);
+        }
 
         return true;
     }
@@ -177,7 +301,10 @@ class StripeWebhookProcessor
             ]
         );
 
-        $paymentId = data_get($object, 'payments.data.0.payment.payment_intent') ?? data_get($object, 'payment_intent');
+        $paymentId = data_get($object, 'payments.data.0.payment.payment_intent')
+            ?? data_get($object, 'payment_intent')
+            ?? data_get($object, 'parent.subscription_details.latest_invoice_payment.payment_intent');
+        $paymentSucceeded = in_array($eventType, ['invoice.paid', 'invoice.payment_succeeded'], true);
         if ($paymentId) {
             BillingPayment::query()->updateOrCreate(
                 ['provider_payment_id' => $paymentId],
@@ -185,20 +312,30 @@ class StripeWebhookProcessor
                     'business_id' => $subscription->business_id,
                     'billing_invoice_id' => $invoice->getKey(),
                     'provider' => 'stripe',
-                    'status' => $eventType === 'invoice.paid' ? 'succeeded' : ($eventType === 'invoice.payment_failed' ? 'failed' : 'pending'),
+                    'status' => $paymentSucceeded ? 'succeeded' : ($eventType === 'invoice.payment_failed' ? 'failed' : 'pending'),
                     'currency' => strtoupper((string) ($object['currency'] ?? 'USD')),
                     'amount_minor' => (int) ($object['amount_paid'] ?: $object['amount_due'] ?? 0),
                     'failure_code' => data_get($object, 'last_finalization_error.code'),
-                    'failure_message' => data_get($object, 'last_finalization_error.message'),
+                    'failure_message' => $eventType === 'invoice.payment_failed' ? 'Stripe could not complete this subscription payment.' : null,
                     'attempted_at' => $occurredAt,
-                    'paid_at' => $eventType === 'invoice.paid' ? $occurredAt : null,
+                    'paid_at' => $paymentSucceeded ? $occurredAt : null,
                 ]
             );
         }
 
         if ($eventType === 'invoice.payment_failed') {
-            $this->lifecycle->renewalFailed($subscription, (int) ($object['attempt_count'] ?? 1), $occurredAt);
-        } elseif ($eventType === 'invoice.paid' && in_array($subscription->status->value, ['past_due', 'grace', 'restricted'], true)) {
+            $initialPayment = ($object['billing_reason'] ?? null) === 'subscription_create'
+                && $subscription->status->value === 'trialing';
+            if ($initialPayment) {
+                BillingCheckoutAttempt::query()
+                    ->where('business_subscription_id', $subscription->getKey())
+                    ->where('provider', 'stripe')
+                    ->whereIn('status', ['pending', 'processing'])
+                    ->update(['status' => 'failed', 'last_error' => 'initial_payment_failed', 'last_checked_at' => now()]);
+            } else {
+                $this->lifecycle->renewalFailed($subscription, (int) ($object['attempt_count'] ?? 1), $occurredAt);
+            }
+        } elseif ($paymentSucceeded && in_array($subscription->status->value, ['past_due', 'grace', 'restricted'], true)) {
             $periodEnd = Carbon::createFromTimestampUTC((int) data_get($object, 'lines.data.0.period.end', $subscription->current_period_ends_at?->timestamp ?? now()->addMonth()->timestamp));
             $this->lifecycle->recover($subscription, $periodEnd, $occurredAt);
         }
@@ -207,16 +344,70 @@ class StripeWebhookProcessor
     }
 
     /** @param array<string, mixed> $object */
-    private function findSubscription(array $object): ?BusinessSubscription
+    private function findSubscription(array $object, bool $allowUnboundCheckout = false): ?BusinessSubscription
     {
-        $providerSubscriptionId = is_string($object['subscription'] ?? null) ? $object['subscription'] : ($object['id'] ?? null);
+        $providerSubscriptionId = is_string($object['subscription'] ?? null)
+            ? $object['subscription']
+            : data_get($object, 'parent.subscription_details.subscription');
+        if (! $providerSubscriptionId && ($object['object'] ?? null) === 'subscription') {
+            $providerSubscriptionId = $object['id'] ?? null;
+        }
         $providerCustomerId = $object['customer'] ?? null;
-        $businessPublicId = data_get($object, 'metadata.business_public_id') ?? data_get($object, 'subscription_details.metadata.business_public_id') ?? $object['client_reference_id'] ?? null;
+        $businessPublicId = $this->metadata($object, 'business_public_id')
+            ?? $object['client_reference_id']
+            ?? null;
 
-        return BusinessSubscription::query()
+        $subscription = BusinessSubscription::query()
+            ->where('provider', 'stripe')
             ->when($providerSubscriptionId, fn ($query) => $query->where('provider_subscription_id', $providerSubscriptionId))
             ->when(! $providerSubscriptionId && $providerCustomerId, fn ($query) => $query->where('provider_customer_id', $providerCustomerId))
-            ->first()
-            ?? ($businessPublicId ? Business::query()->where('public_id', $businessPublicId)->first()?->subscription : null);
+            ->first();
+
+        if ($subscription || ! $businessPublicId) {
+            return $subscription;
+        }
+
+        $candidate = Business::query()->where('public_id', $businessPublicId)->first()?->subscription;
+
+        if (! $candidate || $candidate->provider !== 'stripe') {
+            return null;
+        }
+
+        if ($candidate->provider_subscription_id) {
+            return $candidate->provider_subscription_id === $providerSubscriptionId ? $candidate : null;
+        }
+
+        if ($allowUnboundCheckout) {
+            return $candidate;
+        }
+
+        $attempt = $this->checkoutAttempt($object);
+
+        return $providerSubscriptionId
+            && $attempt
+            && $attempt->business_subscription_id === $candidate->getKey()
+            && in_array($attempt->status, ['pending', 'processing', 'confirmed'], true)
+            && (! $attempt->provider_subscription_id || $attempt->provider_subscription_id === $providerSubscriptionId)
+                ? $candidate
+                : null;
+    }
+
+    /** @param array<string, mixed> $object */
+    private function checkoutAttempt(array $object): ?BillingCheckoutAttempt
+    {
+        $attemptId = $this->metadata($object, 'billing_checkout_attempt_id');
+
+        return BillingCheckoutAttempt::query()
+            ->where('provider', 'stripe')
+            ->when($attemptId, fn ($query) => $query->where('public_id', $attemptId))
+            ->when(! $attemptId && isset($object['id']), fn ($query) => $query->where('provider_transaction_id', $object['id']))
+            ->first();
+    }
+
+    private function metadata(array $object, string $key): mixed
+    {
+        return data_get($object, "metadata.{$key}")
+            ?? data_get($object, "subscription_details.metadata.{$key}")
+            ?? data_get($object, "parent.subscription_details.metadata.{$key}");
     }
 }

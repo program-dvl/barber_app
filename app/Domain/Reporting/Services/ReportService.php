@@ -13,6 +13,15 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class ReportService
 {
+    /** @return list<string> */
+    public function allowedReportKeys(Membership $membership): array
+    {
+        return array_values(array_filter(
+            MetricCatalog::reportKeys(),
+            fn (string $reportKey): bool => $this->hasReportPermission($membership, $reportKey),
+        ));
+    }
+
     /** @param array<string,mixed> $filters
      * @return array<string,mixed>
      */
@@ -56,20 +65,8 @@ class ReportService
         if ((int) $membership->business_id !== (int) $business->id) {
             throw new AccessDeniedHttpException('Report tenant scope does not match.');
         }
-        $financial = ['sales', 'service_revenue', 'staff_revenue', 'payment_method', 'location', 'discount', 'refund', 'client_classification', 'visit_frequency', 'product_sales', 'cash_close'];
-        if (in_array($reportKey, $financial, true) && ! $membership->hasPermissionTo(PermissionName::RevenueView->value, 'web')) {
-            throw new AccessDeniedHttpException('Financial report permission is required.');
-        }
-        if (in_array($reportKey, ['appointments', 'cancellation_no_show', 'popular_service', 'utilisation'], true)
-            && ! $membership->hasAnyPermission([PermissionName::CalendarViewAll->value, PermissionName::CalendarViewOwn->value])) {
-            throw new AccessDeniedHttpException('Calendar report permission is required.');
-        }
-        if ($reportKey === 'stock' && ! $membership->hasPermissionTo(PermissionName::InventoryManage->value, 'web')) {
-            throw new AccessDeniedHttpException('Inventory permission is required.');
-        }
-        if (in_array($reportKey, ['commission', 'tip', 'payroll'], true)
-            && ! $membership->hasAnyPermission([PermissionName::CommissionsViewAll->value, PermissionName::CommissionsViewOwn->value])) {
-            throw new AccessDeniedHttpException('Commission permission is required.');
+        if (! $this->hasReportPermission($membership, $reportKey)) {
+            throw new AccessDeniedHttpException('This membership does not include the requested report.');
         }
 
         $allLocationIds = DB::table('locations')->where('business_id', $business->id)->pluck('id')->map(fn ($id) => (int) $id)->all();
@@ -112,6 +109,33 @@ class ReportService
         }
 
         return ['time_zone' => $timeZone, 'from' => $from, 'to' => $to, 'from_utc' => $from->utc(), 'to_utc' => $to->utc(), 'location_ids' => $locationIds, 'all_locations' => count($locationIds) === count($allLocationIds) && array_diff($allLocationIds, $locationIds) === [], 'staff_ids' => $staffIds, 'service_ids' => $serviceIds, 'statuses' => array_values(array_filter((array) ($filters['statuses'] ?? []), 'is_string'))];
+    }
+
+    private function hasReportPermission(Membership $membership, string $reportKey): bool
+    {
+        if (in_array($reportKey, ['sales', 'service_revenue', 'staff_revenue', 'payment_method', 'location', 'discount', 'refund', 'client_classification', 'visit_frequency', 'product_sales', 'cash_close'], true)) {
+            return $membership->hasPermissionTo(PermissionName::RevenueView->value, 'web');
+        }
+
+        if (in_array($reportKey, ['appointments', 'cancellation_no_show', 'popular_service', 'utilisation'], true)) {
+            return $membership->hasAnyPermission([
+                PermissionName::CalendarViewAll->value,
+                PermissionName::CalendarViewOwn->value,
+            ]);
+        }
+
+        if ($reportKey === 'stock') {
+            return $membership->hasPermissionTo(PermissionName::InventoryManage->value, 'web');
+        }
+
+        if (in_array($reportKey, ['commission', 'tip', 'payroll'], true)) {
+            return $membership->hasAnyPermission([
+                PermissionName::CommissionsViewAll->value,
+                PermissionName::CommissionsViewOwn->value,
+            ]);
+        }
+
+        return false;
     }
 
     /** @param array<string,mixed> $scope

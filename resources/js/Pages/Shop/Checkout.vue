@@ -6,7 +6,7 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 const props = defineProps({ appointments: { type: Array, default: () => [] }, sales: { type: Array, default: () => [] } })
 const page = usePage()
 const selected = ref(null)
-const formatMoney = (amount, currency = 'INR') => new Intl.NumberFormat('en-IN', { style: 'currency', currency }).format((amount || 0) / 100)
+const formatMoney = (amount, currency = page.props.tenant?.regional?.currency_code || 'INR') => new Intl.NumberFormat(page.props.tenant?.regional?.locale || undefined, { style: 'currency', currency }).format((amount || 0) / 100)
 const selectedAppointment = computed(() => props.appointments.find((appointment) => appointment.public_id === selected.value))
 </script>
 

@@ -20,12 +20,16 @@ use App\Domain\BusinessConfiguration\Services\ConfigurationImportService;
 use App\Domain\BusinessConfiguration\Services\OnboardingManager;
 use App\Domain\BusinessConfiguration\Services\ReadinessEvaluator;
 use App\Domain\BusinessConfiguration\Services\StaffScheduleValidator;
+use App\Domain\MoneyCommerce\Models\CommerceSetting;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\PlatformAccess\Models\StaffProfile;
+use App\Domain\SchedulingOperations\Models\Appointment;
 use App\Http\Controllers\Controller;
+use App\Rules\E164Phone;
 use App\Support\Audit\AuditWriter;
+use App\Support\Regional\CountryCatalog;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -49,6 +53,7 @@ class BusinessConfigurationController extends Controller
         private readonly StaffScheduleValidator $scheduleValidator,
         private readonly EntitlementEvaluator $entitlements,
         private readonly ConfigurationChangePreviewer $changePreviewer,
+        private readonly CountryCatalog $countries,
     ) {}
 
     public function show(Business $business): Response
@@ -56,16 +61,32 @@ class BusinessConfigurationController extends Controller
         $this->authorizePermission(PermissionName::SettingsManage);
         $session = $this->onboarding->resume($business);
 
+        $commerce = CommerceSetting::query()->firstOrCreate(
+            ['business_id' => $business->getKey()],
+            [
+                'currency_code' => $business->currency_code ?: 'INR',
+                'tax_inclusive' => $business->tax_posture === 'inclusive',
+                'default_tax_rate_bps' => 0,
+            ],
+        );
+        $referenceData = config('reference-data');
+        $referenceData['countries'] = $this->countries->countries();
+        $referenceData['currencies'] = $this->countries->currencies();
+        $referenceData['country_defaults'] = $this->countries->defaults();
+
         return Inertia::render('Configuration/Onboarding', [
-            'business' => $business->only([
-                'public_id', 'name', 'booking_slug', 'business_type', 'country_code', 'locale', 'currency_code',
-                'time_zone', 'week_starts_on', 'appointment_interval_minutes', 'tax_posture', 'phone', 'email',
-                'website_url', 'social_links', 'address', 'map_url', 'default_cancellation_policy', 'terms_url',
-                'privacy_url', 'logo_path', 'cover_image_path', 'configuration_published_at',
-                'online_booking_enabled', 'online_staff_preference', 'online_price_display', 'online_new_client_rule',
-                'staff_gender_request_enabled', 'cancellation_cutoff_minutes', 'waitlist_offer_batch_size',
-                'public_link_ttl_minutes', 'public_booking_policy_version',
-            ]),
+            'business' => [
+                ...$business->only([
+                    'public_id', 'name', 'booking_slug', 'business_type', 'country_code', 'locale', 'currency_code',
+                    'time_zone', 'week_starts_on', 'appointment_interval_minutes', 'tax_posture', 'phone', 'email',
+                    'website_url', 'social_links', 'address', 'map_url', 'default_cancellation_policy', 'terms_url',
+                    'privacy_url', 'logo_path', 'cover_image_path', 'configuration_published_at',
+                    'online_booking_enabled', 'online_staff_preference', 'online_price_display', 'online_new_client_rule',
+                    'staff_gender_request_enabled', 'cancellation_cutoff_minutes', 'waitlist_offer_batch_size',
+                    'public_link_ttl_minutes', 'public_booking_policy_version',
+                ]),
+                'default_tax_rate_bps' => $commerce->default_tax_rate_bps,
+            ],
             'onboarding' => $session->only(['current_step', 'completed_steps', 'last_saved_at', 'previewed_at', 'published_at']),
             'readiness' => $this->readiness->evaluate($business)->toArray(),
             'locations' => $business->locations()->with(['hours', 'scheduleExceptions', 'physicalResources'])->get(),
@@ -73,7 +94,7 @@ class BusinessConfigurationController extends Controller
             'staff' => $business->staffProfiles()->with(['locations', 'availabilityRules', 'serviceAssignments'])->get(),
             'imports' => $business->configurationImports()->latest()->limit(10)->get(),
             'steps' => OnboardingManager::STEPS,
-            'referenceData' => config('reference-data'),
+            'referenceData' => $referenceData,
         ]);
     }
 
@@ -87,16 +108,41 @@ class BusinessConfigurationController extends Controller
             'time_zone' => ['required', 'timezone:all'], 'week_starts_on' => ['required', 'integer', 'between:1,7'],
             'appointment_interval_minutes' => ['required', 'integer', Rule::in([5, 10, 15, 20, 30, 60])],
             'tax_posture' => ['required', Rule::in(['inclusive', 'exclusive', 'not_registered'])],
-            'phone' => ['required', 'string', 'max:32'], 'email' => ['required', 'email'],
+            'default_tax_rate_bps' => ['sometimes', 'integer', 'between:0,10000'],
+            'phone' => ['required', 'string', 'max:32', new E164Phone], 'email' => ['required', 'email'],
             'website_url' => ['nullable', 'url:http,https'], 'social_links' => ['nullable', 'array'],
             'social_links.*' => ['url:http,https'], 'address' => ['required', 'string', 'max:1000'],
             'map_url' => ['nullable', 'url:http,https'], 'default_cancellation_policy' => ['required', 'string', 'max:4000'],
             'terms_url' => ['required', 'url:http,https'], 'privacy_url' => ['required', 'url:http,https'],
         ]);
+        abort_unless(array_key_exists(strtoupper($data['country_code']), $this->countries->countries()), 422, 'Choose a recognized country.');
+        abort_unless(array_key_exists(strtoupper($data['currency_code']), $this->countries->currencies()), 422, 'Choose a recognized currency.');
+
         $slug = $data['booking_slug'];
-        unset($data['booking_slug']);
+        $storedTaxRate = CommerceSetting::query()->where('business_id', $business->getKey())->value('default_tax_rate_bps');
+        $taxRateBps = $data['tax_posture'] === 'not_registered'
+            ? 0
+            : (int) ($data['default_tax_rate_bps'] ?? $storedTaxRate ?? 0);
+        unset($data['booking_slug'], $data['default_tax_rate_bps']);
+        if ($business->currency_code && strtoupper($data['currency_code']) !== strtoupper($business->currency_code)
+            && ($business->services()->exists() || Appointment::query()->where('business_id', $business->getKey())->exists())) {
+            throw ValidationException::withMessages([
+                'currency_code' => 'Currency cannot be changed after services or appointments exist. Create a reviewed migration so future prices change without rewriting historical records.',
+            ]);
+        }
         $before = $business->only(array_keys($data));
-        $business->update([...$data, 'country_code' => strtoupper($data['country_code']), 'currency_code' => strtoupper($data['currency_code'])]);
+        DB::transaction(function () use ($business, $data, $taxRateBps): void {
+            $business->update([...$data, 'country_code' => strtoupper($data['country_code']), 'currency_code' => strtoupper($data['currency_code'])]);
+            CommerceSetting::query()->updateOrCreate(
+                ['business_id' => $business->getKey()],
+                [
+                    'currency_code' => strtoupper($data['currency_code']),
+                    'tax_inclusive' => $data['tax_posture'] === 'inclusive',
+                    'default_tax_rate_bps' => $taxRateBps,
+                    'cancellation_cutoff_minutes' => max(0, (int) $business->cancellation_cutoff_minutes),
+                ],
+            );
+        });
         $business = $this->onboarding->changeBookingSlug($business, $slug);
         $this->onboarding->saveStep($business, 'business_details');
         $this->audit->write('configuration.profile.updated', $business, target: $business, before: $before, after: $business->only(array_keys($data)));
@@ -130,6 +176,14 @@ class BusinessConfigurationController extends Controller
         ]);
         $before = $business->only(array_keys($data));
         $business->update([...$data, 'public_booking_policy_version' => max(1, (int) $business->public_booking_policy_version) + 1]);
+        CommerceSetting::query()->updateOrCreate(
+            ['business_id' => $business->getKey()],
+            [
+                'currency_code' => $business->currency_code ?: 'INR',
+                'tax_inclusive' => $business->tax_posture === 'inclusive',
+                'cancellation_cutoff_minutes' => (int) $data['cancellation_cutoff_minutes'],
+            ],
+        );
         $this->onboarding->saveStep($business, 'booking_rules');
         $this->audit->write('configuration.public_booking_policy.updated', $business, target: $business, before: $before, after: $business->only(array_keys($data)), metadata: ['policy_version' => $business->public_booking_policy_version]);
 
@@ -218,10 +272,13 @@ class BusinessConfigurationController extends Controller
         }
 
         DB::transaction(function () use ($business, $data): void {
-            $location = Location::query()->firstOrCreate(
+            $location = Location::query()->updateOrCreate(
                 ['business_id' => $business->id, 'name' => $data['location_name']],
                 ['time_zone' => $data['time_zone'], 'address' => $data['location_address'], 'status' => 'active', 'is_active' => true],
             );
+            $this->context->membership()?->locations()->syncWithoutDetaching([
+                $location->id => ['business_id' => $business->id],
+            ]);
             foreach (array_unique($data['working_days']) as $day) {
                 LocationHour::query()->updateOrCreate(
                     ['location_id' => $location->id, 'day_of_week' => $day, 'sequence' => 1, 'effective_from' => null],

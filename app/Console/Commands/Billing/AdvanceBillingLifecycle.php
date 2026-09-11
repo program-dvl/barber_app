@@ -13,9 +13,10 @@ class AdvanceBillingLifecycle extends Command
 
     public function handle(SubscriptionLifecycleManager $lifecycle): int
     {
+        $trials = $lifecycle->advanceTrials(now());
         $changes = $lifecycle->applyDuePlanChanges(now());
         $restrictions = $lifecycle->advanceDunning(now());
-        $this->info("Applied {$changes} plan change(s) and {$restrictions} restriction(s).");
+        $this->info("Expired {$trials['expired']} trial(s), queued {$trials['notices']} trial notice(s), applied {$changes} plan change(s), and restricted {$restrictions} past-due subscription(s).");
 
         return self::SUCCESS;
     }

@@ -12,10 +12,10 @@ return [
     */
     'product_name' => env('BRAND_PRODUCT_NAME', 'ClipperDesk'),
     'company_name' => env('BRAND_COMPANY_NAME', 'ClipperDesk'),
-    'tagline' => env('BRAND_TAGLINE', 'Run the day. Grow the business.'),
+    'tagline' => env('BRAND_TAGLINE', 'Your whole day. Beautifully run.'),
     'description' => env(
         'BRAND_DESCRIPTION',
-        'ClipperDesk is the daily operating system for salons and barbershops—from booking and scheduling to clients, staff, checkout, and reporting.'
+        'ClipperDesk is the daily operating system for beauty, wellness, and appointment-led businesses—from booking and scheduling to clients, staff, checkout, and reporting.'
     ),
 
     'logo' => '/images/brand/clipperdesk-logo.svg',

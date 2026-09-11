@@ -49,6 +49,13 @@ class PlatformTenantQuery
         }
 
         return [...$base,
+            'billing_provider' => $subscription ? [
+                'provider' => $subscription->provider,
+                'customer_id' => $subscription->provider_customer_id,
+                'subscription_id' => $subscription->provider_subscription_id,
+                'cancel_at' => $subscription->cancel_at?->toIso8601String(),
+                'ended_at' => $subscription->ended_at?->toIso8601String(),
+            ] : null,
             'invoices' => $subscription?->invoices()->latest('issued_at')->limit(10)->get()->map->only(['public_id', 'number', 'status', 'currency', 'total_minor', 'amount_paid_minor', 'issued_at'])->values()->all() ?? [],
             'failures' => [
                 'subscription_payments' => BillingPayment::query()->where('business_id', $business->id)->where('status', 'failed')->count(),

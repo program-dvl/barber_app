@@ -41,6 +41,7 @@ uses(RefreshDatabase::class);
 function managementTenant(StarterRole $role = StarterRole::Owner, string $timeZone = 'Asia/Kolkata'): array
 {
     $business = Business::factory()->create(['currency_code' => 'INR', 'time_zone' => $timeZone]);
+    activateTestSubscription($business);
     $location = Location::factory()->create(['business_id' => $business->id, 'time_zone' => $timeZone]);
     $user = User::factory()->create(['email_verified_at' => now()]);
     $membership = Membership::factory()->create(['business_id' => $business->id, 'user_id' => $user->id]);

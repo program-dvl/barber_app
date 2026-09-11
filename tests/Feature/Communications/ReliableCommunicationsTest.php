@@ -29,6 +29,7 @@ use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\SchedulingOperations\Models\Appointment;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
@@ -103,6 +104,7 @@ function communicationFixture(array $clientOverrides = [], ?Business $business =
     $business ??= Business::factory()->create([
         'country_code' => 'IN', 'locale' => 'en-IN', 'currency_code' => 'INR', 'time_zone' => 'Asia/Kolkata',
     ]);
+    activateTestSubscription($business);
     $location = Location::factory()->create(['business_id' => $business->id, 'time_zone' => 'Asia/Kolkata']);
     $client = Client::factory()->create([
         'business_id' => $business->id, 'email' => 'client@example.test', 'normalized_email' => 'client@example.test',
@@ -249,6 +251,30 @@ it('bounds provider retries, reuses one provider idempotency key, and recovers a
     $mobile = $delivery->deliver($mobile);
     expect($mobile->status)->toBe('failed')->and($mobile->attempt_count)->toBe(1)
         ->and($mobile->last_error_code)->toBe('unexpected_provider_error')->and($mobile->next_attempt_at)->toBeNull();
+});
+
+it('atomically enforces the plan mobile-message allowance without charging duplicate delivery attempts', function () {
+    $fixture = communicationFixture();
+    $subscription = $fixture['business']->subscription()->firstOrFail();
+    $definitionId = DB::table('entitlement_definitions')->where('key', 'messaging.monthly_allowance')->value('id');
+    DB::table('billing_plan_entitlements')
+        ->where('billing_plan_id', $subscription->billing_plan_id)
+        ->where('entitlement_definition_id', $definitionId)
+        ->update(['value' => json_encode(1, JSON_THROW_ON_ERROR)]);
+
+    app(CommunicationConsentService::class)->recordWhatsAppOptIn($fixture['client'], 'booking', $fixture['appointment']->id);
+    publishWhatsAppTemplate($fixture['business'], 'booking_confirmation');
+    $intents = app(NotificationIntentService::class);
+    $first = $intents->create(intentFor($fixture, 'appointment:quota-one', recipients: ['whatsapp' => $fixture['client']->mobile]), false)->messages->first();
+    $second = $intents->create(intentFor($fixture, 'appointment:quota-two', recipients: ['whatsapp' => $fixture['client']->mobile]), false)->messages->first();
+    $delivery = app(CommunicationDeliveryService::class);
+
+    expect($delivery->deliver($first)->status)->toBe('sent')
+        ->and($delivery->deliver($first->fresh())->status)->toBe('sent')
+        ->and($delivery->deliver($second)->status)->toBe('suppressed')
+        ->and($second->fresh()->suppression_reason)->toBe('plan_limit')
+        ->and(DB::table('entitlement_usage')->sum('quantity'))->toBe(1)
+        ->and($this->mobileProvider->calls)->toHaveCount(1);
 });
 
 it('deduplicates provider callbacks and ignores an older callback that would rewind delivery', function () {

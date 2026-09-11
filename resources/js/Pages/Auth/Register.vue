@@ -23,13 +23,21 @@ const submit = () => form.post(googleRegistration.value ? route('auth.google.reg
 </script>
 
 <template>
-    <AuthLayout title="Create your workspace">
+    <AuthLayout
+        title="Create your workspace"
+        eyebrow="A considered way to begin"
+        heading="Build the workspace around the way your business works."
+        description="Set up the owner account first, then shape services, people, hours and booking rules before anything goes live."
+        image="/images/marketing/editorial/company-story.webp"
+        image-alt="A group of salon, barber and wellness professionals sharing a natural moment in their studio."
+        image-caption="For independent owners and growing teams alike."
+    >
         <AuthenticationCard embedded wide>
             <div class="mb-7 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <p class="text-xs font-bold uppercase tracking-[0.14em] text-[var(--brand-accent)]">Owner workspace</p>
-                    <h2 class="cd-display mt-2 text-3xl font-bold tracking-tight text-[var(--text-strong)]">{{ googleRegistration ? 'Finish setting up your workspace' : 'Start with a stronger front desk' }}</h2>
-                    <p class="mt-2 max-w-xl text-sm leading-6 text-[var(--text-muted)]">{{ googleRegistration ? 'Google verified your identity. Add the business details ClipperDesk needs to create your secure workspace.' : 'Create the owner account for your salon or barbershop. No payment details are required to begin.' }}</p>
+                    <h2 class="cd-display mt-3 text-[clamp(2.15rem,4vw,3rem)] font-semibold leading-[1.02] tracking-[-0.05em] text-[var(--text-strong)]">{{ googleRegistration ? 'Finish setting up your workspace.' : 'Start with a stronger front desk.' }}</h2>
+                    <p class="mt-3 max-w-xl text-base leading-7 text-[var(--text-muted)]">{{ googleRegistration ? 'Google verified your identity. Add the business details ClipperDesk needs to create your secure workspace.' : 'Create the owner account for your salon or barbershop. No payment details are required to begin.' }}</p>
                 </div>
                 <div class="inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full bg-[var(--status-success-soft)] px-3 py-1.5 text-xs font-bold text-[var(--status-success)]"><ShieldCheckIcon class="size-4" aria-hidden="true" /> Secure setup</div>
             </div>

@@ -19,32 +19,42 @@ class SubscriptionLifecycleManager
 {
     public function __construct(private readonly EntitlementEvaluator $entitlements, private readonly AuditWriter $audit) {}
 
-    public function activate(BusinessSubscription $subscription, BillingPlanPrice $price, CarbonInterface $periodStart, CarbonInterface $periodEnd, CarbonInterface $providerStateAt, ?string $providerCustomerId = null, ?string $providerSubscriptionId = null, ?string $paymentMethodType = null, ?string $lastFour = null): BusinessSubscription
+    public function activate(BusinessSubscription $subscription, BillingPlanPrice $price, CarbonInterface $periodStart, CarbonInterface $periodEnd, CarbonInterface $providerStateAt, ?string $providerCustomerId = null, ?string $providerSubscriptionId = null, ?string $paymentMethodType = null, ?string $lastFour = null, ?CarbonInterface $cancelAt = null): BusinessSubscription
     {
-        return $this->transition($subscription, $providerStateAt, function (BusinessSubscription $locked) use ($price, $periodStart, $periodEnd, $providerCustomerId, $providerSubscriptionId, $paymentMethodType, $lastFour): array {
+        $updated = $this->transition($subscription, $providerStateAt, function (BusinessSubscription $locked) use ($price, $periodStart, $periodEnd, $providerCustomerId, $providerSubscriptionId, $paymentMethodType, $lastFour, $cancelAt): array {
             return [
                 'billing_plan_id' => $price->billing_plan_id,
                 'billing_plan_price_id' => $price->getKey(),
                 'billing_interval' => $price->billing_interval,
+                'provider' => 'stripe',
                 'provider_customer_id' => $providerCustomerId ?? $locked->provider_customer_id,
                 'provider_subscription_id' => $providerSubscriptionId ?? $locked->provider_subscription_id,
-                'status' => SubscriptionStatus::Active,
+                'status' => $cancelAt ? SubscriptionStatus::CancelScheduled : SubscriptionStatus::Active,
                 'restriction_level' => RestrictionLevel::None,
                 'current_period_started_at' => $periodStart,
                 'current_period_ends_at' => $periodEnd,
                 'grace_ends_at' => null,
-                'cancel_at' => null,
+                'cancel_at' => $cancelAt,
                 'canceled_at' => null,
                 'ended_at' => null,
                 'payment_method_type' => $paymentMethodType ?? $locked->payment_method_type,
                 'payment_method_last_four' => $lastFour ?? $locked->payment_method_last_four,
             ];
         }, 'subscription.activated');
+
+        $updated->changes()
+            ->whereNull('applied_at')
+            ->whereNull('superseded_at')
+            ->where('to_billing_plan_id', $price->billing_plan_id)
+            ->where('effective_at', '<=', now())
+            ->update(['applied_at' => now()]);
+
+        return $updated;
     }
 
-    public function requestPlanChange(BusinessSubscription $subscription, BillingPlanPrice $price, User $actor, string $reason, bool $atPeriodEnd): SubscriptionChange
+    public function requestPlanChange(BusinessSubscription $subscription, BillingPlanPrice $price, User $actor, string $reason, bool $atPeriodEnd, bool $awaitProvider = false): SubscriptionChange
     {
-        return DB::transaction(function () use ($subscription, $price, $actor, $reason, $atPeriodEnd): SubscriptionChange {
+        return DB::transaction(function () use ($subscription, $price, $actor, $reason, $atPeriodEnd, $awaitProvider): SubscriptionChange {
             $locked = BusinessSubscription::query()->lockForUpdate()->findOrFail($subscription->getKey());
             $usage = [];
             $limits = [];
@@ -60,7 +70,7 @@ class SubscriptionLifecycleManager
             $locked->changes()->whereNull('applied_at')->whereNull('superseded_at')->update(['superseded_at' => now()]);
             $change = $locked->changes()->create([
                 'business_id' => $locked->business_id,
-                'kind' => $overLimit ? 'over_limit_downgrade' : ($effectiveAt->isFuture() ? 'scheduled_plan_change' : 'immediate_plan_change'),
+                'kind' => $overLimit ? 'over_limit_downgrade' : ($effectiveAt->isFuture() ? 'scheduled_plan_change' : ($awaitProvider ? 'pending_provider_plan_change' : 'immediate_plan_change')),
                 'from_billing_plan_id' => $locked->billing_plan_id,
                 'to_billing_plan_id' => $price->billing_plan_id,
                 'requested_at' => now(),
@@ -71,7 +81,7 @@ class SubscriptionLifecycleManager
                 'limit_snapshot' => $limits,
             ]);
 
-            if (! $effectiveAt->isFuture()) {
+            if (! $effectiveAt->isFuture() && ! $awaitProvider) {
                 $this->applyPlanChange($locked, $change, $price);
             }
 
@@ -100,7 +110,9 @@ class SubscriptionLifecycleManager
     public function applyDuePlanChanges(CarbonInterface $at): int
     {
         $count = 0;
-        SubscriptionChange::query()->whereNull('applied_at')->whereNull('superseded_at')->where('effective_at', '<=', $at)
+        SubscriptionChange::query()->whereNull('applied_at')->whereNull('superseded_at')
+            ->where('kind', '!=', 'pending_provider_plan_change')
+            ->where('effective_at', '<=', $at)
             ->eachById(function (SubscriptionChange $change) use (&$count): void {
                 DB::transaction(function () use ($change, &$count): void {
                     $locked = BusinessSubscription::query()->lockForUpdate()->findOrFail($change->business_subscription_id);
@@ -167,9 +179,72 @@ class SubscriptionLifecycleManager
 
     public function advanceDunning(CarbonInterface $at): int
     {
-        return BusinessSubscription::query()->whereIn('status', [SubscriptionStatus::PastDue->value, SubscriptionStatus::Grace->value])
+        $count = 0;
+        BusinessSubscription::query()->whereIn('status', [SubscriptionStatus::PastDue->value, SubscriptionStatus::Grace->value])
             ->whereNotNull('grace_ends_at')->where('grace_ends_at', '<=', $at)
-            ->update(['status' => SubscriptionStatus::Restricted->value, 'restriction_level' => RestrictionLevel::ReadOnly->value, 'version' => DB::raw('version + 1'), 'updated_at' => now()]);
+            ->eachById(function (BusinessSubscription $subscription) use (&$count): void {
+                DB::transaction(function () use ($subscription, &$count): void {
+                    $locked = BusinessSubscription::query()->lockForUpdate()->findOrFail($subscription->getKey());
+                    if (! in_array($locked->status, [SubscriptionStatus::PastDue, SubscriptionStatus::Grace], true)) {
+                        return;
+                    }
+                    $before = ['status' => $locked->status->value, 'restriction_level' => $locked->restriction_level->value];
+                    $locked->update([
+                        'status' => SubscriptionStatus::Restricted,
+                        'restriction_level' => RestrictionLevel::ReadOnly,
+                        'version' => $locked->version + 1,
+                    ]);
+                    $this->queueNotice($locked, 'subscription_restricted', 'subscription-restricted:'.$locked->getKey());
+                    $this->audit->write('subscription.restricted', $locked->business, target: $locked, before: $before, after: ['status' => 'restricted', 'restriction_level' => 'read_only'], source: 'system');
+                    $count++;
+                });
+            });
+
+        return $count;
+    }
+
+    /** @return array{notices: int, expired: int} */
+    public function advanceTrials(CarbonInterface $at): array
+    {
+        $notices = 0;
+        $expired = 0;
+        BusinessSubscription::query()
+            ->where('status', SubscriptionStatus::Trialing->value)
+            ->whereNotNull('trial_ends_at')
+            ->eachById(function (BusinessSubscription $subscription) use ($at, &$notices, &$expired): void {
+                if ($subscription->trial_ends_at->lessThanOrEqualTo($at)) {
+                    DB::transaction(function () use ($subscription, &$expired): void {
+                        $locked = BusinessSubscription::query()->lockForUpdate()->findOrFail($subscription->getKey());
+                        if ($locked->status !== SubscriptionStatus::Trialing || $locked->trial_ends_at?->isFuture()) {
+                            return;
+                        }
+                        $locked->update([
+                            'status' => SubscriptionStatus::Restricted,
+                            'restriction_level' => RestrictionLevel::ReadOnly,
+                            'version' => $locked->version + 1,
+                        ]);
+                        $this->queueNotice($locked, 'trial_expired', 'trial-expired:'.$locked->getKey());
+                        $this->audit->write('subscription.trial.expired', $locked->business, target: $locked, after: ['status' => 'restricted', 'trial_ends_at' => $locked->trial_ends_at?->toIso8601String()], source: 'system');
+                        $expired++;
+                    });
+
+                    return;
+                }
+
+                foreach ((array) config('billing.trial_notice_days', [7, 3, 1]) as $days) {
+                    $days = (int) $days;
+                    if ($subscription->trial_ends_at->greaterThan($at->copy()->addDays($days))) {
+                        continue;
+                    }
+                    $notices += $this->queueNotice(
+                        $subscription,
+                        'trial_ending',
+                        "trial-ending:{$subscription->getKey()}:{$days}",
+                    ) ? 1 : 0;
+                }
+            });
+
+        return ['notices' => $notices, 'expired' => $expired];
     }
 
     public function recover(BusinessSubscription $subscription, CarbonInterface $periodEnd, CarbonInterface $occurredAt): BusinessSubscription
@@ -182,6 +257,15 @@ class SubscriptionLifecycleManager
         ], 'subscription.recovered');
     }
 
+    public function providerRestricted(BusinessSubscription $subscription, CarbonInterface $occurredAt, string $providerStatus): BusinessSubscription
+    {
+        return $this->transition($subscription, $occurredAt, fn (): array => [
+            'status' => SubscriptionStatus::Restricted,
+            'restriction_level' => RestrictionLevel::ReadOnly,
+            'grace_ends_at' => null,
+        ], 'subscription.provider_restricted.'.$providerStatus);
+    }
+
     public function terminate(BusinessSubscription $subscription, CarbonInterface $occurredAt): BusinessSubscription
     {
         return $this->transition($subscription, $occurredAt, fn (): array => [
@@ -190,6 +274,18 @@ class SubscriptionLifecycleManager
             'ended_at' => $occurredAt,
             'export_available_until' => $occurredAt->copy()->addDays(config('billing.export_days_after_termination')),
         ], 'subscription.terminated');
+    }
+
+    public function supersedePlanChange(SubscriptionChange $change, User $actor, string $reason): void
+    {
+        DB::transaction(function () use ($change, $actor, $reason): void {
+            $locked = SubscriptionChange::query()->lockForUpdate()->findOrFail($change->getKey());
+            if ($locked->applied_at || $locked->superseded_at) {
+                return;
+            }
+            $locked->update(['superseded_at' => now()]);
+            $this->audit->write('subscription.plan_change.failed', $locked->business, $actor, $locked, $reason, source: 'provider');
+        });
     }
 
     private function transition(BusinessSubscription $subscription, CarbonInterface $providerStateAt, callable $attributes, string $action): BusinessSubscription
@@ -235,5 +331,18 @@ class SubscriptionLifecycleManager
         return $plan->entitlements()->whereHas('definition', fn ($query) => $query->where('key', $key))
             ->where('effective_from', '<=', now())->where(fn ($query) => $query->whereNull('effective_until')->orWhere('effective_until', '>', now()))
             ->latest('effective_from')->first()?->value;
+    }
+
+    private function queueNotice(BusinessSubscription $subscription, string $type, string $deduplicationKey): bool
+    {
+        return DB::table('billing_notices')->insertOrIgnore([
+            'business_id' => $subscription->business_id,
+            'business_subscription_id' => $subscription->getKey(),
+            'type' => $type,
+            'scheduled_for' => now(),
+            'deduplication_key' => $deduplicationKey,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]) === 1;
     }
 }

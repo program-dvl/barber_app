@@ -48,6 +48,7 @@ exists.
 | `public-booking-journey.md` | Implemented public flow, secure-link, waitlist, failure, and placeholder contract | Public booking, communications, or payment coordination change |
 | `roadmap.md` | Dependency-aware delivery sequence and prompt map | Stage ordering or scope change |
 | `decisions.md` | Accepted decisions and unresolved choices | Any durable decision |
+| `01-FRESHA-COMPETITIVE-GAP-ANALYSIS.md` through `05-IMPLEMENTATION-MASTER-PLAN.md` | Evidence-based 24–36 month competitive strategy, ecosystem, UX, and engineering blueprint; proposals do not override the approved PRD or accepted decisions | Material benchmark, strategy, sequencing, or future-scope change |
 | `audits/*.md` | Dated evidence-backed repository, architecture, security, or adoption audits | Each completed audit or material re-audit |
 | `frontsite/*.md` | Public acquisition IA, indexation, claims, entity, content, CTA, and crawl contracts | Every Phase 1.5 public-site prompt |
 | `modules/*.md` | Implementation-facing module boundaries and rules | Module behavior or interface change |

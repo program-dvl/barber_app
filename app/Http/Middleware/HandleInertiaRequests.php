@@ -2,11 +2,13 @@
 
 namespace App\Http\Middleware;
 
+use App\Domain\Billing\Services\EntitlementEvaluator;
 use App\Domain\Billing\Services\PublicPricingCatalog;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\PlatformNotice;
 use App\Domain\PlatformAccess\Models\SupportAccessSession;
 use App\Domain\PlatformAccess\Services\MembershipAccessManager;
+use App\Domain\PlatformAccess\Services\WorkspaceAccessService;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\Request;
@@ -75,28 +77,55 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
-            'tenant' => function () use ($context): ?array {
-                if (! $context->hasBusiness()) {
+            'tenant' => function () use ($context, $request): ?array {
+                $business = $context->hasBusiness()
+                    ? $context->business()
+                    : $request->attributes->get('tenant_business');
+                $membership = $context->hasBusiness()
+                    ? $context->membership()
+                    : $request->attributes->get('tenant_membership');
+
+                if (! $business || ! $membership) {
                     return null;
                 }
 
-                $membership = $context->membership();
                 $canManageBilling = $membership
                     ? app(MembershipAccessManager::class)->allows($membership, PermissionName::BillingManage)
                     : false;
-                $subscription = $canManageBilling
-                    ? $context->business()->subscription()->with('plan:id,name,code')->first()
-                    : null;
+                $accessSubscription = $business->subscription()->with('plan:id,name,code')->first();
+                $subscription = $canManageBilling ? $accessSubscription : null;
+                $entitlements = app(EntitlementEvaluator::class);
 
                 return [
-                    'public_id' => $context->business()->public_id,
-                    'name' => $context->business()->name,
+                    'public_id' => $business->public_id,
+                    'name' => $business->name,
+                    'regional' => [
+                        'country_code' => $business->country_code ?: 'IN',
+                        'currency_code' => $business->currency_code ?: 'INR',
+                        'locale' => $business->locale ?: 'en-IN',
+                        'time_zone' => $business->time_zone ?: config('app.timezone'),
+                    ],
                     'membership_id' => $membership?->public_id,
                     'can_manage_billing' => $canManageBilling,
+                    'features' => app(WorkspaceAccessService::class)->navigation($business, $membership),
+                    'access' => $accessSubscription ? [
+                        'status' => $accessSubscription->status->value,
+                        'restriction_level' => $accessSubscription->restriction_level->value,
+                        'trial_ends_at' => $accessSubscription->trial_ends_at?->toIso8601String(),
+                        'grace_ends_at' => $accessSubscription->grace_ends_at?->toIso8601String(),
+                    ] : null,
+                    'entitlements' => [
+                        'inventory.enabled' => (bool) $entitlements->value($business, 'inventory.enabled'),
+                        'reporting.advanced' => (bool) $entitlements->value($business, 'reporting.advanced'),
+                        'branding.custom' => (bool) $entitlements->value($business, 'branding.custom'),
+                    ],
                     'subscription' => $subscription ? [
                         'plan_name' => $subscription->plan->name,
                         'plan_code' => $subscription->plan->code,
                         'status' => $subscription->status->value,
+                        'trial_ends_at' => $subscription->trial_ends_at?->toIso8601String(),
+                        'grace_ends_at' => $subscription->grace_ends_at?->toIso8601String(),
+                        'restriction_level' => $subscription->restriction_level->value,
                         'renews_at' => $subscription->current_period_ends_at?->toIso8601String(),
                         'cancel_at' => $subscription->cancel_at?->toIso8601String(),
                     ] : null,

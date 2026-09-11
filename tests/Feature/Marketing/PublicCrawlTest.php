@@ -9,7 +9,7 @@ it('crawls every curated sitemap URL as a canonical indexable 200 page', functio
     $xml->registerXPathNamespace('sm', 'http://www.sitemaps.org/schemas/sitemap/0.9');
     $urls = collect($xml->xpath('//sm:url/sm:loc'))->map(fn ($node) => (string) $node);
 
-    expect($urls)->toHaveCount(23);
+    expect($urls)->toHaveCount(32);
     foreach ($urls as $url) {
         $path = parse_url($url, PHP_URL_PATH) ?: '/';
         $response = $this->get($path);

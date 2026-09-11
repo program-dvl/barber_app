@@ -12,7 +12,9 @@ use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\StaffProfile;
 use App\Http\Controllers\Controller;
+use App\Rules\E164Phone;
 use App\Support\Audit\AuditWriter;
+use App\Support\Regional\CountryCatalog;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,7 +25,7 @@ use Inertia\Response;
 
 class ClientController extends Controller
 {
-    public function index(Request $request, Business $business, TenantContext $context): Response
+    public function index(Request $request, Business $business, TenantContext $context, CountryCatalog $countries): Response
     {
         $membership = $context->membership();
         abort_unless($membership?->hasPermissionTo(PermissionName::ClientView->value, 'web'), 403);
@@ -55,7 +57,27 @@ class ClientController extends Controller
             'businessLabel' => $business->name, 'clients' => $clients, 'filters' => ['search' => $search],
             'duplicateCount' => ClientDuplicateCandidate::query()->where('business_id', $business->id)->where('status', 'pending')->count(),
             'canContact' => $canContact,
+            'canCreate' => $membership->hasPermissionTo(PermissionName::ClientManage->value, 'web'),
+            'countries' => $countries->countries(),
         ]);
+    }
+
+    public function store(Request $request, Business $business, ClientIdentityService $identity, TenantContext $context): RedirectResponse
+    {
+        $membership = $context->membership();
+        abort_unless($membership?->hasPermissionTo(PermissionName::ClientManage->value, 'web'), 403);
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'mobile' => ['nullable', 'required_without:email', 'string', 'max:32', new E164Phone],
+            'email' => ['nullable', 'required_without:mobile', 'email', 'max:255'],
+            'referral_source' => ['nullable', 'string', 'max:255'],
+        ]);
+        $result = $identity->createManual($business, $data);
+
+        return redirect()->route('business.clients.show', [$business, $result['client']])
+            ->with('status', $result['created']
+                ? 'Client added. You can now book, add preferences, or record service context.'
+                : 'An existing client with the same name and contact details was opened instead of creating a duplicate.');
     }
 
     public function show(Request $request, Business $business, Client $client, ClientRecordService $records, TenantContext $context, AuditWriter $audit): Response
@@ -136,7 +158,7 @@ class ClientController extends Controller
         $this->authorize('update', $client);
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'], 'email' => ['nullable', 'email', 'max:255'],
-            'mobile' => ['nullable', 'string', 'max:32'], 'date_of_birth' => ['nullable', 'date', 'before_or_equal:today'],
+            'mobile' => ['nullable', 'string', 'max:32', new E164Phone], 'date_of_birth' => ['nullable', 'date', 'before_or_equal:today'],
             'referral_source' => ['nullable', 'string', 'max:255'], 'preferences' => ['nullable', 'array'],
             'preferences.notes' => ['nullable', 'string', 'max:2000'],
             'communication_preferences' => ['nullable', 'array', 'max:3'],

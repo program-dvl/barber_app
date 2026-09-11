@@ -396,8 +396,8 @@ tenant-aware queue job before reading or writing the private artifact.
 Resolved: ADR-006 replaces Jetstream Team with Business; Business, not an owner
 User, is the SaaS billing owner; ADR-008 makes each StaffProfile belong to one
 Business rather than sharing a profile across tenants; accepted ADR-007 selects
-an application-owned billing contract, with Paddle selected for new ClipperDesk
-subscription checkout and provider events under ADR-021.
+an application-owned billing contract, with Stripe selected for new ClipperDesk
+subscription checkout and provider events under ADR-029.
 
 Resolve the remaining periods before enabling the destructive executor or
 public launch; the current schema records classifications, deadlines, and

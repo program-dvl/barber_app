@@ -624,7 +624,7 @@ tenant receipt and tax profile.
 
 ### ADR-021: Paddle is the Good Hours SaaS subscription provider
 
-- Status: Accepted
+- Status: Superseded by ADR-029
 - Date: 2026-08-15
 - Owners: Product and Engineering
 - Related requirements: FR-01, FR-19, FR-20
@@ -718,6 +718,127 @@ non-financial price metadata; changing an amount creates a new Paddle price,
 ends the previous local mapping, and preserves the old provider price and all
 historical subscription evidence. The command must run against the same
 Sandbox or Live account that will serve checkout.
+
+### ADR-029: Stripe is the sole ClipperDesk SaaS subscription provider
+
+- Status: Accepted
+- Date: 2026-08-29
+- Owners: Product and Engineering
+- Related requirements: FR-01, FR-19, FR-20
+
+Context: ClipperDesk requires Business-owned billing for a multi-user salon,
+while the inherited LaraFast/Cashier schema is User-owned. ADR-021 selected
+Paddle at the provider edge, but Product has now directed a complete move to
+Stripe and removal of the Paddle runtime.
+
+Decision: Stripe is the only selectable provider for new ClipperDesk SaaS
+subscriptions. The existing application-owned `BusinessSubscription`, invoice,
+payment, checkout-attempt, provider-event and entitlement aggregates remain the
+authoritative local domain. The Stripe SDK/Cashier dependency supplies the
+provider primitives, but the inherited User-owned Cashier tables and routes do
+not own salon access. Checkout uses Stripe-hosted Checkout, payment method and
+invoice management use the Stripe Customer Portal, and signed Stripe webhooks
+are the authority for paid state.
+
+The approved catalog is centralized in `config/billing.php`; checkout and plan
+changes require an active command-managed local mapping that matches the plan
+code, interval, amount and currency. `billing:sync-stripe-catalog` previews by
+default. `--apply` verifies explicitly configured Price IDs without remote
+mutation. `--provision` follows LaraFast's product/price command workflow but
+targets the Business-owned catalog: it manages Stripe objects with stable
+lookup keys and metadata, creates immutable replacements for amount changes,
+commits effective-dated local mappings, and only then archives prior managed
+Prices. Live-mode mutations require `--force`. Browser redirects never activate
+access.
+
+Business plan entitlements and Membership permissions remain independent and
+both must pass. Trial expiry and exhausted dunning move the account to a
+read-only state while billing, profile, data viewing and eligible exports remain
+available. Downgrades that exceed a numeric limit never delete resources; they
+are scheduled and retain a usage/limit snapshot for remediation.
+
+Consequences: Paddle routes, handlers, provider adapter, frontend components,
+catalog command and JavaScript package are removed. Historical Paddle rows and
+already-applied migrations are retained as financial evidence. Any Business
+with a paid Paddle external ID requires an explicit migration/reconciliation
+runbook; only clean trials without external IDs are automatically relabeled.
+Live launch requires a provisioned or explicitly mapped Stripe catalog and
+webhook secret, verified catalog sync, webhook delivery/replay evidence,
+Customer Portal configuration, and Finance/Legal ownership of taxes, refunds
+and customer communications.
+
+### ADR-030: Resolve workspace access from one membership, billing, and location decision
+
+- Status: Accepted
+- Date: 2026-08-30
+- Owners: Product, Engineering, Security, and Operations
+- Related requirements: FR-01 through FR-08, FR-14, FR-16, FR-18, and FR-19
+
+Context: A successfully paid owner could see Calendar, Walk-in Queue and Reports
+in navigation but receive a raw 403 or missing-report-location error. Owner
+onboarding had not created a default Location, a completed Stripe Checkout had
+not reached the local projection because webhook verification was unconfigured,
+and navigation did not consume the backend's permission and entitlement state.
+
+Decision: Verified owner onboarding must idempotently create or reuse one active
+default Location and assign the Owner Membership. Existing Businesses receive a
+forward-only corrective backfill without deleting or merging tenant data.
+Authenticated feature entry and navigation consume `WorkspaceAccessService`,
+which evaluates Membership permission, capability entitlement, and accessible
+Location as separate gates. Role-denied entries are hidden; plan and setup gates
+remain explainable. Expected denials render a product-owned unavailable state
+with the appropriate status code instead of raw framework output.
+
+Signed Stripe webhooks remain the primary external state authority. A stored,
+tenant-owned pending Checkout Session may be recovered from authenticated
+Stripe API evidence in the status endpoint or scheduled reconciler. Browser
+parameters never supply provider status or identifiers. New Checkout fails
+closed when the Stripe server credential or subscription webhook signing secret
+is absent.
+
+Consequences: Plan entitlements never grant a user role, owner role never
+bypasses plan state, and a Location belonging to the Business does not grant an
+unassigned employee Location access. Configuration completes the provisioned
+Location rather than exceeding plan limits with a duplicate. Operators can
+recover a dropped webhook without direct database edits, while deployed and
+local environments must still configure and certify signed webhook delivery.
+
+### ADR-031: Treat Salon setup and regional context as shared operating data
+
+- Status: Accepted
+- Date: 2026-08-30
+- Owners: Product, Design, Engineering, Finance, and Operations
+- Related requirements: FR-02 through FR-05, FR-11, FR-14, FR-15, and FR-19
+
+Context: The inherited Settings form mixed Business identity, booking policy,
+Staff, Availability, and launch status in one surface. A small hard-coded
+country list and repeated raw phone inputs made regional behavior inconsistent.
+Currency and tax posture could be stored without reliably updating the commerce
+defaults that use them.
+
+Decision: The owner-facing surface is **Salon setup**, a guided view of connected
+operating configuration rather than a generic settings dump. It groups Business
+details, bookable foundation, booking experience, import, and preview under an
+explicit readiness overview. Readiness names required blockers and optional
+improvements; it does not claim a vague percentage. Staff and Availability
+remain owned by their dedicated workflows and are summarized, not duplicated.
+
+Business country is the defaulting context for phone country, suggested
+currency, locale, time zones, and address expectations. `CountryCatalog`
+provides the complete ISO country set and derived suggestions; those suggestions
+remain editable and are validated server-side. Phone values use one E.164
+contract across staff-assisted and public workflows. Business currency and tax
+posture synchronize transactionally to commerce currency, tax inclusivity, and
+default tax rate. Historical monetary records retain their captured currencies;
+an owner cannot casually change Business currency after services or appointments
+exist.
+
+Consequences: Regional choices affect booking display, checkout, inventory,
+communications locale, phone entry, and future invoice/receipt adapters through
+shared Business or commerce state. They are not legal or tax determinations.
+Launch-market accounting, address, invoicing, privacy, and receipt rules still
+require accountable review. New regional adapters must consume the shared state
+instead of introducing new country or currency constants.
 
 ### ADR-022: Project inventory, payroll inputs, and reports from completed commerce events
 
@@ -985,6 +1106,87 @@ completion, exactly-once tenant bootstrap, conflicting-link rejection, and TOTP
 challenge preservation. `TenantIsolationTest` proves generic Socialite and
 magic-link route names remain absent while the three reviewed Google routes exist.
 
+### ADR-032: Treat business activation as one guided journey across canonical workspaces
+
+- Status: Accepted
+- Date: 2026-08-31
+- Owners: Product, Design, Engineering, Security, and Operations
+- Related requirements: FR-02, FR-03, FR-04, FR-05, FR-06, FR-09, and ADR-014
+
+Context: The configuration domain could already atomically create a complete
+first bookable path, but its UI combined Location, hours, provider, availability,
+Service, price, and capacity into one oversized form. The main Staff and Services
+navigation still opened placeholders. This made onboarding appear complete in
+the backend while the durable operating workspaces were unavailable.
+
+Decision: Salon setup is the resumable launch task centre; Location, Team &
+availability, and Services are canonical focused workspaces used both during
+activation and after launch. Their write orchestration lives in one
+`BusinessActivationManager` so retries, row locking, tenant validation,
+entitlement limits, onboarding progress, and audit evidence remain consistent.
+StaffProfile represents a schedulable provider independently from login-bearing
+Membership. ReadinessEvaluator remains the only publish authority, and public
+booking remains the only evidence that the assembled delivery path is usable.
+
+The legacy all-in-one endpoint is retained as a compatibility bridge, not linked
+from the owner experience. Service edits update reusable segment identities
+rather than deleting rows referenced by historical appointments. Archive is a
+status change and never deletes financial or booking history.
+
+Consequences: A solo owner moves through a calm sequence and continues managing
+the same records in the same workspaces after launch. New service/team/location
+features must extend these domain contracts rather than reintroduce forms under
+Settings. Bulk operations, templates, sophisticated schedule exceptions and
+provider invitations remain separate follow-up increments and must preserve the
+same tenant, impact-preview, and history rules.
+
+Evidence: `BusinessActivationJourneyTest` proves the focused HTTP journey,
+idempotent retries, tenant/role isolation, readiness/publish, real slot search,
+hold, confirmation, Appointment creation, and Client creation.
+
+### ADR-033: Use a visual, industry-led acquisition system without expanding clinical scope
+
+- Status: Accepted
+- Date: 2026-09-11
+- Owners: Product, Design, Engineering, Security, and Privacy
+- Related requirements: PRD Sections 1-4, FR-01 through FR-19, ADR-024, and ADR-027
+
+Context: The verified public site accurately described the operating system but
+presented it with abstract software diagrams and only four industry pages. The
+result read as an enterprise software specification rather than an aspirational
+brand for owner-operated service businesses. The approved Phase 1 capability
+model already supports configurable services, staff, rooms, stations,
+equipment, forms, booking, client context, checkout, and reporting across
+several appointment-led operating patterns. Some adjacent audiences, however,
+also have regulated clinical, health, age, consent, or animal-record needs that
+ClipperDesk does not implement.
+
+Decision: The public acquisition identity uses the promise **Your whole day.
+Beautifully run.**, an editorial photography-led visual system, and distinct
+indexable pages for barbershops, salons, independent stylists, spa and sauna,
+nail salons, medspas, massage, fitness and recovery, physical therapy, health
+practices, tattooing and piercing, pet grooming, and tanning studios. Each page
+must describe a genuinely distinct scheduling, capacity, client-service, or
+commercial operating pattern; it may reuse the common product capability set
+but may not imply a vertical-specific module, customer relationship, guaranteed
+outcome, certification, or regulatory approval.
+
+Medspa, physical-therapy, health-practice, massage, tanning, tattoo/piercing,
+and pet-grooming pages must state the relevant boundary. ClipperDesk is not an
+EMR/EHR, clinical chart, diagnosis, prescribing, insurance, veterinary, or
+healthcare-compliance product. Local licensing, consent, age, exposure,
+retention, and care obligations remain the Business's independently reviewed
+responsibility. Publishing these acquisition pages does not promote deferred
+clinical, classes, memberships, marketplace, campaign, or medical-compliance
+capabilities into Phase 1.
+
+Consequences: ADR-024's curated solution set is expanded, while its
+indexability, canonical, SSR, sitemap, claim-evidence, and conversion rules stay
+in force. Realistic generated editorial imagery may represent an industry, but
+alt text and nearby copy must not imply that the people or premises are actual
+ClipperDesk customers. Product scope remains the shared booking-to-checkout
+operating system; regulated vertical fit is explicitly non-clinical.
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |
@@ -993,4 +1195,4 @@ magic-link route names remain absent while the three reviewed Google routes exis
 | OPEN-10 | Final data retention and anonymisation schedule plus destructive executor authorization | Client privacy, attachments, audit events, financial records, and closure are safely bounded by ADR-018 but cannot complete destructive requests | Before destructive processing or paid public launch | **Retained; Critical blocker.** Requires named Indian privacy counsel/DPO and Product approval. No waiver or expiry exists. |
 | OPEN-11 | Complete counsel-led ClipperDesk trademark clearance and acquire the approved production domains | ADR-027 selects the identity, but naming rights, domain ownership, sender authentication, and defensive domains are external launch controls | Before public launch, outbound production mail, or printed collateral | **Retained; Critical/High blocker.** Product/Operations and counsel must approve and acquire the final public, app, and booking domains; configuration defaults do not establish ownership. No waiver or expiry exists. |
 | OPEN-12 | Approve marketing attribution/analytics provider, consent class, retention, and accountable privacy owner | Phase 1.5 can implement a bounded first-party event contract, but cannot load a tracker, advertising pixel, fingerprinting, session replay, or claim consent/retention approval | Before enabling any third-party marketing measurement or paid acquisition | **Open; bounded by ADR-024.** Product, Privacy/DPO, and Engineering must name the provider/purpose, allowed properties, consent behavior, retention and deletion process. |
-| OPEN-13 | Approve the legal operator/contact suite and live refund responsibility for subscription and appointment payments | Stripe India website review expects public Terms, Privacy and Return/Refund/Cancellation URLs plus customer-service details and processing timelines; the current appointment adapter records internal refunds but has no certified provider refund executor or approved live merchant-of-record/connected-account allocation | Before legal documents become effective or any live payment is accepted | **Open; Critical/High blocker.** Legal/Product must approve operator, address, governing/dispute/liability terms and version acceptance; Finance/Operations must own direct support, request/decision/submission timelines, Paddle escalation and the live Stripe merchant/refund/reconciliation path. The 2026-08-25 drafts remain `noindex` and non-effective. |
+| OPEN-13 | Approve the legal operator/contact suite and live refund responsibility for subscription and appointment payments | Stripe India website review expects public Terms, Privacy and Return/Refund/Cancellation URLs plus customer-service details and processing timelines; the current appointment adapter records internal refunds but has no certified provider refund executor or approved live merchant-of-record/connected-account allocation | Before legal documents become effective or any live payment is accepted | **Open; Critical/High blocker.** Legal/Product must approve operator, address, governing/dispute/liability terms and version acceptance; Finance/Operations must own direct support, request/decision/submission timelines, and the live Stripe subscription and appointment refund/reconciliation paths. The 2026-08-25 drafts remain `noindex` and non-effective. |

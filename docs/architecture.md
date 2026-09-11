@@ -16,7 +16,7 @@ implemented; use `project-status.md` for implementation status.
 | Admin | Filament 5 with Livewire 4 |
 | Identity | Jetstream, Fortify, Sanctum, Socialite, magic-link code, two-factor support |
 | Authorization | Spatie Laravel Permission plus Jetstream team roles |
-| Subscription candidates | Cashier/Stripe, Lemon Squeezy, and Paddle-related boilerplate |
+| Subscription candidates at initial audit | Cashier/Stripe, Lemon Squeezy, and Paddle-related boilerplate |
 | Supporting services | Sentry, Resend, Guzzle, Puppeteer/Browsershot, image and PDF tooling |
 | Testing | Pest 4 and PHPUnit 12 |
 
@@ -36,7 +36,7 @@ behavior:
 | Sanctum API tokens | Package, schema, pages, and tests exist, but Jetstream API support is disabled. |
 | Email verification | Fortify feature/routes exist, but `User` does not implement `MustVerifyEmail`; authenticated `verified` middleware is therefore not proof of verified identity for this model. |
 | Authorization | One Team policy exists. Spatie roles are global (`permission.teams=false`). No policy was found for invoices or other non-Team application records. |
-| Billing | User currently uses Cashier/Stripe. Parallel Stripe and Lemon Squeezy schemas/routes/resources exist. Paddle routes exist without the Paddle package. |
+| Billing at initial audit | User-owned Cashier/Stripe, parallel Lemon Squeezy resources, and incomplete Paddle routes coexisted. ADR-029 replaces the active edge with Business-owned Stripe billing and quarantines the legacy schemas. |
 | Admin | Filament access is a global `admin` role or stale `is_admin` fallback; no support-access grant/audit model exists. |
 | Operations | Local environment uses MySQL, sync queues, database sessions, file cache, UTC, and has no public storage link or Sentry DSN. These are local facts, not a production topology decision. |
 | Security maintenance | Locked PHP dependencies reported 45 advisories across 19 packages; npm reported 19 vulnerable packages (2 critical, 14 high, 3 moderate). |
@@ -118,7 +118,7 @@ and expiring downloads remain provider/topology work.
 
 ## Implemented subscription and entitlement foundation
 
-ADR-021 selects Paddle Billing for the ClipperDesk subscription boundary, behind the
+ADR-029 selects Stripe Billing for the ClipperDesk subscription boundary, behind the
 application-owned `SubscriptionProvider` interface. Controllers coordinate the
 provider request, normalized domain services own transitions, and signed
 provider events confirm external state. Browser redirects are never payment
@@ -128,8 +128,8 @@ evidence.
 flowchart LR
     Owner["Verified owner"] --> UI["Business billing UI/API"]
     UI --> Contract["SubscriptionProvider contract"]
-    Contract --> Paddle["Paddle inline checkout / portal / subscriptions"]
-    Paddle --> Webhook["Signature-verified webhook"]
+    Contract --> Stripe["Stripe Checkout / Customer Portal / subscriptions"]
+    Stripe --> Webhook["Signature-verified webhook"]
     Webhook --> Inbox["Deduplicated provider-event inbox"]
     Inbox --> Lifecycle["Normalized lifecycle service"]
     Lifecycle --> Records["Business subscription, invoices, payments, changes"]
@@ -142,13 +142,23 @@ hash, verified-signature flag, provider creation time, attempts, processing
 status, and error. A row lock and unique key make duplicates no-ops. Subscription
 updates compare provider creation time with `provider_state_at`; older events
 remain evidence but cannot rewind state. Scheduled reconciliation replays only
-verified pending/failed events through the same idempotent processor.
+verified pending/failed events through the same idempotent processor. A
+separate pending-Checkout reconciler may read only a stored tenant-owned Session
+through authenticated Stripe API access and project its current snapshot; this
+is recovery evidence for missed delivery, never browser evidence or a
+replacement for signed webhooks.
 
 Plans and plan prices are effective-dated commercial configuration. Feature and
 numeric entitlement definitions are stable operation keys. Plan entitlements
 and Business overrides record effective intervals, actor, and reason. Operations
 ask the evaluator for keys such as `staff.max` or `inventory.enabled`; they do
 not branch on plan names.
+
+Workspace entry uses one layered decision shared by routes and navigation:
+active Membership, role permission, subscription/feature entitlement, and an
+active Location accessible to that Membership where the feature requires one.
+Verified owner onboarding creates and assigns a default Location idempotently,
+so operational pages do not depend on an unrelated later setup write.
 
 Progressive restriction separates commercial state from Business closure:
 `past_due` and `grace` warn while allowing normal work; expiry becomes
@@ -164,8 +174,10 @@ retention behavior is complete.
 3. require an active User-to-Business Membership;
 4. activate Business-scoped permission context;
 5. resolve child models through the Business relationship;
-6. run model/action policy and assigned-Location checks; and
-7. clear tenant context after the response.
+6. resolve the workspace feature decision (permission, entitlement, and required
+   assigned Location);
+7. run model/action policy and resource-level scope checks; and
+8. clear tenant context after the response.
 
 Actions that issue/revoke invitations or revoke access repeat authorization and
 lineage checks rather than trusting the controller. Navigation remains a
@@ -275,11 +287,10 @@ successful charge terminal. A booking Hold is extended while the intent is
 pending; only webhook success may confirm the Hold. A failed confirmation opens
 a `payment_reconciliation_tasks` item rather than retrying an unknown charge.
 
-Paddle is deliberately limited to ClipperDesk SaaS subscriptions. It is not
-used for appointment deposits, retail, or in-person salon services; those stay
-as manual/local tender records until a separate customer-payment provider is
-approved. The separate appointment-payment adapter never reuses Paddle billing
-payloads as commerce state. Any future gateway must prove the same
+Stripe subscription billing is deliberately isolated from appointment deposits,
+retail, and in-person salon services. The separate appointment-payment adapter
+never reuses subscription payloads as commerce state even when both boundaries
+use Stripe. Any future gateway must prove the same
 webhook/reconciliation suite.
 
 ### Capacity and concurrency

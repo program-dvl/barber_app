@@ -14,38 +14,52 @@ defineProps({ solution: Object, features: Array });
 <template>
     <HomeLayout>
         <Head :title="solution.title" />
-        <section class="cd-public-section border-b border-[var(--border-subtle)]">
-            <PublicContainer>
-                <Breadcrumbs :items="[{ label: 'Home', href: route('marketing.home') }, { label: 'Solutions', href: route('marketing.solutions') }, { label: solution.label }]" />
-                <p class="cd-eyebrow mt-10">{{ solution.label }}</p>
-                <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.3rem)] font-semibold leading-[0.98] tracking-[-0.05em] text-[var(--text-strong)] text-balance">{{ solution.title }}</h1>
-                <p class="mt-7 max-w-3xl text-lg leading-8 text-[var(--text-muted)] sm:text-xl">{{ solution.description }}</p>
-                <p class="mt-8 max-w-3xl rounded-[var(--radius-lg)] border-l-4 border-[var(--action-primary)] bg-[var(--surface-raised)] p-6 leading-7"><strong class="text-[var(--text-strong)]">Where it fits:</strong> {{ solution.fit }}</p>
+        <section class="cd-solution-hero" :data-accent="solution.accent">
+            <PublicContainer class="grid gap-10 py-12 sm:py-16 lg:grid-cols-[0.86fr_1.14fr] lg:items-center lg:gap-14 lg:py-20">
+                <div>
+                    <Breadcrumbs :items="[{ label: 'Home', href: route('marketing.home') }, { label: 'Solutions', href: route('marketing.solutions') }, { label: solution.label }]" />
+                    <p class="cd-hero-kicker mt-9"><span aria-hidden="true">✦</span> ClipperDesk for {{ solution.label }}</p>
+                    <h1 class="mt-6 font-display text-[clamp(3.25rem,6vw,6.2rem)] font-bold leading-[0.9] tracking-[-0.07em] text-white text-balance">{{ solution.title }}</h1>
+                    <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">{{ solution.description }}</p>
+                    <div class="mt-8 flex flex-wrap gap-3">
+                        <Link :href="route('register')" class="cd-button cd-button-primary">Start your trial</Link>
+                        <Link :href="route('marketing.pricing')" class="cd-button cd-button-hero-secondary">View pricing</Link>
+                    </div>
+                </div>
+                <figure class="cd-solution-photo">
+                    <img :src="solution.image" :alt="solution.image_alt" width="1400" height="933" class="h-full w-full object-cover" fetchpriority="high">
+                </figure>
             </PublicContainer>
+        </section>
+        <section class="border-b border-[var(--border-subtle)] bg-[#f7f8fc] py-8">
+            <PublicContainer><p class="mx-auto max-w-4xl text-center text-lg leading-8 text-[var(--text-default)]"><strong class="text-[var(--text-strong)]">Where it fits:</strong> {{ solution.fit }}</p></PublicContainer>
         </section>
         <section class="cd-public-section">
             <PublicContainer>
-                <SectionHeading eyebrow="What makes this day different" title="Specific operational pressure, not a swapped industry label" />
+                <SectionHeading eyebrow="Your working day" title="The pressure points this business knows well" />
                 <div class="mt-12 grid gap-5 lg:grid-cols-3">
-                    <MarketingCard v-for="challenge in solution.challenges" :key="challenge.title">
+                    <MarketingCard v-for="(challenge, index) in solution.challenges" :key="challenge.title" class="cd-numbered-card">
+                        <span class="cd-card-number" aria-hidden="true">{{ String(index + 1).padStart(2, '0') }}</span>
                         <h2 class="text-xl font-extrabold text-[var(--text-strong)]">{{ challenge.title }}</h2>
                         <p class="mt-4 leading-7 text-[var(--text-muted)]">{{ challenge.body }}</p>
                     </MarketingCard>
                 </div>
             </PublicContainer>
         </section>
-        <section class="cd-public-section bg-[var(--brand-primary)] text-white">
-            <PublicContainer class="grid gap-12 lg:grid-cols-[1fr_0.75fr]">
+        <section class="cd-public-section cd-dark-section text-white">
+            <PublicContainer class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
                 <div>
-                    <h2 class="font-display text-4xl leading-tight">A representative working loop</h2>
+                    <p class="cd-dark-eyebrow">A connected shift</p>
+                    <h2 class="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl">From the first booking to the final close.</h2>
                     <ol class="mt-8 space-y-4">
-                        <li v-for="(step, index) in solution.day" :key="step" class="flex gap-4 rounded-xl border border-white/15 bg-white/7 p-5 leading-7 text-white/82"><span class="font-display text-2xl text-[var(--brand-accent-soft)]">0{{ index + 1 }}</span><span>{{ step }}</span></li>
+                        <li v-for="(step, index) in solution.day" :key="step" class="cd-dark-step"><span>{{ String(index + 1).padStart(2, '0') }}</span><p>{{ step }}</p></li>
                     </ol>
                 </div>
-                <div>
-                    <h2 class="font-display text-4xl leading-tight">Honest boundaries</h2>
+                <div class="cd-boundary-card">
+                    <p class="cd-dark-eyebrow">Good software is honest</p>
+                    <h2 class="mt-4 font-display text-4xl font-semibold leading-tight">Clear boundaries.</h2>
                     <ul class="mt-8 space-y-4">
-                        <li v-for="item in solution.limits" :key="item" class="flex gap-3 leading-7 text-white/82"><ExclamationTriangleIcon class="mt-1 size-5 shrink-0 text-[var(--brand-accent-soft)]" aria-hidden="true" /><span>{{ item }}</span></li>
+                        <li v-for="item in solution.limits" :key="item" class="flex gap-3 leading-7 text-white/80"><ExclamationTriangleIcon class="mt-1 size-5 shrink-0 text-yellow-300" aria-hidden="true" /><span>{{ item }}</span></li>
                     </ul>
                     <p class="mt-8 text-sm font-semibold text-white/60">Requirement evidence: {{ solution.requirements.join(', ') }}</p>
                 </div>
@@ -63,6 +77,6 @@ defineProps({ solution: Object, features: Array });
                 </div>
             </PublicContainer>
         </section>
-        <ConversionBand :title="`Give your ${solution.label.toLowerCase()} one connected operating day.`" description="Start with a verified trial and review the booking and operational rules before publishing." :context="`solution_${solution.slug}_final`" />
+        <ConversionBand title="Make the whole working day feel beautifully under control." description="Start with a verified trial and shape the booking and operating rules before publishing." :context="`solution_${solution.slug}_final`" />
     </HomeLayout>
 </template>

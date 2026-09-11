@@ -35,7 +35,7 @@ function platformTrial(Business $business): BusinessSubscription
 {
     return BusinessSubscription::query()->create([
         'business_id' => $business->id, 'billing_plan_id' => BillingPlan::query()->where('code', 'trial')->firstOrFail()->id,
-        'provider' => 'paddle', 'status' => SubscriptionStatus::Trialing, 'restriction_level' => RestrictionLevel::None,
+        'provider' => 'stripe', 'status' => SubscriptionStatus::Trialing, 'restriction_level' => RestrictionLevel::None,
         'trial_started_at' => now(), 'trial_ends_at' => now()->addDays(14),
     ]);
 }
@@ -73,7 +73,8 @@ it('returns only safe tenant summaries and rejects identifier manipulation', fun
     $response = $this->actingAs($administrator)->getJson(route('platform.businesses.show', $business))->assertOk()
         ->assertJsonPath('business.owner.email', $owner->email)
         ->assertJsonMissingPath('business.owner.password')
-        ->assertJsonMissingPath('business.subscription.provider_customer_id');
+        ->assertJsonPath('business.billing_provider.provider', 'stripe')
+        ->assertJsonPath('business.billing_provider.customer_id', null);
     expect(json_encode($response->json(), JSON_THROW_ON_ERROR))->not->toContain('two_factor')->not->toContain('recipient');
     $this->actingAs($administrator)->getJson('/platform/businesses/'.$other->public_id.'x')->assertNotFound();
 });

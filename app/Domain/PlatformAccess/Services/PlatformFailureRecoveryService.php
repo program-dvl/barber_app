@@ -3,7 +3,6 @@
 namespace App\Domain\PlatformAccess\Services;
 
 use App\Domain\Billing\Models\BillingProviderEvent;
-use App\Domain\Billing\Services\PaddleWebhookProcessor;
 use App\Domain\Billing\Services\StripeWebhookProcessor;
 use App\Domain\Communications\Models\CommunicationMessage;
 use App\Domain\Communications\Services\CommunicationSupportService;
@@ -21,7 +20,6 @@ class PlatformFailureRecoveryService
 {
     public function __construct(
         private readonly StripeWebhookProcessor $stripeBilling,
-        private readonly PaddleWebhookProcessor $paddleBilling,
         private readonly PaymentWebhookProcessor $payments,
         private readonly CommunicationSupportService $communications,
         private readonly AuditWriter $audit,
@@ -107,7 +105,6 @@ class PlatformFailureRecoveryService
     {
         $result = match ($event->provider) {
             'stripe' => $this->stripeBilling->receiveVerified($event->payload),
-            'paddle' => $this->paddleBilling->receiveVerified($event->payload),
             default => throw ValidationException::withMessages(['provider' => 'The billing provider has no reviewed replay adapter.']),
         };
 

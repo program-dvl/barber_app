@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Platform;
 use App\Domain\Billing\Contracts\SubscriptionProvider;
 use App\Domain\Billing\Models\BillingCoupon;
 use App\Domain\Billing\Models\BillingPlanPrice;
+use App\Domain\Billing\Services\PlanCatalog;
 use App\Domain\Billing\Services\SubscriptionLifecycleManager;
 use App\Domain\PlatformAccess\Enums\BusinessStatus;
 use App\Domain\PlatformAccess\Enums\PlatformCapability;
@@ -71,18 +72,34 @@ class PlatformOperationsController extends Controller
         return response()->json(['subscription' => $lifecycle->extendTrial($business->subscription()->firstOrFail(), $data['days'], $request->user(), $data['reason'])]);
     }
 
-    public function changePlan(Request $request, Business $business, PlatformBusinessLifecycleService $lifecycle): JsonResponse
+    public function changePlan(Request $request, Business $business, SubscriptionLifecycleManager $lifecycle, PlanCatalog $catalog, SubscriptionProvider $provider): JsonResponse
     {
         $this->allow($request, PlatformCapability::BillingManage);
         $data = $request->validate(['price_id' => ['required', 'integer'], 'at_period_end' => ['required', 'boolean'], 'reason' => ['required', 'string', 'min:10', 'max:1000']]);
         $subscription = $business->subscription()->firstOrFail();
-        $price = BillingPlanPrice::query()->where('is_active', true)->findOrFail($data['price_id']);
-        $atPeriodEnd = app(SubscriptionLifecycleManager::class)->requiresPeriodEnd($subscription, $price, $data['at_period_end']);
-        if ($subscription->provider_subscription_id) {
-            app(SubscriptionProvider::class)->changePrice($subscription, $price, $atPeriodEnd);
+        abort_unless(
+            $subscription->provider === 'stripe' && filled($subscription->provider_subscription_id),
+            409,
+            'A Stripe subscription is required before support can change a paid plan.',
+        );
+        $price = BillingPlanPrice::query()
+            ->where('provider', 'stripe')
+            ->where('is_active', true)
+            ->where('effective_from', '<=', now())
+            ->where(fn ($query) => $query->whereNull('effective_until')->orWhere('effective_until', '>', now()))
+            ->with('plan:id,code')
+            ->findOrFail($data['price_id']);
+        abort_unless($catalog->allows($price), 422, 'The selected Stripe price is not in the approved billing catalog.');
+        $atPeriodEnd = $lifecycle->requiresPeriodEnd($subscription, $price, $data['at_period_end']);
+        $change = $lifecycle->requestPlanChange($subscription, $price, $request->user(), $data['reason'], $atPeriodEnd, true);
+        try {
+            $provider->changePrice($subscription, $price, $atPeriodEnd);
+        } catch (\Throwable $exception) {
+            $lifecycle->supersedePlanChange($change, $request->user(), 'Stripe rejected or could not complete the platform-requested change.');
+            throw $exception;
         }
 
-        return response()->json(['change' => $lifecycle->changePlan($subscription, $price, $request->user(), $data['reason'], $atPeriodEnd)]);
+        return response()->json(['change' => $change]);
     }
 
     public function applyCoupon(Request $request, Business $business, AuditWriter $audit): JsonResponse
@@ -90,6 +107,7 @@ class PlatformOperationsController extends Controller
         $this->allow($request, PlatformCapability::BillingManage);
         $data = $request->validate(['coupon_code' => ['required', 'string', 'max:64'], 'reason' => ['required', 'string', 'min:10', 'max:1000']]);
         $coupon = BillingCoupon::query()->where('code', Str::upper($data['coupon_code']))->firstOrFail();
+        abort_unless($coupon->provider === 'stripe', 422, 'Coupon is not configured for Stripe.');
         abort_unless($coupon->isRedeemable(), 422, 'Coupon is not redeemable.');
         DB::table('platform_coupon_assignments')->upsert([[
             'business_id' => $business->id, 'billing_coupon_id' => $coupon->id, 'assigned_by_user_id' => $request->user()->id,

@@ -13,6 +13,7 @@ use App\Domain\PlatformAccess\Enums\StarterRole;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Membership;
 use App\Domain\PlatformAccess\Services\BusinessAccessBootstrapper;
+use App\Domain\PlatformAccess\Services\DefaultLocationProvisioner;
 use App\Domain\PlatformAccess\Services\MembershipAccessManager;
 use App\Domain\Reporting\Services\InstrumentationService;
 use App\Models\User;
@@ -27,6 +28,7 @@ class OwnerOnboardingService
         private readonly BusinessAccessBootstrapper $access,
         private readonly ClientFormService $clientForms,
         private readonly MembershipAccessManager $memberships,
+        private readonly DefaultLocationProvisioner $locations,
         private readonly AuditWriter $audit,
         private readonly InstrumentationService $instrumentation,
     ) {}
@@ -66,6 +68,7 @@ class OwnerOnboardingService
                 'joined_at' => now(),
             ]);
             $this->memberships->assignStarterRole($membership, StarterRole::Owner, $user, 'Verified owner registration.');
+            $this->locations->provision($business, $membership, $user);
 
             $trialStartedAt = now();
             $subscription = BusinessSubscription::query()->create([

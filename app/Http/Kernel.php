@@ -5,12 +5,14 @@ namespace App\Http;
 use App\Http\Middleware\ApplyHttpSecurity;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\EnforceSubscriptionAccess;
 use App\Http\Middleware\EnsurePlatformAccess;
 use App\Http\Middleware\EnsurePlatformAdministrator;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\RequireEntitlement;
+use App\Http\Middleware\RequireWorkspaceFeature;
 use App\Http\Middleware\ResolveTenantContext;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\TrustProxies;
@@ -122,7 +124,9 @@ class Kernel extends HttpKernel
         'platform.admin' => EnsurePlatformAdministrator::class,
         'platform.access' => EnsurePlatformAccess::class,
         'tenant' => ResolveTenantContext::class,
+        'subscription.access' => EnforceSubscriptionAccess::class,
         'entitlement' => RequireEntitlement::class,
+        'workspace.feature' => RequireWorkspaceFeature::class,
         'password.confirm' => RequirePassword::class,
         'precognitive' => HandlePrecognitiveRequests::class,
         'signed' => ValidateSignature::class,

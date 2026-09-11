@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('billing:advance-lifecycle')->everyFiveMinutes()->withoutOverlapping();
         $schedule->command('billing:reconcile-provider-events')->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command('billing:reconcile-stripe-checkouts')->everyFiveMinutes()->withoutOverlapping();
         $schedule->command('billing:send-notices')->everyMinute()->withoutOverlapping();
         $schedule->command('communications:process-events')->everyMinute()->withoutOverlapping();
     }

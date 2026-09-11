@@ -62,8 +62,8 @@ Depending on how a person uses the Platform, ClipperDesk may handle:
 | Support and privacy cases | Request type, identity-verification evidence, correspondence, reviewer, deadline, export/correction/withdrawal result and retained-data preview |
 
 ClipperDesk is not designed to store full card numbers, card security codes or
-online-banking credentials. Payment details entered in Paddle or Stripe payment
-components are handled by that provider. ClipperDesk retains only the evidence
+online-banking credentials. Payment details entered in Stripe-hosted payment
+components are handled by Stripe. ClipperDesk retains only the evidence
 needed to reconcile the transaction and operate the related subscription,
 booking, deposit, sale or refund.
 
@@ -130,9 +130,9 @@ an electronic medical record or for emergency care.
 
 ClipperDesk currently separates two payment contexts:
 
-1. **ClipperDesk SaaS subscriptions.** Paddle is the selected merchant of record
-   and handles checkout, payment and applicable subscription tax functions
-   under Paddle's own buyer terms and privacy notice.
+1. **ClipperDesk SaaS subscriptions.** Stripe hosts checkout and the customer
+   billing portal and processes subscription payments under Stripe's privacy
+   notice and applicable service terms.
 2. **Salon-client appointment payments.** Stripe is the implemented adapter for
    eligible appointment deposits or card payments. The salon's booking page
    identifies the service provider and the applicable amount, currency and
@@ -151,9 +151,8 @@ evidence; verified provider events control transaction status.
 Personal data may be disclosed only for an authorized purpose to:
 
 - the Business Customer and its permitted Authorized Users;
-- Paddle for SaaS subscription checkout and merchant-of-record functions;
-- Stripe for eligible appointment payment, fraud prevention, refund and
-  reconciliation functions;
+- Stripe for SaaS subscription checkout, billing management, eligible
+  appointment payment, fraud prevention, refund and reconciliation functions;
 - Resend and Twilio for configured email and WhatsApp delivery;
 - approved hosting, storage, monitoring, security and professional-service
   providers needed to operate the Platform;

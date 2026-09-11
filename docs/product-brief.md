@@ -6,9 +6,13 @@ Run the complete client journey from booking to checkout and rebooking without
 losing control of staff time, physical resources, payments, client history, or
 daily revenue.
 
-The product is a multi-tenant, web-first SaaS for barbershops, salons, spas, and
-independent personal-care professionals. It must be simple enough for a solo
-operator and structured enough for a busy shared front desk.
+The product is a multi-tenant, web-first SaaS for beauty, wellness, and
+appointment-led service businesses. Its launch core remains barbershops,
+salons, spas, nail businesses, and independent personal-care professionals. It
+must be simple enough for a solo operator and structured enough for a busy
+shared front desk. Adjacent health and recovery audiences use only the shared
+non-clinical scheduling and business workflow; ClipperDesk does not replace
+their regulated record or care systems.
 
 ## Chargeable Phase 1 outcome
 
@@ -44,6 +48,9 @@ not met the chargeability standard.
 Launch customers are independent professionals and single-location businesses,
 typically with 2-15 staff. The architecture remains location-aware for future
 growth.
+
+The acquisition site may explain fit for the industry set accepted in ADR-033.
+Those pages do not add vertical-specific or clinical functionality to Phase 1.
 
 ## Core loop
 
@@ -106,4 +113,3 @@ The canonical targets are in PRD Section 15. The defining indicators are setup
 within 30 minutes, conflict leakage of zero, notification success at or above
 98%, payment reconciliation exceptions below 0.1%, strong weekly usage, and
 declining setup-related support demand.
-

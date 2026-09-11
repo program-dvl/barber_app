@@ -43,6 +43,7 @@ afterEach(fn () => app(TenantContext::class)->clear());
 function clientTenant(StarterRole $role = StarterRole::Owner): array
 {
     [$user, $business, $membership] = createTenantMembership($role);
+    activateTestSubscription($business);
     $location = Location::factory()->create(['business_id' => $business->id]);
     $membership->locations()->syncWithPivotValues([$location->id], ['business_id' => $business->id]);
 
@@ -81,6 +82,30 @@ it('uses conservative normalized identity rules and creates review candidates fo
         ->and($candidate->status)->toBe('pending')
         ->and($candidate->reasons)->toContain('same_normalized_mobile')
         ->and($candidate->reasons)->toContain('similar_name');
+});
+
+it('lets authorized front desk staff add a client manually without creating exact duplicates', function () {
+    $tenant = clientTenant(StarterRole::Receptionist);
+    $payload = [
+        'name' => 'Priya Shah',
+        'mobile' => '+919876543210',
+        'email' => 'priya@example.test',
+        'referral_source' => 'Walk-in',
+    ];
+
+    $first = $this->actingAs($tenant['user'])->post(route('business.clients.store', $tenant['business']), $payload);
+    $client = Client::query()->where('business_id', $tenant['business']->id)->firstOrFail();
+    $first->assertRedirect(route('business.clients.show', [$tenant['business'], $client]));
+
+    $this->actingAs($tenant['user'])->post(route('business.clients.store', $tenant['business']), $payload)
+        ->assertRedirect(route('business.clients.show', [$tenant['business'], $client]));
+
+    expect(Client::query()->where('business_id', $tenant['business']->id)->count())->toBe(1)
+        ->and($client->normalized_mobile)->toBe('919876543210');
+
+    $stylist = clientTenant(StarterRole::BarberStylist);
+    $this->actingAs($stylist['user'])->post(route('business.clients.store', $stylist['business']), $payload)
+        ->assertForbidden();
 });
 
 it('rejects stale concurrent profile edits and revokes vulnerable appointment links after contact changes', function () {

@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Schema;
 
 class PublicPricingCatalog
 {
-    private const PLAN_CODES = ['starter', 'pro'];
-
     private const INTERVALS = ['monthly', 'annual'];
+
+    public function __construct(private readonly PlanCatalog $catalog) {}
 
     /** @return array{available: bool, currency: ?string, trial_days: int, plans: array<int, array<string, mixed>>, reason: ?string} */
     public function present(): array
@@ -21,7 +21,7 @@ class PublicPricingCatalog
         $now = now();
         $provider = (string) config('billing.provider');
         $plans = BillingPlan::query()
-            ->whereIn('code', self::PLAN_CODES)
+            ->whereIn('code', $this->catalog->codes())
             ->where('is_active', true)
             ->where(fn ($query) => $query->whereNull('available_from')->orWhere('available_from', '<=', $now))
             ->where(fn ($query) => $query->whereNull('available_until')->orWhere('available_until', '>', $now))
@@ -39,18 +39,18 @@ class PublicPricingCatalog
             ->get()
             ->keyBy('code');
 
-        if ($provider !== 'paddle' || $plans->keys()->sort()->values()->all() !== collect(self::PLAN_CODES)->sort()->values()->all()) {
-            return $this->unavailable('The approved public Paddle catalog is not fully available.');
+        if ($provider !== 'stripe' || $plans->keys()->sort()->values()->all() !== collect($this->catalog->codes())->sort()->values()->all()) {
+            return $this->unavailable('The approved public Stripe catalog is not fully available.');
         }
 
         $currencies = collect();
-        $presented = collect(self::PLAN_CODES)->map(function (string $code) use ($plans, $currencies): ?array {
+        $presented = collect($this->catalog->codes())->map(function (string $code) use ($plans, $currencies): ?array {
             $plan = $plans[$code];
             $prices = $plan->prices->keyBy(fn ($price) => $price->billing_interval->value);
 
             foreach (self::INTERVALS as $interval) {
                 $price = $prices->get($interval);
-                if (! $price || ! str_starts_with((string) $price->provider_price_id, 'pri_')) {
+                if (! $price || ! $this->catalog->allows($price)) {
                     return null;
                 }
                 $currencies->push(strtoupper($price->currency));
@@ -75,13 +75,14 @@ class PublicPricingCatalog
             ];
         });
 
-        if ($presented->contains(null) || $currencies->unique()->count() !== 1 || $currencies->first() !== 'USD') {
+        $currency = strtoupper((string) config('billing.stripe.currency', 'USD'));
+        if ($presented->contains(null) || $currencies->unique()->count() !== 1 || $currencies->first() !== $currency) {
             return $this->unavailable('The approved public prices are incomplete or use an unsupported currency.');
         }
 
         return [
             'available' => true,
-            'currency' => 'USD',
+            'currency' => $currency,
             'trial_days' => (int) config('billing.trial_days'),
             'plans' => $presented->values()->all(),
             'reason' => null,
@@ -90,7 +91,7 @@ class PublicPricingCatalog
 
     public function validSelection(?string $plan, ?string $interval): ?array
     {
-        if (! in_array($plan, self::PLAN_CODES, true) || ! in_array($interval, self::INTERVALS, true)) {
+        if (! in_array($plan, $this->catalog->codes(), true) || ! in_array($interval, self::INTERVALS, true)) {
             return null;
         }
 

@@ -13,7 +13,7 @@ class BillingCheckoutAttempt extends Model
     protected $fillable = [
         'public_id', 'business_id', 'business_subscription_id', 'billing_plan_price_id',
         'created_by_user_id', 'provider', 'provider_transaction_id', 'provider_subscription_id',
-        'status', 'expires_at', 'last_checked_at', 'confirmed_at', 'last_error',
+        'provider_checkout_url', 'status', 'expires_at', 'last_checked_at', 'confirmed_at', 'last_error',
     ];
 
     protected static function booted(): void

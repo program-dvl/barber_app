@@ -35,6 +35,7 @@ class ResolveTenantContext
         abort_unless($membership?->isActive(), 403);
 
         $this->context->activate($business, $membership);
+        $request->attributes->set('tenant_business', $business);
         $request->attributes->set('tenant_membership', $membership);
 
         try {

@@ -27,6 +27,9 @@ const props = defineProps({
 });
 
 const page = usePage();
+const money = value => new Intl.NumberFormat(page.props.tenant?.regional?.locale || undefined, {
+    style: 'currency', currency: page.props.tenant?.regional?.currency_code || 'INR',
+}).format((value || 0) / 100);
 const firstName = computed(() => page.props.auth.user.name?.trim().split(/\s+/)[0] || 'there');
 const views = [
     { id: 'command', label: 'Command desk', icon: AdjustmentsHorizontalIcon },
@@ -121,7 +124,7 @@ onMounted(() => {
             <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <Link v-for="(card, key) in todayMetrics.cards" v-show="card.visible" :key="key" :href="card.drill" class="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4 hover:border-[var(--brand-primary)]">
                     <p class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">{{ key.replaceAll('_', ' ').replace(' minor', '') }}</p>
-                    <p class="mt-2 text-2xl font-bold text-[var(--text-strong)]">{{ key.endsWith('_minor') ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format((card.value || 0) / 100) : (card.value ?? 0) }}</p>
+                    <p class="mt-2 text-2xl font-bold text-[var(--text-strong)]">{{ key.endsWith('_minor') ? money(card.value) : (card.value ?? 0) }}</p>
                 </Link>
             </div>
         </section>

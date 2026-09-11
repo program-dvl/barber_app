@@ -27,7 +27,7 @@ class TrustController extends Controller
                 ['title' => 'Account security', 'body' => 'Launch authentication uses verified email/password plus optional TOTP and recovery codes. Platform administration additionally requires verified email and confirmed TOTP.', 'state' => 'Implemented; independent identity audit pending'],
                 ['title' => 'Sensitive links and files', 'body' => 'Appointment, form and file actions use purpose-bound expiring tokens. Private attachments use tenant-scoped storage and expiring delivery.', 'state' => 'Implemented; malware scanning remains a launch blocker'],
                 ['title' => 'Change and financial history', 'body' => 'Sensitive changes produce audit evidence, and completed commerce corrections use append-only or compensating records rather than erasing history.', 'state' => 'Implemented and tested locally'],
-                ['title' => 'Provider and operational assurance', 'body' => 'Paddle, Stripe, Resend and Twilio production credentials, webhooks, sender identities and settlement/delivery paths require target-environment certification.', 'state' => 'Not production-certified'],
+                ['title' => 'Provider and operational assurance', 'body' => 'Stripe, Resend and Twilio production credentials, webhooks, sender identities and settlement/delivery paths require target-environment certification.', 'state' => 'Not production-certified'],
                 ['title' => 'Recovery and independent review', 'body' => 'Production backup/restore, disaster recovery, on-call monitoring, penetration testing and independent accessibility/security review are not yet evidenced.', 'state' => 'Open launch controls'],
             ],
             'seo' => [

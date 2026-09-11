@@ -2,8 +2,10 @@
 
 namespace App\Domain\BusinessConfiguration\Models;
 
+use App\Domain\PlatformAccess\Models\StaffProfile;
 use App\Support\Tenancy\BelongsToBusiness;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StaffServiceAssignment extends Model
 {
@@ -23,5 +25,15 @@ class StaffServiceAssignment extends Model
             'cleanup_minutes' => 'integer', 'commission_rate' => 'decimal:4',
             'effective_from' => 'immutable_datetime', 'effective_until' => 'immutable_datetime',
         ];
+    }
+
+    public function staffProfile(): BelongsTo
+    {
+        return $this->belongsTo(StaffProfile::class);
+    }
+
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class);
     }
 }

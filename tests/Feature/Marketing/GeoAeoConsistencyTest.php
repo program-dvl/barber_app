@@ -4,7 +4,7 @@ it('keeps the canonical ClipperDesk definition aligned in visible and machine-re
     $home = file_get_contents(resource_path('js/Pages/Home.vue'));
     $schema = file_get_contents(app_path('Support/Seo/StructuredDataGraph.php'));
     expect($home)->toContain('ClipperDesk is the daily operating system for salons and barbershops')
-        ->and(config('brand.description'))->toContain('daily operating system for salons and barbershops')
+        ->and(config('brand.description'))->toContain('daily operating system for beauty, wellness, and appointment-led businesses')
         ->and($schema)->toContain("config('brand.description')");
 });
 

@@ -25,10 +25,12 @@ use App\Domain\BusinessConfiguration\Services\ReadinessEvaluator;
 use App\Domain\BusinessConfiguration\Services\ResourceMaintenanceManager;
 use App\Domain\BusinessConfiguration\Services\StaffScheduleValidator;
 use App\Domain\ClientRecords\Models\Client;
+use App\Domain\MoneyCommerce\Models\CommerceSetting;
 use App\Domain\PlatformAccess\Enums\StarterRole;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\PlatformAccess\Models\StaffProfile;
+use App\Support\Regional\CountryCatalog;
 use App\Support\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Database\Seeders\GoodHoursDemoSeeder;
@@ -71,6 +73,35 @@ it('enforces configuration role permissions and tenant isolation at the HTTP bou
 
     $this->actingAs($receptionist)->get(route('business.configuration.show', $receptionBusiness))->assertForbidden();
     $this->actingAs($owner)->get(route('business.configuration.show', $receptionBusiness))->assertForbidden();
+});
+
+it('offers the complete ISO country catalog and synchronizes regional money and tax settings', function () {
+    [$owner, $business] = createTenantMembership(StarterRole::Owner);
+    activateTestSubscription($business);
+    $catalog = app(CountryCatalog::class);
+
+    expect($catalog->countries())->toHaveCount(249)
+        ->and($catalog->countries()['IN'])->toBe('India')
+        ->and($catalog->defaults()['IN']['currency'])->toBe('INR')
+        ->and($catalog->defaults()['IN']['time_zones'])->toContain('Asia/Kolkata');
+
+    $this->actingAs($owner)->patch(route('business.configuration.profile.update', $business), [
+        'name' => 'Regional Salon', 'booking_slug' => 'regional-salon', 'business_type' => 'Salon',
+        'country_code' => 'IN', 'locale' => 'en-IN', 'currency_code' => 'INR', 'time_zone' => 'Asia/Kolkata',
+        'week_starts_on' => 1, 'appointment_interval_minutes' => 15, 'tax_posture' => 'exclusive',
+        'default_tax_rate_bps' => 1800, 'phone' => '+919876543210', 'email' => 'hello@regional.test',
+        'website_url' => null, 'social_links' => [], 'address' => '12 Salon Road, Pune', 'map_url' => null,
+        'default_cancellation_policy' => 'Please give 24 hours notice.',
+        'terms_url' => 'https://regional.test/terms', 'privacy_url' => 'https://regional.test/privacy',
+    ])->assertRedirect()->assertSessionHasNoErrors();
+
+    $business->refresh();
+    $commerce = CommerceSetting::withoutGlobalScopes()->whereBelongsTo($business)->firstOrFail();
+    expect($business->currency_code)->toBe('INR')
+        ->and($business->tax_posture)->toBe('exclusive')
+        ->and($commerce->currency_code)->toBe('INR')
+        ->and($commerce->tax_inclusive)->toBeFalse()
+        ->and($commerce->default_tax_rate_bps)->toBe(1800);
 });
 
 it('creates a complete first bookable path through the guided interface', function () {
@@ -233,6 +264,7 @@ it('persists exact impacted-appointment previews through the scheduling adapter 
 
 it('requires a fresh impact preview before changing a published schedule', function () {
     [$owner, $business] = createTenantMembership(StarterRole::Owner);
+    activateTestSubscription($business);
     $business->update(['configuration_published_at' => now()]);
     $location = Location::factory()->create(['business_id' => $business->id]);
     $windows = [['day_of_week' => 1, 'opens_at' => '09:00', 'closes_at' => '17:00', 'sequence' => 1]];

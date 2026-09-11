@@ -113,6 +113,10 @@ class EntitlementEvaluator
             return false;
         }
 
+        if ($subscription->status === SubscriptionStatus::Trialing && $subscription->trial_ends_at?->isPast()) {
+            return in_array($operation, ['read', 'delete', 'deactivate'], true);
+        }
+
         if ($subscription->restriction_level === RestrictionLevel::ReadOnly) {
             return in_array($operation, ['read', 'delete', 'deactivate'], true);
         }

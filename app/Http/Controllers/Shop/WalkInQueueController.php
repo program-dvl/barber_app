@@ -11,6 +11,7 @@ use App\Domain\SchedulingOperations\Models\WalkInEntry;
 use App\Domain\SchedulingOperations\Services\SchedulingRecordLookup;
 use App\Domain\SchedulingOperations\Services\WalkInQueueService;
 use App\Http\Controllers\Controller;
+use App\Rules\E164Phone;
 use App\Support\Audit\AuditWriter;
 use App\Support\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
@@ -71,7 +72,7 @@ class WalkInQueueController extends Controller
         abort_unless($membership?->hasPermissionTo(PermissionName::WalkInsManage->value, 'web'), 403);
         $data = $request->validate([
             'location' => ['required', 'string'], 'service' => ['required', 'string'], 'preferred_staff' => ['nullable', 'string'],
-            'client_name' => ['required', 'string', 'max:255'], 'client_mobile' => ['required', 'string', 'max:32'],
+            'client_name' => ['required', 'string', 'max:255'], 'client_mobile' => ['required', 'string', 'max:32', new E164Phone],
             'arrived_at' => ['required', 'date'], 'notes' => ['nullable', 'string', 'max:2000'],
         ]);
         $location = Location::query()->where('business_id', $business->id)->where('public_id', $data['location'])->firstOrFail();

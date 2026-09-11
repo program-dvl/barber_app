@@ -1,5 +1,7 @@
 <?php
 
+use App\Domain\Billing\Enums\BillingInterval;
+use App\Domain\Billing\Models\BillingPlan;
 use App\Domain\Billing\Models\BillingPlanPrice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -7,7 +9,24 @@ use Inertia\Testing\AssertableInertia as Assert;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    config(['billing.provider' => 'paddle', 'billing.trial_days' => 14]);
+    config(['billing.provider' => 'stripe', 'billing.trial_days' => 14]);
+    foreach (['starter', 'pro'] as $code) {
+        foreach ([BillingInterval::Monthly, BillingInterval::Annual] as $interval) {
+            $priceId = "price_{$code}_{$interval->value}_pricing";
+            $amount = (int) config("billing.plans.{$code}.prices.{$interval->value}.amount_minor");
+            config(["billing.plans.{$code}.prices.{$interval->value}.price_id" => $priceId]);
+            BillingPlanPrice::query()->create([
+                'billing_plan_id' => BillingPlan::query()->where('code', $code)->value('id'),
+                'billing_interval' => $interval,
+                'currency' => 'USD',
+                'amount_minor' => $amount,
+                'provider' => 'stripe',
+                'provider_price_id' => $priceId,
+                'is_active' => true,
+                'effective_from' => now()->subMinute(),
+            ]);
+        }
+    }
 });
 
 it('renders an honest unavailable state when provider prices are not mapped', function () {
@@ -63,7 +82,7 @@ it('preserves an allow-listed plan preference through registration and rejects t
 });
 
 it('excludes expired prices from a public selection', function () {
-    BillingPlanPrice::query()->where('billing_interval', 'annual')->firstOrFail()->update(['effective_until' => now()->subMinute()]);
+    BillingPlanPrice::query()->where('provider', 'stripe')->where('billing_interval', 'annual')->firstOrFail()->update(['effective_until' => now()->subMinute()]);
 
     $this->get(route('marketing.pricing'))->assertInertia(fn (Assert $page) => $page->where('catalog.available', false));
 });

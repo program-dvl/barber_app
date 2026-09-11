@@ -8,12 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BillingPlanPrice extends Model
 {
-    protected $fillable = ['billing_plan_id', 'billing_interval', 'currency', 'amount_minor', 'provider', 'provider_price_id', 'is_active', 'effective_from', 'effective_until'];
+    protected $fillable = ['billing_plan_id', 'billing_interval', 'currency', 'amount_minor', 'provider', 'provider_price_id', 'catalog_managed', 'is_active', 'effective_from', 'effective_until'];
 
     protected function casts(): array
     {
         return [
             'billing_interval' => BillingInterval::class,
+            'catalog_managed' => 'boolean',
             'is_active' => 'boolean',
             'effective_from' => 'immutable_datetime',
             'effective_until' => 'immutable_datetime',

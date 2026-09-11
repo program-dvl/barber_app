@@ -1,5 +1,10 @@
 <?php
 
+use App\Domain\PlatformAccess\Enums\StarterRole;
+use App\Domain\PlatformAccess\Models\Location;
+use App\Domain\PlatformAccess\Models\Membership;
+use App\Domain\PlatformAccess\Services\MembershipAccessManager;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -50,4 +55,42 @@ it('repairs a missing inventory levels table without rerunning historical migrat
             'current_stock',
         ]))->toBeTrue()
         ->and(DB::table('inventory_levels')->count())->toBe(0);
+});
+
+it('repairs the active owner location foundation without broadening staff access', function () {
+    [, $business, $ownerMembership] = createTenantMembership(StarterRole::Owner);
+    $staffUser = User::factory()->create();
+    $staffMembership = Membership::factory()->create([
+        'business_id' => $business->getKey(),
+        'user_id' => $staffUser->getKey(),
+    ]);
+    app(MembershipAccessManager::class)->assignStarterRole(
+        $staffMembership,
+        StarterRole::Receptionist,
+        $staffUser,
+        'Migration recovery fixture.',
+    );
+    $location = Location::factory()->create([
+        'business_id' => $business->getKey(),
+        'name' => $business->name,
+        'status' => 'inactive',
+        'is_active' => false,
+    ]);
+
+    $repair = require database_path('migrations/2026_08_30_000003_backfill_owner_location_assignments.php');
+    $repair->up();
+    $repair->up();
+
+    expect($location->fresh()->is_active)->toBeTrue()
+        ->and($location->fresh()->status)->toBe('active')
+        ->and(DB::table('locations')->where('business_id', $business->getKey())->count())->toBe(1)
+        ->and(DB::table('location_membership')
+            ->where('business_id', $business->getKey())
+            ->where('location_id', $location->getKey())
+            ->where('membership_id', $ownerMembership->getKey())
+            ->count())->toBe(1)
+        ->and(DB::table('location_membership')
+            ->where('business_id', $business->getKey())
+            ->where('membership_id', $staffMembership->getKey())
+            ->count())->toBe(0);
 });

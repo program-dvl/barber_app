@@ -11,14 +11,17 @@ it('keeps the shared public accessibility foundations present', function () {
     expect($css)->toContain(':focus-visible')->toContain('prefers-reduced-motion: reduce')->toContain('scroll-padding-top: 6rem')->toContain('@media print');
 });
 
-it('keeps public font and evidence-image files within component budgets', function () {
+it('keeps public font and marketing-image files within component budgets', function () {
     foreach (glob(public_path('fonts/clipperdesk/*.{ttf,woff2}'), GLOB_BRACE) as $font) {
         expect(filesize($font))->toBeLessThanOrEqual(130 * 1024);
     }
-    foreach ([
-        base_path('docs/evidence/product-shell/clipperdesk-shop-dashboard-desktop-1488.png'),
-        base_path('docs/evidence/product-shell/clipperdesk-public-booking-360.png'),
-    ] as $image) {
+    $images = glob(public_path('images/marketing/industries/*.webp'));
+    $editorialImages = glob(public_path('images/marketing/editorial/*.webp'));
+
+    expect($images)->toHaveCount(13);
+    expect($editorialImages)->toHaveCount(6);
+
+    foreach ([...$images, ...$editorialImages] as $image) {
         expect(filesize($image))->toBeLessThanOrEqual(550 * 1024);
     }
 });

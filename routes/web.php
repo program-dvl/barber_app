@@ -5,7 +5,6 @@ use App\Domain\PlatformAccess\Models\Location;
 use App\Http\Controllers\Access\StaffInvitationController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Billing\BusinessBillingController;
-use App\Http\Controllers\Billing\PaddleWebhookController;
 use App\Http\Controllers\Billing\PlatformBillingSupportController;
 use App\Http\Controllers\Billing\StripeWebhookController;
 use App\Http\Controllers\BlogController;
@@ -47,10 +46,13 @@ use App\Http\Controllers\Shop\CommunicationSettingsController;
 use App\Http\Controllers\Shop\DashboardController;
 use App\Http\Controllers\Shop\DashboardRedirectController;
 use App\Http\Controllers\Shop\InventoryController;
+use App\Http\Controllers\Shop\LocationSetupController;
 use App\Http\Controllers\Shop\OperationalExceptionController;
 use App\Http\Controllers\Shop\PrintDailyScheduleController;
 use App\Http\Controllers\Shop\ReportController;
 use App\Http\Controllers\Shop\ScheduleBlockController;
+use App\Http\Controllers\Shop\ServiceManagementController;
+use App\Http\Controllers\Shop\TeamManagementController;
 use App\Http\Controllers\Shop\WalkInQueueController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\Webhooks\AppointmentPaymentWebhookController;
@@ -76,18 +78,6 @@ $shopModules = [
         'description' => 'Close completed services with traceable totals, tenders, receipts, and adjustments.',
         'requirements' => 'FR-14, FR-15, and FR-17',
         'nonGoal' => 'No cart, payment, refund, tax, tip, deposit, commission, or receipt behavior is included in this shell delivery.',
-    ],
-    'staff' => [
-        'label' => 'Staff',
-        'description' => 'Prepare for schedulable staff profiles, location assignments, working hours, roles, and permissions.',
-        'requirements' => 'FR-05',
-        'nonGoal' => 'No staff profile, membership, invitation, role, schedule, or authorization policy is included in this shell delivery.',
-    ],
-    'services' => [
-        'label' => 'Services',
-        'description' => 'Prepare the service catalogue, staff variants, durations, prices, add-ons, and resource needs.',
-        'requirements' => 'FR-04',
-        'nonGoal' => 'No catalogue, price, duration, add-on, or resource configuration behavior is included in this shell delivery.',
     ],
     'inventory' => [
         'label' => 'Inventory',
@@ -216,14 +206,13 @@ if (app()->environment('local')) {
 }
 
 Route::post('billing/webhooks/stripe', StripeWebhookController::class)->name('billing.webhooks.stripe');
-Route::post('billing/webhooks/paddle', PaddleWebhookController::class)->name('billing.webhooks.paddle');
 Route::post('payments/webhooks/stripe', AppointmentPaymentWebhookController::class)->name('payments.webhooks.stripe');
 Route::post('communications/webhooks/resend', [CommunicationWebhookController::class, 'resend'])->name('communications.webhooks.resend');
 Route::post('communications/webhooks/twilio', [CommunicationWebhookController::class, 'twilio'])->name('communications.webhooks.twilio');
 Route::match(['get', 'post'], 'communications/actions/{link}', CommunicationActionController::class)->name('communications.action');
 
 Route::middleware([
-    'auth:sanctum',
+    'auth:web',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () use ($platformModules, $shopModules) {
@@ -233,12 +222,12 @@ Route::middleware([
         ->name('design-system.patterns');
 
     Route::prefix('businesses/{business:public_id}')
-        ->middleware('tenant')
+        ->middleware(['tenant', 'subscription.access'])
         ->scopeBindings()
         ->group(function () use ($shopModules): void {
             Route::get('/dashboard', DashboardController::class)->name('business.dashboard');
 
-            Route::get('/app/calendar', CalendarController::class)->name('business.calendar');
+            Route::get('/app/calendar', CalendarController::class)->middleware('workspace.feature:calendar')->name('business.calendar');
             Route::get('/app/calendar/print', PrintDailyScheduleController::class)->name('business.calendar.print');
             Route::post('/appointments', [AppointmentOperationsController::class, 'store'])->name('business.appointments.store');
             Route::patch('/appointments/{appointment}/status', [AppointmentOperationsController::class, 'transition'])->name('business.appointments.status');
@@ -248,23 +237,23 @@ Route::middleware([
             Route::post('/appointments/{appointment}/exceptions', [OperationalExceptionController::class, 'appointment'])->name('business.appointments.exceptions');
             Route::post('/schedule-blocks', ScheduleBlockController::class)->name('business.schedule-blocks.store');
             Route::post('/operational-exceptions/closure', [OperationalExceptionController::class, 'closure'])->name('business.operational-exceptions.closure');
-            Route::get('/app/checkout-sales', [CheckoutController::class, 'index'])->name('business.checkout.index');
+            Route::get('/app/checkout-sales', [CheckoutController::class, 'index'])->middleware('workspace.feature:checkout-sales')->name('business.checkout.index');
             Route::post('/appointments/{appointment}/checkout', [CheckoutController::class, 'open'])->name('business.checkout.open');
             Route::post('/sales/{sale}/tenders', [CheckoutController::class, 'tender'])->name('business.checkout.tender');
             Route::post('/sales/{sale}/payments/{payment}/refunds', [CheckoutController::class, 'refund'])->name('business.checkout.refund');
             Route::get('/sales/{sale}/receipt', [CheckoutController::class, 'receipt'])->name('business.checkout.receipt');
             Route::post('/locations/{location}/cash-close', [CheckoutController::class, 'close'])->name('business.cash-close.store');
 
-            Route::get('/app/inventory', [InventoryController::class, 'index'])->name('business.inventory.index');
-            Route::post('/inventory/products', [InventoryController::class, 'store'])->name('business.inventory.products.store');
-            Route::post('/inventory/products/import', [InventoryController::class, 'import'])->name('business.inventory.import');
-            Route::get('/inventory/products/export', [InventoryController::class, 'export'])->name('business.inventory.export');
-            Route::post('/inventory/products/{product}/receipts', [InventoryController::class, 'receipt'])->name('business.inventory.receipts.store');
-            Route::post('/inventory/products/{product}/adjustments', [InventoryController::class, 'adjustment'])->name('business.inventory.adjustments.store');
+            Route::get('/app/inventory', [InventoryController::class, 'index'])->middleware(['workspace.feature:inventory', 'entitlement:inventory.enabled,read'])->name('business.inventory.index');
+            Route::post('/inventory/products', [InventoryController::class, 'store'])->middleware('entitlement:inventory.enabled,use')->name('business.inventory.products.store');
+            Route::post('/inventory/products/import', [InventoryController::class, 'import'])->middleware('entitlement:inventory.enabled,import')->name('business.inventory.import');
+            Route::get('/inventory/products/export', [InventoryController::class, 'export'])->middleware('entitlement:inventory.enabled,read')->name('business.inventory.export');
+            Route::post('/inventory/products/{product}/receipts', [InventoryController::class, 'receipt'])->middleware('entitlement:inventory.enabled,use')->name('business.inventory.receipts.store');
+            Route::post('/inventory/products/{product}/adjustments', [InventoryController::class, 'adjustment'])->middleware('entitlement:inventory.enabled,use')->name('business.inventory.adjustments.store');
 
-            Route::get('/app/reports', [ReportController::class, 'index'])->name('business.reports.index');
+            Route::get('/app/reports', [ReportController::class, 'index'])->middleware('workspace.feature:reports')->name('business.reports.index');
             Route::get('/app/reports/print', [ReportController::class, 'print'])->name('business.reports.print');
-            Route::post('/report-exports', [ReportController::class, 'export'])->name('business.report-exports.store');
+            Route::post('/report-exports', [ReportController::class, 'export'])->middleware('entitlement:reporting.advanced,use')->name('business.report-exports.store');
             Route::get('/report-exports/{reportExport}', [ReportController::class, 'exportStatus'])->name('business.report-exports.show');
             Route::get('/report-exports/{reportExport}/download', [ReportController::class, 'download'])->name('business.report-exports.download');
             Route::post('/commission-rules', [CommissionController::class, 'rule'])->name('business.commission-rules.store');
@@ -272,7 +261,7 @@ Route::middleware([
             Route::post('/staff/{staff}/statement-adjustments', [CommissionController::class, 'adjust'])->name('business.staff.statement-adjustments.store');
             Route::post('/payroll-exports', [CommissionController::class, 'payroll'])->name('business.payroll-exports.store');
 
-            Route::get('/app/walk-in-queue', [WalkInQueueController::class, 'index'])->name('business.walk-ins.index');
+            Route::get('/app/walk-in-queue', [WalkInQueueController::class, 'index'])->middleware('workspace.feature:walk-in-queue')->name('business.walk-ins.index');
             Route::post('/walk-ins', [WalkInQueueController::class, 'store'])->name('business.walk-ins.store');
             Route::post('/walk-ins/reorder', [WalkInQueueController::class, 'reorder'])->name('business.walk-ins.reorder');
             Route::patch('/walk-ins/{walkIn}/assign', [WalkInQueueController::class, 'assign'])->name('business.walk-ins.assign');
@@ -280,7 +269,8 @@ Route::middleware([
             Route::post('/walk-ins/{walkIn}/start', [WalkInQueueController::class, 'start'])->name('business.walk-ins.start');
             Route::post('/walk-ins/{walkIn}/leave', [WalkInQueueController::class, 'leave'])->name('business.walk-ins.leave');
 
-            Route::get('/app/clients', [ClientController::class, 'index'])->name('business.clients.index');
+            Route::get('/app/clients', [ClientController::class, 'index'])->middleware('workspace.feature:clients')->name('business.clients.index');
+            Route::post('/clients', [ClientController::class, 'store'])->name('business.clients.store');
             Route::get('/app/clients/{client}', [ClientController::class, 'show'])->name('business.clients.show');
             Route::patch('/clients/{client}', [ClientController::class, 'update'])->name('business.clients.update');
             Route::post('/clients/{client}/notes', [ClientNoteController::class, 'store'])->name('business.clients.notes.store');
@@ -301,6 +291,17 @@ Route::middleware([
             Route::get('/communications/messages/{communicationMessage}', [CommunicationSettingsController::class, 'diagnostic'])->name('business.communications.messages.show');
             Route::post('/communications/messages/{communicationMessage}/replay', [CommunicationSettingsController::class, 'replay'])->name('business.communications.messages.replay');
 
+            Route::get('/app/locations', [LocationSetupController::class, 'index'])->middleware('workspace.feature:settings')->name('business.locations.index');
+            Route::post('/activation/locations', [LocationSetupController::class, 'store'])->name('business.locations.activation.store');
+
+            Route::get('/app/team', [TeamManagementController::class, 'index'])->middleware('workspace.feature:staff')->name('business.team.index');
+            Route::post('/activation/providers', [TeamManagementController::class, 'store'])->name('business.team.providers.store');
+
+            Route::get('/app/services', [ServiceManagementController::class, 'index'])->middleware('workspace.feature:services')->name('business.services.index');
+            Route::post('/activation/services', [ServiceManagementController::class, 'store'])->name('business.services.store');
+            Route::put('/activation/services/{service}', [ServiceManagementController::class, 'update'])->name('business.services.update');
+            Route::patch('/activation/services/{service}/status', [ServiceManagementController::class, 'status'])->name('business.services.status');
+
             Route::get('/app/{module}', function (Business $business, string $module) use ($shopModules) {
                 abort_unless(isset($shopModules[$module]), 404);
 
@@ -308,7 +309,7 @@ Route::middleware([
                     'businessLabel' => $business->name,
                     'module' => $shopModules[$module],
                 ]);
-            })->where('module', implode('|', array_keys($shopModules)))->name('shop.module');
+            })->middleware('workspace.feature:module')->where('module', implode('|', array_keys($shopModules)))->name('shop.module');
 
             Route::get('/locations/{location}', function (Business $business, Location $location) {
                 return response()->json([
@@ -325,7 +326,7 @@ Route::middleware([
                 ->name('staff-invitations.destroy');
 
             Route::prefix('configuration')->name('business.configuration.')->group(function (): void {
-                Route::get('/', [BusinessConfigurationController::class, 'show'])->name('show');
+                Route::get('/', [BusinessConfigurationController::class, 'show'])->middleware('workspace.feature:settings')->name('show');
                 Route::patch('/profile', [BusinessConfigurationController::class, 'updateProfile'])->name('profile.update');
                 Route::post('/branding', [BusinessConfigurationController::class, 'uploadBrandAsset'])->name('branding.store');
                 Route::patch('/public-booking-policy', [BusinessConfigurationController::class, 'updatePublicBookingPolicy'])->name('public-booking-policy.update');
@@ -344,14 +345,14 @@ Route::middleware([
             });
 
             Route::prefix('billing')->name('business.billing.')->group(function (): void {
-                Route::get('/', [BusinessBillingController::class, 'show'])->name('show');
+                Route::get('/', [BusinessBillingController::class, 'show'])->middleware('workspace.feature:subscription-billing')->name('show');
                 Route::get('/checkout', [BusinessBillingController::class, 'checkoutForm'])->name('checkout.form');
                 Route::post('/checkout/session', [BusinessBillingController::class, 'checkout'])
                     ->middleware('throttle:5,1')
                     ->name('checkout');
-                Route::post('/checkout/confirm', [BusinessBillingController::class, 'confirmCheckout'])
+                Route::post('/checkout/status', [BusinessBillingController::class, 'checkoutStatus'])
                     ->middleware('throttle:30,1')
-                    ->name('checkout.confirm');
+                    ->name('checkout.status');
                 Route::post('/plan-change', [BusinessBillingController::class, 'changePlan'])->name('plan-change');
                 Route::post('/cancel', [BusinessBillingController::class, 'cancel'])->name('cancel');
                 Route::post('/reactivate', [BusinessBillingController::class, 'reactivate'])->name('reactivate');

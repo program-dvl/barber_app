@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Domain\Billing\Contracts\SubscriptionProvider;
-use App\Domain\Billing\Providers\PaddleSubscriptionProvider;
 use App\Domain\Billing\Providers\StripeSubscriptionProvider;
 use App\Domain\BusinessConfiguration\Contracts\AppointmentImpactSource;
 use App\Domain\BusinessConfiguration\Contracts\AvailabilityConfiguration;
@@ -42,9 +41,7 @@ class AppServiceProvider extends ServiceProvider
         Cashier::ignoreRoutes();
         LemonSqueezy::ignoreRoutes();
         $this->app->singleton(TenantContext::class);
-        $this->app->bind(SubscriptionProvider::class, fn () => config('billing.provider') === 'paddle'
-            ? app(PaddleSubscriptionProvider::class)
-            : app(StripeSubscriptionProvider::class));
+        $this->app->bind(SubscriptionProvider::class, StripeSubscriptionProvider::class);
         $this->app->bind(AvailabilityConfiguration::class, AvailabilityConfigurationService::class);
         $this->app->bind(AppointmentImpactSource::class, SchedulingAppointmentImpactSource::class);
         $this->app->bind(ClientIdentityLinker::class, ClientIdentityService::class);

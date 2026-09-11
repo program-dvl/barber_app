@@ -48,7 +48,30 @@ class Handler extends ExceptionHandler
         }
 
         $response = parent::render($request, $exception);
-        if (! $request->expectsJson() && in_array($response->getStatusCode(), [404, 410, 500, 503], true)) {
+        if (! $request->expectsJson()
+            && $response->getStatusCode() === 403
+            && $request->attributes->has('tenant_business')) {
+            $business = $request->attributes->get('tenant_business');
+
+            return Inertia::render('Access/Unavailable', [
+                'businessLabel' => $business->name,
+                'state' => [
+                    'code' => 'permission_denied',
+                    'title' => "You don't have permission to access this area",
+                    'description' => 'Your current salon role does not permit this action. Contact your salon administrator if you believe your access should be updated.',
+                    'action' => null,
+                ],
+            ])->toResponse($request)->setStatusCode(403);
+        }
+
+        if ($request->expectsJson() && $response->getStatusCode() === 403) {
+            return response()->json([
+                'message' => 'You do not have permission to perform this action.',
+                'code' => 'permission_denied',
+            ], 403);
+        }
+
+        if (! $request->expectsJson() && in_array($response->getStatusCode(), [403, 404, 410, 500, 503], true)) {
             $request->attributes->set('force_noindex', true);
 
             return Inertia::render('Error', ['status' => $response->getStatusCode()])->toResponse($request)->setStatusCode($response->getStatusCode());

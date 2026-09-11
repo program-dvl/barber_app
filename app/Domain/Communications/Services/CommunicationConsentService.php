@@ -41,9 +41,12 @@ class CommunicationConsentService
 
     public function recordWhatsAppOptIn(Client $client, string $source, ?int $appointmentId = null, string $wording = 'Send appointment and service updates to this mobile number on WhatsApp.'): ClientConsent
     {
+        $business = $client->business;
+
         return ClientConsent::query()->create([
             'business_id' => $client->business_id, 'client_id' => $client->id, 'appointment_id' => $appointmentId,
-            'type' => 'whatsapp', 'status' => 'granted', 'source' => $source, 'policy_version' => 'IN-en-IN-2026-08',
+            'type' => 'whatsapp', 'status' => 'granted', 'source' => $source,
+            'policy_version' => implode('-', [$business->country_code ?: 'IN', $business->locale ?: 'en-IN', now()->format('Y-m')]),
             'wording' => $wording, 'evidence' => ['channel' => 'whatsapp'], 'occurred_at' => now(),
         ]);
     }
@@ -64,9 +67,11 @@ class CommunicationConsentService
             $this->suppress($client->business_id, $client, $channel, $destination, 'marketing', 'unsubscribed', $source);
         }
         $client->forceFill(['marketing_status' => 'withdrawn'])->save();
+        $business = $client->business;
         ClientConsent::query()->create([
             'business_id' => $client->business_id, 'client_id' => $client->id, 'type' => 'marketing',
-            'status' => 'withdrawn', 'source' => $source, 'policy_version' => 'IN-en-IN-2026-08',
+            'status' => 'withdrawn', 'source' => $source,
+            'policy_version' => implode('-', [$business->country_code ?: 'IN', $business->locale ?: 'en-IN', now()->format('Y-m')]),
             'wording' => 'Marketing unsubscribe', 'evidence' => ['channel' => $channel], 'occurred_at' => now(),
         ]);
     }

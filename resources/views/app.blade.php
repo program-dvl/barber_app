@@ -13,8 +13,6 @@
 
         {{-- This is JS for LemonSqueezy --}}
         {{-- @lemonJS--}}
-        {{-- This is JS for Paddle --}}
-        {{-- @paddleJS--}}
 
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
 

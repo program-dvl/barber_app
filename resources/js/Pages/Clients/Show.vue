@@ -3,6 +3,7 @@ import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 import AppButton from '@/Components/Product/AppButton.vue';
+import PhoneInput from '@/Components/Product/PhoneInput.vue';
 import PageHeader from '@/Components/Product/PageHeader.vue';
 import StatePanel from '@/Components/Product/StatePanel.vue';
 import SurfaceCard from '@/Components/Product/SurfaceCard.vue';
@@ -128,7 +129,7 @@ const confirmMerge = () => {
             <SurfaceCard title="Profile and preferences" description="Contact details, service preferences, and helpful context for future visits.">
                 <form v-if="permissions.update" class="grid gap-4 sm:grid-cols-2" @submit.prevent="saveProfile">
                     <label class="text-sm font-medium">Name<input v-model="profile.name" class="cd-input mt-1 w-full" required></label>
-                    <label class="text-sm font-medium">Mobile<input v-model="profile.mobile" class="cd-input mt-1 w-full"></label>
+                    <label class="text-sm font-medium">Mobile<PhoneInput id="client-profile-mobile" v-model="profile.mobile" class="mt-1" :country="page.props.tenant?.regional?.country_code || 'IN'" /></label>
                     <label class="text-sm font-medium">Email<input v-model="profile.email" type="email" class="cd-input mt-1 w-full"></label>
                     <label class="text-sm font-medium">Birthday<input v-model="profile.date_of_birth" type="date" class="cd-input mt-1 w-full"></label>
                     <label class="text-sm font-medium">Preferred employee<select v-model="profile.preferred_staff" class="cd-input mt-1 w-full"><option :value="null">No preference</option><option v-for="staff in staffOptions" :key="staff.public_id" :value="staff.public_id">{{ staff.display_name }}</option></select></label>
@@ -215,7 +216,7 @@ const confirmMerge = () => {
                 <template v-if="privacy.type === 'correction'">
                     <label class="text-sm font-medium">Corrected name<input v-model="privacy.details.changes.name" class="cd-input mt-1 w-full"></label>
                     <label class="text-sm font-medium">Corrected email<input v-model="privacy.details.changes.email" type="email" class="cd-input mt-1 w-full"></label>
-                    <label class="text-sm font-medium">Corrected mobile<input v-model="privacy.details.changes.mobile" class="cd-input mt-1 w-full"></label>
+                    <label class="text-sm font-medium">Corrected mobile<PhoneInput id="privacy-corrected-mobile" v-model="privacy.details.changes.mobile" class="mt-1" :country="page.props.tenant?.regional?.country_code || 'IN'" /></label>
                 </template>
                 <label v-if="privacy.type === 'deletion_anonymization'" class="text-sm font-medium sm:col-span-2">Request context<textarea v-model="privacy.details.reason" class="cd-input mt-1 min-h-24 w-full" required /></label>
                 <AppButton class="sm:col-span-2" type="submit">Log request</AppButton>

@@ -24,7 +24,12 @@ class ReportController extends Controller
     public function index(Request $request, Business $business)
     {
         $membership = $this->tenancy->membership();
-        $key = $request->string('report', 'sales')->toString();
+        $catalog = $this->reports->allowedReportKeys($membership);
+        abort_if($catalog === [], 403);
+        $key = $request->filled('report')
+            ? $request->string('report')->toString()
+            : (in_array('sales', $catalog, true) ? 'sales' : $catalog[0]);
+        abort_unless(in_array($key, $catalog, true), 403);
         $filters = $this->filters($request);
         $result = $this->reports->run($business, $membership, $key, $filters);
         if ($request->expectsJson()) {
@@ -34,7 +39,7 @@ class ReportController extends Controller
         $locationIds = $membership->hasRole('owner', 'web') ? Location::query()->forBusiness($business)->pluck('id') : $membership->locations()->pluck('locations.id');
 
         return Inertia::render('Shop/Reports', [
-            'catalog' => MetricCatalog::reportKeys(),
+            'catalog' => $catalog,
             'metricDefinitions' => MetricCatalog::definitions(),
             'result' => $result,
             'canExport' => $request->user()->can(PermissionName::ExportCreate->value),

@@ -8,6 +8,7 @@ use App\Domain\ClientRecords\Services\ClientAttachmentService;
 use App\Domain\ClientRecords\Services\ClientPrivacyWorkflowService;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Http\Controllers\Controller;
+use App\Rules\E164Phone;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class ClientPrivacyController extends Controller
         $data = $request->validate([
             'type' => ['required', Rule::in(ClientPrivacyWorkflowService::TYPES)], 'details' => ['nullable', 'array'],
             'details.changes' => ['nullable', 'array'], 'details.changes.name' => ['nullable', 'string', 'max:255'],
-            'details.changes.email' => ['nullable', 'email', 'max:255'], 'details.changes.mobile' => ['nullable', 'string', 'max:32'],
+            'details.changes.email' => ['nullable', 'email', 'max:255'], 'details.changes.mobile' => ['nullable', 'string', 'max:32', new E164Phone],
             'details.changes.date_of_birth' => ['nullable', 'date', 'before_or_equal:today'],
             'details.changes.communication_preferences' => ['nullable', 'array', 'max:3'],
             'details.changes.communication_preferences.*' => ['string', 'distinct', 'in:email,sms,whatsapp'],

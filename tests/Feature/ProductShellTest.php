@@ -7,9 +7,22 @@ use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\PlatformAccess\Models\PlatformRoleAssignment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
+
+it('only references registered named routes from Salon Setup', function () {
+    $source = File::get(resource_path('js/Pages/Configuration/Onboarding.vue'));
+    preg_match_all('/\\broute\\(\\s*[\'\"]([^\'\"]+)[\'\"]/', $source, $matches);
+    $missing = collect($matches[1] ?? [])
+        ->unique()
+        ->reject(fn (string $name): bool => Route::has($name))
+        ->values();
+
+    $this->assertSame([], $missing->all(), 'Salon Setup references missing routes: '.implode(', ', $missing->all()));
+});
 
 it('renders the public booking and secure self-service shells', function () {
     $this->get(route('booking.welcome'))
@@ -62,6 +75,7 @@ it('renders the dashboard with tenant-scoped operational data', function () {
 
 it('renders every authenticated shop shell destination without domain data', function (string $module, string $label) {
     [$user, $business] = createTenantMembership(StarterRole::Owner);
+    activateTestSubscription($business);
 
     $this->actingAs($user)
         ->get(route('shop.module', [$business, $module]))
@@ -72,14 +86,25 @@ it('renders every authenticated shop shell destination without domain data', fun
             ->where('module.nonGoal', fn (string $value) => str_contains($value, 'No '))
         );
 })->with([
-    ['staff', 'Staff'],
-    ['services', 'Services'],
     ['settings', 'Settings'],
     ['subscription-billing', 'Subscription & Billing'],
 ]);
 
+it('renders focused location team and service activation workspaces instead of placeholders', function () {
+    [$user, $business] = createTenantMembership(StarterRole::Owner);
+    activateTestSubscription($business);
+
+    $this->actingAs($user)->get(route('business.locations.index', $business))
+        ->assertOk()->assertInertia(fn (Assert $page) => $page->component('Activation/Location'));
+    $this->actingAs($user)->get(route('business.team.index', $business))
+        ->assertOk()->assertInertia(fn (Assert $page) => $page->component('Team/Index'));
+    $this->actingAs($user)->get(route('business.services.index', $business))
+        ->assertOk()->assertInertia(fn (Assert $page) => $page->component('Services/Index'));
+});
+
 it('renders the implemented inventory and reporting workspaces', function () {
     [$user, $business] = createTenantMembership(StarterRole::Owner);
+    activateTestSubscription($business);
     Location::factory()->create(['business_id' => $business->id, 'time_zone' => 'Asia/Kolkata']);
 
     $this->actingAs($user)
@@ -95,6 +120,8 @@ it('renders the implemented inventory and reporting workspaces', function () {
 
 it('renders the appointment-first checkout workspace', function () {
     [$user, $business] = createTenantMembership(StarterRole::Owner);
+    activateTestSubscription($business);
+    Location::factory()->create(['business_id' => $business->id]);
 
     $this->actingAs($user)
         ->get(route('business.checkout.index', $business))

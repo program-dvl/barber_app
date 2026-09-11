@@ -14,11 +14,14 @@ class StripeWebhookController extends Controller
 {
     public function __invoke(Request $request, StripeWebhookProcessor $processor): Response
     {
+        $secret = trim((string) config('billing.stripe.webhook_secret'));
+        abort_if($secret === '', 503, 'Stripe webhook processing is not configured.');
+
         try {
             $event = Webhook::constructEvent(
                 $request->getContent(),
                 (string) $request->header('Stripe-Signature'),
-                (string) config('billing.stripe.webhook_secret')
+                $secret
             );
         } catch (UnexpectedValueException|SignatureVerificationException) {
             abort(400, 'Invalid Stripe webhook signature.');

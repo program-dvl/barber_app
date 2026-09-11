@@ -7,7 +7,7 @@ uses(RefreshDatabase::class);
 
 it('publishes the supported solution hub', function () {
     $this->get(route('marketing.solutions'))->assertOk()->assertInertia(fn (Assert $page) => $page
-        ->component('Marketing/Solutions/Index')->has('solutions', 4)->where('seo.canonical', route('marketing.solutions')));
+        ->component('Marketing/Solutions/Index')->has('solutions', 13)->where('seo.canonical', route('marketing.solutions')));
 });
 
 it('publishes differentiated supported business pages', function (string $slug, string $phrase) {
@@ -24,16 +24,26 @@ it('publishes differentiated supported business pages', function (string $slug, 
     ['salons', 'multi-service work'],
     ['independent-stylists', 'independent stylist'],
     ['spas', 'reserves the room'],
+    ['nail-salons', 'Nail salon software'],
+    ['medspas', 'clinical boundaries'],
+    ['massage', 'Massage studio software'],
+    ['fitness-recovery', 'Fitness and recovery scheduling'],
+    ['physical-therapy', 'non-clinical side'],
+    ['health-practices', 'independent health practices'],
+    ['tattoo-piercing', 'Tattoo and piercing studio'],
+    ['pet-grooming', 'Pet grooming software'],
+    ['tanning-studios', 'Tanning studio software'],
 ]);
 
-it('consolidates or rejects thin and unsupported vertical permutations', function () {
+it('keeps unsupported keyword permutations out and regulated claims bounded', function () {
     $this->get('/solutions/hair-salons')->assertNotFound();
     $this->get('/solutions/beauty-salons')->assertNotFound();
-    $this->get('/solutions/nail-salons')->assertNotFound();
     $this->get('/solutions/medical-spas')->assertNotFound();
+    $this->get('/solutions/veterinary-clinics')->assertNotFound();
 
     expect(json_encode(config('frontsite.solutions')))
         ->not->toContain('guaranteed revenue')
         ->not->toContain('customer story')
-        ->not->toContain('HIPAA compliant');
+        ->not->toContain('HIPAA compliant')
+        ->toContain('not an electronic medical record system');
 });

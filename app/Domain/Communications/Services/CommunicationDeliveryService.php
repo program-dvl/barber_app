@@ -2,6 +2,7 @@
 
 namespace App\Domain\Communications\Services;
 
+use App\Domain\Billing\Services\EntitlementUsageManager;
 use App\Domain\Communications\Contracts\EmailChannelProvider;
 use App\Domain\Communications\Contracts\MobileChannelProvider;
 use App\Domain\Communications\Data\OutboundCommunication;
@@ -23,6 +24,7 @@ class CommunicationDeliveryService
         private readonly CommunicationActionLinkService $links,
         private readonly CommunicationConsentService $consent,
         private readonly CommunicationTemplateService $templates,
+        private readonly EntitlementUsageManager $usage,
     ) {}
 
     public function deliver(CommunicationMessage|int $message): CommunicationMessage
@@ -41,26 +43,41 @@ class CommunicationDeliveryService
                 $current->channel, $current->recipient, $current->category, $current->legal_basis,
             );
             if (! $decision['allowed']) {
-                $current->update(['status' => 'suppressed', 'suppression_reason' => $decision['reason'], 'next_attempt_at' => null]);
+                $updates = ['status' => 'suppressed', 'suppression_reason' => $decision['reason'], 'next_attempt_at' => null];
+                $this->releaseMobileAllowance($current, $updates);
+                $current->update($updates);
                 $this->refreshIntent($current);
 
                 return null;
             }
             if ($this->obsoleteReminder($current)) {
-                $current->update(['status' => 'suppressed', 'suppression_reason' => 'source_cancelled_or_rescheduled', 'next_attempt_at' => null]);
+                $updates = ['status' => 'suppressed', 'suppression_reason' => 'source_cancelled_or_rescheduled', 'next_attempt_at' => null];
+                $this->releaseMobileAllowance($current, $updates);
+                $current->update($updates);
                 $this->refreshIntent($current);
 
                 return null;
             }
             if ($current->attempt_count >= $current->max_attempts) {
-                $current->update(['status' => 'failed', 'failed_at' => now(), 'last_error_code' => 'retry_limit_reached', 'last_error_class' => 'terminal', 'next_attempt_at' => null]);
+                $updates = ['status' => 'failed', 'failed_at' => now(), 'last_error_code' => 'retry_limit_reached', 'last_error_class' => 'terminal', 'next_attempt_at' => null];
+                $this->releaseMobileAllowance($current, $updates);
+                $current->update($updates);
                 $this->refreshIntent($current);
 
                 return null;
             }
+            if ($current->channel !== 'email' && ! $current->entitlement_charged_at) {
+                if (! $this->usage->reserve($current->business, 'messaging.monthly_allowance')) {
+                    $current->update(['status' => 'suppressed', 'suppression_reason' => 'plan_limit', 'next_attempt_at' => null]);
+                    $this->refreshIntent($current);
+
+                    return null;
+                }
+                $current->entitlement_charged_at = now();
+            }
             $number = $current->attempt_count + 1;
             $provider = $current->channel === 'email' ? $this->email->name() : $this->mobile->name();
-            $current->update(['status' => 'sending', 'attempt_count' => $number, 'provider' => $provider, 'next_attempt_at' => null]);
+            $current->update(['status' => 'sending', 'attempt_count' => $number, 'provider' => $provider, 'next_attempt_at' => null, 'entitlement_charged_at' => $current->entitlement_charged_at]);
 
             return CommunicationDeliveryAttempt::query()->create([
                 'business_id' => $current->business_id, 'communication_message_id' => $current->id,
@@ -93,15 +110,15 @@ class CommunicationDeliveryService
                 $this->refreshIntent($current);
             });
         } catch (CommunicationProviderException $error) {
-            $this->recordFailure($message, $attempt, $error->safeCode, $error->retryable);
+            $this->recordFailure($message, $attempt, $error->safeCode, $error->retryable, true);
             if ($error->retryable && $message->attempt_count < $message->max_attempts) {
                 throw $error;
             }
         } catch (ValidationException $error) {
-            $this->recordFailure($message, $attempt, 'template_render_failed', false);
+            $this->recordFailure($message, $attempt, 'template_render_failed', false, true);
         } catch (Throwable $error) {
             $retryable = $message->channel === 'email';
-            $this->recordFailure($message, $attempt, 'unexpected_provider_error', $retryable);
+            $this->recordFailure($message, $attempt, 'unexpected_provider_error', $retryable, false);
             if ($retryable && $message->attempt_count < $message->max_attempts) {
                 throw $error;
             }
@@ -130,21 +147,36 @@ class CommunicationDeliveryService
         return $variables;
     }
 
-    private function recordFailure(CommunicationMessage $message, CommunicationDeliveryAttempt $attempt, string $code, bool $retryable): void
+    private function recordFailure(CommunicationMessage $message, CommunicationDeliveryAttempt $attempt, string $code, bool $retryable, bool $releaseTerminalAllowance): void
     {
-        DB::transaction(function () use ($message, $attempt, $code, $retryable): void {
+        DB::transaction(function () use ($message, $attempt, $code, $retryable, $releaseTerminalAllowance): void {
             $current = CommunicationMessage::query()->lockForUpdate()->findOrFail($message->id);
             $willRetry = $retryable && $current->attempt_count < $current->max_attempts;
             $delay = [1 => 60, 2 => 300, 3 => 900][$current->attempt_count] ?? 1800;
-            $current->update([
+            $updates = [
                 'status' => $willRetry ? 'retried' : 'failed', 'last_error_code' => $code,
                 'last_error_class' => $willRetry ? 'transient' : 'terminal',
                 'next_attempt_at' => $willRetry ? now()->addSeconds($delay) : null,
                 'failed_at' => $willRetry ? null : now(),
-            ]);
+            ];
+            if (! $willRetry && $releaseTerminalAllowance) {
+                $this->releaseMobileAllowance($current, $updates);
+            }
+            $current->update($updates);
             $attempt->update(['status' => $willRetry ? 'retried' : 'failed', 'error_code' => $code, 'error_class' => $willRetry ? 'transient' : 'terminal', 'finished_at' => now()]);
             $this->refreshIntent($current);
         });
+    }
+
+    /** @param array<string, mixed> $updates */
+    private function releaseMobileAllowance(CommunicationMessage $message, array &$updates): void
+    {
+        if ($message->channel === 'email' || ! $message->entitlement_charged_at) {
+            return;
+        }
+
+        $this->usage->release($message->business, 'messaging.monthly_allowance', $message->entitlement_charged_at);
+        $updates['entitlement_charged_at'] = null;
     }
 
     private function obsoleteReminder(CommunicationMessage $message): bool

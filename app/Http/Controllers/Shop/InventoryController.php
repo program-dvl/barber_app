@@ -41,9 +41,9 @@ class InventoryController extends Controller
     public function store(Request $request, Business $business)
     {
         abort_unless($request->user()->can(PermissionName::InventoryManage->value), 403);
-        $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'category' => ['nullable', 'string', 'max:255'], 'sku' => ['required', 'string', 'max:96'], 'barcode' => ['nullable', 'string', 'max:128'], 'sale_price_minor' => ['required', 'integer', 'min:0'], 'cost_minor' => ['required', 'integer', 'min:0'], 'tax_rate_bps' => ['required', 'integer', 'min:0', 'max:100000'], 'currency_code' => ['required', 'string', 'size:3'], 'status' => ['required', 'in:active,inactive'], 'low_stock_threshold' => ['required', 'integer', 'min:0']]);
+        $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'category' => ['nullable', 'string', 'max:255'], 'sku' => ['required', 'string', 'max:96'], 'barcode' => ['nullable', 'string', 'max:128'], 'sale_price_minor' => ['required', 'integer', 'min:0'], 'cost_minor' => ['required', 'integer', 'min:0'], 'tax_rate_bps' => ['required', 'integer', 'min:0', 'max:100000'], 'status' => ['required', 'in:active,inactive'], 'low_stock_threshold' => ['required', 'integer', 'min:0']]);
         $category = empty($data['category']) ? null : ProductCategory::query()->firstOrCreate(['business_id' => $business->id, 'name' => trim($data['category'])], ['status' => 'active']);
-        $product = InventoryProduct::query()->create([...$data, 'business_id' => $business->id, 'product_category_id' => $category?->id, 'currency_code' => strtoupper($data['currency_code']), 'current_stock' => 0]);
+        $product = InventoryProduct::query()->create([...$data, 'business_id' => $business->id, 'product_category_id' => $category?->id, 'currency_code' => strtoupper($business->currency_code ?: 'INR'), 'current_stock' => 0]);
 
         return response()->json(['product' => $product], 201);
     }

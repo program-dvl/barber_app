@@ -8,6 +8,7 @@ use App\Domain\ClientRecords\Models\ClientConsent;
 use App\Domain\ClientRecords\Models\ClientDuplicateCandidate;
 use App\Domain\ClientRecords\Support\ClientIdentityNormalizer;
 use App\Domain\Communications\Services\CommunicationActionLinkService;
+use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PublicBooking\Services\SecureAppointmentLinkService;
 use App\Domain\SchedulingOperations\Models\Appointment;
 use App\Support\Audit\AuditWriter;
@@ -76,13 +77,56 @@ class ClientIdentityService implements ClientIdentityLinker
             ClientConsent::query()->create([
                 'business_id' => $appointment->business_id, 'client_id' => $client->id, 'appointment_id' => $appointment->id,
                 'type' => 'whatsapp', 'status' => 'granted', 'source' => $appointment->source,
-                'policy_version' => 'IN-en-IN-2026-08',
+                'policy_version' => implode('-', [
+                    $appointment->business->country_code ?: 'IN',
+                    $appointment->business->locale ?: 'en-IN',
+                    now()->format('Y-m'),
+                ]),
                 'wording' => data_get($appointment->public_policy_snapshot, 'whatsapp_wording', 'Send appointment and service updates to this mobile number on WhatsApp.'),
                 'evidence' => ['booking_reference' => $appointment->booking_reference, 'channel' => 'whatsapp'],
                 'occurred_at' => $appointment->confirmed_at ?? now(),
             ]);
         }
         $this->detectDuplicates($client);
+    }
+
+    /**
+     * @param  array{name:string,email?:?string,mobile?:?string,referral_source?:?string}  $attributes
+     * @return array{client:Client,created:bool}
+     */
+    public function createManual(Business $business, array $attributes): array
+    {
+        $normalized = $this->normalize($attributes);
+        $existing = $this->contactCandidates($business->getKey(), $normalized['mobile'], $normalized['email'])
+            ->first(fn (Client $client) => $client->normalized_name === $normalized['name']);
+
+        if ($existing) {
+            return ['client' => $existing, 'created' => false];
+        }
+
+        $client = Client::query()->create([
+            'business_id' => $business->getKey(),
+            'name' => trim($attributes['name']),
+            'normalized_name' => $normalized['name'],
+            'email' => filled($attributes['email'] ?? null) ? trim($attributes['email']) : null,
+            'normalized_email' => $normalized['email'],
+            'mobile' => filled($attributes['mobile'] ?? null) ? trim($attributes['mobile']) : null,
+            'normalized_mobile' => $normalized['mobile'],
+            'referral_source' => filled($attributes['referral_source'] ?? null) ? trim($attributes['referral_source']) : 'manual',
+            'communication_preferences' => [],
+            'marketing_status' => 'unknown',
+            'status' => 'active',
+        ]);
+
+        $this->audit->write('client.manually_created', $business, target: $client, after: [
+            'public_id' => $client->public_id,
+            'has_mobile' => filled($client->mobile),
+            'has_email' => filled($client->email),
+            'source' => $client->referral_source,
+        ], source: 'client_records');
+        $this->detectDuplicates($client);
+
+        return ['client' => $client, 'created' => true];
     }
 
     /** @param array{name?:string,mobile?:string,email?:string} $contact */

@@ -1,21 +1,31 @@
 <script setup>
-import { Link, router, usePage } from '@inertiajs/vue3';
+import { Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import AppButton from '@/Components/Product/AppButton.vue';
+import AppDialog from '@/Components/Product/AppDialog.vue';
 import PageHeader from '@/Components/Product/PageHeader.vue';
+import PhoneInput from '@/Components/Product/PhoneInput.vue';
 import StatePanel from '@/Components/Product/StatePanel.vue';
 import SurfaceCard from '@/Components/Product/SurfaceCard.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
-const props = defineProps({ businessLabel: String, clients: Object, filters: Object, duplicateCount: Number, canContact: Boolean });
+const props = defineProps({ businessLabel: String, clients: Object, filters: Object, duplicateCount: Number, canContact: Boolean, canCreate: Boolean, countries: Object });
 const page = usePage();
 const search = ref(props.filters.search ?? '');
+const addDialog = ref(null);
+const createForm = useForm({ name: '', mobile: '', email: '', referral_source: 'Front desk' });
 const runSearch = () => router.get(route('business.clients.index', page.props.tenant.public_id), { search: search.value }, { preserveState: true, replace: true });
+const createClient = () => createForm.post(route('business.clients.store', page.props.tenant.public_id), {
+    preserveScroll: true,
+    onSuccess: () => { addDialog.value?.close(); createForm.reset(); },
+});
 </script>
 
 <template>
     <AppLayout title="Clients" :business-label="businessLabel">
-        <PageHeader eyebrow="Client records" title="Clients" description="Find the right person quickly, then review visit context, preferences, forms, and consent in one place." />
+        <PageHeader eyebrow="Client records" title="Clients" description="Find the right person quickly, then review visit context, preferences, forms, and consent in one place.">
+            <template #actions><AppButton v-if="canCreate" @click="addDialog?.open()">Add client</AppButton></template>
+        </PageHeader>
 
         <div class="mt-6">
             <SurfaceCard title="Find a client" :description="canContact ? 'Search by name, mobile number, or email.' : 'Search by client name.'">
@@ -31,7 +41,7 @@ const runSearch = () => router.get(route('business.clients.index', page.props.te
         </div>
 
         <SurfaceCard class="mt-6" title="Client directory" :description="`${clients.total} active client records`">
-            <StatePanel v-if="clients.data.length === 0" title="No matching clients" description="Bookings create client records automatically using conservative identity rules." />
+            <StatePanel v-if="clients.data.length === 0" title="No matching clients" :description="canCreate ? 'Add a walk-in, phone-booking, or migrated customer now. Online bookings also create client records automatically.' : 'Bookings create client records automatically using conservative identity rules.'"><template v-if="canCreate && !search" #actions><AppButton @click="addDialog?.open()">Add your first client</AppButton></template></StatePanel>
             <ul v-else class="divide-y divide-[var(--border-subtle)]">
                 <li v-for="client in clients.data" :key="client.public_id">
                     <Link :href="route('business.clients.show', [$page.props.tenant.public_id, client.public_id])" class="grid min-h-16 gap-1 px-1 py-4 hover:bg-[var(--surface-subtle)] sm:grid-cols-[minmax(0,1fr)_minmax(12rem,0.6fr)_8rem] sm:items-center sm:px-3">
@@ -48,5 +58,15 @@ const runSearch = () => router.get(route('business.clients.index', page.props.te
                 <Link v-for="link in clients.links" :key="link.label" :href="link.url || '#'" preserve-state :class="['min-h-11 rounded-lg px-4 py-3 text-sm', link.active ? 'bg-[var(--action-primary)] text-white' : 'bg-[var(--surface-subtle)]', !link.url && 'pointer-events-none opacity-50']" v-html="link.label" />
             </nav>
         </SurfaceCard>
+
+        <AppDialog id="add-client" ref="addDialog" title="Add a client" description="Create the reusable client record first; booking, preferences and service notes can be added next." :confirm-label="createForm.processing ? 'Adding client…' : 'Add client'" :confirm-disabled="createForm.processing" :close-on-confirm="false" @confirm="createClient">
+            <form class="space-y-4" @submit.prevent="createClient">
+                <label class="block text-sm font-semibold">Full name<input v-model="createForm.name" required autocomplete="name" class="cd-input mt-2"><span v-if="createForm.errors.name" class="mt-1 block text-xs text-[var(--status-danger)]">{{ createForm.errors.name }}</span></label>
+                <label class="block text-sm font-semibold">Mobile number <span class="font-normal text-[var(--text-muted)]">(or provide email)</span><PhoneInput id="new-client-mobile" v-model="createForm.mobile" class="mt-2" :country="page.props.tenant?.regional?.country_code || 'IN'" :countries="countries" /><span v-if="createForm.errors.mobile" class="mt-1 block text-xs text-[var(--status-danger)]">{{ createForm.errors.mobile }}</span></label>
+                <label class="block text-sm font-semibold">Email <span class="font-normal text-[var(--text-muted)]">(or provide mobile)</span><input v-model="createForm.email" type="email" autocomplete="email" class="cd-input mt-2"><span v-if="createForm.errors.email" class="mt-1 block text-xs text-[var(--status-danger)]">{{ createForm.errors.email }}</span></label>
+                <label class="block text-sm font-semibold">How they found you <span class="font-normal text-[var(--text-muted)]">(optional)</span><input v-model="createForm.referral_source" class="cd-input mt-2" placeholder="Walk-in, phone booking, imported list…"></label>
+                <p class="rounded-lg bg-[var(--surface-subtle)] p-3 text-xs leading-5 text-[var(--text-muted)]">If the same name and contact already exist, ClipperDesk opens that record instead of creating a duplicate.</p>
+            </form>
+        </AppDialog>
     </AppLayout>
 </template>

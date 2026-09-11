@@ -15,9 +15,12 @@ class CommunicationTemplateService
     public function settings(Business|int $business): CommunicationSetting
     {
         $businessId = $business instanceof Business ? $business->id : $business;
+        $locale = $business instanceof Business
+            ? ($business->locale ?: 'en-IN')
+            : (Business::query()->whereKey($businessId)->value('locale') ?: 'en-IN');
 
         return CommunicationSetting::query()->firstOrCreate(['business_id' => $businessId], [
-            'default_locale' => 'en-IN', 'reminder_offsets_minutes' => [1440, 120],
+            'default_locale' => $locale, 'reminder_offsets_minutes' => [1440, 120],
             'quiet_hours_start' => '21:00', 'quiet_hours_end' => '08:00',
         ]);
     }

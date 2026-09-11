@@ -1,6 +1,6 @@
 # Project status
 
-Status date: 2026-08-27
+Status date: 2026-09-11
 
 ## Current state
 
@@ -19,6 +19,161 @@ FR-14/FR-15 commerce and FR-16 through FR-18 Inventory, Commission/Tip,
 dashboard, reporting, export, and Phase 1 metric instrumentation are implemented
 and locally verified. FR-20 platform administration and the support-grant
 workflow are implemented and locally verified.
+
+## Public brand and industry acquisition refresh (2026-09-11)
+
+- [x] The homepage now uses a photography-led editorial direction, a stronger
+  beauty-and-wellness brand voice, clear trial and industry journeys, and real
+  operational stories instead of a software-diagram-led presentation. Its
+  repeated five- and six-step explainer grids have been consolidated into one
+  concise brand rhythm and a three-moment editorial working-day narrative.
+- [x] The shared public header, footer, buttons, conversion band, cards and page
+  heroes use the same modern visual system across product, use-case, pricing,
+  resource, editorial, company and security pages. Those page families now use
+  photography-led split heroes, image-led discovery cards, editorial workflow
+  rows, decision panels and trust/status treatments instead of relying on
+  repeated text-only card grids.
+- [x] The public header now uses a restrained floating navigation surface,
+  clearer active-page treatment and a spacious responsive menu with direct
+  Product, Industry, Use case, Pricing, Resource, Company, Security and account
+  paths. The existing Escape, route-change, outside-click and focus-restoration
+  behavior remains intact.
+- [x] The solution hub publishes 13 differentiated, indexable industry pages:
+  salons, barbershops, independent stylists, spa and sauna, nail salons,
+  medspas, massage, fitness and recovery, physical therapy, health practices,
+  tattoo and piercing, pet grooming, and tanning studios.
+- [x] Regulated-industry pages keep explicit product boundaries and do not claim
+  clinical records, diagnosis, prescriptions, insurance workflows or regulatory
+  compliance that the product does not provide.
+- [x] Thirteen industry images and six original editorial photographs are
+  delivered as optimized WebP assets, and every image remains below the 550 KiB
+  component budget. The deterministic sitemap contains 32 canonical public
+  URLs.
+- [x] The complete marketing suite passes 64 tests / 1,131 assertions. Client
+  and SSR production builds pass on Node 24, and the frontsite budget gate
+  passes for all 17 checked route entries. Browser QA verified the homepage,
+  industry pages, product hub/detail, use-case and resource page families in
+  the local preview.
+
+## Stripe subscription standardization (2026-08-29)
+
+- [x] ADR-029 makes Stripe the sole active SaaS subscription provider while
+  preserving the Business-owned normalized billing and entitlement domain.
+- [x] Hosted Checkout, Customer Portal, exact server-side Price allow-listing,
+  tenant-scoped idempotent checkout attempts, and signed/deduplicated/ordered
+  webhook projection are implemented.
+- [x] Trial notice/expiry, dunning/recovery, cancellation grace, plan changes,
+  safe over-limit downgrades, read-only restricted access, RBAC separation,
+  owner billing UX and platform support visibility are implemented.
+- [x] Paddle runtime code, route, provider adapter, webhook processor, catalog
+  command, frontend components and JavaScript dependency are removed.
+  Historical provider rows and applied migrations remain evidence.
+- [x] Focused billing/access coverage includes catalog provisioning, live-mode
+  safety, LaraFast command compatibility, lifecycle state, workspace decision,
+  onboarding, Location, role separation and operational route tests. The 2026-
+  08-30 Wave 1 acceptance run passes 79 tests / 589 assertions with one
+  intentional skip.
+  Production client and SSR builds pass on Node 24. The complete PHP run reports
+  265 passed / 2,345 assertions / 28 intentional skips; its only failure is the
+  pre-existing frontsite budget check referencing two evidence images already
+  deleted in the working tree before this change.
+- [x] The managed Stripe catalog and corrective migrations are applied in the
+  inspected local environment. The affected NorthFace Checkout was recovered
+  from its stored Stripe Session using authenticated provider evidence and now
+  projects Starter/active state, its current period, confirmed attempt, default
+  Location, and Owner Location assignment.
+- [x] New verified-owner onboarding now provisions that default Location
+  idempotently. `WorkspaceAccessService` aligns navigation and backend entry
+  checks across Membership permission, plan entitlement and assigned Location;
+  expected plan/setup/permission denials render a polished product state rather
+  than a raw 403 response.
+- [x] Pending Checkout reconciliation runs through the authenticated status
+  endpoint and every five minutes. Stripe `unpaid`/`paused` states map to
+  read-only restriction; missing webhook readiness fails closed before a new
+  payment is started.
+- [x] Webhook projection converges when a subscription event arrives before its
+  Checkout completion, refuses late activation from a superseded attempt, and
+  understands both direct and current nested Stripe invoice ownership fields.
+- [x] Selecting a different plan expires the prior Stripe-hosted Checkout
+  before its local attempt is superseded, so an abandoned URL cannot remain a
+  second payable subscription path. The local attempt is reserved under a
+  subscription row lock, so a concurrent request fails safely while Stripe
+  Checkout is being prepared instead of creating another Session.
+- [x] Corrective migration `2026_08_30_000003` is applied locally. It repairs
+  active Owner Location assignments, safely reactivates an existing default
+  Location where needed, and does not broaden employee Location access.
+- [x] The inspected local environment now reports Stripe server credentials,
+  webhook verification, and Checkout readiness as configured without exposing
+  their values. Live Checkout, Portal, test-clock, webhook retry, and settlement
+  certification in the deployment target remain launch gates.
+
+## Onboarding and Salon setup stabilization (2026-08-30)
+
+- [x] Email registration now establishes a fresh authenticated web session,
+  ignores stale protected intended URLs, and deliberately enters verification;
+  verified owners continue to their idempotently provisioned Salon setup.
+- [x] Settings is presented as guided Salon setup with six connected work areas,
+  explicit required readiness states, optional improvements, and useful Staff
+  and Availability summaries instead of duplicate empty sections. Its staff
+  action uses the registered `shop.module` route, with a route-integrity
+  regression test preventing verification-time blank screens.
+- [x] The complete 249-country ISO catalog drives editable currency, locale,
+  time-zone and phone defaults. Business and commerce currency/tax settings are
+  synchronized, historical currency changes fail safely, and tenant money
+  surfaces consume the shared regional projection.
+- [x] One E.164 phone contract now covers setup, Client CRM, Calendar, Walk-in
+  Queue, public booking/waitlist, privacy correction and secure contact update.
+- [x] Authorized front-desk users can manually add a Client with exact-duplicate
+  reuse and conservative review behavior. Unauthorized roles remain denied.
+- [x] Stripe plan changes expose processing/scheduled feedback, fail closed
+  without signed-event readiness, and reject competing unresolved changes.
+- [x] Focused tests pass. The complete local PHP run reports 257 passed / 2,306
+  assertions / 28 intentional skips; the sole failure remains the unrelated
+  frontsite test that references two user-deleted evidence images. Client and
+  SSR production builds pass on Node 24, and registration QA has no console
+  errors or horizontal overflow at desktop and 390 px.
+- [ ] Live Stripe test-mode plan-change/recovery/Portal certification remains a
+  release gate even though the local Stripe readiness checks now pass.
+
+## Wave 2 business activation (2026-08-31)
+
+- [x] The oversized first-bookable-path form is no longer the primary owner
+  experience. Salon setup is a launch task centre with canonical deep links to
+  focused Location, Team & availability, and Services workspaces.
+- [x] Location activation reuses the provisioned default Location, confirms its
+  public address/contact/time zone, replaces its normal weekly hours atomically,
+  assigns the Owner Membership, applies the Location plan limit when a new row
+  is actually needed, advances onboarding, and records audit evidence.
+- [x] Team activation creates or safely reuses a provider by normalized email,
+  keeps StaffProfile separate from optional User/Membership login access,
+  validates the weekly schedule, applies the staff limit, assigns Location and
+  optional Services, advances both staff readiness steps, and records audit
+  evidence.
+- [x] Services now has a dedicated catalogue/editor rather than a placeholder.
+  It server-derives currency/tax context, validates tenant-owned Location and
+  provider assignments, persists effective booking segments without deleting
+  segment records referenced by historic appointments, supports safe archive
+  and restore, and exposes delivery-path readiness.
+- [x] The sidebar routes directly to Team & availability and Services. The
+  former `first-bookable-path` endpoint remains temporarily for compatibility,
+  but the product no longer depends on it for activation.
+- [x] The Wave 2 acceptance test proves one verified/paid Owner can configure a
+  Location, non-login provider and Service through the focused HTTP workspaces,
+  retry all three writes without duplicates, preview/publish, discover a real
+  slot, hold it, and receive a confirmed public booking and Client record.
+  It also covers cross-tenant and role denial.
+- [x] Focused Wave 2/regression coverage passes 36 tests / 342 assertions with
+  one intentional registration skip. The dedicated exit test passes 2 tests /
+  71 assertions. Client and SSR production builds pass on Node 24.
+- [x] The whole PHP suite now reports 266 passed / 2,418 assertions / 28
+  intentional skips. Its only failure remains the pre-existing frontsite budget
+  test for two product-shell evidence PNGs deleted in the working tree before
+  Wave 2; no Wave 2 or ProductShell regression remains.
+- [ ] Advanced Epic 3/4 follow-ups remain intentionally outside this Wave 2
+  exit: bulk service actions/templates, rich resource editing, provider profile
+  edit/invite controls, split-shift/break/leave visual editors, and optimistic
+  concurrency/version UI. The underlying domain models and existing impact
+  preview routes remain available for those increments.
 
 ## Enterprise public homepage (2026-08-27)
 
@@ -91,10 +246,16 @@ workflow are implemented and locally verified.
   legal-acceptance step before the existing exactly-once verified-owner tenant,
   membership, and trial bootstrap runs. Password reset remains an independent
   recovery path.
-- [x] Login and registration now use an enterprise two-panel auth shell on
-  desktop, a focused single-column mobile shell, Google-first action hierarchy,
-  visible secure-access context, semantic error/status treatments, labelled
-  controls, appropriate autocomplete, and no horizontal overflow at 390px.
+- [x] Login and registration now use a photography-led two-panel auth shell on
+  desktop and a focused single-column form on smaller screens. The technical
+  dashboard mockup was replaced with real-business editorial imagery and page-
+  specific brand stories; the Google-first hierarchy, secure-access context,
+  semantic error/status treatments, labelled controls and appropriate
+  autocomplete remain intact.
+- [x] The refreshed login, registration, public header and responsive menu were
+  reviewed in the local browser. Focused authentication, Google, product-shell,
+  public-shell and technical-SEO coverage passes 39 tests / 361 assertions;
+  client and SSR production builds plus the 17-route frontsite budget gate pass.
 - [x] The local MySQL hardening migration ran successfully. Seven focused Google
   authentication tests and the 17-case tenant-isolation suite passed; production
   client/SSR builds and the 17-route front-site budget check passed.
@@ -117,7 +278,7 @@ suite: **201 passed, 1,450 assertions, 28 intentional skips in 17.27 seconds**. 
 **12 passed, 48 assertions**; availability search 212.75 ms/786 queries,
 booking commit 20.79 ms/63 queries, and 32-event calendar 9.52 ms/9 queries.
 
-Critical launch blockers are live Paddle and Stripe certification, OPEN-10
+Critical launch blockers are live Stripe certification, OPEN-10
 retention/privacy authority, India legal/accounting review, and production
 backup/RPO/RTO/DR/rollback evidence. High blockers are external penetration
 testing plus upload malware scanning, target-topology load/burst evidence,
@@ -205,51 +366,49 @@ Implemented tenancy, identity, access, and audit foundation:
 
 Implemented FR-01 subscription and entitlement foundation:
 
-- [x] Paddle Billing is selectable for ClipperDesk SaaS subscriptions through
-  the application-owned provider contract (ADR-021); Stripe historical
-  evidence and adapter remain retained, not deleted
-- [x] Product-approved Paddle sandbox catalog maps Starter (USD 50 monthly /
-  USD 500 annual) and Pro (USD 100 monthly / USD 1,000 annual) to active
-  provider prices and effective-dated, server-enforced entitlements
-- [x] `billing:sync-paddle-catalog` keeps the two Paddle products and four
-  recurring prices synchronized from one reviewed catalog definition: it is
-  dry-run by default, safely creates effective-dated replacement prices when
-  an amount changes, and retains prior provider/local evidence
+- [x] Stripe is the sole ClipperDesk SaaS subscription provider behind the
+  Business-owned provider contract (ADR-029); Paddle runtime code, routes,
+  components, command and JavaScript dependency are removed while historical
+  financial rows and applied migrations remain intact
+- [x] The approved Starter (USD 50 monthly / USD 500 annual) and Pro (USD 100
+  monthly / USD 1,000 annual) catalog is centralized in `config/billing.php`
+  with environment-specific, command-managed Stripe Price mappings and
+  effective-dated, server-enforced entitlements
+- [x] The LaraFast product/price command is standardized on the Business-owned
+  catalog: `--provision` idempotently creates or updates managed Products,
+  creates immutable replacement Prices for amount changes, transfers stable
+  lookup keys, commits local mappings before archiving prior Prices, and
+  requires explicit `--force` for live-mode mutations
+- [x] `billing:sync-stripe-catalog` previews without writes by default and, with
+  `--apply`, verifies active recurring interval, currency and amount in Stripe
+  before synchronizing local plan, price and entitlement history
 - [x] Verified owner registration creates one locked registration intent and,
   only after verification, exactly one Business, Owner Membership, and dated
   trial even when the verification event is replayed
 - [x] Business-owned normalized plans, monthly/annual effective prices,
   subscription state, append-only changes, invoices, payments, coupons,
   provider events, retry notices, usage, and entitlement overrides
-- [x] Responsive owner billing surface for dated trial/renewal state, plan and
-  interval selection, premium in-app review plus embedded Paddle inline
-  checkout (no popup or hosted-page redirect), portal, saved-method evidence,
-  invoices/payment history, cancellation, and reactivation; redesigned plan
-  comparison makes price, annual savings, entitlements, renewal, and payment
-  controls clear before checkout. The 2026-08-16 follow-up removed a duplicated
-  legacy plan grid, corrected Paddle.js decimal totals (`100.00` no longer
-  renders as `$1.00`), and retains an explicit completion result without using
-  the browser result as paid-access evidence. Billing-capable owners now see
-  plan/status in the application header; immediate prorated upgrades,
-  same-interval renewal downgrades, dated period-end cancellation, cancellation
-  reason capture, and undo-cancellation are presented as explicit confirmed
-  actions. Paddle undo correctly clears `scheduled_change`
-- [x] Paddle checkout detects placeholder credentials before any provider call,
-  scopes the owner lookup to the correct Business, and presents a selected-plan
-  loading/error state without exposing raw provider responses
-- [x] Shared Paddle-account traffic is application-marked; signed events for a
-  different SaaS are discarded before payload persistence, while ClipperDesk
-  renewal events retain Business correlation through copied custom data.
-  Paddle's QRxpress seller text is confirmed as account-level hosted checkout
-  identity, not ClipperDesk application copy; changing it to Stylnexa requires
-  an account-wide Paddle change or a separate seller account
+- [x] Responsive owner billing surface shows trial, renewal, cancellation,
+  dunning, usage and plan-change state; the review page starts Stripe-hosted
+  Checkout and the Stripe Customer Portal owns sensitive payment-method,
+  invoice and billing-address controls
+- [x] Checkout creates a tenant-scoped, expiring attempt with an idempotency key;
+  it accepts only an exact configured plan/interval/amount/Stripe Price match,
+  safely reuses a live duplicate attempt, and never trusts browser completion as
+  paid evidence
+- [x] Checkout, subscription, invoice and payment-failure webhooks are
+  signature-verified, application-marked, tenant-matched, deduplicated,
+  retry-safe and ordered by provider occurrence time
 - [x] Failed-renewal warning, retry/grace, read-only restriction, safe payment
   recovery, termination, and dated export-availability behavior
 - [x] Feature and numeric entitlement catalog with server checks reusable by
   HTTP actions/APIs, domain services, jobs, and imports
+- [x] Mobile-message usage is atomically reserved per billing period at the
+  delivery boundary, reused across retries, and fails closed before provider
+  delivery when the plan allowance is exhausted
 - [x] Over-limit downgrades schedule for period end, snapshot usage/limits,
   preserve existing records, and deny only increasing operations after effect
-- [x] Stripe and Paddle webhook signature verification, event ID/payload
+- [x] Stripe webhook signature verification, event ID/payload
   deduplication, provider-time ordering, failed-event replay, and scheduled
   reconciliation contracts
 - [x] Existing Business roles are backfilled when a permission is introduced;
@@ -257,10 +416,11 @@ Implemented FR-01 subscription and entitlement foundation:
 - [x] Staff scheduling policy failures are returned as in-app form feedback;
   dashboard actions are permission-aware and the account profile renders
   without a tenant context
-- [x] Legacy User/Cashier, Lemon Squeezy, and Paddle production routes/listeners
-  disabled without deleting unknown legacy data
-- [x] Provider audit recorded in
-  [`audits/2026-08-11-subscription-provider-audit.md`](audits/2026-08-11-subscription-provider-audit.md)
+- [x] Legacy User/Cashier and Lemon Squeezy production routes/listeners remain
+  quarantined without deleting unknown legacy data; they do not own current
+  subscription access
+- [x] Stripe migration audit recorded in
+  [`audits/2026-08-29-stripe-subscription-migration-audit.md`](audits/2026-08-29-stripe-subscription-migration-audit.md)
 
 Implemented FR-02 through FR-05 business configuration:
 
@@ -848,9 +1008,8 @@ Implemented FR-16 through FR-18 management foundation:
   treat browser return pages as payment evidence. Live Stripe test-mode and
   settlement reconciliation have not been run.
 - ADR-020 resolves India/INR/en-IN calculation behavior and the appointment
-  gateway/method set. Paddle is intentionally excluded from client salon
-  payments because its public product is positioned for digital/SaaS commerce;
-  the supplied Paddle key must be rotated outside the repository.
+  gateway/method set. Subscription and appointment Stripe flows use separate
+  bounded contexts, provider records and webhook secrets.
 
 ### Inventory, commissions, reporting, and metrics verification (2026-08-15)
 
@@ -904,7 +1063,7 @@ Implemented FR-16 through FR-18 management foundation:
   satisfies Membership middleware, shows a tenant banner, and ends on exit,
   supersession, expiry, or revocation with immutable audit evidence.
 - [x] Failure summaries minimize billing/payment/notification/job content.
-  Reviewed Stripe/Paddle/payment/communication replay uses a reason plus unique
+  Reviewed Stripe/payment/communication replay uses a reason plus unique
   operation key and duplicate requests return the first replay result. Generic
   failed jobs remain inspection-only.
 - [x] Queue, communication, webhook, reconciliation, and honest backup health
@@ -1082,12 +1241,12 @@ Implemented FR-16 through FR-18 management foundation:
 
 - [x] `/pricing` reads active/effective Starter and Pro amounts, currency,
   intervals and entitlements through one server presenter. It shows commercial
-  values only when the complete approved Paddle `pri_…` catalog is available;
-  incomplete, expired, mixed-currency or non-Paddle state renders a truthful
+  values only when the complete approved Stripe `price_…` catalog is available;
+  incomplete, expired, mixed-currency or non-Stripe state renders a truthful
   unavailable panel instead of partial prices.
 - [x] Monthly/annual controls are semantic radios. Annual savings are computed
   from current rows; the comparison table uses current entitlement values; and
-  trial, tax, cancellation, appointment-payment separation and live Paddle
+  trial, tax, cancellation, appointment-payment separation and live Stripe
   certification limits are visible. No Vue/content file owns a price.
 - [x] Pricing CTAs carry only allow-listed plan/interval identifiers. The
   server revalidates them against the current catalog, stores the preference on
@@ -1098,7 +1257,7 @@ Implemented FR-16 through FR-18 management foundation:
   tampering. Registration and the 30-test subscription lifecycle regression
   also pass. A fresh 360×800 browser check found one `h1`, the accessible
   interval control, complete prices and no horizontal overflow.
-- [x] Prompt 21 is unblocked. Live Paddle checkout remains a Prompt 13 blocker.
+- [x] Prompt 21 is unblocked. Live Stripe checkout remains a Prompt 13 blocker.
 
 ### Prompt 21 trust, company, and legal pages
 
@@ -1113,7 +1272,7 @@ Implemented FR-16 through FR-18 management foundation:
 - [x] `/refund-policy` now provides a separate `noindex` review draft covering
   subscription cancellation/refunds, appointment deposits, Stripe refund
   eligibility and initiation, original-method handling, provider/bank timing,
-  no-shipping disclosure, disputes and the Paddle-versus-Stripe payment
+  no-shipping disclosure, disputes and the subscription-versus-appointment payment
   boundary. Pricing, subscription checkout and the public footer link to it.
 - [x] The 2026-08-25 provider-policy review is recorded in
   [`audits/2026-08-25-legal-policy-review.md`](audits/2026-08-25-legal-policy-review.md).
@@ -1229,10 +1388,11 @@ Implemented FR-16 through FR-18 management foundation:
 - Jetstream Team is superseded by accepted ADR-006 and is no longer created at
   registration, but legacy Team models/tables/actions remain preserved pending
   a separately reviewed cleanup/backfill decision.
-- Paddle is selected for ClipperDesk SaaS subscriptions; Stripe is separately
-  selected for appointment payments. Overlapping legacy provider tables,
-  resources, and packages remain quarantined until a separately reviewed
-  cleanup/backfill proves they contain no data requiring preservation.
+- Stripe is selected for both ClipperDesk SaaS subscriptions and eligible
+  appointment payments, but these remain separate bounded contexts, webhook
+  secrets and normalized aggregates. Overlapping legacy User/Cashier and Lemon
+  Squeezy tables/resources remain quarantined until a reviewed backfill proves
+  they contain no data requiring preservation.
 - The legacy invoice download now enforces User ownership, global model
   unguarding is removed, unsafe magic/social routes are disabled, and platform
   roles are separated. Other provider billing/admin resources remain legacy
@@ -1256,7 +1416,7 @@ Implemented FR-16 through FR-18 management foundation:
 ## Next recommended work
 
 Do not begin paid launch. Execute the blocker plan in the versioned release
-record: certify Paddle/Stripe/Resend/Twilio in their target environments;
+record: certify Stripe/Resend/Twilio in their target environments;
 approve India tax/privacy/retention with named reviewers; add upload malware
 scanning; optimize and load-test availability, checkout, and webhook bursts on
 the target database/queue/storage topology; configure and exercise monitoring,

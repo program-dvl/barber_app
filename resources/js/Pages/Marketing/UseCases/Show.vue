@@ -1,10 +1,10 @@
 <script setup>
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
 import ConversionBand from '@/Components/Marketing/ConversionBand.vue';
-import MarketingCard from '@/Components/Marketing/MarketingCard.vue';
 import PublicContainer from '@/Components/Marketing/PublicContainer.vue';
 import SectionHeading from '@/Components/Marketing/SectionHeading.vue';
 import HomeLayout from '@/Layouts/HomeLayout.vue';
+import { featureVisuals, marketingFamilyVisuals, solutionVisuals, useCaseVisuals, visualFor } from '@/Support/marketingVisuals';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -14,21 +14,32 @@ defineProps({ useCase: Object, feature: Object, solution: Object });
 <template>
     <HomeLayout>
         <Head :title="useCase.title" />
-        <section class="cd-public-section border-b border-[var(--border-subtle)]">
+        <section class="cd-public-section cd-family-hero" data-tone="coral">
             <PublicContainer>
                 <Breadcrumbs :items="[
                     { label: 'Home', href: route('marketing.home') },
                     { label: 'Use cases', href: route('marketing.use-cases') },
                     { label: useCase.label },
                 ]" />
-                <p class="cd-eyebrow mt-10">{{ useCase.label }}</p>
-                <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.05em] text-[var(--text-strong)] text-balance">{{ useCase.title }}</h1>
-                <p class="mt-7 max-w-3xl text-lg leading-8 text-[var(--text-muted)] sm:text-xl">{{ useCase.description }}</p>
-                <div class="mt-10 max-w-4xl rounded-[var(--radius-xl)] border border-[var(--border-strong)] bg-[var(--status-warning-soft)] p-6 sm:p-8">
-                    <h2 class="text-lg font-extrabold text-[var(--text-strong)]">The direct answer</h2>
-                    <p class="mt-3 leading-8 text-[var(--text-default)]">{{ useCase.answer }}</p>
+                <div class="cd-family-hero-grid mt-10">
+                    <div class="cd-family-hero-copy">
+                        <p class="cd-eyebrow">{{ useCase.label }}</p>
+                        <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-balance">{{ useCase.title }}</h1>
+                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">{{ useCase.description }}</p>
+                    </div>
+                    <figure class="cd-family-hero-media">
+                        <img class="cd-family-hero-image" :src="visualFor(useCaseVisuals, useCase.slug, marketingFamilyVisuals.useCases).src" :alt="visualFor(useCaseVisuals, useCase.slug, marketingFamilyVisuals.useCases).alt" width="1536" height="1024" fetchpriority="high" />
+                        <figcaption class="cd-family-hero-caption">A better day starts with the real operating problem.</figcaption>
+                    </figure>
                 </div>
             </PublicContainer>
+        </section>
+
+        <section class="-mt-8 px-4 pb-4 sm:-mt-12">
+            <div class="cd-answer-panel relative z-10 mx-auto max-w-4xl">
+                <p class="cd-eyebrow">The direct answer</p>
+                <p class="mt-4 text-lg leading-8 text-[var(--text-default)]">{{ useCase.answer }}</p>
+            </div>
         </section>
 
         <section class="cd-public-section">
@@ -44,9 +55,9 @@ defineProps({ useCase: Object, feature: Object, solution: Object });
                 </div>
                 <div>
                     <h2 class="font-display text-4xl font-semibold leading-tight text-[var(--text-strong)]">A practical operating approach</h2>
-                    <ol class="mt-7 space-y-5">
-                        <li v-for="(step, index) in useCase.practice" :key="step.title" class="grid grid-cols-[2.5rem_1fr] gap-4">
-                            <span class="flex size-10 items-center justify-center rounded-full bg-[var(--brand-primary)] font-extrabold text-white" aria-hidden="true">{{ index + 1 }}</span>
+                    <ol class="cd-story-list mt-7">
+                        <li v-for="(step, index) in useCase.practice" :key="step.title" class="grid grid-cols-[3rem_1fr] gap-4 border-b border-[var(--border-default)] py-5">
+                            <span class="font-display text-2xl font-semibold text-[var(--brand-secondary)]" aria-hidden="true">0{{ index + 1 }}</span>
                             <div><h3 class="font-extrabold text-[var(--text-strong)]">{{ step.title }}</h3><p class="mt-2 leading-7 text-[var(--text-muted)]">{{ step.body }}</p></div>
                         </li>
                     </ol>
@@ -54,7 +65,7 @@ defineProps({ useCase: Object, feature: Object, solution: Object });
             </PublicContainer>
         </section>
 
-        <section class="cd-public-section bg-[var(--brand-primary)] text-white">
+        <section class="cd-public-section cd-dark-proof">
             <PublicContainer class="grid gap-12 lg:grid-cols-2">
                 <div>
                     <h2 class="font-display text-4xl leading-tight">How ClipperDesk participates</h2>
@@ -81,17 +92,15 @@ defineProps({ useCase: Object, feature: Object, solution: Object });
         <section class="cd-public-section">
             <PublicContainer>
                 <SectionHeading eyebrow="Continue evaluating" title="See the supporting product workflow and business fit" />
-                <div class="mt-10 grid gap-5 md:grid-cols-2">
-                    <MarketingCard>
-                        <p class="cd-eyebrow">Supporting feature</p>
-                        <h2 class="mt-4 text-xl font-extrabold text-[var(--text-strong)]">{{ feature.title }}</h2>
-                        <Link :href="route('marketing.features.show', feature.slug)" class="mt-5 inline-flex min-h-11 items-center font-extrabold text-[var(--brand-primary)] underline-offset-4 hover:underline">Explore {{ feature.label.toLowerCase() }}</Link>
-                    </MarketingCard>
-                    <MarketingCard>
-                        <p class="cd-eyebrow">Relevant fit</p>
-                        <h2 class="mt-4 text-xl font-extrabold text-[var(--text-strong)]">{{ solution.title }}</h2>
-                        <Link :href="route('marketing.solutions.show', solution.slug)" class="mt-5 inline-flex min-h-11 items-center font-extrabold text-[var(--brand-primary)] underline-offset-4 hover:underline">See the {{ solution.label.toLowerCase() }} workflow</Link>
-                    </MarketingCard>
+                <div class="cd-visual-card-grid mt-10">
+                    <article class="cd-visual-card">
+                        <div class="cd-visual-card-media"><img class="cd-visual-card-image" :src="visualFor(featureVisuals, feature.slug, marketingFamilyVisuals.product).src" :alt="visualFor(featureVisuals, feature.slug, marketingFamilyVisuals.product).alt" width="1536" height="1024" loading="lazy" /></div>
+                        <div class="cd-visual-card-body min-h-0"><p class="cd-eyebrow">Supporting feature</p><h2 class="mt-4 text-xl font-extrabold text-[var(--text-strong)]">{{ feature.title }}</h2><Link :href="route('marketing.features.show', feature.slug)" class="cd-arrow-link mt-5">Explore {{ feature.label.toLowerCase() }}</Link></div>
+                    </article>
+                    <article class="cd-visual-card">
+                        <div class="cd-visual-card-media"><img class="cd-visual-card-image" :src="visualFor(solutionVisuals, solution.slug, marketingFamilyVisuals.useCases).src" :alt="visualFor(solutionVisuals, solution.slug, marketingFamilyVisuals.useCases).alt" width="1536" height="1024" loading="lazy" /></div>
+                        <div class="cd-visual-card-body min-h-0"><p class="cd-eyebrow">Relevant fit</p><h2 class="mt-4 text-xl font-extrabold text-[var(--text-strong)]">{{ solution.title }}</h2><Link :href="route('marketing.solutions.show', solution.slug)" class="cd-arrow-link mt-5">See the {{ solution.label.toLowerCase() }} workflow</Link></div>
+                    </article>
                 </div>
             </PublicContainer>
         </section>

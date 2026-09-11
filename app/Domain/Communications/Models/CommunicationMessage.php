@@ -12,7 +12,7 @@ class CommunicationMessage extends Model
 {
     use BelongsToBusiness;
 
-    protected $fillable = ['business_id', 'communication_intent_id', 'client_id', 'communication_template_id', 'communication_action_link_id', 'channel', 'recipient_hash', 'recipient', 'idempotency_key', 'category', 'legal_basis', 'locale', 'time_zone', 'template_variables', 'subject_hash', 'body_hash', 'status', 'attempt_count', 'max_attempts', 'provider', 'provider_message_id', 'provider_state_at', 'last_error_code', 'last_error_class', 'suppression_reason', 'queued_at', 'sent_at', 'delivered_at', 'failed_at', 'next_attempt_at'];
+    protected $fillable = ['business_id', 'communication_intent_id', 'client_id', 'communication_template_id', 'communication_action_link_id', 'channel', 'recipient_hash', 'recipient', 'idempotency_key', 'category', 'legal_basis', 'locale', 'time_zone', 'template_variables', 'subject_hash', 'body_hash', 'status', 'attempt_count', 'max_attempts', 'provider', 'provider_message_id', 'provider_state_at', 'last_error_code', 'last_error_class', 'suppression_reason', 'queued_at', 'sent_at', 'delivered_at', 'failed_at', 'next_attempt_at', 'entitlement_charged_at'];
 
     protected function casts(): array
     {
@@ -21,6 +21,7 @@ class CommunicationMessage extends Model
             'attempt_count' => 'integer', 'max_attempts' => 'integer', 'queued_at' => 'immutable_datetime',
             'sent_at' => 'immutable_datetime', 'delivered_at' => 'immutable_datetime', 'failed_at' => 'immutable_datetime',
             'next_attempt_at' => 'immutable_datetime', 'provider_state_at' => 'immutable_datetime',
+            'entitlement_charged_at' => 'immutable_datetime',
         ];
     }
 

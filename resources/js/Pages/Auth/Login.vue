@@ -16,12 +16,20 @@ const submit = () => form.transform(data => ({ ...data, remember: form.remember 
 </script>
 
 <template>
-    <AuthLayout title="Sign in">
+    <AuthLayout
+        title="Sign in"
+        eyebrow="Welcome back to your working day"
+        heading="Pick up with the whole day in view."
+        description="Appointments, client context and team decisions stay connected, ready for the next person through the door."
+        image="/images/marketing/editorial/security-trust.webp"
+        image-alt="A salon owner reviewing the day at reception in the evening."
+        image-caption="A calm close makes tomorrow easier to open."
+    >
         <AuthenticationCard embedded>
             <div class="mb-7">
                 <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-[var(--status-info-soft)] px-3 py-1.5 text-xs font-bold text-[var(--status-info)]"><LockClosedIcon class="size-3.5" aria-hidden="true" /> Secure workspace access</div>
-                <h2 class="cd-display text-3xl font-bold tracking-tight text-[var(--text-strong)]">Welcome back</h2>
-                <p class="mt-2 text-sm leading-6 text-[var(--text-muted)]">Sign in to manage today’s schedule, clients, and team.</p>
+                <h2 class="cd-display text-[clamp(2.25rem,5vw,3.25rem)] font-semibold leading-none tracking-[-0.05em] text-[var(--text-strong)]">Welcome back.</h2>
+                <p class="mt-3 text-base leading-7 text-[var(--text-muted)]">Sign in to manage today’s schedule, clients and team.</p>
             </div>
 
             <div v-if="status" class="mb-5 flex items-start gap-2.5 rounded-[var(--radius-md)] border border-[var(--status-success)]/20 bg-[var(--status-success-soft)] p-3.5 text-sm text-[var(--status-success)]" role="status"><CheckCircleIcon class="mt-0.5 size-5 shrink-0" aria-hidden="true" /><span>{{ status }}</span></div>

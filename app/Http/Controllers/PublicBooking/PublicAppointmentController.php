@@ -8,6 +8,7 @@ use App\Domain\PublicBooking\Services\SecureAppointmentLinkService;
 use App\Domain\PublicBooking\Services\WaitlistService;
 use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
 use App\Http\Controllers\Controller;
+use App\Rules\E164Phone;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -44,7 +45,7 @@ class PublicAppointmentController extends Controller
                 return $this->redirectToFreshView($appointment, $links, 'Your appointment has been cancelled.');
             }
             if ($purpose === 'contact') {
-                $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'mobile' => ['required', 'string', 'max:32'], 'email' => ['required', 'email'], 'idempotency_key' => ['required', 'string', 'max:128']]);
+                $data = $request->validate(['name' => ['required', 'string', 'max:255'], 'mobile' => ['required', 'string', 'max:32', new E164Phone], 'email' => ['required', 'email'], 'idempotency_key' => ['required', 'string', 'max:128']]);
                 $appointment = $selfService->updateContact($link, $data, $data['idempotency_key']);
 
                 return $this->redirectToFreshView($appointment, $links, 'Contact details updated without changing your booking history.');
@@ -140,7 +141,7 @@ class PublicAppointmentController extends Controller
         return [
             'appointment' => [
                 'reference' => $appointment->booking_reference, 'status' => $appointment->status,
-                'business' => $appointment->business->name, 'location' => $appointment->location->name,
+                'business' => $appointment->business->name, 'business_country_code' => $appointment->business->country_code, 'location' => $appointment->location->name,
                 'starts_at' => $appointment->starts_at_utc->setTimezone($appointment->time_zone)->toIso8601String(),
                 'ends_at' => $appointment->ends_at_utc->setTimezone($appointment->time_zone)->toIso8601String(),
                 'time_zone' => $appointment->time_zone, 'services' => $appointment->serviceLines->pluck('name')->all(),

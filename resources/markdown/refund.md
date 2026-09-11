@@ -12,7 +12,7 @@ ClipperDesk has two separate payment contexts. They must not be confused:
 
 | Payment | Seller or service provider | Current payment role | Policy that controls |
 | --- | --- | --- | --- |
-| ClipperDesk software subscription | Paddle is the selected merchant of record; ClipperDesk supplies the software | Paddle processes the subscription purchase, renewal, cancellation and approved refund | Paddle buyer/refund terms, mandatory law and this approved ClipperDesk policy where it gives an additional right |
+| ClipperDesk software subscription | The approved ClipperDesk operator supplies the software; its legal identity must be published before launch | Stripe processes the subscription payment and hosts secure billing controls | The final approved ClipperDesk terms and refund policy, mandatory law and applicable Stripe payment-service terms |
 | Salon appointment, deposit or in-person sale | The salon or barbershop shown on the booking/receipt provides the service or product | Stripe is the implemented online appointment-payment adapter; the Business Customer also records supported local tenders | The Business Customer's displayed booking/cancellation policy, mandatory law and the applicable payment-provider rules |
 
 ClipperDesk does not ship physical goods. Retail products recorded in ClipperDesk
@@ -38,8 +38,8 @@ the checkout and billing account.
 ### 2.2 Renewal and cancellation
 
 Paid monthly or annual subscriptions renew automatically until cancelled. An
-authorized owner can use the ClipperDesk billing page or the manage-subscription
-link in Paddle's transaction email to schedule cancellation. Unless mandatory
+authorized owner can use the ClipperDesk billing page or Stripe Customer Portal
+to schedule cancellation. Unless mandatory
 law or the checkout says otherwise, cancellation takes effect at the end of the
 current paid billing period and prevents the next renewal. Access continues
 until that date, subject to payment, security and acceptable-use restrictions.
@@ -49,17 +49,16 @@ An approved refund may end access to the refunded product or period.
 
 ### 2.3 Subscription refund requests
 
-Paddle is the merchant of record for the proposed ClipperDesk subscription
-purchase. A Business Customer may request a refund through the **View receipt**
-or **Manage subscription** link in Paddle's transaction email, the Paddle buyer
-support flow, or an approved ClipperDesk billing-support path once that path is
-operational.
+The approved ClipperDesk operator is responsible for the proposed subscription
+refund policy and decision; Stripe processes the payment and any provider-backed
+refund submitted by that operator. A Business Customer may review invoices and
+billing controls in the Stripe Customer Portal and may use an approved
+ClipperDesk billing-support path once that path is operational.
 
-Eligibility is determined by Paddle's terms, the ClipperDesk commitment shown at
-purchase and mandatory law. The current Paddle policy may allow statutory or
-discretionary refunds and does not remove non-waivable consumer rights. Good
-Hours must not promise a refund that Paddle, as seller, has not approved and
-processed.
+Eligibility is determined by the ClipperDesk commitment shown at purchase,
+the final approved policy and mandatory law. No draft support path may promise
+a refund until Finance and Operations have approved and certified the Stripe
+refund executor and reconciliation process.
 
 <span id="appointment-refunds"></span>
 ## 3. Salon appointments, deposits and sale cancellations
@@ -134,9 +133,9 @@ not by itself evidence that money reached the client's account.
 
 ### 5.2 ClipperDesk subscription request
 
-Use Paddle's receipt/manage-subscription link or buyer support process. An
-authorized Business Customer owner may also review subscription state and
-provider links in the authenticated ClipperDesk billing page. A public Good
+Use the authenticated ClipperDesk billing page or Stripe Customer Portal. An
+authorized Business Customer owner may review subscription state, invoices and
+provider controls there. A public ClipperDesk
 Hours billing-support email, telephone number and response owner must be added
 before this draft can become effective.
 
@@ -165,10 +164,9 @@ of a separate credit appearing. Provider or bank failure can take longer to
 identify. Where available, the merchant should supply the refund reference so
 the customer can ask their bank to trace it.
 
-For a ClipperDesk subscription, Paddle's current buyer refund policy states that
-eligible refunds are processed using the same payment method where possible and
-within **14 days after approval**. The Paddle transaction record and current
-buyer terms control the provider-side timing.
+For a ClipperDesk subscription, the final approved policy must state the
+operator's submission target and the expected Stripe and bank processing
+timeline without promising a guaranteed credit date.
 
 These timeframes begin after approval and provider submission; they do not mean
 the credit is guaranteed to appear on a specific day. Weekends, bank holidays,
@@ -223,7 +221,7 @@ Privacy and Product owners must:
 - implement and certify provider-backed full and partial refunds, failure
   handling and reconciliation;
 - approve request acknowledgment, decision and submission timelines;
-- confirm Paddle seller/support language for ClipperDesk subscriptions;
+- confirm ClipperDesk seller, Stripe processor and support language for subscriptions;
 - verify that checkout and receipts display the policy before payment; and
 - publish an effective date and retain the version accepted for each relevant
   transaction.

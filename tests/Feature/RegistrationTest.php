@@ -7,7 +7,9 @@ use App\Domain\Billing\Models\BusinessSubscription;
 use App\Domain\Billing\Models\OwnerRegistrationIntent;
 use App\Domain\PlatformAccess\Enums\StarterRole;
 use App\Domain\PlatformAccess\Models\Business;
+use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\PlatformAccess\Models\Membership;
+use App\Domain\PlatformAccess\Services\DefaultLocationProvisioner;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -59,7 +61,49 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(RouteServiceProvider::HOME);
+        $response->assertRedirect(route('verification.notice'));
+    }
+
+    public function test_registration_ignores_a_stale_protected_intended_url(): void
+    {
+        if (! Features::enabled(Features::registration())) {
+            $this->markTestSkipped('Registration support is not enabled.');
+        }
+
+        $response = $this->withSession([
+            'url.intended' => '/businesses/01M18WR0P00000000000000000/configuration',
+        ])->post('/register', [
+            'name' => 'New Owner',
+            'business_name' => 'New Salon',
+            'email' => 'new-owner@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature(),
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('verification.notice'));
+        $this->assertNull(session('url.intended'));
+    }
+
+    public function test_inertia_registration_establishes_the_session_before_navigation(): void
+    {
+        if (! Features::enabled(Features::registration())) {
+            $this->markTestSkipped('Registration support is not enabled.');
+        }
+
+        $response = $this->withHeader('X-Inertia', 'true')->post('/register', [
+            'name' => 'Inertia Owner',
+            'business_name' => 'Inertia Salon',
+            'email' => 'inertia-owner@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature(),
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertStatus(409);
+        $response->assertHeader('X-Inertia-Location', route('verification.notice'));
     }
 
     public function test_owner_can_register_verify_complete_tenant_onboarding_and_sign_back_in(): void
@@ -78,7 +122,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $user = User::query()->where('email', 'owner@example.com')->firstOrFail();
-        $registration->assertRedirect(RouteServiceProvider::HOME);
+        $registration->assertRedirect(route('verification.notice'));
         $this->assertAuthenticatedAs($user);
         $this->assertDatabaseHas('owner_registration_intents', [
             'user_id' => $user->getKey(),
@@ -93,11 +137,12 @@ class RegistrationTest extends TestCase
             ['id' => $user->getKey(), 'hash' => sha1($user->email)]
         );
 
-        $this->get($verificationUrl)->assertRedirect(RouteServiceProvider::HOME.'?verified=1');
-        $this->get($verificationUrl);
-
+        $verification = $this->get($verificationUrl);
         $intent = OwnerRegistrationIntent::query()->whereBelongsTo($user)->firstOrFail();
         $business = Business::query()->findOrFail($intent->business_id);
+        $verification->assertRedirect(route('business.configuration.show', $business).'?verified=1');
+        $this->get($verificationUrl);
+
         $membership = Membership::query()->whereBelongsTo($business)->whereBelongsTo($user)->firstOrFail();
         $subscription = BusinessSubscription::query()->whereBelongsTo($business)->firstOrFail();
 
@@ -117,6 +162,11 @@ class RegistrationTest extends TestCase
         $this->assertDatabaseCount('businesses', 1);
         $this->assertDatabaseCount('memberships', 1);
         $this->assertDatabaseCount('business_subscriptions', 1);
+        $this->assertDatabaseCount('locations', 1);
+        $this->assertDatabaseHas('location_membership', [
+            'business_id' => $business->getKey(),
+            'membership_id' => $membership->getKey(),
+        ]);
 
         $this->post('/logout');
         $this->assertGuest();
@@ -128,5 +178,33 @@ class RegistrationTest extends TestCase
 
         $this->assertAuthenticatedAs($user);
         $login->assertRedirect(RouteServiceProvider::HOME);
+    }
+
+    public function test_default_location_provisioning_reactivates_and_reuses_the_existing_foundation(): void
+    {
+        [$owner, $business, $membership] = createTenantMembership(StarterRole::Owner);
+        $location = Location::factory()->create([
+            'business_id' => $business->getKey(),
+            'name' => $business->name,
+            'status' => 'inactive',
+            'is_active' => false,
+        ]);
+
+        $first = app(DefaultLocationProvisioner::class)->provision($business, $membership, $owner);
+        $second = app(DefaultLocationProvisioner::class)->provision($business, $membership, $owner);
+
+        $this->assertTrue($first->is($location));
+        $this->assertTrue($second->is($location));
+        $this->assertTrue($location->fresh()->is_active);
+        $this->assertSame('active', $location->fresh()->status);
+        $this->assertDatabaseCount('locations', 1);
+        $this->assertSame(1, DB::table('location_membership')
+            ->where('business_id', $business->getKey())
+            ->where('membership_id', $membership->getKey())
+            ->count());
+        $this->assertDatabaseHas('audit_events', [
+            'business_id' => $business->getKey(),
+            'action' => 'location.default.reactivated',
+        ]);
     }
 }

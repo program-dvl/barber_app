@@ -1,5 +1,9 @@
 <?php
 
+use App\Domain\Billing\Enums\RestrictionLevel;
+use App\Domain\Billing\Enums\SubscriptionStatus;
+use App\Domain\Billing\Models\BillingPlan;
+use App\Domain\Billing\Models\BusinessSubscription;
 use App\Domain\PlatformAccess\Enums\StarterRole;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Membership;
@@ -72,4 +76,22 @@ function createTenantMembership(StarterRole $role = StarterRole::Owner): array
         ->assignStarterRole($membership, $role, $user, 'Test fixture role assignment.');
 
     return [$user, $business, $membership->fresh()];
+}
+
+/** Create a paid-access fixture for HTTP tests that exercise protected writes. */
+function activateTestSubscription(Business $business, string $planCode = 'pro'): BusinessSubscription
+{
+    return BusinessSubscription::query()->firstOrCreate(
+        ['business_id' => $business->getKey()],
+        [
+            'billing_plan_id' => BillingPlan::query()->where('code', $planCode)->firstOrFail()->getKey(),
+            'provider' => 'stripe',
+            'provider_customer_id' => 'cus_test_'.$business->getKey(),
+            'provider_subscription_id' => 'sub_test_'.$business->getKey(),
+            'status' => SubscriptionStatus::Active,
+            'restriction_level' => RestrictionLevel::None,
+            'current_period_started_at' => now()->subDay(),
+            'current_period_ends_at' => now()->addMonth(),
+        ],
+    );
 }

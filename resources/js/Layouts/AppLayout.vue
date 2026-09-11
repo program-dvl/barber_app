@@ -38,6 +38,18 @@ const accountWorkspaces = computed(() => page.props.account?.workspaces ?? []);
 const primaryWorkspace = computed(() => accountWorkspaces.value.length === 1 ? accountWorkspaces.value[0] : null);
 const billingWorkspaces = computed(() => accountWorkspaces.value.filter(workspace => workspace.can_manage_billing));
 const tenantSubscription = computed(() => page.props.tenant?.subscription);
+const tenantAccess = computed(() => page.props.tenant?.access);
+const tenantEntitlements = computed(() => page.props.tenant?.entitlements ?? {});
+const tenantFeatures = computed(() => page.props.tenant?.features ?? {});
+const accessNotice = computed(() => {
+    const access = tenantAccess.value;
+    if (!access) return null;
+    const trialExpired = access.status === 'trialing' && access.trial_ends_at && new Date(access.trial_ends_at).getTime() <= Date.now();
+    if (trialExpired) return 'Your free trial has ended. Existing information remains readable, but protected changes require an active plan.';
+    if (access.status === 'restricted') return 'This workspace is read-only until subscription billing is resolved.';
+    if (['past_due', 'grace'].includes(access.status)) return `A subscription payment needs attention${access.grace_ends_at ? ` before ${new Date(access.grace_ends_at).toLocaleDateString()}` : ''}. Product access remains available during recovery.`;
+    return null;
+});
 const subscriptionStatusLabel = computed(() => ({
     trialing: 'Trial',
     active: 'Active',
@@ -65,14 +77,31 @@ const navigation = computed(() => {
     { key: 'calendar', label: 'Calendar', href: route('business.calendar', businessRouteParameter.value), icon: CalendarDaysIcon },
     { key: 'walk-in-queue', label: 'Walk-in queue', href: route('business.walk-ins.index', businessRouteParameter.value), icon: QueueListIcon },
     { key: 'clients', label: 'Clients', href: route('business.clients.index', businessRouteParameter.value), icon: UsersIcon },
-    { key: 'checkout-sales', label: 'Checkout & sales', href: route('shop.module', [businessRouteParameter.value, 'checkout-sales']), icon: BanknotesIcon },
-    { key: 'staff', label: 'Staff', href: route('shop.module', [businessRouteParameter.value, 'staff']), icon: UserGroupIcon },
-    { key: 'services', label: 'Services', href: route('shop.module', [businessRouteParameter.value, 'services']), icon: ClipboardDocumentListIcon },
-    { key: 'inventory', label: 'Inventory', href: route('shop.module', [businessRouteParameter.value, 'inventory']), icon: ArchiveBoxIcon },
-    { key: 'reports', label: 'Reports', href: route('shop.module', [businessRouteParameter.value, 'reports']), icon: ChartBarIcon },
-    { key: 'settings', label: 'Settings', href: route('business.configuration.show', businessRouteParameter.value), icon: Cog6ToothIcon },
+    { key: 'checkout-sales', label: 'Checkout & sales', href: route('business.checkout.index', businessRouteParameter.value), icon: BanknotesIcon },
+    { key: 'staff', label: 'Team & availability', href: route('business.team.index', businessRouteParameter.value), icon: UserGroupIcon },
+    { key: 'services', label: 'Services', href: route('business.services.index', businessRouteParameter.value), icon: ClipboardDocumentListIcon },
+    { key: 'inventory', label: 'Inventory', href: route('business.inventory.index', businessRouteParameter.value), icon: ArchiveBoxIcon, entitlement: 'inventory.enabled' },
+    { key: 'reports', label: 'Reports', href: route('business.reports.index', businessRouteParameter.value), icon: ChartBarIcon },
+    { key: 'settings', label: 'Salon setup', href: route('business.configuration.show', businessRouteParameter.value), icon: Cog6ToothIcon },
     { key: 'subscription-billing', label: 'Subscription & billing', href: route('business.billing.show', businessRouteParameter.value), icon: CreditCardIcon },
-    ].filter(item => props.navigationVisibility[item.key] !== false);
+    ].filter(item => props.navigationVisibility[item.key] !== false && tenantFeatures.value[item.key]?.visible !== false).map(item => {
+        const feature = tenantFeatures.value[item.key];
+        if (feature?.status === 'upgrade_required' || (item.entitlement && !tenantEntitlements.value[item.entitlement])) {
+            return {
+                ...item,
+                href: page.props.tenant.can_manage_billing
+                    ? route('business.billing.show', businessRouteParameter.value)
+                    : route('business.dashboard', businessRouteParameter.value),
+                badge: 'Upgrade',
+            };
+        }
+
+        if (feature?.status === 'setup_required') {
+            return { ...item, badge: 'Setup' };
+        }
+
+        return item;
+    });
 });
 
 const primaryMobileNavigation = computed(() => navigation.value.filter(item => ['dashboard', 'calendar', 'walk-in-queue', 'clients'].includes(item.key)));
@@ -145,6 +174,7 @@ const logout = () => router.post(route('logout'));
                         >
                             <component :is="item.icon" class="size-5 shrink-0" aria-hidden="true" />
                             <span>{{ item.label }}</span>
+                            <span v-if="item.badge" class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-white/70">{{ item.badge }}</span>
                         </Link>
                     </li>
                 </ul>
@@ -206,6 +236,10 @@ const logout = () => router.post(route('logout'));
             <div v-for="notice in $page.props.platformNotices" :key="notice.public_id" class="border-b border-[var(--border-subtle)] bg-[var(--surface-subtle)] px-4 py-3 text-sm sm:px-6 lg:px-8" role="status">
                 <strong>{{ notice.title }}</strong> {{ notice.message }}
             </div>
+            <div v-if="accessNotice" class="border-b border-[var(--status-warning)]/30 bg-[var(--status-warning-soft)] px-4 py-3 text-sm text-[var(--status-warning)] sm:px-6 lg:px-8" role="status">
+                <strong>Subscription notice.</strong> {{ accessNotice }}
+                <Link v-if="$page.props.tenant?.can_manage_billing" :href="route('business.billing.show', businessRouteParameter)" class="ml-2 font-semibold underline underline-offset-2">Review billing</Link>
+            </div>
 
             <main id="main-content" tabindex="-1" class="mx-auto w-full max-w-[96rem] px-4 py-6 pb-28 sm:px-6 sm:py-7 lg:px-8 lg:pb-8">
                 <div v-if="$page.props.flash?.status" role="status" class="mb-5 rounded-xl border border-[var(--status-success)]/30 bg-[var(--status-success-soft)] p-4 text-sm">
@@ -234,7 +268,8 @@ const logout = () => router.post(route('logout'));
                         <li v-for="item in navigation" :key="item.key">
                             <Link :href="item.href" preserve-scroll :aria-current="isActive(item) ? 'page' : undefined" :class="['flex min-h-12 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium', isActive(item) ? 'bg-[var(--status-success-soft)] text-[var(--action-primary)]' : 'hover:bg-[var(--surface-subtle)]']" @click="closeNavigation()">
                                 <component :is="item.icon" class="size-5" aria-hidden="true" />
-                                {{ item.label }}
+                                <span>{{ item.label }}</span>
+                                <span v-if="item.badge" class="ml-auto rounded-full bg-[var(--surface-subtle)] px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-[var(--text-muted)]">{{ item.badge }}</span>
                             </Link>
                         </li>
                     </ul>

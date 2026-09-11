@@ -555,9 +555,11 @@ action-oriented where appropriate.
 
 ## Brand posture
 
-The product is **ClipperDesk**. Its brand promise is **Run the day. Grow the
-business.** The identity should feel operational, dependable, modern, and
-approachable. It is not barber-only, fashion-led, childish, or luxury-coded.
+The product is **ClipperDesk**. Its acquisition brand promise is **Your whole
+day. Beautifully run.** The product remains positioned around the reliable
+booking-to-checkout operating loop. The identity should feel operational,
+dependable, modern, energetic, and approachable. It is not barber-only,
+childish, or coded to a single luxury tier.
 
 The geometric mark is a restrained, interlocking **C** and **D** monogram with
 no enclosing app tile. It remains legible in compact navigation and signals a

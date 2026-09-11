@@ -114,10 +114,10 @@ in the approved server catalog. Applicable taxes, payment options and the party
 issuing the subscription invoice are displayed by the subscription payment
 provider at checkout.
 
-The current approved product architecture uses Paddle as merchant of record for
-ClipperDesk SaaS subscriptions. Paddle's buyer terms, privacy notice and refund
-policy also apply to the purchase and payment transaction. ClipperDesk does not
-store full card numbers or security codes entered in Paddle's checkout.
+The current product architecture uses Stripe-hosted Checkout and the Stripe
+Customer Portal for ClipperDesk SaaS subscriptions. Stripe's privacy notice and
+applicable payment-service terms apply to information Stripe handles.
+ClipperDesk does not store full card numbers or security codes entered there.
 
 Plan upgrades, downgrades, cancellation, payment failure, grace and access
 restriction follow the state and effective date shown in the billing page. A
@@ -224,7 +224,7 @@ party receives ownership of the other party's marks.
 
 ## 9. Third-party services
 
-The Platform depends on third-party services such as Paddle, Stripe, Resend,
+The Platform depends on third-party services such as Stripe, Resend,
 Twilio and hosting or infrastructure providers. Their availability, buyer terms
 and privacy practices may apply to the functions they perform. ClipperDesk must
 not materially expand a provider's use of Customer Data without the notice,
@@ -319,6 +319,6 @@ and account controls; Salon Clients should use the salon contact details and
 secure appointment link supplied with their booking.
 
 This draft may move to an effective version only after named Legal, Product,
-Privacy, Finance and Operations owners approve it, the Stripe/Paddle provider
+Privacy, Finance and Operations owners approve it, the Stripe provider
 roles match the live accounts, registration records the accepted version, and
 the public contact paths are tested.
