@@ -6,12 +6,12 @@ import { guideVisuals, marketingFamilyVisuals, visualFor } from '@/Support/marke
 import { CheckIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ guide: Object });
+defineProps({ guide: Object, seo: Object });
 </script>
 
 <template>
     <HomeLayout>
-        <Head :title="guide.title" />
+        <Head :title="seo.title" />
         <article>
             <header class="cd-public-section cd-family-hero" data-tone="amber">
                 <PublicContainer>

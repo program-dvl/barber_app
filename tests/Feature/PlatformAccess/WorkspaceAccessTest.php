@@ -17,7 +17,7 @@ it('returns a polished setup state instead of a raw calendar authorization error
         ->assertInertia(fn (Assert $page) => $page
             ->component('Access/Unavailable')
             ->where('state.code', 'setup_required')
-            ->where('state.action.label', 'Complete salon setup')
+            ->where('state.action.label', 'Continue business setup')
         );
 });
 

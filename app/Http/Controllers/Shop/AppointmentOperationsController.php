@@ -19,6 +19,8 @@ use App\Support\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class AppointmentOperationsController extends Controller
 {
@@ -28,7 +30,7 @@ class AppointmentOperationsController extends Controller
         abort_unless($membership && ($membership->hasPermissionTo(PermissionName::AppointmentsManageAll->value, 'web') || $membership->hasPermissionTo(PermissionName::AppointmentsManageOwn->value, 'web')), 403);
         $data = $request->validate([
             'location' => ['required', 'string'], 'starts_at' => ['required', 'date'], 'source' => ['required', 'in:phone,reception,recurring,consultation'],
-            'client_name' => ['nullable', 'string', 'max:255'], 'client_mobile' => ['nullable', 'string', 'max:32', new E164Phone], 'internal_notes' => ['nullable', 'string', 'max:5000'],
+            'client_name' => ['nullable', 'string', 'max:255'], 'client_mobile' => ['nullable', 'string', 'max:32', new E164Phone], 'client_email' => ['nullable', 'email', 'max:255'], 'internal_notes' => ['nullable', 'string', 'max:5000'],
             'lines' => ['required', 'array', 'min:1', 'max:12'], 'lines.*.service' => ['required', 'string'],
             'lines.*.staff' => ['nullable', 'string'], 'lines.*.duration_minutes' => ['nullable', 'integer', 'min:5', 'max:720'],
             'idempotency_key' => ['required', 'string', 'max:128'], 'override_rule_codes' => ['array'], 'override_rule_codes.*' => ['in:NOTICE_WINDOW,ADVANCE_WINDOW'],
@@ -47,13 +49,26 @@ class AppointmentOperationsController extends Controller
     {
         $record = $records->appointment($business->id, $appointment);
         $this->authorize('update', $record);
+        $cancellationReasons = collect(config('reference-data.appointment_cancellation_reasons.business', []))->keyBy('value');
         $data = $request->validate([
             'status' => ['required', 'string'], 'version' => ['required', 'integer', 'min:1'],
             'reason' => ['nullable', 'string', 'max:1000'], 'idempotency_key' => ['required', 'string', 'max:128'],
             'confirmed' => ['nullable', 'boolean'],
+            'reason_code' => ['nullable', 'string', Rule::in($cancellationReasons->keys()->all())],
+            'other_reason' => ['nullable', 'string', 'max:1000'],
         ]);
         if (in_array($data['status'], ['cancelled_by_client', 'cancelled_by_shop', 'no_show'], true)) {
             abort_unless($request->boolean('confirmed'), 422, 'Confirm this destructive change.');
+        }
+        if (in_array($data['status'], ['cancelled_by_client', 'cancelled_by_shop'], true) && filled($data['reason_code'] ?? null)) {
+            $choice = $cancellationReasons->get($data['reason_code']);
+            if ($data['reason_code'] === 'other' && blank($data['other_reason'] ?? null)) {
+                throw ValidationException::withMessages(['other_reason' => 'Briefly describe the other cancellation reason.']);
+            }
+            $data['status'] = $choice['status'];
+            $data['reason'] = $data['reason_code'] === 'other'
+                ? 'Other cancellation reason: '.trim($data['other_reason'])
+                : $choice['reason'];
         }
         $updated = $lifecycle->transition($record, $data['status'], $data['idempotency_key'], $data['version'], 'calendar', 'user', $request->user()->id, $data['reason'] ?? null);
         $audit->write('appointment.status_changed', $business, $request->user(), $updated, $data['reason'] ?? null, ['status' => $record->status], ['status' => $updated->status], [], 'calendar');
@@ -71,7 +86,7 @@ class AppointmentOperationsController extends Controller
             'lines.*.duration_minutes' => ['nullable', 'integer', 'min:5', 'max:720'], 'version' => ['required', 'integer', 'min:1'],
             'reason' => ['required', 'string', 'max:1000'], 'confirmed' => ['accepted'], 'idempotency_key' => ['required', 'string', 'max:128'],
             'override_rule_codes' => ['array'], 'override_rule_codes.*' => ['in:NOTICE_WINDOW,ADVANCE_WINDOW'], 'override_reason' => ['nullable', 'string', 'max:1000'], 'override_confirmed' => ['nullable', 'boolean'],
-            'client_name' => ['nullable', 'string', 'max:255'], 'client_mobile' => ['nullable', 'string', 'max:32', new E164Phone], 'internal_notes' => ['nullable', 'string', 'max:5000'],
+            'client_name' => ['nullable', 'string', 'max:255'], 'client_mobile' => ['nullable', 'string', 'max:32', new E164Phone], 'client_email' => ['nullable', 'email', 'max:255'], 'internal_notes' => ['nullable', 'string', 'max:5000'],
         ]);
         $data['source'] = 'reception';
         $bookingRequest = $this->bookingRequest($request, $business, $data, $context);
@@ -98,7 +113,7 @@ class AppointmentOperationsController extends Controller
         $bookingRequest = new BookingRequest(
             $business->id, $record->location_id, CarbonImmutable::parse($data['starts_at'], $record->time_zone)->utc(), $lines,
             'reception', 'existing', CarbonImmutable::now()->utc(), null, 'user', $request->user()->id,
-            $record->client_name, $record->client_mobile, $record->internal_notes,
+            $record->client_name, $record->client_mobile, $record->internal_notes, [], null, $record->client_email,
         );
         $copy = $bookings->commit($bookingRequest, $data['idempotency_key']);
         $audit->write('appointment.'.$data['kind'], $business, $request->user(), $copy, null, ['copied_from' => $record->public_id], ['public_id' => $copy->public_id], [], 'calendar');
@@ -147,7 +162,7 @@ class AppointmentOperationsController extends Controller
             $business->id, $location->id, CarbonImmutable::parse($data['starts_at'], $location->time_zone)->utc(), $lines,
             $data['source'], 'existing', CarbonImmutable::now()->utc(), null, 'user', $request->user()->id,
             $data['client_name'] ?? null, $data['client_mobile'] ?? null, $data['internal_notes'] ?? null,
-            $overrideCodes, $data['override_reason'] ?? null,
+            $overrideCodes, $data['override_reason'] ?? null, $data['client_email'] ?? null,
         );
     }
 }

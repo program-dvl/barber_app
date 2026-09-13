@@ -13,6 +13,8 @@ use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -39,8 +41,20 @@ class PublicAppointmentController extends Controller
         $link = $links->resolve($token, $purpose);
         try {
             if ($purpose === 'cancel') {
-                $data = $request->validate(['confirmed' => ['accepted'], 'idempotency_key' => ['required', 'string', 'max:128']]);
-                $appointment = $selfService->cancel($link, $data['idempotency_key']);
+                $reasons = collect(config('reference-data.appointment_cancellation_reasons.client', []))->keyBy('value');
+                $data = $request->validate([
+                    'confirmed' => ['accepted'], 'idempotency_key' => ['required', 'string', 'max:128'],
+                    'reason_code' => ['required', 'string', Rule::in($reasons->keys()->all())],
+                    'other_reason' => ['nullable', 'string', 'max:1000'],
+                ]);
+                if ($data['reason_code'] === 'other' && blank($data['other_reason'] ?? null)) {
+                    throw ValidationException::withMessages(['other_reason' => 'Briefly describe the other cancellation reason.']);
+                }
+                $choice = $reasons->get($data['reason_code']);
+                $reason = $data['reason_code'] === 'other'
+                    ? 'Other cancellation reason: '.trim($data['other_reason'])
+                    : $choice['reason'];
+                $appointment = $selfService->cancel($link, $data['idempotency_key'], $reason);
 
                 return $this->redirectToFreshView($appointment, $links, 'Your appointment has been cancelled.');
             }
@@ -153,6 +167,7 @@ class PublicAppointmentController extends Controller
             ],
             'actions' => $actions,
             'activeWaitlists' => $activeWaitlists,
+            'cancellationReasons' => config('reference-data.appointment_cancellation_reasons.client', []),
         ];
     }
 

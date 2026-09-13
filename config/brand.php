@@ -15,7 +15,7 @@ return [
     'tagline' => env('BRAND_TAGLINE', 'Your whole day. Beautifully run.'),
     'description' => env(
         'BRAND_DESCRIPTION',
-        'ClipperDesk is the daily operating system for beauty, wellness, and appointment-led businesses—from booking and scheduling to clients, staff, checkout, and reporting.'
+        'ClipperDesk is appointment scheduling and service business management software for beauty, wellness, personal care, fitness, recovery, health and pet-care teams—from online booking to checkout and reporting.'
     ),
 
     'logo' => '/images/brand/clipperdesk-logo.svg',

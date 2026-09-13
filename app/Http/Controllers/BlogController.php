@@ -19,9 +19,10 @@ class BlogController extends Controller
         return Inertia::render('Blog', [
             'articles' => $articles,
             'seo' => [
-                'title' => 'ClipperDesk salon operations blog',
-                'description' => 'Reviewed ClipperDesk editorial articles about practical salon and barbershop operations.',
+                'title' => 'Service business operations blog | ClipperDesk',
+                'description' => 'Reviewed articles about booking, scheduling, client service and day-to-day operations for appointment-led service businesses.',
                 'canonical' => route('blog.index'),
+                'image' => url('/images/marketing/editorial/resources-planning.webp'),
             ],
         ]);
     }
@@ -32,15 +33,20 @@ class BlogController extends Controller
         $article->load('user');
         $related = Article::query()->publishable()->where('topic', $article->topic)->whereKeyNot($article->getKey())
             ->with('user')->latest('published_at')->limit(2)->get()->map(fn (Article $item): array => $this->summary($item));
+        $seoTitle = $article->seo_title ?? $article->title;
+        if (! Str::contains(Str::lower($seoTitle), 'clipperdesk')) {
+            $seoTitle .= ' | ClipperDesk';
+        }
 
         return Inertia::render('Article', [
             'article' => [...$this->summary($article), 'html' => $renderer->render($article->content),
                 'materially_updated_at' => $article->materially_updated_at?->toIso8601String(), 'content_owner' => $article->content_owner],
             'related' => $related,
             'seo' => [
-                'title' => $article->seo_title ?? $article->title,
+                'title' => $seoTitle,
                 'description' => $article->seo_description ?? Str::limit($article->content, 160),
                 'canonical' => route('blog.article', ['article' => $article]),
+                'image' => url('/images/marketing/editorial/resources-planning.webp'),
             ],
         ]);
     }

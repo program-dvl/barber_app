@@ -1,6 +1,183 @@
 # Project status
 
-Status date: 2026-09-11
+Status date: 2026-09-13
+
+## Team seats, secure invitations and owner activity (2026-09-13)
+
+- [x] Team setup now creates the working StaffProfile and, when selected, an
+  expiring login invitation in one owner workflow. A provider may still remain
+  bookable without a login; accepting access links the canonical Membership,
+  User and StaffProfile instead of creating a duplicate person.
+- [x] Owners can choose Owner, Manager, Receptionist, Professional or Accountant
+  starter access, or select an exact set of workspace modules. Client-facing
+  titles remain an editable standard-role combobox and never grant permissions.
+  Managers cannot grant Owner or any capability beyond their own role.
+- [x] Invitation email uses a hashed, single-use, seven-day token. Existing
+  identities sign in and return to the invitation; new invitees create their
+  own password on the invitation page. Token possession verifies the invited
+  email. Temporary passwords are not generated, stored or emailed.
+- [x] Owners can change another member's role, module access and assigned
+  locations, revoke login access with a required reason, and deliberately
+  restore a former member with a second recorded reason. Revocation ends active
+  sessions and tokens immediately while retaining the StaffProfile and
+  historical attribution.
+- [x] Team setup shows current plan seat usage, pending invitations and recent
+  activity. A dedicated, permission-gated Activity log supports search and
+  access/appointment/client/payment/configuration filters over append-only,
+  redacted AuditEvent records.
+- [x] Dedicated team-access coverage passes 4 tests / 83 assertions. The
+  adjacent access, activation and shell checks pass 39 tests / 447 assertions;
+  client and SSR production builds pass on the bundled Node runtime.
+- [ ] Production sender-domain certification and live invitation deliverability
+  remain pre-launch operational checks. Current automated coverage uses the
+  application notification contract and local test transport.
+
+## Authenticated workspace design refinement (2026-09-13)
+
+- [x] Shared workspace density now uses 40px desktop controls with 44px
+  mobile/coarse-pointer targets, quieter borders, consistent surfaces, compact
+  page hierarchy and a 240px grouped navigation sidebar. Branding and readable
+  body text remain intact. ADR-037 records the density standard.
+- [x] Authenticated select controls use a shared enhanced native-option
+  component with search, multiple selection, disabled/selected states,
+  viewport-aware popovers, keyboard navigation and required-field focus/error
+  feedback. Services and provider creation use drawers with scrolling bodies
+  and reachable action footers. Client section tabs have roving keyboard focus.
+- [x] Calendar details and attention are collapsed initially; toggling the panel
+  restores/reclaims the side column. Appointment selection opens actions and
+  supports Enter/Space. Close/Escape returns focus to the toggle. Mobile brings
+  the panel into view above the schedule. The clipped 07:00 label was corrected
+  and verified in Day, Week and Team views.
+- [x] Dashboard metrics, client search/list, service catalogue, calendar filters,
+  setup controls, billing summaries, tables and empty states use the refined
+  hierarchy. Reports retain applied filters when switching report type and
+  display readable column names, scoped location/staff/service names and local
+  times, with full source references available on demand.
+- [x] Inventory is hidden from the shared desktop/mobile menu at the user's
+  request. Underlying routes, implementation and entitlements remain intact.
+- [x] Verified application suite: 292 passed / 3,174 assertions / 28 intentional
+  skips. Final frontend checks: nine tests passed, client and SSR builds passed,
+  all 17 frontsite budget entries passed, and diff whitespace checks passed.
+  Visual/browser coverage includes owner dashboard, calendar and appointment
+  actions, services, team drawer, clients/forms, business/booking/location setup,
+  walk-in dialog, checkout empty state, billing and account forms. Representative
+  mobile layouts were checked at 360px.
+- [ ] Broader role, high-volume, cross-browser and assistive-technology testing
+  remains outside this owner-session review. Platform administration received
+  shared styling/build coverage, not an authenticated visual review. Live
+  payments and destructive actions were not exercised.
+
+Evidence and individual findings: [workspace refinement audit](audits/2026-09-13-workspace-refinement/README.md).
+
+## Front-desk operations and setup refinement (2026-09-13)
+
+- [x] The calendar now has genuinely distinct Day, Week and Team views plus a
+  separate Today shortcut. Its continuous 07:00–20:00 location-time grid uses
+  proportional start positions and durations, preserves a visible empty-day
+  grid, marks the current time, and places overlapping visits in separate lanes.
+- [x] Selecting a visit opens one consistent action panel for lifecycle status,
+  reschedule, duration, staff reassignment, service changes, internal notes,
+  duplicate/rebook, no-show, cancellation and completed-visit checkout. Failed
+  dialog actions remain open with feedback; successful actions close cleanly.
+  Cancelled and superseded appointment versions leave the active schedule but
+  remain available through explicit status filters and append-only history.
+- [x] Staff and client cancellation now start with a controlled, broad reason
+  list and reveal free text only for Other. Client-requested choices are stored
+  as client cancellations, business-caused choices as shop cancellations, and
+  the resolved reason remains in auditable history and reporting.
+- [x] Checkout is appointment-first and currently records only externally
+  received manual tender (cash, UPI received, bank transfer or other). A full
+  payment completes the existing canonical Sale once, issues a receipt, queues
+  the payment-receipt email event, removes the visit from the ready list and
+  feeds the implemented revenue/payment/location/staff reports. An additive,
+  idempotent schema repair restores the sale-line service reference for
+  databases whose earlier commerce migration was recorded without that column.
+- [x] Walk-ins now choose an existing Client through tenant-scoped search or
+  create a new Client immediately on queue entry. Queue, later Appointment,
+  communications and Client history retain the same canonical client link.
+- [x] Transactional appointment and receipt email is selected by default when
+  an address exists and stops only after an explicit appointment/client email
+  opt-out. WhatsApp and SMS are not presented by this release.
+- [x] Location setup clearly lists every location, edits one at a time, creates
+  another canonical Location when the plan permits, and always explains the
+  location allowance with a direct plan path. Team setup uses one editable
+  title combobox backed by a broad standard service-business role vocabulary;
+  descriptive titles do not grant application permissions. New locations get
+  an editable distinct-name suggestion, and duplicate names return inline
+  validation instead of a database error page.
+- [x] Reports display only the currently source-backed appointment, commerce,
+  staff, client and cash reports. Product-sales and stock reports stay hidden
+  until the inventory workflow is promoted into the user-facing release.
+- [x] Focused operations coverage passes 39 tests / 439 assertions. The complete
+  local suite passes 292 tests / 3,174 assertions with 28 intentional skips;
+  client and SSR production builds and all 17 frontsite budget entries pass.
+  The implementation/UX audit is recorded in
+  [`audits/2026-09-13-operations-workflow/README.md`](audits/2026-09-13-operations-workflow/README.md).
+
+## Adaptive onboarding and booking experience (2026-09-13)
+
+- [x] New verified owners now enter a four-decision guided experience for
+  business type, operating shape, first location and starter services. Large
+  image choices, chips, regional defaults and schedule presets replace the
+  former expectation that owners complete the full Business setup form first.
+- [x] The versioned, retry-safe starter provisioner persists onboarding answers
+  and creates an editable primary Location, local hours, owner StaffProfile,
+  availability, category-aware starter Services, commerce settings and a
+  collision-safe booking slug through the canonical tenant models.
+- [x] A starter configuration that passes the existing ReadinessEvaluator is
+  previewed and published immediately. The completion state offers the live
+  booking page, shareable link and working Calendar instead of dropping the
+  owner on a generic dashboard.
+- [x] Business setup replaces Salon setup in owner-facing navigation. A
+  persistent header status opens a focus-managed readiness drawer with required
+  and recommended tasks, while every optional or advanced setting remains
+  editable in the existing focused workspaces.
+- [x] The public booking entry is now image-led and business-branded, with
+  category filters, clear service cards, location/provider/date choices, a
+  sticky visit summary, mobile summary controls and secure tenant-private
+  logo/cover delivery. An industry image is the honest fallback until the
+  business uploads its own artwork.
+- [x] Public booking session state now carries its real expiry, rejects stale or
+  legacy browser state, silently starts a fresh availability session when safe,
+  and returns clients to refreshed times when a temporary hold ends. Server
+  hold expiry and capacity revalidation remain unchanged.
+- [x] Existing onboarding sessions were backfilled as guided-complete, so this
+  release does not seed, overwrite or republish existing or partially
+  configured tenants. New-session generation remains idempotent and audited.
+- [x] The dedicated journey passes 4 tests / 89 assertions. The complete local
+  PHP suite passes 285 tests / 3,102 assertions with 28 intentional skips, and
+  client plus SSR production builds pass on Node 24. The combined design audit
+  and screenshots are in
+  [`audits/2026-09-13-onboarding-time-to-value.md`](audits/2026-09-13-onboarding-time-to-value.md).
+
+## Stripe upgrade and interval-switch stabilization (2026-09-13)
+
+- [x] Owner upgrades and billing-interval switches now open a focused Stripe
+  Customer Portal `subscription_update_confirm` flow. Stripe presents the exact
+  proration/effective date and owns payment failure plus 3-D Secure handling;
+  ClipperDesk no longer creates an unresolvable local pending change before the
+  customer confirms.
+- [x] The server still selects and allow-lists the local catalog Price. Owner
+  self-service omits lower-ranked plans and rejects downgrade requests at the
+  backend; generic Portal sessions use a separate managed configuration with
+  subscription changes disabled.
+- [x] Signed subscription webhooks remain authoritative. A tenant-scoped return
+  status endpoint can reconcile the mapped Subscription directly from Stripe
+  when the webhook is delayed, then refresh the plan, interval, entitlements,
+  billing period and latest invoice from the same projection path.
+- [x] Metadata-identified Portal configurations converge automatically with the
+  active local catalog. Annual-to-monthly and decreasing-price changes are
+  scheduled at period end; other upgrades use Stripe's immediate invoiced
+  proration behavior.
+- [x] Replacing a legacy direct-update attempt safely supersedes its stale
+  `pending_provider_plan_change` record only after Stripe returns a usable
+  hosted confirmation session.
+- [x] The full local PHP suite passes: 281 tests / 3,013 assertions with 28
+  intentional skips. Client and SSR production builds pass on Node 24; Pint
+  and whitespace validation pass for the changed billing surfaces.
+- [ ] Complete one live Stripe test-mode upgrade, monthly-to-annual switch and
+  annual-to-monthly scheduled switch before release. This remains an external
+  certification gate, not an unverified implementation claim.
 
 ## Current state
 
@@ -49,11 +226,25 @@ workflow are implemented and locally verified.
   delivered as optimized WebP assets, and every image remains below the 550 KiB
   component budget. The deterministic sitemap contains 32 canonical public
   URLs.
-- [x] The complete marketing suite passes 64 tests / 1,131 assertions. Client
+- [x] The complete marketing suite passes 66 tests / 1,436 assertions. Client
   and SSR production builds pass on Node 24, and the frontsite budget gate
   passes for all 17 checked route entries. Browser QA verified the homepage,
   industry pages, product hub/detail, use-case and resource page families in
   the local preview.
+- [x] The canonical acquisition position now describes ClipperDesk as
+  appointment scheduling and service-business management software across
+  beauty, wellness, personal care, fitness, recovery, health and pet-service
+  businesses. Generic homepage, product, use-case, pricing, resource, blog and
+  company copy no longer frames salons and barbershops as the only market;
+  dedicated industry pages remain specific and retain their approved scope
+  limits.
+- [x] All 32 curated public URLs have unique, useful search titles and meta
+  descriptions, canonical URLs, indexable SSR output and image-aware social
+  metadata. The shared JSON-LD graph consistently identifies the Organization,
+  WebSite, WebPage and SoftwareApplication, including the visible feature set
+  and supported business audience without invented ratings, customers or
+  certifications. `robots.txt` explicitly permits OAI-SearchBot and
+  ChatGPT-User alongside general crawlers and publishes the canonical sitemap.
 
 ## Stripe subscription standardization (2026-08-29)
 
@@ -125,13 +316,12 @@ workflow are implemented and locally verified.
   Queue, public booking/waitlist, privacy correction and secure contact update.
 - [x] Authorized front-desk users can manually add a Client with exact-duplicate
   reuse and conservative review behavior. Unauthorized roles remain denied.
-- [x] Stripe plan changes expose processing/scheduled feedback, fail closed
-  without signed-event readiness, and reject competing unresolved changes.
-- [x] Focused tests pass. The complete local PHP run reports 257 passed / 2,306
-  assertions / 28 intentional skips; the sole failure remains the unrelated
-  frontsite test that references two user-deleted evidence images. Client and
-  SSR production builds pass on Node 24, and registration QA has no console
-  errors or horizontal overflow at desktop and 390 px.
+- [x] The original direct Stripe plan-update path was superseded on 2026-09-13
+  by the focused hosted confirmation flow documented above. Lower-plan choices
+  are absent from owner self-service and rejected server-side.
+- [x] Registration QA has no console errors or horizontal overflow at desktop
+  and 390 px. Current suite and build evidence is recorded in the newest status
+  section rather than duplicated here.
 - [ ] Live Stripe test-mode plan-change/recovery/Portal certification remains a
   release gate even though the local Stripe readiness checks now pass.
 

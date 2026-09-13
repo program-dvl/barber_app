@@ -1,4 +1,5 @@
 <script setup>
+import AppSelect from '@/Components/Product/AppSelect.vue';
 import { computed, onMounted, ref } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {
@@ -104,12 +105,12 @@ onMounted(() => {
 
 <template>
     <AppLayout title="Dashboard" :business-label="businessLabel">
-        <header class="flex flex-col gap-5 border-b border-[var(--border-subtle)] pb-5 md:flex-row md:items-end md:justify-between">
+        <header class="flex flex-col gap-4 pb-1 md:flex-row md:items-end md:justify-between">
             <div class="min-w-0">
                 <p class="text-sm font-semibold text-[var(--brand-primary)]">{{ dateLabel }}</p>
-                <h1 class="cd-display mt-1 text-3xl leading-tight text-[var(--text-strong)] sm:text-4xl">Good {{ new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening' }}, {{ firstName }}</h1>
-                <div class="mt-3 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]">
-                    <label v-if="locations.length > 1" class="inline-flex items-center gap-2"><span class="font-semibold text-[var(--text-strong)]">Location</span><select class="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 py-2" :value="location?.public_id" @change="changeLocation"><option v-for="item in locations" :key="item.public_id" :value="item.public_id">{{ item.name }}</option></select></label>
+                <h1 class="cd-display mt-1 text-2xl leading-tight text-[var(--text-strong)] sm:text-3xl">Good {{ new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening' }}, {{ firstName }}</h1>
+                <div class="mt-2 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]">
+                    <label v-if="locations.length > 1" class="inline-flex items-center gap-2"><span class="font-semibold text-[var(--text-strong)]">Location</span><AppSelect class="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 py-2" :value="location?.public_id" @change="changeLocation"><option v-for="item in locations" :key="item.public_id" :value="item.public_id">{{ item.name }}</option></AppSelect></label>
                     <span v-else>{{ location?.name || 'No active location' }}</span><span v-if="location" aria-hidden="true">·</span><span v-if="location">{{ location.time_zone.replace('_', ' ') }}</span>
                 </div>
             </div>
@@ -118,21 +119,21 @@ onMounted(() => {
 
         <section v-if="todayMetrics" class="mt-5" aria-labelledby="today-metrics-title">
             <div class="mb-3 flex flex-wrap items-end justify-between gap-2">
-                <div><h2 id="today-metrics-title" class="font-semibold text-[var(--text-strong)]">Today’s trusted totals</h2><p class="mt-1 text-xs text-[var(--text-muted)]">Fresh {{ new Date(todayMetrics.fresh_at).toLocaleTimeString() }} · {{ todayMetrics.time_zone }}</p></div>
+                <div><h2 id="today-metrics-title" class="font-semibold text-[var(--text-strong)]">Today at a glance</h2><p class="mt-1 text-xs text-[var(--text-muted)]">Updated {{ new Date(todayMetrics.fresh_at).toLocaleTimeString() }} · {{ todayMetrics.time_zone }}</p></div>
                 <Link :href="route('business.reports.index', page.props.tenant.public_id)" class="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--action-primary)]">Open reports</Link>
             </div>
-            <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <Link v-for="(card, key) in todayMetrics.cards" v-show="card.visible" :key="key" :href="card.drill" class="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4 hover:border-[var(--brand-primary)]">
-                    <p class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">{{ key.replaceAll('_', ' ').replace(' minor', '') }}</p>
-                    <p class="mt-2 text-2xl font-bold text-[var(--text-strong)]">{{ key.endsWith('_minor') ? money(card.value) : (card.value ?? 0) }}</p>
+            <div class="cd-metrics">
+                <Link v-for="(card, key) in todayMetrics.cards" v-show="card.visible" :key="key" :href="card.drill" class="cd-metric">
+                    <p class="cd-metric-label capitalize">{{ key.replaceAll('_', ' ').replace(' minor', '') }}</p>
+                    <p class="cd-metric-value">{{ key.endsWith('_minor') ? money(card.value) : (card.value ?? 0) }}</p>
                 </Link>
             </div>
         </section>
 
         <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div><h2 class="font-semibold text-[var(--text-strong)]">Choose your working view</h2><p class="mt-1 text-sm text-[var(--text-muted)]">ClipperDesk remembers this choice on this device.</p></div>
-            <div class="inline-flex max-w-full gap-1 overflow-x-auto rounded-xl bg-[var(--surface-subtle)] p-1" role="group" aria-label="Dashboard view">
-                <button v-for="view in views" :key="view.id" type="button" :aria-pressed="activeView === view.id" :class="['inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-3 text-sm font-semibold', activeView === view.id ? 'bg-[var(--surface-raised)] text-[var(--brand-primary)] shadow-sm' : 'text-[var(--text-muted)] hover:text-[var(--text-strong)]']" @click="setView(view.id)"><component :is="view.icon" class="size-4" aria-hidden="true" />{{ view.label }}</button>
+            <h2 class="font-semibold text-[var(--text-strong)]">Your working day</h2>
+            <div class="cd-segmented" role="group" aria-label="Dashboard view">
+                <button v-for="view in views" :key="view.id" type="button" :aria-pressed="activeView === view.id" :class="['inline-flex shrink-0 items-center gap-2 rounded-lg px-3 text-sm font-semibold', activeView === view.id ? 'bg-[var(--surface-raised)] text-[var(--brand-primary)] shadow-sm' : 'text-[var(--text-muted)] hover:text-[var(--text-strong)]']" @click="setView(view.id)"><component :is="view.icon" class="size-4" aria-hidden="true" />{{ view.label }}</button>
             </div>
         </div>
 
@@ -149,7 +150,7 @@ onMounted(() => {
         </section>
 
         <section v-else class="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]" aria-labelledby="guided-title">
-            <SurfaceCard :padding="false"><div class="border-b border-[var(--border-subtle)] px-5 py-4"><h2 id="guided-title" class="font-semibold text-[var(--text-strong)]">Your next hours</h2><p class="mt-1 text-sm text-[var(--text-muted)]">One recommended action for each visit.</p></div><StatePanel v-if="!appointments.length" compact title="Your day is clear" description="New appointments will be organized into now, next, and later." /><div v-else class="p-5"><section v-for="group in [{ id: 'now', label: 'Now' }, { id: 'next', label: 'Next' }, { id: 'later', label: 'Later' }]" :key="group.id" class="mb-6 last:mb-0"><div class="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2"><h3 class="font-semibold text-[var(--text-strong)]">{{ group.label }}</h3><span class="text-xs text-[var(--text-muted)]">{{ groupedByTime[group.id].length }}</span></div><p v-if="!groupedByTime[group.id].length" class="py-3 text-sm text-[var(--text-muted)]">Nothing {{ group.id === 'now' ? 'in progress' : group.id === 'next' ? 'starting soon' : 'else scheduled' }}.</p><article v-for="event in groupedByTime[group.id]" :key="event.id" class="cd-list-row"><div class="w-16 shrink-0"><p class="font-semibold text-[var(--text-strong)]">{{ timeLabel(event.startsAt) }}</p><p class="text-xs text-[var(--text-muted)]">{{ durationLabel(event) }}</p></div><div class="min-w-0 flex-1"><p class="truncate font-semibold text-[var(--text-strong)]">{{ event.title }}</p><p class="truncate text-sm text-[var(--text-muted)]">{{ serviceLabel(event) }} · {{ staffLabel(event) }}</p></div><Link :href="calendarHref()" class="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-[var(--border-strong)] px-3 text-sm font-semibold">{{ actionLabel(event.status) }}</Link></article></section></div></SurfaceCard>
+            <SurfaceCard :padding="false"><div class="border-b border-[var(--border-subtle)] px-5 py-4"><h2 id="guided-title" class="font-semibold text-[var(--text-strong)]">Your next hours</h2><p class="mt-1 text-sm text-[var(--text-muted)]">One recommended action for each visit.</p></div><StatePanel v-if="!appointments.length" compact title="Your day is clear" description="New appointments will be organized into now, next, and later." /><div v-else class="p-5"><section v-for="group in [{ id: 'now', label: 'Now' }, { id: 'next', label: 'Next' }, { id: 'later', label: 'Later' }]" :key="group.id" class="mb-6 last:mb-0"><div class="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2"><h3 class="font-semibold text-[var(--text-strong)]">{{ group.label }}</h3><span class="text-xs text-[var(--text-muted)]">{{ groupedByTime[group.id].length }}</span></div><p v-if="!groupedByTime[group.id].length" class="py-3 text-sm text-[var(--text-muted)]">Nothing {{ group.id === 'now' ? 'in progress' : group.id === 'next' ? 'starting soon' : 'else scheduled' }}.</p><article v-for="event in groupedByTime[group.id]" :key="event.id" class="cd-list-row"><div class="w-16 shrink-0"><p class="font-semibold text-[var(--text-strong)]">{{ timeLabel(event.startsAt) }}</p><p class="text-xs text-[var(--text-muted)]">{{ durationLabel(event) }}</p></div><div class="min-w-0 flex-1"><p class="truncate font-semibold text-[var(--text-strong)]">{{ event.title }}</p><p class="truncate text-sm text-[var(--text-muted)]">{{ serviceLabel(event) }} · {{ staffLabel(event) }}</p></div><Link :href="calendarHref()" class="inline-flex shrink-0 items-center rounded-lg border border-[var(--border-strong)] px-3 text-sm font-semibold">{{ actionLabel(event.status) }}</Link></article></section></div></SurfaceCard>
             <aside class="space-y-5"><SurfaceCard v-if="!readiness.publishable" compact><div class="flex gap-3"><span class="grid size-10 shrink-0 place-items-center rounded-full bg-[var(--status-warning-soft)] text-[var(--status-warning)]"><ExclamationTriangleIcon class="size-5" aria-hidden="true" /></span><div><h2 class="font-semibold text-[var(--text-strong)]">Finish your setup</h2><p class="mt-1 text-sm leading-6 text-[var(--text-muted)]">{{ readiness.blockers[0]?.message }}</p></div></div><AppButton class="mt-4 w-full" :href="route('business.configuration.show', page.props.tenant.public_id)">Continue setup<ChevronRightIcon class="size-4" aria-hidden="true" /></AppButton></SurfaceCard><SurfaceCard title="Today at a glance" compact><dl class="divide-y divide-[var(--border-subtle)] text-sm"><div class="flex justify-between py-2 first:pt-0"><dt>Appointments</dt><dd class="font-semibold">{{ calendar.counts.appointments }}</dd></div><div class="flex justify-between py-2"><dt>Waiting</dt><dd class="font-semibold">{{ calendar.counts.walkInsWaiting }}</dd></div><div class="flex justify-between py-2 last:pb-0"><dt>Blocked periods</dt><dd class="font-semibold">{{ calendar.counts.blocks }}</dd></div></dl></SurfaceCard></aside>
         </section>
     </AppLayout>

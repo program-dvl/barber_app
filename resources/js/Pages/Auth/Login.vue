@@ -22,7 +22,7 @@ const submit = () => form.transform(data => ({ ...data, remember: form.remember 
         heading="Pick up with the whole day in view."
         description="Appointments, client context and team decisions stay connected, ready for the next person through the door."
         image="/images/marketing/editorial/security-trust.webp"
-        image-alt="A salon owner reviewing the day at reception in the evening."
+        image-alt="A service business owner reviewing the day at reception in the evening."
         image-caption="A calm close makes tomorrow easier to open."
     >
         <AuthenticationCard embedded>

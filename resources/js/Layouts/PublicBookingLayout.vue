@@ -25,8 +25,8 @@ const progress = computed(() => props.currentStep <= 0 ? 0 : Math.round((props.c
         <Head :title="title" />
         <a href="#public-main" class="fixed left-3 top-3 z-50 -translate-y-24 rounded-lg bg-white px-4 py-3 font-semibold shadow-[var(--shadow-overlay)] transition-transform focus:translate-y-0">Skip to main content</a>
 
-        <header class="border-b border-[var(--border-subtle)] bg-[var(--surface-raised)]">
-            <div class="mx-auto flex min-h-16 max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
+        <header class="border-b border-[var(--border-subtle)] bg-[var(--surface-raised)]/95 backdrop-blur">
+            <div class="mx-auto flex min-h-[4.5rem] max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
                 <Link :href="route('booking.welcome')" class="inline-flex min-h-11 items-center rounded-lg" aria-label="ClipperDesk booking home"><ProductMark /></Link>
                 <Link v-if="mode === 'booking'" :href="route('booking.manage')" aria-label="Manage appointment" class="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-[var(--text-strong)] hover:bg-[var(--surface-subtle)]">
                     <LockClosedIcon class="size-4" aria-hidden="true" />
@@ -39,7 +39,7 @@ const progress = computed(() => props.currentStep <= 0 ? 0 : Math.round((props.c
         </header>
 
         <div v-if="mode === 'booking'" class="border-b border-[var(--border-subtle)] bg-[var(--surface-raised)]">
-            <div class="mx-auto max-w-3xl px-4 py-3 sm:px-6">
+            <div class="mx-auto max-w-6xl px-4 py-3 sm:px-6">
                 <div class="mb-2 flex items-center justify-between text-xs font-medium text-[var(--text-muted)]">
                     <span>{{ currentStep === 0 ? 'Ready to start' : `Step ${currentStep} of ${steps.length} · ${steps[currentStep - 1]}` }}</span>
                     <span v-if="currentStep > 0 && currentStep < steps.length">Next: {{ steps[currentStep] }}</span>
@@ -51,11 +51,11 @@ const progress = computed(() => props.currentStep <= 0 ? 0 : Math.round((props.c
             </div>
         </div>
 
-        <main id="public-main" tabindex="-1" class="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
+        <main id="public-main" tabindex="-1" class="mx-auto w-full max-w-6xl px-4 py-7 sm:px-6 sm:py-10">
             <slot />
         </main>
 
-        <footer class="mx-auto max-w-3xl px-4 pb-8 text-center text-xs leading-5 text-[var(--text-muted)] sm:px-6">
+        <footer class="mx-auto max-w-6xl px-4 pb-8 text-center text-xs leading-5 text-[var(--text-muted)] sm:px-6">
             Your information is used only to manage this booking and the choices you make here. Keep secure appointment links private on a shared device.
         </footer>
     </div>

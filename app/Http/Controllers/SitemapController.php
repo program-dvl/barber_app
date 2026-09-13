@@ -34,6 +34,7 @@ class SitemapController extends Controller
 
     public function robots(): Response
     {
-        return response("User-agent: *\nAllow: /\nSitemap: ".route('sitemap.xml')."\n")->header('Content-Type', 'text/plain; charset=UTF-8');
+        return response("User-agent: OAI-SearchBot\nAllow: /\n\nUser-agent: ChatGPT-User\nAllow: /\n\nUser-agent: *\nAllow: /\n\nSitemap: ".route('sitemap.xml')."\n")
+            ->header('Content-Type', 'text/plain; charset=UTF-8');
     }
 }

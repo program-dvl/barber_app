@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Billing;
 
 use App\Domain\Billing\Contracts\SubscriptionProvider;
-use App\Domain\Billing\Enums\BillingInterval;
 use App\Domain\Billing\Enums\SubscriptionStatus;
 use App\Domain\Billing\Models\BillingCheckoutAttempt;
 use App\Domain\Billing\Models\BillingCoupon;
@@ -16,11 +15,13 @@ use App\Domain\Billing\Services\EntitlementEvaluator;
 use App\Domain\Billing\Services\PlanCatalog;
 use App\Domain\Billing\Services\StripeBillingReadiness;
 use App\Domain\Billing\Services\StripeCheckoutReconciler;
+use App\Domain\Billing\Services\StripeSubscriptionReconciler;
 use App\Domain\Billing\Services\SubscriptionLifecycleManager;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\Audit\AuditWriter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -28,7 +29,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 use Stripe\Exception\ApiErrorException;
@@ -44,6 +44,7 @@ class BusinessBillingController extends Controller
         $pendingChange = $subscription->changes()
             ->whereNull('applied_at')
             ->whereNull('superseded_at')
+            ->whereIn('kind', ['scheduled_plan_change', 'over_limit_downgrade'])
             ->with('toPlan:id,name,code')
             ->latest('requested_at')
             ->first();
@@ -84,6 +85,12 @@ class BusinessBillingController extends Controller
                 ? $request->query('checkout')
                 : null,
             'checkoutAttempt' => $this->checkoutAttemptFromRequest($request, $business),
+            'planChangeStatus' => in_array($request->query('plan_change'), ['success', 'canceled', 'confirmed'], true)
+                ? $request->query('plan_change')
+                : null,
+            'planChangeTargetPriceId' => $request->query('plan_change') === 'success' && ctype_digit((string) $request->query('target_price_id'))
+                ? (int) $request->query('target_price_id')
+                : null,
             'billingReadiness' => $readiness->status(),
             'signupSelection' => OwnerRegistrationIntent::query()
                 ->where('business_id', $business->getKey())
@@ -331,12 +338,11 @@ class BusinessBillingController extends Controller
         ]);
     }
 
-    public function changePlan(Request $request, Business $business, SubscriptionProvider $provider, SubscriptionLifecycleManager $lifecycle, PlanCatalog $catalog, StripeBillingReadiness $readiness): JsonResponse
+    public function changePlan(Request $request, Business $business, SubscriptionProvider $provider, SubscriptionLifecycleManager $lifecycle, PlanCatalog $catalog, StripeBillingReadiness $readiness, AuditWriter $audit): JsonResponse
     {
         $this->authorizeBilling($request, $business);
         $validated = $request->validate([
             'price_id' => ['required', 'integer'],
-            'timing' => ['required', Rule::in(['immediate', 'period_end'])],
             'reason' => ['required', 'string', 'max:1000'],
         ]);
         $subscription = $business->subscription()->with(['plan', 'price'])->firstOrFail();
@@ -345,9 +351,13 @@ class BusinessBillingController extends Controller
         abort_unless($subscription->status === SubscriptionStatus::Active, 409, 'Resolve the current billing status before changing plans.');
         abort_unless($readiness->status()['checkout_ready'], 503, 'Plan changes are paused until secure Stripe event delivery is configured. Your current subscription is unchanged.');
         abort_if(
-            $subscription->changes()->whereNull('applied_at')->whereNull('superseded_at')->exists(),
+            $subscription->changes()
+                ->whereNull('applied_at')
+                ->whereNull('superseded_at')
+                ->whereIn('kind', ['scheduled_plan_change', 'over_limit_downgrade'])
+                ->exists(),
             409,
-            'A plan change is already being processed. Wait for Stripe confirmation before requesting another change.',
+            'A scheduled plan change already exists. Contact support if it needs to be changed.',
         );
 
         $price = BillingPlanPrice::query()
@@ -361,34 +371,71 @@ class BusinessBillingController extends Controller
         abort_unless($catalog->allows($price), 422, 'The selected Stripe price is not in the approved billing catalog.');
         abort_if($subscription->billing_plan_price_id === $price->getKey(), 422, 'This is already your current plan and billing interval.');
 
-        $isDowngrade = $catalog->isDowngrade($subscription->plan->code, $price->plan->code);
-        $annualToMonthly = $subscription->billing_interval === BillingInterval::Annual
-            && $price->billing_interval === BillingInterval::Monthly;
-        $mustWait = $isDowngrade || $annualToMonthly;
-        abort_if($mustWait && $validated['timing'] !== 'period_end', 422, 'This change must be scheduled for the end of the current billing period.');
-        $atPeriodEnd = $lifecycle->requiresPeriodEnd($subscription, $price, $validated['timing'] === 'period_end' || $mustWait);
-        $change = $lifecycle->requestPlanChange(
-            $subscription,
-            $price,
-            $request->user(),
-            $validated['reason'],
-            $atPeriodEnd,
-            awaitProvider: true,
+        abort_if(
+            $catalog->isDowngrade($subscription->plan->code, $price->plan->code),
+            422,
+            'Plan downgrades are not available through self-service. Your current subscription is unchanged.',
         );
-        try {
-            $provider->changePrice($subscription, $price, $atPeriodEnd);
-        } catch (Throwable $exception) {
-            $lifecycle->supersedePlanChange($change, $request->user(), 'Stripe rejected or could not complete the requested change.');
-            throw $exception;
-        }
+
+        $returnUrl = route('business.billing.show', [$business, 'plan_change' => 'canceled']);
+        $completedUrl = route('business.billing.show', [
+            $business,
+            'plan_change' => 'success',
+            'target_price_id' => $price->getKey(),
+        ]);
+        $url = $provider->planChangePortalUrl($subscription, $price, $returnUrl, $completedUrl);
+
+        $lifecycle->supersedePendingProviderPlanChanges(
+            $subscription,
+            $request->user(),
+            'Replaced the legacy direct-update request with a Stripe-hosted confirmation flow.',
+        );
+        $audit->write('subscription.plan_change.portal_started', $business, $request->user(), $subscription, $validated['reason'], after: [
+            'target_plan_id' => $price->billing_plan_id,
+            'target_price_id' => $price->getKey(),
+            'target_interval' => $price->billing_interval->value,
+        ]);
 
         return response()->json([
-            'change_id' => $change->public_id,
-            'status' => $atPeriodEnd ? 'scheduled' : 'processing',
-            'message' => $atPeriodEnd
-                ? 'Your plan change is scheduled for the next renewal.'
-                : 'Stripe accepted the upgrade. Signed confirmation is synchronizing your access.',
-        ], 202);
+            'url' => $url,
+            'status' => 'requires_confirmation',
+            'message' => 'Review the exact timing and charge securely in Stripe before confirming.',
+        ]);
+    }
+
+    public function planChangeStatus(Request $request, Business $business, StripeSubscriptionReconciler $reconciler, PlanCatalog $catalog): JsonResponse
+    {
+        $this->authorizeBilling($request, $business);
+        $validated = $request->validate(['price_id' => ['required', 'integer']]);
+        $price = BillingPlanPrice::query()
+            ->whereKey($validated['price_id'])
+            ->where('provider', 'stripe')
+            ->with('plan:id,code,name')
+            ->firstOrFail();
+        abort_unless($catalog->allows($price), 422, 'The selected Stripe price is not in the approved billing catalog.');
+
+        $subscription = $business->subscription()->with(['plan', 'price'])->firstOrFail();
+        if ($subscription->billing_plan_price_id !== $price->getKey()) {
+            try {
+                $subscription = $reconciler->reconcile($subscription);
+            } catch (Throwable $exception) {
+                Log::warning('Stripe plan change is awaiting provider synchronization.', [
+                    'business_id' => $business->getKey(),
+                    'target_price_id' => $price->getKey(),
+                    'exception' => $exception::class,
+                    'provider_code' => $exception instanceof ApiErrorException ? $exception->getStripeCode() : null,
+                ]);
+            }
+        }
+
+        $confirmed = $subscription->fresh()->billing_plan_price_id === $price->getKey();
+
+        return response()->json([
+            'status' => $confirmed ? 'confirmed' : 'processing',
+            'subscription_status' => $subscription->fresh()->status->value,
+            'plan_name' => $subscription->fresh('plan')->plan->name,
+            'billing_interval' => $subscription->fresh()->billing_interval?->value,
+        ], $confirmed ? 200 : 202);
     }
 
     public function cancel(Request $request, Business $business, SubscriptionProvider $provider, SubscriptionLifecycleManager $lifecycle): JsonResponse

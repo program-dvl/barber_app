@@ -14,6 +14,7 @@ import {
 defineProps({
     canLogin: Boolean,
     canRegister: Boolean,
+    seo: Object,
 });
 
 const storyMoments = [
@@ -46,11 +47,11 @@ const featuredBusinesses = [
 const faqs = [
     {
         question: 'What is ClipperDesk?',
-        answer: 'ClipperDesk is the daily operating system for salons and barbershops. It connects booking and scheduling with client context, checkout and day-to-day reporting.',
+        answer: 'ClipperDesk is appointment scheduling and service business management software for beauty, wellness, personal care, fitness, recovery, health and pet-care teams. It connects booking with the working calendar, client context, checkout and reporting.',
     },
     {
         question: 'Who is ClipperDesk built for?',
-        answer: 'The first release is designed for independent professionals and single-location salons and barbershops, including teams with a shared front desk.',
+        answer: 'The first release is designed for independent professionals and single-location appointment-led businesses, including teams with a shared front desk. Dedicated pages explain the fit and limits for each supported business type.',
     },
     {
         question: 'How is this different from a booking-only tool?',
@@ -89,7 +90,7 @@ const resetPerspective = (event) => {
 
 <template>
     <HomeLayout>
-        <Head title="Salon, barber and wellness business software" />
+        <Head :title="seo.title" />
 
         <section class="cd-home-hero overflow-hidden">
             <PublicContainer class="grid min-h-[calc(100svh-5rem)] gap-10 py-12 sm:py-16 lg:grid-cols-[0.84fr_1.16fr] lg:items-center lg:gap-14 lg:py-20">
@@ -99,7 +100,7 @@ const resetPerspective = (event) => {
                         Your whole day,<br><span class="cd-hero-highlight">beautifully</span> run.
                     </h1>
                     <p class="mt-7 max-w-xl text-lg leading-8 text-slate-300 sm:text-xl">
-                        Bookings, clients, staff, checkout and reporting—one polished workspace for ambitious salon, barber and wellness businesses.
+                        Booking, clients, staff, checkout and reporting—one polished workspace for ambitious appointment-led service businesses.
                     </p>
                     <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
                         <PublicCta context="homepage_hero" />

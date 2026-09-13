@@ -6,12 +6,12 @@ import { guideVisuals, marketingFamilyVisuals, visualFor } from '@/Support/marke
 import { ArrowRightIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ guides: Array, articleCount: Number });
+defineProps({ guides: Array, articleCount: Number, seo: Object });
 </script>
 
 <template>
     <HomeLayout>
-        <Head title="ClipperDesk resources for a clearer salon day" />
+        <Head :title="seo.title" />
 
         <section class="cd-public-section cd-family-hero" data-tone="amber">
             <PublicContainer>
@@ -20,7 +20,7 @@ defineProps({ guides: Array, articleCount: Number });
                     <div class="cd-family-hero-copy">
                         <p class="cd-eyebrow">Resources</p>
                         <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-balance">Practical guidance for the operating work behind a good day.</h1>
-                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Start with a maintained guide, then browse only articles that have a named author, review evidence and a real publication date.</p>
+                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Practical booking, scheduling and operations guidance for appointment-led businesses—published only with a named author, review evidence and a real publication date.</p>
                     </div>
                     <figure class="cd-family-hero-media">
                         <img class="cd-family-hero-image" :src="marketingFamilyVisuals.resources.src" :alt="marketingFamilyVisuals.resources.alt" width="1536" height="1024" fetchpriority="high" />

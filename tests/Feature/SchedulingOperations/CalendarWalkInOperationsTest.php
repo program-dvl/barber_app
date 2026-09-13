@@ -4,6 +4,8 @@ use App\Domain\BusinessConfiguration\Models\LocationHour;
 use App\Domain\BusinessConfiguration\Models\Service;
 use App\Domain\BusinessConfiguration\Models\StaffAvailabilityRule;
 use App\Domain\BusinessConfiguration\Models\StaffServiceAssignment;
+use App\Domain\ClientRecords\Models\Client;
+use App\Domain\MoneyCommerce\Models\Sale;
 use App\Domain\PlatformAccess\Enums\StarterRole;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
@@ -323,4 +325,67 @@ it('returns booking-policy feedback instead of an exception page for a staff boo
         ->assertSessionHasErrors('booking');
 
     CarbonImmutable::setTestNow();
+});
+
+it('cancels from the calendar, releases the default view, and keeps the record discoverable by status', function () {
+    $path = operationalPath();
+    $appointment = operationalBooking($path, '2035-10-10 10:00', 'calendar-cancel-http');
+    app(TenantContext::class)->clear();
+
+    $this->actingAs($path['user'])->patch(route('business.appointments.status', [$path['business'], $appointment]), [
+        'status' => 'cancelled_by_shop', 'version' => 1, 'reason' => 'Client requested cancellation by phone.',
+        'confirmed' => true, 'idempotency_key' => 'calendar-cancel-http-command',
+    ])->assertRedirect()->assertSessionHasNoErrors();
+
+    expect($appointment->fresh()->status)->toBe('cancelled_by_shop');
+    $default = app(CalendarQuery::class)->calendar(new CalendarFilter($path['business']->id, $path['location']->id, 'day', CarbonImmutable::parse('2035-10-10', 'Asia/Kolkata')));
+    $cancelled = app(CalendarQuery::class)->calendar(new CalendarFilter($path['business']->id, $path['location']->id, 'day', CarbonImmutable::parse('2035-10-10', 'Asia/Kolkata'), [], [], ['cancelled_by_shop']));
+    expect($default['events'])->toBeEmpty()->and($cancelled['events'])->toHaveCount(1);
+
+    $clientCancelled = operationalBooking($path, '2035-10-11 10:00', 'calendar-client-cancel-http');
+    $this->actingAs($path['user'])->patch(route('business.appointments.status', [$path['business'], $clientCancelled]), [
+        'status' => 'cancelled_by_shop', 'version' => 1, 'reason_code' => 'client_requested',
+        'confirmed' => true, 'idempotency_key' => 'calendar-client-cancel-http-command',
+    ])->assertRedirect()->assertSessionHasNoErrors();
+
+    expect($clientCancelled->fresh()->status)->toBe('cancelled_by_client')
+        ->and($clientCancelled->changes()->latest('id')->value('reason'))->toBe('Client requested cancellation.');
+});
+
+it('creates and links a client as soon as a walk-in joins the queue', function () {
+    $path = operationalPath();
+    app(TenantContext::class)->clear();
+
+    $this->actingAs($path['user'])->post(route('business.walk-ins.store', $path['business']), [
+        'location' => $path['location']->public_id, 'service' => $path['service']->public_id,
+        'preferred_staff' => $path['staff']->public_id, 'client_mode' => 'new',
+        'client_name' => 'Queue Client', 'client_mobile' => '+919123456789', 'client_email' => 'queue@example.test',
+        'arrived_at' => '2035-10-10T10:00', 'notes' => 'First visit.',
+    ])->assertRedirect()->assertSessionHasNoErrors();
+
+    $client = Client::query()->where('business_id', $path['business']->id)->where('normalized_email', 'queue@example.test')->firstOrFail();
+    $entry = WalkInEntry::query()->where('business_id', $path['business']->id)->firstOrFail();
+    expect($entry->client_id)->toBe($client->id)->and($entry->client_email)->toBe('queue@example.test')->and($entry->appointment_id)->toBeNull();
+
+    $this->actingAs($path['user'])->getJson(route('business.walk-ins.clients.search', [$path['business'], 'q' => 'Queue']))
+        ->assertOk()->assertJsonPath('clients.0.public_id', $client->public_id);
+});
+
+it('records a full manual payment once and removes the settled visit from checkout', function () {
+    $path = operationalPath();
+    $appointment = operationalBooking($path, '2035-10-10 10:00', 'manual-checkout-booking');
+    $appointment->forceFill(['status' => 'completed', 'completed_at' => now()])->save();
+    app(TenantContext::class)->clear();
+
+    $sale = $this->actingAs($path['user'])->postJson(route('business.checkout.open', [$path['business'], $appointment]), ['lines' => []])
+        ->assertOk()->json('sale');
+    $this->actingAs($path['user'])->postJson(route('business.checkout.tender', [$path['business'], $sale['public_id']]), [
+        'method' => 'cash', 'amount_minor' => $sale['balance_minor'], 'idempotency_key' => 'manual-payment-http',
+        'evidence' => ['manually_confirmed' => true],
+    ])->assertOk()->assertJsonPath('sale.status', 'completed')->assertJsonPath('sale.balance_minor', 0);
+
+    expect(Sale::query()->where('business_id', $path['business']->id)->count())->toBe(1)
+        ->and(OperationalNotificationEvent::query()->where('event_type', 'payment.receipt')->where('subject_id', $appointment->id)->count())->toBe(1);
+    $this->actingAs($path['user'])->get(route('business.checkout.index', [$path['business'], 'appointment' => $appointment->public_id]))
+        ->assertOk()->assertInertia(fn (Assert $page) => $page->where('appointments', []));
 });

@@ -20,13 +20,13 @@ class AppointmentSelfService
         private readonly ClientIdentityLinker $clients,
     ) {}
 
-    public function cancel(PublicAppointmentLink $link, string $idempotencyKey): Appointment
+    public function cancel(PublicAppointmentLink $link, string $idempotencyKey, string $reason = 'Client cancelled through a secure self-service link.'): Appointment
     {
         $appointment = $link->appointment->loadMissing('business');
         $this->assertBeforeCutoff($appointment);
         $cancelled = $this->lifecycle->transition(
             $appointment, 'cancelled_by_client', $idempotencyKey, $appointment->version,
-            'self_service', 'public_link', $link->id, 'Client cancelled through a secure self-service link.',
+            'self_service', 'public_link', $link->id, $reason,
         );
         $link->forceFill(['used_at' => now()])->save();
         $this->links->revokeAppointment($cancelled);

@@ -7,12 +7,12 @@ import { marketingFamilyVisuals } from '@/Support/marketingVisuals';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ controls: Array });
+defineProps({ controls: Array, seo: Object });
 </script>
 
 <template>
     <HomeLayout>
-        <Head title="ClipperDesk security approach and current limits" />
+        <Head :title="seo.title" />
         <section class="cd-public-section cd-family-hero" data-tone="cyan">
             <PublicContainer>
                 <Breadcrumbs :items="[{ label: 'Home', href: route('marketing.home') }, { label: 'Security' }]" />

@@ -23,9 +23,10 @@ class FeatureController extends Controller
         return Inertia::render('Marketing/Features/Index', [
             'features' => $features,
             'seo' => [
-                'title' => 'ClipperDesk features for the complete salon day',
-                'description' => 'Explore connected online booking, calendar and walk-ins, client management, checkout and reporting for salons and barbershops.',
+                'title' => 'Service business management software features | ClipperDesk',
+                'description' => 'Explore online booking, staff calendars, walk-ins, client management, checkout and reporting for appointment-led service businesses.',
                 'canonical' => route('marketing.features'),
+                'image' => url('/images/marketing/editorial/product-workday.webp'),
             ],
         ]);
     }
@@ -48,9 +49,10 @@ class FeatureController extends Controller
             'feature' => [...$content, 'slug' => $feature],
             'related' => $related,
             'seo' => [
-                'title' => $content['title'].' | ClipperDesk',
+                'title' => $content['seo_title'],
                 'description' => $content['description'],
                 'canonical' => route('marketing.features.show', $feature),
+                'image' => url($content['image']),
             ],
         ]);
     }

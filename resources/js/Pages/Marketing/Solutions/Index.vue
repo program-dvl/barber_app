@@ -6,17 +6,17 @@ import HomeLayout from '@/Layouts/HomeLayout.vue';
 import { ArrowRightIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ solutions: Array });
+defineProps({ solutions: Array, seo: Object });
 </script>
 
 <template>
     <HomeLayout>
-        <Head title="Business software for beauty, wellness and appointment-led teams" />
+        <Head :title="seo.title" />
         <section class="cd-editorial-hero">
             <PublicContainer class="py-16 sm:py-24">
                 <p class="cd-hero-kicker"><span aria-hidden="true">✦</span> Find your fit</p>
                 <h1 class="mt-7 max-w-5xl font-display text-[clamp(3.5rem,7.4vw,7.5rem)] font-bold leading-[0.88] tracking-[-0.075em] text-white text-balance">Built around the way <span class="cd-hero-highlight">you</span> work.</h1>
-                <p class="mt-8 max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">From a one-chair studio to a busy multi-provider operation, ClipperDesk connects the customer journey and the working day—without pretending every business runs the same way.</p>
+                <p class="mt-8 max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">From an independent practitioner to a busy multi-provider operation, ClipperDesk connects the customer journey and the working day across beauty, wellness, fitness, recovery, health and pet care—without pretending every business runs the same way.</p>
             </PublicContainer>
         </section>
         <section class="cd-public-section">

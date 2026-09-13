@@ -101,15 +101,12 @@ class OperationalCommunicationService
     private function appointmentIntent(Appointment $appointment, string $intent, string $eventType, string $eventKey, CarbonImmutable $when, array $payload): void
     {
         $appointment->loadMissing(['business', 'client', 'location', 'serviceLines.primaryStaff']);
-        $preferences = $appointment->communication_preferences ?? [];
-        $selected = collect(is_array($preferences) ? $preferences : [])->filter(fn ($value, $key) => $value === true || is_int($key))->map(fn ($value, $key) => is_int($key) ? $value : $key)->all();
-        $channels = $selected ?: ['email'];
+        $preferences = is_array($appointment->communication_preferences) ? $appointment->communication_preferences : [];
+        $clientPreferences = is_array($appointment->client?->communication_preferences) ? $appointment->client->communication_preferences : [];
+        $emailOptedOut = ($preferences['email'] ?? null) === false || ($clientPreferences['email'] ?? null) === false;
         $recipients = [];
-        if (in_array('email', $channels, true) && $appointment->client_email) {
+        if (! $emailOptedOut && $appointment->client_email) {
             $recipients['email'] = $appointment->client_email;
-        }
-        if (in_array('whatsapp', $channels, true) && $appointment->client_mobile) {
-            $recipients['whatsapp'] = $appointment->client_mobile;
         }
         $local = $appointment->starts_at_utc->setTimezone($appointment->time_zone);
         $defaults = TemplateVariableCatalog::defaults($intent);
@@ -156,17 +153,25 @@ class OperationalCommunicationService
 
     private function walkIn(OperationalNotificationEvent $event): bool
     {
-        $entry = WalkInEntry::query()->where('business_id', $event->business_id)->find($event->subject_id);
+        $entry = WalkInEntry::query()->where('business_id', $event->business_id)->with(['client'])->find($event->subject_id);
         if (! $entry) {
             return false;
         }
-        $business = Business::query()->findOrFail($event->business_id);
+        $business = Business::query()->with('locations')->findOrFail($event->business_id);
+        $clientPreferences = is_array($entry->client?->communication_preferences) ? $entry->client->communication_preferences : [];
+        $recipients = ! (($clientPreferences['email'] ?? null) === false) && $entry->client_email
+            ? ['email' => $entry->client_email]
+            : [];
+        if ($recipients === []) {
+            return false;
+        }
         $this->intents->create(new CommunicationIntentData(
             $event->business_id, $event->idempotency_key, $event->event_type, 'queue_update', 'transactional',
-            'explicit_channel_opt_in_required', $business->locale ?: 'en-IN', $business->time_zone ?: 'Asia/Kolkata',
-            CarbonImmutable::instance($event->occurred_at), ['whatsapp' => $entry->client_mobile], [
-                'client_name' => $entry->client_name, 'queue_estimate' => $entry->estimated_wait_minutes.' minutes', 'location_name' => 'the shop',
-            ], null, WalkInEntry::class, $entry->id, (string) Str::uuid(), null,
+            'contract_performance', $business->locale ?: 'en-IN', $business->time_zone ?: 'Asia/Kolkata',
+            CarbonImmutable::instance($event->occurred_at), $recipients, [
+                'client_name' => $entry->client_name, 'queue_estimate' => $entry->estimated_wait_minutes.' minutes',
+                'location_name' => $business->locations->firstWhere('id', $entry->location_id)?->name ?? $business->name,
+            ], $entry->client_id, WalkInEntry::class, $entry->id, (string) Str::uuid(), null,
         ));
 
         return true;

@@ -8,12 +8,12 @@ import { featureVisuals, marketingFamilyVisuals, visualFor } from '@/Support/mar
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ feature: Object, related: Array });
+defineProps({ feature: Object, related: Array, seo: Object });
 </script>
 
 <template>
     <HomeLayout>
-        <Head :title="feature.title" />
+        <Head :title="seo.title" />
         <section class="cd-public-section cd-family-hero" data-tone="cyan">
             <PublicContainer>
                 <Breadcrumbs class="text-white/70" :items="[

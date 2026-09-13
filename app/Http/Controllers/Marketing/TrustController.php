@@ -12,9 +12,10 @@ class TrustController extends Controller
     {
         return Inertia::render('Marketing/Company', [
             'seo' => [
-                'title' => 'About ClipperDesk',
-                'description' => 'What ClipperDesk is, who it is for and which operator and brand facts remain pending before public launch.',
+                'title' => 'About ClipperDesk service business software',
+                'description' => 'Learn why ClipperDesk connects booking, daily operations and reporting for appointment-led service businesses—and see the limits kept in view.',
                 'canonical' => route('marketing.company'),
+                'image' => url('/images/marketing/editorial/company-story.webp'),
             ],
         ]);
     }
@@ -31,9 +32,10 @@ class TrustController extends Controller
                 ['title' => 'Recovery and independent review', 'body' => 'Production backup/restore, disaster recovery, on-call monitoring, penetration testing and independent accessibility/security review are not yet evidenced.', 'state' => 'Open launch controls'],
             ],
             'seo' => [
-                'title' => 'ClipperDesk security approach and current limits',
-                'description' => 'Review implemented ClipperDesk security boundaries alongside the operational, provider and independent-assurance work still required.',
+                'title' => 'Service business software security | ClipperDesk',
+                'description' => 'Review ClipperDesk tenant isolation, account security, audit history and sensitive-link controls alongside current assurance limits.',
                 'canonical' => route('marketing.security'),
+                'image' => url('/images/marketing/editorial/security-trust.webp'),
             ],
         ]);
     }

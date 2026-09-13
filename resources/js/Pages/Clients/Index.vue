@@ -23,28 +23,24 @@ const createClient = () => createForm.post(route('business.clients.store', page.
 
 <template>
     <AppLayout title="Clients" :business-label="businessLabel">
-        <PageHeader eyebrow="Client records" title="Clients" description="Find the right person quickly, then review visit context, preferences, forms, and consent in one place.">
+        <PageHeader eyebrow="Client records" title="Clients" description="Find a client, prepare for their visit and keep their history close.">
             <template #actions><AppButton v-if="canCreate" @click="addDialog?.open()">Add client</AppButton></template>
         </PageHeader>
 
-        <div class="mt-6">
-            <SurfaceCard title="Find a client" :description="canContact ? 'Search by name, mobile number, or email.' : 'Search by client name.'">
-                <form class="flex flex-col gap-3 sm:flex-row" @submit.prevent="runSearch">
+        <SurfaceCard class="mt-6" title="Client directory" :description="`${clients.total} active client ${clients.total === 1 ? 'record' : 'records'}`">
+                <form class="mb-4 flex flex-col gap-3 sm:flex-row" @submit.prevent="runSearch">
                     <label class="min-w-0 flex-1">
                         <span class="ds-sr-only">Search clients</span>
                         <input v-model="search" type="search" class="cd-input" :placeholder="canContact ? 'Name, mobile number, or email' : 'Client name'" autocomplete="off">
                     </label>
-                    <AppButton type="submit">Search</AppButton>
+                    <AppButton type="submit" variant="secondary">Search</AppButton>
                 </form>
                 <p v-if="duplicateCount" class="mt-4 rounded-lg bg-[var(--status-warning-soft)] px-3 py-2 text-sm text-[var(--status-warning)]"><strong>{{ duplicateCount }}</strong> possible duplicate{{ duplicateCount === 1 ? '' : 's' }} need review. ClipperDesk never merges client records automatically.</p>
-            </SurfaceCard>
-        </div>
 
-        <SurfaceCard class="mt-6" title="Client directory" :description="`${clients.total} active client records`">
-            <StatePanel v-if="clients.data.length === 0" title="No matching clients" :description="canCreate ? 'Add a walk-in, phone-booking, or migrated customer now. Online bookings also create client records automatically.' : 'Bookings create client records automatically using conservative identity rules.'"><template v-if="canCreate && !search" #actions><AppButton @click="addDialog?.open()">Add your first client</AppButton></template></StatePanel>
+            <StatePanel v-if="clients.data.length === 0" :title="search ? 'No matching clients' : 'Your client list starts here'" :description="search ? 'Try another name or clear the search to see all clients.' : canCreate ? 'Add a walk-in, phone-booking, or migrated customer now. Online bookings also create client records automatically.' : 'Bookings create client records automatically using conservative identity rules.'"><template #actions><AppButton v-if="search" variant="secondary" @click="search = ''; runSearch()">Clear search</AppButton><AppButton v-else-if="canCreate" @click="addDialog?.open()">Add your first client</AppButton></template></StatePanel>
             <ul v-else class="divide-y divide-[var(--border-subtle)]">
                 <li v-for="client in clients.data" :key="client.public_id">
-                    <Link :href="route('business.clients.show', [$page.props.tenant.public_id, client.public_id])" class="grid min-h-16 gap-1 px-1 py-4 hover:bg-[var(--surface-subtle)] sm:grid-cols-[minmax(0,1fr)_minmax(12rem,0.6fr)_8rem] sm:items-center sm:px-3">
+                    <Link :href="route('business.clients.show', [$page.props.tenant.public_id, client.public_id])" class="grid min-h-16 gap-1 px-1 py-3 hover:bg-[var(--surface-subtle)] sm:grid-cols-[minmax(0,1fr)_minmax(12rem,0.6fr)_8rem] sm:items-center sm:px-3">
                         <div class="min-w-0">
                             <p class="truncate font-semibold text-[var(--text-strong)]">{{ client.name }}</p>
                             <p v-if="canContact" class="truncate text-sm text-[var(--text-muted)]">{{ client.mobile || client.email || 'No contact details yet' }}</p>
@@ -55,7 +51,7 @@ const createClient = () => createForm.post(route('business.clients.store', page.
                 </li>
             </ul>
             <nav v-if="clients.last_page > 1" class="mt-4 flex flex-wrap gap-2" aria-label="Client pages">
-                <Link v-for="link in clients.links" :key="link.label" :href="link.url || '#'" preserve-state :class="['min-h-11 rounded-lg px-4 py-3 text-sm', link.active ? 'bg-[var(--action-primary)] text-white' : 'bg-[var(--surface-subtle)]', !link.url && 'pointer-events-none opacity-50']" v-html="link.label" />
+                <component v-for="link in clients.links" :key="link.label" :is="link.url ? Link : 'span'" :href="link.url || undefined" :aria-current="link.active ? 'page' : undefined" :aria-disabled="!link.url || undefined" preserve-state :class="['min-h-11 rounded-lg px-4 py-3 text-sm', link.active ? 'bg-[var(--action-primary)] text-white' : 'bg-[var(--surface-subtle)]', !link.url && 'pointer-events-none opacity-50']" v-html="link.label" />
             </nav>
         </SurfaceCard>
 

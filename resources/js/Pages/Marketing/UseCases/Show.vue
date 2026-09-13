@@ -8,12 +8,12 @@ import { featureVisuals, marketingFamilyVisuals, solutionVisuals, useCaseVisuals
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ useCase: Object, feature: Object, solution: Object });
+defineProps({ useCase: Object, feature: Object, solution: Object, seo: Object });
 </script>
 
 <template>
     <HomeLayout>
-        <Head :title="useCase.title" />
+        <Head :title="seo.title" />
         <section class="cd-public-section cd-family-hero" data-tone="coral">
             <PublicContainer>
                 <Breadcrumbs :items="[

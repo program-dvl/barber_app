@@ -22,9 +22,10 @@ class UseCaseController extends Controller
         return Inertia::render('Marketing/UseCases/Index', [
             'useCases' => $useCases,
             'seo' => [
-                'title' => 'Practical salon operating use cases | ClipperDesk',
-                'description' => 'Practical guidance for scheduling conflicts, mixed walk-ins, deposits and connected client history, with honest ClipperDesk workflows and limits.',
+                'title' => 'Service business operations use cases | ClipperDesk',
+                'description' => 'Practical guidance for scheduling conflicts, walk-ins, deposits and connected client history across appointment-led service businesses.',
                 'canonical' => route('marketing.use-cases'),
+                'image' => url('/images/marketing/editorial/use-cases-front-desk.webp'),
             ],
         ]);
     }
@@ -51,9 +52,10 @@ class UseCaseController extends Controller
                 'title' => $solutions[$content['solution']]['title'],
             ],
             'seo' => [
-                'title' => $content['title'].' | ClipperDesk',
+                'title' => $content['seo_title'],
                 'description' => $content['description'],
                 'canonical' => route('marketing.use-cases.show', $useCase),
+                'image' => url($content['image']),
             ],
         ]);
     }

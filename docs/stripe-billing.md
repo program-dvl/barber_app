@@ -134,10 +134,28 @@ never trusts browser-supplied customer, subscription, plan, or status data.
 The scheduled `billing:reconcile-stripe-checkouts` command provides the same
 retry-safe recovery for pending attempts.
 
-The Stripe Customer Portal owns payment methods, billing details and invoice
-history. The application owns plan comparison, entitlement impact, reasoned
-plan changes, cancellation/resumption UX and local audit history. Portal access
-requires the Business's mapped Stripe Customer ID.
+The Stripe Customer Portal owns payment methods, billing details, invoice
+history, and the payment-sensitive confirmation step for owner upgrades and
+billing-interval switches. ClipperDesk owns the allowed target selection and
+never accepts a provider Price ID from the browser. It creates a focused
+`subscription_update_confirm` Portal flow for the server-selected local Price;
+Stripe displays the exact effective date and proration, then handles card
+failure and 3-D Secure authentication before applying anything.
+
+ClipperDesk maintains two metadata-identified Portal configurations. The normal
+account-management configuration allows billing details, payment methods and
+invoices but disables plan selection. The focused plan-change configuration is
+self-healing against the active local catalog, permits Price changes with
+`always_invoice` proration, and schedules decreasing-price or annual-to-monthly
+changes at period end. Focused Portal navigation is hidden, so it cannot be
+used as an unapproved downgrade picker. Creating Portal sessions requires the
+Business's mapped Stripe Customer and Subscription IDs.
+
+After Portal completion, the browser polls a tenant-scoped status endpoint.
+Signed `customer.subscription.updated` delivery remains primary; the status
+endpoint may retrieve the mapped Subscription using server-side Stripe
+credentials and project the same normalized snapshot when webhook delivery is
+delayed. It never trusts a browser-supplied Stripe status or provider ID.
 
 ## Webhook configuration
 
@@ -154,6 +172,7 @@ Subscribe only to the events projected by the application:
 - `checkout.session.async_payment_failed`
 - `customer.subscription.created`
 - `customer.subscription.updated`
+- `customer.subscription.pending_update_expired`
 - `customer.subscription.deleted`
 - `invoice.created`
 - `invoice.finalized`
@@ -222,10 +241,15 @@ Alternative paths are:
   account becomes read-only; successful invoice payment restores active access.
 - Cancellation: access remains active until the recorded billing-period end and
   can be resumed before that boundary.
-- Downgrade: plan-rank reductions and annual-to-monthly changes occur at period
-  end. If current usage exceeds the target limit, records are preserved and the
-  change stores a usage/limit snapshot; increasing operations remain blocked
-  after the lower entitlement becomes effective.
+- Upgrade: an Owner selects only the same or a higher-ranked plan in
+  ClipperDesk, reviews the exact charge in Stripe, and receives new
+  entitlements only after provider confirmation.
+- Interval switch: monthly-to-annual changes use Stripe's confirmed proration
+  behavior; annual-to-monthly changes preserve the already-paid annual term and
+  take effect at renewal.
+- Downgrade: owner self-service does not expose lower-ranked plans. The existing
+  support-controlled path can schedule a downgrade at period end, preserving
+  records and recording usage/limit snapshots when remediation is required.
 
 `EnforceSubscriptionAccess` is the broad write boundary. `RequireEntitlement`,
 policies, domain services and job/import guards enforce individual capabilities

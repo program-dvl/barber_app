@@ -22,11 +22,13 @@ use App\Domain\Communications\Services\CommunicationScheduleService;
 use App\Domain\Communications\Services\CommunicationSupportService;
 use App\Domain\Communications\Services\CommunicationTemplateService;
 use App\Domain\Communications\Services\NotificationIntentService;
+use App\Domain\Communications\Services\OperationalCommunicationService;
 use App\Domain\Communications\Services\TemplateVariableCatalog;
 use App\Domain\PlatformAccess\Enums\StarterRole;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\SchedulingOperations\Models\Appointment;
+use App\Domain\SchedulingOperations\Models\OperationalNotificationEvent;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -164,6 +166,28 @@ it('creates at most one message per intended event channel and recipient after d
         ->and(CommunicationMessage::query()->pluck('channel')->sort()->values()->all())->toBe(['email', 'whatsapp'])
         ->and(CommunicationMessage::query()->pluck('idempotency_key')->unique()->count())->toBe(2);
     Queue::assertPushed(DeliverCommunicationMessage::class, 2);
+});
+
+it('keeps transactional email on by default and honours an explicit client email opt-out', function () {
+    $fixture = communicationFixture(['communication_preferences' => []]);
+    $fixture['appointment']->update(['communication_preferences' => ['whatsapp']]);
+    $event = OperationalNotificationEvent::query()->create([
+        'business_id' => $fixture['business']->id, 'event_type' => 'appointment.confirmed',
+        'subject_type' => Appointment::class, 'subject_id' => $fixture['appointment']->id,
+        'payload' => [], 'status' => 'pending', 'idempotency_key' => 'default-email-event', 'occurred_at' => now(),
+    ]);
+    app(OperationalCommunicationService::class)->process($event);
+    expect(CommunicationMessage::query()->pluck('channel')->unique()->values()->all())->toBe(['email'])
+        ->and(CommunicationMessage::query()->count())->toBe(3);
+
+    $fixture['client']->update(['communication_preferences' => ['email' => false]]);
+    $second = OperationalNotificationEvent::query()->create([
+        'business_id' => $fixture['business']->id, 'event_type' => 'appointment.confirmed',
+        'subject_type' => Appointment::class, 'subject_id' => $fixture['appointment']->id,
+        'payload' => [], 'status' => 'pending', 'idempotency_key' => 'opted-out-email-event', 'occurred_at' => now(),
+    ]);
+    app(OperationalCommunicationService::class)->process($second);
+    expect(CommunicationMessage::query()->count())->toBe(3);
 });
 
 it('validates allow-listed templates, uses safe fallbacks, and denies cross-tenant template access', function () {

@@ -4,11 +4,13 @@ namespace App\Domain\SchedulingOperations\Models;
 
 use App\Domain\ClientRecords\Models\Client;
 use App\Domain\ClientRecords\Models\ClientFormRequest;
+use App\Domain\MoneyCommerce\Models\Sale;
 use App\Domain\PlatformAccess\Models\Location;
 use App\Support\Tenancy\BelongsToBusiness;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 class Appointment extends Model
@@ -83,6 +85,11 @@ class Appointment extends Model
     public function formRequests(): HasMany
     {
         return $this->hasMany(ClientFormRequest::class)->orderByDesc('requested_at');
+    }
+
+    public function sale(): HasOne
+    {
+        return $this->hasOne(Sale::class);
     }
 
     public function getRouteKeyName(): string

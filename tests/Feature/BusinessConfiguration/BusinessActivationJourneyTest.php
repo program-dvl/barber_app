@@ -16,7 +16,10 @@ beforeEach(function () {
 });
 
 it('takes a new owner from focused activation workspaces to a received public booking', function () {
-    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-09-01 09:00:00', 'Asia/Kolkata')->utc());
+    // Keep the journey clock after the migration-seeded entitlement catalog.
+    // A fixed historical date makes this test start failing as soon as the
+    // real calendar passes it because effective-dated entitlements disappear.
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2035-09-01 09:00:00', 'Asia/Kolkata')->utc());
     [$owner, $business] = createTenantMembership(StarterRole::Owner);
     activateTestSubscription($business);
     $business->update([
@@ -93,7 +96,7 @@ it('takes a new owner from focused activation workspaces to a received public bo
 
     $booking = app(PublicBookingService::class);
     $started = $booking->start($business->fresh());
-    $slots = $booking->search($business->fresh(), $location->public_id, [$service->public_id], $staff->public_id, '2026-09-07', '2026-09-07', 'new');
+    $slots = $booking->search($business->fresh(), $location->public_id, [$service->public_id], $staff->public_id, '2035-09-07', '2035-09-07', 'new');
     expect($slots)->not->toBeEmpty();
     $flow = $booking->hold($business->fresh(), $started['flow'], [
         'location' => $location->public_id, 'services' => [$service->public_id], 'staff' => $staff->public_id,
@@ -131,4 +134,30 @@ it('keeps activation workspaces role and tenant scoped', function () {
     $this->actingAs($owner)->get(route('business.services.index', $otherBusiness))->assertForbidden();
     $this->actingAs($receptionist)->get(route('business.team.index', $otherBusiness))->assertForbidden();
     $this->actingAs($receptionist)->get(route('business.locations.index', $otherBusiness))->assertForbidden();
+});
+
+it('makes multi-location capacity and editable standard team titles explicit', function () {
+    [$owner, $business] = createTenantMembership(StarterRole::Owner);
+    activateTestSubscription($business, 'pro');
+    $payload = [
+        'name' => 'Central', 'address' => '1 Main Road', 'time_zone' => 'Asia/Kolkata',
+        'phone' => '+919000000000', 'email' => 'central@example.test', 'working_days' => [1, 2, 3, 4, 5],
+        'opens_at' => '09:00', 'closes_at' => '18:00',
+    ];
+
+    $this->actingAs($owner)->post(route('business.locations.activation.store', $business), $payload)->assertSessionHasNoErrors();
+    $this->actingAs($owner)->post(route('business.locations.activation.store', $business), [
+        ...$payload, 'create_new' => true, 'name' => 'Riverside', 'address' => '2 River Road',
+    ])->assertSessionHasNoErrors();
+    $this->actingAs($owner)->post(route('business.locations.activation.store', $business), [
+        ...$payload, 'create_new' => true, 'name' => 'central', 'address' => '3 Market Road',
+    ])->assertSessionHasErrors([
+        'name' => 'Use a different location name so clients and team members can tell each place apart.',
+    ]);
+
+    expect($business->locations()->count())->toBe(2);
+    $this->actingAs($owner)->get(route('business.locations.index', $business))->assertInertia(fn (Assert $page) => $page
+        ->where('locationAllowance.can_add', true)->where('locationAllowance.used', 2)->has('locations', 2));
+    $this->actingAs($owner)->get(route('business.team.index', $business))->assertInertia(fn (Assert $page) => $page
+        ->where('roleSuggestions', fn ($roles) => $roles->contains('Senior stylist') && $roles->contains('Physiotherapist') && $roles->contains('Pet groomer')));
 });

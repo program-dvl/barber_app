@@ -21,9 +21,16 @@ class BookingBusinessController extends Controller
 
         return Inertia::render('Booking/Welcome', [
             'business' => [
-                ...$business->only(['name', 'booking_slug', 'country_code', 'currency_code', 'phone', 'email', 'address', 'map_url']),
+                ...$business->only(['name', 'booking_slug', 'business_type', 'description', 'brand_color', 'country_code', 'currency_code', 'phone', 'email', 'website_url', 'social_links', 'address', 'map_url']),
                 'has_logo' => filled($business->logo_path),
                 'has_cover_image' => filled($business->cover_image_path),
+                'logo_url' => filled($business->logo_path) ? route('public.booking.media', [$business->booking_slug, 'logo']) : null,
+                'cover_url' => filled($business->cover_image_path)
+                    ? route('public.booking.media', [$business->booking_slug, 'cover'])
+                    : config('business-onboarding.business_types.'.$business->business_type.'.image', '/images/marketing/editorial/product-workday.webp'),
+                'cover_alt' => filled($business->cover_image_path)
+                    ? $business->name.' booking page cover'
+                    : config('business-onboarding.business_types.'.$business->business_type.'.label', 'Appointment business').' workspace atmosphere',
             ],
             'catalog' => $booking->catalog($business),
         ]);

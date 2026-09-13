@@ -10,7 +10,7 @@ it('renders a truthful ClipperDesk homepage with unique metadata', function () {
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Home')
-            ->where('seo.title', 'Salon, barber and wellness business software | ClipperDesk')
+            ->where('seo.title', 'Appointment scheduling & service business software | ClipperDesk')
             ->where('seo.canonical', route('marketing.home')));
 
     $source = file_get_contents(resource_path('js/Pages/Home.vue'));
@@ -18,7 +18,7 @@ it('renders a truthful ClipperDesk homepage with unique metadata', function () {
     expect($source)
         ->toContain('Your whole day,')
         ->toContain('beautifully</span> run.')
-        ->toContain('ambitious salon, barber and wellness businesses')
+        ->toContain('ambitious appointment-led service businesses')
         ->toContain('One calmer operating rhythm')
         ->toContain('Less admin between the moments that')
         ->toContain('Open ready.')

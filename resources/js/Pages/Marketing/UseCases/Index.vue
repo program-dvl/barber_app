@@ -8,12 +8,12 @@ import { marketingFamilyVisuals, useCaseVisuals, visualFor } from '@/Support/mar
 import { ArrowRightIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ useCases: Array });
+defineProps({ useCases: Array, seo: Object });
 </script>
 
 <template>
     <HomeLayout>
-        <Head title="Practical salon operating use cases" />
+        <Head :title="seo.title" />
         <section class="cd-public-section cd-family-hero" data-tone="coral">
             <PublicContainer>
                 <Breadcrumbs :items="[{ label: 'Home', href: route('marketing.home') }, { label: 'Use cases' }]" />
@@ -21,7 +21,7 @@ defineProps({ useCases: Array });
                     <div class="cd-family-hero-copy">
                         <p class="cd-eyebrow">Use cases</p>
                         <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-balance">Start with the operating problem, not a feature list.</h1>
-                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Use these practical guides to diagnose a recurring salon-day problem, improve the process and see where verified ClipperDesk behavior can help.</p>
+                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Use these practical guides to diagnose recurring scheduling and service-day problems, improve the process and see where verified ClipperDesk behavior can help.</p>
                     </div>
                     <figure class="cd-family-hero-media">
                         <img class="cd-family-hero-image" :src="marketingFamilyVisuals.useCases.src" :alt="marketingFamilyVisuals.useCases.alt" width="1536" height="1024" fetchpriority="high" />

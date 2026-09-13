@@ -11,7 +11,11 @@ import { installMarketingTelemetryContract } from './Support/marketingTelemetry'
 installMarketingTelemetryContract();
 
 createInertiaApp({
-    title: (title) => `${title} - ${document.querySelector('meta[name="application-name"]')?.content || 'ClipperDesk'}`,
+    title: (title) => {
+        const productName = document.querySelector('meta[name="application-name"]')?.content || 'ClipperDesk';
+
+        return title.toLowerCase().includes(productName.toLowerCase()) ? title : `${title} | ${productName}`;
+    },
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Domain\Billing\Services\EntitlementEvaluator;
 use App\Domain\Billing\Services\PublicPricingCatalog;
+use App\Domain\BusinessConfiguration\Services\BusinessSetupProgress;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\PlatformNotice;
 use App\Domain\PlatformAccess\Models\SupportAccessSession;
@@ -95,6 +96,9 @@ class HandleInertiaRequests extends Middleware
                 $accessSubscription = $business->subscription()->with('plan:id,name,code')->first();
                 $subscription = $canManageBilling ? $accessSubscription : null;
                 $entitlements = app(EntitlementEvaluator::class);
+                $canManageSetup = $membership
+                    ? app(MembershipAccessManager::class)->allows($membership, PermissionName::SettingsManage)
+                    : false;
 
                 return [
                     'public_id' => $business->public_id,
@@ -107,6 +111,8 @@ class HandleInertiaRequests extends Middleware
                     ],
                     'membership_id' => $membership?->public_id,
                     'can_manage_billing' => $canManageBilling,
+                    'can_manage_setup' => $canManageSetup,
+                    'setup' => $canManageSetup ? app(BusinessSetupProgress::class)->for($business) : null,
                     'features' => app(WorkspaceAccessService::class)->navigation($business, $membership),
                     'access' => $accessSubscription ? [
                         'status' => $accessSubscription->status->value,

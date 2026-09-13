@@ -288,6 +288,48 @@ class SubscriptionLifecycleManager
         });
     }
 
+    public function supersedePendingProviderPlanChanges(BusinessSubscription $subscription, User $actor, string $reason): int
+    {
+        return DB::transaction(function () use ($subscription, $actor, $reason): int {
+            $locked = BusinessSubscription::query()->lockForUpdate()->findOrFail($subscription->getKey());
+            $changes = $locked->changes()
+                ->where('kind', 'pending_provider_plan_change')
+                ->whereNull('applied_at')
+                ->whereNull('superseded_at')
+                ->lockForUpdate()
+                ->get();
+
+            foreach ($changes as $change) {
+                $change->update(['superseded_at' => now()]);
+                $this->audit->write('subscription.plan_change.superseded', $locked->business, $actor, $change, $reason);
+            }
+
+            return $changes->count();
+        });
+    }
+
+    public function expirePendingProviderPlanChanges(BusinessSubscription $subscription, CarbonInterface $occurredAt): int
+    {
+        return DB::transaction(function () use ($subscription, $occurredAt): int {
+            $locked = BusinessSubscription::query()->lockForUpdate()->findOrFail($subscription->getKey());
+            $changes = $locked->changes()
+                ->where('kind', 'pending_provider_plan_change')
+                ->whereNull('applied_at')
+                ->whereNull('superseded_at')
+                ->lockForUpdate()
+                ->get();
+
+            foreach ($changes as $change) {
+                $change->update(['superseded_at' => $occurredAt]);
+                $this->audit->write('subscription.plan_change.expired', $locked->business, target: $change, after: [
+                    'superseded_at' => $occurredAt->toIso8601String(),
+                ], source: 'provider');
+            }
+
+            return $changes->count();
+        });
+    }
+
     private function transition(BusinessSubscription $subscription, CarbonInterface $providerStateAt, callable $attributes, string $action): BusinessSubscription
     {
         return DB::transaction(function () use ($subscription, $providerStateAt, $attributes, $action): BusinessSubscription {
@@ -295,12 +337,12 @@ class SubscriptionLifecycleManager
             if ($locked->provider_state_at && $providerStateAt->lessThanOrEqualTo($locked->provider_state_at)) {
                 return $locked;
             }
-            $before = ['status' => $locked->status->value, 'restriction_level' => $locked->restriction_level->value, 'plan_id' => $locked->billing_plan_id];
+            $before = ['status' => $locked->status->value, 'restriction_level' => $locked->restriction_level->value, 'plan_id' => $locked->billing_plan_id, 'price_id' => $locked->billing_plan_price_id, 'billing_interval' => $locked->billing_interval?->value];
             $locked->fill($attributes($locked));
             $locked->provider_state_at = $providerStateAt;
             $locked->version++;
             $locked->save();
-            $this->audit->write($action, $locked->business, target: $locked, before: $before, after: ['status' => $locked->status->value, 'restriction_level' => $locked->restriction_level->value, 'plan_id' => $locked->billing_plan_id], source: 'provider');
+            $this->audit->write($action, $locked->business, target: $locked, before: $before, after: ['status' => $locked->status->value, 'restriction_level' => $locked->restriction_level->value, 'plan_id' => $locked->billing_plan_id, 'price_id' => $locked->billing_plan_price_id, 'billing_interval' => $locked->billing_interval?->value], source: 'provider');
 
             return $locked->fresh();
         });

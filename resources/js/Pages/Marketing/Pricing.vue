@@ -11,7 +11,7 @@ import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import { emitMarketingEvent } from '@/Support/marketingTelemetry';
 
-const props = defineProps({ catalog: Object });
+const props = defineProps({ catalog: Object, seo: Object });
 const page = usePage();
 const interval = ref('monthly');
 const authenticated = computed(() => Boolean(page.props.auth?.user));
@@ -35,7 +35,7 @@ const faq = computed(() => [
     { question: 'Does ClipperDesk include a trial?', answer: `A verified owner registration starts a ${props.catalog.trial_days}-day trial. Registration itself does not charge a payment method.` },
     { question: 'What changes between monthly and annual billing?', answer: 'The selected interval changes the subscription cadence. Annual savings shown above are calculated from the currently effective monthly and annual catalog prices.' },
     { question: 'Can I cancel?', answer: 'Paid cancellation is scheduled for the end of the current period by default. Access, billing recovery and dated export availability follow the verified subscription lifecycle.' },
-    { question: 'Are appointment payments included?', answer: 'No. Stripe subscription billing and salon-client deposits remain separate commerce flows with separate records and webhook endpoints.' },
+    { question: 'Are appointment payments included?', answer: 'No. Stripe subscription billing and each service business\'s client deposits remain separate commerce flows with separate records and webhook endpoints.' },
     { question: 'What about taxes and payment fees?', answer: 'Stripe presents the configured subscription tax and final total during hosted Checkout. This page does not claim a universal tax or processing-fee outcome.' },
 ]);
 watch(interval, (value) => emitMarketingEvent('marketing_pricing_interval_changed', { interval: value }));
@@ -43,7 +43,7 @@ watch(interval, (value) => emitMarketingEvent('marketing_pricing_interval_change
 
 <template>
     <HomeLayout>
-        <Head title="ClipperDesk pricing for salons and barbershops" />
+        <Head :title="seo.title" />
         <section class="cd-public-section cd-family-hero" data-tone="amber">
             <PublicContainer>
                 <Breadcrumbs :items="[{ label: 'Home', href: route('marketing.home') }, { label: 'Pricing' }]" />
@@ -105,7 +105,7 @@ watch(interval, (value) => emitMarketingEvent('marketing_pricing_interval_change
 
         <section class="cd-public-section bg-[var(--surface-subtle)]">
             <PublicContainer>
-                <SectionHeading eyebrow="Commercial clarity" title="Subscription billing is separate from salon payments" description="Stripe hosts the ClipperDesk SaaS checkout. Appointment deposits, retail tenders and client payment evidence belong to each salon's operating workflow and are not bundled into the subscription price." />
+                <SectionHeading eyebrow="Commercial clarity" title="Subscription billing is separate from client payments" description="Stripe hosts the ClipperDesk SaaS checkout. Appointment deposits, retail tenders and client payment evidence belong to each service business's operating workflow and are not bundled into the subscription price." />
                 <div class="mt-9 max-w-4xl rounded-[var(--radius-lg)] border-l-4 border-[var(--status-warning)] bg-white p-6 leading-7 text-[var(--text-muted)]"><strong class="text-[var(--text-strong)]">Launch qualification:</strong> live Stripe checkout remains blocked until the production domain, credentials, price mappings, webhook, portal and settlement path are certified. Public pricing never opens a test checkout. Review the proposed <Link :href="route('refund.show')" class="font-bold text-[var(--action-primary)] underline underline-offset-4">refund and cancellation policy</Link> before paid checkout.</div>
             </PublicContainer>
         </section>

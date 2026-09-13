@@ -14,8 +14,10 @@ use App\Domain\ClientRecords\Models\ClientFormTemplate;
 use App\Domain\Communications\Models\CommunicationMessage;
 use App\Domain\Communications\Models\CommunicationTemplate;
 use App\Domain\Inventory\Models\InventoryProduct;
+use App\Domain\MoneyCommerce\Models\Sale;
 use App\Domain\PlatformAccess\Enums\BusinessStatus;
 use App\Domain\Reporting\Models\ReportExport;
+use App\Domain\SchedulingOperations\Models\Appointment;
 use Database\Factories\BusinessFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +36,7 @@ class Business extends Model
         'slug',
         'booking_slug',
         'business_type',
+        'description',
         'country_code',
         'locale',
         'currency_code',
@@ -52,6 +55,7 @@ class Business extends Model
         'privacy_url',
         'logo_path',
         'cover_image_path',
+        'brand_color',
         'configuration_published_at',
         'online_booking_enabled',
         'online_staff_preference',
@@ -176,6 +180,16 @@ class Business extends Model
     public function clients(): HasMany
     {
         return $this->hasMany(Client::class);
+    }
+
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
+    public function sales(): HasMany
+    {
+        return $this->hasMany(Sale::class);
     }
 
     public function clientFormTemplates(): HasMany

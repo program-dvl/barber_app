@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Shop;
 
+use App\Domain\Billing\Services\EntitlementEvaluator;
 use App\Domain\BusinessConfiguration\Services\BusinessActivationManager;
 use App\Domain\BusinessConfiguration\Services\OnboardingManager;
 use App\Domain\BusinessConfiguration\Services\ReadinessEvaluator;
@@ -22,12 +23,15 @@ class LocationSetupController extends Controller
         private readonly BusinessActivationManager $activation,
         private readonly OnboardingManager $onboarding,
         private readonly ReadinessEvaluator $readiness,
+        private readonly EntitlementEvaluator $entitlements,
     ) {}
 
     public function index(Business $business): Response
     {
         $this->authorizeManage();
         $this->onboarding->resume($business);
+
+        $locationDecision = $this->entitlements->decide($business, 'locations.max', 'create', 1);
 
         return Inertia::render('Activation/Location', [
             'business' => $business->only(['public_id', 'name', 'address', 'phone', 'email', 'country_code', 'time_zone']),
@@ -37,6 +41,12 @@ class LocationSetupController extends Controller
             ]),
             'readiness' => $this->readiness->evaluate($business)->toArray(),
             'timeZones' => config('reference-data.time_zones', []),
+            'locationAllowance' => [
+                'can_add' => $locationDecision->allowed,
+                'limit' => $locationDecision->entitledValue,
+                'used' => $locationDecision->currentUsage ?? $business->locations()->where('is_active', true)->count(),
+                'reason' => $locationDecision->code,
+            ],
         ]);
     }
 
@@ -45,6 +55,7 @@ class LocationSetupController extends Controller
         $this->authorizeManage();
         $data = $request->validate([
             'location' => ['nullable', 'string'],
+            'create_new' => ['nullable', 'boolean'],
             'name' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:1000'],
             'time_zone' => ['required', 'timezone:all'],

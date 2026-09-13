@@ -58,7 +58,7 @@ class Handler extends ExceptionHandler
                 'state' => [
                     'code' => 'permission_denied',
                     'title' => "You don't have permission to access this area",
-                    'description' => 'Your current salon role does not permit this action. Contact your salon administrator if you believe your access should be updated.',
+                    'description' => 'Your current business role does not permit this action. Contact your business administrator if you believe your access should be updated.',
                     'action' => null,
                 ],
             ])->toResponse($request)->setStatusCode(403);

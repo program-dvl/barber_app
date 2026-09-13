@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './workspace.css';
 
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
@@ -108,6 +109,12 @@
     --type-leading-body: 1.6;
     --space-unit: 0.25rem;
     --content-width: 76rem;
+    --control-height: 2.75rem;
+    --control-radius: 0.5rem;
+    --panel-radius: 0.75rem;
+    --panel-padding: 1.25rem;
+    --section-gap: 1.25rem;
+    --shadow-menu: 0 4px 12px rgb(15 23 42 / 0.06), 0 16px 40px rgb(15 23 42 / 0.12);
 
     /* DaisyUI compatibility for retained Larafast surfaces. */
     --color-base-100: var(--surface-raised);

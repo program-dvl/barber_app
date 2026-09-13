@@ -155,6 +155,43 @@ it('fails safely for changed policy expired flow and an unconnected required dep
     CarbonImmutable::setTestNow();
 });
 
+it('returns an actionable conflict when availability is requested with an expired flow', function () {
+    $path = publicBookingPath();
+    $started = app(PublicBookingService::class)->start($path['business']);
+    $started['flow']->update(['expires_at' => now()->subMinute()]);
+
+    $this->postJson(route('public.booking.search', $path['business']->booking_slug), [
+        'flow' => $started['flow']->public_id,
+        'secret' => $started['secret'],
+        'location' => $path['location']->public_id,
+        'services' => [$path['service']->public_id],
+        'staff' => $path['staff']->public_id,
+        'from_date' => now()->addDay()->toDateString(),
+        'until_date' => now()->addDay()->toDateString(),
+        'client_eligibility' => 'new',
+    ])->assertConflict()
+        ->assertJsonPath('code', 'BOOKING_FLOW_EXPIRED')
+        ->assertJsonPath('message', 'This booking session expired. Start again to see current availability.');
+});
+
+it('records a selected client cancellation reason through secure self service', function () {
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata')->utc());
+    $path = publicBookingPath();
+    $held = heldPublicFlow($path);
+    $appointment = app(PublicBookingService::class)->confirm($path['business'], $held['flow'], [
+        'client_name' => 'Jordan', 'client_mobile' => '+911', 'client_email' => 'j@example.test',
+    ], 'reasoned-cancel-confirm')['appointment'];
+    $cancel = app(SecureAppointmentLinkService::class)->issue($appointment->loadMissing('business'), 'cancel');
+
+    $this->post(route('public.appointment.mutate', [$cancel['token'], 'cancel']), [
+        'reason_code' => 'unwell', 'confirmed' => true, 'idempotency_key' => 'reasoned-client-cancel',
+    ])->assertRedirect()->assertSessionHasNoErrors();
+
+    expect($appointment->fresh()->status)->toBe('cancelled_by_client')
+        ->and($appointment->changes()->latest('id')->value('reason'))->toBe('Client cancelled because they are unwell.');
+    CarbonImmutable::setTestNow();
+});
+
 it('keeps secure links purpose-bound expiring revocable and versioned for self-service changes', function () {
     CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata')->utc());
     $path = publicBookingPath();

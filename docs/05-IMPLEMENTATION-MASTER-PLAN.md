@@ -75,7 +75,9 @@ E16 APIs/integrations builds after domain contracts and event schemas stabilize.
 
 - Map typed 401/403/409/422 business states to full-page, banner, inline, or plan-lock components.
 - Eliminate raw error HTML inside dialogs/iframes.
-- Contextual billing CTAs: current, upgrade, downgrade, switch interval, manage, cancel, resume.
+- Contextual billing CTAs: current, Stripe-confirmed upgrade, switch interval,
+  manage, cancel, and resume. Lower-plan changes remain support-controlled and
+  are not offered as owner self-service.
 
 ### Data/integrations
 
@@ -98,10 +100,13 @@ E16 APIs/integrations builds after domain contracts and event schemas stabilize.
 
 **Classification:** REFACTOR (UI/orchestration), EXISTING – keep (provisioning/readiness)
 
-**Wave 2 status (2026-08-31):** Core activation exit delivered. Salon setup now
-orchestrates focused Location, Team, Services, policy, preview and publish work;
-regional suggestions and persistence remain centralized. The taxonomy/profile
-schema expansion and versioned answer payloads below remain later scale work.
+**Wave 2 status (updated 2026-09-13):** Core activation and the adaptive
+first-run experience are delivered. Business setup now begins with four
+versioned, resumable decisions and safely generates editable starter records in
+the canonical Location, Team, Services, commerce and public-booking models.
+Regional suggestions and persistence remain centralized. A separate relational
+taxonomy/profile schema is still later scale work; the current versioned config
+and answer payload deliberately avoid duplicating product sources of truth.
 
 ### Feature / user story
 

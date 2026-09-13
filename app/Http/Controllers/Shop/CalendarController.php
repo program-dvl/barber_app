@@ -52,7 +52,8 @@ class CalendarController extends Controller
             'pending_confirmation', 'confirmed', 'arrived', 'checked_in', 'in_service',
             'completed', 'cancelled_by_client', 'cancelled_by_shop', 'no_show', 'late', 'rescheduled',
         ]));
-        $view = in_array($request->input('view'), ['today', 'day', 'week', 'staff'], true) ? $request->input('view') : 'today';
+        $view = in_array($request->input('view'), ['today', 'day', 'week', 'staff'], true) ? $request->input('view') : 'day';
+        $view = $view === 'today' ? 'day' : $view;
         $date = CarbonImmutable::parse($request->input('date', 'today'), $location->time_zone);
 
         return Inertia::render('Operations/Calendar', [
@@ -66,6 +67,7 @@ class CalendarController extends Controller
                 'locations' => $locations->map->only(['public_id', 'name', 'time_zone']),
                 'staff' => $staff->map->only(['public_id', 'display_name']),
                 'services' => $service->map->only(['public_id', 'name', 'minimum_notice_minutes']),
+                'cancellationReasons' => config('reference-data.appointment_cancellation_reasons.business', []),
             ],
             'bookingRules' => [
                 'intervalMinutes' => max(1, (int) ($business->appointment_interval_minutes ?: 15)),

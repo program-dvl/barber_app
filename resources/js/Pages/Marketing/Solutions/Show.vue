@@ -8,12 +8,12 @@ import HomeLayout from '@/Layouts/HomeLayout.vue';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ solution: Object, features: Array });
+defineProps({ solution: Object, features: Array, seo: Object });
 </script>
 
 <template>
     <HomeLayout>
-        <Head :title="solution.title" />
+        <Head :title="seo.title" />
         <section class="cd-solution-hero" :data-accent="solution.accent">
             <PublicContainer class="grid gap-10 py-12 sm:py-16 lg:grid-cols-[0.86fr_1.14fr] lg:items-center lg:gap-14 lg:py-20">
                 <div>

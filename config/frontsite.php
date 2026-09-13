@@ -4,6 +4,8 @@ return [
     'features' => [
         'online-booking' => [
             'label' => 'Online booking',
+            'seo_title' => 'Online booking software for service businesses | ClipperDesk',
+            'image' => '/images/marketing/editorial/use-cases-front-desk.webp',
             'title' => 'Online booking that respects the working calendar',
             'description' => 'Give clients a focused mobile path while ClipperDesk keeps staff, service, resource and policy decisions in the same scheduling engine.',
             'definition' => 'Online booking in ClipperDesk is the client-facing use of the same availability, capacity-hold and booking-commit rules used by the front desk.',
@@ -27,6 +29,8 @@ return [
         ],
         'calendar-and-walk-ins' => [
             'label' => 'Calendar and walk-ins',
+            'seo_title' => 'Calendar and walk-in software for service businesses | ClipperDesk',
+            'image' => '/images/marketing/industries/barbershop.webp',
             'title' => 'Run booked appointments and walk-ins in one operational day',
             'description' => 'Coordinate staff time, required resources, appointment changes, blocks and the walk-in queue without bypassing the scheduling rules.',
             'definition' => 'The ClipperDesk calendar is an operational view over governed Appointment lifecycle and capacity commands, not a free-form grid that writes times directly.',
@@ -50,6 +54,8 @@ return [
         ],
         'client-management' => [
             'label' => 'Client management',
+            'seo_title' => 'Client management software for service businesses | ClipperDesk',
+            'image' => '/images/marketing/industries/nail-salon.webp',
             'title' => 'Keep useful client context without weakening consent or access',
             'description' => 'Bring visits, preferences, protected notes, forms, consent and attachments together with permission-aware history.',
             'definition' => 'Client management in ClipperDesk is a Business-owned service record linked to booking, communication and commerce history, with narrower access for sensitive context.',
@@ -73,6 +79,8 @@ return [
         ],
         'checkout-and-reporting' => [
             'label' => 'Checkout and reporting',
+            'seo_title' => 'Checkout and reporting for service businesses | ClipperDesk',
+            'image' => '/images/marketing/editorial/pricing-decision.webp',
             'title' => 'Close the service and keep the numbers explainable',
             'description' => 'Carry completed work into checkout, receipts, stock, commission and reports with append-only corrections and source-level drill-down.',
             'definition' => 'Checkout and reporting in ClipperDesk use completed Sale and Payment evidence as the common source for revenue, inventory, commission, tip and export projections.',
@@ -98,6 +106,7 @@ return [
     'solutions' => [
         'barbershops' => [
             'label' => 'Barbershops',
+            'seo_title' => 'Barbershop scheduling and walk-in software | ClipperDesk',
             'title' => 'Barbershop software for booked clients and the walk-in line',
             'description' => 'Keep fast services, walk-ins, staff columns, client context and checkout in one front-desk day.',
             'image' => '/images/marketing/industries/barbershop.webp',
@@ -116,6 +125,7 @@ return [
         ],
         'salons' => [
             'label' => 'Salons',
+            'seo_title' => 'Salon booking and business management software | ClipperDesk',
             'title' => 'Salon software that carries multi-service work through the day',
             'description' => 'Coordinate service timing, staff handoffs, client preferences, booking policy and checkout without splitting the visit into disconnected records.',
             'image' => '/images/marketing/industries/home-salon-hero.webp',
@@ -134,6 +144,7 @@ return [
         ],
         'independent-stylists' => [
             'label' => 'Independent stylists',
+            'seo_title' => 'Independent stylist booking software | ClipperDesk',
             'title' => 'A simpler operating system for an independent stylist',
             'description' => 'Move from guided setup to booking, the working calendar, client history and checkout without needing a separate admin team.',
             'image' => '/images/marketing/industries/independent-stylist.webp',
@@ -152,6 +163,7 @@ return [
         ],
         'spas' => [
             'label' => 'Spa & sauna',
+            'seo_title' => 'Spa and sauna scheduling software | ClipperDesk',
             'title' => 'Spa scheduling that reserves the room as well as the practitioner',
             'description' => 'Coordinate qualified staff, rooms or equipment, multi-segment treatments and consultation evidence with explicit limits.',
             'image' => '/images/marketing/industries/spa-sauna.webp',
@@ -170,6 +182,7 @@ return [
         ],
         'nail-salons' => [
             'label' => 'Nail salons',
+            'seo_title' => 'Nail salon booking and scheduling software | ClipperDesk',
             'title' => 'Nail salon software for a beautifully coordinated appointment book',
             'description' => 'Keep technicians, manicure stations, service timing, client preferences and checkout moving in one polished day.',
             'image' => '/images/marketing/industries/nail-salon.webp',
@@ -188,6 +201,7 @@ return [
         ],
         'medspas' => [
             'label' => 'Medspas',
+            'seo_title' => 'Medspa scheduling and business software | ClipperDesk',
             'title' => 'Medspa scheduling and client operations—with clinical boundaries kept clear',
             'description' => 'Coordinate appointments, rooms, practitioner availability, intake forms and payments for non-clinical business operations.',
             'image' => '/images/marketing/industries/medspa.webp',
@@ -206,6 +220,7 @@ return [
         ],
         'massage' => [
             'label' => 'Massage',
+            'seo_title' => 'Massage studio booking software | ClipperDesk',
             'title' => 'Massage studio software that protects practitioner time and room capacity',
             'description' => 'Bring online booking, practitioner schedules, treatment rooms, client preferences and checkout into one calm flow.',
             'image' => '/images/marketing/industries/massage.webp',
@@ -224,6 +239,7 @@ return [
         ],
         'fitness-recovery' => [
             'label' => 'Fitness & recovery',
+            'seo_title' => 'Fitness and recovery scheduling software | ClipperDesk',
             'title' => 'Fitness and recovery scheduling for coached, appointment-led sessions',
             'description' => 'Coordinate coaches, rooms, recovery equipment, client bookings and payments across a busy studio day.',
             'image' => '/images/marketing/industries/fitness-recovery.webp',
@@ -242,6 +258,7 @@ return [
         ],
         'physical-therapy' => [
             'label' => 'Physical therapy',
+            'seo_title' => 'Physical therapy scheduling software | ClipperDesk',
             'title' => 'Physical therapy scheduling for the non-clinical side of the practice',
             'description' => 'Coordinate appointment capacity, rooms, practitioners, reminders and payments while keeping clinical systems separate.',
             'image' => '/images/marketing/industries/physical-therapy.webp',
@@ -260,6 +277,7 @@ return [
         ],
         'health-practices' => [
             'label' => 'Health practices',
+            'seo_title' => 'Health practice scheduling software | ClipperDesk',
             'title' => 'Appointment and business software for independent health practices',
             'description' => 'Organise practitioner calendars, client-facing booking, business forms and payment records without pretending to replace clinical systems.',
             'image' => '/images/marketing/industries/health-practice.webp',
@@ -278,6 +296,7 @@ return [
         ],
         'tattoo-piercing' => [
             'label' => 'Tattooing & piercing',
+            'seo_title' => 'Tattoo and piercing studio software | ClipperDesk',
             'title' => 'Tattoo and piercing studio software for consultations, sessions and the chair plan',
             'description' => 'Coordinate artists, stations, consultation forms, appointment changes, deposits and checkout in one studio workflow.',
             'image' => '/images/marketing/industries/tattoo-piercing.webp',
@@ -296,6 +315,7 @@ return [
         ],
         'pet-grooming' => [
             'label' => 'Pet grooming',
+            'seo_title' => 'Pet grooming booking and scheduling software | ClipperDesk',
             'title' => 'Pet grooming software for busy tables, groomers and repeat visits',
             'description' => 'Coordinate service timing, groomer availability, stations, client contact, pet context and checkout across the day.',
             'image' => '/images/marketing/industries/pet-grooming.webp',
@@ -314,6 +334,7 @@ return [
         ],
         'tanning-studios' => [
             'label' => 'Tanning studios',
+            'seo_title' => 'Tanning studio booking software | ClipperDesk',
             'title' => 'Tanning studio software for rooms, sessions and a polished client journey',
             'description' => 'Coordinate room capacity, staff, client booking, operational forms and checkout with clear limits.',
             'image' => '/images/marketing/industries/tanning-studio.webp',
@@ -334,6 +355,8 @@ return [
     'use_cases' => [
         'reduce-scheduling-conflicts' => [
             'label' => 'Reduce scheduling conflicts',
+            'seo_title' => 'How to reduce scheduling conflicts | ClipperDesk',
+            'image' => '/images/marketing/editorial/product-workday.webp',
             'title' => 'Reduce scheduling conflicts by checking the same capacity twice',
             'description' => 'Use one availability model for client booking and front-desk changes, then revalidate staff, service and resource capacity before committing the appointment.',
             'answer' => 'Scheduling conflicts are best reduced by making every booking path use the same working hours, staff eligibility, service duration and resource rules. ClipperDesk searches those rules, places a short capacity hold and checks them again at confirmation; it helps prevent conflicts but cannot eliminate incorrect configuration or real-world disruption.',
@@ -352,6 +375,8 @@ return [
         ],
         'manage-walk-ins-and-appointments' => [
             'label' => 'Manage walk-ins and appointments',
+            'seo_title' => 'Manage walk-ins and appointments together | ClipperDesk',
+            'image' => '/images/marketing/industries/barbershop.webp',
             'title' => 'Manage walk-ins without losing sight of booked appointments',
             'description' => 'Capture the queue, explain the estimate and revalidate capacity before a walk-in becomes an appointment on the working calendar.',
             'answer' => 'Booked appointments and walk-ins can share one operating view when the queue remains a request—not a hidden calendar reservation—until staff and time are assigned. ClipperDesk keeps queue evidence beside the calendar and validates capacity when the walk-in is converted.',
@@ -370,6 +395,8 @@ return [
         ],
         'protect-time-with-deposits' => [
             'label' => 'Protect time with deposits',
+            'seo_title' => 'Booking deposits for service businesses | ClipperDesk',
+            'image' => '/images/marketing/editorial/pricing-decision.webp',
             'title' => 'Use deposits as one part of a clear booking policy',
             'description' => 'Show the current deposit and cancellation terms before confirmation, preserve the accepted policy version and apply completed payment evidence at checkout.',
             'answer' => 'A deposit can help protect reserved time when the amount, due point, cancellation terms and refund handling are clear. ClipperDesk can calculate and snapshot configured policy, but live collection depends on an approved payment provider and no deposit guarantees attendance.',
@@ -388,6 +415,8 @@ return [
         ],
         'keep-client-history-together' => [
             'label' => 'Keep client history together',
+            'seo_title' => 'Keep service business client history connected | ClipperDesk',
+            'image' => '/images/marketing/industries/spa-sauna.webp',
             'title' => 'Keep useful client history connected to the service record',
             'description' => 'Connect visits, preferences, protected notes, forms, consent, messages and purchases while keeping sensitive context permission-aware.',
             'answer' => 'A useful client history connects service and commerce records without turning every note into public team context. ClipperDesk keeps one Business-owned profile with authored, permission-aware records and conservative matching rather than silently merging similar people.',
@@ -407,6 +436,8 @@ return [
     ],
     'guides' => [
         'booking-policy-basics' => [
+            'seo_title' => 'Booking policy guide for service businesses | ClipperDesk',
+            'image' => '/images/marketing/editorial/resources-planning.webp',
             'title' => 'Booking policy basics for a clearer client decision',
             'description' => 'A practical framework for making booking, deposit, cancellation and change terms visible and operable.',
             'topic' => 'Booking policy', 'published_at' => '2026-08-16', 'reviewed_by' => 'ClipperDesk Product and Engineering',
@@ -422,9 +453,11 @@ return [
             'feature' => 'online-booking',
         ],
         'salon-opening-checklist' => [
-            'title' => 'A salon opening checklist grounded in the working day',
+            'seo_title' => 'Service business opening checklist | ClipperDesk',
+            'image' => '/images/marketing/industries/independent-stylist.webp',
+            'title' => 'A service business opening checklist grounded in the working day',
             'description' => 'Prepare the minimum business, location, service, staff and booking rules needed before sharing an online booking link.',
-            'topic' => 'Salon setup', 'published_at' => '2026-08-16', 'reviewed_by' => 'ClipperDesk Product and Engineering',
+            'topic' => 'Business setup', 'published_at' => '2026-08-16', 'reviewed_by' => 'ClipperDesk Product and Engineering',
             'intro' => 'Opening readiness is clearer when it names each blocking operating fact instead of hiding the work behind a percentage. Complete the facts your calendar and clients depend on first.',
             'sections' => [
                 ['title' => 'Define the Business and location day', 'body' => 'Confirm display name, time zone, currency, address/contact context and the local opening intervals that determine bookable time.'],
@@ -433,7 +466,7 @@ return [
                 ['title' => 'Preview before publishing', 'body' => 'Review policy, booking questions and client-facing choices with synthetic bookings, then publish the Business-specific booking route only when the blockers are clear.'],
             ],
             'checklist' => ['Business name, time zone and currency', 'Location details and weekly hours', 'Service duration, price and eligibility', 'Staff assignments, hours and breaks', 'Resource quantities where needed', 'Booking/deposit/cancellation policy', 'Owner preview and readiness review'],
-            'limitation' => 'This checklist does not replace tax, employment, licensing, safety, insurance or privacy advice for a specific salon.',
+            'limitation' => 'This checklist does not replace tax, employment, licensing, safety, insurance or privacy advice for a specific service business.',
             'feature' => 'calendar-and-walk-ins',
         ],
     ],

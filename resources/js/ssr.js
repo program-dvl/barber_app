@@ -10,7 +10,11 @@ createServer((page) =>
     createInertiaApp({
         page,
         render: renderToString,
-        title: (title) => `${title} - ${page.props.brand?.product_name || 'ClipperDesk'}`,
+        title: (title) => {
+            const productName = page.props.brand?.product_name || 'ClipperDesk';
+
+            return title.toLowerCase().includes(productName.toLowerCase()) ? title : `${title} | ${productName}`;
+        },
         resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
         setup({ App, props, plugin }) {
             return createSSRApp({ render: () => h(App, props) })

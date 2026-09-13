@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Domain\BusinessConfiguration\Models\Service;
+use App\Domain\ClientRecords\Models\Client;
+use App\Domain\ClientRecords\Services\ClientIdentityService;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
@@ -17,6 +19,7 @@ use App\Support\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -37,6 +40,7 @@ class WalkInQueueController extends Controller
         $entries = WalkInEntry::query()
             ->where('business_id', $business->id)->where('location_id', $location->id)
             ->whereIn('status', ['waiting', 'notified', 'assigned', 'in_service'])
+            ->with('client')
             ->orderByRaw("CASE status WHEN 'in_service' THEN 1 ELSE 0 END")
             ->orderBy('queue_position')->get();
         $services = Service::query()->where('business_id', $business->id)->where('is_active', true)->orderBy('name')->get();
@@ -51,7 +55,8 @@ class WalkInQueueController extends Controller
             'staff' => $staff->map->only(['public_id', 'display_name']),
             'entries' => $entries->map(fn ($entry) => [
                 'public_id' => $entry->public_id, 'client_name' => $entry->client_name,
-                'client_mobile' => $entry->client_mobile, 'status' => $entry->status,
+                'client_mobile' => $entry->client_mobile, 'client_email' => $entry->client_email,
+                'client_public_id' => $entry->client?->public_id, 'status' => $entry->status,
                 'queue_position' => $entry->queue_position, 'estimated_wait_minutes' => $entry->estimated_wait_minutes,
                 'estimated_service_at' => $entry->estimated_service_at?->setTimezone($location->time_zone)->toIso8601String(),
                 'arrived_at' => $entry->arrived_at->setTimezone($location->time_zone)->toIso8601String(),
@@ -66,23 +71,54 @@ class WalkInQueueController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, WalkInQueueService $queue, TenantContext $context, AuditWriter $audit): RedirectResponse
+    public function searchClients(Request $request, Business $business, TenantContext $context)
+    {
+        abort_unless($context->membership()?->hasPermissionTo(PermissionName::WalkInsManage->value, 'web'), 403);
+        $data = $request->validate(['q' => ['required', 'string', 'min:2', 'max:100']]);
+        $term = str_replace(['%', '_'], '', mb_strtolower(trim($data['q'])));
+        $clients = Client::query()->where('business_id', $business->id)->where('status', 'active')->whereNotNull('mobile')
+            ->where(function ($query) use ($term): void {
+                $query->whereRaw('lower(name) like ?', ["%{$term}%"])
+                    ->orWhere('normalized_mobile', 'like', "%{$term}%")
+                    ->orWhere('normalized_email', 'like', "%{$term}%");
+            })->orderBy('name')->limit(8)->get(['public_id', 'name', 'mobile', 'email']);
+
+        return response()->json(['clients' => $clients]);
+    }
+
+    public function store(Request $request, Business $business, WalkInQueueService $queue, ClientIdentityService $clients, TenantContext $context, AuditWriter $audit): RedirectResponse
     {
         $membership = $context->membership();
         abort_unless($membership?->hasPermissionTo(PermissionName::WalkInsManage->value, 'web'), 403);
         $data = $request->validate([
             'location' => ['required', 'string'], 'service' => ['required', 'string'], 'preferred_staff' => ['nullable', 'string'],
-            'client_name' => ['required', 'string', 'max:255'], 'client_mobile' => ['required', 'string', 'max:32', new E164Phone],
+            'client_mode' => ['required', 'in:existing,new'], 'client' => ['nullable', 'string'],
+            'client_name' => ['required_if:client_mode,new', 'nullable', 'string', 'max:255'], 'client_mobile' => ['required_if:client_mode,new', 'nullable', 'string', 'max:32', new E164Phone],
+            'client_email' => ['nullable', 'email', 'max:255'],
             'arrived_at' => ['required', 'date'], 'notes' => ['nullable', 'string', 'max:2000'],
         ]);
         $location = Location::query()->where('business_id', $business->id)->where('public_id', $data['location'])->firstOrFail();
         abort_unless($membership->hasRole('owner', 'web') || $membership->locations()->whereKey($location->id)->exists(), 403);
         $service = Service::query()->where('business_id', $business->id)->where('public_id', $data['service'])->firstOrFail();
         $staff = isset($data['preferred_staff']) ? StaffProfile::query()->where('business_id', $business->id)->where('public_id', $data['preferred_staff'])->firstOrFail() : null;
-        $entry = $queue->add(
-            $business->id, $location->id, $service->id, $data['client_name'], $data['client_mobile'], $staff?->id,
-            CarbonImmutable::parse($data['arrived_at'], $location->time_zone)->utc(), $data['notes'] ?? null, 'reception', 'user', $request->user()->id,
-        );
+        $entry = DB::transaction(function () use ($data, $business, $location, $service, $staff, $queue, $clients, $request) {
+            if ($data['client_mode'] === 'existing') {
+                $client = Client::query()->where('business_id', $business->id)->where('status', 'active')
+                    ->where('public_id', $data['client'] ?? '')->firstOrFail();
+                abort_unless(filled($client->mobile), 422, 'The selected client needs a mobile number before joining the queue.');
+            } else {
+                $client = $clients->createManual($business, [
+                    'name' => $data['client_name'], 'mobile' => $data['client_mobile'],
+                    'email' => $data['client_email'] ?? null, 'referral_source' => 'walk_in',
+                ])['client'];
+            }
+
+            return $queue->add(
+                $business->id, $location->id, $service->id, $client->name, $client->mobile, $staff?->id,
+                CarbonImmutable::parse($data['arrived_at'], $location->time_zone)->utc(), $data['notes'] ?? null, 'reception', 'user', $request->user()->id,
+                $client->id, $client->email,
+            );
+        }, 3);
         $audit->write('walk_in.created', $business, $request->user(), $entry, null, [], ['public_id' => $entry->public_id, 'queue_position' => $entry->queue_position], [], 'queue');
 
         return back()->with('status', 'Walk-in added with an evidence-based wait estimate.');

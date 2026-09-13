@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, ref } from 'vue';
+import { nextTick, ref, useId } from 'vue';
 import AppButton from '@/Components/Product/AppButton.vue';
 
 const props = defineProps({
@@ -12,12 +12,18 @@ const props = defineProps({
         type: String,
         default: 'Confirm',
     },
+    cancelLabel: {
+        type: String,
+        default: 'Cancel',
+    },
     destructive: Boolean,
     closeOnConfirm: { type: Boolean, default: true },
     confirmDisabled: Boolean,
+    drawer: Boolean,
 });
 
 const emit = defineEmits(['confirm', 'cancel']);
+const uid = useId();
 const dialog = ref(null);
 const cancelButton = ref(null);
 const opener = ref(null);
@@ -51,22 +57,25 @@ defineExpose({ open, close });
 <template>
     <dialog
         ref="dialog"
-        class="m-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-0 text-[var(--text-default)] shadow-[var(--shadow-overlay)] backdrop:bg-black/45"
-        :aria-labelledby="`${$attrs.id || 'app-dialog'}-title`"
-        :aria-describedby="description ? `${$attrs.id || 'app-dialog'}-description` : undefined"
+        class="cd-dialog m-auto w-[calc(100%-2rem)] max-w-lg rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-0 text-[var(--text-default)] shadow-[var(--shadow-overlay)] backdrop:bg-slate-950/40 backdrop:backdrop-blur-[2px]"
+        :class="{ 'cd-dialog-drawer': drawer }"
+        :aria-labelledby="`${$attrs.id || uid}-title`"
+        :aria-describedby="description ? `${$attrs.id || uid}-description` : undefined"
         @cancel.prevent="cancel"
         @keydown.esc.stop.prevent="cancel"
         @click.self="cancel"
     >
-        <div class="p-5 sm:p-6">
+        <div class="cd-dialog-header">
             <div v-if="destructive" class="mb-4 grid size-10 place-items-center rounded-full bg-[var(--status-danger-soft)] text-[var(--status-danger)]" aria-hidden="true">!</div>
-            <h2 :id="`${$attrs.id || 'app-dialog'}-title`" class="text-lg font-semibold text-[var(--text-strong)]">{{ title }}</h2>
-            <p v-if="description" :id="`${$attrs.id || 'app-dialog'}-description`" class="mt-2 text-sm leading-6 text-[var(--text-muted)]">{{ description }}</p>
-            <div class="mt-4"><slot /></div>
-            <div class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                <AppButton ref="cancelButton" variant="secondary" @click="cancel">Cancel</AppButton>
-                <AppButton :variant="destructive ? 'danger' : 'primary'" :disabled="confirmDisabled" @click="confirm">{{ confirmLabel }}</AppButton>
+            <h2 :id="`${$attrs.id || uid}-title`" class="text-lg font-semibold text-[var(--text-strong)]">{{ title }}</h2>
+            <p v-if="description" :id="`${$attrs.id || uid}-description`" class="mt-2 text-sm leading-6 text-[var(--text-muted)]">{{ description }}</p>
             </div>
-        </div>
+            <div class="cd-dialog-body"><slot /></div>
+            <div class="cd-dialog-footer">
+                <slot name="footer">
+                <AppButton ref="cancelButton" variant="secondary" @click="cancel">{{ cancelLabel }}</AppButton>
+                <AppButton :variant="destructive ? 'danger' : 'primary'" :disabled="confirmDisabled" @click="confirm">{{ confirmLabel }}</AppButton>
+                </slot>
+            </div>
     </dialog>
 </template>

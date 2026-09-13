@@ -4,7 +4,7 @@ Status: Canonical standard; the ClipperDesk visual and component foundation is
 implemented, while individual product surfaces may still require review against
 this document.
 
-Last standards review: 2026-08-25
+Last standards review: 2026-09-13
 
 Last verified foundation evidence: 2026-08-25
 
@@ -420,8 +420,10 @@ is later compressed. Core journeys must work from 360 CSS pixels through
 desktop. Content should reflow before it shrinks; primary actions must remain
 reachable; no essential control may depend on hover.
 
-Interactive targets must be at least 44 by 44 CSS pixels, with enough separation
-for use at a busy front desk. Respect safe areas and virtual keyboards. Keep
+Touch targets must be at least 44 by 44 CSS pixels, with enough separation
+for use at a busy front desk. Authenticated desktop workspaces may use 40px
+standard controls, 32px quiet row actions and 36px menu options on fine-pointer
+devices (ADR-037); mobile and coarse-pointer styles restore 44px targets. Respect safe areas and virtual keyboards. Keep
 forms single-column where width or reading order demands it. Do not trap mobile
 users in wide tables, nested scrolling containers, or full-screen keyboards
 without a visible way to continue.
@@ -621,7 +623,8 @@ License live under `public/fonts/clipperdesk/`. The operative scale is 12px for
 eyebrows and supporting labels, 14-16px for product content and controls,
 18px for lead copy, and a responsive 32-56px range for public section titles.
 Authenticated page titles remain deliberately smaller. The shell uses a 4px
-spacing base, 44px minimum control height, and 48-64px primary mobile targets.
+spacing base, 40px authenticated desktop controls (44px on touch devices),
+and 48-64px primary mobile targets where the workflow benefits from them.
 
 ## Domain and message identity
 
@@ -677,7 +680,7 @@ handling, reply handling, and provider verification are complete.
 | Component | Rule |
 | --- | --- |
 | `PageHeader` | One page-level `h1`, optional eyebrow/description, actions wrap rather than overflow. |
-| `AppButton` | Primary, secondary, quiet, and danger variants; 44px minimum height; disabled state uses native `disabled` plus `aria-disabled`. |
+| `AppButton` | Primary, secondary, quiet, and danger variants; 40px workspace desktop / 44px touch height; disabled state uses native `disabled` plus `aria-disabled`. |
 | `FormField` | Visible label is required; hint and error IDs are passed to the input through slot props; required and error meaning is textual. |
 | `DataTable` | Requires a screen-reader caption and receives keyboard horizontal scrolling when content exceeds the container. |
 | `SurfaceCard` | Raised grouped content with optional heading, description, and actions. Do not nest cards for decoration. |
@@ -842,3 +845,55 @@ administration plus the reusable interface-pattern reference at 1440px. The
 ClipperDesk rebranding adds representative desktop and mobile evidence at the
 same location. Exact automated and browser verification results are recorded in
 `project-status.md` and the dated rebranding audit.
+
+
+## Authenticated workspace refinement (2026-09-13)
+
+ADR-037 establishes a compact operational layer in `resources/css/workspace.css`,
+imported from `app.css`. Scope density rules to `.cd-workspace`; public booking
+continues to use generous default control sizes. Preserve the existing navy,
+indigo and cyan identity and readable 14–16px body text.
+
+| Pattern | Workspace default |
+| --- | --- |
+| Spacing | 4px base; 12px related controls; 16–20px card padding; 20–24px major sections |
+| Controls | 40px desktop, 44px mobile/coarse pointer; 8px corners |
+| Row actions | Explicit small button variant, 32px desktop / 44px touch |
+| Menus | 36px desktop / 44px touch options; 10px corners; restrained menu shadow |
+| Surfaces | 12px panel corners; quiet border; avoid nested empty-state borders |
+| Typography | 24px page heading; 15–18px section headings; 14px body; 12px supporting labels |
+| Tables | 14px body; 12px column labels; approximately 11px vertical cell padding; accessible horizontal overflow |
+| Shell | 240px desktop sidebar, 56px top bar, clearly separated navigation groups |
+| Drawers | 576px maximum, full width on narrow screens, independent body scroll and reachable action footer |
+
+Use `AppSelect` for authenticated single and multiple selection. It retains
+native options, typed values, validation and change events; enhances them with
+search for longer lists, bounded scrolling, selected indicators, keyboard
+navigation, Escape and focus restoration. Keep dates/times native where that
+preserves reliable regional entry. Use semantic labels and associate errors;
+never remove the required reason or other audit inputs to achieve density.
+
+Use shared `SurfaceCard`, `PageHeader`, `FormField`, `AppButton`, `AppDialog`,
+`DataTable` and `StatePanel` before writing a local variant. Keep catalogues
+readable at full width; open add/edit work in a drawer when it would otherwise
+compete with the list. Prefer one searchable report selector over duplicate
+navigation. Disclose secondary calendar filters while preserving visible
+location/date and Day/Week/Team controls. Client section tabs have a tablist,
+selected state, roving focus and keyboard-operable panel navigation.
+
+The calendar details/attention panel starts collapsed so the schedule occupies
+the available width. Its explicit toggle announces expanded state; selecting a
+visit opens actions, and closing returns focus. On narrow screens the panel
+appears above the schedule. Keep the first hour label inside the grid boundary;
+do not move appointment positions to solve label clipping.
+
+Reports display UTC source timestamps in the stated report time zone and use
+human-readable column labels. Preserve the original data and export contracts;
+provide full source references on demand rather than making them the primary
+visual content.
+
+Inventory is temporarily hidden from both navigation menus at the user's
+request. This is menu visibility only; no domain implementation or entitlement
+contract is removed or promoted to a new delivery phase.
+
+Verified screen coverage and limitations: [workspace refinement audit](audits/2026-09-13-workspace-refinement/README.md).

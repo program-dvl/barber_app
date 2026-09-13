@@ -26,7 +26,7 @@ const icon = props.state.code === 'setup_required'
                     <AppButton v-if="state.action" :href="state.action.url">{{ state.action.label }}</AppButton>
                     <AppButton :href="route('business.dashboard', $page.props.tenant.public_id)" variant="secondary">Return to dashboard</AppButton>
                 </div>
-                <p v-if="state.code === 'permission_denied'" class="mt-5 text-xs text-[var(--text-muted)]">Contact your salon administrator if you believe your role should include this area.</p>
+                <p v-if="state.code === 'permission_denied'" class="mt-5 text-xs text-[var(--text-muted)]">Contact your business administrator if you believe your role should include this area.</p>
             </SurfaceCard>
         </div>
     </AppLayout>

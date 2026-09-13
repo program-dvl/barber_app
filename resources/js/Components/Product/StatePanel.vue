@@ -29,7 +29,7 @@ const toneClasses = {
 
 <template>
     <div
-        :class="['rounded-xl border border-[var(--border-subtle)] text-center', compact ? 'p-4' : 'px-5 py-8 sm:px-8']"
+        :class="['cd-state-panel text-center', compact ? 'p-4' : 'px-5 py-8 sm:px-8']"
         :role="tone === 'error' ? 'alert' : tone === 'success' ? 'status' : undefined"
         :aria-busy="tone === 'loading' || undefined"
     >

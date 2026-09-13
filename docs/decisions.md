@@ -1171,6 +1171,14 @@ commercial operating pattern; it may reuse the common product capability set
 but may not imply a vertical-specific module, customer relationship, guaranteed
 outcome, certification, or regulatory approval.
 
+Umbrella acquisition pages define ClipperDesk as appointment scheduling and
+service-business management software for appointment-led beauty, wellness,
+personal-care, fitness, recovery, health and pet-service teams. Salon and barber
+language remains valid on their dedicated industry pages and as representative
+examples, but must not present those two industries as the product's only
+market. Search titles, descriptions, visible answers, image descriptions and
+structured data must stay aligned with that broader, evidence-backed position.
+
 Medspa, physical-therapy, health-practice, massage, tanning, tattoo/piercing,
 and pet-grooming pages must state the relevant boundary. ClipperDesk is not an
 EMR/EHR, clinical chart, diagnosis, prescribing, insurance, veterinary, or
@@ -1187,6 +1195,204 @@ alt text and nearby copy must not imply that the people or premises are actual
 ClipperDesk customers. Product scope remains the shared booking-to-checkout
 operating system; regulated vertical fit is explicitly non-clinical.
 
+### ADR-034: Use a focused Stripe-hosted confirmation for owner plan changes
+
+- **Status:** Accepted on 2026-09-13.
+- **Context:** The former owner flow sent an immediate Subscription update with
+  `pending_if_incomplete`, created local pending state first, and returned only
+  a processing message. A card decline or required customer authentication had
+  no completion surface, leaving the account displaying “Change pending.”
+- **Decision:** ClipperDesk remains the plan-selection and entitlement policy
+  boundary, but owner upgrades and interval switches finish in Stripe's focused
+  Customer Portal `subscription_update_confirm` flow. Stripe previews and
+  applies proration, handles authentication/payment failure, and redirects back
+  only after completion. Signed webhooks remain authoritative, with an
+  authenticated provider snapshot as the delayed-webhook recovery path. Owner
+  self-service does not expose or accept lower-plan changes. Support retains the
+  existing audited period-end downgrade capability required by the PRD.
+- **Consequences:** No local access state changes before provider confirmation;
+  annual-to-monthly switches preserve the paid term; duplicate clicks reuse an
+  idempotent Portal session; generic billing management cannot become a hidden
+  downgrade path; and Stripe credentials need Billing Portal configuration and
+  session permissions in addition to Subscription/Product/Price access.
+
+### ADR-035: Prepare new businesses from four reviewed decisions
+
+- **Status:** Accepted on 2026-09-13.
+- **Owners:** Product, Design, Engineering, Security, and Privacy.
+- **Related requirements:** FR-02 through FR-05, FR-09, ADR-030, ADR-032, and
+  ADR-033.
+
+Context: The canonical Location, Staff, Service, readiness and booking models
+were already strong, but the first owner experience exposed their configuration
+as work. New trial users could enter an empty product or face a large setup
+form before experiencing a calendar or client booking page. “Salon setup” also
+misrepresented the wider appointment-led business scope accepted in ADR-033.
+
+Decision: New onboarding sessions use schema version 2 and collect four small,
+resumable groups: business type, operating shape, first-location region and
+starter services. Confirming those recommendations invokes one retry-safe,
+audited provisioner that writes only to the existing Business, CommerceSetting,
+Location, LocationHour, Membership, StaffProfile, StaffAvailabilityRule,
+ServiceCategory, Service, ServiceSegment and assignment models. Generated
+records and defaults are ordinary editable records, not a second configuration
+system. ReadinessEvaluator remains the only publish authority.
+
+The public owner surface is named Business setup. Setup state remains available
+through a lightweight header drawer that separates essentials from recommended
+refinements. If the reviewed starter workspace is valid, onboarding records the
+preview and publishes it immediately so the completion state can show a live
+booking page and calendar. If the owner is not bookable or another blocker
+remains, the workspace stays usable and the drawer presents the next task.
+
+Existing onboarding sessions are backfilled as guided-complete and receive no
+starter data, configuration overwrite or automatic publish. Brand images remain
+private tenant files and are exposed publicly only through an active, published
+booking slug. An industry image is a labeled fallback, never evidence that a
+pictured business or person is a ClipperDesk customer.
+
+Consequences: Trial time-to-value becomes a prepared workspace instead of an
+administrative checklist; owners can still change type, services, hours, team,
+booking URL, policies and branding afterward. New business profiles remain
+config-driven until a future scale decision justifies relational taxonomy.
+Multi-location expansion, invitations, payments and advanced preferences stay
+progressive tasks and continue to enforce their existing authorization and plan
+limits.
+
+Evidence: `GuidedOnboardingExperienceTest` covers persistence, generated
+records, slug uniqueness, publishability, retry idempotency, regional validation,
+tenant isolation, backward compatibility and private public-media delivery. The
+2026-09-13 combined UX/accessibility audit captures the workspace entry,
+readiness drawer, guided decisions and public booking entry.
+
+### ADR-036: Keep front-desk work canonical, progressive and locally timed
+
+- **Status:** Accepted on 2026-09-13.
+- **Owners:** Product, Design, Engineering, Security, Privacy and Operations.
+- **Related requirements:** FR-02 through FR-08 and FR-11 through FR-18.
+
+Context: The underlying Appointment, Client, Location, Sale, communication and
+reporting domains were already capable, but several owner/front-desk surfaces
+made those capabilities hard to discover. Calendar views repeated one layout,
+time placement was not proportional, actions looked fragmented, walk-ins could
+remain detached from CRM, checkout exposed an implementation-oriented surface,
+and report navigation advertised inventory records before the corresponding
+user workflow was ready.
+
+Decision: Calendar navigation exposes Day, Week and Team as separate models,
+with Today as a date shortcut. All render from the Location's time zone on a
+continuous proportional grid; simultaneous visits receive deterministic visual
+lanes. Appointment mutation continues through the existing append-only
+replacement and lifecycle services. Cancelled appointments and superseded
+versions are excluded from the default active view but remain queryable through
+explicit status filters and history.
+
+A walk-in must reference an existing tenant Client or create one as part of the
+same queue-entry transaction. Location setup creates separate canonical
+Location rows only within the entitlement allowance. Suggested team titles are
+editable descriptive vocabulary and never replace Membership roles or
+permissions.
+
+The current checkout UI records only money received externally and does not
+imply card or online payment processing. It opens/reuses the canonical Sale,
+records an idempotent full-balance tender, issues the existing receipt, queues a
+transactional receipt email and drives the same reporting sources. Reports are
+shown only when their source workflow is part of the visible product; inventory
+report keys remain implemented internally but are hidden for this release.
+
+Transactional appointment and receipt email is on when an email destination
+exists unless the Appointment or Client has explicitly disabled email.
+WhatsApp/SMS delivery is not surfaced until its product, consent and provider
+release is deliberately enabled.
+
+Consequences: Reception work is faster without creating parallel records or
+weakening tenant, permission, capacity, audit, idempotency or time-zone rules.
+The interface can later add online tenders, mobile messaging and inventory
+reports without replacing the canonical Appointment, Client, Sale,
+CommunicationIntent or report contracts.
+
+### ADR-037: Refine authenticated workspace density and shared interactions
+
+- **Status:** Accepted on 2026-09-13, per the product owner's refinement request.
+- **Related requirements:** FR-02 through FR-09, FR-11 through FR-19; PRD usability and accessibility requirements.
+
+Decision: Use an authenticated workspace density layer with 40px standard
+fine-pointer desktop controls, 32px optional row actions and 36px menu options.
+Restore at least 44px targets on mobile/coarse-pointer devices. Preserve body
+readability and the existing brand; reduce excess spacing and duplicate
+navigation before reducing typography. This clarifies the previous universal
+44px rule for daily desktop operations, without reducing touch targets.
+
+Shared native-option select enhancement owns search, selected/disabled states,
+keyboard navigation, validation focus and viewport-aware popovers. Shared
+dialogs own scrolling and stable action footers. Services and provider creation
+use drawers; reports use a single searchable picker. Existing server endpoints,
+permissions, audit reasons, money and scheduling rules remain authoritative.
+
+At the user's explicit follow-up request, hide Inventory from the shared
+navigation source used by desktop and mobile. Retain the underlying module,
+routes and entitlements for later work; this does not authorize deletion or
+expand the current phase. ADR-036's report visibility decision remains intact.
+
+Evidence: [workspace refinement audit](audits/2026-09-13-workspace-refinement/README.md),
+client/SSR builds, six menu boundary tests and the existing application suite.
+
+Follow-up refinement: The user requested a collapsible calendar side panel.
+It starts closed, yields its width to the schedule, and opens through a toggle
+or appointment selection; mobile places it above the grid. The first hour label
+stays within the grid boundary. Report presentation uses readable labels and
+the report's time zone, with optional full source references; three additional
+frontend tests verify UTC/offset/DST formatting and labels.
+
+### ADR-038: Treat team access as a secure invitation attached to a canonical team seat
+
+- **Status:** Accepted on 2026-09-13, per the product owner's team-access request.
+- **Owners:** Product, Engineering and Security.
+- **Related requirements:** FR-01, FR-05 and FR-19; ADR-008 and ADR-013.
+
+Context: The tenant access foundation already separated User, Membership and
+StaffProfile and supported secure invitations, starter/custom permissions,
+revocation and audit evidence. The owner-facing Team workspace created only a
+bookable StaffProfile, however, and explicitly deferred login access. Invitees
+without an existing account also landed behind authenticated middleware, so
+the secure token could not complete their account setup.
+
+Decision: Team setup may create or update the canonical StaffProfile and issue
+its Business-bound Membership invitation in the same owner action. Login access
+remains optional because a schedulable person is not always a software user.
+The existing `staff.max` entitlement remains the operational team-seat limit;
+connecting a login to that profile does not create or charge a duplicate seat.
+
+Invitation links remain hashed, single-use, expiring and bound to the exact
+email, Business, role, locations and optional StaffProfile. Existing Users
+authenticate normally. A new invited identity chooses its own password on the
+invitation surface; possession of the emailed one-time token verifies that
+email before the Membership is activated. ClipperDesk does not generate or
+email temporary passwords.
+
+Owners choose a reviewed starter role or an exact Business-scoped permission
+set. A manager with staff-management access may grant only capabilities already
+held by that manager and may never grant or remove Owner access. No member may
+change or revoke their own access through Team management. Membership role,
+permission and location changes are audited; revocation requires a reason,
+invalidates sessions/tokens promptly and preserves StaffProfile and historical
+actor attribution.
+
+Owners and other `audit.view` roles receive a tenant-scoped Activity workspace
+over append-only AuditEvent records. The UI presents searchable, categorized
+summaries; ordinary users cannot edit/delete evidence and the existing audit
+writer continues to redact credentials and tokens.
+
+Owners may explicitly restore revoked Membership access with a new reason; the
+person then signs in with their existing password rather than receiving a
+second identity or an administrator-known credential.
+
+Consequences: The owner experiences one coherent people-and-access workflow,
+invitees can join without an administrator distributing credentials, and seat
+pricing can rely on the existing team limit without double-counting login
+identity. Production invitation delivery still requires the approved sender
+domain and live transport certification.
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |
@@ -1196,3 +1402,4 @@ operating system; regulated vertical fit is explicitly non-clinical.
 | OPEN-11 | Complete counsel-led ClipperDesk trademark clearance and acquire the approved production domains | ADR-027 selects the identity, but naming rights, domain ownership, sender authentication, and defensive domains are external launch controls | Before public launch, outbound production mail, or printed collateral | **Retained; Critical/High blocker.** Product/Operations and counsel must approve and acquire the final public, app, and booking domains; configuration defaults do not establish ownership. No waiver or expiry exists. |
 | OPEN-12 | Approve marketing attribution/analytics provider, consent class, retention, and accountable privacy owner | Phase 1.5 can implement a bounded first-party event contract, but cannot load a tracker, advertising pixel, fingerprinting, session replay, or claim consent/retention approval | Before enabling any third-party marketing measurement or paid acquisition | **Open; bounded by ADR-024.** Product, Privacy/DPO, and Engineering must name the provider/purpose, allowed properties, consent behavior, retention and deletion process. |
 | OPEN-13 | Approve the legal operator/contact suite and live refund responsibility for subscription and appointment payments | Stripe India website review expects public Terms, Privacy and Return/Refund/Cancellation URLs plus customer-service details and processing timelines; the current appointment adapter records internal refunds but has no certified provider refund executor or approved live merchant-of-record/connected-account allocation | Before legal documents become effective or any live payment is accepted | **Open; Critical/High blocker.** Legal/Product must approve operator, address, governing/dispute/liability terms and version acceptance; Finance/Operations must own direct support, request/decision/submission timelines, and the live Stripe subscription and appointment refund/reconciliation paths. The 2026-08-25 drafts remain `noindex` and non-effective. |
+| OPEN-14 | Restore the module documentation referenced by AGENTS.md | `docs/modules/` is absent in this checkout; PRD, accepted ADRs and the design system guided this presentation-only refinement | Before the next domain scope change | **Open.** Engineering should restore or explicitly replace the referenced implementation specifications. No module behavior was invented to fill the gap. |

@@ -183,6 +183,15 @@ Actions that issue/revoke invitations or revoke access repeat authorization and
 lineage checks rather than trusting the controller. Navigation remains a
 presentation layer only.
 
+Team access is attached to the canonical StaffProfile seat rather than creating
+a parallel user row in setup. A StaffProfile may remain schedulable without a
+login. When access is requested, a hashed and expiring invitation binds its
+Business, email, role, locations and profile; acceptance creates or connects
+the User and Membership and then links the existing profile. New invitees set
+their own password from the one-time email link, while existing Users sign in
+normally and return to accept. Permission changes and revocation flow through
+Business-scoped services and append-only audit events.
+
 ## Architectural style
 
 Use a modular monolith. Domain boundaries should be visible in namespaces,

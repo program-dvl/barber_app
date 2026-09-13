@@ -491,7 +491,7 @@ it('schedules an over-limit downgrade without deleting business resources', func
         ->and($subscription->fresh()->billing_plan_id)->toBe($pro->billing_plan_id);
 });
 
-it('submits one authenticated upgrade to Stripe and exposes a stable processing state', function () {
+it('opens a Stripe-hosted confirmation for an upgrade and clears a legacy stuck change', function () {
     [$owner, $business, $subscription] = stripeTrialBusiness();
     $starter = configuredStripePrice('starter', BillingInterval::Monthly);
     $pro = configuredStripePrice('pro', BillingInterval::Monthly);
@@ -501,28 +501,113 @@ it('submits one authenticated upgrade to Stripe and exposes a stable processing 
         'billing.stripe.webhook_secret' => 'whsec_test_local',
     ]);
 
+    $legacyChange = app(SubscriptionLifecycleManager::class)->requestPlanChange(
+        $subscription,
+        $pro,
+        $owner,
+        'Legacy direct update awaiting Stripe.',
+        false,
+        true,
+    );
+
     $provider = $this->mock(SubscriptionProvider::class, function (MockInterface $mock) use ($subscription, $pro): void {
-        $mock->shouldReceive('changePrice')->once()
-            ->withArgs(fn (BusinessSubscription $candidate, BillingPlanPrice $price, bool $atPeriodEnd) => $candidate->is($subscription)
+        $mock->shouldReceive('planChangePortalUrl')->once()
+            ->withArgs(fn (BusinessSubscription $candidate, BillingPlanPrice $price, string $returnUrl, string $completedUrl) => $candidate->is($subscription)
                 && $price->is($pro)
-                && $atPeriodEnd === false);
+                && str_contains($returnUrl, 'plan_change=canceled')
+                && str_contains($completedUrl, 'plan_change=success'))
+            ->andReturn('https://billing.stripe.test/upgrade-session');
+        $mock->shouldNotReceive('changePrice');
     });
     app()->instance(SubscriptionProvider::class, $provider);
 
     $response = $this->actingAs($owner)->postJson(route('business.billing.plan-change', $business), [
         'price_id' => $pro->getKey(),
-        'timing' => 'immediate',
         'reason' => 'Owner self-service upgrade.',
     ]);
 
-    $response->assertStatus(202)
-        ->assertJsonPath('status', 'processing')
-        ->assertJsonStructure(['change_id', 'message']);
-    expect($subscription->changes()->whereNull('applied_at')->whereNull('superseded_at')->count())->toBe(1);
+    $response->assertOk()
+        ->assertJsonPath('status', 'requires_confirmation')
+        ->assertJsonPath('url', 'https://billing.stripe.test/upgrade-session');
+    expect($legacyChange->fresh()->superseded_at)->not->toBeNull()
+        ->and($subscription->fresh()->billing_plan_price_id)->toBe($starter->getKey())
+        ->and($subscription->changes()->whereNull('applied_at')->whereNull('superseded_at')->count())->toBe(0);
+});
+
+it('allows an interval switch through Stripe but does not offer self-service plan downgrades', function () {
+    [$owner, $business, $subscription] = stripeTrialBusiness();
+    $starterMonthly = configuredStripePrice('starter', BillingInterval::Monthly);
+    $starterAnnual = configuredStripePrice('starter', BillingInterval::Annual);
+    $proMonthly = configuredStripePrice('pro', BillingInterval::Monthly);
+    $subscription = app(SubscriptionLifecycleManager::class)->activate($subscription, $starterMonthly, now(), now()->addMonth(), now(), 'cus_interval', 'sub_interval');
+    config(['billing.stripe.secret' => 'sk_test_local', 'billing.stripe.webhook_secret' => 'whsec_test_local']);
+
+    $provider = $this->mock(SubscriptionProvider::class, function (MockInterface $mock) use ($starterAnnual): void {
+        $mock->shouldReceive('planChangePortalUrl')->once()
+            ->withArgs(fn (BusinessSubscription $subscription, BillingPlanPrice $price): bool => $price->is($starterAnnual))
+            ->andReturn('https://billing.stripe.test/interval-session');
+    });
+    app()->instance(SubscriptionProvider::class, $provider);
 
     $this->actingAs($owner)->postJson(route('business.billing.plan-change', $business), [
-        'price_id' => $pro->getKey(), 'timing' => 'immediate', 'reason' => 'Duplicate click.',
-    ])->assertConflict();
+        'price_id' => $starterAnnual->getKey(),
+        'reason' => 'Switch to annual billing.',
+    ])->assertOk()->assertJsonPath('url', 'https://billing.stripe.test/interval-session');
+
+    app(SubscriptionLifecycleManager::class)->activate($subscription->fresh(), $proMonthly, now(), now()->addMonth(), now()->addSecond(), 'cus_interval', 'sub_interval');
+
+    $provider = $this->mock(SubscriptionProvider::class, fn (MockInterface $mock) => $mock->shouldNotReceive('planChangePortalUrl'));
+    app()->instance(SubscriptionProvider::class, $provider);
+
+    $this->actingAs($owner)->postJson(route('business.billing.plan-change', $business), [
+        'price_id' => $starterMonthly->getKey(),
+        'reason' => 'Try to downgrade.',
+    ])->assertUnprocessable()->assertJsonPath('message', 'Plan downgrades are not available through self-service. Your current subscription is unchanged.');
+});
+
+it('reports a Stripe-confirmed plan change without waiting on a browser redirect', function () {
+    [$owner, $business, $subscription] = stripeTrialBusiness();
+    $starter = configuredStripePrice('starter', BillingInterval::Monthly);
+    $pro = configuredStripePrice('pro', BillingInterval::Annual);
+    $subscription = app(SubscriptionLifecycleManager::class)->activate($subscription, $starter, now(), now()->addMonth(), now(), 'cus_status', 'sub_status');
+    app(SubscriptionLifecycleManager::class)->activate($subscription, $pro, now(), now()->addYear(), now()->addSecond(), 'cus_status', 'sub_status');
+
+    $this->actingAs($owner)->postJson(route('business.billing.plan-change.status', $business), [
+        'price_id' => $pro->getKey(),
+    ])->assertOk()
+        ->assertJsonPath('status', 'confirmed')
+        ->assertJsonPath('plan_name', 'Pro')
+        ->assertJsonPath('billing_interval', 'annual');
+});
+
+it('clears a legacy direct-update record when Stripe expires its pending update', function () {
+    [$owner, $business, $subscription] = stripeTrialBusiness();
+    $starter = configuredStripePrice('starter', BillingInterval::Monthly);
+    $pro = configuredStripePrice('pro', BillingInterval::Monthly);
+    $subscription = app(SubscriptionLifecycleManager::class)->activate($subscription, $starter, now(), now()->addMonth(), now(), 'cus_expired_update', 'sub_expired_update');
+    $change = app(SubscriptionLifecycleManager::class)->requestPlanChange(
+        $subscription,
+        $pro,
+        $owner,
+        'Legacy pending update.',
+        false,
+        true,
+    );
+    $occurredAt = now()->addMinute();
+
+    app(StripeWebhookProcessor::class)->receiveVerified(stripeEvent(
+        'evt_pending_update_expired',
+        'customer.subscription.pending_update_expired',
+        $occurredAt->timestamp,
+        [
+            'id' => 'sub_expired_update',
+            'object' => 'subscription',
+            'customer' => 'cus_expired_update',
+            'metadata' => ['application' => 'clipperdesk', 'business_public_id' => $business->public_id],
+        ],
+    ));
+
+    expect($change->fresh()->superseded_at?->timestamp)->toBe($occurredAt->timestamp);
 });
 
 /** @return array{0: User, 1: Business, 2: BusinessSubscription} */

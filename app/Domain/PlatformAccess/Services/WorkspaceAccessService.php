@@ -26,6 +26,7 @@ class WorkspaceAccessService
             'requires_location' => true,
         ],
         'staff' => ['permissions' => [PermissionName::StaffManage]],
+        'activity' => ['permissions' => [PermissionName::AuditView]],
         'services' => ['permissions' => [PermissionName::SettingsManage]],
         'inventory' => [
             'permissions' => [PermissionName::InventoryManage],

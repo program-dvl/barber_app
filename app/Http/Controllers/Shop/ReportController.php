@@ -24,7 +24,9 @@ class ReportController extends Controller
     public function index(Request $request, Business $business)
     {
         $membership = $this->tenancy->membership();
-        $catalog = $this->reports->allowedReportKeys($membership);
+        // Inventory stays out of the first operations release until its setup and
+        // checkout workflow are ready to support the corresponding reports.
+        $catalog = array_values(array_diff($this->reports->allowedReportKeys($membership), ['product_sales', 'stock']));
         abort_if($catalog === [], 403);
         $key = $request->filled('report')
             ? $request->string('report')->toString()

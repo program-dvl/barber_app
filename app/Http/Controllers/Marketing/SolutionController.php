@@ -24,9 +24,10 @@ class SolutionController extends Controller
         return Inertia::render('Marketing/Solutions/Index', [
             'solutions' => $solutions,
             'seo' => [
-                'title' => 'Business software for beauty, wellness and appointment-led teams',
-                'description' => 'Explore how ClipperDesk supports the daily workflow of salons, barbershops, spas, studios and appointment-led service businesses.',
+                'title' => 'Software for appointment-led service businesses | ClipperDesk',
+                'description' => 'Explore ClipperDesk for beauty, wellness, personal care, fitness, recovery, health and pet-service businesses, from independents to larger teams.',
                 'canonical' => route('marketing.solutions'),
+                'image' => url('/images/marketing/industries/fitness-recovery.webp'),
             ],
         ]);
     }
@@ -46,9 +47,10 @@ class SolutionController extends Controller
                 'title' => $features[$slug]['title'],
             ])->values(),
             'seo' => [
-                'title' => $content['title'].' | ClipperDesk',
+                'title' => $content['seo_title'],
                 'description' => $content['description'],
                 'canonical' => route('marketing.solutions.show', $solution),
+                'image' => url($content['image']),
             ],
         ]);
     }

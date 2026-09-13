@@ -51,7 +51,9 @@ class CheckoutService
             if ($raw > 0 && ! $discountApproved && $discount * 10000 > $raw * $settings->discount_manager_limit_bps) {
                 throw new DomainException('Discount exceeds the approval threshold.');
             }
-            $calculation = $this->money->calculate($lines, $appointment->currency_code, $settings->tax_inclusive, $tipMinor);
+            // Legacy businesses may have a nullable value from before commerce
+            // defaults were provisioned. Checkout must remain deterministic.
+            $calculation = $this->money->calculate($lines, $appointment->currency_code, (bool) ($settings->tax_inclusive ?? false), $tipMinor);
             $sale = Sale::query()->create(['business_id' => $appointment->business_id, 'location_id' => $appointment->location_id, 'appointment_id' => $appointment->id, 'client_id' => $appointment->client_id, 'currency_code' => $appointment->currency_code, 'subtotal_minor' => $calculation['subtotal_minor'], 'discount_minor' => $calculation['discount_minor'], 'tax_minor' => $calculation['tax_minor'], 'tip_minor' => $tipMinor, 'total_minor' => $calculation['total_minor'], 'balance_minor' => $calculation['total_minor'], 'calculation_snapshot' => $calculation]);
             foreach ($calculation['lines'] as $sequence => $line) {
                 SaleLine::query()->create(['business_id' => $sale->business_id, 'sale_id' => $sale->id, 'sequence' => $sequence + 1, ...collect($line)->only(['kind', 'source_type', 'source_id', 'service_id', 'staff_profile_id', 'description', 'quantity', 'unit_price_minor', 'tax_rate_bps', 'discount_minor', 'source_snapshot'])->all()]);

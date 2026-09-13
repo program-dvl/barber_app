@@ -142,13 +142,14 @@ class PublicBookingService
     {
         $this->assertBookable($business);
         $locations = Location::query()->where('business_id', $business->id)->where('is_active', true)->orderBy('name')->get();
-        $services = Service::query()->where('business_id', $business->id)->where('is_active', true)->where('online_visible', true)->with(['locations', 'addons'])->orderBy('kind')->orderBy('name')->get();
+        $services = Service::query()->where('business_id', $business->id)->where('is_active', true)->where('online_visible', true)->with(['category', 'locations', 'addons'])->orderBy('kind')->orderBy('name')->get();
         $staff = StaffProfile::query()->where('business_id', $business->id)->where('status', 'active')->where('online_visible', true)->with(['locations', 'serviceAssignments'])->orderBy('display_name')->get();
 
         return [
             'locations' => $locations->map->only(['public_id', 'name', 'address', 'time_zone']),
             'services' => $services->map(fn (Service $service) => [
                 'public_id' => $service->public_id, 'kind' => $service->kind, 'name' => $service->name,
+                'category' => $service->category?->name ?: 'Services',
                 'description' => $service->description, 'price_type' => match ($business->online_price_display) {
                     'exact' => 'fixed', 'from' => 'from', default => $service->price_type,
                 },

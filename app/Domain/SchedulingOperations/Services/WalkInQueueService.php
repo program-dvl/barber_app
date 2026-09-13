@@ -40,6 +40,8 @@ class WalkInQueueService
         string $source,
         ?string $actorType,
         ?int $actorId,
+        ?int $clientId = null,
+        ?string $clientEmail = null,
     ): WalkInEntry {
         $location = Location::query()->where('business_id', $businessId)->findOrFail($locationId);
         $service = Service::query()->where('business_id', $businessId)->where('is_active', true)->findOrFail($serviceId);
@@ -52,7 +54,7 @@ class WalkInQueueService
 
         $estimate = $this->estimate($businessId, $location, $service, $preferredStaffId, $arrivedAt);
 
-        return DB::transaction(function () use ($businessId, $locationId, $serviceId, $clientName, $clientMobile, $preferredStaffId, $arrivedAt, $notes, $source, $actorType, $actorId, $estimate): WalkInEntry {
+        return DB::transaction(function () use ($businessId, $locationId, $serviceId, $clientName, $clientMobile, $preferredStaffId, $arrivedAt, $notes, $source, $actorType, $actorId, $estimate, $clientId, $clientEmail): WalkInEntry {
             Location::query()->where('business_id', $businessId)->lockForUpdate()->findOrFail($locationId);
             $position = ((int) WalkInEntry::query()
                 ->where('business_id', $businessId)
@@ -64,8 +66,10 @@ class WalkInQueueService
                 'location_id' => $locationId,
                 'service_id' => $serviceId,
                 'preferred_staff_profile_id' => $preferredStaffId,
+                'client_id' => $clientId,
                 'client_name' => trim($clientName),
                 'client_mobile' => trim($clientMobile),
+                'client_email' => filled($clientEmail) ? strtolower(trim($clientEmail)) : null,
                 'notes' => $notes ? trim($notes) : null,
                 'status' => WalkInStatus::Waiting->value,
                 'queue_position' => $position,
@@ -202,6 +206,9 @@ class WalkInQueueService
             $current->client_name,
             $current->client_mobile,
             $current->notes,
+            [],
+            null,
+            $current->client_email,
         );
         // The atomic booking command revalidates against every future visit,
         // hold, staff rule, and resource immediately before capacity is claimed.

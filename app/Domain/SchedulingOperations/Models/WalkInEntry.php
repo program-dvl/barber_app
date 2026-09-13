@@ -2,8 +2,10 @@
 
 namespace App\Domain\SchedulingOperations\Models;
 
+use App\Domain\ClientRecords\Models\Client;
 use App\Support\Tenancy\BelongsToBusiness;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
@@ -13,8 +15,8 @@ class WalkInEntry extends Model
 
     protected $fillable = [
         'business_id', 'location_id', 'service_id', 'preferred_staff_profile_id',
-        'assigned_staff_profile_id', 'appointment_id', 'public_id', 'client_name',
-        'client_mobile', 'notes', 'status', 'queue_position', 'arrived_at',
+        'assigned_staff_profile_id', 'appointment_id', 'client_id', 'public_id', 'client_name',
+        'client_mobile', 'client_email', 'notes', 'status', 'queue_position', 'arrived_at',
         'estimated_service_at', 'estimated_wait_minutes', 'estimate_evidence',
         'notified_at', 'service_started_at', 'abandoned_at', 'actual_wait_minutes', 'version',
     ];
@@ -38,5 +40,10 @@ class WalkInEntry extends Model
     public function history(): HasMany
     {
         return $this->hasMany(WalkInHistory::class)->orderBy('occurred_at');
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
     }
 }

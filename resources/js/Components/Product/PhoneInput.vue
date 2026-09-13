@@ -1,4 +1,5 @@
 <script setup>
+import AppSelect from '@/Components/Product/AppSelect.vue';
 import { computed, ref, watch } from 'vue';
 import { getCountries, getCountryCallingCode, parsePhoneNumberFromString } from 'libphonenumber-js/max';
 
@@ -64,11 +65,11 @@ watch(selectedCountry, publish);
 
 <template>
     <div>
-        <div class="grid grid-cols-[minmax(8.5rem,0.42fr)_minmax(0,1fr)] overflow-hidden rounded-lg border border-[var(--border-strong)] bg-[var(--surface-raised)] focus-within:border-[var(--action-primary)] focus-within:ring-2 focus-within:ring-[var(--focus-ring)]/20">
+        <div class="cd-phone-control grid grid-cols-[minmax(7.5rem,0.42fr)_minmax(0,1fr)] rounded-lg border border-[var(--border-default)] bg-[var(--surface-raised)] focus-within:border-[var(--action-primary)] focus-within:ring-2 focus-within:ring-[var(--focus-ring)]/20">
             <label :for="`${id}-country`" class="ds-sr-only">Phone country</label>
-            <select :id="`${id}-country`" v-model="selectedCountry" class="min-h-11 min-w-0 border-0 border-r border-[var(--border-subtle)] bg-[var(--surface-subtle)] px-3 text-sm font-medium focus:ring-0" :aria-label="`Country code, currently +${getCountryCallingCode(selectedCountry)}`">
+            <AppSelect :id="`${id}-country`" v-model="selectedCountry" class="min-h-11 min-w-0 border-0 border-r border-[var(--border-subtle)] bg-[var(--surface-subtle)] px-3 text-sm font-medium focus:ring-0" :aria-label="`Country code, currently +${getCountryCallingCode(selectedCountry)}`">
                 <option v-for="option in countryOptions" :key="option.code" :value="option.code">{{ option.name }} (+{{ option.dial }})</option>
-            </select>
+            </AppSelect>
             <input :id="id" v-model="localNumber" type="tel" inputmode="tel" :autocomplete="autocomplete" :required="required" class="min-h-11 min-w-0 border-0 bg-transparent px-3 focus:ring-0" placeholder="Local phone number" @input="publish" @blur="touched = true">
         </div>
         <p v-if="touched && !valid" class="mt-1.5 text-xs text-[var(--status-danger)]" role="alert">Enter a valid phone number for the selected country.</p>

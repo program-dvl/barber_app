@@ -7,18 +7,18 @@ import { featureVisuals, marketingFamilyVisuals, visualFor } from '@/Support/mar
 import { ArrowRightIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ features: Array });
+defineProps({ features: Array, seo: Object });
 </script>
 
 <template>
     <HomeLayout>
-        <Head title="ClipperDesk features for the complete salon day" />
+        <Head :title="seo.title" />
         <section class="cd-public-section cd-family-hero">
             <PublicContainer class="cd-family-hero-grid">
                 <div class="cd-family-hero-copy">
                     <p class="cd-eyebrow">Product</p>
                     <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.3rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-balance">One operating system for the work around every appointment.</h1>
-                    <p class="mt-7 max-w-2xl text-lg leading-8">Explore the four connected jobs that carry a salon or barbershop from public demand through the day, client history and explainable numbers.</p>
+                    <p class="mt-7 max-w-2xl text-lg leading-8">Explore the four connected jobs that carry an appointment-led service business from public demand through the working day, client history and explainable numbers.</p>
                 </div>
                 <figure class="cd-family-hero-media">
                     <img class="cd-family-hero-image" :src="marketingFamilyVisuals.product.src" :alt="marketingFamilyVisuals.product.alt" width="1536" height="1024" fetchpriority="high" />

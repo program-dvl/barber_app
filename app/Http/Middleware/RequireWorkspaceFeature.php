@@ -51,14 +51,14 @@ class RequireWorkspaceFeature
                 'url' => route('business.billing.show', $this->tenant->business()),
             ] : null,
             'setup_required' => $canManageSetup ? [
-                'label' => 'Complete salon setup',
+                'label' => 'Continue business setup',
                 'url' => route('business.configuration.show', $this->tenant->business()),
             ] : null,
             default => null,
         };
         $title = match ($decision['status']) {
             'upgrade_required' => 'Upgrade your plan to unlock this area',
-            'setup_required' => 'Finish setting up your salon',
+            'setup_required' => 'Finish setting up your business',
             default => "You don't have permission to access this area",
         };
 

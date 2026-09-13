@@ -72,7 +72,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', handleKeydown));
 </script>
 
 <template>
-    <div class="min-h-screen bg-[var(--surface-canvas)] text-[var(--text-default)]">
+    <div class="cd-workspace min-h-screen bg-[var(--surface-canvas)] text-[var(--text-default)]">
         <Head :title="title" />
         <a href="#platform-main" class="fixed left-3 top-3 z-[60] -translate-y-24 rounded-lg bg-white px-4 py-3 font-semibold shadow-lg transition-transform focus:translate-y-0">Skip to main content</a>
         <aside class="fixed inset-y-0 left-0 hidden w-72 flex-col bg-[var(--navigation-background)] text-white lg:flex" aria-label="Platform administration">

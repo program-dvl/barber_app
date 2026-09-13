@@ -20,6 +20,7 @@ use App\Domain\BusinessConfiguration\Services\ConfigurationImportService;
 use App\Domain\BusinessConfiguration\Services\OnboardingManager;
 use App\Domain\BusinessConfiguration\Services\ReadinessEvaluator;
 use App\Domain\BusinessConfiguration\Services\StaffScheduleValidator;
+use App\Domain\BusinessConfiguration\Services\StarterWorkspaceProvisioner;
 use App\Domain\MoneyCommerce\Models\CommerceSetting;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
@@ -54,6 +55,7 @@ class BusinessConfigurationController extends Controller
         private readonly EntitlementEvaluator $entitlements,
         private readonly ConfigurationChangePreviewer $changePreviewer,
         private readonly CountryCatalog $countries,
+        private readonly StarterWorkspaceProvisioner $starterWorkspace,
     ) {}
 
     public function show(Business $business): Response
@@ -77,17 +79,20 @@ class BusinessConfigurationController extends Controller
         return Inertia::render('Configuration/Onboarding', [
             'business' => [
                 ...$business->only([
-                    'public_id', 'name', 'booking_slug', 'business_type', 'country_code', 'locale', 'currency_code',
+                    'public_id', 'name', 'booking_slug', 'business_type', 'description', 'country_code', 'locale', 'currency_code',
                     'time_zone', 'week_starts_on', 'appointment_interval_minutes', 'tax_posture', 'phone', 'email',
                     'website_url', 'social_links', 'address', 'map_url', 'default_cancellation_policy', 'terms_url',
-                    'privacy_url', 'logo_path', 'cover_image_path', 'configuration_published_at',
+                    'privacy_url', 'logo_path', 'cover_image_path', 'brand_color', 'configuration_published_at',
                     'online_booking_enabled', 'online_staff_preference', 'online_price_display', 'online_new_client_rule',
                     'staff_gender_request_enabled', 'cancellation_cutoff_minutes', 'waitlist_offer_batch_size',
                     'public_link_ttl_minutes', 'public_booking_policy_version',
                 ]),
                 'default_tax_rate_bps' => $commerce->default_tax_rate_bps,
             ],
-            'onboarding' => $session->only(['current_step', 'completed_steps', 'last_saved_at', 'previewed_at', 'published_at']),
+            'onboarding' => $session->only([
+                'schema_version', 'current_step', 'completed_steps', 'answers', 'generated_data', 'last_saved_at',
+                'personalized_at', 'guided_completed_at', 'previewed_at', 'published_at',
+            ]),
             'readiness' => $this->readiness->evaluate($business)->toArray(),
             'locations' => $business->locations()->with(['hours', 'scheduleExceptions', 'physicalResources'])->get(),
             'services' => $business->services()->with(['segments', 'locations', 'staffAssignments', 'resourceRequirements'])->get(),
@@ -95,6 +100,92 @@ class BusinessConfigurationController extends Controller
             'imports' => $business->configurationImports()->latest()->limit(10)->get(),
             'steps' => OnboardingManager::STEPS,
             'referenceData' => $referenceData,
+            'onboardingCatalog' => [
+                'business_types' => config('business-onboarding.business_types'),
+                'operation_models' => config('business-onboarding.operation_models'),
+                'team_sizes' => config('business-onboarding.team_sizes'),
+                'location_scales' => config('business-onboarding.location_scales'),
+                'schedule_presets' => config('business-onboarding.schedule_presets'),
+                'country_defaults' => $this->countries->defaults(),
+                'countries' => $this->countries->countries(),
+            ],
+        ]);
+    }
+
+    public function saveGuidedOnboarding(Request $request, Business $business): RedirectResponse
+    {
+        $this->authorizePermission(PermissionName::SettingsManage);
+        $step = $request->validate([
+            'step' => ['required', Rule::in(OnboardingManager::GUIDED_STEPS)],
+        ])['step'];
+
+        $answers = match ($step) {
+            'business_type' => $request->validate([
+                'business_type' => ['required', Rule::in(array_keys(config('business-onboarding.business_types')))],
+            ]),
+            'business_shape' => $request->validate([
+                'operation_model' => ['required', Rule::in(array_keys(config('business-onboarding.operation_models')))],
+                'team_size' => ['required', Rule::in(array_keys(config('business-onboarding.team_sizes')))],
+                'location_scale' => ['required', Rule::in(array_keys(config('business-onboarding.location_scales')))],
+                'owner_bookable' => ['required', 'boolean'],
+                'accepts_online_bookings' => ['required', 'boolean'],
+            ]),
+            'location' => $request->validate([
+                'country_code' => ['required', 'string', 'size:2'],
+                'time_zone' => ['required', 'timezone:all'],
+                'address' => ['required', 'string', 'max:1000'],
+                'phone' => ['required', 'string', 'max:32', new E164Phone],
+                'schedule_preset' => ['required', Rule::in(array_keys(config('business-onboarding.schedule_presets')))],
+            ]),
+            'starter_services' => $this->validateStarterServices($request, $business),
+        };
+
+        if ($step === 'location') {
+            $country = strtoupper($answers['country_code']);
+            $defaults = $this->countries->defaults()[$country] ?? null;
+            if (! $defaults || ! in_array($answers['time_zone'], $defaults['time_zones'], true)) {
+                throw ValidationException::withMessages(['time_zone' => 'Choose a time zone for the selected country.']);
+            }
+            $answers['country_code'] = $country;
+        }
+
+        $this->onboarding->saveGuidedAnswers($business, $step, $answers);
+
+        return back()->with('status', 'Progress saved.');
+    }
+
+    public function completeGuidedOnboarding(Request $request, Business $business): RedirectResponse
+    {
+        $this->authorizePermission(PermissionName::SettingsManage);
+        $membership = $this->context->membership();
+        abort_unless($membership?->user, 403);
+
+        $serviceAnswers = $this->validateStarterServices($request, $business);
+        $session = $this->onboarding->saveGuidedAnswers($business, 'starter_services', $serviceAnswers);
+        $answers = [...($session->answers ?? []), ...$serviceAnswers];
+        foreach (['business_type', 'operation_model', 'team_size', 'location_scale', 'owner_bookable', 'accepts_online_bookings', 'country_code', 'time_zone', 'address', 'phone', 'schedule_preset', 'service_keys'] as $required) {
+            if (! array_key_exists($required, $answers)) {
+                throw ValidationException::withMessages(['onboarding' => 'Return to the first incomplete onboarding step.']);
+            }
+        }
+
+        $business = $this->starterWorkspace->provision($business, $membership, $membership->user, $answers);
+
+        return redirect()->route('business.configuration.show', ['business' => $business, 'welcome' => 1])
+            ->with('status', 'Your starter workspace is ready. Everything we prepared remains editable.');
+    }
+
+    /** @return array{service_keys:list<string>} */
+    private function validateStarterServices(Request $request, Business $business): array
+    {
+        $session = $this->onboarding->resume($business);
+        $businessType = (string) ($session->answers['business_type'] ?? $request->input('business_type', ''));
+        $templates = config('business-onboarding.business_types.'.$businessType.'.services', []);
+        $allowed = array_column($templates, 'key');
+
+        return $request->validate([
+            'service_keys' => ['required', 'array', 'min:1', 'max:6'],
+            'service_keys.*' => ['required', 'string', 'distinct', Rule::in($allowed)],
         ]);
     }
 
@@ -103,7 +194,8 @@ class BusinessConfigurationController extends Controller
         $this->authorizePermission(PermissionName::SettingsManage);
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'], 'booking_slug' => ['required', 'string', 'min:3', 'max:80'],
-            'business_type' => ['required', 'string', 'max:64'], 'country_code' => ['required', 'string', 'size:2'],
+            'business_type' => ['required', 'string', 'max:64'], 'description' => ['nullable', 'string', 'max:1200'],
+            'brand_color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'], 'country_code' => ['required', 'string', 'size:2'],
             'locale' => ['required', 'string', 'max:16'], 'currency_code' => ['required', 'string', 'size:3'],
             'time_zone' => ['required', 'timezone:all'], 'week_starts_on' => ['required', 'integer', 'between:1,7'],
             'appointment_interval_minutes' => ['required', 'integer', Rule::in([5, 10, 15, 20, 30, 60])],

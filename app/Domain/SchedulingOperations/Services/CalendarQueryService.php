@@ -43,6 +43,7 @@ class CalendarQueryService implements CalendarQuery
             ->where('starts_at_utc', '<', $endsAt)
             ->where('ends_at_utc', '>', $startsAt)
             ->when($filter->statuses !== [], fn ($query) => $query->whereIn('status', $filter->statuses))
+            ->when($filter->statuses === [], fn ($query) => $query->whereNotIn('status', ['cancelled_by_client', 'cancelled_by_shop', 'rescheduled']))
             ->when($filter->staffIds !== [], fn ($query) => $query->whereHas('segments', fn ($segments) => $segments->whereIn('staff_profile_id', $filter->staffIds)))
             ->when($filter->serviceIds !== [], fn ($query) => $query->whereHas('serviceLines', fn ($lines) => $lines->whereIn('service_id', $filter->serviceIds)))
             ->withCount([
@@ -110,6 +111,7 @@ class CalendarQueryService implements CalendarQuery
             'title' => $appointment->client_name ?: 'Unassigned client',
             'clientName' => $appointment->client_name,
             'clientMobile' => $appointment->client_mobile,
+            'clientEmail' => $appointment->client_email,
             'internalNotes' => $appointment->internal_notes,
             'services' => $appointment->serviceLines->map(fn ($line) => [
                 'id' => $line->service?->public_id,

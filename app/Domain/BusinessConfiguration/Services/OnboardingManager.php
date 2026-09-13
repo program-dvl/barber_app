@@ -13,6 +13,8 @@ class OnboardingManager
 {
     public const STEPS = ['business_details', 'hours', 'services', 'staff', 'staff_availability', 'booking_rules', 'import', 'preview', 'publish'];
 
+    public const GUIDED_STEPS = ['business_type', 'business_shape', 'location', 'starter_services'];
+
     public function __construct(
         private readonly ReadinessEvaluator $readiness,
         private readonly BookingSlugManager $slugs,
@@ -24,8 +26,38 @@ class OnboardingManager
     {
         return OnboardingSession::query()->firstOrCreate(
             ['business_id' => $business->id],
-            ['current_step' => self::STEPS[0], 'completed_steps' => [], 'started_at' => now(), 'last_saved_at' => now()],
+            [
+                'schema_version' => config('business-onboarding.schema_version', 2),
+                'current_step' => self::GUIDED_STEPS[0],
+                'completed_steps' => [],
+                'answers' => [],
+                'started_at' => now(),
+                'last_saved_at' => now(),
+            ],
         );
+    }
+
+    /** @param array<string, mixed> $answers */
+    public function saveGuidedAnswers(Business $business, string $step, array $answers): OnboardingSession
+    {
+        if (! in_array($step, self::GUIDED_STEPS, true)) {
+            throw ValidationException::withMessages(['step' => 'Unknown guided onboarding step.']);
+        }
+
+        $session = $this->resume($business);
+        if ($session->guided_completed_at) {
+            return $session;
+        }
+
+        $index = array_search($step, self::GUIDED_STEPS, true);
+        $session->forceFill([
+            'schema_version' => config('business-onboarding.schema_version', 2),
+            'answers' => [...($session->answers ?? []), ...$answers],
+            'current_step' => self::GUIDED_STEPS[min($index + 1, count(self::GUIDED_STEPS) - 1)],
+            'last_saved_at' => now(),
+        ])->save();
+
+        return $session->fresh();
     }
 
     public function saveStep(Business $business, string $step): OnboardingSession

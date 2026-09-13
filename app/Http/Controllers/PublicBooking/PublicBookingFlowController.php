@@ -29,9 +29,13 @@ class PublicBookingFlowController extends Controller
             'client_eligibility' => ['required', 'in:new,existing'],
         ]);
         $business = $this->business($slug, $slugs);
-        $flow = $booking->resolve($business, $data['flow'], $data['secret']);
-        $slots = $booking->search($business, $data['location'], $data['services'], $data['staff'] ?? null, $data['from_date'], $data['until_date'], $data['client_eligibility']);
-        $booking->record($business, $flow, 'time_selection_viewed', $data['secret'], ['slot_count' => count($slots)]);
+        try {
+            $flow = $booking->resolve($business, $data['flow'], $data['secret']);
+            $slots = $booking->search($business, $data['location'], $data['services'], $data['staff'] ?? null, $data['from_date'], $data['until_date'], $data['client_eligibility']);
+            $booking->record($business, $flow, 'time_selection_viewed', $data['secret'], ['slot_count' => count($slots)]);
+        } catch (BookingRuleViolation $error) {
+            return response()->json($error->toDomainError(), 409);
+        }
 
         return response()->json(['slots' => $slots]);
     }

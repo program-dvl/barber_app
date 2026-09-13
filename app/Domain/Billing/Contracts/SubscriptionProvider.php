@@ -16,6 +16,8 @@ interface SubscriptionProvider
 
     public function changePrice(BusinessSubscription $subscription, BillingPlanPrice $price, bool $atPeriodEnd): void;
 
+    public function planChangePortalUrl(BusinessSubscription $subscription, BillingPlanPrice $price, string $returnUrl, string $completedUrl): string;
+
     public function cancelAtPeriodEnd(BusinessSubscription $subscription): void;
 
     public function cancelImmediately(BusinessSubscription $subscription): void;

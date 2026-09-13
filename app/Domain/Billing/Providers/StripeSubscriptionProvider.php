@@ -125,6 +125,49 @@ class StripeSubscriptionProvider implements SubscriptionProvider
         });
     }
 
+    public function planChangePortalUrl(BusinessSubscription $subscription, BillingPlanPrice $price, string $returnUrl, string $completedUrl): string
+    {
+        abort_unless($price->provider === 'stripe' && str_starts_with((string) $price->provider_price_id, 'price_'), 422, 'The selected Stripe price is not configured.');
+
+        return $this->guardProviderOperation($subscription->business_id, 'plan_change_portal', function () use ($subscription, $price, $returnUrl, $completedUrl): string {
+            $provider = $this->providerSubscription($subscription);
+            $item = $provider->items->data[0] ?? throw new LogicException('Stripe subscription has no item.');
+            if (count($provider->items->data) !== 1) {
+                throw new LogicException('Only single-item ClipperDesk subscriptions can be changed through self-service.');
+            }
+
+            $configurationId = $this->managedPortalConfiguration('plan_change', $this->planChangeFeatures());
+            $session = $this->stripe()->billingPortal->sessions->create([
+                'customer' => $subscription->provider_customer_id ?? throw new LogicException('Stripe customer is missing.'),
+                'configuration' => $configurationId,
+                'return_url' => $returnUrl,
+                'flow_data' => [
+                    'type' => 'subscription_update_confirm',
+                    'subscription_update_confirm' => [
+                        'subscription' => $this->providerId($subscription),
+                        'items' => [[
+                            'id' => $item->id,
+                            'price' => $price->provider_price_id,
+                            'quantity' => 1,
+                        ]],
+                    ],
+                    'after_completion' => [
+                        'type' => 'redirect',
+                        'redirect' => ['return_url' => $completedUrl],
+                    ],
+                ],
+            ], [
+                'idempotency_key' => 'clipperdesk-plan-change-'.hash('sha256', implode('|', [
+                    $subscription->public_id,
+                    $price->provider_price_id,
+                    (string) $subscription->version,
+                ])),
+            ]);
+
+            return (string) $session->url;
+        });
+    }
+
     public function cancelAtPeriodEnd(BusinessSubscription $subscription): void
     {
         $this->guardProviderOperation($subscription->business_id, 'cancel_at_period_end', fn () => $this->stripe()->subscriptions->update($this->providerId($subscription), ['cancel_at_period_end' => true]));
@@ -145,11 +188,124 @@ class StripeSubscriptionProvider implements SubscriptionProvider
         return $this->guardProviderOperation($subscription->business_id, 'billing_portal', function () use ($subscription, $returnUrl): string {
             $session = $this->stripe()->billingPortal->sessions->create([
                 'customer' => $subscription->provider_customer_id ?? throw new LogicException('Stripe customer is missing.'),
+                'configuration' => $this->managedPortalConfiguration('account_management', $this->accountManagementFeatures()),
                 'return_url' => $returnUrl,
             ]);
 
             return (string) $session->url;
         });
+    }
+
+    /** @return array<string, mixed> */
+    private function accountManagementFeatures(): array
+    {
+        return [
+            'customer_update' => [
+                'enabled' => true,
+                'allowed_updates' => ['address', 'name', 'phone', 'tax_id'],
+            ],
+            'invoice_history' => ['enabled' => true],
+            'payment_method_update' => ['enabled' => true],
+            'subscription_cancel' => ['enabled' => false],
+            'subscription_update' => ['enabled' => false],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function planChangeFeatures(): array
+    {
+        $products = [];
+        $prices = BillingPlanPrice::query()
+            ->where('provider', 'stripe')
+            ->where('is_active', true)
+            ->where('effective_from', '<=', now())
+            ->where(fn ($query) => $query->whereNull('effective_until')->orWhere('effective_until', '>', now()))
+            ->whereHas('plan', fn ($query) => $query->whereIn('code', array_keys((array) config('billing.plans', []))))
+            ->pluck('provider_price_id')
+            ->filter(fn (?string $id): bool => str_starts_with((string) $id, 'price_'))
+            ->unique()
+            ->values();
+
+        foreach ($prices as $priceId) {
+            $providerPrice = $this->stripe()->prices->retrieve($priceId, []);
+            $productId = is_string($providerPrice->product) ? $providerPrice->product : $providerPrice->product?->id;
+            if (! $providerPrice->active || ! $productId) {
+                continue;
+            }
+
+            $products[$productId] ??= [];
+            $products[$productId][] = $priceId;
+        }
+
+        if ($products === []) {
+            throw new LogicException('No active Stripe plan prices are available for the billing portal.');
+        }
+
+        ksort($products);
+
+        return [
+            ...$this->accountManagementFeatures(),
+            'subscription_update' => [
+                'enabled' => true,
+                'default_allowed_updates' => ['price'],
+                'products' => collect($products)
+                    ->map(fn (array $productPrices, string $productId): array => [
+                        'product' => $productId,
+                        'prices' => array_values(array_unique($productPrices)),
+                    ])
+                    ->values()
+                    ->all(),
+                'proration_behavior' => 'always_invoice',
+                'billing_cycle_anchor' => 'unchanged',
+                'schedule_at_period_end' => [
+                    'conditions' => [
+                        ['type' => 'decreasing_item_amount'],
+                        ['type' => 'shortening_interval'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /** @param array<string, mixed> $features */
+    private function managedPortalConfiguration(string $purpose, array $features): string
+    {
+        $catalogHash = hash('sha256', json_encode($features, JSON_THROW_ON_ERROR));
+        $configuration = null;
+
+        foreach ($this->stripe()->billingPortal->configurations->all(['active' => true, 'limit' => 100])->autoPagingIterator() as $candidate) {
+            if (($candidate->metadata['application'] ?? null) === 'clipperdesk'
+                && ($candidate->metadata['purpose'] ?? null) === $purpose) {
+                $configuration = $candidate;
+                break;
+            }
+        }
+
+        if ($configuration && ($configuration->metadata['catalog_hash'] ?? null) === $catalogHash) {
+            return $configuration->id;
+        }
+
+        $attributes = [
+            'active' => true,
+            'name' => $purpose === 'plan_change'
+                ? 'ClipperDesk focused plan changes'
+                : 'ClipperDesk billing management',
+            'features' => $features,
+            'metadata' => [
+                'application' => 'clipperdesk',
+                'purpose' => $purpose,
+                'catalog_hash' => $catalogHash,
+                'managed_by' => 'clipperdesk_application',
+            ],
+        ];
+
+        if ($configuration) {
+            return $this->stripe()->billingPortal->configurations->update($configuration->id, $attributes)->id;
+        }
+
+        return $this->stripe()->billingPortal->configurations->create($attributes, [
+            'idempotency_key' => "clipperdesk-portal-{$purpose}-{$catalogHash}",
+        ])->id;
     }
 
     private function providerSubscription(BusinessSubscription $subscription): object

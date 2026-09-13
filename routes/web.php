@@ -29,6 +29,7 @@ use App\Http\Controllers\PublicBooking\BookingBusinessController;
 use App\Http\Controllers\PublicBooking\PublicAppointmentController;
 use App\Http\Controllers\PublicBooking\PublicBookingFlowController;
 use App\Http\Controllers\PublicBooking\PublicBookingPaymentController;
+use App\Http\Controllers\PublicBooking\PublicBusinessMediaController;
 use App\Http\Controllers\PublicBooking\PublicWaitlistController;
 use App\Http\Controllers\RoadmapController;
 use App\Http\Controllers\Shop\AppointmentOperationsController;
@@ -157,6 +158,9 @@ Route::get('/use-cases/{useCase}', [UseCaseController::class, 'show'])
     ->name('marketing.use-cases.show');
 Route::get('/book', fn () => Inertia::render('Booking/Welcome'))->name('booking.welcome');
 Route::get('/book/{slug}', BookingBusinessController::class)->where('slug', '[a-z0-9-]+')->name('booking.business');
+Route::get('/book/{slug}/media/{kind}', PublicBusinessMediaController::class)
+    ->where(['slug' => '[a-z0-9-]+', 'kind' => 'logo|cover'])
+    ->name('public.booking.media');
 Route::get('/manage-appointment', fn () => Inertia::render('Booking/Manage'))->name('booking.manage');
 Route::middleware('throttle:30,1')->prefix('/book/{slug}')->where(['slug' => '[a-z0-9-]+'])->group(function (): void {
     Route::post('/flows', [PublicBookingFlowController::class, 'start'])->name('public.booking.start');
@@ -183,6 +187,12 @@ Route::middleware('throttle:20,1')->where(['token' => '[a-f0-9]{64}'])->group(fu
     Route::get('/client-files/{token}', ClientAttachmentDownloadController::class)->name('client-attachments.download');
 });
 Route::get('/client-forms/completed', fn () => Inertia::render('Booking/ClientFormCompleted'))->name('client-forms.completed');
+Route::middleware('throttle:10,1')->where(['token' => '[A-Za-z0-9]{64}'])->group(function (): void {
+    Route::get('/staff-invitations/{token}', [StaffInvitationController::class, 'show'])
+        ->name('staff-invitations.show');
+    Route::post('/staff-invitations/{token}/register', [StaffInvitationController::class, 'register'])
+        ->name('staff-invitations.register');
+});
 Route::get('/sitemap.xml', [SitemapController::class, 'xml'])->name('sitemap.xml');
 Route::get('/sitemap', [SitemapController::class, 'legacy'])->name('sitemap');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
@@ -262,6 +272,7 @@ Route::middleware([
             Route::post('/payroll-exports', [CommissionController::class, 'payroll'])->name('business.payroll-exports.store');
 
             Route::get('/app/walk-in-queue', [WalkInQueueController::class, 'index'])->middleware('workspace.feature:walk-in-queue')->name('business.walk-ins.index');
+            Route::get('/walk-ins/clients/search', [WalkInQueueController::class, 'searchClients'])->name('business.walk-ins.clients.search');
             Route::post('/walk-ins', [WalkInQueueController::class, 'store'])->name('business.walk-ins.store');
             Route::post('/walk-ins/reorder', [WalkInQueueController::class, 'reorder'])->name('business.walk-ins.reorder');
             Route::patch('/walk-ins/{walkIn}/assign', [WalkInQueueController::class, 'assign'])->name('business.walk-ins.assign');
@@ -296,6 +307,11 @@ Route::middleware([
 
             Route::get('/app/team', [TeamManagementController::class, 'index'])->middleware('workspace.feature:staff')->name('business.team.index');
             Route::post('/activation/providers', [TeamManagementController::class, 'store'])->name('business.team.providers.store');
+            Route::post('/team/staff/{staffProfile}/invite', [TeamManagementController::class, 'inviteAccess'])->name('business.team.staff.invite');
+            Route::patch('/team/memberships/{membership}/access', [TeamManagementController::class, 'updateAccess'])->name('business.team.memberships.access.update');
+            Route::post('/team/memberships/{membership}/restore', [TeamManagementController::class, 'restoreAccess'])->name('business.team.memberships.access.restore');
+            Route::delete('/team/memberships/{membership}/access', [TeamManagementController::class, 'revokeAccess'])->name('business.team.memberships.access.destroy');
+            Route::get('/app/activity', [TeamManagementController::class, 'activity'])->middleware('workspace.feature:activity')->name('business.activity.index');
 
             Route::get('/app/services', [ServiceManagementController::class, 'index'])->middleware('workspace.feature:services')->name('business.services.index');
             Route::post('/activation/services', [ServiceManagementController::class, 'store'])->name('business.services.store');
@@ -327,6 +343,8 @@ Route::middleware([
 
             Route::prefix('configuration')->name('business.configuration.')->group(function (): void {
                 Route::get('/', [BusinessConfigurationController::class, 'show'])->middleware('workspace.feature:settings')->name('show');
+                Route::patch('/guided-onboarding', [BusinessConfigurationController::class, 'saveGuidedOnboarding'])->name('guided-onboarding.update');
+                Route::post('/guided-onboarding/complete', [BusinessConfigurationController::class, 'completeGuidedOnboarding'])->name('guided-onboarding.complete');
                 Route::patch('/profile', [BusinessConfigurationController::class, 'updateProfile'])->name('profile.update');
                 Route::post('/branding', [BusinessConfigurationController::class, 'uploadBrandAsset'])->name('branding.store');
                 Route::patch('/public-booking-policy', [BusinessConfigurationController::class, 'updatePublicBookingPolicy'])->name('public-booking-policy.update');
@@ -354,6 +372,9 @@ Route::middleware([
                     ->middleware('throttle:30,1')
                     ->name('checkout.status');
                 Route::post('/plan-change', [BusinessBillingController::class, 'changePlan'])->name('plan-change');
+                Route::post('/plan-change/status', [BusinessBillingController::class, 'planChangeStatus'])
+                    ->middleware('throttle:30,1')
+                    ->name('plan-change.status');
                 Route::post('/cancel', [BusinessBillingController::class, 'cancel'])->name('cancel');
                 Route::post('/reactivate', [BusinessBillingController::class, 'reactivate'])->name('reactivate');
                 Route::get('/portal', [BusinessBillingController::class, 'portal'])->name('portal');
@@ -362,8 +383,6 @@ Route::middleware([
         });
 
     Route::middleware('throttle:6,1')->where(['token' => '[A-Za-z0-9]{64}'])->group(function (): void {
-        Route::get('/staff-invitations/{token}', [StaffInvitationController::class, 'show'])
-            ->name('staff-invitations.show');
         Route::post('/staff-invitations/{token}/accept', [StaffInvitationController::class, 'accept'])
             ->name('staff-invitations.accept');
     });

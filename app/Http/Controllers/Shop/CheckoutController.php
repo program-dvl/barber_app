@@ -12,6 +12,7 @@ use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\SchedulingOperations\Models\Appointment;
+use App\Domain\SchedulingOperations\Models\OperationalNotificationEvent;
 use App\Http\Controllers\Controller;
 use App\Support\Audit\AuditWriter;
 use App\Support\Tenancy\TenantContext;
@@ -26,10 +27,13 @@ class CheckoutController extends Controller
     public function index(Request $request, Business $business)
     {
         abort_unless($request->user()->can(PermissionName::CheckoutManage->value), 403);
-        $appointments = Appointment::query()->where('business_id', $business->id)->whereIn('status', ['checked_in', 'in_service', 'completed'])->with('client')->latest('starts_at_utc')->limit(30)->get()->map(fn (Appointment $appointment) => ['public_id' => $appointment->public_id, 'reference' => $appointment->booking_reference, 'client' => $appointment->client?->name ?? $appointment->client_name, 'status' => $appointment->status, 'price_minor' => $appointment->price_minor, 'currency_code' => $appointment->currency_code]);
-        $sales = Sale::query()->where('business_id', $business->id)->latest()->limit(12)->get()->map->only(['public_id', 'status', 'total_minor', 'paid_minor', 'balance_minor', 'currency_code']);
+        $appointments = Appointment::query()->where('business_id', $business->id)->where('status', 'completed')->with(['client', 'sale'])->latest('starts_at_utc')->limit(30)->get()
+            ->filter(fn (Appointment $appointment) => $appointment->sale?->status !== 'completed')
+            ->map(fn (Appointment $appointment) => ['public_id' => $appointment->public_id, 'reference' => $appointment->booking_reference, 'client' => $appointment->client?->name ?? $appointment->client_name, 'status' => $appointment->status, 'price_minor' => $appointment->price_minor, 'currency_code' => $appointment->currency_code, 'sale' => $appointment->sale?->only(['public_id', 'status', 'total_minor', 'paid_minor', 'balance_minor'])])->values();
+        $sales = Sale::query()->where('business_id', $business->id)->with('appointment:id,booking_reference,client_name')->latest()->limit(12)->get()->map(fn (Sale $sale) => [...$sale->only(['public_id', 'status', 'total_minor', 'paid_minor', 'balance_minor', 'currency_code']), 'client' => $sale->appointment?->client_name, 'reference' => $sale->appointment?->booking_reference]);
+        $selectedAppointment = $request->string('appointment')->toString();
 
-        return Inertia::render('Shop/Checkout', compact('appointments', 'sales'));
+        return Inertia::render('Shop/Checkout', compact('appointments', 'sales', 'selectedAppointment'));
     }
 
     public function open(Request $request, Business $business, Appointment $appointment)
@@ -58,9 +62,27 @@ class CheckoutController extends Controller
         abort_unless($request->user()->can(PermissionName::CheckoutManage->value), 403);
         $data = $request->validate(['method' => ['required', 'in:cash,card,upi,bank_transfer,payment_link,custom,pay_later'], 'amount_minor' => ['required', 'integer', 'min:1'], 'idempotency_key' => ['required', 'string', 'max:128'], 'provider' => ['nullable', 'string', 'max:32'], 'provider_reference' => ['nullable', 'string', 'max:191'], 'evidence' => ['array']]);
         $payment = $this->checkout->recordTender($sale, $data['method'], $data['amount_minor'], $data['idempotency_key'], $data['evidence'] ?? [], $data['provider'] ?? null, $data['provider_reference'] ?? null);
-        $receipt = $sale->fresh()->status === 'completed' ? $this->receipts->issue($sale->fresh()) : null;
+        $completedSale = $sale->fresh();
+        $receipt = $completedSale->status === 'completed' ? $this->receipts->issue($completedSale) : null;
+        if ($receipt && $completedSale->appointment_id) {
+            OperationalNotificationEvent::query()->firstOrCreate([
+                'business_id' => $business->id,
+                'idempotency_key' => 'sale:'.$completedSale->id.':payment-receipt',
+            ], [
+                'event_type' => 'payment.receipt',
+                'subject_type' => Appointment::class,
+                'subject_id' => $completedSale->appointment_id,
+                'payload' => [
+                    'amount_minor' => $completedSale->total_minor,
+                    'currency' => $completedSale->currency_code,
+                    'sale_public_id' => $completedSale->public_id,
+                ],
+                'status' => 'pending',
+                'occurred_at' => now(),
+            ]);
+        }
 
-        return response()->json(['payment' => $payment, 'sale' => $sale->fresh(), 'receipt' => $receipt]);
+        return response()->json(['payment' => $payment, 'sale' => $completedSale, 'receipt' => $receipt]);
     }
 
     public function refund(Request $request, Business $business, Sale $sale, PaymentTransaction $payment)

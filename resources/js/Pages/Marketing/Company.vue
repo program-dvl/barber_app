@@ -6,19 +6,21 @@ import SectionHeading from '@/Components/Marketing/SectionHeading.vue';
 import HomeLayout from '@/Layouts/HomeLayout.vue';
 import { marketingFamilyVisuals } from '@/Support/marketingVisuals';
 import { Head, Link } from '@inertiajs/vue3';
+
+defineProps({ seo: Object });
 </script>
 
 <template>
     <HomeLayout>
-        <Head title="About ClipperDesk" />
+        <Head :title="seo.title" />
         <section class="cd-public-section cd-family-hero" data-tone="coral">
             <PublicContainer>
                 <Breadcrumbs :items="[{ label: 'Home', href: route('marketing.home') }, { label: 'Company' }]" />
                 <div class="cd-family-hero-grid mt-10">
                     <div class="cd-family-hero-copy">
                         <p class="cd-eyebrow">Company</p>
-                        <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-balance">ClipperDesk is being built for the whole working salon day.</h1>
-                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">It is a web-first operating system for independent salons, barbershops, stylists and small non-medical spas—from guided setup and booking through client history, checkout and explainable reporting.</p>
+                        <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-balance">ClipperDesk is being built for the whole working service day.</h1>
+                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">It is a web-first operating system for appointment-led beauty, wellness, personal care, fitness, recovery, health and pet-service businesses—from guided setup and booking through client history, checkout and explainable reporting.</p>
                     </div>
                     <figure class="cd-family-hero-media">
                         <img class="cd-family-hero-image" :src="marketingFamilyVisuals.company.src" :alt="marketingFamilyVisuals.company.alt" width="1536" height="1024" fetchpriority="high" />

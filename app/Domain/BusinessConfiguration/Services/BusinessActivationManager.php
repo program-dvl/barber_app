@@ -32,14 +32,27 @@ class BusinessActivationManager
     {
         $location = DB::transaction(function () use ($business, $membership, $data): Location {
             $lockedBusiness = Business::query()->lockForUpdate()->findOrFail($business->getKey());
+            $createNew = (bool) ($data['create_new'] ?? false);
             $location = filled($data['location'] ?? null)
                 ? $lockedBusiness->locations()->where('public_id', $data['location'])->firstOrFail()
-                : $lockedBusiness->locations()->oldest('id')->first();
+                : ($createNew ? null : $lockedBusiness->locations()->oldest('id')->first());
 
             if (! $location) {
                 $this->entitlements->authorize($lockedBusiness, 'locations.max', 'create', 1);
                 $location = new Location(['business_id' => $lockedBusiness->getKey()]);
             }
+
+            $locationName = trim($data['name']);
+            $duplicateName = $lockedBusiness->locations()
+                ->whereRaw('lower(name) = ?', [mb_strtolower($locationName)])
+                ->when($location->exists, fn ($query) => $query->whereKeyNot($location->getKey()))
+                ->exists();
+            if ($duplicateName) {
+                throw ValidationException::withMessages([
+                    'name' => 'Use a different location name so clients and team members can tell each place apart.',
+                ]);
+            }
+            $data['name'] = $locationName;
 
             if ($location->exists && $lockedBusiness->configuration_published_at
                 && $this->storedLocationWindows($location) !== $this->requestedWindows($data['working_days'], $data['opens_at'], $data['closes_at'])) {

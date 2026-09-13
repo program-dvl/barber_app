@@ -105,6 +105,7 @@ class StripeWebhookProcessor
             'checkout.session.completed' => $this->checkoutCompleted($object, $occurredAt),
             'checkout.session.expired', 'checkout.session.async_payment_failed' => $this->checkoutFailed($object, $type),
             'customer.subscription.created', 'customer.subscription.updated' => $this->subscriptionUpdated($object, $occurredAt),
+            'customer.subscription.pending_update_expired' => $this->pendingUpdateExpired($object, $occurredAt),
             'customer.subscription.deleted' => $this->subscriptionDeleted($object, $occurredAt),
             'invoice.created', 'invoice.finalized', 'invoice.updated', 'invoice.paid', 'invoice.payment_succeeded', 'invoice.payment_failed' => $this->invoiceUpdated($object, $type, $occurredAt),
             default => false,
@@ -268,6 +269,19 @@ class StripeWebhookProcessor
         }
 
         return (bool) $subscription;
+    }
+
+    /** @param array<string, mixed> $object */
+    private function pendingUpdateExpired(array $object, Carbon $occurredAt): bool
+    {
+        $subscription = $this->findSubscription($object);
+        if (! $subscription) {
+            return false;
+        }
+
+        $this->lifecycle->expirePendingProviderPlanChanges($subscription, $occurredAt);
+
+        return true;
     }
 
     /** @param array<string, mixed> $object */
