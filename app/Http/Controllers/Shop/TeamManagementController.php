@@ -22,6 +22,7 @@ use App\Support\Tenancy\TenantContext;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -192,19 +193,21 @@ class TeamManagementController extends Controller
             throw new AuthorizationException('Only an owner may change another owner’s access.');
         }
 
-        $role = $this->resolveRequestedRole($business, $membership->staffProfile, $data, $request, $membership);
-        $this->access->assignCustomRole($membership, $role, $request->user(), $data['reason'] ?: 'Access updated by an authorized team manager.');
-
         $locationIds = $business->locations()->whereIn('public_id', $data['location_ids'])->pluck('id')->all();
         abort_unless(count($locationIds) === count(array_unique($data['location_ids'])), 404);
-        $beforeLocations = $membership->locations()->pluck('locations.public_id')->all();
-        $membership->locations()->syncWithPivotValues($locationIds, ['business_id' => $business->getKey()]);
-        $membership->staffProfile?->locations()->syncWithPivotValues($locationIds, ['business_id' => $business->getKey()]);
-        $this->audit->write(
-            'membership.locations.changed', $business, $request->user(), $membership,
-            $data['reason'] ?: 'Access updated by an authorized team manager.',
-            ['locations' => $beforeLocations], ['locations' => $data['location_ids']],
-        );
+        DB::transaction(function () use ($business, $membership, $data, $request, $locationIds): void {
+            $role = $this->resolveRequestedRole($business, $membership->staffProfile, $data, $request, $membership);
+            $reason = $data['reason'] ?: 'Access updated by an authorized team manager.';
+            $this->access->assignCustomRole($membership, $role, $request->user(), $reason);
+
+            $beforeLocations = $membership->locations()->pluck('locations.public_id')->all();
+            $membership->locations()->syncWithPivotValues($locationIds, ['business_id' => $business->getKey()]);
+            $membership->staffProfile?->locations()->syncWithPivotValues($locationIds, ['business_id' => $business->getKey()]);
+            $this->audit->write(
+                'membership.locations.changed', $business, $request->user(), $membership,
+                $reason, ['locations' => $beforeLocations], ['locations' => $data['location_ids']],
+            );
+        });
 
         return back()->with('status', 'Workspace role, module access and locations updated.');
     }

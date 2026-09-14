@@ -1346,7 +1346,7 @@ frontend tests verify UTC/offset/DST formatting and labels.
 
 ### ADR-038: Treat team access as a secure invitation attached to a canonical team seat
 
-- **Status:** Accepted on 2026-09-13, per the product owner's team-access request.
+- **Status:** Accepted on 2026-09-14, per the product owner's team-access request.
 - **Owners:** Product, Engineering and Security.
 - **Related requirements:** FR-01, FR-05 and FR-19; ADR-008 and ADR-013.
 

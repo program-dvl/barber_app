@@ -1,8 +1,8 @@
 # Project status
 
-Status date: 2026-09-13
+Status date: 2026-09-14
 
-## Team seats, secure invitations and owner activity (2026-09-13)
+## Team seats, secure invitations and owner activity (2026-09-14)
 
 - [x] Team setup now creates the working StaffProfile and, when selected, an
   expiring login invitation in one owner workflow. A provider may still remain
@@ -27,7 +27,9 @@ Status date: 2026-09-13
   redacted AuditEvent records.
 - [x] Dedicated team-access coverage passes 4 tests / 83 assertions. The
   adjacent access, activation and shell checks pass 39 tests / 447 assertions;
-  client and SSR production builds pass on the bundled Node runtime.
+  the complete application suite passes 296 tests / 3,257 assertions with 28
+  intentional skips. Client and SSR production builds and all 17 frontsite
+  budget entries pass on the bundled Node runtime.
 - [ ] Production sender-domain certification and live invitation deliverability
   remain pre-launch operational checks. Current automated coverage uses the
   application notification contract and local test transport.
