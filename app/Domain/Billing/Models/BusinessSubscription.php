@@ -14,12 +14,12 @@ use Illuminate\Support\Str;
 class BusinessSubscription extends Model
 {
     protected $fillable = [
-        'public_id', 'business_id', 'billing_plan_id', 'billing_plan_price_id', 'provider',
+        'billing_rate_card_id', 'capacity_snapshot', 'public_id', 'business_id', 'billing_plan_id', 'billing_plan_price_id', 'provider',
         'provider_customer_id', 'provider_subscription_id', 'status', 'restriction_level',
         'billing_interval', 'trial_started_at', 'trial_ends_at', 'current_period_started_at',
         'current_period_ends_at', 'grace_ends_at', 'cancel_at', 'canceled_at', 'ended_at',
         'export_available_until', 'payment_method_type', 'payment_method_last_four',
-        'provider_state_at', 'version',
+        'provider_state_at', 'version', 'scheduled_billing_plan_price_id', 'scheduled_change_at', 'scheduled_provider_state_at', 'billing_checked_at', 'account_checked_at', 'payment_method_expiry_month', 'payment_method_expiry_year', 'billing_name', 'billing_email', 'customer_balance_minor', 'balance_currency',
     ];
 
     protected static function booted(): void
@@ -30,6 +30,8 @@ class BusinessSubscription extends Model
     protected function casts(): array
     {
         return [
+            'capacity_snapshot' => 'array',
+            'scheduled_change_at' => 'immutable_datetime', 'scheduled_provider_state_at' => 'immutable_datetime', 'billing_checked_at' => 'immutable_datetime', 'account_checked_at' => 'immutable_datetime',
             'status' => SubscriptionStatus::class,
             'restriction_level' => RestrictionLevel::class,
             'billing_interval' => BillingInterval::class,

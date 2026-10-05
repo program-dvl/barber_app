@@ -19,8 +19,8 @@ defineProps({ guides: Array, articleCount: Number, seo: Object });
                 <div class="cd-family-hero-grid mt-10">
                     <div class="cd-family-hero-copy">
                         <p class="cd-eyebrow">Resources</p>
-                        <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-balance">Practical guidance for the operating work behind a good day.</h1>
-                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Practical booking, scheduling and operations guidance for appointment-led businesses—published only with a named author, review evidence and a real publication date.</p>
+                        <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">Practical guides for your business.</h1>
+                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Practical guides to booking rules, schedules and daily operations.</p>
                     </div>
                     <figure class="cd-family-hero-media">
                         <img class="cd-family-hero-image" :src="marketingFamilyVisuals.resources.src" :alt="marketingFamilyVisuals.resources.alt" width="1536" height="1024" fetchpriority="high" />
@@ -34,7 +34,7 @@ defineProps({ guides: Array, articleCount: Number, seo: Object });
             <PublicContainer>
                 <div class="mb-11 max-w-3xl">
                     <p class="cd-eyebrow">Working guides</p>
-                    <h2 class="cd-section-title">Designed to be used, not simply read.</h2>
+                    <h2 class="cd-public-section-title">Designed to be used, not simply read.</h2>
                 </div>
                 <div class="cd-visual-card-grid">
                     <article v-for="(guide, index) in guides" :key="guide.slug" class="cd-visual-card">

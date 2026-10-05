@@ -24,6 +24,7 @@ use App\Domain\PlatformAccess\Services\PlatformInvitationService;
 use App\Domain\PlatformAccess\Services\PlatformTenantQuery;
 use App\Http\Controllers\Controller;
 use App\Support\Audit\AuditWriter;
+use App\Support\AuditEventPresentation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -235,8 +236,14 @@ class PlatformOperationsController extends Controller
     public function auditEvents(Request $request): JsonResponse|Response
     {
         $this->allow($request, PlatformCapability::AuditView);
-        $data = ['events' => AuditEvent::query()->latest('occurred_at')->limit(100)->get()->map->only([
-            'public_id', 'business_id', 'actor_user_id', 'actor_platform_role', 'action', 'auditable_type', 'auditable_id', 'source', 'correlation_id', 'reason', 'occurred_at',
+        $presentation = app(AuditEventPresentation::class);
+        $data = ['events' => AuditEvent::query()->with(['actor:id,name', 'business:id,name,time_zone'])->latest('occurred_at')->limit(100)->get()->map(fn (AuditEvent $event): array => [
+            ...$event->only(['public_id', 'business_id', 'actor_user_id', 'actor_platform_role', 'action', 'auditable_type', 'auditable_id', 'source', 'correlation_id', 'reason', 'occurred_at']),
+            'label' => $presentation->label($event),
+            'summary' => $presentation->summary($event),
+            'actor_name' => $event->actor?->name ?? 'System',
+            'business_name' => $event->business?->name ?? 'Platform',
+            'time_zone' => $event->business?->time_zone ?? 'UTC',
         ])];
 
         return $request->wantsJson() ? response()->json($data) : Inertia::render('Platform/AuditEvents', $data);

@@ -15,9 +15,12 @@ use App\Domain\PlatformAccess\Models\StaffProfile;
 use App\Domain\PlatformAccess\Services\MembershipAccessManager;
 use App\Domain\PlatformAccess\Services\MembershipRestorer;
 use App\Domain\PlatformAccess\Services\MembershipRevoker;
+use App\Domain\SchedulingOperations\Services\TeamWorkspaceQuery;
 use App\Http\Controllers\Controller;
+use App\Notifications\WorkspaceAccessChangedNotification;
 use App\Rules\E164Phone;
 use App\Support\Audit\AuditWriter;
+use App\Support\AuditEventPresentation;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
@@ -39,83 +42,41 @@ class TeamManagementController extends Controller
         private readonly AuditWriter $audit,
     ) {}
 
-    public function index(Business $business): Response
+    public function index(Request $request, Business $business, TeamWorkspaceQuery $workspace): Response
     {
-        $this->authorizeManage();
-
-        $roles = BusinessRole::query()
-            ->where('business_id', $business->getKey())
+        $actor = $this->context->membership();
+        abort_unless($actor, 403);
+        $data = $workspace->build($request, $business, $actor);
+        $manage = $data['can']['manage'];
+        $roles = $manage ? BusinessRole::query()->where('business_id', $business->id)
             ->whereIn('name', ['owner', 'manager', 'receptionist', 'barber_stylist', 'accountant'])
-            ->with('permissions:id,name')
-            ->orderByRaw("CASE name WHEN 'owner' THEN 1 WHEN 'manager' THEN 2 WHEN 'receptionist' THEN 3 WHEN 'barber_stylist' THEN 4 WHEN 'accountant' THEN 5 ELSE 6 END")
-            ->get();
-        $staff = $business->staffProfiles()
-            ->with(['locations', 'availabilityRules', 'serviceAssignments.service', 'membership.user', 'membership.roles', 'membership.permissions'])
-            ->orderBy('display_name')
-            ->get();
-        $pendingInvitations = $business->invitations()
-            ->whereNull('accepted_at')
-            ->whereNull('revoked_at')
-            ->where('expires_at', '>', now())
-            ->with(['role:id,name', 'locations:id,public_id,name', 'staffProfile:id,public_id,display_name'])
-            ->latest()
-            ->get();
-        $seatLimit = (int) ($this->entitlements->value($business, 'staff.max') ?? 0);
-        $seatUsage = $business->staffProfiles()->where('status', 'active')->count();
-        $actorMembership = $this->context->membership();
+            ->with('permissions:id,name')->orderBy('id')->get() : collect();
+        $invitations = $manage ? $business->invitations()->whereNull('accepted_at')->whereNull('revoked_at')
+            ->where(fn ($q) => $q->where('expires_at', '>', now())->orWhere('created_at', '>=', now()->subDays(90)))
+            ->with(['role:id,name', 'role.permissions:id,name', 'locations:id,public_id,name', 'staffProfile:id,public_id,display_name'])->latest()->limit(100)->get()
+            ->filter(fn ($i) => $actor->hasRole('owner', 'web') || $i->locations->pluck('id')->diff($data['locations']->pluck('id'))->isEmpty()) : collect();
+        $seatLimit = $manage ? (int) ($this->entitlements->value($business, 'staff.max') ?? 0) : 0;
+        $used = $manage ? $business->staffProfiles()->where('status', 'active')->count() : 0;
+        $services = $business->services()->where('kind', 'service')->where('is_active', true)->with(['category', 'locations'])
+            ->whereHas('locations', fn ($q) => $q->whereIn('locations.public_id', $data['locations']->pluck('public_id')))
+            ->orderBy('name')->get()->map(fn ($s) => [...$s->only(['public_id', 'name', 'duration_minutes', 'currency_code']),
+                'price_minor' => $manage ? $s->price_minor : null, 'category' => $s->category?->name ?: 'Other services',
+                'locations' => $s->locations->where('pivot.is_eligible', true)->pluck('public_id')->values()]);
 
-        return Inertia::render('Team/Index', [
-            'business' => $business->only(['public_id', 'name', 'country_code', 'time_zone']),
-            'locations' => $business->locations()->where('is_active', true)->with('hours')->orderBy('name')->get()->map(fn ($location): array => [
-                ...$location->only(['public_id', 'name', 'time_zone']),
-                'hours' => $location->hours->map->only(['day_of_week', 'opens_at', 'closes_at'])->values(),
-            ]),
-            'services' => $business->services()->where('kind', 'service')->where('is_active', true)->orderBy('name')->get(['id', 'public_id', 'name']),
-            'staff' => $staff->map(fn ($staff): array => [
-                ...$staff->only(['public_id', 'display_name', 'email', 'mobile', 'title', 'status', 'online_visible', 'membership_id']),
-                'has_login' => $staff->membership?->isActive() ?? false,
-                'membership' => $staff->membership ? [
-                    'public_id' => $staff->membership->public_id,
-                    'status' => $staff->membership->status->value,
-                    'user_name' => $staff->membership->user?->name,
-                    'role' => $staff->membership->getRoleNames()->first(),
-                    'role_label' => $this->roleLabel((string) $staff->membership->getRoleNames()->first()),
-                    'permission_names' => $staff->membership->getAllPermissions()->pluck('name')->sort()->values(),
-                    'is_current' => (int) $staff->membership_id === (int) $actorMembership?->getKey(),
-                ] : null,
-                'locations' => $staff->locations->map->only(['public_id', 'name'])->values(),
-                'availability' => $staff->availabilityRules->map->only(['kind', 'location_id', 'day_of_week', 'starts_at', 'ends_at'])->values(),
-                'services' => $staff->serviceAssignments->where('is_active', true)->map(fn ($assignment): array => [
-                    'public_id' => $assignment->service?->public_id,
-                    'name' => $assignment->service?->name,
-                ])->filter(fn (array $service): bool => filled($service['public_id']))->values(),
-            ]),
-            'readiness' => $this->readiness->evaluate($business)->toArray(),
+        return Inertia::render('Team/Index', [...$data,
+            'services' => $services, 'readiness' => Inertia::optional(fn () => $manage ? $this->readiness->evaluate($business)->toArray() : []),
             'roleSuggestions' => config('business-onboarding.team_roles', []),
-            'accessRoles' => $roles->map(fn (BusinessRole $role): array => [
-                'id' => $role->getKey(),
-                'name' => $role->name,
-                'label' => $this->roleLabel($role->name),
-                'description' => $this->roleDescription($role->name),
-                'permission_names' => $role->permissions->pluck('name')->sort()->values(),
-            ])->values(),
-            'accessModules' => $this->accessModules(),
-            'pendingInvitations' => $pendingInvitations->map(fn ($invitation): array => [
-                'public_id' => $invitation->public_id,
-                'email' => $invitation->email,
-                'person' => $invitation->staffProfile?->display_name,
-                'role' => $this->roleLabel($invitation->role->name),
-                'expires_at' => $invitation->expires_at->toIso8601String(),
-                'locations' => $invitation->locations->pluck('name')->values(),
-            ]),
-            'seatAllowance' => [
-                'used' => $seatUsage,
-                'limit' => $seatLimit,
-                'remaining' => max(0, $seatLimit - $seatUsage),
-                'can_add' => $seatLimit === 0 || $seatUsage < $seatLimit,
-            ],
-            'canManageOwners' => $actorMembership?->hasRole('owner', 'web') ?? false,
-            'activityPreview' => $this->activityQuery($business)->limit(8)->get()->map(fn (AuditEvent $event): array => $this->activityItem($event)),
+            'accessRoles' => $roles->map(fn ($r) => ['id' => $r->id, 'name' => $r->name, 'label' => $this->roleLabel($r->name),
+                'description' => $this->roleDescription($r->name), 'permission_names' => $r->permissions->pluck('name')->sort()->values()]),
+            'accessModules' => $manage ? $this->accessModules() : [],
+            'grantablePermissions' => $manage ? $actor->getAllPermissions()->pluck('name')->values() : [],
+            'pendingInvitations' => $invitations->map(fn ($i) => ['public_id' => $i->public_id, 'email' => $i->email,
+                'role_id' => $i->role_id, 'permission_names' => $i->role->permissions->pluck('name')->sort()->values(), 'location_ids' => $i->locations->pluck('public_id')->values(),
+                'staff_id' => $i->staffProfile?->public_id, 'person' => $i->staffProfile?->display_name, 'role' => $this->roleLabel($i->role->name),
+                'expires_at' => $i->expires_at->toIso8601String(), 'expired' => $i->expires_at->lte(now()), 'locations' => $i->locations->pluck('name')->values()])->values(),
+            'seatAllowance' => ['used' => $used, 'limit' => $seatLimit, 'remaining' => max(0, $seatLimit - $used), 'can_add' => $seatLimit === 0 || $used < $seatLimit],
+            'canManageOwners' => $actor->hasRole('owner', 'web'),
+            'activityPreview' => Inertia::optional(fn () => $manage && $data['can']['audit'] ? $this->activityQuery($business)->limit(5)->get()->map(fn ($e) => $this->activityItem($e)) : []),
         ]);
     }
 
@@ -131,7 +92,7 @@ class TeamManagementController extends Controller
             'location' => ['required', 'string'],
             'service_ids' => ['array'],
             'service_ids.*' => ['string'],
-            'working_days' => ['required', 'array', 'min:1'],
+            'working_days' => ['present', 'array'],
             'working_days.*' => ['integer', 'between:1,7'],
             'starts_at' => ['required', 'date_format:H:i'],
             'ends_at' => ['required', 'date_format:H:i', 'after:starts_at'],
@@ -142,28 +103,49 @@ class TeamManagementController extends Controller
             'permission_names.*' => ['string', Rule::in(PermissionName::values())],
         ]);
         $location = $business->locations()->where('public_id', $data['location'])->where('is_active', true)->firstOrFail();
-        $serviceIds = $business->services()->whereIn('public_id', $data['service_ids'] ?? [])->pluck('id')->map(fn ($id): int => (int) $id)->all();
+        $this->authorizeLocations([$location->id]);
+        $serviceIds = $business->services()->where('is_active', true)->whereHas('locations', fn ($q) => $q->where('locations.id', $location->id)->where('location_service.is_eligible', true))->whereIn('public_id', $data['service_ids'] ?? [])->pluck('id')->map(fn ($id): int => (int) $id)->all();
         abort_unless(count($serviceIds) === count(array_unique($data['service_ids'] ?? [])), 404);
-        $staff = $this->activation->saveProvider($business, [
-            ...$data,
-            'location_id' => $location->getKey(),
-            'service_ids' => $serviceIds,
-        ]);
+        DB::transaction(function () use ($business, $data, $location, $serviceIds, $request, $invitations): void {
+            $locked = Business::query()->lockForUpdate()->findOrFail($business->id);
+            $existing = $locked->staffProfiles()->whereRaw('lower(email) = ?', [strtolower(trim($data['email']))])->with(['locations', 'availabilityRules', 'serviceAssignments'])->first();
+            if ($existing) {
+                $requested = collect($data['working_days'])->unique()->sort()->values()->all();
+                $working = $existing->availabilityRules->where('kind', 'working');
+                $exact = $existing->display_name === trim($data['display_name']) && ($existing->title ?: null) === (($data['title'] ?? null) ?: null)
+                    && ($existing->mobile ?: null) === ($data['mobile'] ?? null) && $existing->status === 'active' && $existing->online_visible === (bool) $data['online_visible']
+                    && $existing->locations->pluck('id')->all() === [$location->id]
+                    && $working->pluck('day_of_week')->sort()->values()->all() === $requested
+                    && $working->every(fn ($r) => $r->location_id === $location->id && substr($r->starts_at, 0, 5) === $data['starts_at'] && substr($r->ends_at, 0, 5) === $data['ends_at'])
+                    && $existing->serviceAssignments->where('is_active', true)->where('is_qualified', true)->pluck('service_id')->sort()->values()->all() === collect($serviceIds)->sort()->values()->all();
+                if (! $exact || ($data['invite_access'] ?? false)) {
+                    throw ValidationException::withMessages(['email' => 'A team member already uses this email. Open their profile to edit their schedule, services or access.', 'working_days' => 'Existing schedules require a reviewed change from the staff profile.']);
+                }
 
-        if ((bool) ($data['invite_access'] ?? false)) {
-            if ($staff->membership_id) {
-                return back()->withErrors(['invite_access' => 'This team member already has workspace access.']);
+                return; // Exact create retry is harmless and cannot rewrite an existing schedule or service version.
+            }
+            $staff = $this->activation->saveProvider($business, [
+                ...$data,
+                'location_id' => $location->getKey(),
+                'service_ids' => $serviceIds,
+            ]);
+
+            if ((bool) ($data['invite_access'] ?? false)) {
+                if ($staff->membership_id) {
+                    throw ValidationException::withMessages(['invite_access' => 'This team member already has workspace access.']);
+                }
+
+                $role = $this->resolveRequestedRole($business, $staff, $data, $request);
+                $invitations->handle(
+                    inviter: $this->context->membership(),
+                    email: $staff->email,
+                    role: $role,
+                    locationIds: [$location->getKey()],
+                    staffProfile: $staff,
+                );
             }
 
-            $role = $this->resolveRequestedRole($business, $staff, $data, $request);
-            $invitations->handle(
-                inviter: $this->context->membership(),
-                email: $staff->email,
-                role: $role,
-                locationIds: [$location->getKey()],
-                staffProfile: $staff,
-            );
-        }
+        });
 
         return back()->with('status', (bool) ($data['invite_access'] ?? false)
             ? 'Team member saved and a secure workspace invitation was emailed.'
@@ -174,6 +156,7 @@ class TeamManagementController extends Controller
     {
         $this->authorizeManage();
         abort_unless((int) $membership->business_id === (int) $business->getKey(), 404);
+        $this->authorizeLocations($membership->locations()->pluck('locations.id')->all());
         $actorMembership = $this->context->membership();
         if ((int) $membership->getKey() === (int) $actorMembership?->getKey()) {
             throw new AuthorizationException('Manage your own security from Profile & security, not from Team access.');
@@ -195,6 +178,7 @@ class TeamManagementController extends Controller
 
         $locationIds = $business->locations()->whereIn('public_id', $data['location_ids'])->pluck('id')->all();
         abort_unless(count($locationIds) === count(array_unique($data['location_ids'])), 404);
+        $this->authorizeLocations($locationIds);
         DB::transaction(function () use ($business, $membership, $data, $request, $locationIds): void {
             $role = $this->resolveRequestedRole($business, $membership->staffProfile, $data, $request, $membership);
             $reason = $data['reason'] ?: 'Access updated by an authorized team manager.';
@@ -202,12 +186,21 @@ class TeamManagementController extends Controller
 
             $beforeLocations = $membership->locations()->pluck('locations.public_id')->all();
             $membership->locations()->syncWithPivotValues($locationIds, ['business_id' => $business->getKey()]);
-            $membership->staffProfile?->locations()->syncWithPivotValues($locationIds, ['business_id' => $business->getKey()]);
             $this->audit->write(
                 'membership.locations.changed', $business, $request->user(), $membership,
                 $reason, ['locations' => $beforeLocations], ['locations' => $data['location_ids']],
             );
         });
+
+        $membership->refresh();
+        $role = $membership->getRoleNames()->first();
+        $membership->user?->notify(new WorkspaceAccessChangedNotification(
+            businessId: $business->getKey(),
+            businessPublicId: $business->public_id,
+            businessName: $business->name,
+            change: 'updated',
+            role: $role ? $this->roleLabel($role) : null,
+        ));
 
         return back()->with('status', 'Workspace role, module access and locations updated.');
     }
@@ -216,6 +209,7 @@ class TeamManagementController extends Controller
     {
         $this->authorizeManage();
         abort_unless((int) $staffProfile->business_id === (int) $business->getKey(), 404);
+        $this->authorizeLocations($staffProfile->locations()->pluck('locations.id')->all());
         if ($staffProfile->membership_id) {
             throw ValidationException::withMessages(['email' => 'This team member already has workspace access.']);
         }
@@ -233,6 +227,7 @@ class TeamManagementController extends Controller
         ]);
         $locationIds = $business->locations()->whereIn('public_id', $data['location_ids'])->pluck('id')->all();
         abort_unless(count($locationIds) === count(array_unique($data['location_ids'])), 404);
+        $this->authorizeLocations($locationIds);
         $role = $this->resolveRequestedRole($business, $staffProfile, $data, $request);
         $invitations->handle(
             inviter: $this->context->membership(),
@@ -249,6 +244,7 @@ class TeamManagementController extends Controller
     {
         $this->authorizeManage();
         abort_unless((int) $membership->business_id === (int) $business->getKey(), 404);
+        $this->authorizeLocations($membership->locations()->pluck('locations.id')->all());
         if ($membership->hasRole('owner', 'web') && ! $this->context->membership()?->hasRole('owner', 'web')) {
             throw new AuthorizationException('Only an owner may remove another owner’s access.');
         }
@@ -262,6 +258,7 @@ class TeamManagementController extends Controller
     {
         $this->authorizeManage();
         abort_unless((int) $membership->business_id === (int) $business->getKey(), 404);
+        $this->authorizeLocations($membership->locations()->pluck('locations.id')->all());
         if ($membership->hasRole('owner', 'web') && ! $this->context->membership()?->hasRole('owner', 'web')) {
             throw new AuthorizationException('Only an owner may restore another owner’s access.');
         }
@@ -292,10 +289,16 @@ class TeamManagementController extends Controller
         }
 
         return Inertia::render('Team/Activity', [
-            'business' => $business->only(['public_id', 'name']),
+            'business' => $business->only(['public_id', 'name', 'time_zone', 'locale']),
             'filters' => ['search' => $data['search'] ?? '', 'category' => $data['category'] ?? 'all'],
             'events' => $query->paginate(30)->withQueryString()->through(fn (AuditEvent $event): array => $this->activityItem($event)),
         ]);
+    }
+
+    private function authorizeLocations(array $ids): void
+    {
+        $actor = $this->context->membership();
+        abort_unless($actor->hasRole('owner', 'web') || collect($ids)->diff($actor->locations()->pluck('locations.id'))->isEmpty(), 403);
     }
 
     private function authorizeManage(): void
@@ -369,7 +372,7 @@ class TeamManagementController extends Controller
 
     private function activityQuery(Business $business)
     {
-        return AuditEvent::query()->where('business_id', $business->getKey())->with('actor:id,name,email')->latest('occurred_at');
+        return AuditEvent::query()->where('business_id', $business->getKey())->with(['actor:id,name,email', 'business:id,time_zone'])->latest('occurred_at');
     }
 
     /** @return array<string, mixed> */
@@ -380,7 +383,8 @@ class TeamManagementController extends Controller
             'actor' => $event->actor?->name ?? 'System',
             'actor_email' => $event->actor?->email,
             'action' => $event->action,
-            'label' => str($event->action)->replace('.', ' ')->headline()->toString(),
+            'label' => app(AuditEventPresentation::class)->label($event),
+            'summary' => app(AuditEventPresentation::class)->summary($event),
             'reason' => $event->reason,
             'before' => $event->before,
             'after' => $event->after,

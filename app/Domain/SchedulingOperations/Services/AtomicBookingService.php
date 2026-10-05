@@ -5,6 +5,7 @@ namespace App\Domain\SchedulingOperations\Services;
 use App\Domain\BusinessConfiguration\Models\PhysicalResource;
 use App\Domain\BusinessConfiguration\Models\Service;
 use App\Domain\ClientRecords\Contracts\ClientIdentityLinker;
+use App\Domain\ClientRecords\Models\Client;
 use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\PlatformAccess\Models\StaffProfile;
 use App\Domain\SchedulingOperations\Contracts\BookingCommitCommand;
@@ -273,10 +274,17 @@ class AtomicBookingService implements BookingCommitCommand, CapacityHoldCommand,
         }
     }
 
-    public function persistAppointment(BookingRequest $request, PlannedVisit $plan, string $idempotencyKey, string $hash): Appointment
+    public function persistAppointment(BookingRequest $request, PlannedVisit $plan, string $idempotencyKey, string $hash, ?int $preservedClientId = null): Appointment
     {
         $now = $request->now();
+        $client = $preservedClientId
+            ? Client::query()->where('business_id', $request->businessId)->whereKey($preservedClientId)->first()
+            : ($request->clientPublicId ? Client::query()->where('business_id', $request->businessId)->where('public_id', $request->clientPublicId)->where('status', 'active')->first() : null);
+        if ($request->clientPublicId && ! $client) {
+            throw new BookingRuleViolation('CLIENT_UNAVAILABLE', 'The selected client is no longer available.');
+        }
         $appointment = Appointment::query()->create([
+            'client_id' => $client?->id,
             'business_id' => $request->businessId,
             'location_id' => $request->locationId,
             'idempotency_key' => $idempotencyKey,

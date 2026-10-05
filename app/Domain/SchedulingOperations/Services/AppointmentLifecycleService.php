@@ -10,6 +10,8 @@ use App\Domain\SchedulingOperations\Models\Appointment;
 use App\Domain\SchedulingOperations\Models\AppointmentChange;
 use App\Domain\SchedulingOperations\Models\AppointmentStatusHistory;
 use App\Domain\SchedulingOperations\Models\OperationalNotificationEvent;
+use App\Domain\SchedulingOperations\Models\WalkInEntry;
+use App\Domain\SchedulingOperations\Models\WalkInHistory;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
@@ -33,6 +35,21 @@ class AppointmentLifecycleService implements AppointmentLifecycleCommand
     private const REASON_REQUIRED = [
         'late', 'cancelled_by_client', 'cancelled_by_shop', 'no_show', 'rescheduled',
     ];
+
+    /** The ordinary next step; cancellation, exceptions and checkout keep their own review flows. */
+    public static function primaryActionFor(string $status): ?array
+    {
+        $action = match ($status) {
+            'pending_confirmation' => ['status' => 'confirmed', 'label' => 'Confirm'],
+            'confirmed', 'late' => ['status' => 'arrived', 'label' => 'Mark arrived'],
+            'arrived' => ['status' => 'checked_in', 'label' => 'Check in'],
+            'checked_in' => ['status' => 'in_service', 'label' => 'Start service'],
+            'in_service' => ['status' => 'completed', 'label' => 'Complete'],
+            default => null,
+        };
+
+        return $action && in_array($action['status'], self::TRANSITIONS[$status] ?? [], true) ? $action : null;
+    }
 
     public function __construct(
         private readonly AtomicBookingService $bookings,
@@ -86,6 +103,34 @@ class AppointmentLifecycleService implements AppointmentLifecycleCommand
                 $updates[$timestampColumn] = $occurredAt;
             }
             $current->update($updates);
+            if (in_array($toStatus, ['in_service', 'completed', 'cancelled_by_shop', 'cancelled_by_client', 'no_show'], true)) {
+                $queueStatus = match ($toStatus) {
+                    'in_service' => 'in_service', 'completed' => 'completed', default => 'left'
+                };
+                $walkIns = WalkInEntry::query()
+                    ->where('business_id', $current->business_id)->where('appointment_id', $current->id)
+                    ->whereIn('status', ['assigned', 'notified', 'waiting', 'in_service'])->lockForUpdate()->get();
+                foreach ($walkIns as $walkIn) {
+                    $previous = $walkIn->status;
+                    if ($previous === $queueStatus) {
+                        continue;
+                    }
+                    $queueUpdates = ['status' => $queueStatus, 'version' => $walkIn->version + 1];
+                    if ($queueStatus === 'in_service') {
+                        $queueUpdates['service_started_at'] = $occurredAt;
+                        $queueUpdates['actual_wait_minutes'] = max(0, (int) $walkIn->arrived_at->diffInMinutes($occurredAt));
+                    } elseif ($queueStatus === 'left') {
+                        $queueUpdates['abandoned_at'] = $occurredAt;
+                    }
+                    $walkIn->update($queueUpdates);
+                    WalkInHistory::query()->create([
+                        'business_id' => $current->business_id, 'walk_in_entry_id' => $walkIn->id,
+                        'action' => $queueStatus === 'in_service' ? 'service_started' : $queueStatus, 'previous_status' => $previous, 'status' => $queueStatus,
+                        'source' => $source, 'actor_type' => $actorType, 'actor_id' => $actorId,
+                        'reason' => $reason, 'before' => ['status' => $previous], 'after' => ['appointment_status' => $toStatus], 'occurred_at' => $occurredAt,
+                    ]);
+                }
+            }
             AppointmentStatusHistory::query()->create([
                 'business_id' => $current->business_id,
                 'appointment_id' => $current->id,
@@ -150,8 +195,22 @@ class AppointmentLifecycleService implements AppointmentLifecycleCommand
 
             $this->bookings->lockCapacityRoots($request);
             $plan = $this->rules->plan($request, true, null, $current->id);
-            $replacement = $this->bookings->persistAppointment($request, $plan, $idempotencyKey, $hash);
+            $replacement = $this->bookings->persistAppointment($request, $plan, $idempotencyKey, $hash, $current->client_id);
             $replacement->update(['rescheduled_from_appointment_id' => $current->id]);
+            $walkIns = WalkInEntry::query()->where('business_id', $current->business_id)->where('appointment_id', $current->id)
+                ->whereIn('status', ['waiting', 'assigned', 'notified', 'in_service'])->lockForUpdate()->get();
+            foreach ($walkIns as $walkIn) {
+                $previousQueueStatus = $walkIn->status;
+                $walkIn->update(['appointment_id' => $replacement->id,
+                    'assigned_staff_profile_id' => $replacement->segments()->whereNotNull('staff_profile_id')->value('staff_profile_id'),
+                    'status' => 'assigned', 'service_started_at' => null,
+                    'version' => $walkIn->version + 1]);
+                WalkInHistory::query()->create(['business_id' => $current->business_id, 'walk_in_entry_id' => $walkIn->id,
+                    'action' => 'calendar_updated', 'previous_status' => $previousQueueStatus, 'status' => $walkIn->status,
+                    'source' => $request->source, 'actor_type' => $request->actorType, 'actor_id' => $request->actorId,
+                    'reason' => $reason, 'before' => ['appointment_id' => $current->id],
+                    'after' => ['appointment_id' => $replacement->id], 'occurred_at' => $request->now()]);
+            }
 
             $before = $this->snapshot($current);
             $fromStatus = $current->status;

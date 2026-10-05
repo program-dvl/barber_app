@@ -55,8 +55,8 @@ const submit = () => {
                     autofocus
                     autocomplete="username"
                     :placeholder="$t('Email address')"
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
+                 :aria-invalid="form.errors.email ? true : undefined" :aria-describedby="form.errors.email ? 'email-error' : undefined"/>
+                <InputError class="mt-2" :message="form.errors.email"  id="email-error"/>
             </div>
 
             <div class="flex items-center justify-center mt-4">

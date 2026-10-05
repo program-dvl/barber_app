@@ -7,47 +7,52 @@ use App\Domain\PlatformAccess\Models\Business;
 
 class BusinessSetupProgress
 {
-    public function __construct(
-        private readonly ReadinessEvaluator $readiness,
-        private readonly EntitlementEvaluator $entitlements,
-    ) {}
+    public function __construct(private readonly ReadinessEvaluator $readiness, private readonly EntitlementEvaluator $entitlements) {}
 
-    /** @return array<string, mixed> */
     public function for(Business $business): array
     {
-        $result = $this->readiness->evaluate($business);
-        $codes = collect($result->blockers)->pluck('code');
-
-        $required = [
-            $this->task('profile', 'Business profile', 'Identity, contact and regional details', ! $codes->contains(fn (string $code) => str_starts_with($code, 'profile.')), route('business.configuration.show', ['business' => $business, 'section' => 'business_details'])),
-            $this->task('location', 'Location & hours', 'Where and when clients can visit', ! $codes->contains(fn (string $code) => str_starts_with($code, 'locations.')), route('business.locations.index', $business)),
-            $this->task('services', 'Service menu', 'What clients can book', ! $codes->contains(fn (string $code) => str_starts_with($code, 'services.')), route('business.services.index', $business)),
-            $this->task('team', 'Team & availability', 'Who delivers each appointment', ! $codes->contains(fn (string $code) => str_starts_with($code, 'staff.')), route('business.team.index', $business)),
-            $this->task('booking_page', 'Booking page', 'Previewed and ready to share', filled($business->configuration_published_at), route('business.configuration.show', ['business' => $business, 'section' => 'preview'])),
+        $inspection = $this->readiness->inspect($business);
+        $result = $inspection['operational'];
+        $counts = $inspection['counts'];
+        $href = fn ($section) => route('business.configuration.show', ['business' => $business, 'section' => $section]);
+        $required = [];
+        foreach ([
+            ['profile', 'Business profile', 'Name, country, currency and time zone', 'profile.', 'business_details'],
+            ['location', 'Location & opening hours', $counts['locations'].' active location'.($counts['locations'] === 1 ? '' : 's'), 'locations.', 'hours'],
+            ['services', 'Review your services', $counts['services'].' active service'.($counts['services'] === 1 ? '' : 's').' · check prices and duration', 'services.', 'services'],
+            ['team', 'Your team', $counts['staff'].' active team member'.($counts['staff'] === 1 ? '' : 's'), 'staff.active', 'team'],
+            ['availability', 'Services & working hours', $counts['bookable_services'].' service'.($counts['bookable_services'] === 1 ? '' : 's').' with qualified staff and matching hours', 'staff.availability', 'team'],
+            ['booking_preferences', 'Booking preferences', 'Your calendar interval and cancellation rules', 'rules.', 'booking_rules'],
+        ] as [$id, $label, $description, $prefix, $section]) {
+            $issues = collect($result->blockers)->filter(fn ($item) => str_starts_with($item['code'], $prefix));
+            $required[] = [...$this->task($id, $label, $issues->first()['message'] ?? $description, $issues->isEmpty(), $href($section)), 'section' => $section, 'priority' => 'Required'];
+        }
+        $complete = collect($required)->where('complete', true)->count();
+        $recommended = [
+            [...$this->task('online_booking', 'Online booking', $business->configuration_published_at
+                ? ($business->online_booking_enabled ? 'Published booking page' : 'Online bookings are paused') : 'Preview your page, then choose when to go live',
+                filled($business->configuration_published_at) && $business->online_booking_enabled && $inspection['publication']->publishable, $href('preview')), 'section' => 'preview'],
+            [...$this->task('notifications', 'Client notifications', 'Prepared messages · review email and SMS delivery', false, route('business.communications.page', $business)), 'section' => 'connections'],
+            [...$this->task('import', 'Bring your records', 'Import clients, services or team when you are ready', $business->configurationImports()->where('status', 'completed')->exists(), $href('import')), 'section' => 'import'],
         ];
-
-        $requiredComplete = collect($required)->where('complete', true)->count();
-        $recommended = array_values(array_filter([
-            $this->entitlements->value($business, 'branding.custom')
-                ? $this->task('branding', 'Add your brand', 'Logo, cover image and accent colour', filled($business->logo_path) && filled($business->cover_image_path), route('business.configuration.show', ['business' => $business, 'section' => 'business_details']))
-                : null,
-            $this->task('team_growth', 'Invite your team', 'Add people now or whenever you are ready', $business->staffProfiles()->where('status', 'active')->count() > 1, route('business.team.index', $business)),
-            $this->task('booking_preferences', 'Fine-tune booking rules', 'Deposits, cancellation and staff choice', in_array('booking_rules', $business->onboardingSession?->completed_steps ?? [], true), route('business.configuration.show', ['business' => $business, 'section' => 'booking_rules'])),
-        ]));
+        if ($this->entitlements->value($business, 'branding.custom')) {
+            $recommended[] = [...$this->task('branding', 'Make it yours', 'Add your logo or a photo of your business', filled($business->logo_path), $href('branding')), 'section' => 'branding'];
+        }
 
         return [
-            'label' => $requiredComplete === count($required) ? 'Ready to take bookings' : 'Getting started',
-            'percent' => (int) round(($requiredComplete / count($required)) * 100),
-            'completed' => $requiredComplete,
-            'total' => count($required),
-            'required_complete' => $requiredComplete === count($required),
-            'required' => $required,
-            'recommended' => $recommended,
-            'next' => collect($required)->firstWhere('complete', false) ?? collect($recommended)->firstWhere('complete', false),
+            'label' => $result->publishable ? 'Ready to take bookings' : 'Getting started',
+            'percent' => (int) round($complete / count($required) * 100),
+            'completed' => $complete, 'total' => count($required), 'required_complete' => $result->publishable,
+            'required' => $required, 'recommended' => $recommended,
+            'next' => collect($required)->firstWhere('complete', false),
+            'counts' => $counts, 'bookable_service_ids' => $inspection['bookable_service_ids'], 'online_service_ids' => $inspection['online_service_ids'], 'operational' => $result->toArray(), 'publication' => $inspection['publication']->toArray(),
+            'online_state' => $business->configuration_published_at
+                ? (! $business->online_booking_enabled ? 'Paused' : ($inspection['publication']->publishable ? 'Live' : 'Needs attention'))
+                : ($inspection['publication']->publishable ? 'Ready to publish' : 'Not published'),
+            'starter' => $business->onboardingSession?->generated_data ?? [],
         ];
     }
 
-    /** @return array{id:string,label:string,description:string,complete:bool,href:string} */
     private function task(string $id, string $label, string $description, bool $complete, string $href): array
     {
         return compact('id', 'label', 'description', 'complete', 'href');

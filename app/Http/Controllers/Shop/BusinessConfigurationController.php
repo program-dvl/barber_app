@@ -15,13 +15,21 @@ use App\Domain\BusinessConfiguration\Models\ServiceResourceRequirement;
 use App\Domain\BusinessConfiguration\Models\ServiceSegment;
 use App\Domain\BusinessConfiguration\Models\StaffAvailabilityRule;
 use App\Domain\BusinessConfiguration\Models\StaffServiceAssignment;
+use App\Domain\BusinessConfiguration\Services\BusinessSetupAccess;
+use App\Domain\BusinessConfiguration\Services\BusinessSetupProgress;
 use App\Domain\BusinessConfiguration\Services\ConfigurationChangePreviewer;
 use App\Domain\BusinessConfiguration\Services\ConfigurationImportService;
 use App\Domain\BusinessConfiguration\Services\OnboardingManager;
 use App\Domain\BusinessConfiguration\Services\ReadinessEvaluator;
+use App\Domain\BusinessConfiguration\Services\ServiceCatalogManager;
 use App\Domain\BusinessConfiguration\Services\StaffScheduleValidator;
+use App\Domain\BusinessConfiguration\Services\StaffWorkforceManager;
 use App\Domain\BusinessConfiguration\Services\StarterWorkspaceProvisioner;
+use App\Domain\Communications\Providers\SesEmailProvider;
+use App\Domain\Communications\Services\CommunicationSenderService;
 use App\Domain\MoneyCommerce\Models\CommerceSetting;
+use App\Domain\MoneyCommerce\Models\Deposit;
+use App\Domain\MoneyCommerce\Models\Sale;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
@@ -32,6 +40,7 @@ use App\Rules\E164Phone;
 use App\Support\Audit\AuditWriter;
 use App\Support\Regional\CountryCatalog;
 use App\Support\Tenancy\TenantContext;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -58,7 +67,7 @@ class BusinessConfigurationController extends Controller
         private readonly StarterWorkspaceProvisioner $starterWorkspace,
     ) {}
 
-    public function show(Business $business): Response
+    public function show(Request $request, Business $business): Response
     {
         $this->authorizePermission(PermissionName::SettingsManage);
         $session = $this->onboarding->resume($business);
@@ -75,6 +84,13 @@ class BusinessConfigurationController extends Controller
         $referenceData['countries'] = $this->countries->countries();
         $referenceData['currencies'] = $this->countries->currencies();
         $referenceData['country_defaults'] = $this->countries->defaults();
+        $summary = app(BusinessSetupProgress::class)->for($business);
+        $request->attributes->set('business_setup_summary', $summary);
+        $business->loadMissing('staffProfiles.serviceAssignments');
+        $catalog = app(ServiceCatalogManager::class);
+        $services = $business->services()->with(ServiceCatalogManager::RELATIONS)->orderBy('name')->get();
+        $visits = $catalog->upcoming($business);
+        $sender = app(CommunicationSenderService::class)->readiness($business);
 
         return Inertia::render('Configuration/Onboarding', [
             'business' => [
@@ -88,20 +104,54 @@ class BusinessConfigurationController extends Controller
                     'public_link_ttl_minutes', 'public_booking_policy_version',
                 ]),
                 'default_tax_rate_bps' => $commerce->default_tax_rate_bps,
+                'setup_revision' => $this->setupRevision($business),
             ],
             'onboarding' => $session->only([
                 'schema_version', 'current_step', 'completed_steps', 'answers', 'generated_data', 'last_saved_at',
                 'personalized_at', 'guided_completed_at', 'previewed_at', 'published_at',
             ]),
-            'readiness' => $this->readiness->evaluate($business)->toArray(),
-            'locations' => $business->locations()->with(['hours', 'scheduleExceptions', 'physicalResources'])->get(),
-            'services' => $business->services()->with(['segments', 'locations', 'staffAssignments', 'resourceRequirements'])->get(),
-            'staff' => $business->staffProfiles()->with(['locations', 'availabilityRules', 'serviceAssignments'])->get(),
+            'setupSummary' => $summary,
+            'canManageTeam' => $this->context->membership()->hasPermissionTo(PermissionName::StaffManage->value, 'web'),
+            'readiness' => $summary['publication'],
+            'channels' => [
+                'email' => config('communications.email_transport_mode') === 'fake' ? 'Simulation' : (SesEmailProvider::configured() ? 'Sending configured' : 'Needs setup'),
+                'sms' => $sender['transport_mode'] !== 'live' ? 'Simulation' : ($sender['transport_ready'] ? 'Sending configured' : 'Needs setup'),
+            ],
+            'serviceReview' => $services->where('kind', 'service')->map(fn ($s) => [
+                'bookable' => in_array($s->public_id, $summary['bookable_service_ids'], true),
+                'bookable_online' => in_array($s->public_id, $summary['online_service_ids'], true),
+                ...$s->only([...ServiceCatalogManager::FIELDS, 'public_id', 'currency_code']),
+                'category' => $s->category?->name,
+                'revision' => $catalog->revision($s),
+                'impact_revision' => $catalog->impactRevision($visits->get($s->id, collect())),
+                'upcoming_count' => $visits->get($s->id, collect())->unique('appointment_id')->count(),
+                'location_ids' => $s->locations->filter(fn ($l) => $l->pivot->is_eligible)->pluck('public_id')->all(),
+                'staff_ids' => $catalog->currentAssignments($s)->where('is_qualified', true)->map(fn ($a) => $a->staffProfile?->public_id)->filter()->values()->all(),
+                'addon_ids' => $s->addons->pluck('public_id')->all(),
+                'starter' => in_array($s->public_id, $session->generated_data['services'] ?? [], true),
+            ])->values(),
+            'locations' => $business->locations,
+            'hoursRevisions' => $business->locations->mapWithKeys(fn ($l) => [$l->public_id => app(SetupHoursController::class)->revision($l)]),
+            'services' => $services->map->only(['public_id']),
+            'staff' => $business->staffProfiles->map->only(['public_id', 'display_name', 'status']),
+            'setupTeam' => $business->staffProfiles->map(function ($s) use ($business, $session) {
+                $manager = app(StaffWorkforceManager::class);
+
+                return [...$s->only(['public_id', 'display_name', 'title', 'email', 'mobile', 'biography', 'status', 'online_visible']),
+                    'owner' => $s->public_id === ($session->generated_data['owner_staff'] ?? null),
+                    'locations' => $s->locations->map->only(['id', 'public_id', 'name'])->values(),
+                    'rules' => collect($manager->rules($s))->filter(fn ($r) => ! $r['ends_on'] || $r['ends_on'] >= CarbonImmutable::today($business->time_zone ?: 'UTC')->toDateString())->values(),
+                    'revision' => $manager->revision($s),
+                    'profile_revision' => $manager->profileRevision($s),
+                    'service_count' => $s->serviceAssignments->filter(fn ($a) => $a->is_active && $a->is_qualified && (! $a->effective_from || $a->effective_from->lte(now())) && (! $a->effective_until || $a->effective_until->gt(now())))->count(),
+                ];
+            })->values(),
             'imports' => $business->configurationImports()->latest()->limit(10)->get(),
             'steps' => OnboardingManager::STEPS,
             'referenceData' => $referenceData,
             'onboardingCatalog' => [
                 'business_types' => config('business-onboarding.business_types'),
+                'starter_price_major' => config('business-onboarding.starter_price_major'),
                 'operation_models' => config('business-onboarding.operation_models'),
                 'team_sizes' => config('business-onboarding.team_sizes'),
                 'location_scales' => config('business-onboarding.location_scales'),
@@ -110,6 +160,18 @@ class BusinessConfigurationController extends Controller
                 'countries' => $this->countries->countries(),
             ],
         ]);
+    }
+
+    private function setupRevision(Business $business): string
+    {
+        return hash('sha256', json_encode([$business->getAttributes(), CommerceSetting::query()->where('business_id', $business->id)->first()?->getAttributes()], JSON_THROW_ON_ERROR));
+    }
+
+    private function assertSetupRevision(Business $business, array $data): void
+    {
+        if (isset($data['setup_revision']) && ! hash_equals($this->setupRevision($business), $data['setup_revision'])) {
+            throw ValidationException::withMessages(['setup_revision' => 'These settings changed elsewhere. Your edits are retained. Reload the saved settings before making another change.']);
+        }
     }
 
     public function saveGuidedOnboarding(Request $request, Business $business): RedirectResponse
@@ -133,8 +195,8 @@ class BusinessConfigurationController extends Controller
             'location' => $request->validate([
                 'country_code' => ['required', 'string', 'size:2'],
                 'time_zone' => ['required', 'timezone:all'],
-                'address' => ['required', 'string', 'max:1000'],
-                'phone' => ['required', 'string', 'max:32', new E164Phone],
+                'address' => ['present', 'nullable', 'string', 'max:1000'],
+                'phone' => ['present', 'nullable', 'string', 'max:32', new E164Phone],
                 'schedule_preset' => ['required', Rule::in(array_keys(config('business-onboarding.schedule_presets')))],
             ]),
             'starter_services' => $this->validateStarterServices($request, $business),
@@ -184,7 +246,7 @@ class BusinessConfigurationController extends Controller
         $allowed = array_column($templates, 'key');
 
         return $request->validate([
-            'service_keys' => ['required', 'array', 'min:1', 'max:6'],
+            'service_keys' => ['present', 'array', 'max:6'],
             'service_keys.*' => ['required', 'string', 'distinct', Rule::in($allowed)],
         ]);
     }
@@ -193,6 +255,7 @@ class BusinessConfigurationController extends Controller
     {
         $this->authorizePermission(PermissionName::SettingsManage);
         $data = $request->validate([
+            'setup_revision' => ['sometimes', 'string', 'size:64'],
             'name' => ['required', 'string', 'max:255'], 'booking_slug' => ['required', 'string', 'min:3', 'max:80'],
             'business_type' => ['required', 'string', 'max:64'], 'description' => ['nullable', 'string', 'max:1200'],
             'brand_color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'], 'country_code' => ['required', 'string', 'size:2'],
@@ -201,11 +264,11 @@ class BusinessConfigurationController extends Controller
             'appointment_interval_minutes' => ['required', 'integer', Rule::in([5, 10, 15, 20, 30, 60])],
             'tax_posture' => ['required', Rule::in(['inclusive', 'exclusive', 'not_registered'])],
             'default_tax_rate_bps' => ['sometimes', 'integer', 'between:0,10000'],
-            'phone' => ['required', 'string', 'max:32', new E164Phone], 'email' => ['required', 'email'],
+            'phone' => ['nullable', 'string', 'max:32', new E164Phone], 'email' => ['nullable', 'email'],
             'website_url' => ['nullable', 'url:http,https'], 'social_links' => ['nullable', 'array'],
-            'social_links.*' => ['url:http,https'], 'address' => ['required', 'string', 'max:1000'],
-            'map_url' => ['nullable', 'url:http,https'], 'default_cancellation_policy' => ['required', 'string', 'max:4000'],
-            'terms_url' => ['required', 'url:http,https'], 'privacy_url' => ['required', 'url:http,https'],
+            'social_links.*' => ['url:http,https'], 'address' => ['nullable', 'string', 'max:1000'],
+            'map_url' => ['nullable', 'url:http,https'], 'default_cancellation_policy' => ['nullable', 'string', 'max:4000'],
+            'terms_url' => ['nullable', 'url:http,https'], 'privacy_url' => ['nullable', 'url:http,https'],
         ]);
         abort_unless(array_key_exists(strtoupper($data['country_code']), $this->countries->countries()), 422, 'Choose a recognized country.');
         abort_unless(array_key_exists(strtoupper($data['currency_code']), $this->countries->currencies()), 422, 'Choose a recognized currency.');
@@ -216,28 +279,29 @@ class BusinessConfigurationController extends Controller
             ? 0
             : (int) ($data['default_tax_rate_bps'] ?? $storedTaxRate ?? 0);
         unset($data['booking_slug'], $data['default_tax_rate_bps']);
-        if ($business->currency_code && strtoupper($data['currency_code']) !== strtoupper($business->currency_code)
-            && ($business->services()->exists() || Appointment::query()->where('business_id', $business->getKey())->exists())) {
-            throw ValidationException::withMessages([
-                'currency_code' => 'Currency cannot be changed after services or appointments exist. Create a reviewed migration so future prices change without rewriting historical records.',
-            ]);
-        }
-        $before = $business->only(array_keys($data));
-        DB::transaction(function () use ($business, $data, $taxRateBps): void {
+        DB::transaction(function () use ($business, $data, $taxRateBps, $slug): void {
+            $business = Business::query()->lockForUpdate()->findOrFail($business->id);
+            $this->assertSetupRevision($business, $data);
+            unset($data['setup_revision']);
+            if ($business->currency_code && strtoupper($data['currency_code']) !== strtoupper($business->currency_code)
+                && ($business->services()->exists() || $business->products()->exists() || Appointment::query()->where('business_id', $business->id)->exists()
+                    || Sale::query()->where('business_id', $business->id)->exists()
+                    || Deposit::query()->where('business_id', $business->id)->exists())) {
+                throw ValidationException::withMessages(['currency_code' => 'Currency cannot change after services or financial history exist. A reviewed migration must preserve historical amounts.']);
+            }
+            $before = [...$business->only([...array_keys($data), 'booking_slug']), 'default_tax_rate_bps' => CommerceSetting::query()->where('business_id', $business->id)->value('default_tax_rate_bps')];
             $business->update([...$data, 'country_code' => strtoupper($data['country_code']), 'currency_code' => strtoupper($data['currency_code'])]);
-            CommerceSetting::query()->updateOrCreate(
-                ['business_id' => $business->getKey()],
-                [
-                    'currency_code' => strtoupper($data['currency_code']),
-                    'tax_inclusive' => $data['tax_posture'] === 'inclusive',
-                    'default_tax_rate_bps' => $taxRateBps,
-                    'cancellation_cutoff_minutes' => max(0, (int) $business->cancellation_cutoff_minutes),
-                ],
-            );
-        });
-        $business = $this->onboarding->changeBookingSlug($business, $slug);
-        $this->onboarding->saveStep($business, 'business_details');
-        $this->audit->write('configuration.profile.updated', $business, target: $business, before: $before, after: $business->only(array_keys($data)));
+            CommerceSetting::query()->updateOrCreate(['business_id' => $business->id], [
+                'currency_code' => strtoupper($data['currency_code']), 'tax_inclusive' => $data['tax_posture'] === 'inclusive',
+                'default_tax_rate_bps' => $taxRateBps, 'cancellation_cutoff_minutes' => max(0, (int) $business->cancellation_cutoff_minutes),
+            ]);
+            $business = $this->onboarding->changeBookingSlug($business, $slug);
+            $this->onboarding->saveStep($business, 'business_details');
+            $after = [...$business->only([...array_keys($data), 'booking_slug']), 'default_tax_rate_bps' => $taxRateBps];
+            if ($before !== $after) {
+                $this->audit->write('configuration.profile.updated', $business, target: $business, before: $before, after: $after);
+            }
+        }, 3);
 
         return back()->with('status', 'Business details saved.');
     }
@@ -257,6 +321,8 @@ class BusinessConfigurationController extends Controller
     {
         $this->authorizePermission(PermissionName::SettingsManage);
         $data = $request->validate([
+            'setup_revision' => ['sometimes', 'string', 'size:64'],
+            'appointment_interval_minutes' => ['sometimes', 'integer', Rule::in([5, 10, 15, 20, 30, 60])],
             'online_booking_enabled' => ['required', 'boolean'],
             'online_staff_preference' => ['required', Rule::in(['any_or_preferred', 'any_only', 'preferred_required'])],
             'online_price_display' => ['required', Rule::in(['service_setting', 'exact', 'from'])],
@@ -266,18 +332,30 @@ class BusinessConfigurationController extends Controller
             'waitlist_offer_batch_size' => ['required', 'integer', 'between:1,10'],
             'public_link_ttl_minutes' => ['required', 'integer', 'between:15,43200'],
         ]);
-        $before = $business->only(array_keys($data));
-        $business->update([...$data, 'public_booking_policy_version' => max(1, (int) $business->public_booking_policy_version) + 1]);
-        CommerceSetting::query()->updateOrCreate(
-            ['business_id' => $business->getKey()],
-            [
-                'currency_code' => $business->currency_code ?: 'INR',
-                'tax_inclusive' => $business->tax_posture === 'inclusive',
-                'cancellation_cutoff_minutes' => (int) $data['cancellation_cutoff_minutes'],
-            ],
-        );
-        $this->onboarding->saveStep($business, 'booking_rules');
-        $this->audit->write('configuration.public_booking_policy.updated', $business, target: $business, before: $before, after: $business->only(array_keys($data)), metadata: ['policy_version' => $business->public_booking_policy_version]);
+        DB::transaction(function () use ($business, $data): void {
+            $business = Business::query()->lockForUpdate()->findOrFail($business->id);
+            $this->assertSetupRevision($business, $data);
+            unset($data['setup_revision']);
+            if ($data['online_booking_enabled'] && ! $business->online_booking_enabled && $business->configuration_published_at && ! $this->readiness->evaluate($business)->publishable) {
+                throw ValidationException::withMessages(['online_booking_enabled' => 'Review the online booking readiness checks before resuming your page.']);
+            }
+            if ($business->only(array_keys($data)) == $data) {
+                return;
+            }
+            $before = $business->only(array_keys($data));
+            $business->update([...$data, 'public_booking_policy_version' => max(1, (int) $business->public_booking_policy_version) + 1]);
+            CommerceSetting::query()->updateOrCreate(
+                ['business_id' => $business->getKey()],
+                [
+                    'currency_code' => $business->currency_code ?: 'INR',
+                    'tax_inclusive' => $business->tax_posture === 'inclusive',
+                    'cancellation_cutoff_minutes' => (int) $data['cancellation_cutoff_minutes'],
+                ],
+            );
+            $this->onboarding->saveStep($business, 'booking_rules');
+            $this->audit->write('configuration.public_booking_policy.updated', $business, target: $business, before: $before, after: $business->only(array_keys($data)), metadata: ['policy_version' => $business->public_booking_policy_version]);
+
+        }, 3);
 
         return back()->with('status', 'Public booking rules saved. In-progress clients will be asked to review the new policy.');
     }
@@ -466,27 +544,8 @@ class BusinessConfigurationController extends Controller
 
     public function saveStaffAvailability(Request $request, Business $business, StaffProfile $staffProfile): RedirectResponse
     {
-        $this->authorizePermission(PermissionName::StaffManage);
-        $data = $request->validate([
-            'rules' => ['present', 'array'], 'rules.*.kind' => ['required', Rule::in(['working', 'break', 'leave', 'holiday', 'sick_leave', 'temporary_change', 'personal_block'])],
-            'rules.*.location_id' => ['nullable', Rule::exists('locations', 'id')->where('business_id', $business->id)],
-            'rules.*.day_of_week' => ['nullable', 'integer', 'between:1,7'], 'rules.*.starts_on' => ['nullable', 'date'],
-            'rules.*.ends_on' => ['nullable', 'date', 'after_or_equal:rules.*.starts_on'], 'rules.*.starts_at' => ['nullable', 'date_format:H:i'],
-            'rules.*.ends_at' => ['nullable', 'date_format:H:i'], 'rules.*.sequence' => ['integer', 'min:1'], 'rules.*.reason' => ['nullable', 'string', 'max:255'],
-        ]);
-        $this->scheduleValidator->validate($data['rules']);
-        $impactPreview = $this->requireImpactResolution($request, $business, $staffProfile, 'staff_availability');
-        DB::transaction(function () use ($business, $staffProfile, $data, $impactPreview, $request): void {
-            $staffProfile->availabilityRules()->delete();
-            foreach ($data['rules'] as $rule) {
-                StaffAvailabilityRule::query()->create([...$rule, 'business_id' => $business->id, 'staff_profile_id' => $staffProfile->id]);
-            }
-            $this->applyImpactResolution($impactPreview, $request);
-        });
-        $this->onboarding->saveStep($business, 'staff_availability');
-        $this->audit->write('configuration.staff_availability.updated', $business, target: $staffProfile, after: ['rules' => $data['rules']]);
-
-        return back()->with('status', 'Staff availability saved.');
+        // Keep the compatibility route, with the same reviewed workforce command.
+        return app(StaffOperationsController::class)->schedule($request, $business, $staffProfile);
     }
 
     public function previewChange(Request $request, Business $business, string $subjectType, string $subjectId): JsonResponse
@@ -557,6 +616,9 @@ class BusinessConfigurationController extends Controller
     private function authorizePermission(PermissionName $permission): void
     {
         abort_unless($this->context->membership()?->hasPermissionTo($permission->value, 'web'), 403);
+        if ($permission === PermissionName::SettingsManage) {
+            abort_unless(app(BusinessSetupAccess::class)->allows($this->context->business(), $this->context->membership()), 403);
+        }
     }
 
     private function requireImpactResolution(Request $request, Business $business, Model $subject, string $changeType): ?ConfigurationChangePreview

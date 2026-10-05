@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Marketing;
 
+use App\Domain\Billing\Services\CapacityPricingCatalog;
 use App\Domain\Billing\Services\PublicPricingCatalog;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
@@ -13,6 +14,7 @@ class PricingController extends Controller
     {
         return Inertia::render('Marketing/Pricing', [
             'catalog' => $catalog->present(),
+            'capacityPricing' => app(CapacityPricingCatalog::class)->present(),
             'seo' => [
                 'title' => 'Service business software pricing | ClipperDesk',
                 'description' => 'Compare ClipperDesk plans, trial terms and operating limits for appointment-led beauty, wellness, fitness, health and pet-service businesses.',

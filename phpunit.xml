@@ -26,5 +26,7 @@
         <env name="SESSION_DRIVER" value="array" force="true"/>
         <env name="QUEUE_CONNECTION" value="sync" force="true"/>
         <env name="MAIL_MAILER" value="array" force="true"/>
+        <env name="COMMUNICATIONS_TRANSPORT_MODE" value="fake" force="true"/>
+        <env name="COMMUNICATIONS_IMMEDIATE_EVENT_DISPATCH" value="false" force="true"/>
     </php>
 </phpunit>

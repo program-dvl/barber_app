@@ -2,6 +2,7 @@
 
 namespace App\Domain\Communications\Services;
 
+use App\Domain\Communications\Models\CommunicationSenderProfile;
 use Illuminate\Http\Request;
 
 class CommunicationWebhookVerifier
@@ -31,9 +32,8 @@ class CommunicationWebhookVerifier
 
     public function verifyTwilio(Request $request): bool
     {
-        $token = (string) config('communications.twilio.auth_token');
         $provided = (string) $request->header('X-Twilio-Signature');
-        if ($token === '' || $provided === '') {
+        if ($provided === '') {
             return false;
         }
         $data = $request->fullUrl();
@@ -42,8 +42,21 @@ class CommunicationWebhookVerifier
         foreach ($parameters as $key => $value) {
             $data .= $key.(is_array($value) ? implode('', $value) : $value);
         }
-        $expected = base64_encode(hash_hmac('sha1', $data, $token, true));
+        $tokens = collect([
+            (string) config('communications.twilio.webhook_auth_token'),
+            (string) config('communications.twilio.auth_token'),
+        ])->filter();
+        if ($accountSid = $request->string('AccountSid')->toString()) {
+            $profile = CommunicationSenderProfile::query()->where('provider_account_sid_hash', hash('sha256', $accountSid))->where('status', 'active')->first();
+            if ($profile?->webhook_auth_token) {
+                $tokens->push($profile->webhook_auth_token);
+            }
+        }
 
-        return hash_equals($expected, $provided);
+        return $tokens->unique()->contains(function (string $token) use ($data, $provided): bool {
+            $expected = base64_encode(hash_hmac('sha1', $data, $token, true));
+
+            return hash_equals($expected, $provided);
+        });
     }
 }

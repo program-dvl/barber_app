@@ -27,9 +27,8 @@ const submit = () => form.transform(data => ({ ...data, remember: form.remember 
     >
         <AuthenticationCard embedded>
             <div class="mb-7">
-                <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-[var(--status-info-soft)] px-3 py-1.5 text-xs font-bold text-[var(--status-info)]"><LockClosedIcon class="size-3.5" aria-hidden="true" /> Secure workspace access</div>
-                <h2 class="cd-display text-[clamp(2.25rem,5vw,3.25rem)] font-semibold leading-none tracking-[-0.05em] text-[var(--text-strong)]">Welcome back.</h2>
-                <p class="mt-3 text-base leading-7 text-[var(--text-muted)]">Sign in to manage today’s schedule, clients and team.</p>
+                <h1 class="cd-display text-2xl font-semibold leading-tight tracking-[-0.05em] text-[var(--text-strong)]">Sign in</h1>
+
             </div>
 
             <div v-if="status" class="mb-5 flex items-start gap-2.5 rounded-[var(--radius-md)] border border-[var(--status-success)]/20 bg-[var(--status-success-soft)] p-3.5 text-sm text-[var(--status-success)]" role="status"><CheckCircleIcon class="mt-0.5 size-5 shrink-0" aria-hidden="true" /><span>{{ status }}</span></div>
@@ -39,16 +38,16 @@ const submit = () => form.transform(data => ({ ...data, remember: form.remember 
             <div v-if="$page.props.googleAuth?.enabled" class="my-6 flex items-center gap-3" aria-hidden="true"><div class="h-px flex-1 bg-[var(--border-subtle)]"></div><span class="text-[0.7rem] font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">or use email</span><div class="h-px flex-1 bg-[var(--border-subtle)]"></div></div>
 
             <form @submit.prevent="submit" class="space-y-5">
-                <div><InputLabel for="email" :value="$t('Work email')" /><TextInput id="email" v-model="form.email" type="email" class="mt-2 block w-full" required autofocus autocomplete="username" placeholder="name@business.com" /><InputError class="mt-2" :message="form.errors.email" /></div>
+                <div><InputLabel for="email" :value="$t('Work email')" /><TextInput id="email" v-model="form.email" type="email" class="mt-2 block w-full" required autofocus autocomplete="username" placeholder="name@business.com"  :aria-invalid="form.errors.email ? true : undefined" :aria-describedby="form.errors.email ? 'email-error' : undefined"/><InputError class="mt-2" :message="form.errors.email"  id="email-error"/></div>
                 <div>
                     <div class="flex items-center justify-between gap-4"><InputLabel for="password" :value="$t('Password')" /><Link v-if="canResetPassword" :href="route('password.request')" class="text-xs font-bold text-[var(--brand-secondary)] hover:underline">{{ $t('Forgot password?') }}</Link></div>
-                    <TextInput id="password" v-model="form.password" type="password" class="mt-2 block w-full" required autocomplete="current-password" placeholder="Enter your password" /><InputError class="mt-2" :message="form.errors.password" />
+                    <TextInput id="password" v-model="form.password" type="password" class="mt-2 block w-full" required autocomplete="current-password" placeholder="Enter your password"  :aria-invalid="form.errors.password ? true : undefined" :aria-describedby="form.errors.password ? 'password-error' : undefined"/><InputError class="mt-2" :message="form.errors.password"  id="password-error"/>
                 </div>
                 <label for="remember" class="flex min-h-11 cursor-pointer items-center gap-2.5 text-sm text-[var(--text-default)]"><Checkbox id="remember" v-model:checked="form.remember" name="remember" /><span>{{ $t('Keep me signed in on this device') }}</span></label>
-                <PrimaryButton class="w-full justify-center" :class="{ 'opacity-75': form.processing }" :disabled="form.processing">{{ form.processing ? $t('Signing in…') : $t('Sign in securely') }}</PrimaryButton>
+                <PrimaryButton class="w-full justify-center" :class="{ 'opacity-75': form.processing }" :disabled="form.processing">{{ form.processing ? $t('Signing in…') : $t('Sign in') }}</PrimaryButton>
             </form>
 
-            <p class="mt-6 text-center text-sm text-[var(--text-muted)]">New to ClipperDesk? <Link :href="route('register')" class="font-bold text-[var(--brand-secondary)] hover:underline">Create your workspace</Link></p>
+            <p class="mt-6 text-center text-sm text-[var(--text-muted)]">New to ClipperDesk? <Link :href="route('register')" class="font-bold text-[var(--brand-secondary)] hover:underline">Create an account</Link></p>
         </AuthenticationCard>
     </AuthLayout>
 </template>

@@ -15,7 +15,7 @@ defineProps({ solutions: Array, seo: Object });
         <section class="cd-editorial-hero">
             <PublicContainer class="py-16 sm:py-24">
                 <p class="cd-hero-kicker"><span aria-hidden="true">✦</span> Find your fit</p>
-                <h1 class="mt-7 max-w-5xl font-display text-[clamp(3.5rem,7.4vw,7.5rem)] font-bold leading-[0.88] tracking-[-0.075em] text-white text-balance">Built around the way <span class="cd-hero-highlight">you</span> work.</h1>
+                <h1 class="mt-7 max-w-5xl font-display cd-public-title font-bold leading-[0.88] tracking-[-0.075em] text-white text-balance">Built around the way <span class="cd-hero-highlight">you</span> work.</h1>
                 <p class="mt-8 max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">From an independent practitioner to a busy multi-provider operation, ClipperDesk connects the customer journey and the working day across beauty, wellness, fitness, recovery, health and pet care—without pretending every business runs the same way.</p>
             </PublicContainer>
         </section>

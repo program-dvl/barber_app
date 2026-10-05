@@ -30,6 +30,7 @@ final readonly class BookingRequest
         public bool $marketingOptIn = false,
         public ?string $specialRequest = null,
         public array $publicPolicySnapshot = [],
+        public ?string $clientPublicId = null,
     ) {}
 
     public function now(): CarbonImmutable
@@ -41,6 +42,7 @@ final readonly class BookingRequest
     public function normalized(): array
     {
         return [
+            ...($this->clientPublicId !== null ? ['client_public_id' => $this->clientPublicId] : []),
             'business_id' => $this->businessId,
             'location_id' => $this->locationId,
             'starts_at_utc' => $this->startsAtUtc->utc()->format('Y-m-d\TH:i:s\Z'),

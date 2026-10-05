@@ -11,7 +11,9 @@ use App\Domain\BusinessConfiguration\Models\PhysicalResource;
 use App\Domain\BusinessConfiguration\Models\Service;
 use App\Domain\ClientRecords\Models\Client;
 use App\Domain\ClientRecords\Models\ClientFormTemplate;
+use App\Domain\Communications\Models\CommunicationConversation;
 use App\Domain\Communications\Models\CommunicationMessage;
+use App\Domain\Communications\Models\CommunicationSenderProfile;
 use App\Domain\Communications\Models\CommunicationTemplate;
 use App\Domain\Inventory\Models\InventoryProduct;
 use App\Domain\MoneyCommerce\Models\Sale;
@@ -117,6 +119,11 @@ class Business extends Model
         return $this->hasMany(StaffProfile::class);
     }
 
+    public function staff(): HasMany
+    {
+        return $this->staffProfiles();
+    }
+
     public function staffs(): HasMany
     {
         return $this->staffProfiles();
@@ -205,6 +212,16 @@ class Business extends Model
     public function communicationMessages(): HasMany
     {
         return $this->hasMany(CommunicationMessage::class);
+    }
+
+    public function communicationSenderProfiles(): HasMany
+    {
+        return $this->hasMany(CommunicationSenderProfile::class);
+    }
+
+    public function communicationConversations(): HasMany
+    {
+        return $this->hasMany(CommunicationConversation::class);
     }
 
     public function isActive(): bool

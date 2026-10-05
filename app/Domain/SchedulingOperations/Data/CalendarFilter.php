@@ -15,5 +15,7 @@ final readonly class CalendarFilter
         public array $staffIds = [],
         public array $serviceIds = [],
         public array $statuses = [],
+        public int $limit = 1000,
+        public bool $prioritizeActive = false,
     ) {}
 }

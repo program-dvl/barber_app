@@ -22,6 +22,12 @@ class ChangelogResource extends Resource
 {
     protected static ?string $model = Changelog::class;
 
+    protected static ?string $modelLabel = 'changelog entry';
+
+    protected static ?string $pluralModelLabel = 'Changelogs';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Content';
@@ -30,14 +36,12 @@ class ChangelogResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('Changelog Content')
-                    ->description('Create and manage changelog entries')
+                Section::make('Changelog entry')
                     ->schema([
                         TextInput::make('title')
                             ->maxLength(255)
                             ->required()
                             ->live(onBlur: true)
-                            ->helperText('A brief title for this changelog entry')
                             ->columnSpanFull(),
 
                         MarkdownEditor::make('description')
@@ -49,20 +53,20 @@ class ChangelogResource extends Resource
                                 ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
                                 ['undo', 'redo'],
                             ])
-                            ->helperText('Detailed description using Markdown syntax'),
+                            ->helperText('Use the toolbar to format the update.'),
 
                         DateTimePicker::make('published_at')
-                            ->label('Publish Date & Time')
+                            ->label('Publication date and time')
                             ->required()
                             ->default(now())
                             ->native(false)
-                            ->helperText('When this changelog should be published')
+                            ->helperText('Shown as the publication date.')
                             ->columnSpan(1),
 
                         TextInput::make('tags')
                             ->maxLength(255)
                             ->placeholder('feature, bugfix, improvement')
-                            ->helperText('Comma-separated tags for categorization')
+                            ->helperText('Separate tags with commas.')
                             ->columnSpan(1),
                     ])
                     ->columns(2)

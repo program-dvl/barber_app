@@ -150,7 +150,7 @@ it('reconciles dashboard, reports, sale lines, payments, CSV, and printable tota
     Storage::disk('private')->assertExists($export->storage_path);
     expect(Storage::disk('private')->get($export->storage_path))->toContain('total:collected_minor,3000');
 
-    $this->actingAs($path['user'])->get(route('business.reports.print', ['business' => $path['business'], 'report' => 'sales', 'start_date' => '2026-08-15', 'end_date' => '2026-08-15', 'location_ids' => [$path['location']->id]]))->assertOk()->assertSee('Reconciled totals')->assertSee('3000');
+    $this->actingAs($path['user'])->get(route('business.reports.print', ['business' => $path['business'], 'report' => 'sales', 'start_date' => '2026-08-15', 'end_date' => '2026-08-15', 'location_ids' => [$path['location']->id]]))->assertOk()->assertSee('Totals:')->assertSee('INR 30.00')->assertSee($path['location']->name)->assertDontSee('Collected Minor');
 });
 
 it('uses governing location-day boundaries instead of server dates', function () {

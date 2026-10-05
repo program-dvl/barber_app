@@ -11,7 +11,7 @@ use LogicException;
 
 class BillingInvoice extends Model
 {
-    protected $fillable = ['public_id', 'business_id', 'business_subscription_id', 'provider', 'provider_invoice_id', 'number', 'status', 'currency', 'subtotal_minor', 'discount_minor', 'tax_minor', 'total_minor', 'amount_due_minor', 'amount_paid_minor', 'issued_at', 'due_at', 'paid_at', 'hosted_url', 'pdf_url', 'line_items'];
+    protected $fillable = ['public_id', 'business_id', 'business_subscription_id', 'provider', 'provider_invoice_id', 'number', 'status', 'currency', 'subtotal_minor', 'discount_minor', 'tax_minor', 'total_minor', 'amount_due_minor', 'amount_paid_minor', 'issued_at', 'due_at', 'paid_at', 'hosted_url', 'pdf_url', 'line_items', 'provider_state_at', 'amount_remaining_minor', 'last_payment_failed_at', 'next_payment_attempt_at'];
 
     protected static function booted(): void
     {
@@ -21,7 +21,7 @@ class BillingInvoice extends Model
 
     protected function casts(): array
     {
-        return ['issued_at' => 'immutable_datetime', 'due_at' => 'immutable_datetime', 'paid_at' => 'immutable_datetime', 'line_items' => 'array'];
+        return ['provider_state_at' => 'immutable_datetime', 'last_payment_failed_at' => 'immutable_datetime', 'next_payment_attempt_at' => 'immutable_datetime', 'amount_remaining_minor' => 'integer', 'issued_at' => 'immutable_datetime', 'due_at' => 'immutable_datetime', 'paid_at' => 'immutable_datetime', 'line_items' => 'array'];
     }
 
     public function business(): BelongsTo

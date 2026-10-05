@@ -24,7 +24,7 @@ defineProps({ useCase: Object, feature: Object, solution: Object, seo: Object })
                 <div class="cd-family-hero-grid mt-10">
                     <div class="cd-family-hero-copy">
                         <p class="cd-eyebrow">{{ useCase.label }}</p>
-                        <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-balance">{{ useCase.title }}</h1>
+                        <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">{{ useCase.title }}</h1>
                         <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">{{ useCase.description }}</p>
                     </div>
                     <figure class="cd-family-hero-media">
@@ -45,7 +45,7 @@ defineProps({ useCase: Object, feature: Object, solution: Object, seo: Object })
         <section class="cd-public-section">
             <PublicContainer class="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
                 <div>
-                    <h2 class="font-display text-4xl font-semibold leading-tight text-[var(--text-strong)]">What the problem looks like</h2>
+                    <h2 class="font-display text-3xl font-semibold leading-tight text-[var(--text-strong)]">What the problem looks like</h2>
                     <ul class="mt-7 space-y-4">
                         <li v-for="symptom in useCase.symptoms" :key="symptom" class="flex gap-3 leading-7 text-[var(--text-muted)]">
                             <ExclamationTriangleIcon class="mt-1 size-5 shrink-0 text-[var(--status-warning)]" aria-hidden="true" />
@@ -54,7 +54,7 @@ defineProps({ useCase: Object, feature: Object, solution: Object, seo: Object })
                     </ul>
                 </div>
                 <div>
-                    <h2 class="font-display text-4xl font-semibold leading-tight text-[var(--text-strong)]">A practical operating approach</h2>
+                    <h2 class="font-display text-3xl font-semibold leading-tight text-[var(--text-strong)]">A practical operating approach</h2>
                     <ol class="cd-story-list mt-7">
                         <li v-for="(step, index) in useCase.practice" :key="step.title" class="grid grid-cols-[3rem_1fr] gap-4 border-b border-[var(--border-default)] py-5">
                             <span class="font-display text-2xl font-semibold text-[var(--brand-secondary)]" aria-hidden="true">0{{ index + 1 }}</span>
@@ -68,17 +68,17 @@ defineProps({ useCase: Object, feature: Object, solution: Object, seo: Object })
         <section class="cd-public-section cd-dark-proof">
             <PublicContainer class="grid gap-12 lg:grid-cols-2">
                 <div>
-                    <h2 class="font-display text-4xl leading-tight">How ClipperDesk participates</h2>
+                    <h2 class="font-display text-3xl leading-tight">How ClipperDesk helps</h2>
                     <ol class="mt-7 space-y-4">
                         <li v-for="(step, index) in useCase.product_steps" :key="step" class="flex gap-3 leading-7 text-white/85">
                             <CheckCircleIcon class="mt-1 size-5 shrink-0 text-[var(--brand-accent-soft)]" aria-hidden="true" />
                             <span><span class="sr-only">Step {{ index + 1 }}: </span>{{ step }}</span>
                         </li>
                     </ol>
-                    <p class="mt-7 text-sm font-semibold text-white/60">Requirement evidence: {{ useCase.requirements.join(', ') }}</p>
+
                 </div>
                 <div class="rounded-[var(--radius-xl)] border border-white/20 bg-white/8 p-6 sm:p-8">
-                    <h2 class="font-display text-4xl leading-tight">Limits to keep in view</h2>
+                    <h2 class="font-display text-3xl leading-tight">Limitations</h2>
                     <ul class="mt-7 space-y-4">
                         <li v-for="item in useCase.limitations" :key="item" class="flex gap-3 leading-7 text-white/85">
                             <ExclamationTriangleIcon class="mt-1 size-5 shrink-0 text-[var(--brand-accent-soft)]" aria-hidden="true" />

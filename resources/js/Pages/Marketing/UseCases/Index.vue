@@ -20,7 +20,7 @@ defineProps({ useCases: Array, seo: Object });
                 <div class="cd-family-hero-grid mt-10">
                     <div class="cd-family-hero-copy">
                         <p class="cd-eyebrow">Use cases</p>
-                        <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-balance">Start with the operating problem, not a feature list.</h1>
+                        <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">Make daily work easier.</h1>
                         <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Use these practical guides to diagnose recurring scheduling and service-day problems, improve the process and see where verified ClipperDesk behavior can help.</p>
                     </div>
                     <figure class="cd-family-hero-media">

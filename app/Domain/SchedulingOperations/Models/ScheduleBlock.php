@@ -2,8 +2,10 @@
 
 namespace App\Domain\SchedulingOperations\Models;
 
+use App\Domain\PlatformAccess\Models\StaffProfile;
 use App\Support\Tenancy\BelongsToBusiness;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class ScheduleBlock extends Model
@@ -19,6 +21,11 @@ class ScheduleBlock extends Model
     protected static function booted(): void
     {
         static::creating(fn (ScheduleBlock $block) => $block->public_id ??= (string) Str::ulid());
+    }
+
+    public function staff(): BelongsTo
+    {
+        return $this->belongsTo(StaffProfile::class, 'staff_profile_id');
     }
 
     protected function casts(): array

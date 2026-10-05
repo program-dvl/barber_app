@@ -19,6 +19,7 @@ class ClientFormPublicController extends Controller
             'token' => $token, 'title' => $request->version->title, 'introduction' => $request->version->introduction,
             'fields' => $request->version->fields, 'appointmentReference' => $request->appointment?->booking_reference,
             'businessName' => $request->business->name,
+            'timeZone' => $request->appointment?->time_zone ?? $request->business->time_zone,
             'expiresAt' => $link->expires_at?->toIso8601String(),
         ]);
     }

@@ -21,17 +21,17 @@ const storyMoments = [
     {
         moment: 'Before the doors open',
         title: 'Open ready.',
-        text: 'Live availability, appointments and the walk-in picture are already together, so the team starts aligned.',
+        text: 'Check appointments, staff availability and waiting clients before opening.',
     },
     {
         moment: 'While the room is moving',
         title: 'Stay present.',
-        text: 'Client context, staff time and resource changes travel with the visit—not through side conversations.',
+        text: 'Keep client preferences, schedules and appointment changes together.',
     },
     {
         moment: 'When the last client leaves',
         title: 'Close clearly.',
-        text: 'Checkout and source records turn the day into useful reporting without rebuilding the story after hours.',
+        text: 'Record payments and review the day’s sales and services.',
     },
 ];
 
@@ -55,15 +55,15 @@ const faqs = [
     },
     {
         question: 'How is this different from a booking-only tool?',
-        answer: 'Booking starts the operational record. ClipperDesk carries that record into the calendar, walk-in operations, client history, checkout, inventory and traceable reporting.',
+        answer: 'Appointments connect to your calendar, client history, checkout and reports. You can also manage walk-ins alongside scheduled visits.',
     },
     {
         question: 'Are payments and reminders ready for live use?',
-        answer: 'The application workflows and provider boundaries are implemented and locally verified. Live card payments, email and WhatsApp sending still require approved provider accounts, callbacks and production certification before public launch.',
+        answer: 'Live card payments, email and text messages require connected providers and final delivery checks before launch. You can record payments received outside ClipperDesk.',
     },
     {
         question: 'Can I bring existing data with me?',
-        answer: 'ClipperDesk includes reviewed CSV imports for clients, staff, services and products. Imports preview validation errors and duplicate candidates before accepted rows become operational records.',
+        answer: 'ClipperDesk includes reviewed CSV imports for clients, staff, services and products. Imports preview validation errors and duplicate candidates before valid rows are added to your business.',
     },
 ];
 
@@ -93,14 +93,14 @@ const resetPerspective = (event) => {
         <Head :title="seo.title" />
 
         <section class="cd-home-hero overflow-hidden">
-            <PublicContainer class="grid min-h-[calc(100svh-5rem)] gap-10 py-12 sm:py-16 lg:grid-cols-[0.84fr_1.16fr] lg:items-center lg:gap-14 lg:py-20">
+            <PublicContainer class="grid gap-10 py-8 sm:py-10 lg:grid-cols-[0.84fr_1.16fr] lg:items-center lg:gap-14 lg:py-12">
                 <div class="relative z-10 max-w-2xl">
                     <p class="cd-hero-kicker"><span aria-hidden="true">✦</span> Made for people-powered businesses</p>
-                    <h1 class="mt-6 font-display text-[clamp(3.5rem,6.2vw,6.6rem)] font-bold leading-[0.88] tracking-[-0.075em] text-white text-balance">
+                    <h1 class="mt-6 font-display cd-public-title font-bold leading-[0.88] tracking-[-0.075em] text-white text-balance">
                         Your whole day,<br><span class="cd-hero-highlight">beautifully</span> run.
                     </h1>
                     <p class="mt-7 max-w-xl text-lg leading-8 text-slate-300 sm:text-xl">
-                        Booking, clients, staff, checkout and reporting—one polished workspace for ambitious appointment-led service businesses.
+                        Manage appointments, walk-ins, clients, your team and payments in one place.
                     </p>
                     <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
                         <PublicCta context="homepage_hero" />
@@ -109,9 +109,6 @@ const resetPerspective = (event) => {
                             <ArrowRightIcon class="ml-2 size-4" aria-hidden="true" />
                         </Link>
                     </div>
-                    <p class="mt-5 max-w-lg text-sm leading-6 text-slate-400">
-                        Start with a verified owner account and a clearly dated trial. Review every rule before your booking page goes live.
-                    </p>
                 </div>
 
                 <figure class="cd-photo-hero min-w-0">
@@ -127,26 +124,13 @@ const resetPerspective = (event) => {
                     <figcaption class="sr-only">An editorial representation of a modern salon business. No customer relationship is implied.</figcaption>
                 </figure>
             </PublicContainer>
-
-            <PublicContainer class="pb-14 sm:pb-20">
-                <div class="cd-home-rhythm">
-                    <p class="cd-home-rhythm-intro">One calmer operating rhythm</p>
-                    <p class="cd-home-rhythm-line" aria-label="A calmer calendar, a better-prepared team and a clean close of day">
-                        <span>A calmer calendar</span>
-                        <i aria-hidden="true"></i>
-                        <span>A better-prepared team</span>
-                        <i aria-hidden="true"></i>
-                        <span>A clean close</span>
-                    </p>
-                </div>
-            </PublicContainer>
         </section>
 
         <section id="workflow" class="cd-home-story scroll-mt-24">
             <PublicContainer>
                 <div class="cd-home-story-heading">
                     <p class="cd-eyebrow">The day, simplified</p>
-                    <h2 class="mt-4 font-display text-[clamp(2.7rem,5.5vw,5.7rem)] font-semibold leading-[0.94] tracking-[-0.06em] text-[var(--text-strong)] text-balance">Less admin between the moments that <em>matter.</em></h2>
+                    <h2 class="mt-4 font-display cd-public-section-title font-semibold leading-[0.94] tracking-[-0.06em] text-[var(--text-strong)] text-balance">Less admin between the moments that <em>matter.</em></h2>
                     <p class="mt-6 max-w-xl text-lg leading-8 text-[var(--text-muted)]">ClipperDesk keeps the working day connected in the background, so the experience out front can feel effortless.</p>
                 </div>
                 <div class="cd-home-story-moments">
@@ -165,15 +149,15 @@ const resetPerspective = (event) => {
             </PublicContainer>
         </section>
 
-        <section id="proof" class="scroll-mt-24 bg-white py-16 sm:py-24 lg:py-28">
-            <PublicContainer class="space-y-20 lg:space-y-28">
+        <section id="proof" class="scroll-mt-24 bg-white py-10 sm:py-14">
+            <PublicContainer class="space-y-12 lg:space-y-16">
                 <article class="cd-home-feature grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-center">
                     <div class="max-w-lg">
                         <p class="cd-eyebrow">Calendar &amp; front desk</p>
-                        <h2 class="mt-4 font-display text-[clamp(2.2rem,3.4vw,3.35rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text-strong)] text-balance">The right appointment. With the right person.</h2>
-                        <p class="mt-6 text-lg leading-8 text-[var(--text-muted)]">See appointments, staff time, blocks and walk-ins together, then handle changes through explicit operational workflows.</p>
+                        <h2 class="mt-4 font-display cd-public-section-title font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text-strong)] text-balance">The right appointment. With the right person.</h2>
+                        <p class="mt-6 text-lg leading-8 text-[var(--text-muted)]">See appointments, staff availability and walk-ins together. Reschedule or cancel appointments from the calendar.</p>
                         <ul class="mt-7 space-y-3">
-                            <li v-for="item in ['Staff-aware availability and resource checks', 'Calendar, walk-in queue and daily attention view', 'Controlled reschedule, cancellation and status changes']" :key="item" class="flex gap-3 leading-7 text-[var(--text-default)]">
+                            <li v-for="item in ['Available staff, chairs and rooms', 'Calendar, walk-in queue and daily attention view', 'Reschedule, cancel or update an appointment']" :key="item" class="flex gap-3 leading-7 text-[var(--text-default)]">
                                 <CheckCircleIcon class="mt-1 size-5 shrink-0 text-[var(--action-primary)]" aria-hidden="true" />{{ item }}
                             </li>
                         </ul>
@@ -190,8 +174,8 @@ const resetPerspective = (event) => {
                     </figure>
                     <div class="max-w-lg lg:order-2 lg:justify-self-center">
                         <p class="cd-eyebrow">Client context</p>
-                        <h2 class="mt-4 font-display text-[clamp(2.2rem,3.4vw,3.35rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text-strong)] text-balance">Know every client. Delight every visit.</h2>
-                        <p class="mt-6 text-lg leading-8 text-[var(--text-muted)]">Give the team useful history and preferences without exposing private schedules, notes or secure tokens in the public experience.</p>
+                        <h2 class="mt-4 font-display cd-public-section-title font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text-strong)] text-balance">Know every client. Delight every visit.</h2>
+                        <p class="mt-6 text-lg leading-8 text-[var(--text-muted)]">Keep client history, preferences, forms and notes available to team members with permission.</p>
                         <ul class="mt-7 space-y-3">
                             <li v-for="item in ['Service and product history in one record', 'Preferences, allergies, forms and notes in context', 'Automated reminders and secure self-service']" :key="item" class="flex gap-3 leading-7 text-[var(--text-default)]">
                                 <CheckCircleIcon class="mt-1 size-5 shrink-0 text-[var(--brand-accent)]" aria-hidden="true" />{{ item }}
@@ -204,10 +188,10 @@ const resetPerspective = (event) => {
                 <article class="cd-home-feature grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-center">
                     <div class="max-w-lg">
                         <p class="cd-eyebrow">Checkout &amp; reporting</p>
-                        <h2 class="mt-4 font-display text-[clamp(2.2rem,3.4vw,3.35rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text-strong)] text-balance">Collect with ease. Grow with insight.</h2>
-                        <p class="mt-6 text-lg leading-8 text-[var(--text-muted)]">Completed work moves through services, products, tenders and receipts into reports that remain traceable to source records.</p>
+                        <h2 class="mt-4 font-display cd-public-section-title font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text-strong)] text-balance">Record payments. Understand your business.</h2>
+                        <p class="mt-6 text-lg leading-8 text-[var(--text-muted)]">Review services, products and totals at checkout. Record payments and issue receipts, then follow each sale in your reports.</p>
                         <ul class="mt-7 space-y-3">
-                            <li v-for="item in ['Clear checkout totals and tender history', 'Append-only corrections and refund evidence', 'Revenue, stock and commission reporting from source records']" :key="item" class="flex gap-3 leading-7 text-[var(--text-default)]">
+                            <li v-for="item in ['Checkout totals and payment history', 'Recorded adjustments and refunds', 'Revenue, stock and commission reports']" :key="item" class="flex gap-3 leading-7 text-[var(--text-default)]">
                                 <CheckCircleIcon class="mt-1 size-5 shrink-0 text-[var(--action-primary)]" aria-hidden="true" />{{ item }}
                             </li>
                         </ul>
@@ -225,7 +209,7 @@ const resetPerspective = (event) => {
                 <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                     <div class="max-w-3xl">
                         <p class="cd-eyebrow">Built around real businesses</p>
-                        <h2 class="mt-4 font-display text-[clamp(2.2rem,4.5vw,3.75rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text-strong)] text-balance">Different rooms. Different rhythms. One connected foundation.</h2>
+                        <h2 class="mt-4 font-display cd-public-section-title font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text-strong)] text-balance">Built for your kind of business.</h2>
                     </div>
                     <Link :href="route('marketing.solutions')" class="cd-button cd-button-secondary shrink-0">Explore all 13 business types</Link>
                 </div>
@@ -240,12 +224,12 @@ const resetPerspective = (event) => {
             </PublicContainer>
         </section>
 
-        <section class="bg-white py-16 sm:py-24">
+        <section class="bg-white py-10 sm:py-14">
             <PublicContainer class="grid gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
                 <div>
                     <p class="cd-eyebrow">A considered way to start</p>
-                    <h2 class="mt-4 font-display text-[clamp(2.3rem,4.5vw,4rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text-strong)] text-balance">Set up the rules before opening the calendar.</h2>
-                    <p class="mt-6 max-w-xl text-lg leading-8 text-[var(--text-muted)]">Guided readiness covers business details, hours, services, staff, availability, booking policy, import, preview and publish.</p>
+                    <h2 class="mt-4 font-display cd-public-section-title font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text-strong)] text-balance">Set up the rules before opening the calendar.</h2>
+                    <p class="mt-6 max-w-xl text-lg leading-8 text-[var(--text-muted)]">Add your services, team and working hours. Set booking rules and preview your page before publishing.</p>
                     <div class="mt-8 flex flex-col gap-3 sm:flex-row">
                         <PublicCta context="homepage_plan_teaser" />
                         <Link :href="route('marketing.pricing')" class="cd-button cd-button-secondary">See pricing</Link>
@@ -253,7 +237,7 @@ const resetPerspective = (event) => {
                 </div>
                 <div id="questions" class="scroll-mt-24 rounded-[var(--radius-xl)] border border-indigo-200 bg-indigo-50/70 p-6 sm:p-8">
                     <p class="cd-eyebrow">Straight answers</p>
-                    <h2 class="mt-3 font-display text-3xl font-semibold tracking-[-0.035em] text-[var(--text-strong)]">What owners usually want to know first</h2>
+                    <h2 class="mt-3 font-display text-3xl font-semibold tracking-[-0.035em] text-[var(--text-strong)]">Common questions</h2>
                     <div class="mt-6"><FaqList :items="faqs" /></div>
                 </div>
             </PublicContainer>

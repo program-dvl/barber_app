@@ -17,7 +17,7 @@ defineProps({ features: Array, seo: Object });
             <PublicContainer class="cd-family-hero-grid">
                 <div class="cd-family-hero-copy">
                     <p class="cd-eyebrow">Product</p>
-                    <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.3rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-balance">One operating system for the work around every appointment.</h1>
+                    <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">Manage the work around every appointment.</h1>
                     <p class="mt-7 max-w-2xl text-lg leading-8">Explore the four connected jobs that carry an appointment-led service business from public demand through the working day, client history and explainable numbers.</p>
                 </div>
                 <figure class="cd-family-hero-media">

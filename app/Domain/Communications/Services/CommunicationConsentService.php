@@ -27,12 +27,12 @@ class CommunicationConsentService
             }
             $legalBasis = 'explicit_marketing_consent';
         }
-        if ($channel === 'whatsapp') {
+        if (in_array($channel, ['sms', 'whatsapp'], true)) {
             $optedIn = $client && ClientConsent::query()->where('business_id', $settings->business_id)->where('client_id', $client->id)
-                ->where('type', 'whatsapp')->latest('occurred_at')->value('status') === 'granted';
+                ->where('type', $channel)->orderByDesc('occurred_at')->orderByDesc('id')->value('status') === 'granted';
             $explicitRequestWithoutProfile = ! $client && $legalBasis === 'explicit_channel_request';
             if (! $optedIn && ! $explicitRequestWithoutProfile) {
-                return ['allowed' => false, 'reason' => 'whatsapp_opt_in_missing', 'basis' => 'explicit_channel_opt_in_required'];
+                return ['allowed' => false, 'reason' => $channel.'_opt_in_missing', 'basis' => 'explicit_channel_opt_in_required'];
             }
         }
 
@@ -41,13 +41,27 @@ class CommunicationConsentService
 
     public function recordWhatsAppOptIn(Client $client, string $source, ?int $appointmentId = null, string $wording = 'Send appointment and service updates to this mobile number on WhatsApp.'): ClientConsent
     {
+        return $this->recordChannelOptIn($client, 'whatsapp', $source, $appointmentId, $wording);
+    }
+
+    public function recordSmsOptIn(Client $client, string $source, ?int $appointmentId = null, string $wording = 'Send appointment and service updates to this mobile number by text message. Message and data rates may apply. Reply STOP to opt out.'): ClientConsent
+    {
+        return $this->recordChannelOptIn($client, 'sms', $source, $appointmentId, $wording);
+    }
+
+    public function recordChannelOptIn(Client $client, string $channel, string $source, ?int $appointmentId = null, ?string $wording = null, array $evidence = []): ClientConsent
+    {
+        abort_unless(in_array($channel, ['sms', 'whatsapp'], true), 422);
         $business = $client->business;
+        $wording ??= $channel === 'whatsapp'
+            ? 'Send appointment and service updates to this mobile number on WhatsApp.'
+            : 'Send appointment and service updates to this mobile number by text message. Message and data rates may apply. Reply STOP to opt out.';
 
         return ClientConsent::query()->create([
             'business_id' => $client->business_id, 'client_id' => $client->id, 'appointment_id' => $appointmentId,
-            'type' => 'whatsapp', 'status' => 'granted', 'source' => $source,
-            'policy_version' => implode('-', [$business->country_code ?: 'IN', $business->locale ?: 'en-IN', now()->format('Y-m')]),
-            'wording' => $wording, 'evidence' => ['channel' => 'whatsapp'], 'occurred_at' => now(),
+            'type' => $channel, 'status' => 'granted', 'source' => $source,
+            'policy_version' => implode('-', [$business->country_code ?: 'US', $business->locale ?: 'en-US', now()->format('Y-m')]),
+            'wording' => $wording, 'evidence' => ['channel' => $channel, ...$evidence], 'occurred_at' => now(),
         ]);
     }
 
@@ -71,9 +85,31 @@ class CommunicationConsentService
         ClientConsent::query()->create([
             'business_id' => $client->business_id, 'client_id' => $client->id, 'type' => 'marketing',
             'status' => 'withdrawn', 'source' => $source,
-            'policy_version' => implode('-', [$business->country_code ?: 'IN', $business->locale ?: 'en-IN', now()->format('Y-m')]),
+            'policy_version' => implode('-', [$business->country_code ?: 'US', $business->locale ?: 'en-US', now()->format('Y-m')]),
             'wording' => 'Marketing unsubscribe', 'evidence' => ['channel' => $channel], 'occurred_at' => now(),
         ]);
+    }
+
+    public function withdrawChannel(Client $client, string $channel, string $source = 'inbound_keyword'): void
+    {
+        $destination = $client->mobile;
+        if ($destination) {
+            $this->suppress($client->business_id, $client, $channel, $destination, 'all', 'channel_opt_out', $source);
+        }
+        $business = $client->business;
+        ClientConsent::query()->create([
+            'business_id' => $client->business_id, 'client_id' => $client->id, 'type' => $channel,
+            'status' => 'withdrawn', 'source' => $source,
+            'policy_version' => implode('-', [$business->country_code ?: 'US', $business->locale ?: 'en-US', now()->format('Y-m')]),
+            'wording' => strtoupper($channel).' opt-out received', 'evidence' => ['channel' => $channel], 'occurred_at' => now(),
+        ]);
+    }
+
+    public function resumeChannel(Client $client, string $channel, string $source = 'inbound_keyword'): void
+    {
+        CommunicationSuppression::query()->where('business_id', $client->business_id)->where('client_id', $client->id)
+            ->where('channel', $channel)->whereNull('released_at')->update(['released_at' => now()]);
+        $this->recordChannelOptIn($client, $channel, $source, evidence: ['keyword' => 'START']);
     }
 
     public static function destinationHash(string $channel, string $destination): string
@@ -87,7 +123,7 @@ class CommunicationConsentService
     {
         return match ($channel) {
             'email' => filter_var($destination, FILTER_VALIDATE_EMAIL) !== false,
-            'whatsapp' => preg_match('/^\+[1-9]\d{7,14}$/', preg_replace('/[^+\d]/', '', $destination)) === 1,
+            'sms', 'whatsapp' => preg_match('/^\+[1-9]\d{7,14}$/', preg_replace('/[^+\d]/', '', $destination)) === 1,
             default => false,
         };
     }

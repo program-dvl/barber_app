@@ -1,0 +1,30 @@
+{
+    "connection": "mysql",
+    "transaction": "read_only_rolled_back",
+    "reports": {
+        "line_items": "passed",
+        "overview": "passed",
+        "payment_activity": "passed",
+        "tax": "passed",
+        "walk_ins": "passed",
+        "appointments": "passed",
+        "sales": "passed",
+        "service_revenue": "passed",
+        "staff_revenue": "passed",
+        "payment_method": "passed",
+        "location": "passed",
+        "discount": "passed",
+        "refund": "passed",
+        "tip": "passed",
+        "commission": "passed",
+        "payroll": "passed",
+        "client_classification": "passed",
+        "cancellation_no_show": "passed",
+        "utilisation": "passed",
+        "popular_service": "passed",
+        "visit_frequency": "passed",
+        "cash_close": "passed"
+    },
+    "reports_passed": 22,
+    "indexes_verified": 3
+}

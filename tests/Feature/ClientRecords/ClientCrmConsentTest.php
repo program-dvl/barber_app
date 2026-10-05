@@ -148,7 +148,7 @@ it('updates tenant-scoped tags and preferred employee and services from the clie
         ->and($client->preferredServices()->pluck('services.id')->all())->toBe([$service->id])
         ->and($client->tags()->orderBy('name')->pluck('client_tags.name')->all())->toBe(['Colour client', 'VIP'])
         ->and($client->preferences['notes'])->toBe('Quiet appointment')
-        ->and($client->communication_preferences)->toBe(['email'])
+        ->and($client->communication_preferences)->toBe(['email' => true, 'sms' => false])
         ->and($client->version)->toBe(2);
 });
 

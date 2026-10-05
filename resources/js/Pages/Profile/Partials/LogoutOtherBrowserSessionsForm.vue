@@ -45,19 +45,19 @@ const closeModal = () => {
 <template>
     <ActionSection>
         <template #title>
-            {{ $t('Browser Sessions') }}
+            {{ $t('Signed-in devices') }}
         </template>
 
         <template #description>
-            {{ $t('Manage and log out your active sessions on other browsers and devices.') }}
+            {{ $t('Review where you are signed in.') }}
         </template>
 
         <template #content>
             <div class="max-w-xl text-sm">
-                {{ $t('If necessary, you may log out of all of your other browser sessions across all of your devices. Some of your recent sessions are listed below; however, this list may not be exhaustive. If you feel your account has been compromised, you should also update your password.') }}
+                {{ $t('Sign out other devices if you no longer use them. Change your password if you suspect someone else has access.') }}
             </div>
 
-            <!-- Other Browser Sessions -->
+            <!-- Other Signed-in devices -->
             <div v-if="sessions.length > 0" class="mt-5 space-y-6">
                 <div v-for="(session, i) in sessions" :key="i" class="flex items-center">
                     <div>
@@ -89,35 +89,35 @@ const closeModal = () => {
 
             <div class="flex items-center mt-5">
                 <PrimaryButton @click="confirmLogout">
-                    {{ $t('Log Out Other Browser Sessions') }}
+                    {{ $t('Sign out other devices') }}
                 </PrimaryButton>
 
                 <ActionMessage :on="form.recentlySuccessful" class="ms-3">
-                    {{ $t('Done.') }}
+                    {{ $t('Other devices signed out.') }}
                 </ActionMessage>
             </div>
 
             <!-- Log Out Other Devices Confirmation Modal -->
             <DialogModal :show="confirmingLogout" @close="closeModal">
                 <template #title>
-                    {{ $t('Log Out Other Browser Sessions') }}
+                    {{ $t('Sign out other devices') }}
                 </template>
 
                 <template #content>
-                    {{ $t('Please enter your password to confirm you would like to log out of your other browser sessions across all of your devices.') }}
+                    {{ $t('Enter your password to sign out other devices. This device stays signed in.') }}
 
                     <div class="mt-4">
+                        <label for="field-logoutotherbrowsersessionsform-form-password" class="block text-sm font-semibold">{{ $t('Current password') }}</label>
                         <TextInput
                             ref="passwordInput"
                             v-model="form.password"
                             type="password"
                             class="mt-1 block w-3/4"
-                            :placeholder="$t('Password')"
                             autocomplete="current-password"
                             @keyup.enter="logoutOtherBrowserSessions"
-                        />
+                         id="field-logoutotherbrowsersessionsform-form-password" :aria-invalid="form.errors.password ? true : undefined" :aria-describedby="form.errors.password ? 'field-logoutotherbrowsersessionsform-form-password-error' : undefined"/>
 
-                        <InputError :message="form.errors.password" class="mt-2" />
+                        <InputError :message="form.errors.password" class="mt-2"  id="field-logoutotherbrowsersessionsform-form-password-error"/>
                     </div>
                 </template>
 
@@ -132,7 +132,7 @@ const closeModal = () => {
                         :disabled="form.processing"
                         @click="logoutOtherBrowserSessions"
                     >
-                        {{ $t('Log Out Other Browser Sessions') }}
+                        {{ $t('Sign out other devices') }}
                     </PrimaryButton>
                 </template>
             </DialogModal>

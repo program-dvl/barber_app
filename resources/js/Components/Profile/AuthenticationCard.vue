@@ -12,7 +12,7 @@ defineProps({
         </div>
 
         <div :class="[
-            'cd-auth-card mx-auto w-full overflow-hidden border bg-[var(--surface-raised)] px-6 py-7 sm:px-9 sm:py-8',
+            'cd-auth-card mx-auto w-full overflow-hidden border bg-[var(--surface-raised)] p-5 sm:p-6',
             embedded ? 'mt-0' : 'mt-6',
             wide ? 'sm:max-w-2xl' : 'sm:max-w-md',
         ]">

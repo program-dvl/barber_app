@@ -13,5 +13,9 @@ final readonly class OutboundCommunication
         public string $correlationId,
         public ?string $providerTemplateId = null,
         public array $providerVariables = [],
+        public string $channel = 'email',
+        public ?int $businessId = null,
+        public ?int $senderProfileId = null,
+        public bool $conversationReply = false,
     ) {}
 }

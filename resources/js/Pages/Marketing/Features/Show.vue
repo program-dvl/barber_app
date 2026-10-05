@@ -24,12 +24,12 @@ defineProps({ feature: Object, related: Array, seo: Object });
                 <div class="cd-family-hero-grid mt-10">
                     <div class="cd-family-hero-copy">
                         <p class="cd-eyebrow">{{ feature.label }}</p>
-                        <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-balance">{{ feature.title }}</h1>
+                        <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">{{ feature.title }}</h1>
                         <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">{{ feature.description }}</p>
                     </div>
                     <figure class="cd-family-hero-media">
                         <img class="cd-family-hero-image" :src="visualFor(featureVisuals, feature.slug, marketingFamilyVisuals.product).src" :alt="visualFor(featureVisuals, feature.slug, marketingFamilyVisuals.product).alt" width="1536" height="1024" fetchpriority="high" />
-                        <figcaption class="cd-family-hero-caption">One part of the day, connected to everything around it.</figcaption>
+
                     </figure>
                 </div>
             </PublicContainer>
@@ -37,14 +37,14 @@ defineProps({ feature: Object, related: Array, seo: Object });
 
         <section class="-mt-8 px-4 pb-4 sm:-mt-12">
             <div class="cd-answer-panel relative z-10 mx-auto max-w-4xl">
-                <p class="cd-eyebrow">In plain language</p>
-                <p class="mt-4 text-lg leading-8 text-[var(--text-default)]"><strong class="text-[var(--text-strong)]">What it means:</strong> {{ feature.definition }}</p>
+                <p class="cd-eyebrow">Overview</p>
+                <p class="mt-4 text-lg leading-8 text-[var(--text-default)]">{{ feature.definition }}</p>
             </div>
         </section>
 
         <section class="cd-public-section">
             <PublicContainer>
-                <SectionHeading eyebrow="How it works" title="A connected workflow with explicit guardrails" />
+                <SectionHeading eyebrow="How it works" title="How it works" />
                 <ol class="cd-story-list mt-12">
                     <li v-for="(step, index) in feature.workflow" :key="step.title" class="cd-story-row">
                         <span class="cd-story-number" aria-hidden="true">0{{ index + 1 }}</span>
@@ -58,17 +58,17 @@ defineProps({ feature: Object, related: Array, seo: Object });
         <section class="cd-public-section cd-dark-proof">
             <PublicContainer class="grid gap-12 lg:grid-cols-2">
                 <div>
-                    <h2 class="font-display text-4xl leading-tight">Verified product evidence</h2>
+                    <h2 class="font-display text-3xl leading-tight">What you can do</h2>
                     <ul class="mt-7 space-y-4">
                         <li v-for="item in feature.proof" :key="item" class="flex gap-3 leading-7 text-white/82">
                             <CheckCircleIcon class="mt-1 size-5 shrink-0 text-[var(--brand-accent-soft)]" aria-hidden="true" />
                             <span>{{ item }}</span>
                         </li>
                     </ul>
-                    <p class="mt-7 text-sm font-semibold text-white/60">Requirement evidence: {{ feature.requirements.join(', ') }}</p>
+
                 </div>
                 <div>
-                    <h2 class="font-display text-4xl leading-tight">Important limits</h2>
+                    <h2 class="font-display text-3xl leading-tight">Important limits</h2>
                     <ul class="mt-7 space-y-4">
                         <li v-for="item in feature.limitations" :key="item" class="flex gap-3 leading-7 text-white/82">
                             <ExclamationTriangleIcon class="mt-1 size-5 shrink-0 text-[var(--brand-accent-soft)]" aria-hidden="true" />

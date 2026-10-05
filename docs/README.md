@@ -5,7 +5,7 @@ It converts the approved Word PRD into searchable Markdown and provides the
 smaller, implementation-facing documents that future Codex threads and human
 developers should use.
 
-Last structured review: 2026-08-16.
+Last structured review: 2026-10-05.
 
 ## Start here
 
@@ -51,10 +51,22 @@ exists.
 | `01-FRESHA-COMPETITIVE-GAP-ANALYSIS.md` through `05-IMPLEMENTATION-MASTER-PLAN.md` | Evidence-based 24–36 month competitive strategy, ecosystem, UX, and engineering blueprint; proposals do not override the approved PRD or accepted decisions | Material benchmark, strategy, sequencing, or future-scope change |
 | `audits/*.md` | Dated evidence-backed repository, architecture, security, or adoption audits | Each completed audit or material re-audit |
 | `frontsite/*.md` | Public acquisition IA, indexation, claims, entity, content, CTA, and crawl contracts | Every Phase 1.5 public-site prompt |
+| `modules/subscription-billing.md` | Capacity pricing, local rate cards, owner billing review, invoices and SMS credits | Billing or messaging economics changes |
+| `modules/business-setup.md` | Prepared starter data, operational readiness, reviewed setup edits and explicit online publication | Onboarding or business-wide configuration changes |
+| `modules/scheduling-operations.md` | Calendar composition, capacity projection, reviewed commands and operational access | Calendar/scheduling changes |
+| `modules/client-records.md` | Restored salon CRM aggregate, directory/profile projections, protected records and operational handoffs | Clients and Calendar/queue linkage changes |
+| `modules/services.md` | Salon catalogue, categories, reviewed price/time/assignment changes and booking/commerce handoffs | Services configuration changes |
+| `modules/team-availability.md` | Workforce workspace, regular/dated hours, exact impact review, service versions and operational access | Team, availability and assignment changes |
+| `modules/communications.md` | Client automation, templates, scoped history, SES/Twilio and reliable delivery contracts | Client messaging or provider/workspace change |
+| `modules/reports.md` | Historical analytics, exact metric bases, scope, comparisons, capacity and export contracts | Reports or analytical projection changes |
+| `modules/dashboard.md` | Permission-aware daily workspace projection, operations, time and performance contract | Dashboard behavior or data change |
+| `modules/product-experience.md` | Shared presentation, terminology and interaction contract with dated route/screen evidence | Product-wide UI refinement |
 | `modules/*.md` | Implementation-facing module boundaries and rules | Module behavior or interface change |
 | `prompts/*.md` | Copy-ready prompts for separate implementation threads | Delivery strategy change |
 | `support/*.md` | Tenant-safe diagnostic and recovery playbooks | New support-visible failure or recovery path |
 | `release/*/` | Versioned launch evidence, gate decisions, owners, limitations, recovery, and sign-off state | Every release candidate or launch rehearsal |
+
+Checkout and sale workflow specification: [modules/checkout-sales.md](modules/checkout-sales.md).
 
 ## Documentation maintenance rules
 

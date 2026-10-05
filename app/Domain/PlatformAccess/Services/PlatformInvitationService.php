@@ -31,7 +31,12 @@ class PlatformInvitationService
 
             return [$replacement, $token];
         });
-        Notification::route('mail', $issued[0]->email)->notify(new StaffInvitationNotification($issued[0]->business->name, $issued[1], $issued[0]->expires_at));
+        Notification::route('mail', $issued[0]->email)->notify(new StaffInvitationNotification(
+            $issued[0]->business_id,
+            $issued[0]->business->name,
+            $issued[1],
+            $issued[0]->expires_at,
+        ));
 
         return $issued[0];
     }

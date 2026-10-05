@@ -1,6 +1,599 @@
 # Project status
 
-Status date: 2026-09-14
+Status date: 2026-10-05
+
+## 2026-10-05 Subscription & Billing integrated into the original checkout
+
+- [x] Applied all 52 files from the user-supplied
+  `subscription-billing-update.zip` to `/Applications/AMPPS/www/barber_app`.
+  Package hashes and every original-file precondition matched before copying;
+  original source files are retained in a local backup. Existing checkout edits
+  were preserved. Imported PHP was formatted to the repository standard, billing
+  requirement links were corrected and authorization provenance was clarified.
+- [x] Original-checkout backend suite: **570 passed / 5,548 assertions**, with
+  28 existing intentional Jetstream skips. After formatting, the billing and
+  communications regression suite passed **128 tests / 685 assertions**.
+  Frontend helpers: **70 passed**. Node 24 client/SSR production builds, all
+  17 front-site asset budgets, scoped formatting and whitespace checks pass.
+- [x] Saved a complete local MySQL dump before applying only the two new additive
+  billing migrations. Verified the five new tables and billing columns, and
+  compared existing-column fingerprints for businesses, subscriptions, invoices,
+  payments, subscription changes and checkout attempts: existing records were
+  unchanged. No account was migrated to capacity pricing.
+- [x] Chrome using the existing local sign-in on port 8017 loads the refreshed
+  billing overview and invoice details. The current Starter subscription and
+  paid invoice remain visible; the business's unconfigured country truthfully
+  shows pricing being prepared. At 360 px, the page and invoice drawer both
+  retain a 360 px document width. No payment/provider refresh or subscription
+  command was submitted during this browser check.
+- [ ] Capacity billing, country approval and SMS purchases remain disabled;
+  commercial approval, live provider/refund/dispute and production-concurrency
+  gates remain open. Source integration is complete; it is not a paid launch.
+  [Integration evidence](audits/2026-10-05-subscription-billing-import/README.md).
+
+## 2026-10-05 Subscription & Billing review package (ADR-054)
+
+- Validated in an isolated application copy; the original checkout was not
+  modified because write access was not granted. These are package verification
+  facts, not a production rollout or completed live certification.
+- One core plan can be priced by purchased locations and global active bookable
+  staff, with monthly/yearly immutable local rate cards. Existing subscriptions
+  retain their terms until an owner reviews an explicit migration. The USD
+  example remains unapproved/off; other country prices are not invented.
+- Owner calculator, bound review/confirmation, pending verified expansion,
+  renewal reductions/interval changes, exact component projections and stable
+  provider keys are prepared. Hosted payment and signed/authorized reconciliation
+  own access. Initial uncertain checkout recovers its original attempt/key.
+- Included SMS uses actual rendered segments and destination multipliers, pooled
+  monthly anniversary windows even annually, and complete atomic reservations.
+  Optional prepaid credits grant once on exact owned paid/async taxed sessions.
+  Automatic purchases remain off. Routine SES email remains included.
+- Paid text purchases have a separate default-off gate pending certified
+  refund/dispute reversal operations; those automatic reversals are not built.
+  Draft examples never become public purchases without approved verified mappings.
+- Earlier billing workspace improvements are retained: bounded invoice history,
+  exact money/status/payment method and billing details, tenant-safe invoice
+  details, provider-state ordering, safer cancellation/reactivation and URL flags
+  that never assert payment success.
+- Verification: 570 backend tests passed, 28 existing Jetstream tests intentionally
+  skipped, 5,548 assertions; 70 frontend helper checks passed; client and SSR
+  production builds passed with bundled Node 24. Fresh isolated migrations and
+  synthetic billing fixtures succeeded. At 360 px the calculator has no horizontal
+  overflow; desktop monthly and mobile yearly breakdowns were visually checked.
+- Stripe SDK transport checks assert pending payment/fixed proration/component
+  quantities and finite taxed renewal phases. They use a fake HTTP transport;
+  no real payment, SMS, email, account migration or live provider object was made.
+- Still required before release: approved local costs/rates, provider/tax/3DS/
+  async/refund/dispute certification, production-database concurrency and existing
+  independent accessibility/security/release gates. OPEN-22 records commercial
+  and SMS refund/dispute decisions. The restored billing module resolves its
+  affected part of OPEN-14.
+
+## 2026-10-05 Business setup implementation
+
+- [x] Business setup now provides six current operational essentials, one
+  recommended next action, labeled starter provenance, direct profile/hours/
+  service/team/booking editors and optional branding/import/provider work.
+  Completion leads into Calendar. The four saved introduction decisions remain;
+  owners can explore, resume, keep suggestions or remove every starter service.
+  Public phone/address can be added before online publication.
+- [x] Readiness checks current service values, active branches/staff, qualified
+  dated assignments, branch membership, resource eligibility and overlapping
+  opening/working hours in the next four weeks. Internal bookings do not require
+  online visibility, branding or provider connections. A shared backend projection
+  avoids disconnected completion flags; a 51-service fixture stays below 18 queries.
+- [x] Starter preparation is private. Explicit preview review and Go live replace
+  automatic publication under ADR-053. Online service paths, public contacts,
+  policies and slugs remain publication gates; pause/resume is explicit. Existing
+  published businesses retain their state. Preview shows eligible services,
+  opening week, base-price context and client policy links.
+- [x] Hardened initialization locks, atomic rollback, terminal retry, existing
+  history protection, commerce preservation and type-change invalidation.
+  Profile/commerce/slug saves are atomic and revision-checked. Weekly hours bind
+  a reviewed exact payload to revisions, upcoming appointment versions and
+  current holds; replay audits once and retains booked visits. Setup service and
+  team writes reuse their canonical commands. Tenant and business-wide settings
+  authority are enforced on the server; branch managers retain scoped workspaces.
+- [x] Full backend: **513 passed / 5,311 assertions**, 28 existing intentional
+  legacy skips. New readiness/recovery/authorization tests: **34 passed / 165
+  assertions**; frontend: **59 passed**. Node 24.19.0 client/SSR builds,
+  17 route asset budgets, scoped PHP formatting and whitespace checks pass.
+  The notification history test now fixes its clock rather than relying on
+  the review date. Browser evidence covers 320/390/768/1024/1280/1366/1920 widths,
+  dirty protection, validation, service/team/hours saves, optional work and
+  explicit preview/publication/pause/resume in isolated synthetic data.
+- [ ] This does not certify live provider delivery, production concurrency or
+  regional legal/payment launch. OPEN-13/15/16/19/20/21 remain. No real business
+  publication, client message, primary-database fixture, migration or dependency
+  was introduced. [Evidence and six-perspective review](audits/2026-10-04-business-setup/README.md),
+  [Business setup specification](modules/business-setup.md) and ADR-053.
+
+## 2026-10-04 Client notifications implementation
+
+- [x] Replaced the configuration-heavy page with searchable Automations, versioned
+  template drawers, scoped Delivery history and separately saved Channels & timing.
+  Ten connected event rules are distinguished from two prepared deposit templates.
+  Email/SMS previews, real supported variable insertion, sample segment estimates,
+  current-version drafts/publication and guarded unsaved changes are implemented.
+- [x] Added 25-record history filtering, safe failure reasons and serialized,
+  reasoned manager retry. Client records show six recent outcomes; Calendar shows
+  latest appointment communication and links to filtered history. Tenant, branch,
+  own-calendar, financial and contact scope are backend-enforced. No credentials,
+  historical message bodies or secure action URLs are projected.
+- [x] User-selected AWS SES now delivers new client email using existing configured
+  credentials and mail sender; Twilio retains the mobile contract. Signed,
+  configured-topic SNS delivery callbacks, safe unknown-outcome holds and legacy
+  callback compatibility are implemented. Credentials were not changed or printed.
+  Actual SES delivery connection is not yet configured; SMS remains simulated.
+- [x] Fixed obsolete/late reminder suppression, future action-link expiry, captured
+  SMS sender readiness and explicit client channel withdrawals. Client profiles
+  accept retained list/map preferences and preserve opt-outs on save. Receipt
+  notification links privately display issued immutable receipts, including older
+  appointment-target links, without changing financial history.
+- [x] Full backend: **479 passed / 5,132 assertions**, 28 existing intentional
+  legacy skips. Communications: **44 passed**; frontend: **57 passed**.
+  Node 24.19.0 client/SSR builds, 17 route asset budgets, scoped PHP formatting
+  and whitespace checks pass. Synthetic browser evidence covers 320/360/390/768/
+  1024/1280/1440 widths, editor/publication, settings/filter states and operational
+  handoffs. No real client send, main-database fixture mutation, new dependency or
+  application migration was performed. Concurrent Reports work was preserved.
+- [ ] Live SES/SNS and Twilio certification, country/domain/legal/retention gates
+  remain open. OPEN-21 records prepared deposit dispatch/action scope alongside
+  OPEN-16. No additional reminders, marketing, unsupported mobile channels or
+  Phase 2 benefits were promoted. See [six-perspective review and screenshots](audits/2026-10-04-client-notifications/README.md),
+  [Communications specification](modules/communications.md) and ADR-052.
+
+## 2026-10-04 Reports implementation
+
+Applied directly to the intended `/Applications/AMPPS/www/barber_app` checkout.
+The isolated copy was used only for preparation. Reports provides a historical overview, grouped searchable reports,
+location-local presets/comparisons, complete SQL aggregates, responsive charts,
+record drilldowns, shared Calendar capacity and privately streamed CSV exports.
+Financial bases, own-only scope and historical schedule limitations are explicit.
+
+Preparation verification in the isolated copy: 458 backend tests passed (28 existing skips; 4,962 assertions),
+52 frontend tests passed, and the production client/server build passed. A 5,001-sale
+SQLite fixture returned 30 details with complete totals in 10 queries and a
+20,041-byte response. Desktop/tablet/mobile, native CSV and bounded print flows
+were inspected with synthetic data. This is not deployment or production-load
+evidence. See [Reports evidence](audits/2026-10-04-reports/README.md),
+[specification](modules/reports.md) and ADR-051.
+
+Original-project verification: **469 backend tests passed / 5,054 assertions**
+(28 existing skips), **56 frontend tests passed**, Node 24.19.0 client/SSR builds,
+17 asset budgets, scoped formatting and whitespace checks pass. Caches cleared;
+only the Reports index migration applied and all three indexes verified. All 22
+visible Reports projections pass read-only local MySQL checks. Chrome confirmed
+the new overview, Sales detail and record drawer in the actual Pine & Palm Studio
+app on port 8000 using the existing sign-in. Environment/business records were
+preserved; concurrent Communications edits remain intact. Original-app evidence
+is recorded in the linked Reports audit.
+
+## Business-type starter categories (2026-10-04)
+
+- [x] New onboarding previews and prepares small category sets for all 12
+  supported business types, including empty groups. Only selected starter
+  services are created, mapped to the proper categories. Categories remain
+  editable through Services; completed sessions/existing catalogues are not
+  reseeded. Tenant case-insensitive reuse retains names, ordering and archive
+  choices. Generated IDs/counts extend the existing onboarding/audit evidence.
+- [x] Browser review confirmed a single selected hair service produced Hair,
+  Styling, Colour and Treatments, then saved a category rename in Services.
+  Verification: **18 onboarding tests / 181 assertions**, **440 repository tests /
+  4,837 assertions**, 28 existing skips; client/SSR production builds pass.
+  No migration/dependency introduced. [Evidence and scope](audits/2026-10-04-starter-categories/README.md).
+  Decision: ADR-050; specification: FR-02/FR-04 in Services.
+
+## Services catalogue operational redesign (2026-10-04)
+
+- [x] Restored the Services implementation specification and accepted ADR-049.
+  One navigation entry combines a compact catalogue, category management and
+  attached add-ons. Instant name/category search, combined filters, persisted
+  category order, natural duration, price exceptions and 25-row pagination
+  support large catalogues. Setup warnings include branches without eligible staff.
+- [x] Overview, Team & locations and Booking & rules provide explicit saves,
+  searchable qualification, staff price/time/online variants, branch prices,
+  booking notice, deposits, tax-policy context and upcoming appointment review.
+  Inactive references, recorded currency, commission references, segment/resource
+  identities and historical appointment/sale snapshots remain intact.
+- [x] Business/branch authorization, revisions, exact upcoming version signatures,
+  reasoned impactful changes, hold protection, booking-compatible locks and
+  transactional UUID replay protect configuration writes. Dirty navigation and
+  unconfirmed-save recovery are guarded. Existing-service CSV changes now require
+  the reviewed editor; imports cannot overwrite live pricing or reactivate rows.
+- [x] Calendar and public booking project qualified staff variants and branch prices.
+  Public selection removes unavailable branch selections and orphan add-ons;
+  unqualified services are hidden. Checkout requires a parent for newly added
+  add-ons and retains booked snapshots. Queue continues through canonical service
+  timing/capacity resolution; Activity shows useful price/time/count summaries.
+- [x] Isolated synthetic browser review exercised creation, zero-price setup,
+  errors/focus, dirty discard, categories/order, duplication preview, search,
+  pagination, overrides, upcoming impact and Calendar/public estimates. Sampled
+  320, 360, 390, 768, 1024, 1280 and 1440 widths have no observed document
+  overflow; 320/360 drawers have no horizontal overflow. No real appointment,
+  payment, invitation or access change was submitted.
+- [x] Repository backend suite: **426 passed / 4,745 assertions**, 28 existing skips.
+  Final Services feature check: **19 passed / 139 assertions**. Frontend helpers:
+  **48 passed**, including seven catalogue checks. Client/SSR builds, 17 front-site
+  asset budgets, scoped PHP formatting and whitespace checks pass. One command
+  replay migration was added and applied locally; no dependency was added.
+  [Review, screenshots and practical limits](audits/2026-10-03-services/README.md).
+- [ ] OPEN-19/20 retain dated-configuration editing and undefined service-tax,
+  image-upload, completed-consultation and advanced segment/resource workflows.
+  Membership/package benefits remain Phase 2. Public paid-deposit confirmation,
+  production concurrency/load and independent accessibility certification retain
+  their existing release gates.
+
+## Team & availability operational redesign (2026-10-03)
+
+- [x] Restored the Team implementation specification and accepted ADR-048.
+  One navigation entry combines the operational directory, weekly coverage,
+  upcoming time off and manager-only access, with focused staff profiles.
+  Shared Calendar projections provide daily status, booking gaps, upcoming
+  visits/shifts and reserved-time visibility; overdue service blocks Available now.
+- [x] Managers configure weekly/split hours, copied patterns, recurring/one-time
+  breaks, full/partial/multiple-day leave and dated replacement hours. Exact,
+  expiring review binds proposal and revision, lists affected future appointments,
+  requires reasons for retained visits, protects active holds and rechecks inside
+  booking-compatible locks. Expired dated rules are preserved outside editing.
+- [x] Branch/timezone/overlap validation, stale revisions, role authorization,
+  private leave redaction and own-profile isolation are enforced server-side.
+  Employment/bookability and login/access branches remain independent. Service
+  capabilities, duration and price use versioned assignments; appointment and
+  financial history remain intact. Permissioned commission statements load via
+  business-scoped staff binding and show separate recorded-currency balances.
+- [x] Minimal creation, actual business roles/capability groups, invitation status,
+  login-only accounts, dirty-draft guards and idle/stale availability refresh were
+  implemented. Query-count coverage verifies bounded loading from one to thirteen
+  staff; directory appointment context is limited to two weeks.
+- [x] Chrome review at 320, 390, 768, 1024, 1366, 1440 and native 1512 widths
+  exercised directory/profile/coverage/services/access flows, keyboard focus,
+  empty search, mobile time fields and drawer overflow. A synthetic break saved
+  through the UI appeared in both Calendar and Walk-in Queue. A conflicting leave
+  proposal was reviewed and discarded; no invitation/access grant was submitted.
+- [x] Final repository suite: 407 passed / 4,606 assertions, 28 intentional skips.
+  Team feature coverage: 23 tests / 184 assertions; frontend: 41 passing helpers including 7 Team
+  tests. Client/SSR builds, 17 asset budgets, scoped PHP formatting and whitespace
+  checks pass. Evidence and limits: [Team audit](audits/2026-10-03-team/README.md).
+  OPEN-19 and existing external release gates remain in force.
+
+## Checkout & sales operational redesign (2026-10-03)
+
+- [x] Restored checkout implementation specification and accepted ADR-047.
+  Compact visit selection, source-priced service basket, qualified service/retail
+  search, stock-aware quantities, permissioned reasoned adjustments, item/order
+  discounts, configured taxes and staff tips lead into authoritative quote review.
+- [x] Saved items remain immutable. Verified same-appointment deposits, partial
+  payment, atomic split recording and pay later retain original financial rules.
+  Aggregate locks precede exact-payload replay; stock, commissions, receipt and
+  audit effects commit with settlement. Zero/full-prepaid completion creates no
+  fake tender. Private contacts/provider evidence/product costs are redacted.
+- [x] Revenue-gated paginated history has actual performer/method/status and
+  branch-local date filters. Detail separates original totals from net receipts
+  and append-only refunds. Reasoned original-method manual returns enforce
+  cumulative item/quantity limits and stock disposition. Immutable completed-sale
+  receipts print/save as PDF; the existing consent-gated receipt event is reused.
+- [x] Pending recording commands persist exact keys/payloads and freeze changes
+  until a definitive result. Unsaved visit switching is guarded. Desktop/tablet
+  keep due visible while scrolling; phone has a fixed due/payment shortcut.
+  Local Chrome owner review exercised synthetic service/product edits, deposit,
+  split completion, receipt, partial sale, history/pagination, refund/restock,
+  empty search and discard. Sampled 320/390/768/1024/1440 CSS widths have no
+  document overflow. Other role/location protections are HTTP-tested.
+- [x] Final suite: **384 passed / 4,422 assertions**, 28 existing intentional skips;
+  **34 frontend tests pass**. Client/SSR builds, 17 front-site asset budgets,
+  scoped PHP formatting and whitespace checks pass. No migration/dependency added.
+  [Audit, screenshots and practical limits](audits/2026-10-03-checkout/README.md).
+- [ ] Live card/provider refund execution remains uncertified under OPEN-13/16.
+  Phase 2 benefit instruments remain deferred. OPEN-18 records pending saved-sale
+  amendment/cancellation and controlled allocation-transfer rules; this workspace
+  does not expose those commands. Production races/load, physical payment/print
+  devices, outbound receipt delivery and independent accessibility remain unverified.
+
+## Clients operational CRM redesign (2026-10-03)
+
+- [x] Restored Client records implementation specification and accepted ADR-046.
+  Compact directory, guarded normalized name/phone/email/reference search,
+  relationship/staff filters, allowed sorts, 30-row pagination, important-note
+  context and explicit duplicate-contact review implemented.
+- [x] Operational profile prioritizes the next booking, important visible notes,
+  explicit preferences, recent past visits and payment follow-up. Editing retains
+  version/reason, validation and unsaved-change protection; notes retain staff or
+  recorded tenant-audit actor attribution. Existing forms, consent, private files,
+  privacy cases, communication outcomes and reviewed merge remain available.
+- [x] Exact authorized visit/service aggregates are independent of 20-row history
+  pages. Completed-sale net receipts, refunds, tips and open balances remain separate
+  per currency; transactions paginate 20 rows and omit provider evidence. Contact,
+  finance, sensitive data, own-history and assigned-location restrictions are
+  applied before serialization. Hidden contact edits preserve canonical values.
+- [x] Canonical Client handoffs open Calendar/rebook and Queue review drawers.
+  Rebooking uses current eligible services/staff, excluding unavailable services
+  and requiring staff selection where needed. Exact Calendar links retain the
+  appointment's branch-local date. No benefit-program placeholder is introduced.
+- [x] Local owner browser review verified synthetic creation, duplicate warning,
+  note/preference saves, payment pagination, keyboard focus/Escape/tabs and both
+  handoffs. Directory/profile sampled 320/390/768/1024/1440 CSS widths; phone visit
+  and payment histories retain local scrolling without sampled document overflow.
+  Role/location restrictions are tested through HTTP, not a complete visual role matrix.
+- [x] Final suite: **370 passed / 4,246 assertions**, 28 existing intentional skips;
+  **30 frontend tests pass**. Client/SSR builds, 17 front-site asset budgets, scoped
+  PHP formatting and whitespace checks pass. Directory query growth is constant
+  from one to 30 clients. No new migration or dependency required.
+  [Audit, screenshots and practical limits](audits/2026-10-03-clients/README.md).
+
+## Walk-in Queue operational redesign (2026-10-03)
+
+- [x] Compact numbered queue with explicit NEXT, shared live wait clock,
+  service/staff context, past-arrival-estimate awareness, search and filters that
+  preserve actual order. Staff availability, current services and bounded recent
+  completions connect to authorized Calendar/checkout workflows.
+- [x] Qualified-staff forecasts use real working windows, breaks/leave, closures,
+  bookings, holds, blocks and other-location work. Arrival/refreshed forecasts
+  share the ordered method. Full resource/staff fit is checked on selection and
+  atomic start; unknown finishes and expired checks cannot create a partial visit.
+- [x] Minimal client intake and saved-contact reuse, canonical conversion,
+  add/start replay, transactional lifecycle/history, Calendar synchronization,
+  branch service qualification, redaction and assigned-location overrides verified.
+- [x] Visible idle polling every 30 seconds and one 15-second display clock;
+  input/dialog/mutation pauses preserve the working view. Expanded team context
+  remains live. Desktop sticky labels/team, tablet disclosure and phone cards
+  reviewed at measured 360/390/768/1024/1280/1440/1920 widths without sampled
+  document overflow. Synthetic add/assign/start/complete workflows, saved client
+  lookup, keyboard loop/Escape and empty-branch isolation checked in Chrome.
+- [x] Final results: 358 repository tests / 3,941 assertions; 28 existing intentional skips.
+  All 26 frontend helper tests pass; client/SSR build and scoped PHP formatting pass.
+  Query growth stays bounded from one to 40 entries. No new migration is required.
+  [Audit, screenshots and practical limits](audits/2026-10-03-walk-in-queue/README.md).
+
+## Calendar operational redesign (2026-10-03)
+
+- [x] Staff-first Team day, Day/Week and Agenda; compact toolbar, status cards,
+  sticky references, native creation/quick-view drawers and deliberate phone agenda.
+- [x] Read-only working windows, breaks/leave, blocks, active holds and cross-location
+  commitments. Filtering/searching never turns reserved capacity into an open slot.
+  Inactive/former staff visits remain visible; new booking choices remain active/assigned.
+- [x] Slot prefill, bounded existing-client lookup, permitted lifecycle/checkout,
+  reviewed drag/reassignment/resize, remembered selections and quiet idle refresh.
+  Contact/note/finance redaction and own scope are enforced before serialization.
+- [x] Existing-client booking resolves and normalizes saved mobile contacts before
+  validation, displays the saved number, clears stale phone errors on selection,
+  and exposes an optional appointment phone when the saved number needs attention.
+  Permanent contact corrections use the existing client profile workflow.
+- [x] Canonical client identity survives contactless booking, replay and replacement;
+  replacements retain inactive client records. Overnight leave/closure exclusions
+  are enforced by the booking validator as well as the Calendar projection.
+- [x] Final verification: 348 repository tests / 3,796 assertions, 28 intentional
+  skips; 23 focused Calendar tests / 279 assertions; 21 frontend helper tests.
+  Production client/SSR build, targeted PHP formatting and whitespace checks pass.
+- [x] Local Chrome review at measured 320/390/770/1280/1680 CSS widths covers populated
+  and empty schedules, filters/search, overlap lanes, drawers, slot prefill and drag/
+  no-show review. No sampled document overflow or runtime console errors remain.
+  [Evidence and practical limits](audits/2026-10-03-calendar/README.md).
+
+
+## Daily workspace dashboard redesign (2026-10-02)
+
+- [x] Dashboard now prioritizes recorded current work, upcoming visits, unresolved
+  arrivals, confirmation/forms and unpaid checkouts. Compact counts filter the
+  schedule; direct lifecycle actions and an appointment drawer retain context.
+  Calendar and checkout links open the exact record. Permission capabilities,
+  staff linkage and assigned locations determine schedule, contacts, notes,
+  queue, readiness and finance visibility; own access without staff fails closed.
+- [x] Opening/exceptional hours and staff windows reuse the existing resolvers.
+  Breaks/leave affect scheduled hours. Financial definitions are explicit and
+  retain governed sources. Inventory remains outside this visible release under
+  ADR-036. No attendance, tasks, client memberships or generated insights are
+  fabricated. Idle visible refresh, local-day rollover, bounded active-priority
+  appointment details and exact totals implemented.
+- [x] Checkout reads/writes now enforce location access and older unpaid links
+  are retained. Calendar handoffs redact restricted fields; schedule changes
+  preserve unreadable contact/notes, note edits require permission and printed
+  schedules enforce assigned locations. Version/idempotency/audit/outbox and
+  append-only financial workflows remain authoritative.
+- [x] Isolated browser fixtures rendered owner, manager, reception, professional
+  and finance scopes; tested confirmation, exact calendar/checkout handoffs,
+  drawer Escape/focus restoration and first/last Tab loop, phone disclosure and a closed-day empty state.
+  Desktop/768px tablet/360px phone had no page overflow. Full suite: **337 passed,
+  3,654 assertions, 28 existing intentional skips**. Frontend: **14 passed**.
+  Client/SSR builds, 17 asset-budget entries and scoped whitespace checks pass.
+  Availability query count stays constant from one to 21 staff after warmup.
+  [Audit, screenshots and remaining limits](audits/2026-10-02-daily-workspace/README.md).
+
+## Brand color and account menu correction (2026-10-02)
+
+- [x] Navigation and signed-in header identity now use the public frontend's
+  brand-primary navy; action-primary indigo remains unchanged. The account
+  popover has compact icon rows, wrapping name/email and permission-aware billing
+  grouping, with a separate Sign out row.
+- [x] Public home/product/pricing brand colors checked; shop owner Reports and
+  account popover rendered at desktop and 360px mobile. Enter, arrow navigation,
+  Escape/focus restoration and long account details checked. No page overflow
+  found. Client/SSR builds, 17 asset-budget entries, 9 frontend tests and diff
+  checks pass. Other roles and multiple billing-workspace variants are source
+  reviewed only. [Evidence](audits/2026-10-02-brand-account-menu/README.md).
+
+## Blue navigation and header follow-up (2026-10-02)
+
+- [x] Primary-blue desktop/mobile navigation, inverse branding and selection/focus
+  states implemented in shop and platform layouts; content backgrounds retained.
+  Signed-in headers use a subtle blue wash and clearer identity/account styling.
+- [x] Shop owner desktop dashboard/clients, 360px client list/navigation and 768px
+  header rendered; account/menu Escape restores focus and no page overflow found.
+  Client/SSR builds, 17 asset-budget entries, 9 frontend tests and diff checks pass.
+  Protected platform shell is source/build verified only.
+  [Evidence](audits/2026-10-02-blue-shell/README.md).
+
+## Workspace surface hierarchy follow-up (2026-10-02)
+
+- [x] Refined shared workspace surfaces, navy text/label contrast, table headings,
+  breadcrumbs and indigo record avatars; mobile navigation uses the same tokens.
+- [x] Fresh owner-role rendering: clients and dialog at 1280×800, clients and
+  navigation at 390×844, services at 768×1024, and empty dashboard at 1280×800.
+  Client/SSR builds, 17 asset-budget entries, 9 frontend tests and diff checks pass.
+  [Evidence and inspection limits](audits/2026-10-02-surface-hierarchy/README.md).
+
+## StepES-inspired presentation follow-up (2026-10-02)
+
+- [x] Implemented white navigation, shared breadcrumbs, compact record tables,
+  labelled search/filter toolbars, dashboard cards and progressive report filters.
+  Mobile amounts, row actions, metadata and publishing badges were visually fixed.
+- [x] Fresh owner-role browser inspection covered all 12 workspace modules at
+  desktop/mobile sizes, selected tablet/narrow-width states, client validation,
+  service drawers, long names and public booking's first step. Exact states and
+  source-only exclusions are in the [follow-up audit](audits/2026-10-02-stepes-inspired-refinement/README.md).
+- [x] Full PHP suite rerun: 321 passed / 3,394 assertions / 28 skips; frontend
+  tests: 9 passed; final client/SSR builds, 17 asset-budget entries and diff checks
+  passed. Visual review used isolated synthetic data, with no real payment/sending.
+- [ ] Newly observed existing report defect: previous-period calculations retain
+  the current UTC query bounds. Domain correction and date-boundary tests remain.
+  Protected platform screens, other roles, 200% text, other browser engines and
+  live providers were not freshly verified in this follow-up.
+
+## Platform presentation refinement (2026-10-02)
+
+- [x] Reviewed the full source inventory (76 Vue pages, 103 shared Vue sources,
+  20 Blade views and 294 routes). Shared semantic typography, spacing, controls,
+  headers, dialogs, errors and responsive navigation now use a compact contract.
+- [x] Refined operational workflows, guided/business setup, notifications,
+  billing, public booking/self-service, account, platform operations and public
+  acquisition language. Appointment/booking terminology is defined in ADR-042;
+  user-entered data and stored dashboard preferences remain compatible.
+- [x] Readable audit presentation is scoped and read-only. Reports/receipts use
+  readable reference names, currency and business-local time. Visit duration
+  excludes cleanup while the existing capacity reservation remains unchanged.
+- [x] Browser inspection covered all 12 shop modules at desktop/mobile sizes,
+  with tablet, narrow-width and 200% text passes, four roles, populated/empty
+  states, validation and dialogs. All 11 platform modules, active content lists,
+  four onboarding steps and representative public/account flows were inspected.
+  Exact rendered states and source-only exclusions are in the
+  [coverage audit](audits/2026-10-02-platform-refinement/README.md).
+- [x] Complete PHP suite: 321 passed / 3,394 assertions, 28 intentional skips.
+  Frontend tests: 9 passed. Client/SSR production builds and 17 frontsite asset
+  budget entries pass. This is local evidence, not live-provider certification.
+- [ ] OPEN-16 records a pre-existing incomplete public Stripe deposit interface.
+  Deposit-required review now accurately states that online payment is unavailable
+  and cannot imply a paid/confirmed appointment. Provider completion/recovery,
+  token/security states, generated invoice PDFs, physical devices, cross-browser
+  and independent accessibility verification remain explicitly unverified.
+
+## Essential SMS client notifications (2026-10-01)
+
+- [x] Owner and public-booking surfaces now expose email and SMS only. The
+  Client notifications workspace explains platform versus registered branded
+  text senders without presenting deferred channels, fallback controls,
+  promotional texting or a conversation inbox.
+- [x] The operational policy covers booking status, material appointment
+  changes/cancellation, deposit and receipt events, requested waitlist offers,
+  deliberate turn-approaching queue updates and one reminder normally 24 hours
+  before the appointment. Feedback/rebooking mobile marketing is disabled.
+- [x] SMS remains explicit opt-in rather than preselected. Consent evidence is
+  append-only and rechecked at delivery; inbound STOP/START compliance remains
+  active. Waitlist SMS selection is treated as an explicit request for that
+  opening notification.
+- [x] A server-side enabled-channel allow-list prevents creation of deferred-
+  channel messages and suppresses old queued messages before provider access.
+  Existing provider adapters, consent and communication history are preserved
+  for a deliberate later release rather than deleted.
+- [x] Existing businesses are migrated to SMS, no fallback, no two-way inbox,
+  no mobile marketing and one 24-hour reminder. Rescheduled appointments use a
+  schedule-specific reminder key so an obsolete suppressed reminder cannot
+  block the replacement.
+- [x] Focused communications coverage passes 23 tests / 155 assertions and
+  public-booking coverage passes 11 tests / 100 assertions. The complete suite
+  passes 315 tests / 3,358 assertions with 28 intentional skips. Client and SSR
+  production builds pass on Node 24.
+- [ ] Live SMS is not enabled or certified by this change. OPEN-11 and OPEN-15,
+  country-specific sender registration, public HTTPS callbacks, legal wording,
+  STOP/START rehearsal and actual-device delivery remain launch gates.
+
+## Branded business-account email and Amazon SES foundation (2026-09-20)
+
+- [x] Password registration now sends a ClipperDesk verification email; verified
+  owner provisioning sends a separate workspace/trial welcome, and first
+  booking-page publication sends a one-time owner confirmation.
+- [x] Verified users receive a new-browser/device sign-in alert by default.
+  Password reset/change, old-and-new email change handling, two-factor enable/
+  disable, recovery-code regeneration and recovery-code use each have a
+  dedicated security message and clear recovery action.
+- [x] Team invitations, invitation acceptance, access/role/location changes,
+  revocation and restoration notify the affected team member. Owners are also
+  notified when support access is approved, entered or revoked and when the
+  platform suspends, closes or restores their workspace. Billing owners receive
+  deduplicated trial, activation, plan-change, cancellation, renewal,
+  restriction, recovery and termination messages through the existing billing
+  notice schedule.
+- [x] All Laravel notification email uses one responsive, plain-text-compatible
+  ClipperDesk theme with Account, Security and Billing sender streams. Queued
+  state-change mail waits for the database commit and uses bounded retries;
+  verification and reset links remain immediate.
+- [x] Laravel's Amazon SES transport is runtime-complete with the official AWS
+  SDK, temporary-token and optional SES configuration-set support. Local/test
+  remains non-sending unless explicitly changed.
+- [x] A metadata-only delivery ledger retains tenant/user scope, message class,
+  sender stream, masked/hashed destination, attempts, accepted/failed state and
+  provider ID without storing a message body or plain recipient address. A
+  scheduled retention command prunes expired sign-in fingerprints.
+- [ ] Production mail is not certified by this local change. OPEN-11, verified
+  domains, SES production access, SPF/DKIM/DMARC/custom MAIL FROM, bounce and
+  complaint event destinations, suppression operations, queue monitoring and a
+  live deliverability/rendering rehearsal remain required.
+
+## Historical multi-channel messaging foundation (2026-09-20; user-facing scope superseded by ADR-041)
+
+The following records the verified foundation as it existed on 2026-09-20.
+ADR-041 now keeps non-SMS channels, fallback and the inbox dormant and removes
+them from current owner/client surfaces without deleting historical evidence.
+
+- [x] The owner workspace now presents two clear sender experiences: shared
+  ClipperDesk messaging for business-labelled outbound notifications and an
+  entitled business-branded client line for approved WhatsApp/SMS identities,
+  direct replies and a tenant-scoped inbox. Sender identity is independent of
+  usage credits and changing it does not rewrite communication history.
+- [x] Appointment, walk-in and waitlist operations can select email plus the
+  client's currently consented preferred SMS/WhatsApp route. SMS and WhatsApp
+  have separate opt-in evidence, transactional purpose remains separate from
+  marketing consent, and STOP/START keywords update durable suppression and
+  consent evidence immediately.
+- [x] Smart fallback queues only the preferred mobile message and holds the
+  alternate channel until a definitive failure. Consent, template and sender
+  readiness are rechecked before release, preventing optimistic duplicate
+  WhatsApp/SMS outreach.
+- [x] Branded sender profiles keep provider credentials encrypted and outside
+  owner-facing payloads. Inbound replies route only through an exact active
+  business sender; shared production inbound is intentionally disabled because
+  it cannot identify a tenant safely. Sandbox inbound requires one explicitly
+  configured Business.
+- [x] Matched branded conversations include a reply composer. Replies are
+  idempotent, consume the same visible allowance and recheck consent, plan,
+  sender ownership and WhatsApp's 24-hour customer-service window immediately
+  before provider delivery.
+- [x] Transport promotion is configuration-only: `fake` makes no network call,
+  `twilio_test` uses zero-charge SMS test credentials, `whatsapp_sandbox`
+  requires an explicit Sandbox switch and may consume Twilio units, and `live`
+  requires a separate production-send switch. Live authentication supports a
+  restricted API key while webhook signatures retain a dedicated/Auth Token.
+- [x] New booking and operational events dispatch immediately after their
+  transaction commits, so local first delivery no longer depends on a running
+  scheduler. The minute schedule now recovers both pending outbox events and due
+  message retries, while an atomic message-state gate prevents duplicate
+  provider calls. The Sandbox screen presents a three-step booking test guide
+  and explicitly explains why a shared Sandbox identity cannot be selected as a
+  business-branded line. Provider authentication/configuration failures are
+  translated into owner-readable recovery guidance and can be retried from the
+  delivery activity after the setup is corrected.
+- [x] Starter and Pro currently include 100 and 1,000 mobile messages per
+  billing period. Pro enables branded sender and two-way entitlements.
+  Additional-credit purchasing and pricing remain deliberately deferred until
+  the core provider workflow is externally certified.
+- [x] The focused communications suite passes 20 tests / 159 assertions,
+  including transport locks, fallback, inbound STOP/idempotency and credential
+  non-exposure. The complete application suite passes 304 tests / 3,324
+  assertions with 28 intentional skips. Client and SSR production builds pass
+  on Node 24.
+- [ ] Live sending is not certified or enabled. Complete provider sender and
+  template approvals, country-specific SMS registration, public HTTPS callback
+  verification, regional legal/privacy/quiet-hour review and end-to-end tests
+  under ADR-039, OPEN-11 and OPEN-15 first.
 
 ## Team seats, secure invitations and owner activity (2026-09-14)
 
@@ -126,10 +719,9 @@ Evidence and individual findings: [workspace refinement audit](audits/2026-09-13
   and creates an editable primary Location, local hours, owner StaffProfile,
   availability, category-aware starter Services, commerce settings and a
   collision-safe booking slug through the canonical tenant models.
-- [x] A starter configuration that passes the existing ReadinessEvaluator is
-  previewed and published immediately. The completion state offers the live
-  booking page, shareable link and working Calendar instead of dropping the
-  owner on a generic dashboard.
+- [x] Historical behavior: valid starter configuration was previewed and published
+  immediately. **Superseded on 2026-10-05 by ADR-053:** preparation stays private,
+  operational readiness leads to Calendar, and owners explicitly review/go live.
 - [x] Business setup replaces Salon setup in owner-facing navigation. A
   persistent header status opens a focus-managed readiness drawer with required
   and recommended tasks, while every optional or advanced setting remains
@@ -192,8 +784,10 @@ FR-06/FR-08 operational calendar, Appointment lifecycle, and walk-in queue are
 implemented. FR-09/FR-10 public booking, secure self-service, and waitlist plus
 FR-11/FR-12 Client CRM, protected context, forms, consent, attachments,
 duplicates, and privacy cases are also implemented. FR-13 application-owned
-email/WhatsApp communications, local-time reminders, consent/suppression,
-delivery evidence, callbacks, diagnostics, and safe replay are implemented.
+email/SMS/WhatsApp communications, shared and branded sender modes, smart
+fallback, tenant-safe inbound replies, local-time reminders, consent/
+suppression, delivery evidence, callbacks, diagnostics, and safe replay are
+implemented.
 FR-14/FR-15 commerce and FR-16 through FR-18 Inventory, Commission/Tip,
 dashboard, reporting, export, and Phase 1 metric instrumentation are implemented
 and locally verified. FR-20 platform administration and the support-grant
@@ -488,10 +1082,11 @@ Documentation foundation:
 - [x] ClipperDesk name, mark, voice, palette, typography, and configurable
   message identity accepted in ADR-027; trademark/domain/sender approval remains
   OPEN-11
-- [ ] Launch country, currency, tax posture, and privacy regime confirmed
-- [x] Communications locale and mobile channel resolved by ADR-019 as
-  India/`en-IN`, Resend email, and Twilio WhatsApp; broader India tax/privacy/
-  receipt approval remains open
+- [ ] Exact first-country order, currencies, tax posture and privacy regimes
+  confirmed for the United States, Canada, United Kingdom and selected Europe
+- [x] ADR-039 supersedes ADR-019's communications direction with email, SMS and
+  WhatsApp, shared/branded senders, consent-safe fallback and explicit transport
+  promotion; regional legal and provider approval remains open under OPEN-15
 - [x] Larafast reuse and removal audit completed; recommendations await approval
 - [x] Phase 1 implementation started with the product-shell foundation
 
@@ -755,9 +1350,10 @@ Implemented FR-11/FR-12 Client CRM and consent:
 
 Implemented FR-13 reliable communications:
 
-- [x] ADR-019 resolves OPEN-06 and the communications portion of OPEN-02:
-  India/`en-IN` is the launch fallback, email uses Resend, and the approved
-  mobile channel is Twilio WhatsApp behind application-owned contracts
+- [x] ADR-039 supersedes ADR-019's India-only launch direction: the target
+  regions are the United States, Canada, the United Kingdom and selected Europe;
+  email, SMS and WhatsApp remain behind application-owned contracts. Exact
+  country launch order and regional certification remain open under OPEN-15.
 - [x] Versioned tenant templates cover confirmation, pending, approval,
   rejection, reminders, changes, cancellation, deposits, receipts, waitlist,
   queue, feedback, and rebooking with allow-listed variables, validation,
@@ -770,8 +1366,9 @@ Implemented FR-13 reliable communications:
   Appointment; cancellation/reschedule and consent changes are checked
   immediately before provider access
 - [x] Transactional/legal basis remains distinct from explicit marketing
-  consent; WhatsApp always requires channel opt-in; unsubscribe, marketing/all
-  suppression, invalid destination, bounce, and complaint paths are durable
+  consent; SMS and WhatsApp always require channel opt-in; unsubscribe, STOP,
+  START, marketing/all suppression, invalid destination, bounce, and complaint
+  paths are durable
 - [x] Tenant-aware queued jobs carry Business and correlation UUID; provider
   callbacks verify signatures, deduplicate event IDs/payload hashes, and ignore
   older states that would rewind delivery
@@ -1199,9 +1796,11 @@ Implemented FR-16 through FR-18 management foundation:
   The Stripe adapter uses a separate appointment webhook secret and does not
   treat browser return pages as payment evidence. Live Stripe test-mode and
   settlement reconciliation have not been run.
-- ADR-020 resolves India/INR/en-IN calculation behavior and the appointment
-  gateway/method set. Subscription and appointment Stripe flows use separate
-  bounded contexts, provider records and webhook secrets.
+- ADR-020 records the implemented India/INR/en-IN calculation behavior and the
+  appointment gateway/method set. ADR-039 supersedes it for target-market
+  direction; regionalisation remains required. Subscription and appointment
+  Stripe flows use separate bounded contexts, provider records and webhook
+  secrets.
 
 ### Inventory, commissions, reporting, and metrics verification (2026-08-15)
 
@@ -1519,10 +2118,11 @@ Implemented FR-16 through FR-18 management foundation:
 
 ### Prompt 25 performance, accessibility, and international readiness
 
-- [x] Public HTML declares `en-IN`; one reviewed locale is launched without a
-  fake selector or `hreflang`. ADR-025 requires equivalent path-prefixed legal,
-  commercial, provider, copy, and reciprocal metadata review before another
-  locale can be indexed.
+- [x] Public HTML currently declares `en-IN`; one reviewed locale exists without
+  a fake selector or `hreflang`. ADR-039 supersedes ADR-025's target-market
+  direction, so equivalent regional legal, commercial, provider, copy and
+  reciprocal metadata review is required before the intended locales can be
+  indexed.
 - [x] Skip navigation, landmarks, focus visibility, reduced-motion handling,
   touch targets, semantic disclosures/radios/tables, responsive wrapping, print
   rules, intrinsic image dimensions, and lazy below-fold evidence are present.
@@ -1598,9 +2198,10 @@ Implemented FR-16 through FR-18 management foundation:
   failover, replica, queue, or payment-idempotency evidence. Availability search
   currently repeats authoritative reads (746 statements for 20 measured
   slots), and any-qualified commits lock every eligible candidate Staff member.
-- India commerce behavior is implemented under ADR-020, but each live tenant's
-  GST/receipt/legal review, provider approval, and settlement certification are
-  still hard launch controls.
+- India commerce and `en-IN` public-site behavior remain in the current
+  implementation, but ADR-039 supersedes that target-market direction. They are
+  not approved for the intended United States, Canada, United Kingdom or Europe
+  launch until OPEN-15 regionalisation and review are complete.
 - Resend sender/domain authentication and Twilio WhatsApp sender/Content SID
   approvals are not configured or externally certified; production sending
   remains blocked by those provider controls and OPEN-11.
@@ -1608,8 +2209,9 @@ Implemented FR-16 through FR-18 management foundation:
 ## Next recommended work
 
 Do not begin paid launch. Execute the blocker plan in the versioned release
-record: certify Stripe/Resend/Twilio in their target environments;
-approve India tax/privacy/retention with named reviewers; add upload malware
+record: choose the exact first countries; regionalise and certify
+Stripe/Resend/Twilio in their target environments; approve tax/privacy/
+retention and messaging consent/quiet-hour rules with named reviewers; add upload malware
 scanning; optimize and load-test availability, checkout, and webhook bursts on
 the target database/queue/storage topology; configure and exercise monitoring,
 on-call, status communications, backups, restore, DR, and rollback; and run an

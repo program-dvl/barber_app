@@ -31,7 +31,8 @@ voice, but domain meanings should remain stable.
 | Schedule Exception | A dated holiday, closure, special opening, leave, sick leave, temporary change, or personal block that overrides normal availability |
 | Schedule | A staff or resource's recurring working availability |
 | Time Off / Block | An exception that removes capacity from normal availability |
-| Appointment | The customer-facing visit containing one or more service lines |
+| Appointment | The scheduled client visit containing one or more service lines; staff action labels use “Add appointment” |
+| Booking | The process of reserving an appointment, or the public booking page; not a separate visit entity (ADR-042) |
 | Service Line | A versioned service or add-on selected for a specific appointment |
 | Segment | Active, processing, or cleanup time within a service line with explicit capacity use |
 | Capacity Hold | A temporary, expiring claim used during booking or payment |

@@ -1,0 +1,325 @@
+{
+  "version": 1,
+  "application": "ClipperDesk",
+  "files": [
+    {
+      "path": "app/Console/Commands/Billing/VerifyCapacityRates.php",
+      "original_sha256": null,
+      "updated_sha256": "3405303d687c72bb718b1f345574d5dbdca53181e655f552d84bcc2620df0a39",
+      "integrated_sha256": "6e75107c3f7e4477b2b96b9ad2519d13778de39235e33f364c3cbaadba29469b"
+    },
+    {
+      "path": "app/Domain/Billing/Models/BillingCapacityChange.php",
+      "original_sha256": null,
+      "updated_sha256": "40c73fadc5ceec35b5320c3e0554ff3999decf22e05df94cf58681ff901a720d",
+      "integrated_sha256": "40c73fadc5ceec35b5320c3e0554ff3999decf22e05df94cf58681ff901a720d"
+    },
+    {
+      "path": "app/Domain/Billing/Models/BillingCheckoutAttempt.php",
+      "original_sha256": "c07cc2b0d91a062eaa99f6348a8446485f175e3692cf8c67960aafd80e30d557",
+      "updated_sha256": "226da6abeb5b157021564e42e8cbd032029597ff0cbcf8ae7d724af003e567b4",
+      "integrated_sha256": "226da6abeb5b157021564e42e8cbd032029597ff0cbcf8ae7d724af003e567b4"
+    },
+    {
+      "path": "app/Domain/Billing/Models/BillingInvoice.php",
+      "original_sha256": "b7d9642dc0230cdea2d3a401d443c14a4619facd67d533aa09081368f9b31538",
+      "updated_sha256": "cfa114e8c727307a44efee6ee82f0ea0bbefdf3b4c358aa1ff5571a423eeee1c",
+      "integrated_sha256": "cfa114e8c727307a44efee6ee82f0ea0bbefdf3b4c358aa1ff5571a423eeee1c"
+    },
+    {
+      "path": "app/Domain/Billing/Models/BillingRateCard.php",
+      "original_sha256": null,
+      "updated_sha256": "e79974819215995dc7ef1e7f8559dd589af989fb3c0d7c637d4a558b62d5abcd",
+      "integrated_sha256": "e79974819215995dc7ef1e7f8559dd589af989fb3c0d7c637d4a558b62d5abcd"
+    },
+    {
+      "path": "app/Domain/Billing/Models/BusinessSubscription.php",
+      "original_sha256": "bc2f10fcd2a5782207fdf956b1db6fa509c6652e178f4f14b7dd4fec6473e082",
+      "updated_sha256": "4d26d724672eb604e4e7adc5511353c45740ba74b926222ed95bf6f68edf6da0",
+      "integrated_sha256": "4d26d724672eb604e4e7adc5511353c45740ba74b926222ed95bf6f68edf6da0"
+    },
+    {
+      "path": "app/Domain/Billing/Models/SmsCreditPurchase.php",
+      "original_sha256": null,
+      "updated_sha256": "a84a88f29a31b9df6050cff2b98ee2b375b9106d483ff9c82ac4a5a74c32f4c6",
+      "integrated_sha256": "a84a88f29a31b9df6050cff2b98ee2b375b9106d483ff9c82ac4a5a74c32f4c6"
+    },
+    {
+      "path": "app/Domain/Billing/Providers/StripeSubscriptionProvider.php",
+      "original_sha256": "98885b87d52d5f1e0dcfb3495f3ec4bd338c773ed59e20d71afb784fed43069e",
+      "updated_sha256": "faaecd8ba93882a5e79351fea6b1f1fa2e31d78f01dbc83be581f8a0ad359e49",
+      "integrated_sha256": "227d09783e83cbf56d0231d1fed5d93abaca2894a96048b1acd3947c7853f6c6"
+    },
+    {
+      "path": "app/Domain/Billing/Services/BillingWorkspaceQuery.php",
+      "original_sha256": null,
+      "updated_sha256": "7565ed69106c1a7598473e8fff77ea551d87a21a5e6003560677f91f1f5c137e",
+      "integrated_sha256": "c7102be499054073ffda967f98c95ce00819f10975caf1da652cb2e3856c6fca"
+    },
+    {
+      "path": "app/Domain/Billing/Services/CapacityBillingManager.php",
+      "original_sha256": null,
+      "updated_sha256": "fdb875a92f4a0dbaaddc04e781ffe41b9aa2c4ea88f6c32043880fe56ccc99e1",
+      "integrated_sha256": "52002ddcfcd00c3b50ce9d9b3df9440972c355240f76a3cb857eb6824b1ad5b8"
+    },
+    {
+      "path": "app/Domain/Billing/Services/CapacityPricingCatalog.php",
+      "original_sha256": null,
+      "updated_sha256": "926517a6a9ff09dcb1c2f1f3b1d53ae0fdf0d3ab8f1081ae20061c316b3648fe",
+      "integrated_sha256": "b34b28e6f9d367eab156272d038f44d22ed190b0f89666a5871e972554190a6c"
+    },
+    {
+      "path": "app/Domain/Billing/Services/CapacityStripeGateway.php",
+      "original_sha256": null,
+      "updated_sha256": "514e2861f21600f8795bc2304670b93164fbc351e9c8d373aff27bfcf519584b",
+      "integrated_sha256": "0b71d6a07cec27829bb84bcfba7d50a53b4af29168385ccdff524953848aaf66"
+    },
+    {
+      "path": "app/Domain/Billing/Services/CapacitySubscriptionProjector.php",
+      "original_sha256": null,
+      "updated_sha256": "0ae01ba70298717544f84116f4300dc9eb49b13411c851a176004ecfaf9b668c",
+      "integrated_sha256": "fdb755b36008677514baaeaf7aeac65658334b96ea2a61107eb327d8d463c21b"
+    },
+    {
+      "path": "app/Domain/Billing/Services/EntitlementEvaluator.php",
+      "original_sha256": "bb5d9df4e8017f89061b7ef8b67a3fe8b3ea80c43e38ebaf4b8943acc130d023",
+      "updated_sha256": "47f699a131c3122ab1e01d1f3076723d1a15e159564898dca65bca88e6f40568",
+      "integrated_sha256": "7df88d3075a9d413724892d46321822a32c76bb6b8313ad3da8d5edc642c21f9"
+    },
+    {
+      "path": "app/Domain/Billing/Services/EntitlementUsageManager.php",
+      "original_sha256": "2381c8bc75877b1db6c7fb6403ae7028d5737ef9df2c402f3959eab8e1561655",
+      "updated_sha256": "dea3b15288f5a3492c3597a1e82de770756b958d6c702f599bbab702ed840af4",
+      "integrated_sha256": "49731357dc2a5596446e98853bc6f6d0c63ebaeb6248ea333d8614dcc35421cd"
+    },
+    {
+      "path": "app/Domain/Billing/Services/SmsCreditWallet.php",
+      "original_sha256": null,
+      "updated_sha256": "7ce0787d49e3e1c86ca9b6c302a2dae524b4a0718b42a82a46f470c68d9d3bcf",
+      "integrated_sha256": "79adb6aedfd16acf70f48b768ef80f321f14b11b339becba57bca5dfc9573406"
+    },
+    {
+      "path": "app/Domain/Billing/Services/StripeSubscriptionReconciler.php",
+      "original_sha256": "218a13a6e8b9f33dec8f5907f768db01d36a05fc13d3c9cd393a57bac24df9d2",
+      "updated_sha256": "0e053fe8e9c86c58e328abdf7f90bea07485bd1c20a4257a7e7345ea89f645a9",
+      "integrated_sha256": "12cbf216f19f473189c1fab9f6f3190045e15fde1ab88a7a6412e013d4a6b605"
+    },
+    {
+      "path": "app/Domain/Billing/Services/StripeWebhookProcessor.php",
+      "original_sha256": "96b564d1c601a351a726782f10377f71552fca85a94bd35448160a56d06e18ac",
+      "updated_sha256": "bc2c38252b8eb5e0ba958033933ac1b7de559cbb40ffd6944e9c2d17df7ff899",
+      "integrated_sha256": "b20a12e7f67eba76f7e5ecb4ebdfd350e4c01de61d32de060c80c4efe1cf4ffe"
+    },
+    {
+      "path": "app/Domain/Billing/Services/SubscriptionLifecycleManager.php",
+      "original_sha256": "5594c017c438fcbb421060f3ef5985ade6d58bd01184087f781e701453c26fd5",
+      "updated_sha256": "6612df9183da20aae7ae067ebf3283397c99957e78cbfe4c2225092e1b668f49",
+      "integrated_sha256": "6612df9183da20aae7ae067ebf3283397c99957e78cbfe4c2225092e1b668f49"
+    },
+    {
+      "path": "app/Domain/Communications/Services/CommunicationDeliveryService.php",
+      "original_sha256": "7d76c56f6ed04e78f288608c54fb34ccb5941382d12e601a715836b7da79c956",
+      "updated_sha256": "6cc621bffc7ffcdeaab09fdfb59890a32d86e5f70c2514e9a83e0d6542e093a3",
+      "integrated_sha256": "89b95cac91b6c16e05d60a92188a3ca681af12646cd90ebc17b60c07ffca0c85"
+    },
+    {
+      "path": "app/Domain/Communications/Services/NotificationWorkspaceCatalog.php",
+      "original_sha256": "5a25a7ddd9e7122c3f72ab33516ae3078ee7ef7dbf9290950bca45fe140590b2",
+      "updated_sha256": "71bcd7033a36e915cfc0b15d5bb13e3901ff49c96fe8d66680f9f56861baa7b4",
+      "integrated_sha256": "71bcd7033a36e915cfc0b15d5bb13e3901ff49c96fe8d66680f9f56861baa7b4"
+    },
+    {
+      "path": "app/Domain/Communications/Services/SmsSegmentCounter.php",
+      "original_sha256": null,
+      "updated_sha256": "91a9888f92f67f2ca6973c09ca56680a22bbbca40f6292b05bf82072ec93d9b3",
+      "integrated_sha256": "2ffe3fa216132e245c345fe9f4d4126e0fcd8359c0dfc21af7126139027f2a16"
+    },
+    {
+      "path": "app/Http/Controllers/Billing/BusinessBillingController.php",
+      "original_sha256": "d9776d2af375b502386e5763443095d9274408acc569ae53b29c9aeb79197f0a",
+      "updated_sha256": "b587e6758034112475d0f106603b47b599aa5b7a1704ca33fa5849277afa334d",
+      "integrated_sha256": "e113da1df3f0e0d54c0a277fb5cabfbc14dd528551e79e7adcb8c82334328140"
+    },
+    {
+      "path": "app/Http/Controllers/Billing/CapacityBillingController.php",
+      "original_sha256": null,
+      "updated_sha256": "adf5631a5d26d1adbc531a75db380a6fcbd24a3d22f1fbe1cc61d6e4c3c14715",
+      "integrated_sha256": "6e3319e238d41a422f82408bc384601dd13192d5572846079e57d51d072cebf3"
+    },
+    {
+      "path": "app/Http/Controllers/Marketing/PricingController.php",
+      "original_sha256": "fe3271e7a749ff738f3a5c98f54b8ccb549595dadce06b2883229b42b5adbe0e",
+      "updated_sha256": "2bf5eb7f664695f1c250c36eaf09ebc39c9a8a4e415e0ed5d873fb3f696ad8ab",
+      "integrated_sha256": "53b141343ff9e8b83a2021f651b43af8c5b9aa95f7e8f91cf7dd6cd3c7dadfcb"
+    },
+    {
+      "path": "config/capacity-billing.php",
+      "original_sha256": null,
+      "updated_sha256": "86bd9d7091dcc2bc737f6dd3c7b9503e45f1b747008e292d5f9daec63bf5bc5f",
+      "integrated_sha256": "86bd9d7091dcc2bc737f6dd3c7b9503e45f1b747008e292d5f9daec63bf5bc5f"
+    },
+    {
+      "path": "database/migrations/2026_10_05_000001_preserve_billing_invoice_provider_state.php",
+      "original_sha256": null,
+      "updated_sha256": "b6c5379aa263bf922d8252282ad3e4de6b12a60d2994ff0ba123c40923976014",
+      "integrated_sha256": "29c88bf1eed9b0aadaeb4f7462b1a93dba17973c2bb45b1efcca0229f9315f39"
+    },
+    {
+      "path": "database/migrations/2026_10_05_000002_create_capacity_billing.php",
+      "original_sha256": null,
+      "updated_sha256": "96b5e24ec83cdae21473004883ebaeefe1a9a15ece3f68062ab352f9e80c28d4",
+      "integrated_sha256": "8428b765f5fdea7283aa3578c7f0c32132870b80a827c7a4075f5d4ebd20575d"
+    },
+    {
+      "path": "docs/README.md",
+      "original_sha256": "f466b51c5f837e83436d52def68a84a2a4dcadf1203384e7fec018dcc49e4594",
+      "updated_sha256": "9bb71f096e2493aaf10b00b31c86d2401c6131b7ebc5f761db7b2e51a6d278a9",
+      "integrated_sha256": "9bb71f096e2493aaf10b00b31c86d2401c6131b7ebc5f761db7b2e51a6d278a9"
+    },
+    {
+      "path": "docs/decisions.md",
+      "original_sha256": "69dc9197e2fa534c78ca9d8c6c7d4be2187d229fa3fc606629609d36ee004643",
+      "updated_sha256": "5ad572a8cee886dd5d48077fb52c9dab9ac14bf0dc4f0cc1044755c1a528761f",
+      "integrated_sha256": "50d9465bc351cb4fad09f3ff502781e5709c75458d607d7472deaabb20e90992"
+    },
+    {
+      "path": "docs/modules/communications.md",
+      "original_sha256": "42bd3036d96eba65a33644f35da21930f773eb5c2134db96546f4ecc02f6ed11",
+      "updated_sha256": "6830564d7cd03cfb7043548fbb8cd3cdd9eb646d27c10fab10c34e2f4cb95cbe",
+      "integrated_sha256": "6830564d7cd03cfb7043548fbb8cd3cdd9eb646d27c10fab10c34e2f4cb95cbe"
+    },
+    {
+      "path": "docs/modules/subscription-billing.md",
+      "original_sha256": null,
+      "updated_sha256": "bcc76ee5f691d0997894478d8573bcbe98f2235eec614ed397b5524b08f4c195",
+      "integrated_sha256": "26e7068f8e86a491b05ae938b352d3d164874078805c1634deffdc3302651bff"
+    },
+    {
+      "path": "docs/product-requirements.md",
+      "original_sha256": "4ceb3c2fa582b8a4980fd02005d542dbf65444c49b95bdff96db694bd485c9ba",
+      "updated_sha256": "4d5a19bdc87af8eff586202690df7f2793488cc1d9e1bd3c2f99abb2ef694ab4",
+      "integrated_sha256": "4d5a19bdc87af8eff586202690df7f2793488cc1d9e1bd3c2f99abb2ef694ab4"
+    },
+    {
+      "path": "docs/project-status.md",
+      "original_sha256": "f5012125963d48531b1dea01d479741fafaa2919df4c60645787c0c46d4ffa11",
+      "updated_sha256": "ee06017b7bf48ea62ec9803e04b348069d618f23bb783efd29cf9664ca574c77",
+      "integrated_sha256": "4dc6380128b8a6cef0709041c7f24be00d857f0caea8ae215bf2f6ab2996702e"
+    },
+    {
+      "path": "docs/stripe-billing.md",
+      "original_sha256": "17370afece466878a99e2e84bfeda301acd9d9f9a428cba2fc4818f1671166dd",
+      "updated_sha256": "3a95288fc7de0fa16e6a59757b1fb7fe1f76de99519c8e3af0ac232758c3bb63",
+      "integrated_sha256": "3a95288fc7de0fa16e6a59757b1fb7fe1f76de99519c8e3af0ac232758c3bb63"
+    },
+    {
+      "path": "resources/css/billing.css",
+      "original_sha256": null,
+      "updated_sha256": "86d598de018aa17b3f682c17718c4ef437dc004209097609c739aacbdc16fe9a",
+      "integrated_sha256": "86d598de018aa17b3f682c17718c4ef437dc004209097609c739aacbdc16fe9a"
+    },
+    {
+      "path": "resources/js/Components/Billing/CapacityBillingPanel.vue",
+      "original_sha256": null,
+      "updated_sha256": "1a3cd47150fdb8637f9231954429450aaadf1faf43d57b36b45e53fc20069dae",
+      "integrated_sha256": "1a3cd47150fdb8637f9231954429450aaadf1faf43d57b36b45e53fc20069dae"
+    },
+    {
+      "path": "resources/js/Components/Billing/CapacityCalculator.vue",
+      "original_sha256": null,
+      "updated_sha256": "e2349dbc5152f0a99ff34fee92b14686cd39689aeaaa222132fbabdde4f967e6",
+      "integrated_sha256": "e2349dbc5152f0a99ff34fee92b14686cd39689aeaaa222132fbabdde4f967e6"
+    },
+    {
+      "path": "resources/js/Layouts/AppLayout.vue",
+      "original_sha256": "38649489c5015c7fd6fed2cecfae9f70734054991e32a7f327c9aa1d5274f9aa",
+      "updated_sha256": "3174d3e053ae2635876d7047eecac8c7f786fba531b991135e4ab52a0dcded17",
+      "integrated_sha256": "3174d3e053ae2635876d7047eecac8c7f786fba531b991135e4ab52a0dcded17"
+    },
+    {
+      "path": "resources/js/Pages/Billing/Checkout.vue",
+      "original_sha256": "2c69fa3271b8da93fa371210ed1c73ce0f2e165b0cb8f7c9abea6bf2635ea364",
+      "updated_sha256": "8ba90800e5a77cf50fca3d7dee81273ba4a1c7ec29d11cccc451b3595784a4b2",
+      "integrated_sha256": "8ba90800e5a77cf50fca3d7dee81273ba4a1c7ec29d11cccc451b3595784a4b2"
+    },
+    {
+      "path": "resources/js/Pages/Billing/Overview.vue",
+      "original_sha256": "92fd0904bb27b5ba0a97bf62e222a44d92e55dfadb6086888ebb9660fba71db0",
+      "updated_sha256": "89d742174d78af824b51c0483cb458237cca991792c53d15f46dcfc4699ed124",
+      "integrated_sha256": "89d742174d78af824b51c0483cb458237cca991792c53d15f46dcfc4699ed124"
+    },
+    {
+      "path": "resources/js/Pages/Configuration/Onboarding.vue",
+      "original_sha256": "92bd30a19d3da5e2b98bf655d5484dbb71c92717f316555d1ba2cc831fee0e40",
+      "updated_sha256": "a57706f190beaf7afd42e61aec8f54115a324ca17bf1e9b5d9f36f4036fa49fa",
+      "integrated_sha256": "a57706f190beaf7afd42e61aec8f54115a324ca17bf1e9b5d9f36f4036fa49fa"
+    },
+    {
+      "path": "resources/js/Pages/Marketing/Pricing.vue",
+      "original_sha256": "28f3ec2025d7f03c9c6c84b6eb39752a93ac284854328c74c0ccc93dbd9fe42b",
+      "updated_sha256": "7c7e7f337fc2b34019fb6da2ae030fdbd855ce4a46580d9df8e14c9e7a6554e3",
+      "integrated_sha256": "7c7e7f337fc2b34019fb6da2ae030fdbd855ce4a46580d9df8e14c9e7a6554e3"
+    },
+    {
+      "path": "resources/js/Support/billingWorkspace.js",
+      "original_sha256": null,
+      "updated_sha256": "b6ded3b8cdf503e15ecbc1f7b78a4dd3e581e72515ebc13bbbbe2a28469a6c31",
+      "integrated_sha256": "b6ded3b8cdf503e15ecbc1f7b78a4dd3e581e72515ebc13bbbbe2a28469a6c31"
+    },
+    {
+      "path": "resources/js/Support/capacityPricing.js",
+      "original_sha256": null,
+      "updated_sha256": "f59ebeaa313170dd046e3c5186c94cc4051d9e25f4eab55b2a9ac254f8b55f7c",
+      "integrated_sha256": "f59ebeaa313170dd046e3c5186c94cc4051d9e25f4eab55b2a9ac254f8b55f7c"
+    },
+    {
+      "path": "routes/web.php",
+      "original_sha256": "3bc1b9e838ba93c81d54d2bee1850746d41db18bb77a7bf8b3ee60d6afa7b333",
+      "updated_sha256": "cba801788437d67daf591afbf229773510943cd0cb4f0c32bbf59afd403366be",
+      "integrated_sha256": "89f843536086bbd63344e40530e845b57d8d51040e704162f25c2001bc3e33b1"
+    },
+    {
+      "path": "tests/Feature/Billing/BillingWorkspaceTest.php",
+      "original_sha256": null,
+      "updated_sha256": "8b2d242d7ded3f4e8c7f0e7523f67ab4d78185758097531d555300b45f25e546",
+      "integrated_sha256": "af8c1bf2422ab4a883e43668c6afe4dddb07963b09fa5d1b231bd5a1ffd8853f"
+    },
+    {
+      "path": "tests/Feature/Billing/CapacityBillingTest.php",
+      "original_sha256": null,
+      "updated_sha256": "31ef2a497ca3da6806e86db2b0568b4b12fec4b4c4696b438dc7b40825f2f220",
+      "integrated_sha256": "1d61c1020c2eea12a04d9d026c62ed458797a5de64555c46f8e745bd353d1c7c"
+    },
+    {
+      "path": "tests/Feature/Billing/SubscriptionLifecycleTest.php",
+      "original_sha256": "219519f1615dd2572f77bd3c6afa8d91e9b83f6c7e03fb888a0c799a13bad048",
+      "updated_sha256": "6dac9bb01ed996c256b040502d9c73a1155ab4d7fdd74b1d89978ec639d65ce0",
+      "integrated_sha256": "6dac9bb01ed996c256b040502d9c73a1155ab4d7fdd74b1d89978ec639d65ce0"
+    },
+    {
+      "path": "tests/Frontend/billing-workspace.test.mjs",
+      "original_sha256": null,
+      "updated_sha256": "9fb4d6fce74a3d1a4d43806ebf62dcd24df7c0b499bcdf7797506490be4f5978",
+      "integrated_sha256": "9fb4d6fce74a3d1a4d43806ebf62dcd24df7c0b499bcdf7797506490be4f5978"
+    },
+    {
+      "path": "tests/Frontend/capacity-pricing.test.mjs",
+      "original_sha256": null,
+      "updated_sha256": "e1800529c3f6056a3e8bfed023c8209590cdd27e6a6a59953a1282a056033c9d",
+      "integrated_sha256": "e1800529c3f6056a3e8bfed023c8209590cdd27e6a6a59953a1282a056033c9d"
+    },
+    {
+      "path": ".env.example",
+      "original_sha256": "1a56692f68a66c2faab8b1be75a9284de6e395c583f7918a2f9f395bb7b5a3e0",
+      "updated_sha256": "a6b598fc4cdb299870a9957d7a588d223b129b6539c3954defc564ad8348997c",
+      "integrated_sha256": "a6b598fc4cdb299870a9957d7a588d223b129b6539c3954defc564ad8348997c"
+    }
+  ],
+  "integration": {
+    "date": "2026-10-05",
+    "source_archive": "subscription-billing-update.zip",
+    "archive_sha256": "003e5f45520ce85085f4078cc8f47ae0b297b6bd80954826fffdbb1492468c50",
+    "all_original_preconditions_matched": true,
+    "file_count": 52
+  }
+}

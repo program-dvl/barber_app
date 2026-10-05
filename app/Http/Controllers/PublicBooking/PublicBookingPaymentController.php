@@ -18,7 +18,7 @@ class PublicBookingPaymentController extends Controller
             'flow' => ['required', 'string'], 'secret' => ['required', 'string', 'size:64'], 'idempotency_key' => ['required', 'string', 'max:128'],
             'client_name' => ['required', 'string', 'max:255'], 'client_mobile' => ['required', 'string', 'max:32', new E164Phone], 'client_email' => ['required', 'email', 'max:255'],
             'client_date_of_birth' => ['nullable', 'date', 'before:today'], 'referral_source' => ['nullable', 'string', 'max:255'], 'special_request' => ['nullable', 'string', 'max:2000'],
-            'communication_preferences' => ['array'], 'communication_preferences.*' => ['in:email,whatsapp'], 'marketing_opt_in' => ['boolean'], 'policy_accepted' => ['accepted'],
+            'communication_preferences' => ['array'], 'communication_preferences.*' => ['in:email,sms'], 'marketing_opt_in' => ['boolean'], 'policy_accepted' => ['accepted'],
         ]);
         $business = $slugs->resolve($slug);
         abort_unless($business && $business->booking_slug === $slug, 404);

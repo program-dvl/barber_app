@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class BillingCheckoutAttempt extends Model
 {
     protected $fillable = [
-        'public_id', 'business_id', 'business_subscription_id', 'billing_plan_price_id',
+        'capacity_quote', 'public_id', 'business_id', 'business_subscription_id', 'billing_plan_price_id',
         'created_by_user_id', 'provider', 'provider_transaction_id', 'provider_subscription_id',
         'provider_checkout_url', 'status', 'expires_at', 'last_checked_at', 'confirmed_at', 'last_error',
     ];
@@ -24,6 +24,7 @@ class BillingCheckoutAttempt extends Model
     protected function casts(): array
     {
         return [
+            'capacity_quote' => 'array',
             'expires_at' => 'immutable_datetime',
             'last_checked_at' => 'immutable_datetime',
             'confirmed_at' => 'immutable_datetime',

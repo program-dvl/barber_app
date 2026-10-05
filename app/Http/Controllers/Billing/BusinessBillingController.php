@@ -4,15 +4,21 @@ namespace App\Http\Controllers\Billing;
 
 use App\Domain\Billing\Contracts\SubscriptionProvider;
 use App\Domain\Billing\Enums\SubscriptionStatus;
+use App\Domain\Billing\Models\BillingCapacityChange;
 use App\Domain\Billing\Models\BillingCheckoutAttempt;
 use App\Domain\Billing\Models\BillingCoupon;
 use App\Domain\Billing\Models\BillingInvoice;
 use App\Domain\Billing\Models\BillingPlan;
 use App\Domain\Billing\Models\BillingPlanPrice;
+use App\Domain\Billing\Models\BillingRateCard;
 use App\Domain\Billing\Models\BusinessSubscription;
 use App\Domain\Billing\Models\OwnerRegistrationIntent;
+use App\Domain\Billing\Models\SmsCreditPurchase;
+use App\Domain\Billing\Services\BillingWorkspaceQuery;
+use App\Domain\Billing\Services\CapacityPricingCatalog;
 use App\Domain\Billing\Services\EntitlementEvaluator;
 use App\Domain\Billing\Services\PlanCatalog;
+use App\Domain\Billing\Services\SmsCreditWallet;
 use App\Domain\Billing\Services\StripeBillingReadiness;
 use App\Domain\Billing\Services\StripeCheckoutReconciler;
 use App\Domain\Billing\Services\StripeSubscriptionReconciler;
@@ -37,7 +43,7 @@ use Throwable;
 
 class BusinessBillingController extends Controller
 {
-    public function show(Request $request, Business $business, EntitlementEvaluator $entitlements, PlanCatalog $catalog, StripeBillingReadiness $readiness): Response
+    public function show(Request $request, Business $business, EntitlementEvaluator $entitlements, PlanCatalog $catalog, StripeBillingReadiness $readiness, BillingWorkspaceQuery $workspace): Response
     {
         $this->authorizeBilling($request, $business);
         $subscription = $business->subscription()->with(['plan', 'price'])->firstOrFail();
@@ -48,11 +54,22 @@ class BusinessBillingController extends Controller
             ->with('toPlan:id,name,code')
             ->latest('requested_at')
             ->first();
+        $scheduledPrice = $subscription->scheduled_billing_plan_price_id ? BillingPlanPrice::with('plan:id,name')->find($subscription->scheduled_billing_plan_price_id) : null;
         $now = now();
 
         return Inertia::render('Billing/Overview', [
+            'capacityPricing' => app(CapacityPricingCatalog::class)->present(true),
+            'billingCountry' => $business->country_code,
+            'capacityRequest' => ($capacityRequest = BillingCapacityChange::where('business_id', $business->id)->whereIn('status', ['submitted', 'scheduled'])->latest('id')->first()) ? app(CapacityBillingController::class)->present($capacityRequest) : null,
+            'smsCredits' => app(SmsCreditWallet::class)->balance($business->id),
+            'smsPacks' => config('capacity-billing.sms_purchases_enabled') && $subscription->billing_rate_card_id ? collect(BillingRateCard::find($subscription->billing_rate_card_id)?->terms['sms_packs'] ?? [])->map(fn ($pack, $key) => ['key' => (string) $key, 'credits' => $pack['credits'], 'amount_minor' => $pack['amount_minor'], 'currency' => $subscription->capacity_snapshot['currency']])->values() : [],
+            'smsPurchase' => is_string($request->query('sms_purchase')) ? SmsCreditPurchase::where('business_id', $business->id)->where('public_id', $request->query('sms_purchase'))->first()?->only(['public_id', 'status']) : null,
             'businessLabel' => $business->name,
-            'subscription' => $subscription,
+            'subscription' => $workspace->subscription($subscription),
+            'billingTimeZone' => $business->time_zone ?: 'UTC',
+            'billingLocale' => $business->locale ?: 'en-US',
+            'attention' => $workspace->attention($subscription),
+            'usage' => collect(['locations.max', 'staff.max', 'messaging.monthly_allowance'])->mapWithKeys(fn ($key) => [$key => $entitlements->usage($business, $key)]),
             'trial' => ['started_at' => $subscription->trial_started_at, 'ends_at' => $subscription->trial_ends_at],
             'plans' => BillingPlan::query()
                 ->whereIn('code', $catalog->codes())
@@ -69,23 +86,25 @@ class BusinessBillingController extends Controller
                         ->with('definition'),
                 ])
                 ->orderBy('id')
-                ->get(),
+                ->get()->map(function ($plan) use ($catalog) {
+                    return $plan->only(['id', 'code', 'name', 'description']) + [
+                        'prices' => $plan->prices->filter(fn ($price) => $catalog->allows($price))->map(fn ($price) => $price->only(['id', 'amount_minor', 'currency', 'billing_interval']))->values(),
+                        'entitlements' => $plan->entitlements->map(fn ($item) => ['value' => $item->value, 'definition' => ['key' => $item->definition->key]]),
+                    ];
+                }),
             'planRanks' => $catalog->plans()->map(fn (array $plan) => (int) ($plan['rank'] ?? 0))->all(),
-            'entitlements' => collect(['locations.max', 'staff.max', 'messaging.monthly_allowance', 'deposits.enabled', 'inventory.enabled', 'reporting.advanced', 'branding.custom', 'support.priority', 'exports.enabled'])
-                ->mapWithKeys(fn (string $key) => [$key => $entitlements->value($business, $key)]),
-            'invoices' => $subscription->invoices()->latest('issued_at')->get(),
-            'payments' => $subscription->invoices()->with('payments')->latest('issued_at')->get()->pluck('payments')->flatten()->values(),
+            'entitlements' => $workspace->entitlements($business, $subscription),
+            'invoices' => $subscription->invoices()->orderByDesc('issued_at')->orderByDesc('id')->paginate(10)->withQueryString()->through(fn ($invoice) => $workspace->invoice($invoice)),
             'exportAvailable' => $subscription->exportIsAvailable(),
-            'pendingChange' => $pendingChange ? [
+            'portalReturned' => $request->query('billing') === 'returned',
+            'pendingChange' => $scheduledPrice ? ['plan_name' => $scheduledPrice->plan->name.' · '.($scheduledPrice->billing_interval->value === 'annual' ? 'yearly' : 'monthly'), 'effective_at' => $subscription->scheduled_change_at] : ($pendingChange ? [
                 'kind' => $pendingChange->kind,
                 'plan_name' => $pendingChange->toPlan->name,
                 'effective_at' => $pendingChange->effective_at,
-            ] : null,
-            'checkoutStatus' => in_array($request->query('checkout'), ['success', 'canceled'], true)
-                ? $request->query('checkout')
-                : null,
+            ] : null),
+            'checkoutStatus' => $request->query('checkout') === 'canceled' ? 'canceled' : null,
             'checkoutAttempt' => $this->checkoutAttemptFromRequest($request, $business),
-            'planChangeStatus' => in_array($request->query('plan_change'), ['success', 'canceled', 'confirmed'], true)
+            'planChangeStatus' => in_array($request->query('plan_change'), ['success', 'canceled'], true)
                 ? $request->query('plan_change')
                 : null,
             'planChangeTargetPriceId' => $request->query('plan_change') === 'success' && ctype_digit((string) $request->query('target_price_id'))
@@ -114,6 +133,7 @@ class BusinessBillingController extends Controller
             ->where(fn ($effective) => $effective->whereNull('effective_until')->orWhere('effective_until', '>', now()))
             ->with('plan:id,code')
             ->firstOrFail();
+        abort_if($price->plan->code === 'capacity', 422, 'Use the locations and bookable staff review for this subscription.');
         abort_unless($catalog->allows($price), 422, 'The selected Stripe price is not in the approved billing catalog.');
         $couponProviderId = null;
 
@@ -276,8 +296,8 @@ class BusinessBillingController extends Controller
         return Inertia::render('Billing/Checkout', [
             'businessLabel' => $business->name,
             'billingContact' => [
-                'name' => $request->user()->name,
-                'email' => $request->user()->email,
+                'name' => $business->name,
+                'email' => null,
             ],
             'price' => [
                 'id' => $price->getKey(),
@@ -293,6 +313,9 @@ class BusinessBillingController extends Controller
                 ],
             ],
             'stripe' => $readiness->status(),
+            'billingTimeZone' => $business->time_zone ?: 'UTC',
+            'billingLocale' => $business->locale ?: 'en-US',
+            'trialEndsAt' => $business->subscription?->status === SubscriptionStatus::Trialing ? $business->subscription->trial_ends_at : null,
             'checkoutAttempt' => $attempt ? [
                 'attempt_id' => $attempt->public_id,
                 'status' => $attempt->status,
@@ -340,6 +363,7 @@ class BusinessBillingController extends Controller
 
     public function changePlan(Request $request, Business $business, SubscriptionProvider $provider, SubscriptionLifecycleManager $lifecycle, PlanCatalog $catalog, StripeBillingReadiness $readiness, AuditWriter $audit): JsonResponse
     {
+        abort_if($business->subscription?->capacity_snapshot, 409, 'Use the locations and bookable staff controls to change this subscription.');
         $this->authorizeBilling($request, $business);
         $validated = $request->validate([
             'price_id' => ['required', 'integer'],
@@ -415,7 +439,7 @@ class BusinessBillingController extends Controller
         abort_unless($catalog->allows($price), 422, 'The selected Stripe price is not in the approved billing catalog.');
 
         $subscription = $business->subscription()->with(['plan', 'price'])->firstOrFail();
-        if ($subscription->billing_plan_price_id !== $price->getKey()) {
+        if ($subscription->billing_plan_price_id !== $price->getKey() && ! $subscription->billing_checked_at?->gt(now()->subSeconds(5))) {
             try {
                 $subscription = $reconciler->reconcile($subscription);
             } catch (Throwable $exception) {
@@ -428,40 +452,59 @@ class BusinessBillingController extends Controller
             }
         }
 
-        $confirmed = $subscription->fresh()->billing_plan_price_id === $price->getKey();
+        $subscription->refresh();
+        $confirmed = $subscription->billing_plan_price_id === $price->getKey();
+        $scheduled = $subscription->scheduled_billing_plan_price_id === $price->getKey() && $subscription->scheduled_change_at?->isFuture();
 
         return response()->json([
-            'status' => $confirmed ? 'confirmed' : 'processing',
+            'status' => $confirmed ? 'confirmed' : ($scheduled ? 'scheduled' : 'processing'),
+            'effective_at' => $scheduled ? $subscription->scheduled_change_at : null,
             'subscription_status' => $subscription->fresh()->status->value,
             'plan_name' => $subscription->fresh('plan')->plan->name,
             'billing_interval' => $subscription->fresh()->billing_interval?->value,
-        ], $confirmed ? 200 : 202);
+        ], $confirmed || $scheduled ? 200 : 202);
     }
 
     public function cancel(Request $request, Business $business, SubscriptionProvider $provider, SubscriptionLifecycleManager $lifecycle): JsonResponse
     {
         $this->authorizeBilling($request, $business);
-        $validated = $request->validate(['reason' => ['required', 'string', 'max:1000']]);
-        $subscription = $business->subscription()->firstOrFail();
-        abort_unless($subscription->status === SubscriptionStatus::Active, 409, 'Only an active subscription can be scheduled for cancellation.');
-        abort_unless($subscription->provider === 'stripe', 409, 'This subscription must be migrated to Stripe before it can be canceled here.');
-        abort_unless(filled($subscription->provider_subscription_id), 409, 'A provider subscription is required to schedule cancellation.');
-        $provider->cancelAtPeriodEnd($subscription);
+        $validated = $request->validate(['reason' => ['nullable', 'string', 'max:1000'], 'version' => ['nullable', 'integer', 'min:0']]);
 
-        return response()->json($lifecycle->scheduleCancellation($subscription, $request->user(), $validated['reason']));
+        return DB::transaction(function () use ($request, $business, $provider, $lifecycle, $validated): JsonResponse {
+            $subscription = $business->subscription()->lockForUpdate()->firstOrFail();
+            if ($subscription->status === SubscriptionStatus::CancelScheduled) {
+                return response()->json(['status' => $subscription->status->value]);
+            }
+            abort_if(isset($validated['version']) && $validated['version'] !== $subscription->version, 409, 'Your subscription changed. Refresh billing before trying again.');
+            abort_unless($subscription->status === SubscriptionStatus::Active, 409, 'Only an active subscription can be scheduled for cancellation.');
+            abort_unless($subscription->provider === 'stripe', 409, 'This subscription must be migrated to Stripe before it can be canceled here.');
+            abort_unless(filled($subscription->provider_subscription_id), 409, 'A provider subscription is required to schedule cancellation.');
+            abort_unless($subscription->current_period_ends_at?->isFuture(), 409, 'The paid access end date needs verification before cancellation. Refresh billing or contact support.');
+            $provider->cancelAtPeriodEnd($subscription);
+
+            return response()->json($lifecycle->scheduleCancellation($subscription, $request->user(), $validated['reason'] ?? 'Owner requested cancellation.'));
+        }, 3);
     }
 
     public function reactivate(Request $request, Business $business, SubscriptionProvider $provider, SubscriptionLifecycleManager $lifecycle): JsonResponse
     {
         $this->authorizeBilling($request, $business);
-        $validated = $request->validate(['reason' => ['required', 'string', 'max:1000']]);
-        $subscription = $business->subscription()->firstOrFail();
-        abort_unless($subscription->status === SubscriptionStatus::CancelScheduled, 409, 'Only a scheduled cancellation can be reactivated.');
-        abort_unless($subscription->provider === 'stripe', 409, 'This subscription must be migrated to Stripe before it can be reactivated here.');
-        abort_unless(filled($subscription->provider_subscription_id), 409, 'A provider subscription is required to reactivate billing.');
-        $provider->reactivate($subscription);
+        $validated = $request->validate(['reason' => ['nullable', 'string', 'max:1000'], 'version' => ['nullable', 'integer', 'min:0']]);
 
-        return response()->json($lifecycle->reactivate($subscription, $request->user(), $validated['reason']));
+        return DB::transaction(function () use ($request, $business, $provider, $lifecycle, $validated): JsonResponse {
+            $subscription = $business->subscription()->lockForUpdate()->firstOrFail();
+            if ($subscription->status === SubscriptionStatus::Active) {
+                return response()->json(['status' => $subscription->status->value]);
+            }
+            abort_if(isset($validated['version']) && $validated['version'] !== $subscription->version, 409, 'Your subscription changed. Refresh billing before trying again.');
+            abort_unless($subscription->status === SubscriptionStatus::CancelScheduled, 409, 'Only a scheduled cancellation can be reactivated.');
+            abort_unless($subscription->provider === 'stripe', 409, 'This subscription must be migrated to Stripe before it can be reactivated here.');
+            abort_unless(filled($subscription->provider_subscription_id), 409, 'A provider subscription is required to reactivate billing.');
+            abort_unless($subscription->cancel_at?->isFuture(), 409, 'This subscription has already ended. Choose a plan to subscribe again.');
+            $provider->reactivate($subscription);
+
+            return response()->json($lifecycle->reactivate($subscription, $request->user(), $validated['reason'] ?? 'Owner requested continued renewal.'));
+        }, 3);
     }
 
     public function portal(Request $request, Business $business, SubscriptionProvider $provider): RedirectResponse
@@ -469,17 +512,52 @@ class BusinessBillingController extends Controller
         $this->authorizeBilling($request, $business);
         $subscription = $business->subscription()->firstOrFail();
         abort_unless($subscription->provider === 'stripe' && filled($subscription->provider_customer_id), 409, 'Complete Stripe checkout before opening the billing portal.');
-        $url = $provider->billingPortalUrl($subscription, route('business.billing.show', $business));
+        $url = $provider->billingPortalUrl($subscription, route('business.billing.show', [$business, 'billing' => 'returned']));
 
         return redirect()->away($url);
     }
 
-    public function invoice(Request $request, Business $business, string $invoice): JsonResponse
+    public function refreshBilling(Request $request, Business $business, StripeSubscriptionReconciler $reconciler, AuditWriter $audit): JsonResponse
+    {
+        $this->authorizeBilling($request, $business);
+        $subscription = $business->subscription()->firstOrFail();
+        abort_unless($subscription->provider === 'stripe' && filled($subscription->provider_customer_id), 409, 'No secure billing account has been set up yet.');
+        if ($subscription->account_checked_at?->gt(now()->subSeconds(15))) {
+            return response()->json(['status' => 'recently_checked']);
+        }
+        try {
+            $before = $subscription->only(['payment_method_type', 'payment_method_last_four', 'payment_method_expiry_month', 'payment_method_expiry_year', 'billing_name', 'billing_email']);
+            $updated = $reconciler->reconcileAccount($subscription);
+            $paymentChanged = collect(['payment_method_type', 'payment_method_last_four', 'payment_method_expiry_month', 'payment_method_expiry_year'])->contains(fn ($field) => $before[$field] !== $updated->$field);
+            $detailsChanged = collect(['billing_name', 'billing_email'])->contains(fn ($field) => $before[$field] !== $updated->$field);
+            if ($paymentChanged) {
+                $audit->write('subscription.payment_method.updated', $business, $request->user(), $subscription, 'Verified a secure payment-method update.', after: ['updated' => true], source: 'provider');
+            }
+            if ($detailsChanged) {
+                $audit->write('subscription.billing_details.updated', $business, $request->user(), $subscription, 'Verified secure billing-detail changes.', after: ['updated' => true], source: 'provider');
+            }
+        } catch (Throwable $exception) {
+            Log::warning('Billing account verification is pending.', ['business_id' => $business->id, 'exception' => $exception::class]);
+
+            return response()->json(['message' => 'Billing details could not be verified yet. Your recorded details remain available. Please check again shortly.'], 503);
+        }
+
+        return response()->json(['status' => 'verified']);
+    }
+
+    public function invoice(Request $request, Business $business, string $invoice, BillingWorkspaceQuery $workspace): JsonResponse
     {
         $this->authorizeBilling($request, $business);
         $record = BillingInvoice::query()->where('business_id', $business->getKey())->where('public_id', $invoice)->firstOrFail();
 
-        return response()->json($record->load('payments'));
+        return response()->json($workspace->invoice($record) + [
+            'line_items' => collect($record->line_items ?? [])->map(fn ($line) => [
+                'description' => data_get($line, 'description', 'Subscription charge'),
+                'amount_minor' => data_get($line, 'amount'),
+                'period_started_at' => data_get($line, 'period.start'),
+                'period_ends_at' => data_get($line, 'period.end'),
+            ])->values(),
+        ]);
     }
 
     private function authorizeBilling(Request $request, Business $business): void

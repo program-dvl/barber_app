@@ -9,9 +9,9 @@ defineProps({ module: { type: Object, required: true } });
 
 <template>
     <PlatformAdminLayout :title="module.label">
-        <PageHeader eyebrow="Internal operations" :title="module.label" :description="module.description" />
+        <PageHeader :title="module.label" />
         <div class="mt-6">
-            <StatePanel tone="info" title="This operation is not available yet" description="The destination is reserved, but no business data or administrative action is exposed until the workflow and its safety controls are implemented and verified.">
+            <StatePanel tone="info" title="This operation is not available yet">
                 <template #actions><AppButton :href="route('platform.overview')" variant="secondary">Return to overview</AppButton></template>
             </StatePanel>
         </div>

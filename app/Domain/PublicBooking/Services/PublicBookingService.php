@@ -141,8 +141,8 @@ class PublicBookingService
     public function catalog(Business $business): array
     {
         $this->assertBookable($business);
-        $locations = Location::query()->where('business_id', $business->id)->where('is_active', true)->orderBy('name')->get();
-        $services = Service::query()->where('business_id', $business->id)->where('is_active', true)->where('online_visible', true)->with(['category', 'locations', 'addons'])->orderBy('kind')->orderBy('name')->get();
+        $locations = Location::query()->where('business_id', $business->id)->where('is_active', true)->where('status', 'active')->orderBy('name')->get();
+        $services = Service::query()->where('business_id', $business->id)->where('is_active', true)->where('online_visible', true)->where(fn ($q) => $q->whereNull('effective_from')->orWhere('effective_from', '<=', now()))->where(fn ($q) => $q->whereNull('effective_until')->orWhere('effective_until', '>', now()))->with(['category', 'locations', 'addons'])->get()->sortBy(fn ($s) => sprintf('%05d', $s->category?->display_order ?? 65535).'|'.($s->category?->name ?? '').'|'.$s->kind.'|'.$s->name)->values();
         $staff = StaffProfile::query()->where('business_id', $business->id)->where('status', 'active')->where('online_visible', true)->with(['locations', 'serviceAssignments'])->orderBy('display_name')->get();
 
         return [
@@ -155,15 +155,20 @@ class PublicBookingService
                 },
                 'price_minor' => $service->price_minor, 'currency_code' => $service->currency_code,
                 'duration_minutes' => $service->duration_minutes + $service->processing_minutes + $service->cleanup_minutes,
+                'visit_minutes' => $service->duration_minutes + $service->processing_minutes,
+                'active_minutes' => $service->duration_minutes, 'processing_minutes' => $service->processing_minutes, 'cleanup_minutes' => $service->cleanup_minutes,
+                'location_prices' => $service->locations->filter(fn ($l) => $l->pivot->is_eligible && $l->is_active && $l->status === 'active')->map(fn ($l) => ['location' => $l->public_id, 'price_minor' => $l->pivot->price_minor])->values(),
                 'deposit_type' => $service->deposit_type, 'deposit_value' => $service->deposit_value,
                 'client_eligibility' => $service->client_eligibility,
-                'location_ids' => $service->locations->pluck('public_id')->all(),
+                'location_ids' => $service->locations->filter(fn ($location) => $location->pivot->is_eligible && $location->is_active && $location->status === 'active')->pluck('public_id')->all(),
+                'addon_ids' => $service->addons->where('is_active', true)->where('online_visible', true)->pluck('public_id')->all(),
             ]),
             'staff' => $staff->map(fn (StaffProfile $profile) => [
                 'public_id' => $profile->public_id, 'display_name' => $profile->display_name,
                 'title' => $profile->title, 'biography' => $profile->biography,
                 'location_ids' => $profile->locations->pluck('public_id')->all(),
-                'service_ids' => $services->whereIn('id', $profile->serviceAssignments->where('is_active', true)->where('is_qualified', true)->where('online_visible', true)->pluck('service_id'))->pluck('public_id')->all(),
+                'service_ids' => $services->whereIn('id', $profile->serviceAssignments->filter(fn ($a) => $a->is_active && $a->is_qualified && $a->online_visible && (! $a->effective_from || $a->effective_from->lte(now())) && (! $a->effective_until || $a->effective_until->gt(now())))->sortByDesc('effective_from')->unique('service_id')->pluck('service_id'))->pluck('public_id')->all(),
+                'service_variants' => $profile->serviceAssignments->filter(fn ($a) => $a->is_active && $a->is_qualified && $a->online_visible && (! $a->effective_from || $a->effective_from->lte(now())) && (! $a->effective_until || $a->effective_until->gt(now())))->sortByDesc('effective_from')->unique('service_id')->filter(fn ($a) => $services->contains('id', $a->service_id))->map(fn ($a) => ['service' => $services->firstWhere('id', $a->service_id)->public_id, ...$a->only(['price_minor', 'duration_minutes', 'processing_minutes', 'cleanup_minutes'])])->values(),
             ]),
             'policy' => $this->policySnapshot($business, null, []),
         ];
@@ -209,7 +214,7 @@ class PublicBookingService
             'terms_url' => $business->terms_url,
             'privacy_url' => $business->privacy_url,
             'marketing_wording' => 'Optional: send me marketing updates. Booking messages do not depend on this choice.',
-            'whatsapp_wording' => 'Send appointment and service updates to this mobile number on WhatsApp. I can opt out at any time.',
+            'sms_wording' => 'Send essential appointment texts, including confirmations, important changes, cancellations, and one reminder. Message and data rates may apply. Reply STOP to opt out.',
             'location_time_zone' => $location?->time_zone,
             'services' => collect($snapshots)->map(fn (array $snapshot) => [
                 'name' => $snapshot['name'], 'price_type' => match ($business->online_price_display) {

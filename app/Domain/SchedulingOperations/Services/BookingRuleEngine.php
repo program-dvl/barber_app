@@ -329,6 +329,12 @@ class BookingRuleEngine
 
     private function assertLocationAvailable(Location $location, CarbonImmutable $startsAt, CarbonImmutable $endsAt): void
     {
+        $location->loadMissing('scheduleExceptions');
+        $first = $startsAt->setTimezone($location->time_zone)->toDateString();
+        $last = $endsAt->subSecond()->setTimezone($location->time_zone)->toDateString();
+        if ($location->scheduleExceptions->contains(fn ($exception) => in_array($exception->kind, ['holiday', 'closure', 'temporary_closure'], true) && $exception->starts_on->toDateString() <= $last && $exception->ends_on->toDateString() >= $first)) {
+            throw new BookingRuleViolation('LOCATION_UNAVAILABLE', 'The visit falls outside this location’s available hours.');
+        }
         if (! $this->isCovered($startsAt, $endsAt, $location->time_zone, fn (CarbonImmutable $date) => $this->configuration->locationWindows($location, $date))) {
             throw new BookingRuleViolation('LOCATION_UNAVAILABLE', 'The visit falls outside this location’s available hours.');
         }
@@ -344,6 +350,34 @@ class BookingRuleEngine
         ?int $excludeHoldId,
         ?int $excludeAppointmentId,
     ): void {
+        $staff->loadMissing(['locations', 'availabilityRules']);
+        $first = $startsAt->setTimezone($location->time_zone)->startOfDay()->subDay();
+        $last = $endsAt->subSecond()->setTimezone($location->time_zone)->startOfDay();
+        // An overnight working window must never carry through a later-day leave
+        // or a break. Check exclusions as real intervals, not clock-string order.
+        for ($day = $first; $day->lte($last); $day = $day->addDay()) {
+            foreach ($staff->availabilityRules as $rule) {
+                if ($rule->location_id !== null && (int) $rule->location_id !== (int) $location->id) {
+                    continue;
+                }
+                if (! in_array($rule->kind, ['break', 'personal_block', 'leave', 'holiday', 'sick_leave'], true)) {
+                    continue;
+                }
+                $dated = $rule->starts_on && $rule->starts_on->toDateString() <= $day->toDateString() && ($rule->ends_on ?? $rule->starts_on)->toDateString() >= $day->toDateString();
+                $weekly = $rule->day_of_week && (int) $rule->day_of_week === $day->dayOfWeekIso;
+                if (! $dated && ! $weekly) {
+                    continue;
+                }
+                $from = $rule->starts_at ? $this->localWindowInstant($day, $rule->starts_at, $location->time_zone) : $day;
+                $until = $rule->ends_at ? $this->localWindowInstant($day, $rule->ends_at, $location->time_zone) : $day->addDay();
+                if ($from && $until && $until->lte($from)) {
+                    $until = $this->localWindowInstant($day->addDay(), $rule->ends_at, $location->time_zone);
+                }
+                if ($from && $until && $from->lt($endsAt) && $until->gt($startsAt)) {
+                    throw new BookingRuleViolation('STAFF_UNAVAILABLE', 'A qualified team member is not available at this time.');
+                }
+            }
+        }
         if (! $this->isCovered($startsAt, $endsAt, $location->time_zone, fn (CarbonImmutable $date) => $this->configuration->staffWindows($staff, $location, $date))) {
             throw new BookingRuleViolation('STAFF_UNAVAILABLE', 'A qualified team member is not available at this time.');
         }

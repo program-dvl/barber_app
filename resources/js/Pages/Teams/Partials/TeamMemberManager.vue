@@ -122,8 +122,8 @@ const displayableRole = (role) => {
                             v-model="addTeamMemberForm.email"
                             type="email"
                             class="mt-1 block w-full"
-                        />
-                        <InputError :message="addTeamMemberForm.errors.email" class="mt-2" />
+                         :aria-invalid="addTeamMemberForm.errors.email ? true : undefined" :aria-describedby="addTeamMemberForm.errors.email ? 'email-error' : undefined"/>
+                        <InputError :message="addTeamMemberForm.errors.email" class="mt-2"  id="email-error"/>
                     </div>
 
                     <!-- Role -->

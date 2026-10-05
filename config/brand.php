@@ -22,6 +22,10 @@ return [
     'logo_inverse' => '/images/brand/clipperdesk-logo-inverse.svg',
     'logo_mark' => '/images/brand/clipperdesk-mark.svg',
     'logo_mark_inverse' => '/images/brand/clipperdesk-mark-inverse.svg',
+    'email_logo_url' => env(
+        'BRAND_EMAIL_LOGO_URL',
+        'https://clipperdesk.com/build/assets/clipperdesk-mark-CDKNGozz.svg'
+    ),
     'favicon' => '/favicon.svg',
     'social_image' => '/images/brand/clipperdesk-social.png',
 

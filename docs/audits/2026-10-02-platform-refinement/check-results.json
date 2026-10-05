@@ -1,0 +1,24 @@
+{
+  "review_date": "2026-10-02",
+  "php_suite": {
+    "passed": 321,
+    "skipped": 28,
+    "assertions": 3394
+  },
+  "frontend_tests": {
+    "passed": 9,
+    "failed": 0
+  },
+  "build": {
+    "client": "passed",
+    "ssr": "passed",
+    "node": "24"
+  },
+  "frontsite_budgets": {
+    "passed_entries": 17
+  },
+  "targeted_php_formatting": "passed",
+  "diff_whitespace": "passed",
+  "fixture": "isolated synthetic SQLite; fake communications; no external transactions",
+  "verification_limits": "See README.md; no live providers, generated invoice PDF or independent cross-browser/accessibility certification"
+}

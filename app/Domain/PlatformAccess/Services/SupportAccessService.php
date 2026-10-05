@@ -2,12 +2,14 @@
 
 namespace App\Domain\PlatformAccess\Services;
 
+use App\Domain\AccountNotifications\Services\BusinessNotificationRecipients;
 use App\Domain\PlatformAccess\Enums\PlatformRole;
 use App\Domain\PlatformAccess\Enums\SupportScope;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\SupportAccessGrant;
 use App\Domain\PlatformAccess\Models\SupportAccessSession;
 use App\Models\User;
+use App\Notifications\SupportAccessNotification;
 use App\Support\Audit\AuditWriter;
 use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
@@ -17,7 +19,10 @@ use Illuminate\Validation\ValidationException;
 
 class SupportAccessService
 {
-    public function __construct(private readonly AuditWriter $audit) {}
+    public function __construct(
+        private readonly AuditWriter $audit,
+        private readonly BusinessNotificationRecipients $recipients,
+    ) {}
 
     /** @param list<string> $scopes */
     public function grant(Business $business, User $operator, User $approver, string $ticket, string $reason, array $scopes, CarbonInterface $expiresAt): SupportAccessGrant
@@ -39,6 +44,7 @@ class SupportAccessService
             'ticket_reference' => trim($ticket), 'reason' => trim($reason), 'scopes' => $allowed->all(), 'expires_at' => $expiresAt,
         ]);
         $this->audit->write('support.access.granted', $business, $approver, $grant, $reason, after: ['operator_user_id' => $operator->id, 'ticket_reference' => $ticket, 'scopes' => $allowed->all(), 'expires_at' => $expiresAt->toIso8601String()], source: 'platform');
+        $this->notifyOwners($grant, 'granted', $operator);
 
         return $grant;
     }
@@ -65,6 +71,7 @@ class SupportAccessService
         $request->session()->put('support_access_session_id', $session->public_id);
         $request->session()->put('support_access_session_token', $sessionToken);
         $this->detectCrossTenantPattern($operator, $grant->business);
+        $this->notifyOwners($grant, 'entered', $operator);
 
         return $session;
     }
@@ -117,6 +124,23 @@ class SupportAccessService
             });
             $this->audit->write('support.access.revoked', $grant->business, $actor, $grant, $reason, after: ['ticket_reference' => $grant->ticket_reference], source: 'platform');
         });
+        $this->notifyOwners($grant->fresh(), 'revoked', $grant->operator);
+    }
+
+    private function notifyOwners(SupportAccessGrant $grant, string $change, User $operator): void
+    {
+        $business = $grant->business;
+        $timeZone = $business->time_zone ?: config('app.timezone', 'UTC');
+        $notification = new SupportAccessNotification(
+            businessId: $business->getKey(),
+            businessPublicId: $business->public_id,
+            businessName: $business->name,
+            change: $change,
+            operatorName: $operator->name,
+            ticketReference: $grant->ticket_reference,
+            expiresAt: $grant->expires_at?->timezone($timeZone)->format('M j, Y \a\t g:i A T'),
+        );
+        $this->recipients->owners($business)->each->notify($notification);
     }
 
     private function detectCrossTenantPattern(User $operator, Business $business): void

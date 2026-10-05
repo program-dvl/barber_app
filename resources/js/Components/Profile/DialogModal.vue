@@ -1,5 +1,7 @@
 <script setup>
 import Modal from './Modal.vue';
+import { useId } from 'vue';
+const titleId = useId();
 
 const emit = defineEmits(['close']);
 
@@ -28,19 +30,20 @@ const close = () => {
         :show="show"
         :max-width="maxWidth"
         :closeable="closeable"
+        :labelledby="titleId"
         @close="close"
     >
         <div class="px-6 py-4">
-            <div class="text-lg font-medium text-[var(--text-strong)]">
+            <h2 :id="titleId" class="cd-section-title">
                 <slot name="title" />
-            </div>
+            </h2>
 
             <div class="mt-4 text-sm text-[var(--text-muted)]">
                 <slot name="content" />
             </div>
         </div>
 
-        <div class="flex flex-row justify-end bg-[var(--surface-subtle)] px-6 py-4 text-end">
+        <div class="flex flex-row flex-wrap items-center justify-end gap-2 bg-[var(--surface-subtle)] px-6 py-4 text-end">
             <slot name="footer" />
         </div>
     </Modal>

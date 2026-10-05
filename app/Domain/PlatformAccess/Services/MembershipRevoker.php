@@ -6,6 +6,7 @@ use App\Domain\PlatformAccess\Enums\MembershipStatus;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Membership;
 use App\Models\User;
+use App\Notifications\WorkspaceAccessChangedNotification;
 use App\Support\Audit\AuditWriter;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
@@ -34,12 +35,15 @@ class MembershipRevoker
             throw new AuthorizationException('The actor may not revoke this Membership.');
         }
 
-        return DB::transaction(function () use ($membership, $actor, $reason): Membership {
+        $changed = false;
+        $revoked = DB::transaction(function () use ($membership, $actor, $reason, &$changed): Membership {
             $membership = Membership::query()->with(['business', 'user'])->lockForUpdate()->findOrFail($membership->getKey());
 
             if ($membership->status === MembershipStatus::Revoked) {
                 return $membership;
             }
+
+            $changed = true;
 
             $before = ['status' => $membership->status->value, 'revoked_at' => null];
             $membership->forceFill([
@@ -79,5 +83,16 @@ class MembershipRevoker
 
             return $membership;
         });
+
+        if ($changed) {
+            $revoked->user?->notify(new WorkspaceAccessChangedNotification(
+                businessId: $revoked->business_id,
+                businessPublicId: $revoked->business->public_id,
+                businessName: $revoked->business->name,
+                change: 'revoked',
+            ));
+        }
+
+        return $revoked;
     }
 }

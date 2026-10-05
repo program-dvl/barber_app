@@ -13,6 +13,7 @@ use App\Domain\ClientRecords\Services\ClientIdentityService;
 use App\Domain\ClientRecords\Support\ClientIdentityNormalizer;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\StaffProfile;
+use App\Support\Audit\AuditWriter;
 use App\Support\Files\TenantPrivateStorage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -87,7 +88,7 @@ class ConfigurationImportService
                 foreach ($mapping as $field => $header) {
                     $data[$field] = trim((string) ($record[array_search($header, $headers, true)] ?? ''));
                 }
-                $errors = $this->validateRow($entityType, $data);
+                $errors = $this->validateRow($entityType, $data, $business);
                 $rowKey = $this->rowKey($entityType, $data, $offset + 2);
                 $fingerprint = hash('sha256', json_encode($data, JSON_THROW_ON_ERROR));
                 $duplicates = $errors === [] ? $this->duplicates($business, $entityType, $data) : [];
@@ -125,12 +126,19 @@ class ConfigurationImportService
         }
 
         return DB::transaction(function () use ($import, $duplicateResolutions): ConfigurationImport {
+            if ($import->entity_type === 'services') {
+                Business::query()->whereKey($import->business_id)->lockForUpdate()->firstOrFail();
+            }
             $import = ConfigurationImport::query()->lockForUpdate()->with('rows.duplicates')->findOrFail($import->id);
             if ($import->status === 'completed') {
                 return $import;
             }
             if ($import->rows->contains(fn ($row) => $row->status === 'duplicate_review' && ! in_array($duplicateResolutions[$row->id] ?? null, ['create', 'update', 'skip'], true))) {
                 throw ValidationException::withMessages(['duplicates' => 'Review every duplicate candidate before committing the import.']);
+            }
+
+            if ($import->entity_type === 'services' && $import->rows->contains(fn ($row) => $row->status === 'duplicate_review' && ($duplicateResolutions[$row->id] ?? null) !== 'skip')) {
+                throw ValidationException::withMessages(['duplicates' => 'Skip existing services in this import. Use Services to review price, duration and future appointments before changing them.']);
             }
 
             $increases = $import->rows->filter(fn ($row) => in_array($row->status, ['valid', 'duplicate_review'], true) && ($duplicateResolutions[$row->id] ?? 'create') === 'create')->count();
@@ -205,7 +213,7 @@ class ConfigurationImportService
     }
 
     /** @param array<string, string> $data @return list<string> */
-    private function validateRow(string $type, array $data): array
+    private function validateRow(string $type, array $data, Business $business): array
     {
         $errors = [];
         foreach (self::REQUIRED[$type] as $field) {
@@ -219,6 +227,21 @@ class ConfigurationImportService
         foreach (['price_minor', 'duration_minutes'] as $integerField) {
             if (($data[$integerField] ?? '') !== '' && filter_var($data[$integerField], FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]) === false) {
                 $errors[] = "{$integerField} must be a non-negative integer";
+            }
+        }
+
+        if ($type === 'services') {
+            if (! filter_var($data['duration_minutes'] ?? '', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 1440]])) {
+                $errors[] = 'duration_minutes must be between 1 and 1440';
+            }
+            if (isset($data['price_minor']) && (int) $data['price_minor'] > 100000000) {
+                $errors[] = 'price_minor exceeds the supported limit';
+            }
+            if (($data['currency_code'] ?? '') !== '' && strtoupper($data['currency_code']) !== $business->currency_code) {
+                $errors[] = 'currency_code must match the business currency';
+            }
+            if (mb_strlen($data['name'] ?? '') > 255) {
+                $errors[] = 'name must not exceed 255 characters';
             }
         }
 
@@ -310,14 +333,22 @@ class ConfigurationImportService
             );
         }
         if ($type === 'services') {
-            Service::query()->updateOrCreate(
-                ['business_id' => $business->id, 'name' => $data['name']],
-                [
-                    'kind' => 'service', 'price_minor' => (int) $data['price_minor'],
-                    'duration_minutes' => (int) $data['duration_minutes'], 'currency_code' => ($data['currency_code'] ?? '') ?: ($business->currency_code ?? 'USD'),
-                    'tax_inclusive' => $business->tax_posture === 'inclusive', 'is_active' => true, 'online_visible' => false,
-                ],
-            );
+            // Revalidate older previews before creating operational catalogue data.
+            $errors = $this->validateRow('services', $data, $business);
+            if ($errors !== []) {
+                throw ValidationException::withMessages(['imports' => implode('; ', $errors)]);
+            }
+            // Import is a setup path, never an unreviewed update to live pricing.
+            if ($business->services()->whereRaw('lower(name) = ?', [Str::lower($data['name'])])->exists()) {
+                throw ValidationException::withMessages(['duplicates' => 'A service name now exists. Refresh the import and skip it; edit its configuration in Services.']);
+            }
+            $service = Service::query()->create([
+                'business_id' => $business->id, 'name' => $data['name'], 'kind' => 'service',
+                'price_minor' => (int) $data['price_minor'], 'duration_minutes' => (int) $data['duration_minutes'],
+                'currency_code' => $business->currency_code, 'tax_inclusive' => $business->tax_posture === 'inclusive',
+                'is_active' => true, 'online_visible' => false,
+            ]);
+            app(AuditWriter::class)->write('service.catalog.created', $business, target: $service, after: $service->fresh()->only(['name', 'price_minor', 'duration_minutes', 'currency_code', 'is_active', 'online_visible']));
         }
     }
 

@@ -31,6 +31,8 @@ const submit = () => {
         <template #logo>
             <AuthenticationCardLogo />
         </template>
+        <Head title="Reset your password" />
+        <h1 class="cd-page-title mb-4">Reset your password</h1>
 
         <form @submit.prevent="submit">
             <div>
@@ -43,8 +45,8 @@ const submit = () => {
                     required
                     autofocus
                     autocomplete="username"
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
+                 :aria-invalid="form.errors.email ? true : undefined" :aria-describedby="form.errors.email ? 'email-error' : undefined"/>
+                <InputError class="mt-2" :message="form.errors.email"  id="email-error"/>
             </div>
 
             <div class="mt-4">
@@ -56,12 +58,12 @@ const submit = () => {
                     class="mt-1 block w-full"
                     required
                     autocomplete="new-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
+                 :aria-invalid="form.errors.password ? true : undefined" :aria-describedby="form.errors.password ? 'password-error' : undefined"/>
+                <InputError class="mt-2" :message="form.errors.password"  id="password-error"/>
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password_confirmation" :value="$t('Confirm Password')" />
+                <InputLabel for="password_confirmation" :value="$t('Confirm password')" />
                 <TextInput
                     id="password_confirmation"
                     v-model="form.password_confirmation"
@@ -69,13 +71,13 @@ const submit = () => {
                     class="mt-1 block w-full"
                     required
                     autocomplete="new-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                 :aria-invalid="form.errors.password_confirmation ? true : undefined" :aria-describedby="form.errors.password_confirmation ? 'password_confirmation-error' : undefined"/>
+                <InputError class="mt-2" :message="form.errors.password_confirmation"  id="password_confirmation-error"/>
             </div>
 
             <div class="flex items-center justify-end mt-4">
                 <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    {{ $t('Reset Password') }}
+                    {{ $t('Reset password') }}
                 </PrimaryButton>
             </div>
         </form>

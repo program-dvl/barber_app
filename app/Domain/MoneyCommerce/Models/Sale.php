@@ -40,6 +40,12 @@ class Sale extends Model
         return $this->hasMany(SaleLine::class)->orderBy('sequence');
     }
 
+    // Laravel scoped route binding resolves the {payment} child through payments.
+    public function payments(): HasMany
+    {
+        return $this->transactions();
+    }
+
     public function transactions(): HasMany
     {
         return $this->hasMany(PaymentTransaction::class);

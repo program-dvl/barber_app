@@ -28,10 +28,10 @@ it('publishes unique substantive feature pages', function (string $slug, string 
             ->has('related', 2)
             ->where('seo.canonical', route('marketing.features.show', $slug)));
 })->with([
-    ['online-booking', 'Online booking that respects the working calendar'],
-    ['calendar-and-walk-ins', 'Run booked appointments and walk-ins in one operational day'],
-    ['client-management', 'Keep useful client context without weakening consent or access'],
-    ['checkout-and-reporting', 'Close the service and keep the numbers explainable'],
+    ['online-booking', 'Book appointments online'],
+    ['calendar-and-walk-ins', 'Manage appointments and walk-ins together'],
+    ['client-management', 'Keep client history and preferences together'],
+    ['checkout-and-reporting', 'Complete checkout and understand your reports'],
 ]);
 
 it('does not expose unapproved feature permutations', function () {

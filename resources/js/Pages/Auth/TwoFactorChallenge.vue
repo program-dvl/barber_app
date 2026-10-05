@@ -42,14 +42,16 @@ const submit = () => {
         <template #logo>
             <AuthenticationCardLogo />
         </template>
+        <Head title="Two-factor authentication" />
+        <h1 class="cd-page-title mb-4">Two-factor authentication</h1>
 
         <div class="mb-4 text-sm text-[var(--text-muted)]">
             <template v-if="! recovery">
-                {{ $t('Please confirm access to your account by entering the authentication code provided by your authenticator application.') }}
+                {{ $t('Enter the code from your authenticator app.') }}
             </template>
 
             <template v-else>
-                {{ $t('Please confirm access to your account by entering one of your emergency recovery codes.') }}
+                {{ $t('Enter one of your saved recovery codes.') }}
             </template>
         </div>
 
@@ -65,12 +67,12 @@ const submit = () => {
                     class="mt-1 block w-full"
                     autofocus
                     autocomplete="one-time-code"
-                />
-                <InputError class="mt-2" :message="form.errors.code" />
+                 :aria-invalid="form.errors.code ? true : undefined" :aria-describedby="form.errors.code ? 'code-error' : undefined"/>
+                <InputError class="mt-2" :message="form.errors.code"  id="code-error"/>
             </div>
 
             <div v-else>
-                <InputLabel for="recovery_code" :value="$t('Recovery Code')" />
+                <InputLabel for="recovery_code" :value="$t('Recovery code')" />
                 <TextInput
                     id="recovery_code"
                     ref="recoveryCodeInput"
@@ -78,8 +80,8 @@ const submit = () => {
                     type="text"
                     class="mt-1 block w-full"
                     autocomplete="one-time-code"
-                />
-                <InputError class="mt-2" :message="form.errors.recovery_code" />
+                 :aria-invalid="form.errors.recovery_code ? true : undefined" :aria-describedby="form.errors.recovery_code ? 'recovery_code-error' : undefined"/>
+                <InputError class="mt-2" :message="form.errors.recovery_code"  id="recovery_code-error"/>
             </div>
 
             <div class="flex items-center justify-end mt-4">
@@ -94,7 +96,7 @@ const submit = () => {
                 </button>
 
                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    {{ $t('Log in') }}
+                    {{ $t('Sign in') }}
                 </PrimaryButton>
             </div>
         </form>

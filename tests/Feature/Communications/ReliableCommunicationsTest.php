@@ -9,18 +9,26 @@ use App\Domain\Communications\Data\OutboundCommunication;
 use App\Domain\Communications\Data\ProviderSendResult;
 use App\Domain\Communications\Exceptions\CommunicationProviderException;
 use App\Domain\Communications\Jobs\DeliverCommunicationMessage;
+use App\Domain\Communications\Jobs\ProcessOperationalCommunicationEvent;
+use App\Domain\Communications\Models\CommunicationConversation;
 use App\Domain\Communications\Models\CommunicationDeliveryAttempt;
+use App\Domain\Communications\Models\CommunicationInboundMessage;
 use App\Domain\Communications\Models\CommunicationIntent;
 use App\Domain\Communications\Models\CommunicationMessage;
 use App\Domain\Communications\Models\CommunicationProviderEvent;
 use App\Domain\Communications\Models\CommunicationSuppression;
+use App\Domain\Communications\Providers\TwilioSmsProvider;
+use App\Domain\Communications\Providers\TwilioWhatsAppProvider;
 use App\Domain\Communications\Services\CommunicationActionLinkService;
 use App\Domain\Communications\Services\CommunicationConsentService;
+use App\Domain\Communications\Services\CommunicationDeliveryDispatcher;
 use App\Domain\Communications\Services\CommunicationDeliveryService;
 use App\Domain\Communications\Services\CommunicationProviderCallbackService;
 use App\Domain\Communications\Services\CommunicationScheduleService;
+use App\Domain\Communications\Services\CommunicationSenderService;
 use App\Domain\Communications\Services\CommunicationSupportService;
 use App\Domain\Communications\Services\CommunicationTemplateService;
+use App\Domain\Communications\Services\InboundCommunicationService;
 use App\Domain\Communications\Services\NotificationIntentService;
 use App\Domain\Communications\Services\OperationalCommunicationService;
 use App\Domain\Communications\Services\TemplateVariableCatalog;
@@ -32,6 +40,7 @@ use App\Domain\SchedulingOperations\Models\OperationalNotificationEvent;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
@@ -78,7 +87,7 @@ class RecordingMobileProvider implements MobileChannelProvider
 
     public function channel(): string
     {
-        return 'whatsapp';
+        return 'sms';
     }
 
     public function send(OutboundCommunication $message): ProviderSendResult
@@ -88,11 +97,18 @@ class RecordingMobileProvider implements MobileChannelProvider
             throw array_shift($this->failures);
         }
 
-        return new ProviderSendResult('whatsapp-message-'.count($this->calls));
+        return new ProviderSendResult('sms-message-'.count($this->calls));
     }
 }
 
 beforeEach(function () {
+    config([
+        'communications.transport_mode' => 'fake',
+        'communications.dispatch_operational_events_immediately' => true,
+        'communications.live_send_enabled' => false,
+        'communications.whatsapp_sandbox_send_enabled' => false,
+        'communications.client_mobile_channels' => ['sms'],
+    ]);
     $this->emailProvider = new RecordingEmailProvider;
     $this->mobileProvider = new RecordingMobileProvider;
     app()->instance(EmailChannelProvider::class, $this->emailProvider);
@@ -111,13 +127,13 @@ function communicationFixture(array $clientOverrides = [], ?Business $business =
     $client = Client::factory()->create([
         'business_id' => $business->id, 'email' => 'client@example.test', 'normalized_email' => 'client@example.test',
         'mobile' => '+919999999999', 'normalized_mobile' => '919999999999',
-        'communication_preferences' => ['email', 'whatsapp'], ...$clientOverrides,
+        'communication_preferences' => ['email', 'sms'], ...$clientOverrides,
     ]);
     $appointment = Appointment::query()->create([
         'business_id' => $business->id, 'location_id' => $location->id, 'client_id' => $client->id,
         'idempotency_key' => 'communications-fixture-'.str()->uuid(), 'request_hash' => hash('sha256', (string) str()->uuid()),
         'status' => 'confirmed', 'source' => 'online', 'client_name' => $client->name, 'client_email' => $client->email,
-        'client_mobile' => $client->mobile, 'communication_preferences' => ['email', 'whatsapp'],
+        'client_mobile' => $client->mobile, 'communication_preferences' => ['email', 'sms'],
         'starts_at_utc' => CarbonImmutable::parse('2026-11-02 05:30:00', 'UTC'), 'ends_at_utc' => CarbonImmutable::parse('2026-11-02 06:30:00', 'UTC'),
         'time_zone' => 'America/New_York', 'local_starts_at' => '2026-11-02 00:30:00 -05:00', 'local_ends_at' => '2026-11-02 01:30:00 -05:00',
         'price_minor' => 3500, 'currency_code' => 'INR', 'confirmed_at' => now(),
@@ -134,13 +150,21 @@ function publishWhatsAppTemplate(Business $business, string $intent): void
     $templates->publish($business, $template);
 }
 
+function publishSmsTemplate(Business $business, string $intent): void
+{
+    $templates = app(CommunicationTemplateService::class);
+    $defaults = TemplateVariableCatalog::defaults($intent);
+    $template = $templates->save($business, $intent, 'sms', 'en-IN', $defaults['subject'], $defaults['body']);
+    $templates->publish($business, $template);
+}
+
 function intentFor(array $fixture, string $eventKey, string $intent = 'booking_confirmation', array $recipients = []): CommunicationIntentData
 {
     return new CommunicationIntentData(
         $fixture['business']->id, $eventKey, 'appointment.created', $intent,
         in_array($intent, ['feedback_request', 'rebooking_reminder'], true) ? 'marketing' : 'transactional',
         'contract_performance', 'en-IN', 'America/New_York', now()->toImmutable(),
-        $recipients ?: ['email' => $fixture['client']->email, 'whatsapp' => $fixture['client']->mobile],
+        $recipients ?: ['email' => $fixture['client']->email, 'sms' => $fixture['client']->mobile],
         [
             'client_name' => $fixture['client']->name, 'service_name' => 'Signature cut', 'location_name' => $fixture['location']->name,
             'appointment_date' => '2 November 2026', 'appointment_time' => '00:30', 'time_zone' => 'America/New_York',
@@ -152,10 +176,10 @@ function intentFor(array $fixture, string $eventKey, string $intent = 'booking_c
 it('creates at most one message per intended event channel and recipient after duplicate domain events', function () {
     $fixture = communicationFixture();
     ClientConsent::query()->create([
-        'business_id' => $fixture['business']->id, 'client_id' => $fixture['client']->id, 'type' => 'whatsapp',
+        'business_id' => $fixture['business']->id, 'client_id' => $fixture['client']->id, 'type' => 'sms',
         'status' => 'granted', 'source' => 'booking', 'occurred_at' => now(),
     ]);
-    publishWhatsAppTemplate($fixture['business'], 'booking_confirmation');
+    publishSmsTemplate($fixture['business'], 'booking_confirmation');
     $service = app(NotificationIntentService::class);
     $first = $service->create(intentFor($fixture, 'appointment:event-1'));
     $second = $service->create(intentFor($fixture, 'appointment:event-1'));
@@ -163,14 +187,14 @@ it('creates at most one message per intended event channel and recipient after d
     expect($second->id)->toBe($first->id)
         ->and(CommunicationIntent::query()->count())->toBe(1)
         ->and(CommunicationMessage::query()->count())->toBe(2)
-        ->and(CommunicationMessage::query()->pluck('channel')->sort()->values()->all())->toBe(['email', 'whatsapp'])
+        ->and(CommunicationMessage::query()->pluck('channel')->sort()->values()->all())->toBe(['email', 'sms'])
         ->and(CommunicationMessage::query()->pluck('idempotency_key')->unique()->count())->toBe(2);
     Queue::assertPushed(DeliverCommunicationMessage::class, 2);
 });
 
 it('keeps transactional email on by default and honours an explicit client email opt-out', function () {
     $fixture = communicationFixture(['communication_preferences' => []]);
-    $fixture['appointment']->update(['communication_preferences' => ['whatsapp']]);
+    $fixture['appointment']->update(['communication_preferences' => ['sms']]);
     $event = OperationalNotificationEvent::query()->create([
         'business_id' => $fixture['business']->id, 'event_type' => 'appointment.confirmed',
         'subject_type' => Appointment::class, 'subject_id' => $fixture['appointment']->id,
@@ -178,7 +202,7 @@ it('keeps transactional email on by default and honours an explicit client email
     ]);
     app(OperationalCommunicationService::class)->process($event);
     expect(CommunicationMessage::query()->pluck('channel')->unique()->values()->all())->toBe(['email'])
-        ->and(CommunicationMessage::query()->count())->toBe(3);
+        ->and(CommunicationMessage::query()->count())->toBe(2);
 
     $fixture['client']->update(['communication_preferences' => ['email' => false]]);
     $second = OperationalNotificationEvent::query()->create([
@@ -187,7 +211,40 @@ it('keeps transactional email on by default and honours an explicit client email
         'payload' => [], 'status' => 'pending', 'idempotency_key' => 'opted-out-email-event', 'occurred_at' => now(),
     ]);
     app(OperationalCommunicationService::class)->process($second);
-    expect(CommunicationMessage::query()->count())->toBe(3);
+    expect(CommunicationMessage::query()->count())->toBe(2);
+});
+
+it('kicks new operational events immediately and sweeps due delivery retries', function () {
+    $fixture = communicationFixture();
+    $event = OperationalNotificationEvent::query()->create([
+        'business_id' => $fixture['business']->id, 'event_type' => 'appointment.confirmed',
+        'subject_type' => Appointment::class, 'subject_id' => $fixture['appointment']->id,
+        'payload' => [], 'status' => 'pending', 'idempotency_key' => 'immediate-event-kick', 'occurred_at' => now(),
+    ]);
+
+    Queue::assertPushed(ProcessOperationalCommunicationEvent::class, fn ($job) => $job->eventId === $event->id
+        && $job->tenantBusinessId() === $fixture['business']->id);
+
+    app(OperationalCommunicationService::class)->process($event);
+    $message = CommunicationMessage::query()->where('channel', 'email')->firstOrFail();
+    $message->update(['status' => 'retried', 'next_attempt_at' => now()->subSecond()]);
+
+    expect(app(CommunicationDeliveryDispatcher::class)->dispatchDue($fixture['business']->id))->toBe(1);
+    Queue::assertPushed(DeliverCommunicationMessage::class, fn ($job) => $job->messageId === $message->id);
+});
+
+it('does not contact a provider for duplicate delivery jobs once a message is sending', function () {
+    $fixture = communicationFixture();
+    $message = app(NotificationIntentService::class)
+        ->create(intentFor($fixture, 'appointment:duplicate-delivery-guard', recipients: ['email' => $fixture['client']->email]), false)
+        ->messages->firstOrFail();
+    $message->update(['status' => 'sending']);
+
+    $result = app(CommunicationDeliveryService::class)->deliver($message->fresh());
+
+    expect($result->status)->toBe('sending')
+        ->and($result->attempt_count)->toBe(0)
+        ->and($this->emailProvider->calls)->toBeEmpty();
 });
 
 it('validates allow-listed templates, uses safe fallbacks, and denies cross-tenant template access', function () {
@@ -226,7 +283,25 @@ it('calculates quiet-hour boundaries and preserves explicit offsets across dayli
         ->toBe('2026-11-01 20:59 -05:00');
 });
 
-it('separates transactional necessity, WhatsApp opt-in, marketing consent, unsubscribe, and suppression', function () {
+it('schedules one day-before reminder and creates a replacement after rescheduling', function () {
+    $fixture = communicationFixture(['communication_preferences' => []]);
+    $service = app(OperationalCommunicationService::class);
+
+    expect(app(CommunicationTemplateService::class)->settings($fixture['business'])->reminder_offsets_minutes)->toBe([1440])
+        ->and($service->scheduleReminders($fixture['appointment']))->toBe(1)
+        ->and(CommunicationIntent::query()->where('intent_type', 'appointment_reminder')->count())->toBe(1);
+
+    $fixture['appointment']->update([
+        'starts_at_utc' => $fixture['appointment']->starts_at_utc->addDay(),
+        'ends_at_utc' => $fixture['appointment']->ends_at_utc->addDay(),
+    ]);
+
+    expect($service->scheduleReminders($fixture['appointment']->fresh()))->toBe(1)
+        ->and(CommunicationIntent::query()->where('intent_type', 'appointment_reminder')->count())->toBe(2)
+        ->and(CommunicationIntent::query()->where('intent_type', 'appointment_reminder')->pluck('event_key')->unique())->toHaveCount(2);
+});
+
+it('separates transactional necessity, SMS opt-in, marketing consent, unsubscribe, and suppression', function () {
     $fixture = communicationFixture(['marketing_status' => 'unknown']);
     $templates = app(CommunicationTemplateService::class);
     $settings = $templates->settings($fixture['business']);
@@ -234,18 +309,35 @@ it('separates transactional necessity, WhatsApp opt-in, marketing consent, unsub
     $consent = app(CommunicationConsentService::class);
 
     expect($consent->decision($settings, $fixture['client'], 'email', $fixture['client']->email, 'transactional', 'contract_performance')['allowed'])->toBeTrue()
-        ->and($consent->decision($settings, $fixture['client'], 'whatsapp', $fixture['client']->mobile, 'transactional', 'contract_performance')['reason'])->toBe('whatsapp_opt_in_missing')
+        ->and($consent->decision($settings, $fixture['client'], 'sms', $fixture['client']->mobile, 'transactional', 'contract_performance')['reason'])->toBe('sms_opt_in_missing')
         ->and($consent->decision($settings, $fixture['client'], 'email', $fixture['client']->email, 'marketing', 'explicit_marketing_consent')['reason'])->toBe('marketing_consent_missing');
 
     $fixture['client']->update(['marketing_status' => 'subscribed']);
-    $consent->recordWhatsAppOptIn($fixture['client'], 'booking', $fixture['appointment']->id);
-    expect($consent->decision($settings, $fixture['client']->fresh(), 'whatsapp', $fixture['client']->mobile, 'transactional', 'contract_performance')['allowed'])->toBeTrue()
+    $consent->recordSmsOptIn($fixture['client'], 'booking', $fixture['appointment']->id);
+    expect($consent->decision($settings, $fixture['client']->fresh(), 'sms', $fixture['client']->mobile, 'transactional', 'contract_performance')['allowed'])->toBeTrue()
         ->and($consent->decision($settings, $fixture['client']->fresh(), 'email', $fixture['client']->email, 'marketing', 'explicit_marketing_consent')['allowed'])->toBeTrue();
 
     $consent->unsubscribe($fixture['client']->fresh(), 'email');
     expect($consent->decision($settings, $fixture['client']->fresh(), 'email', $fixture['client']->email, 'marketing', 'explicit_marketing_consent')['allowed'])->toBeFalse()
         ->and($consent->decision($settings, $fixture['client']->fresh(), 'email', $fixture['client']->email, 'transactional', 'legal_obligation_receipt')['allowed'])->toBeTrue()
         ->and(CommunicationSuppression::query()->where('scope', 'marketing')->exists())->toBeTrue();
+});
+
+it('keeps promotional SMS paused even when legacy marketing settings and consent exist', function () {
+    $fixture = communicationFixture(['marketing_status' => 'subscribed', 'communication_preferences' => ['sms']]);
+    app(CommunicationTemplateService::class)->settings($fixture['business'])->update(['marketing_enabled' => true]);
+    app(CommunicationConsentService::class)->recordSmsOptIn($fixture['client'], 'booking', $fixture['appointment']->id);
+
+    $intent = app(NotificationIntentService::class)->create(intentFor(
+        $fixture,
+        'appointment:mobile-marketing-paused',
+        'feedback_request',
+        ['sms' => $fixture['client']->mobile],
+    ), false);
+
+    expect($intent->status)->toBe('suppressed')
+        ->and($intent->messages)->toBeEmpty()
+        ->and($this->mobileProvider->calls)->toBeEmpty();
 });
 
 it('bounds provider retries, reuses one provider idempotency key, and recovers after an outage', function () {
@@ -268,9 +360,9 @@ it('bounds provider retries, reuses one provider idempotency key, and recovers a
         ->and(CommunicationDeliveryAttempt::query()->pluck('status')->all())->toBe(['retried', 'retried', 'sent'])
         ->and($this->emailProvider->calls)->toHaveCount(3);
 
-    app(CommunicationConsentService::class)->recordWhatsAppOptIn($fixture['client'], 'booking', $fixture['appointment']->id);
-    publishWhatsAppTemplate($fixture['business'], 'booking_confirmation');
-    $mobile = app(NotificationIntentService::class)->create(intentFor($fixture, 'appointment:mobile-ambiguous', recipients: ['whatsapp' => $fixture['client']->mobile]), false)->messages->first();
+    app(CommunicationConsentService::class)->recordSmsOptIn($fixture['client'], 'booking', $fixture['appointment']->id);
+    publishSmsTemplate($fixture['business'], 'booking_confirmation');
+    $mobile = app(NotificationIntentService::class)->create(intentFor($fixture, 'appointment:mobile-ambiguous', recipients: ['sms' => $fixture['client']->mobile]), false)->messages->first();
     $this->mobileProvider->failures = [new RuntimeException('Ambiguous transport failure')];
     $mobile = $delivery->deliver($mobile);
     expect($mobile->status)->toBe('failed')->and($mobile->attempt_count)->toBe(1)
@@ -286,11 +378,11 @@ it('atomically enforces the plan mobile-message allowance without charging dupli
         ->where('entitlement_definition_id', $definitionId)
         ->update(['value' => json_encode(1, JSON_THROW_ON_ERROR)]);
 
-    app(CommunicationConsentService::class)->recordWhatsAppOptIn($fixture['client'], 'booking', $fixture['appointment']->id);
-    publishWhatsAppTemplate($fixture['business'], 'booking_confirmation');
+    app(CommunicationConsentService::class)->recordSmsOptIn($fixture['client'], 'booking', $fixture['appointment']->id);
+    publishSmsTemplate($fixture['business'], 'booking_confirmation');
     $intents = app(NotificationIntentService::class);
-    $first = $intents->create(intentFor($fixture, 'appointment:quota-one', recipients: ['whatsapp' => $fixture['client']->mobile]), false)->messages->first();
-    $second = $intents->create(intentFor($fixture, 'appointment:quota-two', recipients: ['whatsapp' => $fixture['client']->mobile]), false)->messages->first();
+    $first = $intents->create(intentFor($fixture, 'appointment:quota-one', recipients: ['sms' => $fixture['client']->mobile]), false)->messages->first();
+    $second = $intents->create(intentFor($fixture, 'appointment:quota-two', recipients: ['sms' => $fixture['client']->mobile]), false)->messages->first();
     $delivery = app(CommunicationDeliveryService::class);
 
     expect($delivery->deliver($first)->status)->toBe('sent')
@@ -416,4 +508,181 @@ it('creates revocable purpose-bound short-lived action links and explicit tenant
     $job = new DeliverCommunicationMessage($message->id, '123e4567-e89b-12d3-a456-426614174999');
     expect($job->tenantBusinessId())->toBe($fixture['business']->id)
         ->and($job->correlationId())->toBe('123e4567-e89b-12d3-a456-426614174999');
+});
+
+it('creates only one SMS message when deferred channel data is still present', function () {
+    $fixture = communicationFixture(['communication_preferences' => ['sms']]);
+    $consent = app(CommunicationConsentService::class);
+    $consent->recordSmsOptIn($fixture['client'], 'booking', $fixture['appointment']->id);
+    publishSmsTemplate($fixture['business'], 'booking_confirmation');
+
+    $intent = app(NotificationIntentService::class)->create(intentFor($fixture, 'appointment:sms-only', recipients: [
+        'whatsapp' => $fixture['client']->mobile,
+        'sms' => $fixture['client']->mobile,
+    ]), false);
+    $sms = $intent->messages->firstWhere('channel', 'sms');
+    app(CommunicationDeliveryService::class)->deliver($sms->fresh());
+
+    expect($intent->messages)->toHaveCount(1)
+        ->and($sms->fresh()->status)->toBe('sent')
+        ->and($this->mobileProvider->calls)->toHaveCount(1)
+        ->and($this->mobileProvider->calls[0]->channel)->toBe('sms');
+});
+
+it('suppresses an old queued deferred-channel message before provider access', function () {
+    $fixture = communicationFixture(['communication_preferences' => ['whatsapp']]);
+    app(CommunicationConsentService::class)->recordWhatsAppOptIn($fixture['client'], 'booking', $fixture['appointment']->id);
+    publishWhatsAppTemplate($fixture['business'], 'booking_confirmation');
+    config(['communications.client_mobile_channels' => ['sms', 'whatsapp']]);
+    $message = app(NotificationIntentService::class)->create(intentFor(
+        $fixture,
+        'appointment:legacy-queued-mobile',
+        recipients: ['whatsapp' => $fixture['client']->mobile],
+    ), false)->messages->firstOrFail();
+
+    config(['communications.client_mobile_channels' => ['sms']]);
+    $result = app(CommunicationDeliveryService::class)->deliver($message);
+
+    expect($result->status)->toBe('suppressed')
+        ->and($result->suppression_reason)->toBe('channel_paused')
+        ->and($this->mobileProvider->calls)->toBeEmpty();
+});
+
+it('records SMS STOP once and withdraws text consent immediately', function () {
+    $fixture = communicationFixture(['communication_preferences' => ['sms']]);
+    $profile = app(CommunicationSenderService::class)->ensurePlatformProfile($fixture['business'], 'sms');
+    $profile->update(['mode' => 'branded']);
+    app(CommunicationConsentService::class)->recordSmsOptIn($fixture['client'], 'booking', $fixture['appointment']->id);
+
+    $message = app(InboundCommunicationService::class)->receiveTwilio(
+        'SM_INBOUND_STOP', $fixture['client']->mobile, $profile->sender_identifier, 'STOP', [], now()->toImmutable(),
+    );
+    $duplicate = app(InboundCommunicationService::class)->receiveTwilio(
+        'SM_INBOUND_STOP', $fixture['client']->mobile, $profile->sender_identifier, 'STOP', [], now()->toImmutable(),
+    );
+
+    expect($message)->not->toBeNull()
+        ->and($duplicate->id)->toBe($message->id)
+        ->and(CommunicationConversation::query()->count())->toBe(1)
+        ->and(CommunicationInboundMessage::query()->count())->toBe(1)
+        ->and(CommunicationSuppression::query()->where('channel', 'sms')->where('scope', 'all')->exists())->toBeTrue()
+        ->and(ClientConsent::query()->where('type', 'sms')->orderByDesc('occurred_at')->orderByDesc('id')->value('status'))->toBe('withdrawn');
+});
+
+it('prepares an entitled branded sender without exposing provider credentials in the owner workspace', function () {
+    [$user, $business] = createTenantMembership(StarterRole::Owner);
+    activateTestSubscription($business, 'pro');
+    config(['communications.transport_mode' => 'fake']);
+    $this->withoutVite();
+
+    $this->actingAs($user)->post(route('business.communications.senders.branded', $business), [
+        'channels' => ['sms'], 'display_name' => 'North Shore Studio',
+    ])->assertRedirect();
+    $this->actingAs($user)->get(route('business.communications.page', $business))
+        ->assertOk()->assertInertia(fn ($page) => $page->component('Communications/Index')
+        ->where('capabilities.branded_sender', true)
+        ->where('senderReadiness.transport_mode', 'fake')
+        ->has('senderReadiness.profiles', 2)
+        ->missing('senderReadiness.profiles.0.provider_api_key_secret'));
+});
+
+it('rejects deferred channels from the owner notification settings', function () {
+    [$user, $business] = createTenantMembership(StarterRole::Owner);
+    activateTestSubscription($business, 'pro');
+    config(['communications.transport_mode' => 'fake']);
+
+    $this->actingAs($user)->from(route('business.communications.page', $business))->post(route('business.communications.senders.branded', $business), [
+        'channels' => ['whatsapp'], 'display_name' => 'North Shore Studio',
+    ])->assertSessionHasErrors('channels.0');
+
+    expect($business->communicationSenderProfiles()->where('channel', 'whatsapp')->exists())->toBeFalse();
+});
+
+it('keeps sms tests free and requires explicit switches before sandbox or live delivery', function () {
+    config([
+        'communications.transport_mode' => 'twilio_test',
+        'communications.twilio.test_account_sid' => 'AC_TEST_ACCOUNT',
+        'communications.twilio.test_auth_token' => 'test-auth-token',
+        'communications.twilio.test_sms_from' => '+15005550006',
+    ]);
+    Http::fake([
+        'https://api.twilio.com/*' => Http::response(['sid' => 'SM_TEST_SENT', 'status' => 'queued'], 201),
+    ]);
+
+    $sms = new OutboundCommunication(
+        destination: '+14155550123',
+        subject: '',
+        body: 'Safe integration test',
+        idempotencyKey: 'sms-safe-test',
+        correlationId: 'sms-safe-correlation',
+        channel: 'sms',
+    );
+    $result = app(TwilioSmsProvider::class)->send($sms);
+
+    expect($result->providerMessageId)->toBe('SM_TEST_SENT');
+    Http::assertSent(function ($request) {
+        return str_contains($request->url(), '/Accounts/AC_TEST_ACCOUNT/Messages.json')
+            && $request['From'] === '+15005550006'
+            && $request['To'] === '+14155550123'
+            && ! isset($request['StatusCallback']);
+    });
+
+    config(['communications.transport_mode' => 'whatsapp_sandbox', 'communications.whatsapp_sandbox_send_enabled' => false]);
+    $whatsApp = new OutboundCommunication(
+        destination: '+14155550123',
+        subject: '',
+        body: 'Sandbox safety test',
+        idempotencyKey: 'whatsapp-safe-test',
+        correlationId: 'whatsapp-safe-correlation',
+        channel: 'whatsapp',
+    );
+    expect(fn () => app(TwilioWhatsAppProvider::class)->send($whatsApp))
+        ->toThrow(CommunicationProviderException::class, 'whatsapp_sandbox_send_not_enabled');
+
+    config(['communications.transport_mode' => 'live', 'communications.live_send_enabled' => false]);
+    expect(fn () => app(TwilioSmsProvider::class)->send($sms))
+        ->toThrow(CommunicationProviderException::class, 'live_send_not_enabled');
+    expect(fn () => app(TwilioWhatsAppProvider::class)->send($whatsApp))
+        ->toThrow(CommunicationProviderException::class, 'live_send_not_enabled');
+    Http::assertSentCount(1);
+});
+
+it('uses free-form whatsapp content only for an open branded conversation reply', function () {
+    config([
+        'communications.transport_mode' => 'live',
+        'communications.live_send_enabled' => true,
+        'communications.twilio.account_sid' => 'AC_LIVE_ACCOUNT',
+        'communications.twilio.api_key_sid' => 'SK_RESTRICTED_KEY',
+        'communications.twilio.api_key_secret' => 'restricted-key-secret',
+        'communications.twilio.whatsapp_from' => '+14155550000',
+    ]);
+    Http::fake([
+        'https://api.twilio.com/*' => Http::response(['sid' => 'SM_LIVE_REPLY', 'status' => 'queued'], 201),
+    ]);
+    $reply = new OutboundCommunication(
+        destination: '+14155550123',
+        subject: '',
+        body: 'Yes — we will be ready for you.',
+        idempotencyKey: 'live-conversation-reply',
+        correlationId: 'live-conversation-correlation',
+        channel: 'whatsapp',
+        conversationReply: true,
+    );
+
+    expect(app(TwilioWhatsAppProvider::class)->send($reply)->providerMessageId)->toBe('SM_LIVE_REPLY');
+    Http::assertSent(fn ($request) => $request['Body'] === 'Yes — we will be ready for you.'
+        && ! isset($request['ContentSid'])
+        && $request['From'] === 'whatsapp:+14155550000');
+
+    $unapprovedNotification = new OutboundCommunication(
+        destination: '+14155550123',
+        subject: '',
+        body: 'Unapproved notification',
+        idempotencyKey: 'live-unapproved-notification',
+        correlationId: 'live-unapproved-correlation',
+        channel: 'whatsapp',
+    );
+    expect(fn () => app(TwilioWhatsAppProvider::class)->send($unapprovedNotification))
+        ->toThrow(CommunicationProviderException::class, 'approved_template_required');
+    Http::assertSentCount(1);
 });

@@ -92,6 +92,27 @@ class EffectiveServiceResolver
     {
         $indexes = array_keys(array_filter($segments, fn (array $segment) => $segment['kind'] === $kind));
         if ($indexes === []) {
+            if ($targetMinutes > 0) {
+                // A staff override may introduce a kind absent from the base
+                // layout. Keep stored segment IDs for resource attribution.
+                $rank = ['active' => 0, 'processing' => 1, 'cleanup' => 2];
+                $position = count($segments);
+                foreach ($segments as $index => $segment) {
+                    if (($rank[$segment['kind']] ?? 0) > $rank[$kind]) {
+                        $position = $index;
+                        break;
+                    }
+                }
+                array_splice($segments, $position, 0, [[
+                    'id' => null, 'kind' => $kind, 'sequence' => $position + 1,
+                    'duration_minutes' => $targetMinutes, 'occupies_staff' => $kind !== 'processing',
+                ]]);
+                foreach ($segments as $index => &$segment) {
+                    $segment['sequence'] = $index + 1;
+                }
+                unset($segment);
+            }
+
             return $segments;
         }
         $baseTotal = array_sum(array_map(fn (int $index) => (int) $segments[$index]['duration_minutes'], $indexes));

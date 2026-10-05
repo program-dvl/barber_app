@@ -9,7 +9,10 @@ use Illuminate\Support\Facades\DB;
 
 class CommunicationProviderCallbackService
 {
-    public function __construct(private readonly CommunicationConsentService $consent) {}
+    public function __construct(
+        private readonly CommunicationConsentService $consent,
+        private readonly CommunicationFallbackService $fallbacks,
+    ) {}
 
     public function receive(string $provider, string $eventId, string $providerMessageId, string $eventType, CarbonImmutable $occurredAt, string $payloadHash): CommunicationProviderEvent
     {
@@ -63,7 +66,12 @@ class CommunicationProviderCallbackService
             $event->update(['status' => 'processed', 'processed_at' => now(), 'last_error_code' => null]);
         }, 3);
 
-        return $event->fresh();
+        $event = $event->fresh();
+        if ($event->status === 'processed' && $this->normalize($provider, $eventType) === 'failed' && $event->communication_message_id) {
+            $this->fallbacks->activateAfterDefinitiveFailure(CommunicationMessage::query()->findOrFail($event->communication_message_id));
+        }
+
+        return $event;
     }
 
     private function normalize(string $provider, string $event): string

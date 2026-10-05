@@ -28,14 +28,14 @@ const submit = () => {
 
         <!-- Header -->
         <div class="mb-8 text-center">
-            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                <svg class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                <svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                 </svg>
             </div>
-            <h2 class="text-2xl font-bold text-base-content">{{ $t('Forgot password?') }}</h2>
+            <h1 class="cd-page-title font-bold text-base-content">{{ $t('Forgot password?') }}</h1>
             <p class="mt-2 text-sm text-base-content/70">
-                {{ $t('No worries! Enter your email and we\'ll send you reset instructions.') }}
+                {{ $t('Enter your email to receive a password reset link.') }}
             </p>
         </div>
 
@@ -60,8 +60,8 @@ const submit = () => {
                     autofocus
                     autocomplete="username"
                     placeholder="you@example.com"
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
+                 :aria-invalid="form.errors.email ? true : undefined" :aria-describedby="form.errors.email ? 'email-error' : undefined"/>
+                <InputError class="mt-2" :message="form.errors.email"  id="email-error"/>
             </div>
 
             <PrimaryButton class="w-full justify-center" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">

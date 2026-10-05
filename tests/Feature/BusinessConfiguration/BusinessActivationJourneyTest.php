@@ -1,12 +1,14 @@
 <?php
 
 use App\Domain\BusinessConfiguration\Services\ReadinessEvaluator;
+use App\Domain\BusinessConfiguration\Services\ServiceCatalogManager;
 use App\Domain\ClientRecords\Models\Client;
 use App\Domain\PlatformAccess\Enums\StarterRole;
 use App\Domain\PublicBooking\Services\PublicBookingService;
 use App\Domain\SchedulingOperations\Models\Appointment;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
@@ -55,7 +57,7 @@ it('takes a new owner from focused activation workspaces to a received public bo
     $this->actingAs($owner)->get(route('business.services.index', $business))
         ->assertOk()->assertInertia(fn (Assert $page) => $page->component('Services/Index'));
     $servicePayload = [
-        'category' => 'Hair', 'name' => 'Signature cut', 'description' => 'Consultation, cut and finish.',
+        'command_key' => (string) Str::uuid(), 'category' => 'Hair', 'name' => 'Signature cut', 'description' => 'Consultation, cut and finish.',
         'price_type' => 'fixed', 'price_minor' => 5000, 'duration_minutes' => 45, 'processing_minutes' => 0,
         'cleanup_minutes' => 5, 'minimum_notice_minutes' => 0, 'maximum_advance_days' => 60,
         'deposit_type' => 'none', 'deposit_value' => 0, 'client_eligibility' => 'all',
@@ -113,12 +115,15 @@ it('takes a new owner from focused activation workspaces to a received public bo
 
     $segmentIds = $service->segments()->orderBy('sequence')->pluck('id')->all();
     $this->actingAs($owner)->put(route('business.services.update', [$business, $service]), [
-        ...$servicePayload, 'duration_minutes' => 50,
+        ...$servicePayload, 'command_key' => (string) Str::uuid(), 'duration_minutes' => 50,
+        'revision' => app(ServiceCatalogManager::class)->revision($service->fresh()),
+        'impact_revision' => app(ServiceCatalogManager::class)->impactRevision(app(ServiceCatalogManager::class)->upcoming($business)->get($service->id, collect())),
+        'reason' => 'Reviewed the original appointment snapshot.',
     ])->assertRedirect()->assertSessionHasNoErrors();
     expect($service->fresh()->duration_minutes)->toBe(50)
         ->and($service->segments()->orderBy('sequence')->pluck('id')->all())->toBe($segmentIds)
         ->and($result['appointment']->fresh()->status)->toBe('confirmed');
-    $this->actingAs($owner)->patch(route('business.services.status', [$business, $service]), ['active' => false])
+    $this->actingAs($owner)->patch(route('business.services.status', [$business, $service]), ['active' => false, 'revision' => app(ServiceCatalogManager::class)->revision($service->fresh()), 'impact_revision' => app(ServiceCatalogManager::class)->impactRevision(app(ServiceCatalogManager::class)->upcoming($business)->get($service->id, collect())), 'reason' => 'Retain the original appointment.'])
         ->assertRedirect()->assertSessionHasNoErrors();
     expect($service->fresh()->is_active)->toBeFalse()
         ->and($result['appointment']->fresh()->status)->toBe('confirmed');

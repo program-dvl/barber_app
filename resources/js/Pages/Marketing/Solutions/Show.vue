@@ -19,7 +19,7 @@ defineProps({ solution: Object, features: Array, seo: Object });
                 <div>
                     <Breadcrumbs :items="[{ label: 'Home', href: route('marketing.home') }, { label: 'Solutions', href: route('marketing.solutions') }, { label: solution.label }]" />
                     <p class="cd-hero-kicker mt-9"><span aria-hidden="true">✦</span> ClipperDesk for {{ solution.label }}</p>
-                    <h1 class="mt-6 font-display text-[clamp(3.25rem,6vw,6.2rem)] font-bold leading-[0.9] tracking-[-0.07em] text-white text-balance">{{ solution.title }}</h1>
+                    <h1 class="mt-6 font-display cd-public-title font-bold leading-[0.9] tracking-[-0.07em] text-white text-balance">{{ solution.title }}</h1>
                     <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">{{ solution.description }}</p>
                     <div class="mt-8 flex flex-wrap gap-3">
                         <Link :href="route('register')" class="cd-button cd-button-primary">Start your trial</Link>
@@ -50,18 +50,18 @@ defineProps({ solution: Object, features: Array, seo: Object });
             <PublicContainer class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
                 <div>
                     <p class="cd-dark-eyebrow">A connected shift</p>
-                    <h2 class="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl">From the first booking to the final close.</h2>
+                    <h2 class="mt-4 font-display text-3xl font-semibold leading-tight sm:text-3xl">From the first booking to the final close.</h2>
                     <ol class="mt-8 space-y-4">
                         <li v-for="(step, index) in solution.day" :key="step" class="cd-dark-step"><span>{{ String(index + 1).padStart(2, '0') }}</span><p>{{ step }}</p></li>
                     </ol>
                 </div>
                 <div class="cd-boundary-card">
                     <p class="cd-dark-eyebrow">Good software is honest</p>
-                    <h2 class="mt-4 font-display text-4xl font-semibold leading-tight">Clear boundaries.</h2>
+                    <h2 class="mt-4 font-display text-3xl font-semibold leading-tight">Clear boundaries.</h2>
                     <ul class="mt-8 space-y-4">
                         <li v-for="item in solution.limits" :key="item" class="flex gap-3 leading-7 text-white/80"><ExclamationTriangleIcon class="mt-1 size-5 shrink-0 text-yellow-300" aria-hidden="true" /><span>{{ item }}</span></li>
                     </ul>
-                    <p class="mt-8 text-sm font-semibold text-white/60">Requirement evidence: {{ solution.requirements.join(', ') }}</p>
+
                 </div>
             </PublicContainer>
         </section>

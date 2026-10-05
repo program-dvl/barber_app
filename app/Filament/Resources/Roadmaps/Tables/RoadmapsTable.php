@@ -16,7 +16,7 @@ class RoadmapsTable
         return $table
             ->columns([
                 TextColumn::make('user.name')
-                    ->label('Requested By')
+                    ->label('Requested by')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('title')
@@ -24,6 +24,7 @@ class RoadmapsTable
                     ->sortable()
                     ->limit(50),
                 TextColumn::make('status')
+                    ->formatStateUsing(fn (string $state): string => ucfirst(str_replace('_', ' ', $state)))
                     ->badge()
                     ->sortable()
                     ->colors([
@@ -53,7 +54,7 @@ class RoadmapsTable
                     ->options([
                         'pending' => 'Pending',
                         'approved' => 'Approved',
-                        'in_progress' => 'In Progress',
+                        'in_progress' => 'In progress',
                         'completed' => 'Completed',
                     ]),
             ])

@@ -55,7 +55,7 @@ class IssueStaffInvitation
             throw ValidationException::withMessages(['email' => 'This person already has workspace access.']);
         }
 
-        if ($role->name === 'owner' && ! $inviter->hasRole('owner', 'web')) {
+        if ($role->name === 'owner' && ! $this->access->hasRole($inviter, 'owner')) {
             throw new AuthorizationException('Only an owner may grant owner access.');
         }
 
@@ -73,6 +73,10 @@ class IssueStaffInvitation
 
         if (count($validLocationIds) !== count(array_unique($locationIds))) {
             throw ValidationException::withMessages(['locations' => 'Every invitation location must belong to the active Business.']);
+        }
+
+        if (! $this->access->hasRole($inviter, 'owner') && collect($validLocationIds)->diff($inviter->locations()->pluck('locations.id'))->isNotEmpty()) {
+            throw new AuthorizationException('You may invite staff only to your assigned locations.');
         }
 
         $issued = DB::transaction(function () use ($inviter, $email, $role, $staffProfile, $expiresInDays, $validLocationIds): IssuedStaffInvitation {
@@ -112,6 +116,7 @@ class IssueStaffInvitation
         });
 
         Notification::route('mail', $email)->notify(new StaffInvitationNotification(
+            businessId: $inviter->business_id,
             businessName: $inviter->business->name,
             plainTextToken: $issued->plainTextToken,
             expiresAt: $issued->invitation->expires_at,

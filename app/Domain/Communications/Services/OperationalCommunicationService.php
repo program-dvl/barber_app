@@ -2,6 +2,7 @@
 
 namespace App\Domain\Communications\Services;
 
+use App\Domain\ClientRecords\Models\ClientConsent;
 use App\Domain\Communications\Data\CommunicationIntentData;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PublicBooking\Models\WaitlistMatch;
@@ -50,11 +51,23 @@ class OperationalCommunicationService
         $settings = $this->templates->settings($appointment->business_id);
         $created = 0;
         foreach ($settings->reminder_offsets_minutes as $offset) {
+            // Quiet hours must not revive a reminder whose original lead time
+            // has already passed for a newly booked or moved appointment.
+            if ($appointment->starts_at_utc->subMinutes((int) $offset)->lessThanOrEqualTo(now())) {
+                continue;
+            }
             $when = $this->schedule->reminderTime($appointment, (int) $offset, $settings);
             if ($when->lessThanOrEqualTo(now())) {
                 continue;
             }
-            $this->appointmentIntent($appointment, 'appointment_reminder', 'appointment.reminder', 'appointment:'.$appointment->id.':reminder:'.$offset, $when, []);
+            $this->appointmentIntent(
+                $appointment,
+                'appointment_reminder',
+                'appointment.reminder',
+                'appointment:'.$appointment->id.':reminder:'.$appointment->starts_at_utc->getTimestamp().':'.$offset,
+                $when,
+                [],
+            );
             $created++;
         }
 
@@ -108,12 +121,21 @@ class OperationalCommunicationService
         if (! $emailOptedOut && $appointment->client_email) {
             $recipients['email'] = $appointment->client_email;
         }
+        foreach (config('communications.client_mobile_channels', ['sms']) as $channel) {
+            $selected = in_array($channel, $preferences, true) || ($preferences[$channel] ?? false) === true
+                || in_array($channel, $clientPreferences, true) || ($clientPreferences[$channel] ?? false) === true;
+            $granted = $appointment->client_id && ClientConsent::query()->where('business_id', $appointment->business_id)
+                ->where('client_id', $appointment->client_id)->where('type', $channel)->orderByDesc('occurred_at')->orderByDesc('id')->value('status') === 'granted';
+            if ($selected && $granted && $appointment->client_mobile) {
+                $recipients[$channel] = $appointment->client_mobile;
+            }
+        }
         $local = $appointment->starts_at_utc->setTimezone($appointment->time_zone);
         $defaults = TemplateVariableCatalog::defaults($intent);
         $this->intents->create(new CommunicationIntentData(
             $appointment->business_id, $eventKey, $eventType, $intent, $defaults['category'],
             $defaults['category'] === 'marketing' ? 'explicit_marketing_consent' : 'contract_performance',
-            $appointment->business->locale ?: 'en-IN', $appointment->time_zone, $when->utc(), $recipients,
+            $appointment->business->locale ?: 'en-US', $appointment->time_zone, $when->utc(), $recipients,
             [
                 'client_name' => $appointment->client_name, 'service_name' => $appointment->serviceLines->pluck('name')->join(', '),
                 'staff_name' => $appointment->serviceLines->pluck('primaryStaff.display_name')->filter()->unique()->join(', '),
@@ -133,18 +155,19 @@ class OperationalCommunicationService
         }
         $method = $match->request->notification_method;
         $destination = $method === 'email' ? $match->request->client_email : $match->request->client_mobile;
-        if (! in_array($method, ['email', 'whatsapp'], true) || ! $destination) {
+        if (! in_array($method, ['email', ...config('communications.client_mobile_channels', ['sms'])], true) || ! $destination) {
             return false;
         }
         $local = $match->slot_starts_at_utc->setTimezone($match->request->location->time_zone);
         $business = Business::query()->findOrFail($event->business_id);
         $this->intents->create(new CommunicationIntentData(
             $event->business_id, $event->idempotency_key, $event->event_type, 'waitlist_opening', 'transactional',
-            'explicit_channel_request', $business->locale ?: 'en-IN', $match->request->location->time_zone,
+            'explicit_channel_request', $business->locale ?: 'en-US', $match->request->location->time_zone,
             CarbonImmutable::instance($event->occurred_at), [$method => $destination], [
                 'client_name' => $match->request->client_name, 'service_name' => $match->request->service->name,
                 'location_name' => $match->request->location->name, 'appointment_date' => $local->isoFormat('D MMMM YYYY'),
                 'appointment_time' => $local->format('H:i'), 'time_zone' => $match->request->location->time_zone,
+                'business_name' => $business->name,
             ], null, WaitlistMatch::class, $match->id, (string) Str::uuid(), 'waitlist_claim',
         ));
 
@@ -162,15 +185,24 @@ class OperationalCommunicationService
         $recipients = ! (($clientPreferences['email'] ?? null) === false) && $entry->client_email
             ? ['email' => $entry->client_email]
             : [];
+        foreach (config('communications.client_mobile_channels', ['sms']) as $channel) {
+            $selected = in_array($channel, $clientPreferences, true) || ($clientPreferences[$channel] ?? false) === true;
+            $granted = $entry->client_id && ClientConsent::query()->where('business_id', $entry->business_id)
+                ->where('client_id', $entry->client_id)->where('type', $channel)->orderByDesc('occurred_at')->orderByDesc('id')->value('status') === 'granted';
+            if ($selected && $granted && $entry->client_mobile) {
+                $recipients[$channel] = $entry->client_mobile;
+            }
+        }
         if ($recipients === []) {
             return false;
         }
         $this->intents->create(new CommunicationIntentData(
             $event->business_id, $event->idempotency_key, $event->event_type, 'queue_update', 'transactional',
-            'contract_performance', $business->locale ?: 'en-IN', $business->time_zone ?: 'Asia/Kolkata',
+            'contract_performance', $business->locale ?: 'en-US', $business->time_zone ?: 'UTC',
             CarbonImmutable::instance($event->occurred_at), $recipients, [
                 'client_name' => $entry->client_name, 'queue_estimate' => $entry->estimated_wait_minutes.' minutes',
                 'location_name' => $business->locations->firstWhere('id', $entry->location_id)?->name ?? $business->name,
+                'business_name' => $business->name,
             ], $entry->client_id, WalkInEntry::class, $entry->id, (string) Str::uuid(), null,
         ));
 

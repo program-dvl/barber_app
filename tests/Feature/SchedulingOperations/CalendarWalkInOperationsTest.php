@@ -6,6 +6,7 @@ use App\Domain\BusinessConfiguration\Models\StaffAvailabilityRule;
 use App\Domain\BusinessConfiguration\Models\StaffServiceAssignment;
 use App\Domain\ClientRecords\Models\Client;
 use App\Domain\MoneyCommerce\Models\Sale;
+use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Enums\StarterRole;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
@@ -26,6 +27,7 @@ use App\Domain\SchedulingOperations\Models\OperationalNotificationEvent;
 use App\Domain\SchedulingOperations\Models\ScheduleBlock;
 use App\Domain\SchedulingOperations\Models\WalkInEntry;
 use App\Domain\SchedulingOperations\Models\WalkInHistory;
+use App\Domain\SchedulingOperations\Services\CalendarWorkspaceQuery;
 use App\Domain\SchedulingOperations\Services\OperationalExceptionService;
 use App\Domain\SchedulingOperations\Services\ScheduleBlockService;
 use App\Domain\SchedulingOperations\Services\WalkInQueueService;
@@ -34,9 +36,36 @@ use App\Support\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Database\Seeders\FrontDeskDaySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
+
+it('preserves unreadable contact and notes during a schedule change and denies unassigned print access', function () {
+    CarbonImmutable::setTestNow('2035-10-09 03:00 UTC');
+    try {
+        $p = operationalPath(StarterRole::Receptionist);
+        $a = operationalBooking($p, '2035-10-10 10:00', 'privacy-calendar-booking');
+        $a->update(['client_email' => 'private@example.test', 'internal_notes' => 'Private appointment note']);
+        app(TenantContext::class)->run($p['business'], $p['membership'], function () use ($p) {
+            $p['membership']->syncRoles([]);
+            $p['membership']->syncPermissions([PermissionName::CalendarViewAll->value, PermissionName::AppointmentsManageAll->value]);
+        });
+        $this->actingAs($p['user'])->post(route('business.appointments.replace', [$p['business'], $a]), [
+            'kind' => 'reschedule', 'location' => $p['location']->public_id, 'starts_at' => '2035-10-10T12:00',
+            'lines' => [['service' => $p['service']->public_id, 'staff' => $p['staff']->public_id]], 'version' => 1,
+            'reason' => 'Client requested another time', 'confirmed' => true, 'idempotency_key' => 'privacy-preserve-replacement',
+            'client_name' => $a->client_name, 'client_mobile' => null, 'client_email' => null, 'internal_notes' => null,
+        ])->assertSessionHasNoErrors()->assertRedirect();
+        $replacement = Appointment::query()->findOrFail($a->fresh()->rescheduled_to_appointment_id);
+        expect($replacement->client_mobile)->toBe('+919999999999')->and($replacement->client_email)->toBe('private@example.test')->and($replacement->internal_notes)->toBe('Private appointment note');
+        $this->patchJson(route('business.appointments.notes', [$p['business'], $replacement]), ['notes' => 'Not allowed', 'version' => 1, 'idempotency_key' => 'denied-note'])->assertForbidden();
+        $other = Location::factory()->create(['business_id' => $p['business']->id]);
+        $this->get(route('business.calendar.print', ['business' => $p['business'], 'location' => $other->public_id]))->assertForbidden();
+    } finally {
+        CarbonImmutable::setTestNow();
+    }
+});
 
 /** @return array{business:Business,location:Location,staff:StaffProfile,service:Service,user:User,membership:Membership} */
 function operationalPath(StarterRole $role = StarterRole::Owner, int $noticeMinutes = 0): array
@@ -388,4 +417,382 @@ it('records a full manual payment once and removes the settled visit from checko
         ->and(OperationalNotificationEvent::query()->where('event_type', 'payment.receipt')->where('subject_id', $appointment->id)->count())->toBe(1);
     $this->actingAs($path['user'])->get(route('business.checkout.index', [$path['business'], 'appointment' => $appointment->public_id]))
         ->assertOk()->assertInertia(fn (Assert $page) => $page->where('appointments', []));
+});
+
+it('projects real schedule context even when appointment filters hide reserved capacity', function () {
+    $path = operationalPath();
+    $a = operationalBooking($path, '2035-10-10 10:00', 'workspace-filtered');
+    StaffAvailabilityRule::query()->create([
+        'business_id' => $path['business']->id, 'staff_profile_id' => $path['staff']->id,
+        'location_id' => $path['location']->id, 'kind' => 'break', 'day_of_week' => 3,
+        'starts_at' => '12:00', 'ends_at' => '12:30', 'reason' => 'Private staff information',
+    ]);
+    app(ScheduleBlockService::class)->create($path['business']->id, $path['location']->id, $path['staff']->id, 'personal_block', 'Meeting',
+        CarbonImmutable::parse('2035-10-10 14:00', 'Asia/Kolkata')->utc(), CarbonImmutable::parse('2035-10-10 14:30', 'Asia/Kolkata')->utc(),
+        'Private reason', 'user', $path['user']->id);
+    $this->actingAs($path['user'])->get(route('business.calendar', ['business' => $path['business'], 'date' => '2035-10-10', 'status' => ['completed']]))
+        ->assertOk()->assertInertia(fn (Assert $page) => $page
+        ->where('filters.view', 'staff')->where('calendar.counts.appointments', 0)
+        ->has('schedule.days', 1)->has('schedule.days.0.staff', 1)
+        ->has('schedule.days.0.staff.0.windows', 2)
+        ->where('schedule.days.0.staff.0.busy.0.appointmentId', $a->public_id)
+        ->where('schedule.days.0.staff.0.unavailable.0.label', 'Break')
+        ->missing('schedule.days.0.staff.0.unavailable.0.reason'));
+});
+
+it('limits calendar own staff options and hides protected payment and client fields', function () {
+    $path = operationalPath(StarterRole::BarberStylist);
+    $a = operationalBooking($path, '2035-10-10 10:00', 'workspace-own');
+    app(TenantContext::class)->run($path['business'], $path['membership'], function () use ($path) {
+        $path['membership']->syncRoles([]);
+        $path['membership']->syncPermissions([PermissionName::CalendarViewOwn->value, PermissionName::AppointmentsManageOwn->value]);
+    });
+    $peer = StaffProfile::factory()->create(['business_id' => $path['business']->id, 'display_name' => 'Private peer']);
+    $peer->locations()->syncWithPivotValues([$path['location']->id], ['business_id' => $path['business']->id]);
+    $this->actingAs($path['user'])->get(route('business.calendar', ['business' => $path['business'], 'date' => '2035-10-10']))
+        ->assertOk()->assertInertia(fn (Assert $page) => $page
+        ->has('options.staff', 1)->where('options.staff.0.public_id', $path['staff']->public_id)
+        ->has('schedule.days.0.staff', 1)->where('permissions.checkout', false)
+        ->where('calendar.events.0.canManage', true)->where('calendar.events.0.clientMobile', null)
+        ->missing('calendar.events.0.checkoutReady')->missing('calendar.events.0.paymentLabel'));
+    $this->actingAs($path['user'])->get(route('business.calendar.clients', ['business' => $path['business'], 'search' => 'Jordan']))->assertForbidden();
+});
+
+it('selects an existing client explicitly and preserves the canonical identity through replay and reschedule', function () {
+    $path = operationalPath();
+    $client = Client::query()->create([
+        'business_id' => $path['business']->id, 'name' => 'Alex Example', 'normalized_name' => 'alexexample', 'status' => 'active',
+    ]);
+    $data = ['client' => $client->public_id, 'location' => $path['location']->public_id, 'starts_at' => '2035-10-10T10:00', 'source' => 'reception',
+        'client_name' => 'Ignored tampering', 'lines' => [['service' => $path['service']->public_id, 'staff' => $path['staff']->public_id]], 'idempotency_key' => 'selected-client'];
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2035-10-09', 'Asia/Kolkata'));
+    try {
+        $this->actingAs($path['user'])->post(route('business.appointments.store', $path['business']), $data)->assertRedirect()->assertSessionHasNoErrors();
+        $this->post(route('business.appointments.store', $path['business']), $data)->assertRedirect()->assertSessionHasNoErrors();
+        $a = Appointment::query()->where('idempotency_key', 'selected-client')->firstOrFail();
+        expect($a->client_id)->toBe($client->id)->and($a->client_name)->toBe('Alex Example')->and(Appointment::query()->count())->toBe(1)
+            ->and(Client::query()->count())->toBe(1);
+        $client->update(['status' => 'inactive']);
+        $this->post(route('business.appointments.replace', [$path['business'], $a]), [
+            'kind' => 'reschedule', 'location' => $path['location']->public_id, 'starts_at' => '2035-10-10T11:00',
+            'source' => 'reception', 'client_name' => $a->client_name, 'lines' => $data['lines'], 'version' => 1,
+            'reason' => 'Client requested a later time.', 'confirmed' => true, 'idempotency_key' => 'selected-client-replace',
+        ])->assertRedirect()->assertSessionHasNoErrors();
+        expect(Appointment::query()->where('status', 'confirmed')->firstOrFail()->client_id)->toBe($client->id);
+        $other = operationalPath();
+        $this->post(route('business.appointments.store', $other['business']), $data)->assertForbidden();
+    } finally {
+        CarbonImmutable::setTestNow();
+    }
+});
+
+it('uses the selected clients saved formatted contacts before validating stale form fields', function () {
+    $path = operationalPath();
+    $client = Client::query()->create([
+        'business_id' => $path['business']->id, 'name' => 'Anika Rao', 'normalized_name' => 'anikarao', 'status' => 'active',
+        'mobile' => '+91 (90000) 01001', 'email' => 'anika@example.test',
+    ]);
+    $data = ['client' => $client->public_id, 'location' => $path['location']->public_id, 'starts_at' => '2035-10-10T10:00', 'source' => 'reception',
+        'client_name' => ['invalid stale input'], 'client_mobile' => 'not a phone', 'client_email' => 'not an email',
+        'lines' => [['service' => $path['service']->public_id, 'staff' => $path['staff']->public_id]], 'idempotency_key' => 'saved-client-phone'];
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2035-10-09', 'Asia/Kolkata'));
+    try {
+        $this->actingAs($path['user'])->post(route('business.appointments.store', $path['business']), $data)->assertRedirect()->assertSessionHasNoErrors();
+        $data['client_mobile'] = '+919123456789';
+        $this->post(route('business.appointments.store', $path['business']), $data)->assertRedirect()->assertSessionHasNoErrors();
+        $a = Appointment::query()->where('idempotency_key', 'saved-client-phone')->firstOrFail();
+        expect($a->client_id)->toBe($client->id)->and($a->client_name)->toBe('Anika Rao')
+            ->and($a->client_mobile)->toBe('+919000001001')->and($a->client_email)->toBe('anika@example.test')
+            ->and($client->fresh()->mobile)->toBe('+91 (90000) 01001')
+            ->and(Appointment::query()->count())->toBe(1)->and(Client::query()->count())->toBe(1);
+    } finally {
+        CarbonImmutable::setTestNow();
+    }
+});
+
+it('allows an optional appointment phone for selected clients with missing or invalid saved numbers', function (?string $savedMobile) {
+    $path = operationalPath();
+    $client = Client::query()->create([
+        'business_id' => $path['business']->id, 'name' => 'Alex Example', 'normalized_name' => 'alexexample', 'status' => 'active', 'mobile' => $savedMobile,
+    ]);
+    $data = ['client' => $client->public_id, 'location' => $path['location']->public_id, 'starts_at' => '2035-10-10T10:00', 'source' => 'reception',
+        'client_mobile' => 'not a phone', 'lines' => [['service' => $path['service']->public_id, 'staff' => $path['staff']->public_id]], 'idempotency_key' => 'client-phone-correction'];
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2035-10-09', 'Asia/Kolkata'));
+    try {
+        $this->actingAs($path['user'])->post(route('business.appointments.store', $path['business']), $data)->assertSessionHasErrors('client_mobile');
+        expect(Appointment::query()->count())->toBe(0);
+        $data['client_mobile'] = '+91 91234 56789';
+        $this->post(route('business.appointments.store', $path['business']), $data)->assertRedirect()->assertSessionHasNoErrors();
+        $a = Appointment::query()->where('idempotency_key', 'client-phone-correction')->firstOrFail();
+        expect($a->client_id)->toBe($client->id)->and($a->client_mobile)->toBe('+919123456789')
+            ->and($client->fresh()->mobile)->toBe($savedMobile)->and(Client::query()->count())->toBe(1);
+    } finally {
+        CarbonImmutable::setTestNow();
+    }
+})->with(['missing' => [null], 'invalid' => ['invalid saved phone']]);
+
+it('reuses private saved client contacts without letting a restricted operator replace them', function () {
+    $path = operationalPath();
+    $client = Client::query()->create([
+        'business_id' => $path['business']->id, 'name' => 'Private Client', 'normalized_name' => 'privateclient', 'status' => 'active',
+        'mobile' => '+91 90000 01001', 'email' => 'private@example.test',
+    ]);
+    app(TenantContext::class)->run($path['business'], $path['membership'], function () use ($path) {
+        $path['membership']->syncRoles([]);
+        $path['membership']->syncPermissions([PermissionName::CalendarViewAll->value, PermissionName::AppointmentsManageAll->value, PermissionName::ClientView->value]);
+    });
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2035-10-09', 'Asia/Kolkata'));
+    try {
+        $this->actingAs($path['user'])->post(route('business.appointments.store', $path['business']), [
+            'client' => $client->public_id, 'location' => $path['location']->public_id, 'starts_at' => 'not a date', 'source' => 'reception',
+            'client_mobile' => null, 'client_email' => null,
+            'lines' => [['service' => $path['service']->public_id, 'staff' => $path['staff']->public_id]], 'idempotency_key' => 'private-contact-validation',
+        ])->assertSessionHasErrors('starts_at');
+        expect(session()->getOldInput('client_mobile'))->toBeNull()->and(session()->getOldInput('client_email'))->toBeNull();
+        $this->actingAs($path['user'])->post(route('business.appointments.store', $path['business']), [
+            'client' => $client->public_id, 'location' => $path['location']->public_id, 'starts_at' => '2035-10-10T10:00', 'source' => 'reception',
+            'client_mobile' => 'invalid hidden input', 'client_email' => 'invalid hidden input',
+            'lines' => [['service' => $path['service']->public_id, 'staff' => $path['staff']->public_id]], 'idempotency_key' => 'private-saved-contact',
+        ])->assertRedirect()->assertSessionHasNoErrors();
+        $a = Appointment::query()->where('idempotency_key', 'private-saved-contact')->firstOrFail();
+        expect($a->client_id)->toBe($client->id)->and($a->client_mobile)->toBe('+919000001001')->and($a->client_email)->toBe('private@example.test');
+        $this->getJson(route('business.calendar.clients', ['business' => $path['business'], 'search' => 'Private']))
+            ->assertOk()->assertJsonPath('clients.0.mobile', null)->assertJsonPath('clients.0.email', null);
+        $client->update(['mobile' => null]);
+        $this->post(route('business.appointments.store', $path['business']), [
+            'client' => $client->public_id, 'location' => $path['location']->public_id, 'starts_at' => '2035-10-10T12:00', 'source' => 'reception',
+            'client_mobile' => '+919123456789', 'lines' => [['service' => $path['service']->public_id, 'staff' => $path['staff']->public_id]], 'idempotency_key' => 'private-missing-contact',
+        ])->assertRedirect()->assertSessionHasNoErrors();
+        expect(Appointment::query()->where('idempotency_key', 'private-missing-contact')->firstOrFail()->client_mobile)->toBeNull();
+    } finally {
+        CarbonImmutable::setTestNow();
+    }
+});
+
+it('still rejects invalid phone input when booking a new client', function () {
+    $path = operationalPath();
+    $this->actingAs($path['user'])->post(route('business.appointments.store', $path['business']), [
+        'location' => $path['location']->public_id, 'starts_at' => '2035-10-10T10:00', 'source' => 'reception',
+        'client_name' => 'New Client', 'client_mobile' => '9000001001',
+        'lines' => [['service' => $path['service']->public_id, 'staff' => $path['staff']->public_id]], 'idempotency_key' => 'invalid-new-client-phone',
+    ])->assertSessionHasErrors('client_mobile');
+    expect(Appointment::query()->count())->toBe(0)->and(Client::query()->count())->toBe(0);
+});
+
+it('projects overnight hours and full day leave without leaking leave reasons', function () {
+    $path = operationalPath();
+    $path['location']->hours()->delete();
+    $path['staff']->availabilityRules()->delete();
+    LocationHour::query()->create(['business_id' => $path['business']->id, 'location_id' => $path['location']->id, 'day_of_week' => 2, 'opens_at' => '22:00', 'closes_at' => '02:00', 'sequence' => 1]);
+    StaffAvailabilityRule::query()->create(['business_id' => $path['business']->id, 'staff_profile_id' => $path['staff']->id, 'location_id' => $path['location']->id, 'kind' => 'working', 'day_of_week' => 2, 'starts_at' => '22:00', 'ends_at' => '02:00']);
+    $query = app(CalendarWorkspaceQuery::class);
+    $result = $query->build($path['location'], collect([$path['staff']]), CarbonImmutable::parse('2035-10-10', 'Asia/Kolkata'), 1);
+    expect($result['days'][0]['windows'][0]['startsAt'])->toBe('2035-10-10T00:00:00+05:30')
+        ->and($result['days'][0]['staff'][0]['windows'][0]['endsAt'])->toBe('2035-10-10T02:00:00+05:30');
+    StaffAvailabilityRule::query()->create(['business_id' => $path['business']->id, 'staff_profile_id' => $path['staff']->id, 'kind' => 'leave', 'starts_on' => '2035-10-10', 'ends_on' => '2035-10-10', 'reason' => 'Private medical reason']);
+    $path['staff']->unsetRelation('availabilityRules');
+    $result = $query->build($path['location'], collect([$path['staff']]), CarbonImmutable::parse('2035-10-10', 'Asia/Kolkata'), 1);
+    expect($result['days'][0]['staff'][0]['windows'])->toBe([])
+        ->and($result['days'][0]['staff'][0]['unavailable'][0]['label'])->toBe('Time off')
+        ->and(json_encode($result))->not->toContain('Private medical reason');
+    $request = new BookingRequest($path['business']->id, $path['location']->id, CarbonImmutable::parse('2035-10-10 00:30', 'Asia/Kolkata')->utc(), [new BookingLineRequest($path['service']->id, $path['staff']->id)], asOfUtc: CarbonImmutable::parse('2035-10-08', 'Asia/Kolkata')->utc());
+    expect(fn () => app(BookingCommitCommand::class)->commit($request, 'overnight-leave-denial'))->toThrow(BookingRuleViolation::class);
+});
+
+it('scopes existing client search and redacts contact fields before serialization', function () {
+    $path = operationalPath();
+    $a = operationalBooking($path, '2035-10-10 10:00', 'client-search-visit');
+    $client = $a->client;
+    $client->update(['name' => 'Jordan Example', 'normalized_name' => 'jordanexample', 'email' => 'jordan@example.test', 'normalized_email' => 'jordan@example.test']);
+    $otherBusiness = Business::factory()->create();
+    Client::query()->create(['business_id' => $otherBusiness->id, 'name' => 'Jordan Private', 'normalized_name' => 'jordanprivate', 'status' => 'active']);
+    $this->actingAs($path['user'])->getJson(route('business.calendar.clients', ['business' => $path['business'], 'search' => 'jordan@example']))
+        ->assertOk()->assertJsonCount(1, 'clients')->assertJsonPath('clients.0.id', $client->public_id);
+    app(TenantContext::class)->run($path['business'], $path['membership'], function () use ($path) {
+        $path['membership']->syncRoles([]);
+        $path['membership']->syncPermissions([PermissionName::CalendarViewOwn->value, PermissionName::AppointmentsManageOwn->value, PermissionName::ClientView->value]);
+    });
+    $this->getJson(route('business.calendar.clients', ['business' => $path['business'], 'search' => 'Jordan']))
+        ->assertOk()->assertJsonCount(1, 'clients')->assertJsonPath('clients.0.mobile', null)->assertJsonPath('clients.0.email', null);
+    $this->getJson(route('business.calendar.clients', ['business' => $path['business'], 'search' => '+919999999999']))->assertOk()->assertJsonCount(0, 'clients');
+});
+
+it('keeps existing visits visible when their staff member becomes inactive', function () {
+    $path = operationalPath();
+    $appointment = operationalBooking($path, '2035-10-10 10:00', 'inactive-calendar-staff');
+    $path['staff']->update(['status' => 'inactive']);
+    $this->actingAs($path['user'])->get(route('business.calendar', ['business' => $path['business'], 'date' => '2035-10-10']))
+        ->assertOk()->assertInertia(fn (Assert $page) => $page
+        ->where('calendar.events.0.id', $appointment->public_id)->has('options.bookableStaff', 0)
+        ->where('schedule.days.0.staff.0.id', $path['staff']->public_id)
+        ->where('schedule.days.0.staff.0.status', 'inactive')->has('schedule.days.0.staff.0.windows', 0));
+});
+
+it('forecasts parallel staff capacity in queue order and protects future bookings and breaks', function () {
+    $p = operationalPath();
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2035-10-10 09:00', 'Asia/Kolkata'));
+    try {
+        $peer = StaffProfile::factory()->create(['business_id' => $p['business']->id, 'display_name' => 'Blair']);
+        $peer->locations()->attach($p['location']->id, ['business_id' => $p['business']->id]);
+        StaffAvailabilityRule::query()->create(['business_id' => $p['business']->id, 'staff_profile_id' => $peer->id, 'location_id' => $p['location']->id, 'kind' => 'working', 'day_of_week' => 3, 'starts_at' => '09:00', 'ends_at' => '18:00']);
+        StaffServiceAssignment::query()->create(['business_id' => $p['business']->id, 'staff_profile_id' => $peer->id, 'service_id' => $p['service']->id, 'is_qualified' => true, 'is_active' => true, 'duration_minutes' => 30]);
+        operationalBooking($p, '2035-10-10 09:30', 'queue-next-booking');
+        $q = app(WalkInQueueService::class);
+        $first = $q->add($p['business']->id, $p['location']->id, $p['service']->id, 'First Client', '+919111111111', $p['staff']->id, CarbonImmutable::now()->utc(), null, 'reception', 'user', $p['user']->id);
+        $second = $q->add($p['business']->id, $p['location']->id, $p['service']->id, 'Second Client', '+919222222222', null, CarbonImmutable::now()->utc(), null, 'reception', 'user', $p['user']->id);
+        $this->actingAs($p['user'])->get(route('business.walk-ins.index', $p['business']))->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('entries.0.public_id', $first->public_id)->where('entries.0.estimated_at', '2035-10-10T05:00:00+00:00')
+            ->where('entries.1.public_id', $second->public_id)->where('entries.1.estimated_at', '2035-10-10T03:30:00+00:00')
+            ->where('entries.1.suggested_staff_id', $peer->public_id)->where('staff.0.gap_minutes', 30));
+        $this->getJson(route('business.walk-ins.readiness', [$p['business'], $first->public_id, 'staff' => $p['staff']->public_id]))
+            ->assertOk()->assertJsonPath('ready', false)->assertJsonPath('code', 'STAFF_UNAVAILABLE');
+        $this->getJson(route('business.walk-ins.readiness', [$p['business'], $second->public_id, 'staff' => $peer->public_id]))->assertOk()->assertJsonPath('ready', true);
+        StaffAvailabilityRule::query()->create(['business_id' => $p['business']->id, 'staff_profile_id' => $peer->id, 'kind' => 'break', 'day_of_week' => 3, 'starts_at' => '09:00', 'ends_at' => '09:30', 'reason' => 'Private reason']);
+        $this->getJson(route('business.walk-ins.readiness', [$p['business'], $second->public_id, 'staff' => $peer->public_id]))->assertOk()->assertJsonPath('ready', false)->assertDontSee('Private reason');
+    } finally {
+        CarbonImmutable::setTestNow();
+    }
+});
+
+it('keeps walk-in identity start replay and completion synchronized with the canonical appointment', function () {
+    $p = operationalPath();
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2035-10-10 09:00', 'Asia/Kolkata'));
+    try {
+        $client = Client::query()->create(['business_id' => $p['business']->id, 'name' => 'Canonical Client', 'normalized_name' => 'canonicalclient', 'mobile' => '+919111111111', 'normalized_mobile' => '+919111111111', 'status' => 'active']);
+        $q = app(WalkInQueueService::class);
+        $e = $q->add($p['business']->id, $p['location']->id, $p['service']->id, $client->name, $client->mobile, null, CarbonImmutable::now()->utc(), null, 'reception', 'user', $p['user']->id, $client->id);
+        $a = $q->startService($e, CarbonImmutable::now()->utc(), 'atomic-queue-start', 1, $p['staff']->id, 'reception', 'user', $p['user']->id);
+        $replay = $q->startService($e, CarbonImmutable::now()->utc(), 'atomic-queue-start', 1, $p['staff']->id, 'reception', 'user', $p['user']->id);
+        expect($a->client_id)->toBe($client->id)->and($replay->id)->toBe($a->id)->and(Appointment::query()->count())->toBe(1)->and(Client::query()->count())->toBe(1);
+        expect(fn () => $q->startService($e, CarbonImmutable::now()->utc()->addMinutes(15), 'atomic-queue-start', 1, $p['staff']->id, 'reception', 'user', $p['user']->id))->toThrow(BookingRuleViolation::class);
+        $this->actingAs($p['user'])->patch(route('business.appointments.status', [$p['business'], $a]), ['status' => 'completed', 'version' => $a->version, 'idempotency_key' => 'queue-complete'])->assertRedirect()->assertSessionHasNoErrors();
+        $this->patch(route('business.appointments.status', [$p['business'], $a]), ['status' => 'completed', 'version' => $a->version, 'idempotency_key' => 'queue-complete'])->assertRedirect()->assertSessionHasNoErrors();
+        expect($e->fresh()->status)->toBe('completed')->and($e->history()->where('action', 'completed')->count())->toBe(1);
+        $this->get(route('business.walk-ins.index', $p['business']))->assertOk()->assertInertia(fn (Assert $page) => $page->has('entries', 0)->where('recent.0.public_id', $e->public_id));
+    } finally {
+        CarbonImmutable::setTestNow();
+    }
+});
+
+it('redacts queue contacts and notes and denies branch and tenant overrides', function () {
+    $p = operationalPath(StarterRole::Receptionist);
+    $q = app(WalkInQueueService::class);
+    $client = Client::query()->create(['business_id' => $p['business']->id, 'name' => 'Private Client', 'normalized_name' => 'privateclient', 'status' => 'active', 'mobile' => '+919111111111', 'normalized_mobile' => '+919111111111', 'email' => 'private@example.test', 'normalized_email' => 'private@example.test']);
+    $e = $q->add($p['business']->id, $p['location']->id, $p['service']->id, $client->name, $client->mobile, null, CarbonImmutable::now()->utc(), 'Private visit note', 'reception', 'user', $p['user']->id, $client->id);
+    app(TenantContext::class)->run($p['business'], $p['membership'], function () use ($p) {
+        $p['membership']->syncRoles([]);
+        $p['membership']->syncPermissions([PermissionName::WalkInsManage->value, PermissionName::ScheduleOverride->value]);
+    });
+    $this->actingAs($p['user'])->get(route('business.walk-ins.index', $p['business']))->assertOk()->assertInertia(fn (Assert $page) => $page->where('entries.0.client_mobile', null)->where('entries.0.notes', null)->where('entries.0.client_public_id', null)->where('permissions.checkout', false));
+    $this->getJson(route('business.walk-ins.clients.search', [$p['business'], 'q' => 'Private']))->assertOk()->assertJsonPath('clients.0.mobile', null)->assertJsonPath('clients.0.email', null);
+    $this->getJson(route('business.walk-ins.clients.search', [$p['business'], 'q' => 'private@example.test']))->assertOk()->assertJsonCount(0, 'clients');
+    $other = Location::factory()->create(['business_id' => $p['business']->id]);
+    $this->post(route('business.walk-ins.reorder', $p['business']), ['location' => $other->public_id, 'entries' => [$e->public_id], 'reason' => 'Unauthorized change', 'confirmed' => true])->assertForbidden();
+    $otherTenant = operationalPath();
+    $this->getJson(route('business.walk-ins.readiness', [$p['business'], $e->public_id, 'staff' => $otherTenant['staff']->public_id]))->assertNotFound();
+    $this->get(route('business.walk-ins.index', ['business' => $p['business'], 'location' => $other->public_id]))->assertNotFound();
+});
+
+it('does not invent a finish estimate or start another walk-in for an overdue live service', function () {
+    $p = operationalPath();
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2035-10-10 11:00', 'Asia/Kolkata'));
+    try {
+        $a = operationalBooking($p, '2035-10-09 09:00', 'overdue-live', CarbonImmutable::parse('2035-10-08 03:00 UTC'));
+        $a->update(['status' => 'in_service']);
+        $q = app(WalkInQueueService::class);
+        $e = $q->add($p['business']->id, $p['location']->id, $p['service']->id, 'Waiting Client', '+919111111111', $p['staff']->id, CarbonImmutable::now()->utc(), null, 'reception', 'user', $p['user']->id);
+        $this->actingAs($p['user'])->get(route('business.walk-ins.index', $p['business']))->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('staff.0.state', 'Service running over')->where('staff.0.available_now', false)->where('entries.0.estimated_at', null));
+        $this->actingAs($p['user'])->getJson(route('business.walk-ins.readiness', [$p['business'], $e->public_id, 'staff' => $p['staff']->public_id]))->assertOk()->assertJsonPath('ready', false)->assertJsonPath('code', 'SERVICE_RUNNING_OVER');
+        expect(fn () => $q->startService($e, CarbonImmutable::now()->utc(), 'overdue-start-denied', 1, $p['staff']->id, 'reception', 'user', $p['user']->id))->toThrow(BookingRuleViolation::class);
+        $e->update(['preferred_staff_profile_id' => null]);
+        expect(fn () => $q->startService($e, CarbonImmutable::now()->utc(), 'overdue-auto-denied', 1, null, 'reception', 'user', $p['user']->id))->toThrow(BookingRuleViolation::class);
+        expect($e->fresh()->appointment_id)->toBeNull()->and(Appointment::query()->count())->toBe(1);
+    } finally {
+        CarbonImmutable::setTestNow();
+    }
+});
+
+it('keeps board query growth bounded as the waiting queue grows', function () {
+    $p = operationalPath();
+    $make = fn ($position) => WalkInEntry::query()->create(['business_id' => $p['business']->id, 'location_id' => $p['location']->id, 'service_id' => $p['service']->id, 'client_name' => 'Synthetic client '.$position, 'client_mobile' => '+919000000200', 'status' => 'waiting', 'queue_position' => $position, 'arrived_at' => now()]);
+    $make(1);
+    $this->actingAs($p['user'])->get(route('business.walk-ins.index', $p['business']))->assertOk();
+    DB::enableQueryLog();
+    DB::flushQueryLog();
+    $this->get(route('business.walk-ins.index', $p['business']))->assertOk();
+    $single = count(DB::getQueryLog());
+    foreach (range(2, 40) as $position) {
+        $make($position);
+    }
+    DB::flushQueryLog();
+    $this->get(route('business.walk-ins.index', $p['business']))->assertOk()->assertInertia(fn (Assert $page) => $page->has('entries', 40));
+    $busy = count(DB::getQueryLog());
+    DB::disableQueryLog();
+    expect($busy)->toBeLessThanOrEqual($single + 3);
+});
+
+it('replays a rapid check-in without duplicating the client or queue entry', function () {
+    $p = operationalPath();
+    $data = ['location' => $p['location']->public_id, 'service' => $p['service']->public_id, 'client_mode' => 'new',
+        'client_name' => 'Replay Client', 'client_mobile' => '+919111111111', 'arrived_at' => '2035-10-10T10:00', 'idempotency_key' => 'rapid-check-in'];
+    $this->actingAs($p['user'])->post(route('business.walk-ins.store', $p['business']), $data)->assertRedirect()->assertSessionHasNoErrors()->assertSessionHas('status', 'Walk-in added to the queue.');
+    $this->post(route('business.walk-ins.store', $p['business']), $data)->assertRedirect()->assertSessionHasNoErrors();
+    expect(WalkInEntry::query()->count())->toBe(1)->and(Client::query()->count())->toBe(1)
+        ->and(WalkInHistory::query()->where('action', 'created')->count())->toBe(1);
+});
+
+it('keeps a converted queue visit linked through Calendar replacement and lifecycle actions', function () {
+    $p = operationalPath();
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2035-10-10 09:00', 'Asia/Kolkata'));
+    try {
+        $q = app(WalkInQueueService::class);
+        $e = $q->add($p['business']->id, $p['location']->id, $p['service']->id, 'Converted Client', '+919111111111', null, CarbonImmutable::now()->utc(), null, 'reception', 'user', $p['user']->id);
+        $a = $q->convertToAppointment($e, CarbonImmutable::parse('2035-10-10 10:00', 'Asia/Kolkata')->utc(), 'convert-for-calendar', 1, $p['staff']->id, 'reception', 'user', $p['user']->id);
+        expect(fn () => $q->assign($e->fresh(), $p['staff']->id, $e->fresh()->version, 'reception', 'user', $p['user']->id))->toThrow(BookingRuleViolation::class);
+        expect(fn () => $q->markLeft($e->fresh(), $e->fresh()->version, 'Leaving', 'reception', 'user', $p['user']->id))->toThrow(BookingRuleViolation::class);
+        $request = new BookingRequest($p['business']->id, $p['location']->id, CarbonImmutable::parse('2035-10-10 11:00', 'Asia/Kolkata')->utc(), [new BookingLineRequest($p['service']->id, $p['staff']->id)], 'reception', 'existing', CarbonImmutable::now()->utc(), clientName: 'Converted Client', clientMobile: '+919111111111');
+        $life = app(AppointmentLifecycleCommand::class);
+        $replacement = $life->replace($a, $request, 'reschedule', 'converted-change', $a->version, 'Client requested a later time.');
+        expect($e->fresh()->appointment_id)->toBe($replacement->id)->and($e->history()->where('action', 'calendar_updated')->count())->toBe(1);
+        $arrived = $life->transition($replacement, 'arrived', 'converted-arrived', $replacement->version, 'reception', 'user', $p['user']->id);
+        $started = $life->transition($arrived, 'in_service', 'converted-start', $arrived->version, 'reception', 'user', $p['user']->id);
+        expect($e->fresh()->status)->toBe('in_service')->and($e->fresh()->service_started_at)->not->toBeNull()->and($e->history()->where('action', 'service_started')->count())->toBe(1);
+        $life->transition($started, 'completed', 'converted-complete', $started->version, 'reception', 'user', $p['user']->id);
+        expect($e->fresh()->status)->toBe('completed');
+    } finally {
+        CarbonImmutable::setTestNow();
+    }
+});
+
+it('reuses formatted saved mobile details and explains invalid client contacts before check-in', function () {
+    $p = operationalPath();
+    $client = Client::query()->create(['business_id' => $p['business']->id, 'name' => 'Saved Client', 'normalized_name' => 'savedclient',
+        'status' => 'active', 'mobile' => '+91 91111 11111', 'normalized_mobile' => '+919111111111']);
+    $data = ['location' => $p['location']->public_id, 'service' => $p['service']->public_id, 'client_mode' => 'existing', 'client' => $client->public_id, 'arrived_at' => '2035-10-10T10:00'];
+    $this->actingAs($p['user'])->post(route('business.walk-ins.store', $p['business']), $data)->assertRedirect()->assertSessionHasNoErrors();
+    expect(WalkInEntry::query()->first()->client_mobile)->toBe('+919111111111')->and($client->fresh()->mobile)->toBe('+91 91111 11111');
+    $client->update(['mobile' => 'invalid']);
+    $this->post(route('business.walk-ins.store', $p['business']), $data)->assertRedirect()->assertSessionHasErrors('client');
+    expect(WalkInEntry::query()->count())->toBe(1);
+});
+
+it('rejects an expired start check without creating a partial appointment', function () {
+    $p = operationalPath();
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2035-10-10 09:15', 'Asia/Kolkata'));
+    try {
+        $q = app(WalkInQueueService::class);
+        $e = $q->add($p['business']->id, $p['location']->id, $p['service']->id, 'Waiting Client', '+919111111111', null, CarbonImmutable::now()->utc()->subMinutes(15), null, 'reception', 'user', $p['user']->id);
+        expect(fn () => $q->startService($e, CarbonImmutable::now()->utc()->subMinutes(15), 'expired-check', 1, $p['staff']->id, 'reception', 'user', $p['user']->id))->toThrow(BookingRuleViolation::class);
+        expect(Appointment::query()->count())->toBe(0)->and($e->fresh()->status)->toBe('waiting')->and($e->fresh()->appointment_id)->toBeNull();
+    } finally {
+        CarbonImmutable::setTestNow();
+    }
+});
+
+it('does not accept a service from another branch into the queue', function () {
+    $p = operationalPath();
+    $other = Location::factory()->create(['business_id' => $p['business']->id]);
+    expect(fn () => app(WalkInQueueService::class)->add($p['business']->id, $other->id, $p['service']->id, 'Wrong branch', '+919111111111', null, CarbonImmutable::now()->utc(), null, 'reception', 'user', $p['user']->id))->toThrow(BookingRuleViolation::class);
+    expect(WalkInEntry::query()->count())->toBe(0);
 });

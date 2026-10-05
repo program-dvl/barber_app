@@ -2,8 +2,10 @@
 
 namespace App\Domain\BusinessConfiguration\Services;
 
+use App\Domain\AccountNotifications\Services\BusinessNotificationRecipients;
 use App\Domain\BusinessConfiguration\Models\OnboardingSession;
 use App\Domain\PlatformAccess\Models\Business;
+use App\Notifications\BusinessPublishedNotification;
 use App\Support\Audit\AuditWriter;
 use App\Support\Files\TenantPrivateStorage;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +22,7 @@ class OnboardingManager
         private readonly BookingSlugManager $slugs,
         private readonly TenantPrivateStorage $storage,
         private readonly AuditWriter $audit,
+        private readonly BusinessNotificationRecipients $recipients,
     ) {}
 
     public function resume(Business $business): OnboardingSession
@@ -44,20 +47,26 @@ class OnboardingManager
             throw ValidationException::withMessages(['step' => 'Unknown guided onboarding step.']);
         }
 
-        $session = $this->resume($business);
-        if ($session->guided_completed_at) {
-            return $session;
-        }
+        return DB::transaction(function () use ($business, $step, $answers): OnboardingSession {
+            $business = Business::query()->lockForUpdate()->findOrFail($business->id);
+            $session = $this->resume($business);
+            if ($session->guided_completed_at) {
+                return $session;
+            }
+            $stored = $session->answers ?? [];
+            if ($step === 'business_type' && ($stored['business_type'] ?? null) !== $answers['business_type']) {
+                unset($stored['service_keys']);
+            }
+            $index = array_search($step, self::GUIDED_STEPS, true);
+            $session->forceFill([
+                'schema_version' => config('business-onboarding.schema_version', 2),
+                'answers' => [...$stored, ...$answers],
+                'current_step' => self::GUIDED_STEPS[min($index + 1, count(self::GUIDED_STEPS) - 1)],
+                'last_saved_at' => now(),
+            ])->save();
 
-        $index = array_search($step, self::GUIDED_STEPS, true);
-        $session->forceFill([
-            'schema_version' => config('business-onboarding.schema_version', 2),
-            'answers' => [...($session->answers ?? []), ...$answers],
-            'current_step' => self::GUIDED_STEPS[min($index + 1, count(self::GUIDED_STEPS) - 1)],
-            'last_saved_at' => now(),
-        ])->save();
-
-        return $session->fresh();
+            return $session->fresh();
+        }, 3);
     }
 
     public function saveStep(Business $business, string $step): OnboardingSession
@@ -93,29 +102,56 @@ class OnboardingManager
         }
         $path = 'configuration/branding/'.$kind.'-'.hash('sha256', $contents).'.'.strtolower($extension);
         $this->storage->put($business, $path, $contents);
-        $business->forceFill([$kind === 'logo' ? 'logo_path' : 'cover_image_path' => $path])->save();
+        DB::transaction(function () use ($business, $kind, $path): void {
+            $business = Business::query()->lockForUpdate()->findOrFail($business->id);
+            $field = $kind === 'logo' ? 'logo_path' : 'cover_image_path';
+            if ($business->{$field} === $path) {
+                return;
+            }
+            $before = [$field => $business->{$field}];
+            $business->forceFill([$field => $path])->save();
+            $this->audit->write('configuration.brand_asset.updated', $business, target: $business, before: $before, after: [$field => $path]);
+        });
 
         return $path;
     }
 
     public function publish(Business $business): Business
     {
-        return DB::transaction(function () use ($business): Business {
+        $publishedNow = false;
+        $published = DB::transaction(function () use ($business, &$publishedNow): Business {
             $business = Business::query()->lockForUpdate()->findOrFail($business->id);
             $result = $this->readiness->evaluate($business);
             if (! $result->publishable) {
                 throw ValidationException::withMessages(['readiness' => array_map(fn ($item) => $item['message'], $result->blockers)]);
             }
-            $before = ['configuration_published_at' => $business->configuration_published_at?->toIso8601String()];
-            $business->forceFill(['configuration_published_at' => now()])->save();
+            $publishedNow = $business->configuration_published_at === null;
+            if (! $publishedNow && $business->online_booking_enabled) {
+                return $business->fresh();
+            }
+            $before = ['configuration_published_at' => $business->configuration_published_at?->toIso8601String(), 'online_booking_enabled' => $business->online_booking_enabled];
+            $business->forceFill(['configuration_published_at' => $business->configuration_published_at ?? now(), 'online_booking_enabled' => true])->save();
             $session = $this->saveStep($business, 'publish');
             $session->update(['published_at' => now()]);
             $this->audit->write('configuration.published', $business, target: $business, before: $before, after: [
                 'configuration_published_at' => $business->configuration_published_at?->toIso8601String(),
+                'online_booking_enabled' => true,
                 'ready_within_30_minutes' => $session->started_at->diffInMinutes($session->published_at) <= 30,
             ]);
 
             return $business->fresh();
         });
+
+        if ($publishedNow && filled($published->booking_slug)) {
+            $notification = new BusinessPublishedNotification(
+                businessId: $published->getKey(),
+                businessPublicId: $published->public_id,
+                businessName: $published->name,
+                bookingSlug: $published->booking_slug,
+            );
+            $this->recipients->owners($published)->each->notify($notification);
+        }
+
+        return $published;
     }
 }

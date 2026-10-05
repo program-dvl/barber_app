@@ -18,6 +18,12 @@ class RoadmapResource extends Resource
 {
     protected static ?string $model = Roadmap::class;
 
+    protected static ?string $modelLabel = 'feature request';
+
+    protected static ?string $pluralModelLabel = 'Roadmaps';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Content';

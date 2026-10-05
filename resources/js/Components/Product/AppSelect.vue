@@ -8,6 +8,7 @@ import { nextEnabledOption, selectMenuPosition } from '@/Support/selectMenu';
 defineOptions({ inheritAttrs: false });
 const props = defineProps({
     modelValue: { default: undefined }, value: { default: undefined },
+    placeholder: {type:String,default:'Choose an option'},
     multiple: Boolean, disabled: Boolean, required: Boolean,
     searchable: { type: Boolean, default: undefined },
 });
@@ -35,7 +36,7 @@ const filtered = computed(() => options.value.filter(option => option.label.toLo
 const canSearch = computed(() => props.searchable ?? options.value.length > 7);
 const selectedLabel = computed(() => {
     const chosen = options.value.filter(option => option.selected);
-    return chosen.length > 1 ? `${chosen.length} selected` : chosen[0]?.label || 'Choose an option';
+    return chosen.length > 1 ? `${chosen.length} selected` : chosen[0]?.label || props.placeholder;
 });
 const activeId = computed(() => opened.value && active.value >= 0 ? `${controlId.value}-option-${filtered.value[active.value]?.index}` : undefined);
 let observer;
@@ -164,9 +165,15 @@ onMounted(async () => {
             associatedLabel = parentLabel;
         }
     }
-    else label.value = document.querySelector(`label[for="${controlId.value}"]`)?.textContent.trim() || label.value;
+    else {
+        const fieldLabel = document.querySelector(`label[for="${controlId.value}"]`);
+        // Required state is exposed separately; exclude decorative marks and hints.
+        if (fieldLabel) label.value = [...fieldLabel.childNodes].filter(node => node.nodeType === 3).map(node => node.textContent.trim()).join(' ').trim() || label.value;
+    }
     ready.value = true;
     await nextTick(); synchronize();
+    // A fast Inertia navigation may unmount the control during this tick.
+    if (!native.value) return;
     observer = new MutationObserver(() => nextTick(synchronize));
     observer.observe(native.value, { childList: true, subtree: true, characterData: true, attributes: true });
     document.addEventListener('pointerdown', outside);

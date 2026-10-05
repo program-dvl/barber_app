@@ -11,26 +11,35 @@ class StaffAvailabilityResolver
     /** @return list<array{opens_at:string,closes_at:string,source:string}> */
     public function windows(StaffProfile $staff, Location $location, CarbonImmutable $localDate): array
     {
-        if ($staff->business_id !== $location->business_id || $staff->status !== 'active' || ! $staff->locations()->whereKey($location->id)->exists()) {
+        $assigned = $staff->relationLoaded('locations')
+            ? $staff->locations->contains('id', $location->id)
+            : $staff->locations()->whereKey($location->id)->exists();
+        if ($staff->business_id !== $location->business_id || $staff->status !== 'active' || ! $assigned) {
             return [];
         }
         $date = $localDate->setTimezone($location->time_zone)->toDateString();
         $day = $localDate->setTimezone($location->time_zone)->dayOfWeekIso;
-        $rules = $staff->availabilityRules()->where(fn ($query) => $query->whereNull('location_id')->orWhere('location_id', $location->id))->get();
+        $rules = ($staff->relationLoaded('availabilityRules') ? $staff->availabilityRules : $staff->availabilityRules()->get())
+            ->filter(fn ($rule) => $rule->location_id === null || (int) $rule->location_id === (int) $location->id);
         $dated = $rules->filter(fn ($rule) => $rule->starts_on && $rule->starts_on->toDateString() <= $date && ($rule->ends_on ?? $rule->starts_on)->toDateString() >= $date);
         if ($dated->contains(fn ($rule) => in_array($rule->kind, ['leave', 'holiday', 'sick_leave'], true) && ! $rule->starts_at)) {
             return [];
         }
 
         $temporary = $dated->where('kind', 'temporary_change');
-        $base = ($temporary->isNotEmpty() ? $temporary : $rules->where('kind', 'working')->where('day_of_week', $day))
+        $regular = $rules->where('kind', 'working')->where('day_of_week', $day)
+            ->filter(fn ($rule) => (! $rule->starts_on || $rule->starts_on->toDateString() <= $date)
+                && (! $rule->ends_on || $rule->ends_on->toDateString() >= $date));
+        $base = ($temporary->isNotEmpty() ? $temporary : $regular)
             ->sortBy('sequence')->map(fn ($rule) => ['opens_at' => $rule->starts_at, 'closes_at' => $rule->ends_at, 'source' => $rule->kind])->values()->all();
-        $unavailable = $rules->filter(function ($rule) use ($dated, $day): bool {
+        $unavailable = $rules->filter(function ($rule) use ($dated, $day, $date): bool {
             if (! in_array($rule->kind, ['break', 'personal_block', 'leave', 'sick_leave'], true) || ! $rule->starts_at) {
                 return false;
             }
 
-            return ($rule->day_of_week && (int) $rule->day_of_week === $day) || $dated->contains(fn ($datedRule) => $datedRule->is($rule));
+            return ($rule->day_of_week && (int) $rule->day_of_week === $day
+                && (! $rule->starts_on || $rule->starts_on->toDateString() <= $date)
+                && (! $rule->ends_on || $rule->ends_on->toDateString() >= $date)) || $dated->contains(fn ($datedRule) => $datedRule->is($rule));
         });
         foreach ($unavailable as $block) {
             $base = $this->subtract($base, $block->starts_at, $block->ends_at);

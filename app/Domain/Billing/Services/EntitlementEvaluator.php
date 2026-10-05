@@ -42,6 +42,17 @@ class EntitlementEvaluator
             return null;
         }
 
+        if ($subscription->capacity_snapshot) {
+            $capacity = $subscription->capacity_snapshot;
+
+            return match ($key) {
+                'locations.max' => $capacity['locations'],
+                'staff.max' => $capacity['staff'],
+                'messaging.monthly_allowance' => $capacity['sms_monthly_allowance'],
+                default => $capacity['features'][$key] ?? null,
+            };
+        }
+
         return $subscription->plan->entitlements()
             ->where('entitlement_definition_id', $definition->getKey())
             ->where('effective_from', '<=', $at)

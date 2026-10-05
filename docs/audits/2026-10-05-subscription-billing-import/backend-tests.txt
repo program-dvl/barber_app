@@ -1,0 +1,748 @@
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true
+
+   PASS  Tests\Unit\TranslationTest
+  ✓ translation strings                                                  0.11s  
+
+   PASS  Tests\Feature\AccountNotifications\BusinessEmailJourneyTest
+  ✓ it sends the verified owner journey from registration through works… 0.68s  
+  ✓ it alerts once for a known browser and again when a different brows… 1.34s  
+  ✓ it notifies both sides of an email change without exposing the full… 0.02s  
+  ✓ it sends dedicated two-factor security notices for critical changes  0.02s  
+  ✓ it records accepted mail without retaining the full recipient addre… 0.09s  
+  ✓ it renders the ClipperDesk mail theme and exposes the SES configura… 0.03s  
+  ✓ it prunes expired browser activity using the configured retention b… 0.02s  
+  ✓ it notifies owners about platform status and approved support acces… 0.05s  
+
+   WARN  Tests\Feature\ApiTokenPermissionsTest
+  - api token permissions can be updated → API support is not enabled.   0.02s  
+
+   PASS  Tests\Feature\AuthenticationTest
+  ✓ login screen can be rendered                                         0.08s  
+  ✓ users can authenticate using the login screen                        0.38s  
+  ✓ users can not authenticate with invalid password                     0.19s  
+
+   PASS  Tests\Feature\Billing\BillingWorkspaceTest
+  ✓ it returns bounded invoice history and safe summary fields without…  0.12s  
+  ✓ it shows only approved plan prices and retains historical subscript… 0.08s  
+  ✓ it separates outstanding currencies and excludes paid invoices from… 0.04s  
+  ✓ it returns secure invoice details without provider metadata and blo… 0.07s  
+  ✓ it filters unsafe and non-provider document links                    0.04s  
+  ✓ it does not grant staff access to billing refresh or invoice eviden… 0.05s  
+  ✓ it ignores provider events without ownership identifiers             0.04s  
+  ✓ it rejects conflicting provider customer and tenant metadata with (… 0.04s  
+  ✓ it rejects conflicting provider customer and tenant metadata with (… 0.04s  
+  ✓ it preserves paid evidence against older and same-second failed inv… 0.04s  
+  ✓ it preserves paid evidence against older and same-second failed inv… 0.04s  
+  ✓ it sums all provider discounts and taxes and preserves exact retry…  0.04s  
+  ✓ it records a provider-confirmed future billing phase without granti… 0.05s  
+  ✓ it accepts optional cancellation feedback and makes exact replay a…  0.06s  
+  ✓ it rejects stale cancellation and reactivation after paid access en… 0.05s  
+  ✓ it reactivates a scheduled cancellation once and preserves replay s… 0.06s  
+  ✓ it throttles freshly verified account refresh without another provi… 0.05s  
+  ✓ it does not send a new failure notice for an older subscription sna… 0.04s  
+
+   PASS  Tests\Feature\Billing\CapacityBillingTest
+  ✓ it prices solo shops and larger teams without rounding or staff cap… 0.02s  
+  ✓ it prices solo shops and larger teams without rounding or staff cap… 0.01s  
+  ✓ it prices solo shops and larger teams without rounding or staff cap… 0.01s  
+  ✓ it prices solo shops and larger teams without rounding or staff cap… 0.01s  
+  ✓ it prices solo shops and larger teams without rounding or staff cap… 0.01s  
+  ✓ it does not present draft country prices as purchasable public pric… 0.01s  
+  ✓ it requires both approval and an exactly verified rate revision      0.01s  
+  ✓ it uses local currency rate cards without exchanging customer invoi… 0.01s  
+  ✓ it reviews expansion without granting capacity and claims the revie… 0.04s  
+  ✓ it schedules reduced capacity at renewal and prevents deleting acti… 0.05s  
+  ✓ it rejects stale and expired reviews before dispatching payment wit… 0.06s  
+  ✓ it rejects stale and expired reviews before dispatching payment wit… 0.06s  
+  ✓ it protects billing review and purchases from staff and other tenan… 0.07s  
+  ✓ it creates one capacity checkout and reuses its exact replay         0.06s  
+  ✓ it identifies the base item independently of provider item order     0.01s  
+  ✓ it rejects unknown extra items mismatched currency and duplicate co… 0.01s  
+  ✓ it rejects unknown extra items mismatched currency and duplicate co… 0.01s  
+  ✓ it rejects unknown extra items mismatched currency and duplicate co… 0.01s  
+  ✓ it applies signed active quantities and ignores stale provider expa… 0.04s  
+  ✓ it keeps current quantities when Stripe has a pending unpaid update  0.04s  
+  ✓ it reconciles a future capacity phase without reducing current acce… 0.05s  
+  ✓ it counts a bookable person once across branches and excludes login… 0.04s  
+  ✓ it resets included SMS monthly within an annual subscription and cl… 0.04s  
+  ✓ it adds prepaid credits only after exact owned payment and handles…  0.04s  
+  ✓ it rejects topup currency amount and ownership mismatches with ('cu… 0.04s  
+  ✓ it rejects topup currency amount and ownership mismatches with ('cu… 0.04s  
+  ✓ it rejects topup currency amount and ownership mismatches with ('am… 0.04s  
+  ✓ it rejects topup currency amount and ownership mismatches with ('id… 0.04s  
+  ✓ it reserves complete segment cost without overspending and releases… 0.05s  
+  ✓ it counts GSM extensions unicode and emojis as actual SMS segments   0.01s  
+  ✓ it shows the total capacity charge rather than just the base item o… 0.08s  
+  ✓ it spends prepaid credits after included allowance is fully used an… 0.05s  
+  ✓ it verifies asynchronous taxed text payments once without accepting… 0.04s  
+  ✓ it closes overlapping legacy annual allowance when explicitly migra… 0.05s  
+  ✓ it releases an expired pending expansion but ignores an older expir… 0.04s  
+  ✓ it rejects provider quantities that renew on different dates         0.01s  
+  ✓ it recovers an uncertain checkout using the same attempt and paymen… 0.06s  
+  ✓ it sends pending payment and fixed proration with all component qua… 0.07s  
+  ✓ it creates a finite renewal schedule and retains automatic tax thro… 0.04s  
+
+   PASS  Tests\Feature\Billing\StripeCatalogSyncCommandTest
+  ✓ it keeps the approved Stripe catalog centralized and does not write… 0.02s  
+  ✓ it fails closed when any required Stripe price mapping is absent     0.02s  
+  ✓ it provisions missing Stripe products and prices and synchronizes g… 0.02s  
+  ✓ it requires explicit force before provisioning against a live Strip… 0.01s  
+  ✓ it rejects a publishable Stripe key before attempting catalog provi… 0.01s  
+  ✓ it keeps the LaraFast create command as a safe alias to the Busines… 0.02s  
+
+   PASS  Tests\Feature\Billing\SubscriptionLifecycleTest
+  ✓ it starts business-owned trials on Stripe and restricts expired tri… 0.08s  
+  ✓ it creates one reusable hosted Stripe checkout from an approved ser… 0.06s  
+  ✓ it expires a competing Stripe Checkout before replacing it with ano… 0.06s  
+  ✓ it fails closed while another request is still preparing the Stripe… 0.05s  
+  ✓ it fails closed before checkout when Stripe webhook verification is… 0.05s  
+  ✓ it rejects a forged or unconfigured Stripe price before contacting…  0.06s  
+  ✓ it uses signed idempotent webhooks as the authority for checkout ac… 0.05s  
+  ✓ it converges when Stripe delivers subscription state before the Che… 0.05s  
+  ✓ it does not activate a superseded Checkout attempt delivered late b… 0.04s  
+  ✓ it moves renewal failures through past due and read-only restrictio… 0.05s  
+  ✓ it projects current Stripe invoice payloads that nest subscription…  0.04s  
+  ✓ it maps Stripe unpaid and paused states to read-only access with ('… 0.04s  
+  ✓ it maps Stripe unpaid and paused states to read-only access with ('… 0.04s  
+  ✓ it keeps subscription entitlements separate from member permissions  0.07s  
+  ✓ it prevents cross-business checkout status and billing access        0.06s  
+  ✓ it rejects invalid Stripe signatures and accepts a valid signed eve… 0.11s  
+  ✓ it schedules an over-limit downgrade without deleting business reso… 0.05s  
+  ✓ it opens a Stripe-hosted confirmation for an upgrade and clears a l… 0.06s  
+  ✓ it allows an interval switch through Stripe but does not offer self… 0.06s  
+  ✓ it reports a Stripe-confirmed plan change without waiting on a brow… 0.06s  
+  ✓ it clears a legacy direct-update record when Stripe expires its pen… 0.05s  
+
+   PASS  Tests\Feature\BrowserSessionsTest
+  ✓ other browser sessions can be logged out                             0.56s  
+
+   PASS  Tests\Feature\BusinessConfiguration\BusinessActivationJourneyTest
+  ✓ it takes a new owner from focused activation workspaces to a receiv… 0.44s  
+  ✓ it keeps activation workspaces role and tenant scoped                0.10s  
+  ✓ it makes multi-location capacity and editable standard team titles…  0.12s  
+
+   PASS  Tests\Feature\BusinessConfiguration\BusinessSetupReadinessTest
+  ✓ it is operational before publication without logos providers or pub… 0.11s  
+  ✓ it recomputes readiness after configuration breaks elsewhere with (… 0.06s  
+  ✓ it recomputes readiness after configuration breaks elsewhere with (… 0.06s  
+  ✓ it recomputes readiness after configuration breaks elsewhere with (… 0.07s  
+  ✓ it recomputes readiness after configuration breaks elsewhere with (… 0.06s  
+  ✓ it recomputes readiness after configuration breaks elsewhere with (… 0.06s  
+  ✓ it recomputes readiness after configuration breaks elsewhere with (… 0.06s  
+  ✓ it recomputes readiness after configuration breaks elsewhere with (… 0.06s  
+  ✓ it recomputes readiness after configuration breaks elsewhere with (… 0.06s  
+  ✓ it recomputes readiness after configuration breaks elsewhere with (… 0.06s  
+  ✓ it recomputes readiness after configuration breaks elsewhere with (… 0.06s  
+  ✓ it recomputes readiness after configuration breaks elsewhere with (… 0.06s  
+  ✓ it recomputes readiness after configuration breaks elsewhere with (… 0.06s  
+  ✓ it does not treat an assignment expiring before opening as a delive… 0.06s  
+  ✓ it keeps internal bookings ready while online staff visibility is o… 0.06s  
+  ✓ it allows removing every starter suggestion and does not put them b… 0.06s  
+  ✓ it rolls starter initialization back and recovers after validation…  0.06s  
+  ✓ it preserves prepared commerce settings rather than resetting them   0.05s  
+  ✓ it will not restore starter defaults over an established business    0.04s  
+  ✓ it invalidates saved starter choices when business type changes and… 0.04s  
+  ✓ it reviews and saves split opening hours idempotently without rewri… 0.08s  
+  ✓ it rejects changed payloads stale reviews and active client holds w… 0.07s  
+  ✓ it rejects changed payloads stale reviews and active client holds w… 0.07s  
+  ✓ it rejects changed payloads stale reviews and active client holds w… 0.06s  
+  ✓ it rejects changed payloads stale reviews and active client holds w… 0.07s  
+  ✓ it rejects changed payloads stale reviews and active client holds w… 0.07s  
+  ✓ it rejects overlapping and backwards hours with an actionable field… 0.07s  
+  ✓ it enforces tenant and branch scope for the summary and new editor   0.10s  
+  ✓ it loads readiness in a bounded number of queries even with a large… 0.12s  
+  ✓ it saves draft public profile fields without blocking internal oper… 0.08s  
+  ✓ it rolls profile and commerce updates back when the booking slug is… 0.07s  
+  ✓ it rejects stale setup profile revisions and preserves the newer sa… 0.11s  
+  ✓ it saves the calendar interval from booking preferences and rejects… 0.11s  
+  ✓ it prepares an operational starter workspace without requiring publ… 0.07s  
+
+   PASS  Tests\Feature\BusinessConfiguration\ConfigurationFoundationTest
+  ✓ it reports explicit readiness blockers and verifies the under-30-mi… 0.24s  
+  ✓ it enforces configuration role permissions and tenant isolation at…  0.13s  
+  ✓ it offers the complete ISO country catalog and synchronizes regiona… 0.06s  
+  ✓ it creates a complete first bookable path through the guided interf… 0.07s  
+  ✓ it keeps booking slugs unique and redirects every prior alias to th… 0.05s  
+  ✓ it resolves local normal and special hours with closure precedence…  0.04s  
+  ✓ it stores resource maintenance as UTC plus original local intent     0.04s  
+  ✓ it subtracts recurring breaks and dated leave from staff availabili… 0.04s  
+  ✓ it rejects overlapping and travel-impossible staff schedules while…  0.01s  
+  ✓ it resolves staff-specific commercial and duration variants and pre… 0.04s  
+  ✓ it aggregates service and add-on resource quantities without claimi… 0.04s  
+  ✓ it persists exact impacted-appointment previews through the schedul… 0.04s  
+  ✓ it requires a fresh impact preview before changing a published sche… 0.06s  
+  ✓ it previews imports, requires duplicate review, exports errors priv… 0.05s  
+  ✓ it enforces staff entitlements when an import would increase usage   0.04s  
+  ✓ it offers one stable read-only configuration contract to the future… 0.01s  
+
+   PASS  Tests\Feature\BusinessConfiguration\GuidedOnboardingExperienceTest
+  ✓ it turns four short owner decisions into an editable private starte… 0.21s  
+  ✓ it prepares type-specific categories but only selected services for… 0.06s  
+  ✓ it prepares type-specific categories but only selected services for… 0.05s  
+  ✓ it prepares type-specific categories but only selected services for… 0.05s  
+  ✓ it prepares type-specific categories but only selected services for… 0.05s  
+  ✓ it prepares type-specific categories but only selected services for… 0.05s  
+  ✓ it prepares type-specific categories but only selected services for… 0.05s  
+  ✓ it prepares type-specific categories but only selected services for… 0.05s  
+  ✓ it prepares type-specific categories but only selected services for… 0.05s  
+  ✓ it prepares type-specific categories but only selected services for… 0.05s  
+  ✓ it prepares type-specific categories but only selected services for… 0.05s  
+  ✓ it prepares type-specific categories but only selected services for… 0.05s  
+  ✓ it prepares type-specific categories but only selected services for… 0.05s  
+  ✓ it reuses tenant categories case-insensitively without restoring ar… 0.06s  
+  ✓ it does not add a starter category set over an existing service cat… 0.05s  
+  ✓ it keeps existing and partially configured businesses out of automa… 0.09s  
+  ✓ it rejects another tenant and mismatched regional answers during gu… 0.11s  
+  ✓ it serves private booking artwork only for a live public business    0.05s  
+
+   PASS  Tests\Feature\BusinessConfiguration\ServiceCatalogTest
+  ✓ it projects current versions, add-ons, branch overrides and setup h… 0.09s  
+  ✓ it saves staff and branch overrides through the same resolver and r… 0.08s  
+  ✓ it does not reactivate an inactive service or publish an internal s… 0.07s  
+  ✓ it rejects stale configuration, changed appointment reviews and unr… 0.08s  
+  ✓ it preserves dated staff variants and prevents edits during live bo… 0.07s  
+  ✓ it clears zeroed processing and cleanup in effective segments witho… 0.06s  
+  ✓ it creates an incomplete service safely, replays once, and refuses…  0.07s  
+  ✓ it validates money and assignments, denies reception and isolates t… 0.17s  
+  ✓ it manages categories inline without deleting historical relationsh… 0.06s  
+  ✓ it includes newly introduced staff processing and cleanup in canoni… 0.04s  
+  ✓ it duplicates segments and resource configuration with new identiti… 0.07s  
+  ✓ it prevents a branch manager from changing shared staff capabilitie… 0.10s  
+  ✓ it projects qualified Calendar variants and prevents invalid added…  0.12s  
+  ✓ it places introduced base processing before cleanup while retaining… 0.06s  
+  ✓ it validates imported duration and currency and blocks unreviewed e… 0.05s  
+  ✓ it presents service changes in Activity without exposing descriptio… 0.02s  
+  ✓ it loads larger catalogues without per-service query growth          0.18s  
+  ✓ it retains inactive branch and professional configuration without m… 0.07s  
+  ✓ it projects current public staff and branch prices without private…  0.05s  
+
+   PASS  Tests\Feature\ClientRecords\ClientCrmConsentTest
+  ✓ it uses conservative normalized identity rules and creates review c… 0.05s  
+  ✓ it lets authorized front desk staff add a client manually without c… 0.09s  
+  ✓ it rejects stale concurrent profile edits and revokes vulnerable ap… 0.05s  
+  ✓ it updates tenant-scoped tags and preferred employee and services f… 0.06s  
+  ✓ it previews and merges every current client relationship while pres… 0.06s  
+  ✓ it keeps submitted wording answers signatures identity and appointm… 0.06s  
+  ✓ it enforces sensitive-note permissions and tenant-scoped client rou… 0.15s  
+  ✓ it keeps files tenant-private and rejects expired bearer links       0.05s  
+  ✓ it completes minimized export correction and withdrawal while polic… 0.05s  
+
+   PASS  Tests\Feature\ClientRecords\ClientWorkspaceTest
+  ✓ it searches names without a blank phone wildcard and normalizes pho… 0.16s  
+  ✓ it filters and sorts from all scoped visits and excludes future ter… 0.10s  
+  ✓ it projects exact totals independently from bounded history and nev… 0.13s  
+  ✓ it calculates ledger net receipts and open balances per currency an… 0.09s  
+  ✓ it redacts finance contacts and sensitive context and scopes own vi… 0.12s  
+  ✓ it warns before different people sharing contacts and keeps exact i… 0.06s  
+  ✓ it keeps normalized identity consistent when authorized contacts ar… 0.04s  
+  ✓ it validates canonical client handoffs and rejects foreign or inact… 0.17s  
+  ✓ it rebooks with current eligible services and requires review of un… 0.15s  
+  ✓ it attributes owner notes through their tenant audit without exposi… 0.09s  
+  ✓ it keeps directory query growth constant from one to thirty clients  0.06s  
+  ✓ it exposes only permissioned duplicate reviews and handles punctuat… 0.11s  
+
+   PASS  Tests\Feature\Communications\NotificationWorkspaceTest
+  ✓ it projects existing rules and both channels without credentials or… 0.07s  
+  ✓ it saves a first draft without suppressing the live default and pub… 0.06s  
+  ✓ it validates event-specific variables, malformed syntax, HTML and d… 0.07s  
+  ✓ it rejects stale publishes and cross-tenant template preview and pu… 0.07s  
+  ✓ it paginates history, filters local dates and searches exact encryp… 0.15s  
+  ✓ it allows reception to view branch-scoped history while denying edi… 0.11s  
+  ✓ it requires a current settings revision and audits only saved chang… 0.06s  
+  ✓ it serializes retry commands and never retries a queued or accepted… 0.07s  
+  ✓ it keeps future reminder links usable through their actual send tim… 0.09s  
+  ✓ it suppresses queued SMS when its captured sender becomes inactive…  0.05s  
+  ✓ it does not revive an elapsed day-before reminder by shifting it ou… 0.04s  
+  ✓ it opens the exact issued receipt through a signed private link and… 0.21s  
+  ✓ it retains explicit client channel withdrawals when editing other p… 0.07s  
+
+   PASS  Tests\Feature\Communications\ReliableCommunicationsTest
+  ✓ it creates at most one message per intended event channel and recip… 0.05s  
+  ✓ it keeps transactional email on by default and honours an explicit…  0.05s  
+  ✓ it kicks new operational events immediately and sweeps due delivery… 0.05s  
+  ✓ it does not contact a provider for duplicate delivery jobs once a m… 0.04s  
+  ✓ it validates allow-listed templates, uses safe fallbacks, and denie… 0.05s  
+  ✓ it calculates quiet-hour boundaries and preserves explicit offsets…  0.04s  
+  ✓ it schedules one day-before reminder and creates a replacement afte… 0.05s  
+  ✓ it separates transactional necessity, SMS opt-in, marketing consent… 0.04s  
+  ✓ it keeps promotional SMS paused even when legacy marketing settings… 0.04s  
+  ✓ it bounds provider retries, reuses one provider idempotency key, an… 0.06s  
+  ✓ it atomically enforces the plan mobile-message allowance without ch… 0.05s  
+  ✓ it deduplicates provider callbacks and ignores an older callback th… 0.05s  
+  ✓ it rejects unsigned callbacks and accepts valid Resend and Twilio w… 0.13s  
+  ✓ it suppresses invalid destinations and cancelled or rescheduled rem… 0.05s  
+  ✓ it rechecks consent immediately before delivery and safely replays…  0.11s  
+  ✓ it creates revocable purpose-bound short-lived action links and exp… 0.04s  
+  ✓ it creates only one SMS message when deferred channel data is still… 0.05s  
+  ✓ it suppresses an old queued deferred-channel message before provide… 0.05s  
+  ✓ it records SMS STOP once and withdraws text consent immediately      0.04s  
+  ✓ it prepares an entitled branded sender without exposing provider cr… 0.08s  
+  ✓ it rejects deferred channels from the owner notification settings    0.05s  
+  ✓ it keeps sms tests free and requires explicit switches before sandb… 0.01s  
+  ✓ it uses free-form whatsapp content only for an open branded convers… 0.01s  
+
+   PASS  Tests\Feature\Communications\SesClientDeliveryTest
+  ✓ it uses configured SES with a real message identifier, escaped HTML… 0.05s  
+  ✓ it only retries explicit SES throttling and holds uncertain accepta… 0.05s  
+  ✓ it accepts signed SES delivery and bounce evidence idempotently wit… 0.11s  
+  ✓ it rejects unsigned, wrong-topic and redirected certificates before… 0.07s  
+  ✓ it keeps local email simulation separate from SES delivery           0.05s  
+  ✓ it confirms only a signed subscription for the explicitly configure… 0.06s  
+  ✓ it asks SNS to retry a delivery callback that races the provider re… 0.11s  
+  ✓ it does not move uncertain historical provider attempts to SES auto… 0.05s  
+
+   WARN  Tests\Feature\CreateApiTokenTest
+  - api tokens can be created → API support is not enabled.              0.01s  
+
+   WARN  Tests\Feature\CreateTeamTest
+  - teams can be created → Jetstream Team is intentionally superseded by Business memberships.
+
+   PASS  Tests\Feature\Dashboard\DailyWorkspaceTest
+  ✓ it renders a real operational dashboard with next actions and local… 0.09s  
+  ✓ it keeps a professional within their schedule and removes peer and…  0.09s  
+  ✓ it fails closed for own-calendar permission without a linked staff…  0.09s  
+  ✓ it gives accountants financial context without schedules or client…  0.09s  
+  ✓ it checks custom permissions separately for contact notes and appoi… 0.11s  
+  ✓ it rejects unassigned and foreign locations and malformed dates      0.10s  
+  ✓ it uses the location day and handles closing boundaries without dev… 0.12s  
+  ✓ it does not count active staff on full-day leave as scheduled        0.09s  
+  ✓ it bounds appointment payloads while keeping status totals exact     0.19s  
+  ✓ it transitions appointments idempotently and preserves stale versio… 0.06s  
+  ✓ it retains active work before finished history when the dashboard s… 0.19s  
+  ✓ it loads team availability without adding queries per staff member   0.07s  
+  ✓ it deep links cancelled visits with their status included in the ca… 0.09s  
+  ✓ it links an older unresolved checkout and denies checkout outside a… 0.13s  
+  ✓ it hides settled checkout actions and keeps unresolved checkout cou… 0.09s  
+
+   PASS  Tests\Feature\Database\FoundationMigrationRecoveryTest
+  ✓ it resumes partially applied foundation migrations without duplicat… 0.02s  
+  ✓ it repairs a missing inventory levels table without rerunning histo… 0.02s  
+  ✓ it repairs the active owner location foundation without broadening…  0.05s  
+
+   PASS  Tests\Feature\DeleteAccountTest
+  ✓ user accounts can be deleted                                         0.19s  
+  ✓ correct password must be provided before account can be deleted      0.22s  
+
+   WARN  Tests\Feature\DeleteApiTokenTest
+  - api tokens can be deleted → API support is not enabled.              0.02s  
+
+   WARN  Tests\Feature\DeleteTeamTest
+  - teams can be deleted → Jetstream Team is intentionally superseded by Business memberships.
+  - personal teams cant be deleted → Jetstream Team is intentionally superseded by Business memberships.
+
+   PASS  Tests\Feature\EmailVerificationTest
+  ✓ email verification screen can be rendered                            0.03s  
+  ✓ email can be verified                                                0.02s  
+  ✓ email can not verified with invalid hash                             0.03s  
+
+   PASS  Tests\Feature\ExampleTest
+  ✓ the application returns a successful response                        0.02s  
+
+   PASS  Tests\Feature\GoogleAuthenticationTest
+  ✓ google redirect is stateful google only and remembers signup intent  0.02s  
+  ✓ existing user can sign in and google identity is linked without sto… 0.04s  
+  ✓ verified google identity completes an existing pending owner onboar… 0.07s  
+  ✓ new google user finishes business details before verified owner wor… 0.24s  
+  ✓ google callback rejects unverified email claims                      0.02s  
+  ✓ google cannot replace an existing account link for the same email    0.02s  
+  ✓ google sign in preserves the existing two factor challenge           0.02s  
+
+   PASS  Tests\Feature\InventoryCommissionReporting\InventoryCommissionReportingTest
+  ✓ it deducts product stock exactly once and preserves explicit refund… 0.06s  
+  ✓ it freezes effective commission rules, calculates after discount, a… 0.06s  
+  ✓ it reconciles dashboard, reports, sale lines, payments, CSV, and pr… 0.08s  
+  ✓ it uses governing location-day boundaries instead of server dates    0.06s  
+  ✓ it enforces role, staff, location, and cross-tenant export scope     0.14s  
+  ✓ it publishes the complete metric and event catalogs and rejects per… 0.09s  
+  ✓ it imports and exports product CSV and keeps receipts and manual ch… 0.05s  
+  ✓ it keeps realistic report volume bounded and indexed                 0.08s  
+
+   WARN  Tests\Feature\InviteTeamMemberTest
+  - team members can be invited to team → Team invitations not enabled.  0.02s  
+  - team member invitations can be cancelled → Team invitations not ena… 0.01s  
+
+   PASS  Tests\Feature\InvoiceTest
+  ✓ creating invoices assigns global invoice numbers                     0.01s  
+  ✓ invoice item totals are calculated and rolled up                     0.01s  
+  ✓ invoice download route returns pdf response                          0.02s  
+  ✓ invoice download denies another authenticated user                   0.03s  
+
+   PASS  Tests\Feature\LaunchHardening\DemoTenantChargeabilityTest
+  ✓ it seeds a representative shop with an accessible trial billing jou… 0.26s  
+
+   WARN  Tests\Feature\LeaveTeamTest
+  - users can leave teams → Jetstream Team is intentionally superseded by Business memberships.
+  - team owners cant leave their own team → Jetstream Team is intentionally superseded by Business memberships.
+
+   PASS  Tests\Feature\Marketing\FeaturesTest
+  ✓ it publishes the evidence-backed feature hub                         0.03s  
+  ✓ it publishes unique substantive feature pages with ('online-booking… 0.02s  
+  ✓ it publishes unique substantive feature pages with ('calendar-and-w… 0.02s  
+  ✓ it publishes unique substantive feature pages with ('client-managem… 0.02s  
+  ✓ it publishes unique substantive feature pages with ('checkout-and-r… 0.02s  
+  ✓ it does not expose unapproved feature permutations                   0.03s  
+
+   PASS  Tests\Feature\Marketing\FrontsiteQualityTest
+  ✓ it declares the launch language without publishing fake locale alte… 0.02s  
+  ✓ it keeps the shared public accessibility foundations present         0.01s  
+  ✓ it keeps public font and marketing-image files within component bud… 0.01s  
+
+   PASS  Tests\Feature\Marketing\GeoAeoConsistencyTest
+  ✓ it keeps the canonical ClipperDesk definition aligned in visible an… 0.01s  
+  ✓ it contains no machine-only or unsupported answer-engine tactics     0.01s  
+  ✓ it keeps generic acquisition pages broad while allowing industry pa… 0.01s  
+
+   PASS  Tests\Feature\Marketing\HomepageTest
+  ✓ it renders a truthful ClipperDesk homepage with unique metadata      0.02s  
+  ✓ it uses one page heading and only valid homepage destinations        0.01s  
+
+   PASS  Tests\Feature\Marketing\PricingTest
+  ✓ it renders an honest unavailable state when provider prices are not… 0.03s  
+  ✓ it presents only the complete effective server-owned catalog and ca… 0.02s  
+  ✓ it preserves an allow-listed plan preference through registration a… 0.21s  
+  ✓ it excludes expired prices from a public selection                   0.03s  
+
+   PASS  Tests\Feature\Marketing\PublicCrawlTest
+  ✓ it crawls every curated sitemap URL as a canonical indexable 200 pa… 0.16s  
+  ✓ it keeps attribution-like query values out of canonical identity     0.02s  
+
+   PASS  Tests\Feature\Marketing\PublicDesignSystemTest
+  ✓ it renders the named public home route with the marketing shell con… 0.03s  
+  ✓ it keeps marketing navigation on real named routes with accessible…  0.01s  
+  ✓ it provides an authenticated dashboard action without a signup loop  0.05s  
+
+   PASS  Tests\Feature\Marketing\ResourcesTest
+  ✓ it publishes a focused resources hub and two maintained guides       0.03s  
+  ✓ it keeps legacy active articles quarantined until every publication… 0.03s  
+  ✓ it publishes reviewed article metadata and sanitized markdown witho… 0.03s  
+  ✓ it strips unsafe html and unsafe url protocols in the renderer       0.01s  
+
+   PASS  Tests\Feature\Marketing\SolutionsTest
+  ✓ it publishes the supported solution hub                              0.02s  
+  ✓ it publishes differentiated supported business pages with ('barbers… 0.02s  
+  ✓ it publishes differentiated supported business pages with ('salons'… 0.02s  
+  ✓ it publishes differentiated supported business pages with ('indepen… 0.02s  
+  ✓ it publishes differentiated supported business pages with ('spas',…  0.02s  
+  ✓ it publishes differentiated supported business pages with ('nail-sa… 0.02s  
+  ✓ it publishes differentiated supported business pages with ('medspas… 0.02s  
+  ✓ it publishes differentiated supported business pages with ('massage… 0.02s  
+  ✓ it publishes differentiated supported business pages with ('fitness… 0.02s  
+  ✓ it publishes differentiated supported business pages with ('physica… 0.02s  
+  ✓ it publishes differentiated supported business pages with ('health-… 0.02s  
+  ✓ it publishes differentiated supported business pages with ('tattoo-… 0.02s  
+  ✓ it publishes differentiated supported business pages with ('pet-gro… 0.02s  
+  ✓ it publishes differentiated supported business pages with ('tanning… 0.02s  
+  ✓ it keeps unsupported keyword permutations out and regulated claims…  0.03s  
+
+   PASS  Tests\Feature\Marketing\TechnicalSeoTest
+  ✓ it renders centralized metadata and a truthful schema graph for an…  0.03s  
+  ✓ it fails closed for auth booking legal secure and missing route fam… 0.02s  
+  ✓ it fails closed for auth booking legal secure and missing route fam… 0.02s  
+  ✓ it fails closed for auth booking legal secure and missing route fam… 0.03s  
+  ✓ it fails closed for auth booking legal secure and missing route fam… 0.03s  
+  ✓ it fails closed for auth booking legal secure and missing route fam… 0.03s  
+  ✓ it fails closed for auth booking legal secure and missing route fam… 0.02s  
+  ✓ it fails closed for auth booking legal secure and missing route fam… 0.02s  
+  ✓ it fails closed for auth booking legal secure and missing route fam… 0.02s  
+  ✓ it publishes a deterministic curated sitemap and canonical robots r… 0.02s  
+  ✓ it publishes unique useful search titles and descriptions across th… 0.17s  
+  ✓ it returns an accessible real 404 and keeps local-only og utilities… 0.02s  
+
+   PASS  Tests\Feature\Marketing\TrustPagesTest
+  ✓ it publishes factual company and security pages without invented as… 0.03s  
+  ✓ it publishes factual company and security pages without invented as… 0.02s  
+  ✓ it keeps stable legal acceptance routes and publishes substantive v… 0.04s  
+  ✓ it publishes a Stripe-aware refund policy with a clear request and…  0.03s  
+  ✓ it links the refund policy from evaluation checkout and the public…  0.01s  
+  ✓ it does not claim certifications or publish an unowned contact or s… 0.02s  
+
+   PASS  Tests\Feature\Marketing\UseCasesTest
+  ✓ it publishes a limited evidence-backed use-case hub                  0.03s  
+  ✓ it publishes each distinct problem answer with guidance and evidenc… 0.02s  
+  ✓ it publishes each distinct problem answer with guidance and evidenc… 0.02s  
+  ✓ it publishes each distinct problem answer with guidance and evidenc… 0.02s  
+  ✓ it publishes each distinct problem answer with guidance and evidenc… 0.02s  
+  ✓ it rejects thin or unsupported problem permutations                  0.03s  
+
+   PASS  Tests\Feature\MoneyCommerce\CheckoutWorkspaceTest
+  ✓ it preloads source prices and qualified variants, searches barcode…  0.08s  
+  ✓ it revalidates the quote and refuses price drift without creating a… 0.06s  
+  ✓ it enforces discounts, overrides and staff lineage on the server ra… 0.08s  
+  ✓ it requires adjustment reasons, preserves overridden sources and al… 0.07s  
+  ✓ it applies verified appointment deposits once and completes a fully… 0.07s  
+  ✓ it keeps partial payments open, replays exact split commands and re… 0.09s  
+  ✓ it rolls back the entire split if final stock fails and permits saf… 0.09s  
+  ✓ it scopes history and receipt capabilities separately and denies fo… 0.21s  
+  ✓ it paginates and filters history by reference, staff, status and lo… 0.15s  
+  ✓ it records append-only manual refunds with cumulative stock bounds…  0.10s  
+  ✓ it allows accountants to inspect history without preparing or takin… 0.08s  
+  ✓ it applies a later verified deposit to a saved sale and safely repl… 0.07s  
+  ✓ it completes a fully discounted zero-value sale without fabricating… 0.07s  
+  ✓ it does not apply deposit evidence belonging to another tenant or a… 0.08s  
+
+   PASS  Tests\Feature\MoneyCommerce\MoneyCommerceTest
+  ✓ it reconciles a deposit and split tender, preserves a partial refun… 0.05s  
+  ✓ it denies an excessive unapproved discount and records a reasoned c… 0.04s  
+  ✓ it deduplicates and orders verified provider evidence without losin… 0.04s  
+  ✓ it resolves no, fixed, percentage, full, new-client, threshold, and… 0.05s  
+  ✓ it keeps payment access tenant-scoped and preserves an explicit man… 0.06s  
+  ✓ it prints receipts in the appointment time zone without rewriting t… 0.06s  
+
+   PASS  Tests\Feature\PasswordConfirmationTest
+  ✓ confirm password screen can be rendered                              0.03s  
+  ✓ password can be confirmed                                            0.19s  
+  ✓ password is not confirmed with invalid password                      0.23s  
+
+   PASS  Tests\Feature\PasswordResetTest
+  ✓ reset password link screen can be rendered                           0.03s  
+  ✓ reset password link can be requested                                 0.23s  
+  ✓ reset password screen can be rendered                                0.23s  
+  ✓ password can be reset with valid token                               0.58s  
+
+   PASS  Tests\Feature\PlatformAccess\AuditEventPresentationTest
+  ✓ it presents meaningful billing changes without exposing private pay… 0.04s  
+  ✓ it does not present unchanged fields, unknown fields, or missing ca… 0.01s  
+  ✓ it keeps readable activity scoped to the authorised business         0.08s  
+  ✓ it resolves role names only within the event business                0.05s  
+
+   PASS  Tests\Feature\PlatformAccess\AuditEventTest
+  ✓ it writes tenant-attributed redacted append-only audit events        0.04s  
+
+   PASS  Tests\Feature\PlatformAccess\HttpSecurityHardeningTest
+  ✓ it adds browser security and generated correlation headers           0.03s  
+  ✓ it accepts only UUID correlation identifiers from callers            0.03s  
+  ✓ it prevents browser storage of authenticated and token-protected re… 0.03s  
+
+   PASS  Tests\Feature\PlatformAccess\PlatformOperationsTest
+  ✓ it separates platform roles and enforces MFA plus idle and absolute… 0.07s  
+  ✓ it returns only safe tenant summaries and rejects identifier manipu… 0.06s  
+  ✓ it requires approved scoped expiring support access and makes activ… 0.11s  
+  ✓ it ends an active support session when its grant expires             0.05s  
+  ✓ it revokes support grants immediately and preserves immutable entry… 0.05s  
+  ✓ it restricts bulk export attempts, raises an alert, and creates onl… 0.06s  
+  ✓ it manages application-owned flags notices and append-only internal… 0.05s  
+  ✓ it replays a verified provider failure once and returns the origina… 0.05s  
+  ✓ it alerts when one operator enters an unusual number of tenants in…  0.07s  
+  ✓ it quarantines legacy Filament identity and permission editors afte… 0.01s  
+
+   PASS  Tests\Feature\PlatformAccess\TeamAccessExperienceTest
+  ✓ it creates a bookable team profile and secure login invitation in o… 0.13s  
+  ✓ it lets a new invitee create a password and join the correct worksp… 0.24s  
+  ✓ it lets an owner tailor module access and revoke it with complete a… 0.11s  
+  ✓ it prevents a manager from granting access beyond their own role     0.06s  
+
+   PASS  Tests\Feature\PlatformAccess\TenantIsolationTest
+  ✓ it provisions the documented starter-role authorization matrix with… 0.06s  
+  ✓ it provisions the documented starter-role authorization matrix with… 0.06s  
+  ✓ it provisions the documented starter-role authorization matrix with… 0.06s  
+  ✓ it provisions the documented starter-role authorization matrix with… 0.06s  
+  ✓ it provisions the documented starter-role authorization matrix with… 0.06s  
+  ✓ it keeps permissions distinct when one user belongs to two business… 0.05s  
+  ✓ it supports audited custom direct permission sets without changing…  0.05s  
+  ✓ it supports fully custom tenant roles with an exact permission set   0.05s  
+  ✓ it layers tenant membership, scoped route binding, and policy check… 0.08s  
+  ✓ it binds an expiring invitation to its business, role, locations, s… 0.07s  
+  ✓ it rejects cross-tenant identifiers while issuing invitations        0.05s  
+  ✓ it denies invitation issuance to a role without staff-management pe… 0.05s  
+  ✓ it rejects expired and revoked staff invitations                     0.06s  
+  ✓ it removes tenant access promptly and revokes active sessions and s… 0.06s  
+  ✓ it uses tenant-prefixed cache, private file, search, export, and jo… 0.05s  
+  ✓ it keeps platform roles separate from tenant access and requires ve… 0.08s  
+  ✓ it enforces verified launch identities and exposes only the reviewe… 0.05s  
+
+   PASS  Tests\Feature\PlatformAccess\WorkspaceAccessTest
+  ✓ it returns a polished setup state instead of a raw calendar authori… 0.11s  
+  ✓ it distinguishes role denial, membership location setup, and plan u… 0.12s  
+  ✓ it shares navigation decisions that agree with backend feature enfo… 0.11s  
+
+   PASS  Tests\Feature\ProductShellTest
+  ✓ it only references registered named routes from Salon Setup          0.04s  
+  ✓ it renders the public booking and secure self-service shells         0.05s  
+  ✓ it keeps shop shell routes behind authentication                     0.07s  
+  ✓ it renders the reusable interface pattern reference                  0.04s  
+  ✓ it renders the dashboard with tenant-scoped operational data         0.11s  
+  ✓ it renders every authenticated shop shell destination without domai… 0.11s  
+  ✓ it renders every authenticated shop shell destination without domai… 0.10s  
+  ✓ it renders focused location team and service activation workspaces…  0.19s  
+  ✓ it renders the implemented inventory and reporting workspaces        0.12s  
+  ✓ it renders the appointment-first checkout workspace                  0.08s  
+  ✓ it denies the platform shell to an ordinary authenticated user       0.03s  
+  ✓ it renders the distinct platform shell for the existing platform ad… 0.03s  
+  ✓ it does not expose unknown shell modules                             0.05s  
+  ✓ it defines semantic focus and reduced-motion foundations             0.01s  
+  ✓ it uses the accepted ClipperDesk product identity                    0.02s  
+
+   PASS  Tests\Feature\ProfileInformationTest
+  ✓ profile information can be updated                                   0.03s  
+  ✓ profile page renders without an active business context              0.03s  
+  ✓ profile page exposes only the users own billing workspace            0.06s  
+
+   PASS  Tests\Feature\PublicBooking\PublicBookingWaitlistTest
+  ✓ it books passwordlessly through one shared hold and commit engine w… 0.17s  
+  ✓ it confirms an unchanged hold after the service snapshot observatio… 0.17s  
+  ✓ it fails safely for changed policy expired flow and an unconnected…  0.29s  
+  ✓ it returns an actionable conflict when availability is requested wi… 0.05s  
+  ✓ it records a selected client cancellation reason through secure sel… 0.18s  
+  ✓ it keeps secure links purpose-bound expiring revocable and versione… 0.18s  
+  ✓ it deduplicates matching waitlist requests and awards one opening t… 0.19s  
+  ✓ it expires an offer while preserving its request for a later eligib… 0.12s  
+  ✓ it serves the mobile booking surface while resisting tenant and ide… 0.09s  
+  ✓ it lets a secure client join and leave a waitlist without reusing c… 0.19s  
+  ✓ it rate limits repeated public booking session creation              0.08s  
+  ✓ it shows visit time separately from reserved cleanup time without c… 0.05s  
+
+   WARN  Tests\Feature\RegistrationTest
+  ✓ registration screen can be rendered                                  0.03s  
+  - registration screen cannot be rendered if support is disabled → Reg… 0.01s  
+  ✓ new users can register                                               0.19s  
+  ✓ registration ignores a stale protected intended url                  0.19s  
+  ✓ inertia registration establishes the session before navigation       0.19s  
+  ✓ owner can register verify complete tenant onboarding and sign back…  0.64s  
+  ✓ default location provisioning reactivates and reuses the existing f… 0.09s  
+
+   WARN  Tests\Feature\RemoveTeamMemberTest
+  - team members can be removed from teams → Jetstream Team is intentionally superseded by Business memberships.
+  - only team owner can remove team members → Jetstream Team is intentionally superseded by Business memberships.
+
+   PASS  Tests\Feature\Reporting\ReportsWorkspaceTest
+  ✓ it keeps full SQL totals independent of pages and narrows search an… 0.09s  
+  ✓ it updates previous UTC boundaries and keeps DST and local midnight… 0.05s  
+  ✓ it separates sale-cohort receipts from transaction-date partial pay… 0.06s  
+  ✓ it preserves tax basis tips discounts deposits and current catalogu… 0.06s  
+  ✓ it never sums currencies and formats zero and three decimal currenc… 0.05s  
+  ✓ it counts distinct paying clients by their first sale before the se… 0.05s  
+  ✓ it independently restricts calendar-only staff and redacts financia… 0.05s  
+  ✓ it uses filtered cancellation denominators without summing or assig… 0.06s  
+  ✓ it uses Calendar windows and unions overlapping bookings while excl… 0.06s  
+  ✓ it uses measured walk-in waits and excludes missing measurements     0.05s  
+  ✓ it rejects unauthorized branches foreign filters mixed zones and ma… 0.08s  
+  ✓ it makes exports inert readable complete and private after permissi… 0.10s  
+  ✓ it classifies a returning client across currencies without adding u… 0.05s  
+  ✓ it rechecks own-compensation when downloading an existing all-team…  0.09s  
+  ✓ it keeps 5000-row totals exact with a bounded detail payload and co… 0.10s  
+  ✓ it runs every permitted empty report without fabricated rates or so… 0.09s  
+  ✓ it denies an existing protected-reason export after notes permissio… 0.08s  
+  ✓ it aligns comparison hours across a daylight-saving fallback and di… 0.05s  
+
+   PASS  Tests\Feature\RoadmapTest
+  ✓ it displays the roadmap page to guests                               0.04s  
+  ✓ it allows authenticated users to create a feature request            0.02s  
+  ✓ it requires authentication to create a feature request               0.02s  
+  ✓ it validates feature request fields                                  0.02s  
+  ✓ it allows authenticated users to vote on a feature                   0.02s  
+  ✓ it allows authenticated users to unvote a feature                    0.02s  
+  ✓ it requires authentication to vote on a feature                      0.02s  
+  ✓ it prevents duplicate votes from the same user                       0.01s  
+  ✓ it shows roadmaps ordered by votes                                   0.03s  
+  ✓ it marks roadmaps as voted by authenticated user                     0.03s  
+
+   PASS  Tests\Feature\SchedulingOperations\BookingEngineTest
+  ✓ it uses one query and commit rule engine and safely replays a direc… 0.20s  
+  ✓ it expires capacity holds deterministically and returns the stable…  0.07s  
+  ✓ it enforces pooled resource quantity when staff is independently fr… 0.06s  
+  ✓ it releases staff but retains configured resources through a proces… 0.07s  
+  ✓ it commits a segmented provider handoff atomically and leaves no pa… 0.06s  
+  ✓ it revalidates stale search and hides closure break maintenance and… 0.19s  
+  ✓ it handles local midnight and daylight-saving transitions as real i… 0.11s  
+  ✓ it honors preferred staff, falls back only when any qualified staff… 0.06s  
+  ✓ it confirms an unchanged hold once and rejects a hold whose commerc… 0.06s  
+  ✓ it prevents travel-impossible overlap when the same staff is reques… 0.06s  
+  ✓ it requires eligible add-ons and commits them as explicit contiguou… 0.06s  
+  ✓ it applies staff duration variants to explicit segment occupancy an… 0.06s  
+
+   PASS  Tests\Feature\SchedulingOperations\CalendarWalkInOperationsTest
+  ✓ it preserves unreadable contact and notes during a schedule change…  0.10s  
+  ✓ it enforces the complete controlled lifecycle with actor reason rep… 0.06s  
+  ✓ it revalidates reschedule resize reassign and manager policy overri… 0.07s  
+  ✓ it blocks time without bypassing capacity and returns accessible ca… 0.06s  
+  ✓ it operates a walk-in queue and never silently collides with the ne… 0.09s  
+  ✓ it records late overrun staff-unavailable and unexpected-closure re… 0.06s  
+  ✓ it enforces calendar and queue permissions, assigned locations, and… 0.23s  
+  ✓ it runs an idempotent production-like front-desk day simulation      0.51s  
+  ✓ it returns booking-policy feedback instead of an exception page for… 0.06s  
+  ✓ it cancels from the calendar, releases the default view, and keeps…  0.08s  
+  ✓ it creates and links a client as soon as a walk-in joins the queue   0.07s  
+  ✓ it records a full manual payment once and removes the settled visit… 0.11s  
+  ✓ it projects real schedule context even when appointment filters hid… 0.10s  
+  ✓ it limits calendar own staff options and hides protected payment an… 0.11s  
+  ✓ it selects an existing client explicitly and preserves the canonica… 0.12s  
+  ✓ it uses the selected clients saved formatted contacts before valida… 0.07s  
+  ✓ it allows an optional appointment phone for selected clients with m… 0.07s  
+  ✓ it allows an optional appointment phone for selected clients with m… 0.07s  
+  ✓ it reuses private saved client contacts without letting a restricte… 0.08s  
+  ✓ it still rejects invalid phone input when booking a new client       0.06s  
+  ✓ it projects overnight hours and full day leave without leaking leav… 0.05s  
+  ✓ it scopes existing client search and redacts contact fields before…  0.08s  
+  ✓ it keeps existing visits visible when their staff member becomes in… 0.10s  
+  ✓ it forecasts parallel staff capacity in queue order and protects fu… 0.13s  
+  ✓ it keeps walk-in identity start replay and completion synchronized…  0.12s  
+  ✓ it redacts queue contacts and notes and denies branch and tenant ov… 0.16s  
+  ✓ it does not invent a finish estimate or start another walk-in for a… 0.12s  
+  ✓ it keeps board query growth bounded as the waiting queue grows       0.17s  
+  ✓ it replays a rapid check-in without duplicating the client or queue… 0.07s  
+  ✓ it keeps a converted queue visit linked through Calendar replacemen… 0.07s  
+  ✓ it reuses formatted saved mobile details and explains invalid clien… 0.08s  
+  ✓ it rejects an expired start check without creating a partial appoin… 0.05s  
+  ✓ it does not accept a service from another branch into the queue      0.05s  
+
+   WARN  Tests\Feature\SchedulingOperations\MySqlBookingConcurrencyTest
+  - it serializes online-online and online-reception races on one staff member → Set BOOKING_MYSQL_INTEGRATION=1 to run destructive tests against the dedicated barber_app_booking_test database.
+  - it allows exactly one concurrent client profile edit from the same version → Set BOOKING_MYSQL_INTEGRATION=1 to run destructive tests against the dedicated barber_app_booking_test database.
+  - it serializes staff-free resource-busy and pooled resource quantity races → Set BOOKING_MYSQL_INTEGRATION=1 to run destructive tests against the dedicated barber_app_booking_test database.
+  - it prevents partial multi-segment handoff commits under parallel contention → Set BOOKING_MYSQL_INTEGRATION=1 to run destructive tests against the dedicated barber_app_booking_test database.
+  - it releases an expired hold safely while a competitor commits → Set BOOKING_MYSQL_INTEGRATION=1 to run destructive tests against the dedicated barber_app_booking_test database.
+  - it confirms an unchanged hold after MySQL normalizes JSON snapshot key order → Set BOOKING_MYSQL_INTEGRATION=1 to run destructive tests against the dedicated barber_app_booking_test database.
+  - it returns one appointment for genuinely parallel duplicate commands → Set BOOKING_MYSQL_INTEGRATION=1 to run destructive tests against the dedicated barber_app_booking_test database.
+  - it rejects a stale search result after another request claims it → Set BOOKING_MYSQL_INTEGRATION=1 to run destructive tests against the dedicated barber_app_booking_test database.
+  - it measures representative MySQL search and commit query performance → Set BOOKING_MYSQL_INTEGRATION=1 to run destructive tests against the dedicated barber_app_booking_test database.
+  - it serializes stale concurrent lifecycle edits without losing history → Set BOOKING_MYSQL_INTEGRATION=1 to run destructive tests against the dedicated barber_app_booking_test database.
+  - it atomically awards a controlled waitlist batch to only one parallel claimant → Set BOOKING_MYSQL_INTEGRATION=1 to run destructive tests against the dedicated barber_app_booking_test database.
+  - it measures a production-engine calendar projection with status and block cues → Set BOOKING_MYSQL_INTEGRATION=1 to run destructive tests against the dedicated barber_app_booking_test database.
+
+   PASS  Tests\Feature\Team\TeamWorkspaceTest
+  ✓ it projects workforce coverage from the same configuration as Calen… 0.12s  
+  ✓ it allows reception read-only coverage and limits a professional to… 0.19s  
+  ✓ it fails closed for own-calendar access without a staff profile and… 0.11s  
+  ✓ it previews leave conflicts, requires a retained exception and save… 0.17s  
+  ✓ it rejects a changed proposal, an expired preview and a stale sched… 0.15s  
+  ✓ it invalidates a review when a booking arrives or changes after the… 0.16s  
+  ✓ it validates rule shapes, dates, reversed times and recurring overl… 0.08s  
+  ✓ it allows split shifts and same-branch temporary replacement but de… 0.06s  
+  ✓ it denies manager changes at unassigned branches and disallows an u… 0.10s  
+  ✓ it warns about out-of-business hours without silently changing the…  0.11s  
+  ✓ it versions service variants and preserves existing appointment pri… 0.08s  
+  ✓ it requires a reason before removing a capability used by future ap… 0.07s  
+  ✓ it keeps login-only accounts visible alongside working profiles      0.10s  
+  ✓ it creates a minimal working profile without hours and prevents pri… 0.10s  
+  ✓ it protects live holds from schedule reductions, deactivation and q… 0.12s  
+  ✓ it preserves dated service changes and rejects inactive new qualifi… 0.07s  
+  ✓ it requires a reason for deactivation and preserves visits and logi… 0.07s  
+  ✓ it changes permitted login branches without altering staff work loc… 0.07s  
+  ✓ it warns about dated branch closures and handles matching times sto… 0.10s  
+  ✓ it accepts exact normalized schedules when a JSON database reorders… 0.11s  
+  ✓ it loads more staff without adding per-person schedule or permissio… 0.12s  
+  ✓ it presents commission and tip balances in their recorded currencie… 0.07s  
+  ✓ it keeps expired schedule history outside the editor and preserves…  0.97s  
+
+   PASS  Tests\Feature\TwoFactorAuthenticationSettingsTest
+  ✓ two factor authentication can be enabled                             0.03s  
+  ✓ recovery codes can be regenerated                                    0.03s  
+  ✓ two factor authentication can be disabled                            0.03s  
+
+   PASS  Tests\Feature\UpdatePasswordTest
+  ✓ password can be updated                                              0.55s  
+  ✓ current password must be correct                                     0.38s  
+  ✓ new passwords must match                                             0.36s  
+
+   WARN  Tests\Feature\UpdateTeamMemberRoleTest
+  - team member roles can be updated → Jetstream Team is intentionally superseded by Business memberships.
+  - only team owner can update team member roles → Jetstream Team is intentionally superseded by Business memberships.
+
+   WARN  Tests\Feature\UpdateTeamNameTest
+  - team names can be updated → Jetstream Team is intentionally superseded by Business memberships.
+
+  Tests:    28 skipped, 570 passed (5548 assertions)
+  Duration: 45.60s
+

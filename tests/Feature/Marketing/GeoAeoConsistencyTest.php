@@ -33,7 +33,7 @@ it('keeps generic acquisition pages broad while allowing industry pages to be sp
     ])->map(fn ($file) => file_get_contents($file))->implode("\n");
 
     expect($genericCopy)
-        ->toContain('appointment-led service businesses')
+        ->toContain('appointment-led businesses')
         ->toContain('fitness')
         ->toContain('health')
         ->toContain('pet');

@@ -22,6 +22,7 @@ const form = useForm({
 
 const verificationLinkSent = ref(null);
 const photoPreview = ref(null);
+const photoFailed = ref(false);
 const photoInput = ref(null);
 
 const updateProfileInformation = () => {
@@ -78,24 +79,19 @@ const clearPhotoFileInput = () => {
 <template>
     <FormSection @submitted="updateProfileInformation">
         <template #title>
-            <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                    <svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                </div>
-                <span>{{ $t('Profile Information') }}</span>
+            <div>
+                <span>{{ $t('Profile details') }}</span>
             </div>
         </template>
 
         <template #description>
-            {{ $t("Update your account's profile information and email address.") }}
+            {{ $t("Your name and sign-in email.") }}
         </template>
 
         <template #form>
-            <!-- Profile Photo -->
+            <!-- Profile photo -->
             <div v-if="$page.props.jetstream.managesProfilePhotos" class="col-span-6 sm:col-span-4">
-                <!-- Profile Photo File Input -->
+                <!-- Profile photo File Input -->
                 <input
                     id="photo"
                     ref="photoInput"
@@ -104,17 +100,18 @@ const clearPhotoFileInput = () => {
                     @change="updatePhotoPreview"
                 >
 
-                <InputLabel for="photo" :value="$t('Profile Photo')" />
+                <InputLabel for="photo" :value="$t('Profile photo')" />
 
-                <!-- Current Profile Photo -->
+                <!-- Current Profile photo -->
                 <div v-show="! photoPreview" class="mt-3">
-                    <img :src="user.profile_photo_url" :alt="user.name" class="h-24 w-24 rounded-full border-4 border-base-300 object-cover shadow-lg">
+                    <span v-if="!user.profile_photo_path || photoFailed" class="grid size-14 place-items-center rounded-full bg-[var(--brand-primary-soft)] text-lg font-semibold text-[var(--action-primary)]" :aria-label="user.name">{{ user.name?.trim().charAt(0) }}</span>
+                    <img v-else @error="photoFailed = true" :src="user.profile_photo_url" :alt="user.name" class="h-14 w-14 rounded-full border-2 border-base-300 object-cover shadow-sm">
                 </div>
 
-                <!-- New Profile Photo Preview -->
+                <!-- New Profile photo Preview -->
                 <div v-show="photoPreview" class="mt-3">
                     <span
-                        class="block h-24 w-24 rounded-full border-4 border-primary bg-cover bg-center bg-no-repeat shadow-lg"
+                        class="block h-14 w-14 rounded-full border-2 border-primary bg-cover bg-center bg-no-repeat shadow-sm"
                         :style="'background-image: url(\'' + photoPreview + '\');'"
                     />
                 </div>
@@ -124,7 +121,7 @@ const clearPhotoFileInput = () => {
                         <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        {{ $t('Select A New Photo') }}
+                        {{ $t('Choose photo') }}
                     </SecondaryButton>
 
                     <SecondaryButton
@@ -135,7 +132,7 @@ const clearPhotoFileInput = () => {
                         <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
-                        {{ $t('Remove Photo') }}
+                        {{ $t('Remove photo') }}
                     </SecondaryButton>
                 </div>
 
@@ -144,7 +141,7 @@ const clearPhotoFileInput = () => {
 
             <!-- Name -->
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="name" :value="$t('Full Name')" />
+                <InputLabel for="name" :value="$t('Full name')" />
                 <TextInput
                     id="name"
                     v-model="form.name"
@@ -153,13 +150,13 @@ const clearPhotoFileInput = () => {
                     required
                     autocomplete="name"
                     placeholder="John Doe"
-                />
-                <InputError :message="form.errors.name" class="mt-2" />
+                 :aria-invalid="form.errors.name ? true : undefined" :aria-describedby="form.errors.name ? 'name-error' : undefined"/>
+                <InputError :message="form.errors.name" class="mt-2"  id="name-error"/>
             </div>
 
             <!-- Email -->
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="email" :value="$t('Email Address')" />
+                <InputLabel for="email" :value="$t('Email address')" />
                 <TextInput
                     id="email"
                     v-model="form.email"
@@ -168,8 +165,8 @@ const clearPhotoFileInput = () => {
                     required
                     autocomplete="username"
                     placeholder="you@example.com"
-                />
-                <InputError :message="form.errors.email" class="mt-2" />
+                 :aria-invalid="form.errors.email ? true : undefined" :aria-describedby="form.errors.email ? 'email-error' : undefined"/>
+                <InputError :message="form.errors.email" class="mt-2"  id="email-error"/>
 
                 <div v-if="$page.props.jetstream.hasEmailVerification && user.email_verified_at === null">
                     <div class="mt-3 rounded-lg border border-warning/20 bg-warning/10 p-3">
@@ -215,7 +212,7 @@ const clearPhotoFileInput = () => {
             </ActionMessage>
 
             <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                {{ $t('Save Changes') }}
+                {{ $t('Save changes') }}
             </PrimaryButton>
         </template>
     </FormSection>

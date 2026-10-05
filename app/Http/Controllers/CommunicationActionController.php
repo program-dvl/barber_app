@@ -6,6 +6,9 @@ use App\Domain\ClientRecords\Models\Client;
 use App\Domain\Communications\Models\CommunicationActionLink;
 use App\Domain\Communications\Services\CommunicationActionLinkService;
 use App\Domain\Communications\Services\CommunicationConsentService;
+use App\Domain\MoneyCommerce\Models\Sale;
+use App\Domain\MoneyCommerce\Models\SaleReceipt;
+use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PublicBooking\Models\WaitlistMatch;
 use App\Domain\PublicBooking\Services\SecureAppointmentLinkService;
 use App\Domain\PublicBooking\Services\WaitlistService;
@@ -21,6 +24,25 @@ class CommunicationActionController extends Controller
     {
         abort_unless($request->hasValidSignature(), 403);
         $links->assertUsable($link);
+        if ($link->purpose === 'receipt_view') {
+            $receipt = SaleReceipt::query()->where('business_id', $link->business_id);
+            if ($link->target_type === SaleReceipt::class && $link->target_id) {
+                $receipt->whereKey($link->target_id);
+            } elseif ($link->target_type === Appointment::class && $link->target_id) {
+                // Existing links targeted the appointment. Each appointment has
+                // one sale and one immutable issued receipt, so recovery is exact.
+                $receipt->whereIn('sale_id', Sale::query()->select('id')->where('business_id', $link->business_id)->where('appointment_id', $link->target_id));
+            } else {
+                abort(410, 'This receipt is no longer available.');
+            }
+            $receipt = $receipt->firstOrFail();
+            $sale = Sale::query()->where('business_id', $link->business_id)->with('appointment')->findOrFail($receipt->sale_id);
+            $business = Business::query()->findOrFail($link->business_id);
+
+            return response()->view('receipts.sale', ['receipt' => $receipt, 'receiptTimeZone' => $sale->appointment?->time_zone ?: $business->time_zone ?: 'UTC', 'receiptLocale' => $business->locale ?: 'en'], 200, [
+                'Cache-Control' => 'private, no-store', 'X-Robots-Tag' => 'noindex, nofollow', 'Referrer-Policy' => 'no-referrer',
+            ]);
+        }
         if (str_starts_with($link->purpose, 'marketing_unsubscribe_')) {
             $client = Client::query()->where('business_id', $link->business_id)->findOrFail($link->client_id);
             $consent->unsubscribe($client, str($link->purpose)->afterLast('_')->toString());

@@ -5,6 +5,7 @@ use App\Domain\PlatformAccess\Models\Location;
 use App\Http\Controllers\Access\StaffInvitationController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Billing\BusinessBillingController;
+use App\Http\Controllers\Billing\CapacityBillingController;
 use App\Http\Controllers\Billing\PlatformBillingSupportController;
 use App\Http\Controllers\Billing\StripeWebhookController;
 use App\Http\Controllers\BlogController;
@@ -53,6 +54,8 @@ use App\Http\Controllers\Shop\PrintDailyScheduleController;
 use App\Http\Controllers\Shop\ReportController;
 use App\Http\Controllers\Shop\ScheduleBlockController;
 use App\Http\Controllers\Shop\ServiceManagementController;
+use App\Http\Controllers\Shop\SetupHoursController;
+use App\Http\Controllers\Shop\StaffOperationsController;
 use App\Http\Controllers\Shop\TeamManagementController;
 use App\Http\Controllers\Shop\WalkInQueueController;
 use App\Http\Controllers\SitemapController;
@@ -217,8 +220,10 @@ if (app()->environment('local')) {
 
 Route::post('billing/webhooks/stripe', StripeWebhookController::class)->name('billing.webhooks.stripe');
 Route::post('payments/webhooks/stripe', AppointmentPaymentWebhookController::class)->name('payments.webhooks.stripe');
+Route::post('communications/webhooks/ses', [CommunicationWebhookController::class, 'ses'])->name('communications.webhooks.ses');
 Route::post('communications/webhooks/resend', [CommunicationWebhookController::class, 'resend'])->name('communications.webhooks.resend');
 Route::post('communications/webhooks/twilio', [CommunicationWebhookController::class, 'twilio'])->name('communications.webhooks.twilio');
+Route::post('communications/webhooks/twilio/inbound', [CommunicationWebhookController::class, 'twilioInbound'])->name('communications.webhooks.twilio.inbound');
 Route::match(['get', 'post'], 'communications/actions/{link}', CommunicationActionController::class)->name('communications.action');
 
 Route::middleware([
@@ -238,6 +243,7 @@ Route::middleware([
             Route::get('/dashboard', DashboardController::class)->name('business.dashboard');
 
             Route::get('/app/calendar', CalendarController::class)->middleware('workspace.feature:calendar')->name('business.calendar');
+            Route::get('/app/calendar/clients', [CalendarController::class, 'clients'])->name('business.calendar.clients');
             Route::get('/app/calendar/print', PrintDailyScheduleController::class)->name('business.calendar.print');
             Route::post('/appointments', [AppointmentOperationsController::class, 'store'])->name('business.appointments.store');
             Route::patch('/appointments/{appointment}/status', [AppointmentOperationsController::class, 'transition'])->name('business.appointments.status');
@@ -248,6 +254,13 @@ Route::middleware([
             Route::post('/schedule-blocks', ScheduleBlockController::class)->name('business.schedule-blocks.store');
             Route::post('/operational-exceptions/closure', [OperationalExceptionController::class, 'closure'])->name('business.operational-exceptions.closure');
             Route::get('/app/checkout-sales', [CheckoutController::class, 'index'])->middleware('workspace.feature:checkout-sales')->name('business.checkout.index');
+            Route::get('/appointments/{appointment}/checkout', [CheckoutController::class, 'visit'])->name('business.checkout.visit');
+            Route::get('/appointments/{appointment}/checkout/catalogue', [CheckoutController::class, 'catalogue'])->name('business.checkout.catalogue');
+            Route::post('/appointments/{appointment}/checkout/preview', [CheckoutController::class, 'preview'])->name('business.checkout.preview');
+            Route::post('/appointments/{appointment}/checkout/prepare', [CheckoutController::class, 'prepare'])->name('business.checkout.prepare');
+            Route::get('/sales/{sale}', [CheckoutController::class, 'show'])->name('business.checkout.show');
+            Route::post('/sales/{sale}/deposits', [CheckoutController::class, 'applyDeposit'])->name('business.checkout.deposit');
+            Route::post('/sales/{sale}/payments', [CheckoutController::class, 'payments'])->name('business.checkout.payments');
             Route::post('/appointments/{appointment}/checkout', [CheckoutController::class, 'open'])->name('business.checkout.open');
             Route::post('/sales/{sale}/tenders', [CheckoutController::class, 'tender'])->name('business.checkout.tender');
             Route::post('/sales/{sale}/payments/{payment}/refunds', [CheckoutController::class, 'refund'])->name('business.checkout.refund');
@@ -275,6 +288,7 @@ Route::middleware([
             Route::get('/walk-ins/clients/search', [WalkInQueueController::class, 'searchClients'])->name('business.walk-ins.clients.search');
             Route::post('/walk-ins', [WalkInQueueController::class, 'store'])->name('business.walk-ins.store');
             Route::post('/walk-ins/reorder', [WalkInQueueController::class, 'reorder'])->name('business.walk-ins.reorder');
+            Route::get('/walk-ins/{walkIn}/readiness', [WalkInQueueController::class, 'readiness'])->name('business.walk-ins.readiness');
             Route::patch('/walk-ins/{walkIn}/assign', [WalkInQueueController::class, 'assign'])->name('business.walk-ins.assign');
             Route::post('/walk-ins/{walkIn}/notify', [WalkInQueueController::class, 'notify'])->name('business.walk-ins.notify');
             Route::post('/walk-ins/{walkIn}/start', [WalkInQueueController::class, 'start'])->name('business.walk-ins.start');
@@ -282,6 +296,7 @@ Route::middleware([
 
             Route::get('/app/clients', [ClientController::class, 'index'])->middleware('workspace.feature:clients')->name('business.clients.index');
             Route::post('/clients', [ClientController::class, 'store'])->name('business.clients.store');
+            Route::get('/clients/matches', [ClientController::class, 'matches'])->name('business.clients.matches');
             Route::get('/app/clients/{client}', [ClientController::class, 'show'])->name('business.clients.show');
             Route::patch('/clients/{client}', [ClientController::class, 'update'])->name('business.clients.update');
             Route::post('/clients/{client}/notes', [ClientNoteController::class, 'store'])->name('business.clients.notes.store');
@@ -294,8 +309,12 @@ Route::middleware([
             Route::post('/clients/{client}/privacy-requests', [ClientPrivacyController::class, 'store'])->name('business.clients.privacy.store');
             Route::post('/clients/{client}/privacy-requests/{privacyRequest}/process', [ClientPrivacyController::class, 'process'])->name('business.clients.privacy.process');
 
+            Route::get('/app/communications', [CommunicationSettingsController::class, 'page'])->middleware('workspace.feature:communications')->name('business.communications.page');
+            Route::get('/communications/history', [CommunicationSettingsController::class, 'history'])->name('business.communications.history');
             Route::get('/communications/settings', [CommunicationSettingsController::class, 'index'])->name('business.communications.index');
             Route::patch('/communications/settings', [CommunicationSettingsController::class, 'update'])->name('business.communications.update');
+            Route::post('/communications/senders/branded', [CommunicationSettingsController::class, 'requestBrandedSender'])->name('business.communications.senders.branded');
+            Route::post('/communications/conversations/{communicationConversation}/reply', [CommunicationSettingsController::class, 'reply'])->name('business.communications.conversations.reply');
             Route::post('/communications/templates', [CommunicationSettingsController::class, 'storeTemplate'])->name('business.communications.templates.store');
             Route::post('/communications/templates/{communicationTemplate}/preview', [CommunicationSettingsController::class, 'preview'])->name('business.communications.templates.preview');
             Route::post('/communications/templates/{communicationTemplate}/publish', [CommunicationSettingsController::class, 'publish'])->name('business.communications.templates.publish');
@@ -306,6 +325,10 @@ Route::middleware([
             Route::post('/activation/locations', [LocationSetupController::class, 'store'])->name('business.locations.activation.store');
 
             Route::get('/app/team', [TeamManagementController::class, 'index'])->middleware('workspace.feature:staff')->name('business.team.index');
+            Route::post('/team/staff/{staffProfile}/schedule/preview', [StaffOperationsController::class, 'preview'])->name('business.team.schedule.preview');
+            Route::put('/team/staff/{staffProfile}/schedule', [StaffOperationsController::class, 'schedule'])->name('business.team.schedule.update');
+            Route::patch('/team/staff/{staffProfile}/profile', [StaffOperationsController::class, 'profile'])->name('business.team.profile.update');
+            Route::put('/team/staff/{staffProfile}/services', [StaffOperationsController::class, 'services'])->name('business.team.services.update');
             Route::post('/activation/providers', [TeamManagementController::class, 'store'])->name('business.team.providers.store');
             Route::post('/team/staff/{staffProfile}/invite', [TeamManagementController::class, 'inviteAccess'])->name('business.team.staff.invite');
             Route::patch('/team/memberships/{membership}/access', [TeamManagementController::class, 'updateAccess'])->name('business.team.memberships.access.update');
@@ -313,6 +336,8 @@ Route::middleware([
             Route::delete('/team/memberships/{membership}/access', [TeamManagementController::class, 'revokeAccess'])->name('business.team.memberships.access.destroy');
             Route::get('/app/activity', [TeamManagementController::class, 'activity'])->middleware('workspace.feature:activity')->name('business.activity.index');
 
+            Route::post('/app/service-categories', [ServiceManagementController::class, 'category'])->name('business.services.categories.save');
+            Route::put('/app/service-categories/order', [ServiceManagementController::class, 'categoryOrder'])->name('business.services.categories.order');
             Route::get('/app/services', [ServiceManagementController::class, 'index'])->middleware('workspace.feature:services')->name('business.services.index');
             Route::post('/activation/services', [ServiceManagementController::class, 'store'])->name('business.services.store');
             Route::put('/activation/services/{service}', [ServiceManagementController::class, 'update'])->name('business.services.update');
@@ -346,6 +371,8 @@ Route::middleware([
                 Route::patch('/guided-onboarding', [BusinessConfigurationController::class, 'saveGuidedOnboarding'])->name('guided-onboarding.update');
                 Route::post('/guided-onboarding/complete', [BusinessConfigurationController::class, 'completeGuidedOnboarding'])->name('guided-onboarding.complete');
                 Route::patch('/profile', [BusinessConfigurationController::class, 'updateProfile'])->name('profile.update');
+                Route::post('/setup/locations/{location}/hours/review', [SetupHoursController::class, 'review'])->name('setup-hours.review');
+                Route::put('/setup/locations/{location}/hours', [SetupHoursController::class, 'save'])->name('setup-hours.save');
                 Route::post('/branding', [BusinessConfigurationController::class, 'uploadBrandAsset'])->name('branding.store');
                 Route::patch('/public-booking-policy', [BusinessConfigurationController::class, 'updatePublicBookingPolicy'])->name('public-booking-policy.update');
                 Route::put('/locations/{location}/hours', [BusinessConfigurationController::class, 'saveHours'])->name('locations.hours.update');
@@ -364,6 +391,11 @@ Route::middleware([
 
             Route::prefix('billing')->name('business.billing.')->group(function (): void {
                 Route::get('/', [BusinessBillingController::class, 'show'])->middleware('workspace.feature:subscription-billing')->name('show');
+                Route::post('/capacity/review', [CapacityBillingController::class, 'review'])->middleware('throttle:10,1')->name('capacity.review');
+                Route::post('/capacity/confirm', [CapacityBillingController::class, 'confirm'])->middleware('throttle:5,1')->name('capacity.confirm');
+                Route::post('/capacity/status', [CapacityBillingController::class, 'status'])->middleware('throttle:10,1')->name('capacity.status');
+                Route::post('/sms/topup', [CapacityBillingController::class, 'topup'])->middleware('throttle:5,1')->name('sms.topup');
+                Route::post('/sms/status', [CapacityBillingController::class, 'topupStatus'])->middleware('throttle:6,1')->name('sms.status');
                 Route::get('/checkout', [BusinessBillingController::class, 'checkoutForm'])->name('checkout.form');
                 Route::post('/checkout/session', [BusinessBillingController::class, 'checkout'])
                     ->middleware('throttle:5,1')
@@ -378,6 +410,7 @@ Route::middleware([
                 Route::post('/cancel', [BusinessBillingController::class, 'cancel'])->name('cancel');
                 Route::post('/reactivate', [BusinessBillingController::class, 'reactivate'])->name('reactivate');
                 Route::get('/portal', [BusinessBillingController::class, 'portal'])->name('portal');
+                Route::post('/refresh', [BusinessBillingController::class, 'refreshBilling'])->middleware('throttle:4,1')->name('refresh');
                 Route::get('/invoices/{invoice}', [BusinessBillingController::class, 'invoice'])->name('invoices.show');
             });
         });

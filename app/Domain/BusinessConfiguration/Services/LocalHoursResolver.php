@@ -11,7 +11,7 @@ class LocalHoursResolver
     public function windows(Location $location, CarbonImmutable $localDate): array
     {
         $date = $localDate->setTimezone($location->time_zone)->toDateString();
-        $exceptions = $location->scheduleExceptions()->whereDate('starts_on', '<=', $date)->whereDate('ends_on', '>=', $date)->get();
+        $exceptions = ($location->relationLoaded('scheduleExceptions') ? $location->scheduleExceptions : $location->scheduleExceptions()->get())->filter(fn ($e) => $e->starts_on->toDateString() <= $date && $e->ends_on->toDateString() >= $date);
         if ($exceptions->contains(fn ($exception) => in_array($exception->kind, ['holiday', 'closure', 'temporary_closure'], true))) {
             return [];
         }
@@ -21,12 +21,10 @@ class LocalHoursResolver
             return $special->map(fn ($window) => ['opens_at' => $window->opens_at, 'closes_at' => $window->closes_at, 'source' => 'special_hours'])->values()->all();
         }
 
-        return $location->hours()
-            ->where('day_of_week', $localDate->setTimezone($location->time_zone)->dayOfWeekIso)
-            ->where(fn ($query) => $query->whereNull('effective_from')->orWhereDate('effective_from', '<=', $date))
-            ->where(fn ($query) => $query->whereNull('effective_until')->orWhereDate('effective_until', '>=', $date))
-            ->orderBy('sequence')->get()
-            ->map(fn ($window) => ['opens_at' => $window->opens_at, 'closes_at' => $window->closes_at, 'source' => 'normal_hours'])
-            ->all();
+        return ($location->relationLoaded('hours') ? $location->hours : $location->hours()->get())
+            ->filter(fn ($h) => (int) $h->day_of_week === $localDate->setTimezone($location->time_zone)->dayOfWeekIso
+                && (! $h->effective_from || $h->effective_from->toDateString() <= $date)
+                && (! $h->effective_until || $h->effective_until->toDateString() >= $date))
+            ->sortBy('sequence')->map(fn ($h) => ['opens_at' => $h->opens_at, 'closes_at' => $h->closes_at, 'source' => 'normal_hours'])->values()->all();
     }
 }

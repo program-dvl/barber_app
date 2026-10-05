@@ -71,19 +71,24 @@ class ClientIdentityService implements ClientIdentityLinker
 
         $appointment->forceFill(['client_id' => $client->id])->save();
         $preferences = $appointment->communication_preferences ?? [];
-        $whatsAppSelected = in_array('whatsapp', $preferences, true) || ($preferences['whatsapp'] ?? false) === true;
-        if ($whatsAppSelected && ! ClientConsent::query()->where('business_id', $appointment->business_id)->where('client_id', $client->id)
-            ->where('type', 'whatsapp')->where('status', 'granted')->exists()) {
+        foreach (config('communications.client_mobile_channels', ['sms']) as $channel) {
+            $selected = in_array($channel, $preferences, true) || ($preferences[$channel] ?? false) === true;
+            $latestStatus = ClientConsent::query()->where('business_id', $appointment->business_id)->where('client_id', $client->id)
+                ->where('type', $channel)->orderByDesc('occurred_at')->orderByDesc('id')->value('status');
+            if (! $selected || $latestStatus === 'granted') {
+                continue;
+            }
+            $defaultWording = 'Send essential appointment updates to this mobile number by text message. Message and data rates may apply. Reply STOP to opt out.';
             ClientConsent::query()->create([
                 'business_id' => $appointment->business_id, 'client_id' => $client->id, 'appointment_id' => $appointment->id,
-                'type' => 'whatsapp', 'status' => 'granted', 'source' => $appointment->source,
+                'type' => $channel, 'status' => 'granted', 'source' => $appointment->source,
                 'policy_version' => implode('-', [
-                    $appointment->business->country_code ?: 'IN',
-                    $appointment->business->locale ?: 'en-IN',
+                    $appointment->business->country_code ?: 'US',
+                    $appointment->business->locale ?: 'en-US',
                     now()->format('Y-m'),
                 ]),
-                'wording' => data_get($appointment->public_policy_snapshot, 'whatsapp_wording', 'Send appointment and service updates to this mobile number on WhatsApp.'),
-                'evidence' => ['booking_reference' => $appointment->booking_reference, 'channel' => 'whatsapp'],
+                'wording' => data_get($appointment->public_policy_snapshot, $channel.'_wording', $defaultWording),
+                'evidence' => ['booking_reference' => $appointment->booking_reference, 'channel' => $channel],
                 'occurred_at' => $appointment->confirmed_at ?? now(),
             ]);
         }
@@ -153,8 +158,8 @@ class ClientIdentityService implements ClientIdentityLinker
         ])->all();
         $normalized = $this->normalize([
             'name' => $allowed['name'] ?? $client->name,
-            'email' => $allowed['email'] ?? $client->email,
-            'mobile' => $allowed['mobile'] ?? $client->mobile,
+            'email' => array_key_exists('email', $allowed) ? $allowed['email'] : $client->email,
+            'mobile' => array_key_exists('mobile', $allowed) ? $allowed['mobile'] : $client->mobile,
         ]);
         $allowed['normalized_name'] = $normalized['name'];
         $allowed['normalized_email'] = $normalized['email'];

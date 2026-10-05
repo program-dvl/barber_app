@@ -1,4 +1,5 @@
 <script setup>
+import { sentenceLabel } from '@/Support/userLanguage';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import PageHeader from '@/Components/Product/PageHeader.vue';
@@ -12,20 +13,20 @@ const submit = () => router.get(route('platform.businesses.index'), { search: qu
 
 <template>
     <PlatformAdminLayout title="Businesses">
-        <PageHeader eyebrow="Internal operations" title="Businesses" description="Search safe account, onboarding, plan, usage, subscription, and owner summaries. Tenant records remain unavailable without scoped support access." />
+        <PageHeader title="Businesses" />
         <form class="mt-6 flex max-w-2xl gap-2" role="search" @submit.prevent="submit">
             <label class="ds-sr-only" for="platform-business-search">Search businesses</label>
             <input id="platform-business-search" v-model="query" class="min-h-11 flex-1 rounded-lg border border-[var(--border-default)] bg-white px-3" placeholder="Business name, slug, or exact public ID" />
             <button class="min-h-11 rounded-lg bg-[var(--brand-primary)] px-5 font-semibold text-white" type="submit">Search</button>
         </form>
-        <SurfaceCard class="mt-6" :padding="false" title="Safe business summaries" description="No client notes, message bodies, authentication data, or provider secrets are included.">
+        <SurfaceCard class="mt-6" :padding="false" title="Business accounts">
             <ul class="divide-y divide-[var(--border-subtle)]">
-                <li v-for="business in businesses" :key="business.public_id" class="grid gap-4 px-5 py-5 lg:grid-cols-[minmax(0,1fr)_12rem_14rem]">
+                <li v-for="business in businesses" :key="business.public_id" class="grid gap-4 px-5 py-3 lg:grid-cols-[minmax(0,1fr)_12rem_14rem]">
                     <div><p class="font-semibold text-[var(--text-strong)]">{{ business.name }}</p><p class="mt-1 text-sm text-[var(--text-muted)]">{{ business.public_id }} · {{ business.owner?.name ?? 'Owner unavailable' }} · {{ business.owner?.verified ? 'Verified' : 'Unverified' }}</p></div>
-                    <div><p class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Plan</p><p class="mt-1 text-sm">{{ business.subscription?.plan ?? 'No plan' }} · {{ business.subscription?.status ?? 'No subscription' }}</p></div>
-                    <div><p class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Usage</p><p class="mt-1 text-sm">{{ business.usage.locations }} locations · {{ business.usage.active_staff }} active staff</p></div>
+                    <div><p class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Plan</p><p class="mt-1 text-sm">{{ business.subscription?.plan ?? 'No plan' }} · {{ business.subscription?.status ? sentenceLabel(business.subscription.status) : 'No subscription' }}</p></div>
+                    <div><p class="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Usage</p><p class="mt-1 text-sm">{{ business.usage.locations }} {{ business.usage.locations === 1 ? 'location' : 'locations' }} · {{ business.usage.active_staff }} active staff</p></div>
                 </li>
-                <li v-if="!businesses.length" class="px-5 py-10 text-center text-sm text-[var(--text-muted)]">No businesses match this search.</li>
+                <li v-if="!businesses.length" class="px-5 py-6 text-center text-sm text-[var(--text-muted)]">No businesses match this search.</li>
             </ul>
         </SurfaceCard>
     </PlatformAdminLayout>

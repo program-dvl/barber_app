@@ -12,7 +12,7 @@ class CommunicationMessage extends Model
 {
     use BelongsToBusiness;
 
-    protected $fillable = ['business_id', 'communication_intent_id', 'client_id', 'communication_template_id', 'communication_action_link_id', 'channel', 'recipient_hash', 'recipient', 'idempotency_key', 'category', 'legal_basis', 'locale', 'time_zone', 'template_variables', 'subject_hash', 'body_hash', 'status', 'attempt_count', 'max_attempts', 'provider', 'provider_message_id', 'provider_state_at', 'last_error_code', 'last_error_class', 'suppression_reason', 'queued_at', 'sent_at', 'delivered_at', 'failed_at', 'next_attempt_at', 'entitlement_charged_at'];
+    protected $fillable = ['business_id', 'communication_intent_id', 'client_id', 'communication_template_id', 'communication_action_link_id', 'communication_sender_profile_id', 'fallback_of_message_id', 'channel', 'recipient_hash', 'recipient', 'idempotency_key', 'category', 'legal_basis', 'locale', 'time_zone', 'template_variables', 'subject_hash', 'body_hash', 'status', 'attempt_count', 'max_attempts', 'provider', 'provider_message_id', 'provider_state_at', 'last_error_code', 'last_error_class', 'suppression_reason', 'queued_at', 'sent_at', 'delivered_at', 'failed_at', 'next_attempt_at', 'entitlement_charged_at'];
 
     protected function casts(): array
     {
@@ -38,6 +38,21 @@ class CommunicationMessage extends Model
     public function actionLink(): BelongsTo
     {
         return $this->belongsTo(CommunicationActionLink::class, 'communication_action_link_id');
+    }
+
+    public function senderProfile(): BelongsTo
+    {
+        return $this->belongsTo(CommunicationSenderProfile::class, 'communication_sender_profile_id');
+    }
+
+    public function fallbackOf(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'fallback_of_message_id');
+    }
+
+    public function fallbacks(): HasMany
+    {
+        return $this->hasMany(self::class, 'fallback_of_message_id');
     }
 
     public function client(): BelongsTo

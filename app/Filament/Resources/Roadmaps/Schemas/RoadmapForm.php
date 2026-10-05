@@ -15,8 +15,7 @@ class RoadmapForm
     {
         return $schema
             ->components([
-                Section::make('Feature Request Details')
-                    ->description('Manage the feature request information')
+                Section::make('Feature request')
                     ->schema([
                         Hidden::make('user_id')
                             ->default(fn () => auth()->id())
@@ -26,34 +25,31 @@ class RoadmapForm
                         TextInput::make('title')
                             ->required()
                             ->maxLength(255)
-                            ->helperText('A brief and clear title for the feature request')
                             ->columnSpanFull(),
 
                         Textarea::make('description')
                             ->required()
                             ->rows(4)
-                            ->helperText('Detailed description of what this feature should do')
                             ->columnSpanFull(),
 
                         Select::make('status')
                             ->options([
                                 'pending' => 'Pending',
                                 'approved' => 'Approved',
-                                'in_progress' => 'In Progress',
+                                'in_progress' => 'In progress',
                                 'completed' => 'Completed',
                             ])
                             ->default('pending')
                             ->required()
-                            ->helperText('Current status of this feature request')
                             ->columnSpan(1),
 
                         TextInput::make('votes_count')
-                            ->label('Total Votes')
+                            ->label('Votes')
                             ->numeric()
                             ->default(0)
                             ->disabled()
                             ->dehydrated(false)
-                            ->helperText('Vote count is automatically calculated based on user votes')
+                            ->helperText('Calculated from user votes.')
                             ->columnSpan(1),
                     ])
                     ->columns(2)

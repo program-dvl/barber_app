@@ -27,6 +27,10 @@ class CommunicationTemplateRenderer
     /** @return list<string> */
     public function variables(string $subject, string $body): array
     {
+        $plain = preg_replace('/\{\{\s*[a-z_]+\s*\}\}/', '', $subject."\n".$body);
+        if (str_contains($plain, '{{') || str_contains($plain, '}}')) {
+            throw ValidationException::withMessages(['body' => 'Use the variable picker to insert a supported variable. Check for incomplete or misspelled tokens.']);
+        }
         preg_match_all('/\{\{\s*([a-z_]+)\s*\}\}/', $subject."\n".$body, $matches);
 
         return array_values(array_unique($matches[1] ?? []));

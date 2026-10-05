@@ -28,7 +28,7 @@ class CalendarQueryService implements CalendarQuery
 
     public function calendar(CalendarFilter $filter): array
     {
-        if (! in_array($filter->view, ['today', 'day', 'week', 'staff'], true)) {
+        if (! in_array($filter->view, ['today', 'day', 'week', 'staff', 'agenda'], true)) {
             throw new \InvalidArgumentException('Unsupported calendar view.');
         }
         $location = Location::query()->where('business_id', $filter->businessId)->findOrFail($filter->locationId);
@@ -36,6 +36,7 @@ class CalendarQueryService implements CalendarQuery
         $localEnd = $filter->view === 'week' ? $localStart->addDays(7) : $localStart->addDay();
         $startsAt = $localStart->utc();
         $endsAt = $localEnd->utc();
+        $limit = max(1, min(1000, $filter->limit));
 
         $appointments = Appointment::query()
             ->where('business_id', $filter->businessId)
@@ -50,12 +51,15 @@ class CalendarQueryService implements CalendarQuery
                 'formRequests as forms_requested_count',
                 'formRequests as forms_completed_count' => fn ($query) => $query->where('status', 'completed'),
             ])
-            ->with(['serviceLines:id,appointment_id,name,service_id,primary_staff_profile_id,bookable_minutes', 'serviceLines.service:id,public_id', 'serviceLines.primaryStaff:id,public_id,display_name', 'segments:id,appointment_id,staff_profile_id,starts_at_utc,ends_at_utc,kind,occupies_staff', 'segments.staff:id,public_id,display_name'])
-            ->orderBy('starts_at_utc')
-            ->limit(1000)
+            ->with(['serviceLines:id,appointment_id,name,service_id,primary_staff_profile_id,bookable_minutes', 'serviceLines.service:id,public_id', 'serviceLines.primaryStaff:id,public_id,display_name', 'segments:id,appointment_id,staff_profile_id,starts_at_utc,ends_at_utc,kind,occupies_staff', 'segments.staff:id,public_id,display_name', 'client:id,public_id'])
+            ->when($filter->prioritizeActive, fn ($query) => $query->orderByRaw("case when status in ('completed','cancelled_by_client','cancelled_by_shop','no_show','rescheduled') then 1 else 0 end"))
+            ->orderBy('starts_at_utc')->orderBy('id')
+            ->limit($limit + 1)
             ->get();
+        $truncated = $appointments->count() > $limit;
+        $appointments = $appointments->take($limit)->sortBy('starts_at_utc')->values();
 
-        $blocks = ScheduleBlock::query()
+        $blocks = ScheduleBlock::query()->with('staff:id,public_id')
             ->where('business_id', $filter->businessId)
             ->where('location_id', $location->id)
             ->where('starts_at_utc', '<', $endsAt)
@@ -81,6 +85,7 @@ class CalendarQueryService implements CalendarQuery
             'timeZone' => $location->time_zone,
             'range' => ['startsAt' => $localStart->toIso8601String(), 'endsAt' => $localEnd->toIso8601String()],
             'currentTime' => CarbonImmutable::now($location->time_zone)->toIso8601String(),
+            'truncated' => $truncated,
             'events' => [
                 ...$appointments->map(fn (Appointment $appointment) => $this->appointmentEvent($appointment, $location->time_zone))->all(),
                 ...$blocks->map(fn (ScheduleBlock $block) => $this->blockEvent($block, $location->time_zone))->all(),
@@ -110,6 +115,15 @@ class CalendarQueryService implements CalendarQuery
             'tone' => $presentation['tone'],
             'title' => $appointment->client_name ?: 'Unassigned client',
             'clientName' => $appointment->client_name,
+            'reference' => $appointment->booking_reference,
+            'clientId' => $appointment->client?->public_id,
+            'action' => AppointmentLifecycleService::primaryActionFor($appointment->status),
+            'segments' => $appointment->segments->map(fn ($segment) => [
+                'staffId' => $segment->staff?->public_id, 'kind' => $segment->kind,
+                'occupiesStaff' => $segment->occupies_staff,
+                'startsAt' => $segment->starts_at_utc->setTimezone($timeZone)->toIso8601String(),
+                'endsAt' => $segment->ends_at_utc->setTimezone($timeZone)->toIso8601String(),
+            ])->all(),
             'clientMobile' => $appointment->client_mobile,
             'clientEmail' => $appointment->client_email,
             'internalNotes' => $appointment->internal_notes,
@@ -145,7 +159,7 @@ class CalendarQueryService implements CalendarQuery
             'statusCue' => 'Unavailable',
             'tone' => 'neutral',
             'title' => $block->label,
-            'staff' => [['id' => $block->staff_profile_id]],
+            'staff' => [['id' => $block->staff?->public_id]],
             'startsAt' => $block->starts_at_utc->setTimezone($timeZone)->toIso8601String(),
             'endsAt' => $block->ends_at_utc->setTimezone($timeZone)->toIso8601String(),
             'version' => $block->version,

@@ -23,19 +23,21 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
         <template #logo>
             <AuthenticationCardLogo />
         </template>
+        <Head title="Verify your email" />
+        <h1 class="cd-page-title mb-4">Verify your email</h1>
 
         <div class="mb-4 text-sm text-[var(--text-muted)]">
-            {{ $t("Before continuing, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.") }}
+            {{ $t("Open the verification link in your email to continue.") }}
         </div>
 
         <div v-if="verificationLinkSent" class="mb-4 text-sm font-medium text-[var(--status-success)]">
-            {{ $t('A new verification link has been sent to the email address you provided in your profile settings.') }}
+            {{ $t('A new verification link has been sent.') }}
         </div>
 
         <form @submit.prevent="submit">
-            <div class="mt-4 flex items-center justify-between">
+            <div class="mt-4 flex flex-wrap gap-3 items-center justify-between">
                 <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    {{ $t('Resend Verification Email') }}
+                    {{ $t('Resend verification email') }}
                 </PrimaryButton>
 
                 <div>
@@ -43,7 +45,7 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
                         :href="route('profile.show')"
                         class="link"
                     >
-                        {{ $t('Edit Profile') }}
+                        {{ $t('Edit email') }}
                     </Link>
 
                     <Link
@@ -52,7 +54,7 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
                         as="button"
                         class="link ms-2"
                     >
-                        {{ $t('Log Out') }}
+                        {{ $t('Sign out') }}
                     </Link>
                 </div>
             </div>

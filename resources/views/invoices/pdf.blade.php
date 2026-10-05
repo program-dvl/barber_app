@@ -6,12 +6,12 @@
     <style>
         @include('brand.document-styles')
         h1, h2, p { margin-bottom: 0; }
-        .header { align-items: flex-start; display: flex; justify-content: space-between; margin-bottom: 44px; }
+        .header { align-items: flex-start; display: flex; justify-content: space-between; margin-bottom: 24px; }
         .brand { color: #172554; font-size: 22px; font-weight: 700; }
         .muted { color: #64748b; }
-        .invoice-title { font-size: 34px; font-weight: 700; text-align: right; }
+        .invoice-title { font-size: 26px; font-weight: 700; text-align: right; }
         .grid { display: grid; gap: 24px; grid-template-columns: 1fr 1fr; margin-bottom: 32px; }
-        .label { color: #475569; font-size: 11px; font-weight: 700; letter-spacing: .04em; margin-bottom: 6px; text-transform: uppercase; }
+        .label { color: #475569; font-size: 11px; font-weight: 700; letter-spacing: .04em; margin-bottom: 6px;  }
         .box { border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; }
         table { border-collapse: collapse; margin-top: 8px; width: 100%; }
         .right { text-align: right; }
@@ -19,7 +19,7 @@
         .totals-row { display: flex; justify-content: space-between; padding: 8px 0; }
         .grand-total { border-top: 2px solid #0f172a; font-size: 18px; font-weight: 700; margin-top: 6px; padding-top: 12px; }
         .notes { margin-top: 32px; }
-        .status { border: 1px solid #cbd5e1; border-radius: 999px; display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 10px; text-transform: uppercase; }
+        .status { border: 1px solid #cbd5e1; border-radius: 999px; display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 10px;  }
     </style>
 </head>
 <body>

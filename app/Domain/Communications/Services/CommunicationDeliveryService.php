@@ -2,14 +2,18 @@
 
 namespace App\Domain\Communications\Services;
 
+use App\Domain\Billing\Services\EntitlementEvaluator;
 use App\Domain\Billing\Services\EntitlementUsageManager;
+use App\Domain\Billing\Services\SmsCreditWallet;
 use App\Domain\Communications\Contracts\EmailChannelProvider;
 use App\Domain\Communications\Contracts\MobileChannelProvider;
 use App\Domain\Communications\Data\OutboundCommunication;
 use App\Domain\Communications\Exceptions\CommunicationProviderException;
 use App\Domain\Communications\Models\CommunicationActionLink;
+use App\Domain\Communications\Models\CommunicationConversation;
 use App\Domain\Communications\Models\CommunicationDeliveryAttempt;
 use App\Domain\Communications\Models\CommunicationMessage;
+use App\Domain\Communications\Models\CommunicationSenderProfile;
 use App\Domain\SchedulingOperations\Models\Appointment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -25,6 +29,8 @@ class CommunicationDeliveryService
         private readonly CommunicationConsentService $consent,
         private readonly CommunicationTemplateService $templates,
         private readonly EntitlementUsageManager $usage,
+        private readonly EntitlementEvaluator $entitlements,
+        private readonly CommunicationFallbackService $fallbacks,
     ) {}
 
     public function deliver(CommunicationMessage|int $message): CommunicationMessage
@@ -32,10 +38,37 @@ class CommunicationDeliveryService
         $messageId = $message instanceof CommunicationMessage ? $message->id : $message;
         $attempt = DB::transaction(function () use ($messageId): ?CommunicationDeliveryAttempt {
             $current = CommunicationMessage::query()->with(['intent', 'template', 'actionLink'])->lockForUpdate()->findOrFail($messageId);
-            if (in_array($current->status, ['sent', 'delivered', 'suppressed'], true)) {
+            // Only a due queued/retried message owns permission to enter the
+            // provider call. Duplicate queue deliveries and concurrent sweeps
+            // observe `sending` and return without contacting the provider.
+            if (! in_array($current->status, ['queued', 'retried'], true)) {
                 return null;
             }
             if ($current->next_attempt_at && $current->next_attempt_at->isFuture()) {
+                return null;
+            }
+            if ($current->channel === 'email' && $current->attempt_count > 0 && $current->provider
+                && $current->provider !== $this->email->name()
+                && ! in_array($current->last_error_code, ['provider_not_configured', 'resend_http_429', 'ses_throttled', 'ses_authentication_failed', 'ses_sender_rejected', 'ses_configuration_set_missing', 'ses_sending_paused'], true)) {
+                $current->update(['status' => 'failed', 'failed_at' => now(), 'last_error_code' => 'provider_changed_requires_review', 'last_error_class' => 'terminal', 'next_attempt_at' => null]);
+                $this->refreshIntent($current);
+
+                return null;
+            }
+            if ($current->channel !== 'email' && ! in_array($current->channel, config('communications.client_mobile_channels', ['sms']), true)) {
+                $updates = ['status' => 'suppressed', 'suppression_reason' => 'channel_paused', 'next_attempt_at' => null];
+                $this->releaseMobileAllowance($current, $updates);
+                $current->update($updates);
+                $this->refreshIntent($current);
+
+                return null;
+            }
+            if ($current->channel !== 'email' && $current->category === 'marketing' && ! config('communications.mobile_marketing_enabled', false)) {
+                $updates = ['status' => 'suppressed', 'suppression_reason' => 'mobile_marketing_paused', 'next_attempt_at' => null];
+                $this->releaseMobileAllowance($current, $updates);
+                $current->update($updates);
+                $this->refreshIntent($current);
+
                 return null;
             }
             $decision = $this->consent->decision(
@@ -50,8 +83,34 @@ class CommunicationDeliveryService
 
                 return null;
             }
+            if ($this->preferenceWithdrawn($current)) {
+                $updates = ['status' => 'suppressed', 'suppression_reason' => 'channel_preference_withdrawn', 'next_attempt_at' => null];
+                $this->releaseMobileAllowance($current, $updates);
+                $current->update($updates);
+                $this->refreshIntent($current);
+
+                return null;
+            }
             if ($this->obsoleteReminder($current)) {
                 $updates = ['status' => 'suppressed', 'suppression_reason' => 'source_cancelled_or_rescheduled', 'next_attempt_at' => null];
+                $this->releaseMobileAllowance($current, $updates);
+                $current->update($updates);
+                $this->refreshIntent($current);
+
+                return null;
+            }
+            if ($current->channel === 'sms' && ! CommunicationSenderProfile::query()
+                ->where('business_id', $current->business_id)->where('channel', 'sms')->where('status', 'active')
+                ->whereKey($current->communication_sender_profile_id)->exists()) {
+                $updates = ['status' => 'suppressed', 'suppression_reason' => 'sender_not_ready', 'next_attempt_at' => null];
+                $this->releaseMobileAllowance($current, $updates);
+                $current->update($updates);
+                $this->refreshIntent($current);
+
+                return null;
+            }
+            if ($reason = $this->invalidConversationReply($current)) {
+                $updates = ['status' => 'suppressed', 'suppression_reason' => $reason, 'next_attempt_at' => null];
                 $this->releaseMobileAllowance($current, $updates);
                 $current->update($updates);
                 $this->refreshIntent($current);
@@ -67,7 +126,28 @@ class CommunicationDeliveryService
                 return null;
             }
             if ($current->channel !== 'email' && ! $current->entitlement_charged_at) {
-                if (! $this->usage->reserve($current->business, 'messaging.monthly_allowance')) {
+                if ($current->channel === 'sms' && $current->business->subscription?->capacity_snapshot) {
+                    $snapshot = $current->business->subscription->capacity_snapshot;
+                    try {
+                        $rendered = $this->renderer->render($current->template, $this->deliveryVariables($current));
+                    } catch (Throwable) {
+                        $current->update(['status' => 'failed', 'last_error_code' => 'template_render_failed', 'last_error_class' => 'terminal', 'failed_at' => now()]);
+                        $this->refreshIntent($current);
+
+                        return null;
+                    }
+                    $quantity = app(SmsSegmentCounter::class)->credits($rendered['body'], $current->recipient, $snapshot['sms_routes']);
+                    if ($quantity === null) {
+                        $current->update(['status' => 'suppressed', 'suppression_reason' => 'destination_not_included', 'next_attempt_at' => null]);
+                        $this->refreshIntent($current);
+
+                        return null;
+                    }
+                    $reserved = app(SmsCreditWallet::class)->reserve($current, $quantity);
+                } else {
+                    $reserved = $this->usage->reserve($current->business, 'messaging.monthly_allowance');
+                }
+                if (! $reserved) {
                     $current->update(['status' => 'suppressed', 'suppression_reason' => 'plan_limit', 'next_attempt_at' => null]);
                     $this->refreshIntent($current);
 
@@ -96,6 +176,8 @@ class CommunicationDeliveryService
             $outbound = new OutboundCommunication(
                 $message->recipient, $rendered['subject'], $rendered['body'], $message->idempotency_key,
                 $message->intent->correlation_id, $message->template->provider_template_id, $rendered['variables'],
+                $message->channel, $message->business_id, $message->communication_sender_profile_id,
+                $message->intent->intent_type === 'conversation_reply',
             );
             $result = $message->channel === 'email' ? $this->email->send($outbound) : $this->mobile->send($outbound);
             DB::transaction(function () use ($message, $attempt, $result, $rendered): void {
@@ -111,14 +193,17 @@ class CommunicationDeliveryService
             });
         } catch (CommunicationProviderException $error) {
             $this->recordFailure($message, $attempt, $error->safeCode, $error->retryable, true);
+            $this->activateFallbackIfFailed($message);
             if ($error->retryable && $message->attempt_count < $message->max_attempts) {
                 throw $error;
             }
         } catch (ValidationException $error) {
             $this->recordFailure($message, $attempt, 'template_render_failed', false, true);
+            $this->activateFallbackIfFailed($message);
         } catch (Throwable $error) {
-            $retryable = $message->channel === 'email';
+            $retryable = $message->channel === 'email' && $message->provider !== 'ses';
             $this->recordFailure($message, $attempt, 'unexpected_provider_error', $retryable, false);
+            $this->activateFallbackIfFailed($message);
             if ($retryable && $message->attempt_count < $message->max_attempts) {
                 throw $error;
             }
@@ -175,7 +260,11 @@ class CommunicationDeliveryService
             return;
         }
 
-        $this->usage->release($message->business, 'messaging.monthly_allowance', $message->entitlement_charged_at);
+        if (DB::table('sms_usage_reservations')->where('communication_message_id', $message->id)->exists()) {
+            app(SmsCreditWallet::class)->release($message);
+        } else {
+            $this->usage->release($message->business, 'messaging.monthly_allowance', $message->entitlement_charged_at);
+        }
         $updates['entitlement_charged_at'] = null;
     }
 
@@ -184,9 +273,56 @@ class CommunicationDeliveryService
         if ($message->intent->intent_type !== 'appointment_reminder' || $message->intent->source_type !== Appointment::class) {
             return false;
         }
-        $status = Appointment::query()->where('business_id', $message->business_id)->whereKey($message->intent->source_id)->value('status');
+        $appointment = Appointment::query()->where('business_id', $message->business_id)->find($message->intent->source_id);
 
-        return in_array($status, ['cancelled_by_client', 'cancelled_by_shop', 'rescheduled'], true);
+        if (! $appointment || $appointment->starts_at_utc->lessThanOrEqualTo(now())) {
+            return true;
+        }
+        if (preg_match('/^appointment:\d+:reminder:(\d+):\d+$/', $message->intent->event_key, $match)
+            && (int) $match[1] !== $appointment->starts_at_utc->getTimestamp()) {
+            return true;
+        }
+
+        return in_array($appointment->status, ['cancelled_by_client', 'cancelled_by_shop', 'rescheduled', 'completed', 'no_show'], true);
+    }
+
+    private function preferenceWithdrawn(CommunicationMessage $message): bool
+    {
+        $preferences = $message->client?->communication_preferences ?? [];
+        if (($preferences[$message->channel] ?? null) === false) {
+            return true;
+        }
+        if ($message->intent->source_type !== Appointment::class) {
+            return false;
+        }
+        $appointment = Appointment::query()->where('business_id', $message->business_id)->find($message->intent->source_id);
+
+        return $appointment && (($appointment->communication_preferences[$message->channel] ?? null) === false);
+    }
+
+    private function invalidConversationReply(CommunicationMessage $message): ?string
+    {
+        if ($message->intent->intent_type !== 'conversation_reply') {
+            return null;
+        }
+        if ($message->intent->source_type !== CommunicationConversation::class) {
+            return 'conversation_reply_invalid';
+        }
+        $conversation = CommunicationConversation::query()->where('business_id', $message->business_id)
+            ->with('senderProfile')->find($message->intent->source_id);
+        $settings = $this->templates->settings($message->business_id);
+        if (! $conversation || $conversation->client_id !== $message->client_id || $conversation->channel !== $message->channel
+            || $conversation->communication_sender_profile_id !== $message->communication_sender_profile_id
+            || $conversation->senderProfile?->mode !== 'branded' || $conversation->senderProfile?->status !== 'active'
+            || $settings->sender_mode !== 'branded' || ! $settings->two_way_enabled
+            || ! $this->entitlements->decide($message->business, 'messaging.two_way')->allowed) {
+            return 'conversation_reply_unavailable';
+        }
+        if ($message->channel === 'whatsapp' && (! $conversation->last_message_at || $conversation->last_message_at->lt(now()->subHours(24)))) {
+            return 'conversation_reply_window_closed';
+        }
+
+        return null;
     }
 
     private function refreshIntent(CommunicationMessage $message): void
@@ -198,5 +334,13 @@ class CommunicationDeliveryService
                 : ($states->contains('failed') && ! $states->contains(fn ($state) => in_array($state, ['queued', 'sending', 'retried', 'sent'], true)) ? 'failed'
                     : ($states->contains('sent') ? 'sent' : 'queued')));
         $intent->update(['status' => $status]);
+    }
+
+    private function activateFallbackIfFailed(CommunicationMessage $message): void
+    {
+        $fresh = $message->fresh();
+        if ($fresh->status === 'failed') {
+            $this->fallbacks->activateAfterDefinitiveFailure($fresh);
+        }
     }
 }

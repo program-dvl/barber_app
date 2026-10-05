@@ -1,0 +1,210 @@
+[
+  {
+    "module": "Activity log",
+    "file": "activity-desktop.png",
+    "heading": "Activity log",
+    "height": 720,
+    "pageWidth": 1280,
+    "width": 1280
+  },
+  {
+    "module": "Checkout & sales",
+    "file": "checkout-desktop.png",
+    "heading": "Checkout",
+    "height": 720,
+    "pageWidth": 1280,
+    "width": 1280
+  },
+  {
+    "module": "Walk-in queue",
+    "file": "walk-ins-desktop.png",
+    "heading": "Walk-in queue",
+    "height": 720,
+    "pageWidth": 1280,
+    "width": 1280
+  },
+  {
+    "module": "Client notifications",
+    "file": "notifications-desktop.png",
+    "heading": "Client notifications",
+    "height": 720,
+    "pageWidth": 1280,
+    "width": 1280
+  },
+  {
+    "module": "Business setup",
+    "file": "setup-desktop.png",
+    "heading": "Business setup",
+    "height": 720,
+    "pageWidth": 1280,
+    "width": 1280
+  },
+  {
+    "module": "Subscription & billing",
+    "file": "billing-desktop.png",
+    "heading": "Subscription & billing",
+    "height": 720,
+    "pageWidth": 1280,
+    "width": 1280
+  },
+  {
+    "module": "Clients",
+    "file": "clients-mobile.png",
+    "heading": "Clients",
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  },
+  {
+    "module": "Services",
+    "file": "services-mobile.png",
+    "heading": "Services",
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  },
+  {
+    "module": "Team & availability",
+    "file": "team-mobile.png",
+    "heading": "Team & availability",
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  },
+  {
+    "module": "Activity log",
+    "file": "activity-mobile.png",
+    "heading": "Activity log",
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  },
+  {
+    "module": "Reports",
+    "file": "reports-mobile.png",
+    "heading": "Reports",
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  },
+  {
+    "module": "Business setup",
+    "file": "setup-mobile.png",
+    "heading": "Business setup",
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  },
+  {
+    "module": "Walk-in queue",
+    "file": "walk-ins-mobile.png",
+    "heading": "Walk-in queue",
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  },
+  {
+    "module": "Client notifications",
+    "file": "notifications-mobile.png",
+    "heading": "Client notifications",
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  },
+  {
+    "module": "Subscription & billing",
+    "file": "billing-mobile.png",
+    "heading": "Subscription & billing",
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  },
+  {
+    "module": "Checkout & sales",
+    "file": "checkout-mobile.png",
+    "heading": "Checkout",
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  },
+  {
+    "module": "Clients",
+    "file": "clients-long-name-mobile.png",
+    "heading": "Clients",
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  },
+  {
+    "module": "Team & availability",
+    "file": "team-tablet.png",
+    "heading": "Team & availability",
+    "height": 1024,
+    "pageWidth": 768,
+    "width": 768
+  },
+  {
+    "module": "Reports",
+    "file": "reports-tablet.png",
+    "heading": "Reports",
+    "height": 1024,
+    "pageWidth": 768,
+    "width": 768
+  },
+  {
+    "module": "Services",
+    "file": "services-360.png",
+    "heading": "Services",
+    "height": 800,
+    "pageWidth": 360,
+    "width": 360
+  },
+  {
+    "module": "Checkout & sales",
+    "file": "checkout-populated-desktop.png",
+    "heading": "Checkout",
+    "height": 720,
+    "pageWidth": 1280,
+    "width": 1280
+  },
+  {
+    "module": "Clients",
+    "file": "clients-desktop.png",
+    "heading": "Clients",
+    "height": 720,
+    "pageWidth": 1280,
+    "width": 1280
+  },
+  {
+    "module": "Reports",
+    "file": "reports-desktop.png",
+    "heading": "Reports",
+    "height": 720,
+    "pageWidth": 1280,
+    "width": 1280
+  },
+  {
+    "module": "Business setup",
+    "file": "setup-desktop.png",
+    "heading": "Business setup",
+    "height": 720,
+    "pageWidth": 1280,
+    "width": 1280
+  },
+  {
+    "module": "Checkout & sales",
+    "file": "checkout-mobile.png",
+    "heading": "Checkout",
+    "height": 844,
+    "pageWidth": 390,
+    "width": 390
+  },
+  {
+    "module": "Clients",
+    "file": "clients-640.png",
+    "heading": "Clients",
+    "height": 960,
+    "pageWidth": 640,
+    "width": 640
+  }
+]

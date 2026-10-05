@@ -86,3 +86,12 @@ idempotency rules through one
 Business/event/channel/recipient message key, encrypted destinations, signed
 short-lived action links, and content-minimized support history. Provider-backed
 payment events in Prompt 10 must reuse the deposit/receipt intents.
+
+## Receipt notification actions (2026-10-04, FR-13/14)
+
+Signed receipt links display the existing issued sale receipt, with its immutable
+recorded financial values, until link expiry. Legacy appointment-target links
+resolve the appointment's issued receipt. Viewing creates no payment/receipt and
+uses private no-store/no-referrer/noindex headers. Future notification action-link
+expiry is based on intended delivery time; existing revocation/tenant checks and
+single-use mutation actions remain. See [Communications](modules/communications.md).

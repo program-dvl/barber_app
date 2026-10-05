@@ -397,7 +397,7 @@ it('maps Stripe unpaid and paused states to read-only access', function (string 
         now()->subMonth(),
         now()->addMonth(),
         now()->subMinute(),
-        'cus_restricted',
+        'cus_activation',
         'sub_activation',
     );
 

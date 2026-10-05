@@ -329,3 +329,21 @@ Before production launch, verify all of the following:
 - queues, scheduler, monitoring and alerting are running; and
 - a full test-mode checkout, renewal failure, recovery, plan switch,
   cancellation, grace-period expiry and reactivation is reconciled locally.
+
+## Capacity billing package — 2026-10-05
+
+ADR-054 and `modules/subscription-billing.md` define the new one-plan quantity
+model. Existing single-price subscriptions keep their terms; do not edit their
+Stripe items to migrate them outside the reviewed workflow. Use distinct,
+licensed/per-unit, tax-exclusive base/location/staff Stripe prices for each
+country/cadence, and tax-exclusive one-time SMS packs. New price revisions need
+new immutable base IDs. `billing:verify-capacity-rates XX` previews local terms;
+`--apply` reads remote prices and installs exact local mappings without creating
+or changing Stripe objects. Global and per-country approval default off.
+
+Keep `CAPACITY_SMS_PURCHASES_ENABLED=false` until refund/dispute reversal and
+negative-balance operations are certified. The package prepares grant/reservation
+accounting but does not implement automatic chargeback/refund ledger adjustments.
+`CAPACITY_AUTOMATIC_TAX` requires the normal reviewed tax registration/configuration
+and sandbox certification; the final total is shown at hosted checkout. No real
+provider credentials or remote mutations were used to verify this package.

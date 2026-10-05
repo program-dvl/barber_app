@@ -90,11 +90,6 @@
                             </div>
                             <div class="group flex justify-center">
                                 <div class="flex h-20 w-20 items-center justify-center rounded-2xl border border-base-300 bg-base-100 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:border-primary/30 group-hover:shadow-xl">
-                                    <img alt="whatsapp" class="h-10 w-10" src="/images/integrations/whatsapp.svg" />
-                                </div>
-                            </div>
-                            <div class="group flex justify-center">
-                                <div class="flex h-20 w-20 items-center justify-center rounded-2xl border border-base-300 bg-base-100 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:border-primary/30 group-hover:shadow-xl">
                                     <img alt="x" class="h-10 w-10" src="/images/integrations/x.svg" />
                                 </div>
                             </div>

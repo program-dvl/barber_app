@@ -1,0 +1,3875 @@
+[
+  {
+    "method": "GET|HEAD",
+    "uri": "/",
+    "name": "marketing.home",
+    "action": "App\\Http\\Controllers\\HomeController@index",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "_boost/browser-logs",
+    "name": "boost.browser-logs",
+    "action": "Closure",
+    "middleware": []
+  },
+  {
+    "method": "POST",
+    "uri": "_ignition/execute-solution",
+    "name": "ignition.executeSolution",
+    "action": "Spatie\\LaravelIgnition\\Http\\Controllers\\ExecuteSolutionController",
+    "middleware": [
+      "Spatie\\LaravelIgnition\\Http\\Middleware\\RunnableSolutionsEnabled"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "_ignition/health-check",
+    "name": "ignition.healthCheck",
+    "action": "Spatie\\LaravelIgnition\\Http\\Controllers\\HealthCheckController",
+    "middleware": [
+      "Spatie\\LaravelIgnition\\Http\\Middleware\\RunnableSolutionsEnabled"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "_ignition/update-config",
+    "name": "ignition.updateConfig",
+    "action": "Spatie\\LaravelIgnition\\Http\\Controllers\\UpdateConfigController",
+    "middleware": [
+      "Spatie\\LaravelIgnition\\Http\\Middleware\\RunnableSolutionsEnabled"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin",
+    "name": "filament.admin.pages.dashboard",
+    "action": "Filament\\Pages\\Dashboard",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/articles",
+    "name": "filament.admin.resources.articles.index",
+    "action": "App\\Filament\\Resources\\Articles\\Pages\\ListArticles",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/articles/create",
+    "name": "filament.admin.resources.articles.create",
+    "action": "App\\Filament\\Resources\\Articles\\Pages\\CreateArticle",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/articles/{record}/edit",
+    "name": "filament.admin.resources.articles.edit",
+    "action": "App\\Filament\\Resources\\Articles\\Pages\\EditArticle",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/changelogs",
+    "name": "filament.admin.resources.changelogs.index",
+    "action": "App\\Filament\\Resources\\Changelogs\\Pages\\ListChangelogs",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/changelogs/create",
+    "name": "filament.admin.resources.changelogs.create",
+    "action": "App\\Filament\\Resources\\Changelogs\\Pages\\CreateChangelog",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/changelogs/{record}/edit",
+    "name": "filament.admin.resources.changelogs.edit",
+    "action": "App\\Filament\\Resources\\Changelogs\\Pages\\EditChangelog",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/coming-soon-emails",
+    "name": "filament.admin.resources.coming-soon-emails.index",
+    "action": "App\\Filament\\Resources\\ComingSoonEmails\\Pages\\ListComingSoonEmails",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/coming-soon-emails/create",
+    "name": "filament.admin.resources.coming-soon-emails.create",
+    "action": "App\\Filament\\Resources\\ComingSoonEmails\\Pages\\CreateComingSoonEmail",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/coming-soon-emails/{record}",
+    "name": "filament.admin.resources.coming-soon-emails.view",
+    "action": "App\\Filament\\Resources\\ComingSoonEmails\\Pages\\ViewComingSoonEmail",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/coming-soon-emails/{record}/edit",
+    "name": "filament.admin.resources.coming-soon-emails.edit",
+    "action": "App\\Filament\\Resources\\ComingSoonEmails\\Pages\\EditComingSoonEmail",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/invoices",
+    "name": "filament.admin.resources.invoices.index",
+    "action": "App\\Filament\\Resources\\Invoices\\Pages\\ListInvoices",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/invoices/create",
+    "name": "filament.admin.resources.invoices.create",
+    "action": "App\\Filament\\Resources\\Invoices\\Pages\\CreateInvoice",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/invoices/{record}",
+    "name": "filament.admin.resources.invoices.view",
+    "action": "App\\Filament\\Resources\\Invoices\\Pages\\ViewInvoice",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/invoices/{record}/edit",
+    "name": "filament.admin.resources.invoices.edit",
+    "action": "App\\Filament\\Resources\\Invoices\\Pages\\EditInvoice",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/lemon-squeezy-orders",
+    "name": "filament.admin.resources.lemon-squeezy-orders.index",
+    "action": "App\\Filament\\Resources\\LemonSqueezyOrders\\Pages\\ListOrders",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/lemon-squeezy-subscriptions",
+    "name": "filament.admin.resources.lemon-squeezy-subscriptions.index",
+    "action": "App\\Filament\\Resources\\LemonSqueezySubscriptions\\Pages\\ListLemonSqueezySubscriptions",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/lemon-squeezy-subscriptions/create",
+    "name": "filament.admin.resources.lemon-squeezy-subscriptions.create",
+    "action": "App\\Filament\\Resources\\LemonSqueezySubscriptions\\Pages\\CreateLemonSqueezySubscription",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/lemon-squeezy-subscriptions/{record}",
+    "name": "filament.admin.resources.lemon-squeezy-subscriptions.view",
+    "action": "App\\Filament\\Resources\\LemonSqueezySubscriptions\\Pages\\ViewLemonSqueezySubscription",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/lemon-squeezy-subscriptions/{record}/edit",
+    "name": "filament.admin.resources.lemon-squeezy-subscriptions.edit",
+    "action": "App\\Filament\\Resources\\LemonSqueezySubscriptions\\Pages\\EditLemonSqueezySubscription",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/login",
+    "name": "filament.admin.auth.login",
+    "action": "Filament\\Auth\\Pages\\Login",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "admin/logout",
+    "name": "filament.admin.auth.logout",
+    "action": "Filament\\Auth\\Http\\Controllers\\LogoutController",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/permissions",
+    "name": "filament.admin.resources.permissions.index",
+    "action": "App\\Filament\\Resources\\Permissions\\Pages\\ListPermissions",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/permissions/create",
+    "name": "filament.admin.resources.permissions.create",
+    "action": "App\\Filament\\Resources\\Permissions\\Pages\\CreatePermission",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/permissions/{record}/edit",
+    "name": "filament.admin.resources.permissions.edit",
+    "action": "App\\Filament\\Resources\\Permissions\\Pages\\EditPermission",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/prices",
+    "name": "filament.admin.resources.prices.index",
+    "action": "App\\Filament\\Resources\\Prices\\Pages\\ListPrices",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/prices/create",
+    "name": "filament.admin.resources.prices.create",
+    "action": "App\\Filament\\Resources\\Prices\\Pages\\CreatePrice",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/prices/{record}/edit",
+    "name": "filament.admin.resources.prices.edit",
+    "action": "App\\Filament\\Resources\\Prices\\Pages\\EditPrice",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/products",
+    "name": "filament.admin.resources.products.index",
+    "action": "App\\Filament\\Resources\\Products\\Pages\\ListProducts",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/products/create",
+    "name": "filament.admin.resources.products.create",
+    "action": "App\\Filament\\Resources\\Products\\Pages\\CreateProduct",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/products/{record}/edit",
+    "name": "filament.admin.resources.products.edit",
+    "action": "App\\Filament\\Resources\\Products\\Pages\\EditProduct",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/roadmaps",
+    "name": "filament.admin.resources.roadmaps.index",
+    "action": "App\\Filament\\Resources\\Roadmaps\\Pages\\ListRoadmaps",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/roadmaps/create",
+    "name": "filament.admin.resources.roadmaps.create",
+    "action": "App\\Filament\\Resources\\Roadmaps\\Pages\\CreateRoadmap",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/roadmaps/{record}/edit",
+    "name": "filament.admin.resources.roadmaps.edit",
+    "action": "App\\Filament\\Resources\\Roadmaps\\Pages\\EditRoadmap",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/roles",
+    "name": "filament.admin.resources.roles.index",
+    "action": "App\\Filament\\Resources\\Roles\\Pages\\ListRoles",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/roles/create",
+    "name": "filament.admin.resources.roles.create",
+    "action": "App\\Filament\\Resources\\Roles\\Pages\\CreateRole",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/roles/{record}/edit",
+    "name": "filament.admin.resources.roles.edit",
+    "action": "App\\Filament\\Resources\\Roles\\Pages\\EditRole",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/stripe-orders",
+    "name": "filament.admin.resources.stripe-orders.index",
+    "action": "App\\Filament\\Resources\\StripeOrders\\Pages\\ListStripeOrders",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/stripe-orders/create",
+    "name": "filament.admin.resources.stripe-orders.create",
+    "action": "App\\Filament\\Resources\\StripeOrders\\Pages\\CreateStripeOrder",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/stripe-orders/{record}/edit",
+    "name": "filament.admin.resources.stripe-orders.edit",
+    "action": "App\\Filament\\Resources\\StripeOrders\\Pages\\EditStripeOrder",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/stripe-subscriptions",
+    "name": "filament.admin.resources.stripe-subscriptions.index",
+    "action": "App\\Filament\\Resources\\StripeSubscriptions\\Pages\\ListStripeSubscriptions",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/stripe-subscriptions/create",
+    "name": "filament.admin.resources.stripe-subscriptions.create",
+    "action": "App\\Filament\\Resources\\StripeSubscriptions\\Pages\\CreateStripeSubscription",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/stripe-subscriptions/{record}",
+    "name": "filament.admin.resources.stripe-subscriptions.view",
+    "action": "App\\Filament\\Resources\\StripeSubscriptions\\Pages\\ViewStripeSubscription",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/stripe-subscriptions/{record}/edit",
+    "name": "filament.admin.resources.stripe-subscriptions.edit",
+    "action": "App\\Filament\\Resources\\StripeSubscriptions\\Pages\\EditStripeSubscription",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/users",
+    "name": "filament.admin.resources.users.index",
+    "action": "App\\Filament\\Resources\\Users\\Pages\\ListUsers",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/users/create",
+    "name": "filament.admin.resources.users.create",
+    "action": "App\\Filament\\Resources\\Users\\Pages\\CreateUser",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "admin/users/{record}/edit",
+    "name": "filament.admin.resources.users.edit",
+    "action": "App\\Filament\\Resources\\Users\\Pages\\EditUser",
+    "middleware": [
+      "Filament\\Http\\Middleware\\SetUpPanel:admin",
+      "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+      "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+      "Illuminate\\Session\\Middleware\\StartSession",
+      "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+      "Filament\\Http\\Middleware\\Authenticate",
+      "Illuminate\\Session\\Middleware\\AuthenticateSession",
+      "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery",
+      "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+      "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+      "Filament\\Http\\Middleware\\DispatchServingFilamentEvent"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "api/user",
+    "name": null,
+    "action": "Closure",
+    "middleware": [
+      "api",
+      "App\\Http\\Middleware\\Authenticate:sanctum"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "app/interface-patterns",
+    "name": "design-system.patterns",
+    "action": "Closure",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "appointments/secure/{token}",
+    "name": "public.appointment.view",
+    "action": "App\\Http\\Controllers\\PublicBooking\\PublicAppointmentController@view",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:20,1"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "appointments/secure/{token}/calendar",
+    "name": "public.appointment.calendar",
+    "action": "App\\Http\\Controllers\\PublicBooking\\PublicAppointmentController@calendar",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:20,1"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "appointments/secure/{token}/{purpose}",
+    "name": "public.appointment.action",
+    "action": "App\\Http\\Controllers\\PublicBooking\\PublicAppointmentController@action",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:20,1"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "appointments/secure/{token}/{purpose}",
+    "name": "public.appointment.mutate",
+    "action": "App\\Http\\Controllers\\PublicBooking\\PublicAppointmentController@mutate",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:20,1"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "auth/callback/google",
+    "name": "auth.google.callback",
+    "action": "App\\Http\\Controllers\\Auth\\SocialiteController@callback",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:10,1"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "auth/google/redirect",
+    "name": "auth.google.redirect",
+    "action": "App\\Http\\Controllers\\Auth\\SocialiteController@redirect",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:10,1"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "auth/google/register",
+    "name": "auth.google.register",
+    "action": "App\\Http\\Controllers\\Auth\\SocialiteController@completeRegistration",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:10,1"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "billing/webhooks/stripe",
+    "name": "billing.webhooks.stripe",
+    "action": "App\\Http\\Controllers\\Billing\\StripeWebhookController",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "blog",
+    "name": "blog.index",
+    "action": "App\\Http\\Controllers\\BlogController@index",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "blog/{article:slug}",
+    "name": "blog.article",
+    "action": "App\\Http\\Controllers\\BlogController@article",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "book",
+    "name": "booking.welcome",
+    "action": "Closure",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "book/{slug}",
+    "name": "booking.business",
+    "action": "App\\Http\\Controllers\\PublicBooking\\BookingBusinessController",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "book/{slug}/availability",
+    "name": "public.booking.search",
+    "action": "App\\Http\\Controllers\\PublicBooking\\PublicBookingFlowController@search",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:30,1"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "book/{slug}/confirm",
+    "name": "public.booking.confirm",
+    "action": "App\\Http\\Controllers\\PublicBooking\\PublicBookingFlowController@confirm",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:10,1"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "book/{slug}/deposit-payment",
+    "name": "public.booking.deposit-payment",
+    "action": "App\\Http\\Controllers\\PublicBooking\\PublicBookingPaymentController@store",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:10,1"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "book/{slug}/flows",
+    "name": "public.booking.start",
+    "action": "App\\Http\\Controllers\\PublicBooking\\PublicBookingFlowController@start",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:30,1"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "book/{slug}/hold",
+    "name": "public.booking.hold",
+    "action": "App\\Http\\Controllers\\PublicBooking\\PublicBookingFlowController@hold",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:10,1"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "book/{slug}/media/{kind}",
+    "name": "public.booking.media",
+    "action": "App\\Http\\Controllers\\PublicBooking\\PublicBusinessMediaController",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "book/{slug}/waitlist",
+    "name": "public.waitlist.store",
+    "action": "App\\Http\\Controllers\\PublicBooking\\PublicWaitlistController@store",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:10,1"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/activation/locations",
+    "name": "business.locations.activation.store",
+    "action": "App\\Http\\Controllers\\Shop\\LocationSetupController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/activation/providers",
+    "name": "business.team.providers.store",
+    "action": "App\\Http\\Controllers\\Shop\\TeamManagementController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/activation/services",
+    "name": "business.services.store",
+    "action": "App\\Http\\Controllers\\Shop\\ServiceManagementController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "PUT",
+    "uri": "businesses/{business:public_id}/activation/services/{service}",
+    "name": "business.services.update",
+    "action": "App\\Http\\Controllers\\Shop\\ServiceManagementController@update",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "PATCH",
+    "uri": "businesses/{business:public_id}/activation/services/{service}/status",
+    "name": "business.services.status",
+    "action": "App\\Http\\Controllers\\Shop\\ServiceManagementController@status",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/activity",
+    "name": "business.activity.index",
+    "action": "App\\Http\\Controllers\\Shop\\TeamManagementController@activity",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:activity"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/calendar",
+    "name": "business.calendar",
+    "action": "App\\Http\\Controllers\\Shop\\CalendarController",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:calendar"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/calendar/print",
+    "name": "business.calendar.print",
+    "action": "App\\Http\\Controllers\\Shop\\PrintDailyScheduleController",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/checkout-sales",
+    "name": "business.checkout.index",
+    "action": "App\\Http\\Controllers\\Shop\\CheckoutController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:checkout-sales"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/clients",
+    "name": "business.clients.index",
+    "action": "App\\Http\\Controllers\\Shop\\ClientRecords\\ClientController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:clients"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/clients/{client}",
+    "name": "business.clients.show",
+    "action": "App\\Http\\Controllers\\Shop\\ClientRecords\\ClientController@show",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/communications",
+    "name": "business.communications.page",
+    "action": "App\\Http\\Controllers\\Shop\\CommunicationSettingsController@page",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:settings"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/inventory",
+    "name": "business.inventory.index",
+    "action": "App\\Http\\Controllers\\Shop\\InventoryController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:inventory",
+      "App\\Http\\Middleware\\RequireEntitlement:inventory.enabled,read"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/locations",
+    "name": "business.locations.index",
+    "action": "App\\Http\\Controllers\\Shop\\LocationSetupController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:settings"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/reports",
+    "name": "business.reports.index",
+    "action": "App\\Http\\Controllers\\Shop\\ReportController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:reports"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/reports/print",
+    "name": "business.reports.print",
+    "action": "App\\Http\\Controllers\\Shop\\ReportController@print",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/services",
+    "name": "business.services.index",
+    "action": "App\\Http\\Controllers\\Shop\\ServiceManagementController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:services"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/team",
+    "name": "business.team.index",
+    "action": "App\\Http\\Controllers\\Shop\\TeamManagementController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:staff"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/walk-in-queue",
+    "name": "business.walk-ins.index",
+    "action": "App\\Http\\Controllers\\Shop\\WalkInQueueController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:walk-in-queue"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/app/{module}",
+    "name": "shop.module",
+    "action": "Closure",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:module"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/appointments",
+    "name": "business.appointments.store",
+    "action": "App\\Http\\Controllers\\Shop\\AppointmentOperationsController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/appointments/{appointment}/checkout",
+    "name": "business.checkout.open",
+    "action": "App\\Http\\Controllers\\Shop\\CheckoutController@open",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/appointments/{appointment}/copy",
+    "name": "business.appointments.copy",
+    "action": "App\\Http\\Controllers\\Shop\\AppointmentOperationsController@copy",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/appointments/{appointment}/exceptions",
+    "name": "business.appointments.exceptions",
+    "action": "App\\Http\\Controllers\\Shop\\OperationalExceptionController@appointment",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "PATCH",
+    "uri": "businesses/{business:public_id}/appointments/{appointment}/notes",
+    "name": "business.appointments.notes",
+    "action": "App\\Http\\Controllers\\Shop\\AppointmentOperationsController@notes",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/appointments/{appointment}/replace",
+    "name": "business.appointments.replace",
+    "action": "App\\Http\\Controllers\\Shop\\AppointmentOperationsController@replace",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "PATCH",
+    "uri": "businesses/{business:public_id}/appointments/{appointment}/status",
+    "name": "business.appointments.status",
+    "action": "App\\Http\\Controllers\\Shop\\AppointmentOperationsController@transition",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/billing",
+    "name": "business.billing.show",
+    "action": "App\\Http\\Controllers\\Billing\\BusinessBillingController@show",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:subscription-billing"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/billing/cancel",
+    "name": "business.billing.cancel",
+    "action": "App\\Http\\Controllers\\Billing\\BusinessBillingController@cancel",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/billing/checkout",
+    "name": "business.billing.checkout.form",
+    "action": "App\\Http\\Controllers\\Billing\\BusinessBillingController@checkoutForm",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/billing/checkout/session",
+    "name": "business.billing.checkout",
+    "action": "App\\Http\\Controllers\\Billing\\BusinessBillingController@checkout",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:5,1",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/billing/checkout/status",
+    "name": "business.billing.checkout.status",
+    "action": "App\\Http\\Controllers\\Billing\\BusinessBillingController@checkoutStatus",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:30,1",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/billing/invoices/{invoice}",
+    "name": "business.billing.invoices.show",
+    "action": "App\\Http\\Controllers\\Billing\\BusinessBillingController@invoice",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/billing/plan-change",
+    "name": "business.billing.plan-change",
+    "action": "App\\Http\\Controllers\\Billing\\BusinessBillingController@changePlan",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/billing/plan-change/status",
+    "name": "business.billing.plan-change.status",
+    "action": "App\\Http\\Controllers\\Billing\\BusinessBillingController@planChangeStatus",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:30,1",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/billing/portal",
+    "name": "business.billing.portal",
+    "action": "App\\Http\\Controllers\\Billing\\BusinessBillingController@portal",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/billing/reactivate",
+    "name": "business.billing.reactivate",
+    "action": "App\\Http\\Controllers\\Billing\\BusinessBillingController@reactivate",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/client-duplicates/{candidate}/merge",
+    "name": "business.clients.duplicates.merge",
+    "action": "App\\Http\\Controllers\\Shop\\ClientRecords\\ClientDuplicateController@merge",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/client-duplicates/{candidate}/preview",
+    "name": "business.clients.duplicates.preview",
+    "action": "App\\Http\\Controllers\\Shop\\ClientRecords\\ClientDuplicateController@preview",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/client-form-templates/publish",
+    "name": "business.clients.forms.publish",
+    "action": "App\\Http\\Controllers\\Shop\\ClientRecords\\ClientFormController@publish",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/clients",
+    "name": "business.clients.store",
+    "action": "App\\Http\\Controllers\\Shop\\ClientRecords\\ClientController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "PATCH",
+    "uri": "businesses/{business:public_id}/clients/{client}",
+    "name": "business.clients.update",
+    "action": "App\\Http\\Controllers\\Shop\\ClientRecords\\ClientController@update",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/clients/{client}/attachments",
+    "name": "business.clients.attachments.store",
+    "action": "App\\Http\\Controllers\\Shop\\ClientRecords\\ClientAttachmentController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/clients/{client}/attachments/{attachment}/link",
+    "name": "business.clients.attachments.link",
+    "action": "App\\Http\\Controllers\\Shop\\ClientRecords\\ClientAttachmentController@link",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/clients/{client}/form-requests",
+    "name": "business.clients.forms.request",
+    "action": "App\\Http\\Controllers\\Shop\\ClientRecords\\ClientFormController@request",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/clients/{client}/notes",
+    "name": "business.clients.notes.store",
+    "action": "App\\Http\\Controllers\\Shop\\ClientRecords\\ClientNoteController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/clients/{client}/privacy-requests",
+    "name": "business.clients.privacy.store",
+    "action": "App\\Http\\Controllers\\Shop\\ClientRecords\\ClientPrivacyController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/clients/{client}/privacy-requests/{privacyRequest}/process",
+    "name": "business.clients.privacy.process",
+    "action": "App\\Http\\Controllers\\Shop\\ClientRecords\\ClientPrivacyController@process",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/commission-rules",
+    "name": "business.commission-rules.store",
+    "action": "App\\Http\\Controllers\\Shop\\CommissionController@rule",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/communications/conversations/{communicationConversation}/reply",
+    "name": "business.communications.conversations.reply",
+    "action": "App\\Http\\Controllers\\Shop\\CommunicationSettingsController@reply",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/communications/messages/{communicationMessage}",
+    "name": "business.communications.messages.show",
+    "action": "App\\Http\\Controllers\\Shop\\CommunicationSettingsController@diagnostic",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/communications/messages/{communicationMessage}/replay",
+    "name": "business.communications.messages.replay",
+    "action": "App\\Http\\Controllers\\Shop\\CommunicationSettingsController@replay",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/communications/senders/branded",
+    "name": "business.communications.senders.branded",
+    "action": "App\\Http\\Controllers\\Shop\\CommunicationSettingsController@requestBrandedSender",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/communications/settings",
+    "name": "business.communications.index",
+    "action": "App\\Http\\Controllers\\Shop\\CommunicationSettingsController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "PATCH",
+    "uri": "businesses/{business:public_id}/communications/settings",
+    "name": "business.communications.update",
+    "action": "App\\Http\\Controllers\\Shop\\CommunicationSettingsController@update",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/communications/templates",
+    "name": "business.communications.templates.store",
+    "action": "App\\Http\\Controllers\\Shop\\CommunicationSettingsController@storeTemplate",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/communications/templates/{communicationTemplate}/preview",
+    "name": "business.communications.templates.preview",
+    "action": "App\\Http\\Controllers\\Shop\\CommunicationSettingsController@preview",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/communications/templates/{communicationTemplate}/publish",
+    "name": "business.communications.templates.publish",
+    "action": "App\\Http\\Controllers\\Shop\\CommunicationSettingsController@publish",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/configuration",
+    "name": "business.configuration.show",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@show",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireWorkspaceFeature:settings"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/configuration/branding",
+    "name": "business.configuration.branding.store",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@uploadBrandAsset",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/configuration/change-previews/{subjectType}/{subjectId}",
+    "name": "business.configuration.change-previews.store",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@previewChange",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/configuration/first-bookable-path",
+    "name": "business.configuration.first-bookable-path.store",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@createFirstBookablePath",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "PATCH",
+    "uri": "businesses/{business:public_id}/configuration/guided-onboarding",
+    "name": "business.configuration.guided-onboarding.update",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@saveGuidedOnboarding",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/configuration/guided-onboarding/complete",
+    "name": "business.configuration.guided-onboarding.complete",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@completeGuidedOnboarding",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/configuration/imports/preview",
+    "name": "business.configuration.imports.preview",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@previewImport",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/configuration/imports/templates/{entityType}",
+    "name": "business.configuration.imports.template",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@importTemplate",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/configuration/imports/{configurationImport}/commit",
+    "name": "business.configuration.imports.commit",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@commitImport",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/configuration/locations/{location}/exceptions",
+    "name": "business.configuration.locations.exceptions.store",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@storeLocationException",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "PUT",
+    "uri": "businesses/{business:public_id}/configuration/locations/{location}/hours",
+    "name": "business.configuration.locations.hours.update",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@saveHours",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/configuration/locations/{location}/resources",
+    "name": "business.configuration.locations.resources.store",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@storeResource",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/configuration/preview",
+    "name": "business.configuration.preview",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@preview",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "PATCH",
+    "uri": "businesses/{business:public_id}/configuration/profile",
+    "name": "business.configuration.profile.update",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@updateProfile",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "PATCH",
+    "uri": "businesses/{business:public_id}/configuration/public-booking-policy",
+    "name": "business.configuration.public-booking-policy.update",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@updatePublicBookingPolicy",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/configuration/publish",
+    "name": "business.configuration.publish",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@publish",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/configuration/services",
+    "name": "business.configuration.services.store",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@storeService",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "PUT",
+    "uri": "businesses/{business:public_id}/configuration/staff/{staffProfile}/availability",
+    "name": "business.configuration.staff.availability.update",
+    "action": "App\\Http\\Controllers\\Shop\\BusinessConfigurationController@saveStaffAvailability",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/dashboard",
+    "name": "business.dashboard",
+    "action": "App\\Http\\Controllers\\Shop\\DashboardController",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/inventory/products",
+    "name": "business.inventory.products.store",
+    "action": "App\\Http\\Controllers\\Shop\\InventoryController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireEntitlement:inventory.enabled,use"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/inventory/products/export",
+    "name": "business.inventory.export",
+    "action": "App\\Http\\Controllers\\Shop\\InventoryController@export",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireEntitlement:inventory.enabled,read"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/inventory/products/import",
+    "name": "business.inventory.import",
+    "action": "App\\Http\\Controllers\\Shop\\InventoryController@import",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireEntitlement:inventory.enabled,import"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/inventory/products/{product}/adjustments",
+    "name": "business.inventory.adjustments.store",
+    "action": "App\\Http\\Controllers\\Shop\\InventoryController@adjustment",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireEntitlement:inventory.enabled,use"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/inventory/products/{product}/receipts",
+    "name": "business.inventory.receipts.store",
+    "action": "App\\Http\\Controllers\\Shop\\InventoryController@receipt",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireEntitlement:inventory.enabled,use"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/locations/{location}",
+    "name": "business.locations.show",
+    "action": "Closure",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "Illuminate\\Auth\\Middleware\\Authorize:view,location"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/locations/{location}/cash-close",
+    "name": "business.cash-close.store",
+    "action": "App\\Http\\Controllers\\Shop\\CheckoutController@close",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/operational-exceptions/closure",
+    "name": "business.operational-exceptions.closure",
+    "action": "App\\Http\\Controllers\\Shop\\OperationalExceptionController@closure",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/payroll-exports",
+    "name": "business.payroll-exports.store",
+    "action": "App\\Http\\Controllers\\Shop\\CommissionController@payroll",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/report-exports",
+    "name": "business.report-exports.store",
+    "action": "App\\Http\\Controllers\\Shop\\ReportController@export",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess",
+      "App\\Http\\Middleware\\RequireEntitlement:reporting.advanced,use"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/report-exports/{reportExport}",
+    "name": "business.report-exports.show",
+    "action": "App\\Http\\Controllers\\Shop\\ReportController@exportStatus",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/report-exports/{reportExport}/download",
+    "name": "business.report-exports.download",
+    "action": "App\\Http\\Controllers\\Shop\\ReportController@download",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/sales/{sale}/payments/{payment}/refunds",
+    "name": "business.checkout.refund",
+    "action": "App\\Http\\Controllers\\Shop\\CheckoutController@refund",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/sales/{sale}/receipt",
+    "name": "business.checkout.receipt",
+    "action": "App\\Http\\Controllers\\Shop\\CheckoutController@receipt",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/sales/{sale}/tenders",
+    "name": "business.checkout.tender",
+    "action": "App\\Http\\Controllers\\Shop\\CheckoutController@tender",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/schedule-blocks",
+    "name": "business.schedule-blocks.store",
+    "action": "App\\Http\\Controllers\\Shop\\ScheduleBlockController",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/staff-invitations",
+    "name": "staff-invitations.store",
+    "action": "App\\Http\\Controllers\\Access\\StaffInvitationController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "DELETE",
+    "uri": "businesses/{business:public_id}/staff-invitations/{invitation}",
+    "name": "staff-invitations.destroy",
+    "action": "App\\Http\\Controllers\\Access\\StaffInvitationController@destroy",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/staff/{staff}/statement",
+    "name": "business.staff.statement",
+    "action": "App\\Http\\Controllers\\Shop\\CommissionController@statement",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/staff/{staff}/statement-adjustments",
+    "name": "business.staff.statement-adjustments.store",
+    "action": "App\\Http\\Controllers\\Shop\\CommissionController@adjust",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "PATCH",
+    "uri": "businesses/{business:public_id}/team/memberships/{membership}/access",
+    "name": "business.team.memberships.access.update",
+    "action": "App\\Http\\Controllers\\Shop\\TeamManagementController@updateAccess",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "DELETE",
+    "uri": "businesses/{business:public_id}/team/memberships/{membership}/access",
+    "name": "business.team.memberships.access.destroy",
+    "action": "App\\Http\\Controllers\\Shop\\TeamManagementController@revokeAccess",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/team/memberships/{membership}/restore",
+    "name": "business.team.memberships.access.restore",
+    "action": "App\\Http\\Controllers\\Shop\\TeamManagementController@restoreAccess",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/team/staff/{staffProfile}/invite",
+    "name": "business.team.staff.invite",
+    "action": "App\\Http\\Controllers\\Shop\\TeamManagementController@inviteAccess",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/walk-ins",
+    "name": "business.walk-ins.store",
+    "action": "App\\Http\\Controllers\\Shop\\WalkInQueueController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "businesses/{business:public_id}/walk-ins/clients/search",
+    "name": "business.walk-ins.clients.search",
+    "action": "App\\Http\\Controllers\\Shop\\WalkInQueueController@searchClients",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/walk-ins/reorder",
+    "name": "business.walk-ins.reorder",
+    "action": "App\\Http\\Controllers\\Shop\\WalkInQueueController@reorder",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "PATCH",
+    "uri": "businesses/{business:public_id}/walk-ins/{walkIn}/assign",
+    "name": "business.walk-ins.assign",
+    "action": "App\\Http\\Controllers\\Shop\\WalkInQueueController@assign",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/walk-ins/{walkIn}/leave",
+    "name": "business.walk-ins.leave",
+    "action": "App\\Http\\Controllers\\Shop\\WalkInQueueController@leave",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/walk-ins/{walkIn}/notify",
+    "name": "business.walk-ins.notify",
+    "action": "App\\Http\\Controllers\\Shop\\WalkInQueueController@notify",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "businesses/{business:public_id}/walk-ins/{walkIn}/start",
+    "name": "business.walk-ins.start",
+    "action": "App\\Http\\Controllers\\Shop\\WalkInQueueController@start",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\ResolveTenantContext",
+      "App\\Http\\Middleware\\EnforceSubscriptionAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "changelog",
+    "name": "changelog",
+    "action": "App\\Http\\Controllers\\ChangelogController@index",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "client-files/{token}",
+    "name": "client-attachments.download",
+    "action": "App\\Http\\Controllers\\ClientAttachmentDownloadController",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:20,1"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "client-forms/completed",
+    "name": "client-forms.completed",
+    "action": "Closure",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "client-forms/secure/{token}",
+    "name": "client-forms.view",
+    "action": "App\\Http\\Controllers\\ClientFormPublicController@view",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:20,1"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "client-forms/secure/{token}",
+    "name": "client-forms.submit",
+    "action": "App\\Http\\Controllers\\ClientFormPublicController@submit",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:20,1"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "coming-soon",
+    "name": "coming-soon",
+    "action": "Closure",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "coming-soon",
+    "name": "coming-soon.store",
+    "action": "App\\Http\\Controllers\\ComingSoonController@index",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|POST|HEAD",
+    "uri": "communications/actions/{link}",
+    "name": "communications.action",
+    "action": "App\\Http\\Controllers\\CommunicationActionController",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "communications/webhooks/resend",
+    "name": "communications.webhooks.resend",
+    "action": "App\\Http\\Controllers\\Webhooks\\CommunicationWebhookController@resend",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "communications/webhooks/twilio",
+    "name": "communications.webhooks.twilio",
+    "action": "App\\Http\\Controllers\\Webhooks\\CommunicationWebhookController@twilio",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "communications/webhooks/twilio/inbound",
+    "name": "communications.webhooks.twilio.inbound",
+    "action": "App\\Http\\Controllers\\Webhooks\\CommunicationWebhookController@twilioInbound",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "company",
+    "name": "marketing.company",
+    "action": "App\\Http\\Controllers\\Marketing\\TrustController@company",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "dashboard",
+    "name": "dashboard",
+    "action": "App\\Http\\Controllers\\Shop\\DashboardRedirectController",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "email/verification-notification",
+    "name": "verification.send",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\EmailVerificationNotificationController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:6,1"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "email/verify",
+    "name": "verification.notice",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\EmailVerificationPromptController@__invoke",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "email/verify/{id}/{hash}",
+    "name": "verification.verify",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\VerifyEmailController@__invoke",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "App\\Http\\Middleware\\ValidateSignature",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:6,1"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "features",
+    "name": "marketing.features",
+    "action": "App\\Http\\Controllers\\Marketing\\FeatureController@index",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "features/{feature}",
+    "name": "marketing.features.show",
+    "action": "App\\Http\\Controllers\\Marketing\\FeatureController@show",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "filament/exports/{export}/download",
+    "name": "filament.exports.download",
+    "action": "Filament\\Actions\\Exports\\Http\\Controllers\\DownloadExport",
+    "middleware": [
+      "filament.actions"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "filament/imports/{import}/failed-rows/download",
+    "name": "filament.imports.failed-rows.download",
+    "action": "Filament\\Actions\\Imports\\Http\\Controllers\\DownloadImportFailureCsv",
+    "middleware": [
+      "filament.actions"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "forgot-password",
+    "name": "password.request",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\PasswordResetLinkController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated:web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "forgot-password",
+    "name": "password.email",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\PasswordResetLinkController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated:web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "guides/{guide}",
+    "name": "marketing.guides.show",
+    "action": "App\\Http\\Controllers\\Marketing\\ResourceController@guide",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "invoices/{invoice}/download",
+    "name": "invoices.download",
+    "action": "App\\Http\\Controllers\\Invoices\\DownloadInvoiceController",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "livewire-6d23f71c/css/{component}.css",
+    "name": null,
+    "action": "Closure",
+    "middleware": []
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "livewire-6d23f71c/css/{component}.global.css",
+    "name": null,
+    "action": "Closure",
+    "middleware": []
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "livewire-6d23f71c/js/{component}.js",
+    "name": null,
+    "action": "Closure",
+    "middleware": []
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "livewire-6d23f71c/livewire.csp.min.js.map",
+    "name": null,
+    "action": "Livewire\\Mechanisms\\FrontendAssets\\FrontendAssets@cspMaps",
+    "middleware": []
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "livewire-6d23f71c/livewire.js",
+    "name": null,
+    "action": "Livewire\\Mechanisms\\FrontendAssets\\FrontendAssets@returnJavaScriptAsFile",
+    "middleware": []
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "livewire-6d23f71c/livewire.min.js.map",
+    "name": null,
+    "action": "Livewire\\Mechanisms\\FrontendAssets\\FrontendAssets@maps",
+    "middleware": []
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "livewire-6d23f71c/preview-file/{filename}",
+    "name": "livewire.preview-file",
+    "action": "Livewire\\Features\\SupportFileUploads\\FilePreviewController@handle",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "livewire-6d23f71c/update",
+    "name": "default-livewire.update",
+    "action": "Livewire\\Mechanisms\\HandleRequests\\HandleRequests@handleUpdate",
+    "middleware": [
+      "web",
+      "Livewire\\Mechanisms\\HandleRequests\\RequireLivewireHeaders"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "livewire-6d23f71c/upload-file",
+    "name": "livewire.upload-file",
+    "action": "Livewire\\Features\\SupportFileUploads\\FileUploadController@handle",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:60,1"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "login",
+    "name": "login",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\AuthenticatedSessionController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated:web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "login",
+    "name": "login.store",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\AuthenticatedSessionController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated:web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:login"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "logout",
+    "name": "logout",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\AuthenticatedSessionController@destroy",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "manage-appointment",
+    "name": "booking.manage",
+    "action": "Closure",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "og-image-testing",
+    "name": null,
+    "action": "Closure",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "og-image/{title?}/{description?}",
+    "name": "og-image",
+    "action": "App\\Http\\Controllers\\OgImageController",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "payments/webhooks/stripe",
+    "name": "payments.webhooks.stripe",
+    "action": "App\\Http\\Controllers\\Webhooks\\AppointmentPaymentWebhookController",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "platform",
+    "name": "platform.overview",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@overview",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "platform/alerts",
+    "name": "platform.alerts.index",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@alerts",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "platform/audit-events",
+    "name": "platform.audit-events.index",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@auditEvents",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "platform/businesses",
+    "name": "platform.businesses.index",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@businesses",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "platform/businesses/{business:public_id}",
+    "name": "platform.businesses.show",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@business",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/businesses/{business:public_id}/billing/cancel",
+    "name": "platform.businesses.billing.cancel",
+    "action": "App\\Http\\Controllers\\Billing\\PlatformBillingSupportController@cancel",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/businesses/{business:public_id}/coupon",
+    "name": "platform.businesses.coupon",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@applyCoupon",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/businesses/{business:public_id}/exports",
+    "name": "platform.businesses.exports",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@initiateExport",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/businesses/{business:public_id}/invitations/{staffInvitation:public_id}/resend",
+    "name": "platform.businesses.invitations.resend",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@resendInvitation",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/businesses/{business:public_id}/notes",
+    "name": "platform.businesses.notes",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@note",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/businesses/{business:public_id}/plan-change",
+    "name": "platform.businesses.plan-change",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@changePlan",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/businesses/{business:public_id}/resend-verification",
+    "name": "platform.businesses.resend-verification",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@resendVerification",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/businesses/{business:public_id}/status",
+    "name": "platform.businesses.status",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@status",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/businesses/{business:public_id}/support-access",
+    "name": "platform.support-access.store",
+    "action": "App\\Http\\Controllers\\Platform\\SupportAccessController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/businesses/{business:public_id}/trial-extension",
+    "name": "platform.businesses.trial-extension",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@extendTrial",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "platform/failures",
+    "name": "platform.failures.index",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@failures",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/failures/{type}/{id}/replay",
+    "name": "platform.failures.replay",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@replay",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "platform/feature-flags",
+    "name": "platform.feature-flags.index",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@flags",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/feature-flags",
+    "name": "platform.feature-flags.store",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@setFlag",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "platform/health",
+    "name": "platform.health",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@health",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/notices",
+    "name": "platform.notices.store",
+    "action": "App\\Http\\Controllers\\Platform\\PlatformOperationsController@publishNotice",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "platform/support-access",
+    "name": "platform.support-access.index",
+    "action": "App\\Http\\Controllers\\Platform\\SupportAccessController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/support-access/{grant:public_id}/enter",
+    "name": "platform.support-access.enter",
+    "action": "App\\Http\\Controllers\\Platform\\SupportAccessController@enter",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/support-access/{grant:public_id}/revoke",
+    "name": "platform.support-access.revoke",
+    "action": "App\\Http\\Controllers\\Platform\\SupportAccessController@revoke",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/support-sessions/{supportSession:public_id}/leave",
+    "name": "platform.support-access.leave",
+    "action": "App\\Http\\Controllers\\Platform\\SupportAccessController@leave",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "platform/support/businesses/{business:public_id}",
+    "name": "platform.support.businesses.show",
+    "action": "App\\Http\\Controllers\\Platform\\SupportAccessController@business",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "platform/support/businesses/{business:public_id}/failures",
+    "name": "platform.support.businesses.failures",
+    "action": "App\\Http\\Controllers\\Platform\\SupportAccessController@failures",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "platform/support/businesses/{business:public_id}/failures/{type}/{id}/replay",
+    "name": "platform.support.businesses.failures.replay",
+    "action": "App\\Http\\Controllers\\Platform\\SupportAccessController@replay",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "platform/{module}",
+    "name": "platform.module",
+    "action": "Closure",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified",
+      "App\\Http\\Middleware\\EnsurePlatformAccess"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "pricing",
+    "name": "marketing.pricing",
+    "action": "App\\Http\\Controllers\\Marketing\\PricingController",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "privacy-policy",
+    "name": "policy.show",
+    "action": "App\\Http\\Controllers\\Marketing\\LegalDocumentController@privacy",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "refund-policy",
+    "name": "refund.show",
+    "action": "App\\Http\\Controllers\\Marketing\\LegalDocumentController@refund",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "register",
+    "name": "register",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\RegisteredUserController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated:web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "register",
+    "name": "register.store",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\RegisteredUserController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated:web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "reset-password",
+    "name": "password.update",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\NewPasswordController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated:web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "reset-password/{token}",
+    "name": "password.reset",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\NewPasswordController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated:web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "resources",
+    "name": "marketing.resources",
+    "action": "App\\Http\\Controllers\\Marketing\\ResourceController@index",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "roadmap",
+    "name": "roadmap.index",
+    "action": "App\\Http\\Controllers\\RoadmapController@index",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "roadmap",
+    "name": "roadmap.store",
+    "action": "App\\Http\\Controllers\\RoadmapController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "roadmap/{roadmap}/vote",
+    "name": "roadmap.vote",
+    "action": "App\\Http\\Controllers\\RoadmapController@vote",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "robots.txt",
+    "name": "robots",
+    "action": "App\\Http\\Controllers\\SitemapController@robots",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "sanctum/csrf-cookie",
+    "name": "sanctum.csrf-cookie",
+    "action": "Laravel\\Sanctum\\Http\\Controllers\\CsrfCookieController@show",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "security",
+    "name": "marketing.security",
+    "action": "App\\Http\\Controllers\\Marketing\\TrustController@security",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "sitemap",
+    "name": "sitemap",
+    "action": "App\\Http\\Controllers\\SitemapController@legacy",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "sitemap.xml",
+    "name": "sitemap.xml",
+    "action": "App\\Http\\Controllers\\SitemapController@xml",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "solutions",
+    "name": "marketing.solutions",
+    "action": "App\\Http\\Controllers\\Marketing\\SolutionController@index",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "solutions/{solution}",
+    "name": "marketing.solutions.show",
+    "action": "App\\Http\\Controllers\\Marketing\\SolutionController@show",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "staff-invitations/{token}",
+    "name": "staff-invitations.show",
+    "action": "App\\Http\\Controllers\\Access\\StaffInvitationController@show",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:10,1"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "staff-invitations/{token}/accept",
+    "name": "staff-invitations.accept",
+    "action": "App\\Http\\Controllers\\Access\\StaffInvitationController@accept",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:6,1",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession",
+      "Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "staff-invitations/{token}/register",
+    "name": "staff-invitations.register",
+    "action": "App\\Http\\Controllers\\Access\\StaffInvitationController@register",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:10,1"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "terms-of-service",
+    "name": "terms.show",
+    "action": "App\\Http\\Controllers\\Marketing\\LegalDocumentController@terms",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "two-factor-challenge",
+    "name": "two-factor.login",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\TwoFactorAuthenticatedSessionController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated:web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "two-factor-challenge",
+    "name": "two-factor.login.store",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\TwoFactorAuthenticatedSessionController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated:web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:two-factor"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "use-cases",
+    "name": "marketing.use-cases",
+    "action": "App\\Http\\Controllers\\Marketing\\UseCaseController@index",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "use-cases/{useCase}",
+    "name": "marketing.use-cases.show",
+    "action": "App\\Http\\Controllers\\Marketing\\UseCaseController@show",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "method": "DELETE",
+    "uri": "user",
+    "name": "current-user.destroy",
+    "action": "Laravel\\Jetstream\\Http\\Controllers\\Inertia\\CurrentUserController@destroy",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:sanctum",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "user/confirm-password",
+    "name": "password.confirm",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\ConfirmablePasswordController@show",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "user/confirm-password",
+    "name": "password.confirm.store",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\ConfirmablePasswordController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "user/confirmed-password-status",
+    "name": "password.confirmation",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\ConfirmedPasswordStatusController@show",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "user/confirmed-two-factor-authentication",
+    "name": "two-factor.confirm",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\ConfirmedTwoFactorAuthenticationController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Illuminate\\Auth\\Middleware\\RequirePassword"
+    ]
+  },
+  {
+    "method": "DELETE",
+    "uri": "user/other-browser-sessions",
+    "name": "other-browser-sessions.destroy",
+    "action": "Laravel\\Jetstream\\Http\\Controllers\\Inertia\\OtherBrowserSessionsController@destroy",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:sanctum",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession"
+    ]
+  },
+  {
+    "method": "PUT",
+    "uri": "user/password",
+    "name": "user-password.update",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\PasswordController@update",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "user/profile",
+    "name": "profile.show",
+    "action": "Laravel\\Jetstream\\Http\\Controllers\\Inertia\\UserProfileController@show",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:sanctum",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession"
+    ]
+  },
+  {
+    "method": "PUT",
+    "uri": "user/profile-information",
+    "name": "user-profile-information.update",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\ProfileInformationController@update",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web"
+    ]
+  },
+  {
+    "method": "DELETE",
+    "uri": "user/profile-photo",
+    "name": "current-user-photo.destroy",
+    "action": "Laravel\\Jetstream\\Http\\Controllers\\Inertia\\ProfilePhotoController@destroy",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:sanctum",
+      "Laravel\\Jetstream\\Http\\Middleware\\AuthenticateSession"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "user/two-factor-authentication",
+    "name": "two-factor.enable",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\TwoFactorAuthenticationController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Illuminate\\Auth\\Middleware\\RequirePassword"
+    ]
+  },
+  {
+    "method": "DELETE",
+    "uri": "user/two-factor-authentication",
+    "name": "two-factor.disable",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\TwoFactorAuthenticationController@destroy",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Illuminate\\Auth\\Middleware\\RequirePassword"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "user/two-factor-qr-code",
+    "name": "two-factor.qr-code",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\TwoFactorQrCodeController@show",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Illuminate\\Auth\\Middleware\\RequirePassword"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "user/two-factor-recovery-codes",
+    "name": "two-factor.recovery-codes",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\RecoveryCodeController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Illuminate\\Auth\\Middleware\\RequirePassword"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "user/two-factor-recovery-codes",
+    "name": "two-factor.regenerate-recovery-codes",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\RecoveryCodeController@store",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Illuminate\\Auth\\Middleware\\RequirePassword"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "user/two-factor-secret-key",
+    "name": "two-factor.secret-key",
+    "action": "Laravel\\Fortify\\Http\\Controllers\\TwoFactorSecretKeyController@show",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate:web",
+      "Illuminate\\Auth\\Middleware\\RequirePassword"
+    ]
+  },
+  {
+    "method": "GET|HEAD",
+    "uri": "waitlist-offers/{token}",
+    "name": "public.waitlist.offer",
+    "action": "App\\Http\\Controllers\\PublicBooking\\PublicWaitlistController@offer",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:20,1"
+    ]
+  },
+  {
+    "method": "POST",
+    "uri": "waitlist-offers/{token}/claim",
+    "name": "public.waitlist.claim",
+    "action": "App\\Http\\Controllers\\PublicBooking\\PublicWaitlistController@claim",
+    "middleware": [
+      "web",
+      "Illuminate\\Routing\\Middleware\\ThrottleRequests:20,1"
+    ]
+  }
+]

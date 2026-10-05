@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Domain\BusinessConfiguration\Models\Service;
+use App\Domain\ClientRecords\Models\Client;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
@@ -19,6 +20,7 @@ use App\Support\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -28,14 +30,36 @@ class AppointmentOperationsController extends Controller
     {
         $membership = $context->membership();
         abort_unless($membership && ($membership->hasPermissionTo(PermissionName::AppointmentsManageAll->value, 'web') || $membership->hasPermissionTo(PermissionName::AppointmentsManageOwn->value, 'web')), 403);
-        $data = $request->validate([
+        $selection = $request->validate(['client' => ['nullable', 'string', 'max:64']]);
+        $bookingInput = $request->all();
+        $client = null;
+        if (! empty($selection['client'])) {
+            abort_unless($membership->hasPermissionTo(PermissionName::ClientView->value, 'web'), 403);
+            $client = Client::query()->where('business_id', $business->id)->where('public_id', $selection['client'])->where('status', 'active')->firstOrFail();
+            if (! $membership->hasPermissionTo(PermissionName::CalendarViewAll->value, 'web')) {
+                abort_unless($membership->staffProfile && $client->appointments()->whereHas('segments', fn ($q) => $q->where('staff_profile_id', $membership->staffProfile->id))->exists(), 403);
+            }
+            // Resolve saved contacts before validating. Hidden or stale form values
+            // must never block a selected client or replace their valid saved number.
+            $mobile = E164Phone::normalize($client->mobile);
+            if (! E164Phone::isValid($mobile) && $membership->hasPermissionTo(PermissionName::ClientContactView->value, 'web') && $request->has('client_mobile')) {
+                $mobile = is_string($request->input('client_mobile')) ? E164Phone::normalize($request->input('client_mobile')) : $request->input('client_mobile');
+            }
+            // Keep canonical contacts out of flashed request input on validation errors.
+            $bookingInput = array_replace($bookingInput, ['client_name' => $client->name, 'client_mobile' => $mobile, 'client_email' => $client->email]);
+        }
+        $data = Validator::make($bookingInput, [
+            'client' => ['nullable', 'string', 'max:64'],
             'location' => ['required', 'string'], 'starts_at' => ['required', 'date'], 'source' => ['required', 'in:phone,reception,recurring,consultation'],
             'client_name' => ['nullable', 'string', 'max:255'], 'client_mobile' => ['nullable', 'string', 'max:32', new E164Phone], 'client_email' => ['nullable', 'email', 'max:255'], 'internal_notes' => ['nullable', 'string', 'max:5000'],
             'lines' => ['required', 'array', 'min:1', 'max:12'], 'lines.*.service' => ['required', 'string'],
             'lines.*.staff' => ['nullable', 'string'], 'lines.*.duration_minutes' => ['nullable', 'integer', 'min:5', 'max:720'],
             'idempotency_key' => ['required', 'string', 'max:128'], 'override_rule_codes' => ['array'], 'override_rule_codes.*' => ['in:NOTICE_WINDOW,ADVANCE_WINDOW'],
             'override_reason' => ['nullable', 'string', 'max:1000'], 'override_confirmed' => ['nullable', 'boolean'],
-        ]);
+        ])->validate();
+        if ($client) {
+            $data['_client_public_id'] = $client->public_id;
+        }
         $bookingRequest = $this->bookingRequest($request, $business, $data, $context);
         $appointment = $bookings->commit($bookingRequest, $data['idempotency_key']);
         $audit->write('appointment.created', $business, $request->user(), $appointment, $data['override_reason'] ?? null, [], [
@@ -73,7 +97,7 @@ class AppointmentOperationsController extends Controller
         $updated = $lifecycle->transition($record, $data['status'], $data['idempotency_key'], $data['version'], 'calendar', 'user', $request->user()->id, $data['reason'] ?? null);
         $audit->write('appointment.status_changed', $business, $request->user(), $updated, $data['reason'] ?? null, ['status' => $record->status], ['status' => $updated->status], [], 'calendar');
 
-        return back()->with('status', 'Appointment status updated.');
+        return back()->with('status', $data['status'] === 'completed' ? 'Service completed.' : 'Appointment status updated.');
     }
 
     public function replace(Request $request, Business $business, string $appointment, SchedulingRecordLookup $records, AppointmentLifecycleCommand $lifecycle, TenantContext $context, AuditWriter $audit): RedirectResponse
@@ -89,6 +113,15 @@ class AppointmentOperationsController extends Controller
             'client_name' => ['nullable', 'string', 'max:255'], 'client_mobile' => ['nullable', 'string', 'max:32', new E164Phone], 'client_email' => ['nullable', 'email', 'max:255'], 'internal_notes' => ['nullable', 'string', 'max:5000'],
         ]);
         $data['source'] = 'reception';
+        $data['_client_public_id'] = $record->client?->public_id;
+        // A schedule change must preserve fields the operator cannot read.
+        if (! $request->user()->can(PermissionName::ClientContactView->value)) {
+            $data['client_mobile'] = $record->client_mobile;
+            $data['client_email'] = $record->client_email;
+        }
+        if (! $request->user()->can(PermissionName::ClientNotesManage->value)) {
+            $data['internal_notes'] = $record->internal_notes;
+        }
         $bookingRequest = $this->bookingRequest($request, $business, $data, $context);
         $replacement = $lifecycle->replace($record, $bookingRequest, $data['kind'], $data['idempotency_key'], $data['version'], $data['reason']);
         $audit->write('appointment.'.$data['kind'], $business, $request->user(), $replacement, $data['reason'], ['public_id' => $record->public_id], ['public_id' => $replacement->public_id], [], 'calendar');
@@ -114,6 +147,7 @@ class AppointmentOperationsController extends Controller
             $business->id, $record->location_id, CarbonImmutable::parse($data['starts_at'], $record->time_zone)->utc(), $lines,
             'reception', 'existing', CarbonImmutable::now()->utc(), null, 'user', $request->user()->id,
             $record->client_name, $record->client_mobile, $record->internal_notes, [], null, $record->client_email,
+            clientPublicId: $record->client?->public_id,
         );
         $copy = $bookings->commit($bookingRequest, $data['idempotency_key']);
         $audit->write('appointment.'.$data['kind'], $business, $request->user(), $copy, null, ['copied_from' => $record->public_id], ['public_id' => $copy->public_id], [], 'calendar');
@@ -123,6 +157,7 @@ class AppointmentOperationsController extends Controller
 
     public function notes(Request $request, Business $business, string $appointment, SchedulingRecordLookup $records, AppointmentLifecycleCommand $lifecycle, AuditWriter $audit): RedirectResponse
     {
+        abort_unless($request->user()->can(PermissionName::ClientNotesManage->value), 403);
         $record = $records->appointment($business->id, $appointment);
         $this->authorize('update', $record);
         $data = $request->validate(['notes' => ['nullable', 'string', 'max:5000'], 'version' => ['required', 'integer', 'min:1'], 'idempotency_key' => ['required', 'string', 'max:128']]);
@@ -163,6 +198,7 @@ class AppointmentOperationsController extends Controller
             $data['source'], 'existing', CarbonImmutable::now()->utc(), null, 'user', $request->user()->id,
             $data['client_name'] ?? null, $data['client_mobile'] ?? null, $data['internal_notes'] ?? null,
             $overrideCodes, $data['override_reason'] ?? null, $data['client_email'] ?? null,
+            clientPublicId: $data['_client_public_id'] ?? null,
         );
     }
 }

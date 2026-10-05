@@ -47,14 +47,14 @@ const groups = computed(() => [
                         <ProductMark inverse />
                     </Link>
                     <p class="mt-6 max-w-md text-sm leading-7 text-slate-400">
-                        ClipperDesk is the polished operating system for people-powered beauty, wellness and appointment-led businesses.
+                        Appointments, clients, team schedules and checkout for barber shops and salons.
                     </p>
-                    <p class="mt-3 font-display text-xl font-semibold text-yellow-300">Your whole day, beautifully run.</p>
+
                 </div>
 
                 <div class="grid gap-9 sm:grid-cols-3">
                     <nav v-for="group in groups" :key="group.label" :aria-label="`${group.label} links`">
-                        <h2 class="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">{{ group.label }}</h2>
+                        <h2 class="text-xs font-semibold text-slate-400">{{ group.label }}</h2>
                         <ul class="mt-4 space-y-2">
                             <li v-for="[label, routeName] in group.links" :key="routeName">
                                 <Link :href="route(routeName)" class="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-slate-300 underline-offset-4 hover:text-white hover:underline">
@@ -66,9 +66,9 @@ const groups = computed(() => [
                 </div>
             </div>
 
-            <div class="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs leading-6 text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-                <p>© {{ new Date().getFullYear() }} ClipperDesk. Product identity remains subject to OPEN-11 clearance.</p>
-                <p>Built for clear, accessible work on the web.</p>
+            <div class="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs leading-6 text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+                <p>© {{ new Date().getFullYear() }} ClipperDesk. Preview release. Production domains and legal details await approval.</p>
+
             </div>
         </div>
     </footer>

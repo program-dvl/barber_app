@@ -32,7 +32,7 @@ class PublicAppointmentController extends Controller
         abort_unless(in_array($purpose, ['reschedule', 'cancel', 'rebook', 'contact', 'waitlist', 'payment_status'], true), 404);
         $link = $links->resolve($token, $purpose);
 
-        return Inertia::render('Booking/Manage', [...$this->payload($link->appointment, []), 'purpose' => $purpose, 'actionToken' => $token]);
+        return Inertia::render('Booking/Manage', [...$this->payload($link->appointment, []), 'purpose' => $purpose, 'actionToken' => $token, 'viewUrl' => route('public.appointment.view', $links->issue($link->appointment, 'view')['token'])]);
     }
 
     public function mutate(Request $request, string $token, string $purpose, SecureAppointmentLinkService $links, AppointmentSelfService $selfService, WaitlistService $waitlist): RedirectResponse
@@ -91,7 +91,7 @@ class PublicAppointmentController extends Controller
                     'operation' => ['required', 'in:join'],
                     'acceptable_from' => ['required', 'date', 'after_or_equal:today'], 'acceptable_until' => ['required', 'date', 'after_or_equal:acceptable_from'],
                     'time_from' => ['required', 'date_format:H:i'], 'time_until' => ['required', 'date_format:H:i', 'after:time_from'],
-                    'notification_method' => ['required', 'in:email,sms,whatsapp'], 'notes' => ['nullable', 'string', 'max:1000'],
+                    'notification_method' => ['required', 'in:email,sms'], 'notes' => ['nullable', 'string', 'max:1000'],
                 ]);
                 $appointment = $link->appointment->loadMissing(['location', 'serviceLines']);
                 $line = $appointment->serviceLines->firstOrFail();

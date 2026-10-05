@@ -19,8 +19,8 @@ defineProps({ seo: Object });
                 <div class="cd-family-hero-grid mt-10">
                     <div class="cd-family-hero-copy">
                         <p class="cd-eyebrow">Company</p>
-                        <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-balance">ClipperDesk is being built for the whole working service day.</h1>
-                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">It is a web-first operating system for appointment-led beauty, wellness, personal care, fitness, recovery, health and pet-service businesses—from guided setup and booking through client history, checkout and explainable reporting.</p>
+                        <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">About ClipperDesk</h1>
+                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Manage appointments, client records, team schedules and checkout for beauty, wellness, fitness, health and pet-care businesses.</p>
                     </div>
                     <figure class="cd-family-hero-media">
                         <img class="cd-family-hero-image" :src="marketingFamilyVisuals.company.src" :alt="marketingFamilyVisuals.company.alt" width="1536" height="1024" fetchpriority="high" />
@@ -32,10 +32,10 @@ defineProps({ seo: Object });
 
         <section class="cd-public-section">
             <PublicContainer>
-                <SectionHeading eyebrow="What guides the product" title="Calm operation, explicit rules and honest evidence" />
+                <SectionHeading eyebrow="What guides the product" title="Our approach" />
                 <div class="cd-value-columns mt-12">
                     <article class="cd-value-column"><p class="cd-eyebrow">01 · Connected</p><h2 class="mt-4 text-2xl font-extrabold text-[var(--text-strong)]">One connected day</h2><p class="mt-4 leading-8 text-[var(--text-muted)]">Availability, appointment, client and Sale records carry the work instead of forcing the front desk to reconcile disconnected tools.</p></article>
-                    <article class="cd-value-column"><p class="cd-eyebrow">02 · Considered</p><h2 class="mt-4 text-2xl font-extrabold text-[var(--text-strong)]">Rules before shortcuts</h2><p class="mt-4 leading-8 text-[var(--text-muted)]">Tenant isolation, permission, local time, idempotency and append-only financial history remain product constraints—not optional polish.</p></article>
+                    <article class="cd-value-column"><p class="cd-eyebrow">02 · Considered</p><h2 class="mt-4 text-2xl font-extrabold text-[var(--text-strong)]">Rules before shortcuts</h2><p class="mt-4 leading-8 text-[var(--text-muted)]">Business records stay separate, access follows each role, and times reflect the location. Financial corrections keep their history.</p></article>
                     <article class="cd-value-column"><p class="cd-eyebrow">03 · Candid</p><h2 class="mt-4 text-2xl font-extrabold text-[var(--text-strong)]">Claims need proof</h2><p class="mt-4 leading-8 text-[var(--text-muted)]">The public site names provider, legal and operational limits instead of using customer logos, reviews, awards or certifications that have not been earned.</p></article>
                 </div>
             </PublicContainer>
@@ -45,8 +45,8 @@ defineProps({ seo: Object });
             <PublicContainer class="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
                 <div>
                     <p class="cd-dark-eyebrow">Clarity as a company value</p>
-                    <h2 class="mt-4 font-display text-4xl font-semibold text-white">Operator and identity status</h2>
-                    <p class="mt-5 max-w-2xl leading-8 text-white/75">ClipperDesk is the selected product identity. Trademark clearance, the production domain and the final legal operator/contact details are not yet approved evidence. They will not be invented here; OPEN-11 blocks public launch until named Product, Operations and counsel owners resolve them.</p>
+                    <h2 class="mt-4 font-display text-3xl font-semibold text-white">Operator and identity status</h2>
+                    <p class="mt-5 max-w-2xl leading-8 text-white/75">ClipperDesk is the selected product identity. Trademark clearance, the production domain and the final legal operator/contact details are not yet approved evidence. Public launch requires approval of these details.</p>
                 </div>
                 <div class="cd-dark-proof-panel">
                     <h2 class="text-xl font-extrabold text-white">Review the current evidence</h2>

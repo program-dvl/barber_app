@@ -52,8 +52,8 @@ const createTeam = () => {
                     type="text"
                     class="block w-full mt-1"
                     autofocus
-                />
-                <InputError :message="form.errors.name" class="mt-2" />
+                 :aria-invalid="form.errors.name ? true : undefined" :aria-describedby="form.errors.name ? 'name-error' : undefined"/>
+                <InputError :message="form.errors.name" class="mt-2"  id="name-error"/>
             </div>
         </template>
 

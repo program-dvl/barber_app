@@ -30,9 +30,11 @@ const submit = () => {
         <template #logo>
             <AuthenticationCardLogo />
         </template>
+        <Head title="Confirm your password" />
+        <h1 class="cd-page-title mb-4">Confirm your password</h1>
 
         <div class="mb-4 text-sm text-[var(--text-muted)]">
-            {{ $t('This is a secure area of the application. Please confirm your password before continuing.') }}
+            {{ $t('Enter your password to continue.') }}
         </div>
 
         <form @submit.prevent="submit">
@@ -47,13 +49,13 @@ const submit = () => {
                     required
                     autocomplete="current-password"
                     autofocus
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
+                 :aria-invalid="form.errors.password ? true : undefined" :aria-describedby="form.errors.password ? 'password-error' : undefined"/>
+                <InputError class="mt-2" :message="form.errors.password"  id="password-error"/>
             </div>
 
             <div class="flex justify-end mt-4">
                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    {{ $t('Confirm') }}
+                    {{ $t('Confirm password') }}
                 </PrimaryButton>
             </div>
         </form>

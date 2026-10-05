@@ -27,7 +27,7 @@ class ClientPrivacyController extends Controller
             'details.changes.email' => ['nullable', 'email', 'max:255'], 'details.changes.mobile' => ['nullable', 'string', 'max:32', new E164Phone],
             'details.changes.date_of_birth' => ['nullable', 'date', 'before_or_equal:today'],
             'details.changes.communication_preferences' => ['nullable', 'array', 'max:3'],
-            'details.changes.communication_preferences.*' => ['string', 'distinct', 'in:email,sms,whatsapp'],
+            'details.changes.communication_preferences.*' => ['string', 'distinct', 'in:email,sms'],
             'details.consent_type' => ['nullable', 'string', Rule::in(['marketing', 'photography', 'treatment'])],
             'details.reason' => ['nullable', 'string', 'max:2000'],
         ]);

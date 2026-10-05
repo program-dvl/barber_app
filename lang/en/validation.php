@@ -157,6 +157,8 @@ return [
     */
 
     'custom' => [
+        'mobile' => ['required_without' => 'Enter a mobile number or an email address.'],
+        'email' => ['required_without' => 'Enter an email address or a mobile number.'],
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
@@ -173,6 +175,21 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'client_name' => 'client name', 'client_mobile' => 'mobile number', 'client_email' => 'email address',
+        'display_name' => 'name', 'booking_slug' => 'booking link', 'business_type' => 'business type',
+        'price_minor' => 'price', 'price_amount' => 'price', 'duration_minutes' => 'service time',
+        'cleanup_minutes' => 'cleanup time', 'processing_minutes' => 'processing time',
+        'starts_at' => 'start time', 'ends_at' => 'end time', 'time_zone' => 'time zone',
+        'role_id' => 'role', 'location_ids' => 'locations', 'service_ids' => 'services',
+        'access_role_id' => 'login role', 'working_days' => 'working days',
+        'policy_accepted' => 'agreement to the booking terms', 'reason_code' => 'reason',
+        'acceptable_from' => 'earliest date', 'acceptable_until' => 'latest date',
+        'time_from' => 'earliest time', 'time_until' => 'latest time',
+        'date_of_birth' => 'date of birth', 'other_reason' => 'other reason',
+        'quiet_hours_start' => 'quiet hours start', 'quiet_hours_end' => 'quiet hours end',
+        'default_locale' => 'message locale', 'sender_mode' => 'text sender',
+        'answers.*' => 'answer', 'lines.*.service' => 'service', 'lines.*.staff' => 'staff member',
+    ],
 
 ];

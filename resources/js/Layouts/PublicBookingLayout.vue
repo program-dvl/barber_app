@@ -21,19 +21,19 @@ const progress = computed(() => props.currentStep <= 0 ? 0 : Math.round((props.c
 </script>
 
 <template>
-    <div class="min-h-screen bg-[var(--surface-canvas)] text-[var(--text-default)]">
+    <div class="cd-product-flow min-h-screen bg-[var(--surface-canvas)] text-[var(--text-default)]">
         <Head :title="title" />
         <a href="#public-main" class="fixed left-3 top-3 z-50 -translate-y-24 rounded-lg bg-white px-4 py-3 font-semibold shadow-[var(--shadow-overlay)] transition-transform focus:translate-y-0">Skip to main content</a>
 
         <header class="border-b border-[var(--border-subtle)] bg-[var(--surface-raised)]/95 backdrop-blur">
-            <div class="mx-auto flex min-h-[4.5rem] max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
-                <Link :href="route('booking.welcome')" class="inline-flex min-h-11 items-center rounded-lg" aria-label="ClipperDesk booking home"><ProductMark /></Link>
-                <Link v-if="mode === 'booking'" :href="route('booking.manage')" aria-label="Manage appointment" class="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-[var(--text-strong)] hover:bg-[var(--surface-subtle)]">
-                    <LockClosedIcon class="size-4" aria-hidden="true" />
+            <div class="mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-2 sm:px-6">
+                <Link :href="route('booking.welcome')" class="inline-flex min-h-11 max-w-full items-center rounded-lg" aria-label="ClipperDesk booking home"><ProductMark :show-tagline="false" /></Link>
+                <Link v-if="mode === 'booking'" :href="route('booking.manage')" aria-label="Manage appointment" class="inline-flex min-h-11 max-w-full shrink-0 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-[var(--text-strong)] hover:bg-[var(--surface-subtle)]">
+                    <LockClosedIcon class="size-4 shrink-0" aria-hidden="true" />
                     <span class="hidden sm:inline">Manage appointment</span><span class="sm:hidden">Manage</span>
                 </Link>
                 <span v-else class="inline-flex items-center gap-2 rounded-full bg-[var(--status-success-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--status-success)]">
-                    <LockClosedIcon class="size-4" aria-hidden="true" /> Secure self-service
+                    <LockClosedIcon class="size-4 shrink-0" aria-hidden="true" /> Appointment link
                 </span>
             </div>
         </header>
@@ -51,12 +51,12 @@ const progress = computed(() => props.currentStep <= 0 ? 0 : Math.round((props.c
             </div>
         </div>
 
-        <main id="public-main" tabindex="-1" class="mx-auto w-full max-w-6xl px-4 py-7 sm:px-6 sm:py-10">
+        <main id="public-main" tabindex="-1" :class="['mx-auto w-full px-4 py-5 sm:px-6 sm:py-6', mode === 'booking' ? 'max-w-6xl' : 'max-w-3xl']">
             <slot />
         </main>
 
         <footer class="mx-auto max-w-6xl px-4 pb-8 text-center text-xs leading-5 text-[var(--text-muted)] sm:px-6">
-            Your information is used only to manage this booking and the choices you make here. Keep secure appointment links private on a shared device.
+            Keep your appointment links private. Your information is used for this appointment and the preferences you choose.
         </footer>
     </div>
 </template>

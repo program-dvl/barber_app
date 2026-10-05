@@ -1,4 +1,5 @@
 <script setup>
+import CapacityCalculator from '@/Components/Billing/CapacityCalculator.vue';
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
 import ComparisonTable from '@/Components/Marketing/ComparisonTable.vue';
 import FaqList from '@/Components/Marketing/FaqList.vue';
@@ -7,11 +8,11 @@ import SectionHeading from '@/Components/Marketing/SectionHeading.vue';
 import HomeLayout from '@/Layouts/HomeLayout.vue';
 import { marketingFamilyVisuals } from '@/Support/marketingVisuals';
 import { CheckIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import { emitMarketingEvent } from '@/Support/marketingTelemetry';
 
-const props = defineProps({ catalog: Object, seo: Object });
+const props = defineProps({ catalog: Object, seo: Object, capacityPricing: Object });
 const page = usePage();
 const interval = ref('monthly');
 const authenticated = computed(() => Boolean(page.props.auth?.user));
@@ -21,7 +22,7 @@ const entitlementLabels = {
     'locations.max': 'Active locations',
     'staff.max': 'Active staff profiles',
     'messaging.monthly_allowance': 'Included mobile messages / month',
-    'deposits.enabled': 'Appointment deposit capability',
+    'deposits.enabled': 'Appointment deposits',
     'inventory.enabled': 'Inventory operations',
     'reporting.advanced': 'Advanced reporting',
     'branding.custom': 'Custom booking branding',
@@ -50,8 +51,8 @@ watch(interval, (value) => emitMarketingEvent('marketing_pricing_interval_change
                 <div class="cd-family-hero-grid mt-10">
                     <div class="cd-family-hero-copy">
                         <p class="cd-eyebrow">Pricing</p>
-                        <h1 class="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-balance">Choose the operating depth your Business needs.</h1>
-                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">ClipperDesk uses a {{ catalog.trial_days }}-day verified trial. Paid prices and allowances below appear only when the complete, verified Stripe catalog is available.</p>
+                        <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">{{ capacityPricing?.markets?.length ? 'Pricing for your locations and team.' : 'Choose a plan for your business.' }}</h1>
+                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Start a {{ catalog.trial_days }}-day trial after verifying your email. Paid plans appear when their prices are ready.</p>
                     </div>
                     <figure class="cd-family-hero-media">
                         <img class="cd-family-hero-image" :src="marketingFamilyVisuals.pricing.src" :alt="marketingFamilyVisuals.pricing.alt" width="1536" height="1024" fetchpriority="high" />
@@ -63,10 +64,15 @@ watch(interval, (value) => emitMarketingEvent('marketing_pricing_interval_change
 
         <section class="cd-public-section">
             <PublicContainer>
-                <div v-if="!catalog.available" class="cd-answer-panel mx-auto max-w-3xl" role="status">
+                <div v-if="capacityPricing?.markets?.length" class="cd-answer-panel mx-auto max-w-5xl">
+                    <h2 class="font-display text-3xl font-semibold">One plan. Your size.</h2>
+                    <p class="my-6">Choose your country, locations and bookable staff. Review your selection after signing up; registration does not charge you.</p>
+                    <CapacityCalculator :catalog="capacityPricing" action-label="Start your trial" @review="router.visit(authenticated ? route('dashboard') : route('register'))" />
+                </div>
+                <div v-else-if="!catalog.available" class="cd-answer-panel mx-auto max-w-3xl" role="status">
                     <ExclamationTriangleIcon class="size-8 text-[var(--status-warning)]" aria-hidden="true" />
-                    <h2 class="mt-5 font-display text-3xl font-semibold text-[var(--text-strong)]">Paid pricing is not available in this environment.</h2>
-                    <p class="mt-4 leading-7 text-[var(--text-muted)]">{{ catalog.reason }} We will not show placeholder, expired or unmapped provider prices. The verified trial can still be started without a charge.</p>
+                    <h2 class="mt-5 font-display text-3xl font-semibold text-[var(--text-strong)]">Paid plans are not available yet.</h2>
+                    <p class="mt-4 leading-7 text-[var(--text-muted)]">You can still start a free trial after verifying your email.</p>
                     <Link :href="authenticated ? route('dashboard') : route('register')" class="cd-button cd-button-primary mt-7">{{ authenticated ? 'Open dashboard' : 'Start your trial' }}</Link>
                 </div>
 
@@ -83,7 +89,7 @@ watch(interval, (value) => emitMarketingEvent('marketing_pricing_interval_change
                         <article v-for="plan in catalog.plans" :key="plan.code" class="cd-price-card flex flex-col">
                             <p class="cd-eyebrow">{{ plan.name }}</p>
                             <h2 class="mt-4 text-2xl font-extrabold text-[var(--text-strong)]">{{ plan.description }}</h2>
-                            <p class="mt-8 text-[var(--text-muted)]"><span class="font-display text-5xl font-semibold text-[var(--text-strong)]">{{ money(plan.prices[interval].amount_minor, plan.prices[interval].currency) }}</span> / {{ cadence }}</p>
+                            <p class="mt-8 text-[var(--text-muted)]"><span class="font-display text-3xl font-semibold text-[var(--text-strong)]">{{ money(plan.prices[interval].amount_minor, plan.prices[interval].currency) }}</span> / {{ cadence }}</p>
                             <p v-if="interval === 'annual' && plan.annual_savings_minor" class="mt-2 text-sm font-bold text-[var(--brand-primary)]">{{ money(plan.annual_savings_minor, catalog.currency) }} less per year than 12 current monthly payments</p>
                             <ul class="mt-7 grow space-y-3">
                                 <li v-for="key in ['locations.max', 'staff.max', 'messaging.monthly_allowance', 'exports.enabled']" :key="key" class="flex gap-3 text-sm leading-6 text-[var(--text-muted)]">
@@ -96,8 +102,8 @@ watch(interval, (value) => emitMarketingEvent('marketing_pricing_interval_change
                     </div>
 
                     <div class="mt-18">
-                        <SectionHeading eyebrow="Complete comparison" title="Limits and capabilities come from the same entitlement catalog" />
-                        <ComparisonTable class="mt-9" caption="ClipperDesk plan entitlement comparison" :columns="['Capability', ...catalog.plans.map((plan) => plan.name)]" :rows="comparisonRows" />
+                        <SectionHeading eyebrow="Complete comparison" title="Compare plans" />
+                        <ComparisonTable class="mt-9" caption="ClipperDesk plan comparison" :columns="['Capability', ...catalog.plans.map((plan) => plan.name)]" :rows="comparisonRows" />
                     </div>
                 </template>
             </PublicContainer>
@@ -106,7 +112,7 @@ watch(interval, (value) => emitMarketingEvent('marketing_pricing_interval_change
         <section class="cd-public-section bg-[var(--surface-subtle)]">
             <PublicContainer>
                 <SectionHeading eyebrow="Commercial clarity" title="Subscription billing is separate from client payments" description="Stripe hosts the ClipperDesk SaaS checkout. Appointment deposits, retail tenders and client payment evidence belong to each service business's operating workflow and are not bundled into the subscription price." />
-                <div class="mt-9 max-w-4xl rounded-[var(--radius-lg)] border-l-4 border-[var(--status-warning)] bg-white p-6 leading-7 text-[var(--text-muted)]"><strong class="text-[var(--text-strong)]">Launch qualification:</strong> live Stripe checkout remains blocked until the production domain, credentials, price mappings, webhook, portal and settlement path are certified. Public pricing never opens a test checkout. Review the proposed <Link :href="route('refund.show')" class="font-bold text-[var(--action-primary)] underline underline-offset-4">refund and cancellation policy</Link> before paid checkout.</div>
+                <p class="mt-9 max-w-4xl leading-7 text-[var(--text-muted)]">Review the <Link :href="route('refund.show')" class="font-bold underline underline-offset-4">refund and cancellation policy</Link> before paid checkout. The final tax and total appear before you pay.</p>
             </PublicContainer>
         </section>
 

@@ -1,91 +1,39 @@
 <script setup>
-import { computed, onMounted, onUnmounted, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 
-const props = defineProps({
-    show: {
-        type: Boolean,
-        default: false,
-    },
-    maxWidth: {
-        type: String,
-        default: '2xl',
-    },
-    closeable: {
-        type: Boolean,
-        default: true,
-    },
-});
-
+const props = defineProps({ show: Boolean, maxWidth: { type: String, default: '2xl' }, closeable: { type: Boolean, default: true }, labelledby: String });
 const emit = defineEmits(['close']);
-
-watch(() => props.show, () => {
-    if (props.show) {
+const dialog = ref(null);
+let trigger;
+let previousOverflow;
+const maxWidthClass = computed(() => ({ sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg', xl: 'max-w-xl', '2xl': 'max-w-2xl' }[props.maxWidth] || 'max-w-2xl'));
+const close = () => { if (props.closeable) emit('close'); };
+const sync = async () => {
+    await nextTick();
+    if (!dialog.value) return;
+    if (props.show && !dialog.value.open) {
+        trigger = document.activeElement;
+        previousOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
-    } else {
-        document.body.style.overflow = null;
-    }
-});
-
-const close = () => {
-    if (props.closeable) {
-        emit('close');
-    }
-};
-
-const closeOnEscape = (e) => {
-    if (e.key === 'Escape' && props.show) {
-        close();
+        dialog.value.showModal();
+        // Native dialog provides focus containment and background inertness.
+        dialog.value.querySelector('[autofocus], input:not([disabled]), button:not([disabled])')?.focus();
+    } else if (!props.show && dialog.value.open) {
+        dialog.value.close();
+        document.body.style.overflow = previousOverflow || '';
+        if (trigger?.isConnected) trigger.focus();
     }
 };
-
-onMounted(() => document.addEventListener('keydown', closeOnEscape));
-
-onUnmounted(() => {
-    document.removeEventListener('keydown', closeOnEscape);
-    document.body.style.overflow = null;
-});
-
-const maxWidthClass = computed(() => {
-    return {
-        'sm': 'sm:max-w-sm',
-        'md': 'sm:max-w-md',
-        'lg': 'sm:max-w-lg',
-        'xl': 'sm:max-w-xl',
-        '2xl': 'sm:max-w-2xl',
-    }[props.maxWidth];
-});
+watch(() => props.show, sync);
+onMounted(sync);
+onUnmounted(() => { if (dialog.value?.open) document.body.style.overflow = previousOverflow || ''; });
+const backdrop = event => { if (event.target === dialog.value) { const rect = dialog.value.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) close(); } };
 </script>
 
 <template>
-    <teleport to="body">
-        <transition leave-active-class="duration-200">
-            <div v-show="show" class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50" scroll-region>
-                <transition
-                    enter-active-class="ease-out duration-300"
-                    enter-from-class="opacity-0"
-                    enter-to-class="opacity-100"
-                    leave-active-class="ease-in duration-200"
-                    leave-from-class="opacity-100"
-                    leave-to-class="opacity-0"
-                >
-                    <div v-show="show" class="fixed inset-0 transform transition-all" @click="close">
-                        <div class="absolute inset-0 bg-[var(--surface-inverse)] opacity-75" />
-                    </div>
-                </transition>
-
-                <transition
-                    enter-active-class="ease-out duration-300"
-                    enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    enter-to-class="opacity-100 translate-y-0 sm:scale-100"
-                    leave-active-class="ease-in duration-200"
-                    leave-from-class="opacity-100 translate-y-0 sm:scale-100"
-                    leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                >
-                    <div v-show="show" class="mb-6 overflow-hidden rounded-[var(--radius-lg)] bg-[var(--surface-raised)] shadow-[var(--shadow-overlay)] transition-all sm:mx-auto sm:w-full" :class="maxWidthClass">
-                        <slot v-if="show" />
-                    </div>
-                </transition>
-            </div>
-        </transition>
-    </teleport>
+    <Teleport to="body">
+        <dialog ref="dialog" :aria-labelledby="labelledby" class="cd-profile-dialog m-auto max-h-[calc(100dvh_-_2rem)] w-[calc(100%_-_2rem)] overflow-y-auto rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-0 text-[var(--text-strong)] shadow-[var(--shadow-overlay)]" :class="maxWidthClass" @cancel.prevent="close" @click="backdrop">
+            <slot v-if="show" />
+        </dialog>
+    </Teleport>
 </template>

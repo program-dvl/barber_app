@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -29,6 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->brandName(config('brand.product_name').' administration')
             ->favicon(config('brand.favicon'))
+            ->font('Manrope', url: asset('fonts/clipperdesk/manrope.css'), provider: LocalFontProvider::class)
             ->colors([
                 'primary' => Color::hex(config('brand.colors.action_primary')),
             ])

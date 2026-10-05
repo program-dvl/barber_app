@@ -5,6 +5,7 @@ namespace App\Domain\Communications\Services;
 use App\Domain\Communications\Jobs\DeliverCommunicationMessage;
 use App\Domain\Communications\Models\CommunicationMessage;
 use App\Support\Audit\AuditWriter;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class CommunicationSupportService
@@ -31,35 +32,38 @@ class CommunicationSupportService
 
     public function replay(CommunicationMessage $message, string $reason): CommunicationMessage
     {
-        if (! in_array($message->status, ['failed', 'retried', 'sending'], true)) {
-            throw ValidationException::withMessages(['message' => 'Only failed or interrupted communication can be replayed.']);
-        }
-        if (! $this->replayableError($message)) {
-            throw ValidationException::withMessages(['message' => 'This terminal destination or provider error is not safe to replay.']);
-        }
-        if ($message->attempt_count >= self::MAX_OPERATOR_ATTEMPTS) {
-            throw ValidationException::withMessages(['message' => 'The operator replay limit has been reached.']);
-        }
-        $message->forceFill([
-            'status' => 'queued', 'next_attempt_at' => now(), 'failed_at' => null,
-            'max_attempts' => max($message->max_attempts, $message->attempt_count + 1),
-        ])->save();
-        $this->audit->write('communication.replay_requested', $message->business, target: $message, reason: $reason, after: [
-            'message_id' => $message->id, 'channel' => $message->channel, 'attempt_count' => $message->attempt_count,
-        ], source: 'support', correlationId: $message->intent->correlation_id);
-        DeliverCommunicationMessage::dispatch($message->id, $message->intent->correlation_id);
+        return DB::transaction(function () use ($message, $reason): CommunicationMessage {
+            $message = CommunicationMessage::query()->with(['intent', 'business'])->lockForUpdate()->findOrFail($message->id);
+            if (! $this->canReplay($message)) {
+                throw ValidationException::withMessages(['message' => 'Only a failed message with a safe retry reason and remaining attempts can be retried. Messages already queued, sending or delivered cannot be retried.']);
+            }
+            $message->forceFill([
+                'status' => 'queued', 'next_attempt_at' => now(), 'failed_at' => null,
+                'max_attempts' => max($message->max_attempts, $message->attempt_count + 1),
+            ])->save();
+            $this->audit->write('communication.replay_requested', $message->business, target: $message, reason: $reason, after: [
+                'message_id' => $message->id, 'channel' => $message->channel, 'attempt_count' => $message->attempt_count,
+            ], source: 'support', correlationId: $message->intent->correlation_id);
+            DeliverCommunicationMessage::dispatch($message->id, $message->intent->correlation_id)->afterCommit();
 
-        return $message->fresh();
+            return $message->fresh();
+        }, 3);
+    }
+
+    public function canReplay(CommunicationMessage $message): bool
+    {
+        return $message->status === 'failed' && ! $message->delivered_at && ! $message->sent_at
+            && $message->attempt_count < self::MAX_OPERATOR_ATTEMPTS && $this->replayableError($message);
     }
 
     private function replayableError(CommunicationMessage $message): bool
     {
         $code = $message->last_error_code;
-        if ($code === 'provider_not_configured' || $code === 'resend_missing_message_id') {
+        if (in_array($code, ['provider_not_configured', 'ses_throttled', 'ses_authentication_failed', 'ses_sender_rejected', 'ses_configuration_set_missing', 'ses_sending_paused', 'resend_missing_message_id', 'twilio_http_401', 'twilio_http_403'], true)) {
             return true;
         }
         if ($code === 'unexpected_provider_error') {
-            return $message->channel === 'email';
+            return $message->channel === 'email' && $message->provider !== 'ses';
         }
 
         return (bool) preg_match('/^resend_http_(429|5\d\d)$/', (string) $code)

@@ -10,6 +10,7 @@
 .env.backup
 .env.production
 .env.testing
+/tmp/subscription-billing-update-import/
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml

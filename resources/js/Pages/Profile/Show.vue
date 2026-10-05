@@ -6,6 +6,7 @@ import SectionBorder from '@/Components/Profile/SectionBorder.vue';
 import TwoFactorAuthenticationForm from '@/Pages/Profile/Partials/TwoFactorAuthenticationForm.vue';
 import UpdatePasswordForm from '@/Pages/Profile/Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from '@/Pages/Profile/Partials/UpdateProfileInformationForm.vue';
+import AppButton from '@/Components/Product/AppButton.vue';
 import PageHeader from '@/Components/Product/PageHeader.vue';
 
 defineProps({
@@ -17,8 +18,8 @@ defineProps({
 <template>
     <AppLayout title="Profile">
         <div>
-            <PageHeader eyebrow="Account" :title="$t('Profile & security')" :description="$t('Manage your identity, password, two-factor authentication, and active sessions.')" />
-            <div class="mt-8 space-y-6">
+            <PageHeader :title="$t('Profile & security')"><template #actions><AppButton v-if="$page.props.account?.workspaces?.length === 1" :href="route('business.dashboard', $page.props.account.workspaces[0].public_id)" variant="secondary">Back to workspace</AppButton></template></PageHeader>
+            <div class="mt-5 space-y-5">
                 <div v-if="$page.props.jetstream.canUpdateProfileInformation">
                     <UpdateProfileInformationForm :user="$page.props.auth.user" />
                 </div>

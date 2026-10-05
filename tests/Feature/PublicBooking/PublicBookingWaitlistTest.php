@@ -332,3 +332,11 @@ it('rate limits repeated public booking session creation', function () {
 
     $last->assertTooManyRequests();
 });
+
+it('shows visit time separately from reserved cleanup time without changing capacity', function () {
+    $path = publicBookingPath();
+    $path['service']->update(['duration_minutes' => 40, 'processing_minutes' => 10, 'cleanup_minutes' => 15]);
+    $catalog = app(PublicBookingService::class)->catalog($path['business']);
+    expect($catalog['services'][0]['visit_minutes'])->toBe(50)
+        ->and($catalog['services'][0]['duration_minutes'])->toBe(65);
+});

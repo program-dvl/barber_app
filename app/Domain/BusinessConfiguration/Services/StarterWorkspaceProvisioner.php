@@ -10,9 +10,11 @@ use App\Domain\BusinessConfiguration\Models\ServiceSegment;
 use App\Domain\BusinessConfiguration\Models\StaffAvailabilityRule;
 use App\Domain\BusinessConfiguration\Models\StaffServiceAssignment;
 use App\Domain\MoneyCommerce\Models\CommerceSetting;
+use App\Domain\MoneyCommerce\Models\Sale;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Membership;
 use App\Domain\PlatformAccess\Models\StaffProfile;
+use App\Domain\SchedulingOperations\Models\Appointment;
 use App\Models\User;
 use App\Support\Audit\AuditWriter;
 use App\Support\Regional\CountryCatalog;
@@ -24,7 +26,6 @@ class StarterWorkspaceProvisioner
 {
     public function __construct(
         private readonly OnboardingManager $onboarding,
-        private readonly ReadinessEvaluator $readiness,
         private readonly CountryCatalog $countries,
         private readonly AuditWriter $audit,
     ) {}
@@ -32,6 +33,7 @@ class StarterWorkspaceProvisioner
     /** @param array<string, mixed> $answers */
     public function provision(Business $business, Membership $membership, User $actor, array $answers): Business
     {
+        abort_unless((int) $membership->business_id === (int) $business->id && (int) $membership->user_id === (int) $actor->id, 403);
         if ($business->onboardingSession?->guided_completed_at) {
             return $business->fresh();
         }
@@ -44,6 +46,10 @@ class StarterWorkspaceProvisioner
                 return $session->generated_data ?? [];
             }
 
+            if ($business->configuration_published_at || Appointment::query()->where('business_id', $business->id)->exists()
+                || Sale::query()->where('business_id', $business->id)->exists()) {
+                throw ValidationException::withMessages(['onboarding' => 'This business already has operational history. Review its current setup instead of restoring starter defaults.']);
+            }
             $types = config('business-onboarding.business_types');
             $typeKey = (string) ($answers['business_type'] ?? '');
             $type = $types[$typeKey] ?? null;
@@ -68,6 +74,7 @@ class StarterWorkspaceProvisioner
                 throw ValidationException::withMessages(['schedule_preset' => 'Choose a starter schedule.']);
             }
 
+            $preparedCommerce = CommerceSetting::query()->where('business_id', $business->id)->first();
             $business->fill([
                 'business_type' => $typeKey,
                 'description' => $business->description ?: $type['description'],
@@ -77,7 +84,7 @@ class StarterWorkspaceProvisioner
                 'time_zone' => $timeZone,
                 'week_starts_on' => in_array($country, ['CA', 'US'], true) ? 7 : 1,
                 'appointment_interval_minutes' => $business->appointment_interval_minutes ?: 15,
-                'tax_posture' => $business->tax_posture ?: 'not_registered',
+                'tax_posture' => $business->tax_posture ?: ($preparedCommerce?->default_tax_rate_bps ? ($preparedCommerce->tax_inclusive ? 'inclusive' : 'exclusive') : 'not_registered'),
                 'phone' => (string) $answers['phone'],
                 'email' => $business->email ?: $actor->email,
                 'address' => (string) $answers['address'],
@@ -86,16 +93,16 @@ class StarterWorkspaceProvisioner
                 'terms_url' => $business->terms_url ?: route('terms.show'),
                 'privacy_url' => $business->privacy_url ?: route('policy.show'),
                 'brand_color' => $business->brand_color ?: $type['accent'],
-                'online_booking_enabled' => true,
+                'online_booking_enabled' => false,
                 'online_staff_preference' => 'any_or_preferred',
                 'online_price_display' => 'service_setting',
                 'online_new_client_rule' => 'allow',
-                'cancellation_cutoff_minutes' => 1440,
+                'cancellation_cutoff_minutes' => $preparedCommerce?->cancellation_cutoff_minutes ?? 1440,
             ]);
             $business->booking_slug ??= $this->availableBookingSlug($business);
             $business->save();
 
-            CommerceSetting::query()->updateOrCreate(
+            CommerceSetting::query()->firstOrCreate(
                 ['business_id' => $business->getKey()],
                 ['currency_code' => $business->currency_code, 'tax_inclusive' => false, 'default_tax_rate_bps' => 0, 'cancellation_cutoff_minutes' => 1440],
             );
@@ -159,17 +166,35 @@ class StarterWorkspaceProvisioner
 
             $selectedKeys = array_values(array_unique($answers['service_keys'] ?? []));
             $templates = collect($type['services'])->keyBy('key');
-            if ($selectedKeys === [] || collect($selectedKeys)->contains(fn (string $key): bool => ! $templates->has($key))) {
-                throw ValidationException::withMessages(['service_keys' => 'Choose at least one suggested service.']);
+            if (collect($selectedKeys)->contains(fn (string $key): bool => ! $templates->has($key))) {
+                throw ValidationException::withMessages(['service_keys' => 'Choose supported starter services.']);
             }
 
             $serviceIds = [];
+            $categoryIds = [];
             if (! $business->services()->where('kind', 'service')->exists()) {
+                // Prepare the whole small profile, including categories without a selected service.
+                // Reuse tenant records without resetting their names, order or archive preference.
+                $categories = ServiceCategory::query()->where('business_id', $business->getKey())->get()
+                    ->keyBy(fn (ServiceCategory $category) => Str::lower($category->name));
+                $nextOrder = (int) ($categories->max('display_order') ?? 0);
+                $categoryNames = collect($type['categories'] ?? [])
+                    ->merge($templates->pluck('category'))->unique(fn (string $name) => Str::lower($name));
+                foreach ($categoryNames as $name) {
+                    $normalized = Str::lower($name);
+                    $category = $categories->get($normalized);
+                    if (! $category) {
+                        $category = ServiceCategory::query()->create([
+                            'business_id' => $business->getKey(), 'name' => $name,
+                            'display_order' => ++$nextOrder, 'is_active' => true,
+                        ]);
+                        $categories->put($normalized, $category);
+                        $categoryIds[] = $category->public_id;
+                    }
+                }
                 foreach ($selectedKeys as $key) {
                     $template = $templates->get($key);
-                    $category = ServiceCategory::query()->firstOrCreate(
-                        ['business_id' => $business->getKey(), 'name' => $template['category']],
-                    );
+                    $category = $categories->get(Str::lower($template['category']));
                     $service = Service::query()->create([
                         'business_id' => $business->getKey(), 'service_category_id' => $category->getKey(), 'kind' => 'service',
                         'name' => $template['name'], 'description' => $template['description'], 'price_type' => 'fixed',
@@ -178,7 +203,7 @@ class StarterWorkspaceProvisioner
                         'duration_minutes' => $template['duration'], 'processing_minutes' => 0, 'cleanup_minutes' => 0,
                         'minimum_notice_minutes' => 60, 'maximum_advance_days' => 90,
                         'deposit_type' => 'none', 'deposit_value' => 0, 'client_eligibility' => 'all',
-                        'consultation_required' => str_contains($key, 'consult'), 'online_visible' => true, 'is_active' => true,
+                        'consultation_required' => str_contains($key, 'consult'), 'online_visible' => $category->is_active, 'is_active' => $category->is_active,
                     ]);
                     ServiceSegment::query()->create([
                         'business_id' => $business->getKey(), 'service_id' => $service->getKey(), 'kind' => 'active',
@@ -202,6 +227,7 @@ class StarterWorkspaceProvisioner
                 'location' => $location->public_id,
                 'owner_staff' => $staff->public_id,
                 'services' => $serviceIds,
+                'categories' => $categoryIds,
                 'starter_schedule' => $scheduleKey,
             ];
             $completedSteps = array_values(array_unique([
@@ -221,21 +247,12 @@ class StarterWorkspaceProvisioner
             $this->audit->write(
                 action: 'onboarding.starter_workspace.created', business: $business, actor: $actor, target: $session,
                 reason: 'Owner confirmed adaptive onboarding recommendations.',
-                after: ['business_type' => $typeKey, 'location' => $location->public_id, 'owner_bookable' => $ownerBookable, 'service_count' => count($serviceIds), 'schema_version' => $session->schema_version],
+                after: ['business_type' => $typeKey, 'location' => $location->public_id, 'owner_bookable' => $ownerBookable, 'service_count' => count($serviceIds), 'category_count' => count($categoryIds), 'schema_version' => $session->schema_version],
                 source: 'onboarding',
             );
 
             return $generated;
         }, 3);
-
-        $business = $business->fresh();
-        $session = $business->onboardingSession;
-        if (! $session?->previewed_at) {
-            $this->onboarding->markPreviewed($business);
-        }
-        if (! $business->configuration_published_at && $this->readiness->evaluate($business->fresh())->publishable) {
-            $business = $this->onboarding->publish($business->fresh());
-        }
 
         return $business->fresh();
     }

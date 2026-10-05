@@ -1,5 +1,6 @@
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import '../../css/workspace-records.css';
+import { computed, nextTick, onBeforeUnmount, onMounted, provide, ref } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { Bars3Icon, ShieldCheckIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import ProductMark from '@/Components/Product/ProductMark.vue';
@@ -11,17 +12,17 @@ const menuOpen = ref(false);
 const menuButton = ref(null);
 const mobileDrawer = ref(null);
 const items = [
-    ['overview', 'Operations overview'],
+    ['overview', 'Platform overview'],
     ['businesses', 'Businesses'],
     ['subscriptions', 'Subscriptions'],
     ['plans-entitlements', 'Plans & entitlements'],
     ['payments-invoices', 'Payments & invoices'],
     ['coupons', 'Coupons'],
     ['support-access', 'Support access'],
-    ['notification-logs', 'Notification logs'],
+    ['notification-logs', 'Failed operations'],
     ['system-health', 'System health'],
     ['feature-flags', 'Feature flags'],
-    ['audit-logs', 'Audit logs'],
+    ['audit-logs', 'Audit log'],
 ];
 const routeNames = {
     overview: 'platform.overview',
@@ -36,6 +37,7 @@ const platformHref = key => routeNames[key] ? route(routeNames[key]) : route('pl
 const navigation = computed(() => items.map(([key, label]) => ({ key, label, href: platformHref(key) })));
 const path = computed(() => page.url.split('?')[0]);
 const active = item => new URL(item.href, 'http://app.local').pathname === path.value;
+provide('workspaceBreadcrumbs', computed(() => [{ label: 'Platform', href: platformHref('overview'), current: path.value === new URL(platformHref('overview')).pathname }, ...navigation.value.filter(item => active(item) && item.key !== 'overview').map(item => ({ label: item.label, current: true }))]));
 
 const openMenu = async () => {
     menuOpen.value = true;
@@ -74,37 +76,36 @@ onBeforeUnmount(() => document.removeEventListener('keydown', handleKeydown));
 <template>
     <div class="cd-workspace min-h-screen bg-[var(--surface-canvas)] text-[var(--text-default)]">
         <Head :title="title" />
-        <a href="#platform-main" class="fixed left-3 top-3 z-[60] -translate-y-24 rounded-lg bg-white px-4 py-3 font-semibold shadow-lg transition-transform focus:translate-y-0">Skip to main content</a>
-        <aside class="fixed inset-y-0 left-0 hidden w-72 flex-col bg-[var(--navigation-background)] text-white lg:flex" aria-label="Platform administration">
-            <div class="border-b border-white/10 p-5">
-                <ProductMark inverse />
-                <div class="mt-5 flex items-center gap-3"><span class="grid size-10 place-items-center rounded-xl bg-[var(--brand-accent-soft)] text-[var(--brand-primary-strong)]"><ShieldCheckIcon class="size-6" aria-hidden="true" /></span><div><p class="font-semibold">Platform administration</p><p class="text-xs text-white/60">Internal operations only</p></div></div>
+        <a :inert="menuOpen" href="#platform-main" class="fixed left-3 top-3 z-[60] -translate-y-24 rounded-lg bg-white px-4 py-3 font-semibold shadow-lg transition-transform focus:translate-y-0">Skip to main content</a>
+        <aside :inert="menuOpen" class="fixed inset-y-0 left-0 cd-sidebar cd-navigation-panel hidden w-[15rem] flex-col border-r border-[var(--border-subtle)] text-[var(--text-default)] lg:flex" aria-label="Platform admin">
+            <div class="border-b border-[var(--border-subtle)] p-4">
+                <ProductMark inverse small :show-tagline="false" />
+                <div class="mt-4 flex items-center gap-3"><span class="grid size-10 place-items-center rounded-xl bg-[var(--brand-accent-soft)] text-[var(--brand-primary-strong)]"><ShieldCheckIcon class="size-6" aria-hidden="true" /></span><div><p class="font-semibold">Platform admin</p></div></div>
             </div>
             <nav class="min-h-0 flex-1 overflow-y-auto p-3" aria-label="Platform primary">
                 <ul class="space-y-1">
-                    <li v-for="item in navigation" :key="item.key"><Link :href="item.href" :aria-current="active(item) ? 'page' : undefined" :class="['flex min-h-11 items-center rounded-lg px-3 text-sm font-medium', active(item) ? 'bg-[var(--navigation-active)] text-white ring-1 ring-white/10' : 'text-white/75 hover:bg-white/10 hover:text-white']">{{ item.label }}</Link></li>
+                    <li v-for="item in navigation" :key="item.key"><Link :href="item.href" :aria-current="active(item) ? 'page' : undefined" :class="['flex min-h-11 items-center rounded-lg px-3 text-sm font-medium', active(item) ? 'bg-[var(--action-secondary-hover)] text-[var(--action-primary)]' : 'text-[var(--text-default)] hover:bg-[var(--surface-subtle)]']">{{ item.label }}</Link></li>
                 </ul>
             </nav>
-            <div class="border-t border-white/10 p-4 text-xs leading-5 text-white/65">Platform access does not grant ordinary tenant record access.</div>
         </aside>
 
-        <div class="lg:pl-72">
-            <header class="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-3 border-b border-[var(--border-subtle)] bg-[var(--surface-raised)]/95 px-4 backdrop-blur sm:px-6 lg:px-8">
+        <div :inert="menuOpen" class="lg:pl-[15rem]">
+            <header class="cd-workspace-topbar sticky top-0 z-20 flex min-h-14 items-center justify-between gap-3 border-b border-[var(--border-subtle)] bg-[var(--surface-raised)]/95 px-4 backdrop-blur sm:px-6 lg:px-8">
                 <div class="flex items-center gap-3">
                     <button ref="menuButton" type="button" class="grid size-11 shrink-0 place-items-center rounded-lg hover:bg-black/5 lg:hidden" aria-label="Open platform navigation" :aria-expanded="menuOpen" aria-controls="platform-mobile-navigation" @click="openMenu"><Bars3Icon class="size-6" aria-hidden="true" /></button>
-                    <span class="inline-flex items-center gap-2 rounded-full bg-[var(--brand-accent-soft)] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.08em] text-[var(--brand-primary)]"><ShieldCheckIcon class="size-4" aria-hidden="true" /> Platform operations</span>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-[var(--brand-accent-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--brand-primary)]"><ShieldCheckIcon class="size-4" aria-hidden="true" /> Platform operations</span>
                 </div>
-                <span class="truncate text-sm font-semibold">{{ $page.props.auth.user.name }}</span>
+                <div class="flex min-w-0 items-center gap-2.5"><span class="cd-account-avatar" aria-hidden="true">{{ $page.props.auth.user.name?.charAt(0) }}</span><span class="truncate text-sm font-semibold">{{ $page.props.auth.user.name }}</span></div>
             </header>
-            <div class="border-b border-[var(--status-danger)]/20 bg-[var(--status-danger-soft)] px-4 py-3 text-sm text-[var(--status-danger)] sm:px-6 lg:px-8" role="note"><strong>Support access is off.</strong> Business records stay private unless a separate, time-limited support session is approved.</div>
-            <main id="platform-main" tabindex="-1" class="mx-auto max-w-[100rem] px-4 py-6 sm:px-6 sm:py-8 lg:px-8"><slot /></main>
+            <div class="border-b border-[var(--status-danger)]/20 bg-[var(--surface-subtle)] px-4 py-2 text-sm text-[var(--text-muted)] sm:px-6 lg:px-8" role="note">Business records require an approved, time-limited support session.</div>
+            <main id="platform-main" tabindex="-1" class="mx-auto max-w-[96rem] px-4 py-5 sm:px-6"><slot /></main>
         </div>
 
         <div v-if="menuOpen" class="fixed inset-0 z-50 lg:hidden">
             <button type="button" class="absolute inset-0 bg-black/55" aria-label="Close platform navigation" @click="closeMenu({ restoreFocus: true })" />
-            <aside id="platform-mobile-navigation" ref="mobileDrawer" role="dialog" aria-modal="true" aria-label="Platform administration" class="absolute inset-y-0 left-0 flex w-[min(22rem,90vw)] flex-col bg-[var(--navigation-background)] text-white shadow-[var(--shadow-overlay)]">
-                <div class="flex min-h-16 items-center justify-between border-b border-white/10 px-4"><div class="flex items-center gap-3"><ProductMark inverse compact /><p class="font-semibold">Platform administration</p></div><button type="button" class="grid size-11 place-items-center rounded-lg hover:bg-white/10" aria-label="Close platform navigation" @click="closeMenu({ restoreFocus: true })"><XMarkIcon class="size-6" aria-hidden="true" /></button></div>
-                <nav class="min-h-0 flex-1 overflow-y-auto p-3" aria-label="Platform mobile primary"><ul class="space-y-1"><li v-for="item in navigation" :key="item.key"><Link :href="item.href" :aria-current="active(item) ? 'page' : undefined" :class="['flex min-h-12 items-center rounded-lg px-3 text-sm font-medium', active(item) ? 'bg-[var(--navigation-active)] text-white ring-1 ring-white/10' : 'text-white/75 hover:bg-white/10']" @click="closeMenu()">{{ item.label }}</Link></li></ul></nav>
+            <aside id="platform-mobile-navigation" ref="mobileDrawer" role="dialog" aria-modal="true" aria-label="Platform admin" class="cd-navigation-panel absolute inset-y-0 left-0 flex w-[min(22rem,90vw)] flex-col text-[var(--text-default)] shadow-[var(--shadow-overlay)]">
+                <div class="flex min-h-16 items-center justify-between border-b border-[var(--border-subtle)] px-4"><div class="flex items-center gap-3"><ProductMark inverse small :show-tagline="false" /><p class="font-semibold">Platform admin</p></div><button type="button" class="grid size-11 place-items-center rounded-lg hover:bg-[var(--surface-subtle)]" aria-label="Close platform navigation" @click="closeMenu({ restoreFocus: true })"><XMarkIcon class="size-6" aria-hidden="true" /></button></div>
+                <nav class="min-h-0 flex-1 overflow-y-auto p-3" aria-label="Platform mobile primary"><ul class="space-y-1"><li v-for="item in navigation" :key="item.key"><Link :href="item.href" :aria-current="active(item) ? 'page' : undefined" :class="['flex min-h-12 items-center rounded-lg px-3 text-sm font-medium', active(item) ? 'bg-[var(--action-secondary-hover)] text-[var(--action-primary)]' : 'text-[var(--text-default)] hover:bg-[var(--surface-subtle)]']" @click="closeMenu()">{{ item.label }}</Link></li></ul></nav>
             </aside>
         </div>
     </div>

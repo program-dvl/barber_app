@@ -72,23 +72,4 @@ class ClientRecordService
             'tag_count' => count($tagIds), 'preferred_service_count' => count($validServiceIds),
         ], [], 'client_records');
     }
-
-    /** @return array<string,mixed> */
-    public function historySummary(Client $client): array
-    {
-        $appointments = $client->appointments()->with('serviceLines.segments')->get();
-        $completed = $appointments->where('status', 'completed');
-        $now = now();
-
-        return [
-            'visit_count' => $completed->count(),
-            'last_visit' => $completed->sortByDesc('starts_at_utc')->first()?->starts_at_utc?->toIso8601String(),
-            'next_appointment' => $appointments->filter(fn ($appointment) => $appointment->starts_at_utc->isAfter($now) && ! str_starts_with($appointment->status, 'cancelled'))->sortBy('starts_at_utc')->first()?->starts_at_utc?->toIso8601String(),
-            'cancellations' => $appointments->filter(fn ($appointment) => str_starts_with($appointment->status, 'cancelled'))->count(),
-            'no_shows' => $appointments->where('status', 'no_show')->count(),
-            'lifetime_spend_minor' => 0,
-            'financial_history_status' => 'awaiting_checkout_ledger',
-            'appointments' => $appointments,
-        ];
-    }
 }

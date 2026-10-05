@@ -14,6 +14,7 @@ const props = defineProps({
         default: 'button',
     },
     disabled: Boolean,
+    loading: Boolean,
     size: { type: String, default: 'default', validator: value => ['default', 'small'].includes(value) },
 });
 
@@ -31,20 +32,22 @@ defineExpose({ focus: () => element.value?.$el?.focus?.() ?? element.value?.focu
 <template>
     <component
         ref="element"
-        :is="href && !disabled ? Link : 'button'"
-        :href="disabled ? undefined : href"
-        :type="href ? undefined : type"
-        :disabled="disabled"
-        :aria-disabled="disabled || undefined"
-        :tabindex="disabled && href ? -1 : undefined"
-        @click="disabled && $event.preventDefault()"
+        :is="href && !disabled && !loading ? Link : 'button'"
+        :href="disabled || loading ? undefined : href"
+        :type="href ? 'button' : type"
+        :disabled="disabled || loading"
+        :aria-disabled="disabled || loading || undefined"
+        :aria-busy="loading || undefined"
+        :tabindex="(disabled || loading) && href ? -1 : undefined"
+        @click="(disabled || loading) && $event.preventDefault()"
         :class="[
             styles[props.variant],
-            'cd-app-button inline-flex items-center justify-center gap-2 border text-sm font-semibold transition-colors',
+            'cd-app-button inline-flex max-w-full whitespace-normal items-center justify-center gap-2 border text-sm font-semibold transition-colors',
             size === 'small' ? 'cd-app-button-small' : '',
-            disabled ? 'cursor-not-allowed opacity-55' : '',
+            disabled || loading ? 'cursor-not-allowed opacity-55' : '',
         ]"
     >
+        <span v-if="loading" aria-hidden="true" class="size-4 animate-spin rounded-full border-2 border-current border-r-transparent motion-reduce:animate-none" />
         <slot />
     </component>
 </template>

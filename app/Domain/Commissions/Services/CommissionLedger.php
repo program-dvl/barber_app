@@ -141,7 +141,12 @@ class CommissionLedger
             ->concat($tips->map(fn ($entry) => ['source' => 'tip', 'source_id' => $entry->id, 'sale_line_id' => null, 'payment_transaction_id' => $entry->payment_transaction_id, 'type' => $entry->type, 'amount_minor' => $entry->amount_minor, 'occurred_at' => $entry->occurred_at->toIso8601String(), 'reason' => $entry->reason]))
             ->sortBy('occurred_at')->values()->all();
 
-        return ['entries' => $entries, 'commission_minor' => (int) $commissions->sum('amount_minor'), 'tips_minor' => (int) $tips->sum('amount_minor'), 'total_minor' => (int) $commissions->sum('amount_minor') + (int) $tips->sum('amount_minor')];
+        $balances = $commissions->pluck('currency_code')->merge($tips->pluck('currency_code'))->unique()->sort()->values()->map(fn ($currency) => [
+            'currency_code' => $currency, 'commission_minor' => (int) $commissions->where('currency_code', $currency)->sum('amount_minor'),
+            'tips_minor' => (int) $tips->where('currency_code', $currency)->sum('amount_minor'),
+        ])->all();
+
+        return ['entries' => $entries, 'totals_by_currency' => $balances, 'commission_minor' => (int) $commissions->sum('amount_minor'), 'tips_minor' => (int) $tips->sum('amount_minor'), 'total_minor' => (int) $commissions->sum('amount_minor') + (int) $tips->sum('amount_minor')];
     }
 
     private function effectiveRule(Sale $sale, SaleLine $line, CarbonInterface $at): ?CommissionRule

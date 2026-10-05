@@ -66,7 +66,7 @@ class PublicBookingFlowController extends Controller
             'client_name' => ['required', 'string', 'max:255'], 'client_mobile' => ['required', 'string', 'max:32', new E164Phone],
             'client_email' => ['required', 'email', 'max:255'], 'client_date_of_birth' => ['nullable', 'date', 'before:today'],
             'referral_source' => ['nullable', 'string', 'max:255'], 'special_request' => ['nullable', 'string', 'max:2000'],
-            'communication_preferences' => ['array'], 'communication_preferences.*' => ['in:email,whatsapp'],
+            'communication_preferences' => ['array'], 'communication_preferences.*' => ['in:email,sms'],
             'marketing_opt_in' => ['boolean'], 'policy_accepted' => ['accepted'],
         ]);
         $business = $this->business($slug, $slugs);

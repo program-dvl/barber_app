@@ -1,87 +1,245 @@
 <script setup>
-import AppSelect from '@/Components/Product/AppSelect.vue';
-import { computed, ref } from 'vue';
-import { router, useForm } from '@inertiajs/vue3';
-import { ArchiveBoxIcon, CheckCircleIcon, PlusIcon, WrenchScrewdriverIcon } from '@heroicons/vue/24/outline';
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+import { router, useForm, usePage } from '@inertiajs/vue3';
+import { ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ChevronLeftIcon, ChevronRightIcon, DocumentDuplicateIcon, EllipsisHorizontalIcon, GlobeAltIcon, PlusIcon, ScissorsIcon, ExclamationTriangleIcon, AdjustmentsHorizontalIcon, ArchiveBoxIcon } from '@heroicons/vue/24/outline';
 import AppDialog from '@/Components/Product/AppDialog.vue';
+import AppSelect from '@/Components/Product/AppSelect.vue';
 import AppButton from '@/Components/Product/AppButton.vue';
+import FormField from '@/Components/Product/FormField.vue';
+import SearchField from '@/Components/Product/SearchField.vue';
 import PageHeader from '@/Components/Product/PageHeader.vue';
-import SurfaceCard from '@/Components/Product/SurfaceCard.vue';
+import DurationField from '@/Components/Services/DurationField.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { channelLabel, decimalToMinor, durationLabel, filterServices } from '@/Support/serviceCatalog';
+import '../../../css/services.css';
 
-const props = defineProps({ business: Object, locations: Array, staff: Array, services: Array, readiness: Object });
-const editing = ref(null);
-const editor = ref(null);
-const search = ref('');
-const visibleServices = computed(() => props.services.filter(service => `${service.name} ${service.category || ''}`.toLowerCase().includes(search.value.toLowerCase())));
-const add = () => { reset(); editor.value?.open(); };
-const amount = ref(0);
-const defaults = () => ({
-    category: 'Services', name: '', description: '', price_type: 'fixed', price_minor: 0,
-    duration_minutes: 30, processing_minutes: 0, cleanup_minutes: 5,
-    minimum_notice_minutes: 0, maximum_advance_days: 60, deposit_type: 'none', deposit_value: 0,
-    client_eligibility: 'all', consultation_required: false, online_visible: true, tax_category: '',
-    location_ids: props.locations.map(item => item.public_id), staff_ids: props.staff.filter(item => item.has_working_hours).map(item => item.public_id),
-});
+const props = defineProps({ business: Object, locations: Array, staff: Array, services: Array, categories: Array, category_order_revision:String, commerce: Object, readiness: Object });
+const pageContext = usePage();
+const editor = ref(null), discard = ref(null), statusDialog = ref(null), categoriesDialog = ref(null);
+const editing = ref(null), editorOpen = ref(false), tab = ref('overview'), filtersOpen = ref(false), page = ref(1), staffSearch = ref(''), addonSearch = ref('');
+const filter = reactive({ search:'', category:'', status:'all', channel:'', staff:'', location:'', kind:'', sort:'category' });
+const visible = computed(() => filterServices(props.services, filter));
+const paged = computed(() => visible.value.slice((page.value - 1) * 25, page.value * 25));
+const pages = computed(() => Math.max(1, Math.ceil(visible.value.length / 25)));
+const filterCount = computed(() => ['status','channel','staff','location'].filter(k => filter[k] && filter[k] !== 'all').length);
+const activeCount = computed(() => props.services.filter(s => s.is_active).length);
+const onlineCount = computed(() => props.services.filter(s => s.is_active && s.online_visible).length);
+const setupCount = computed(() => props.services.filter(s => s.is_active && s.warnings.length).length);
+const categoryName = computed(() => filter.category === 'uncategorised' ? 'Uncategorised' : props.categories.find(c => c.public_id === filter.category)?.name || 'All services');
+watch(filter, () => { page.value = 1; });
+watch(pages, value => { page.value = Math.min(page.value, value); });
+const clearFilters = () => Object.assign(filter, { search:'', category:'', status:'all', channel:'', staff:'', location:'', kind:'', sort:'category' });
+const locale = (props.business.locale || 'en-IN').replace('_', '-');
+const money = (minor, currency = props.business.currency_code) => new Intl.NumberFormat(locale, { style:'currency', currency:currency || 'INR', minimumFractionDigits:2, maximumFractionDigits:2 }).format((Number(minor) || 0) / 100);
+const initials = name => (name || '').split(/\s+/).slice(0,2).map(n => n[0]).join('').toUpperCase();
+const defaults = () => ({ command_key:crypto.randomUUID(), duplicate_of:null, revision:null, impact_revision:null, kind:'service', category:'', name:'', description:'', price_type:'fixed', price_minor:0, duration_minutes:30, processing_minutes:0, cleanup_minutes:0, minimum_notice_minutes:0, maximum_advance_days:60, deposit_type:'none', deposit_value:0, client_eligibility:'all', consultation_required:false, online_visible:true, is_active:true, tax_category:'', location_ids:props.locations.filter(l => l.is_active && l.status === 'active').length === 1 ? [props.locations.find(l => l.is_active && l.status === 'active').public_id] : [], staff_ids:[], staff_overrides:[], location_overrides:[], addon_ids:[], reason:'' });
 const form = useForm(defaults());
-const readyProviders = computed(() => props.staff.filter(item => item.has_working_hours));
-const isReady = computed(() => !(props.readiness.blockers || []).some(item => item.code.startsWith('services.')));
-const money = value => new Intl.NumberFormat(undefined, { style: 'currency', currency: props.business.currency_code || 'INR' }).format(value / 100);
-const reset = () => { editing.value = null; form.defaults(defaults()); form.reset(); form.clearErrors(); amount.value = 0; };
-const edit = service => {
-    editing.value = service;
-    amount.value = service.price_minor / 100;
-    Object.assign(form, {
-        ...defaults(), ...service, category: service.category || 'Services',
-        location_ids: service.locations.map(item => item.public_id), staff_ids: service.staff.map(item => item.public_id),
-    });
-    editor.value?.open();
+const price = ref(''), deposit = ref('0'), variants = reactive({}), branchPrices = reactive({}), overrideOpen = reactive({});
+const baseline = ref(''), pending = ref(null), uncertain = ref(false), submitting = ref(false);
+const storageKey = computed(() => `clipperdesk:service-save:${pageContext.props.auth?.user?.id}:${props.business.public_id}`);
+const source = () => JSON.stringify([form.data(), price.value, deposit.value, variants, branchPrices]);
+const dirty = computed(() => editorOpen.value && source() !== baseline.value);
+const assignedStaff = computed(() => props.staff.filter(p => `${p.display_name} ${p.title || ''}`.toLowerCase().includes(staffSearch.value.toLowerCase())));
+const addons = computed(() => props.services.filter(s => s.kind === 'addon' && (s.is_active || form.addon_ids.includes(s.public_id)) && s.name.toLowerCase().includes(addonSearch.value.toLowerCase())));
+const editorCurrency = computed(() => editing.value?.currency_code || props.services.find(s => s.public_id === form.duplicate_of)?.currency_code || props.business.currency_code);
+const previewPrice = computed(() => decimalToMinor(price.value) ?? 0);
+const visitMinutes = computed(() => Number(form.duration_minutes || 0) + Number(form.processing_minutes || 0));
+const totalMinutes = computed(() => visitMinutes.value + Number(form.cleanup_minutes || 0));
+const selectedVariants = computed(() => form.staff_ids.map(id => ({ staff:id, ...variants[id], price_minor:variants[id]?.price === '' || variants[id]?.price == null ? null : decimalToMinor(variants[id].price), duration_minutes:variants[id]?.duration_minutes === '' ? null : variants[id]?.duration_minutes ?? null, processing_minutes:variants[id]?.processing_minutes === '' ? null : variants[id]?.processing_minutes ?? null, cleanup_minutes:variants[id]?.cleanup_minutes === '' ? null : variants[id]?.cleanup_minutes ?? null })).map(({price, ...v}) => v));
+const seedVariants = service => {
+    Object.keys(variants).forEach(k => delete variants[k]); Object.keys(branchPrices).forEach(k => delete branchPrices[k]); Object.keys(overrideOpen).forEach(k => delete overrideOpen[k]);
+    props.staff.forEach(p => { const old = service?.staff.find(s => s.public_id === p.public_id); variants[p.public_id] = { price:old?.price_minor == null ? '' : (old.price_minor / 100).toFixed(2), duration_minutes:old?.duration_minutes ?? null, processing_minutes:old?.processing_minutes ?? null, cleanup_minutes:old?.cleanup_minutes ?? null, commission_rate:old?.commission_rate ?? null, online_visible:old?.online_visible ?? true }; });
+    props.locations.forEach(l => { const old = service?.locations.find(s => s.public_id === l.public_id); branchPrices[l.public_id] = old?.price_minor == null ? '' : (old.price_minor / 100).toFixed(2); });
+};
+const openEditor = async (service = null, duplicate = false) => {
+    editing.value = duplicate ? null : service;
+    form.defaults(defaults()); form.reset(); form.clearErrors();
+    if (service) {
+        Object.keys(form.data()).forEach(k => { if (k in service && !['command_key','staff_overrides','location_overrides'].includes(k)) form[k] = service[k]; });
+        form.category = service.category || ''; form.location_ids = service.locations.map(l => l.public_id).filter(id => props.locations.some(l => l.public_id === id)); form.staff_ids = service.staff.map(p => p.public_id).filter(id => props.staff.some(p => p.public_id === id));
+        if (duplicate) { form.duplicate_of = service.public_id; form.name = `${service.name} (copy)`; form.revision = null; form.impact_revision = null; form.is_active = false; form.online_visible = false; }
+    }
+    seedVariants(service); price.value = service ? (service.price_minor / 100).toFixed(2) : ''; deposit.value = String((service?.deposit_value || 0) / 100);
+    staffSearch.value = ''; addonSearch.value = ''; tab.value = 'overview'; editorOpen.value = true; uncertain.value = false; pending.value = null;
+    await nextTick(); baseline.value = source(); editor.value?.open();
+};
+const canClose = () => { if (form.processing || uncertain.value) return false; if (dirty.value) { discard.value?.open(); return false; } editorOpen.value = false; return true; };
+const closeEditor = () => { if (canClose()) editor.value?.close(); };
+const discardEdits = () => { clearPending(); editorOpen.value = false; editor.value?.close(); };
+const beforeUnload = e => { if (dirty.value || uncertain.value) { e.preventDefault(); e.returnValue = ''; } };
+let stopNavigation;
+onMounted(() => {
+    window.addEventListener('beforeunload', beforeUnload);
+    stopNavigation = router.on('before', event => { if ((dirty.value || uncertain.value) && !form.processing && !submitting.value) { event.preventDefault(); if (!uncertain.value) discard.value?.open(); } });
+    try { const saved = sessionStorage.getItem(storageKey.value); if (saved) { pending.value = JSON.parse(saved); uncertain.value = true; } } catch {}
+});
+onBeforeUnmount(() => { window.removeEventListener('beforeunload', beforeUnload); stopNavigation?.(); });
+const clearPending = () => { pending.value = null; uncertain.value = false; try { sessionStorage.removeItem(storageKey.value); } catch {} };
+const fieldTab = key => key.startsWith('staff') || key.startsWith('location') ? 'team' : ['reason','impact_revision','deposit','minimum','maximum','client','online','consultation','tax','addon'].some(v => key.startsWith(v)) ? 'booking' : 'overview';
+const focusError = async field => {
+    tab.value = fieldTab(field);
+    let target = `svc-${field}`;
+    const parts = field.split('.');
+    if (field === 'staff_ids') { await nextTick(); document.querySelector('#service-form .svc-selection-tools input')?.focus(); return; }
+    if (field === 'location_ids') { await nextTick(); document.querySelector('#service-form .svc-selection input[type=checkbox]')?.focus(); return; }
+    if (parts[0] === 'staff_overrides' && parts.length > 2) {
+        const id = form.staff_ids[Number(parts[1])];
+        overrideOpen[id] = true;
+        target = `svc-staff-${({price_minor:'price', duration_minutes:'duration', processing_minutes:'processing', cleanup_minutes:'cleanup'})[parts[2]] || 'price'}-${id}`;
+    } else if (parts[0] === 'location_overrides' && parts.length > 2) {
+        const id = form.location_ids[Number(parts[1])]; overrideOpen[id] = true; target = `svc-branch-${id}`;
+    }
+    await nextTick();
+    (document.getElementById(target) || document.querySelector('#service-form [aria-invalid=true]') || document.querySelector('#service-form input'))?.focus();
 };
 const save = () => {
-    form.price_minor = Math.round((Number(amount.value) || 0) * 100);
-    const options = { preserveScroll: true, onSuccess: () => { editor.value?.close(); reset(); } };
-    if (editing.value) form.put(route('business.services.update', [props.business.public_id, editing.value.public_id]), options);
+    if (form.processing) return;
+    if (!uncertain.value) {
+        const amount = decimalToMinor(price.value);
+        if (amount === null) { form.setError('price_minor', 'Enter a non-negative amount with up to two decimal places.'); focusError('price_minor'); return; }
+        if (form.staff_ids.some(id => variants[id]?.price !== '' && decimalToMinor(variants[id]?.price) === null)) { form.setError('staff_overrides', 'Enter valid staff prices with up to two decimal places.'); tab.value = 'team'; return; }
+        if (form.location_ids.some(id => branchPrices[id] !== '' && decimalToMinor(branchPrices[id]) === null)) { form.setError('location_overrides', 'Enter valid location prices with up to two decimal places.'); tab.value = 'team'; return; }
+        form.price_minor = amount; form.staff_overrides = selectedVariants.value;
+        form.location_overrides = form.location_ids.map(id => ({location:id, price_minor:branchPrices[id] === '' ? null : decimalToMinor(branchPrices[id])}));
+        form.deposit_value = form.deposit_type === 'none' ? 0 : decimalToMinor(deposit.value);
+        if (form.deposit_value === null) { form.setError('deposit_value', 'Enter a valid deposit amount or percentage.'); focusError('deposit_value'); return; }
+        pending.value = {service:editing.value?.public_id || null, data:form.data()};
+        try { sessionStorage.setItem(storageKey.value, JSON.stringify(pending.value)); } catch {}
+    }
+    const command = pending.value;
+    if (!command) return;
+    submitting.value = true;
+    form.transform(() => command.data);
+    const options = { preserveScroll:true, onSuccess:() => { clearPending(); editorOpen.value = false; editor.value?.close(); form.reset(); }, onError:() => { clearPending(); form.command_key = crypto.randomUUID(); }, onFinish:() => { submitting.value = false; if (pending.value) uncertain.value = true; form.transform(data => data); if (Object.keys(form.errors).length) focusError(Object.keys(form.errors)[0]); } };
+    if (command.service) form.put(route('business.services.update', [props.business.public_id, command.service]), options);
     else form.post(route('business.services.store', props.business.public_id), options);
 };
-const toggle = service => router.patch(route('business.services.status', [props.business.public_id, service.public_id]), { active: !service.is_active }, { preserveScroll: true });
+const resumeSave = async () => { editorOpen.value = true; editing.value = props.services.find(s => s.public_id === pending.value?.service) || null; Object.assign(form, pending.value.data); seedVariants(null); price.value = (form.price_minor / 100).toFixed(2); deposit.value = (form.deposit_value / 100).toFixed(2); tab.value = 'booking'; await editor.value?.open(); };
+const statusTarget = ref(null);
+const statusForm = useForm({active:false, revision:'', impact_revision:'', reason:''});
+const changeStatus = service => { statusTarget.value = service; statusForm.clearErrors(); Object.assign(statusForm, {active:!service.is_active, revision:service.revision, impact_revision:service.impact_revision, reason:''}); statusDialog.value?.open(); };
+const saveStatus = () => statusForm.patch(route('business.services.status', [props.business.public_id, statusTarget.value.public_id]), {preserveScroll:true, onSuccess:() => statusDialog.value?.close()});
+const categoryForm = useForm({category_id:null, name:'', is_active:true, revision:null});
+const categoryEditing = ref(false);
+const openCategories = () => { categoryEditing.value = false; categoryForm.clearErrors(); categoriesDialog.value?.open(); };
+const editCategory = category => { categoryEditing.value = true; Object.assign(categoryForm, {category_id:category?.public_id || null, name:category?.name || '', is_active:category?.is_active ?? true, revision:category?.revision || null}); categoryForm.clearErrors(); };
+const saveCategory = () => categoryForm.post(route('business.services.categories.save', props.business.public_id), {preserveScroll:true, onSuccess:() => { categoryEditing.value = false; }});
+const ordering = ref(false);
+const reorderCategory = (index, step) => { const ids = props.categories.map(c => c.public_id); [ids[index], ids[index+step]] = [ids[index+step], ids[index]]; ordering.value = true; router.put(route('business.services.categories.order', props.business.public_id), {ids, revision:props.category_order_revision}, {preserveScroll:true, onFinish:() => ordering.value = false}); };
+const overrideLabel = person => person.price_minor != null || person.duration_minutes != null ? 'Custom' : 'Default';
+const resetVariant = id => Object.assign(variants[id], {price:'', duration_minutes:null, processing_minutes:null, cleanup_minutes:null});
+const closeMenus = event => { if (!event.target.closest('.svc-menu')) document.querySelectorAll('.svc-menu[open]').forEach(el => el.removeAttribute('open')); };
+onMounted(() => document.addEventListener('click', closeMenus));
+onBeforeUnmount(() => document.removeEventListener('click', closeMenus));
 </script>
 
 <template>
-    <AppLayout title="Services" :business-label="business.name">
-        <PageHeader eyebrow="Business setup · Services" title="Services" description="Manage your menu, pricing and who can deliver each service.">
-            <template #actions><AppButton :href="route('business.configuration.show', business.public_id)" variant="quiet">Business setup</AppButton><AppButton @click="add"><PlusIcon class="size-4" aria-hidden="true" />Add service</AppButton></template>
-        </PageHeader>
-
-        <div v-if="!locations.length || !readyProviders.length" class="mt-6 rounded-xl bg-[var(--status-warning-soft)] p-5 text-sm text-[var(--status-warning)]"><strong>Complete the delivery path first.</strong><p class="mt-1">A bookable service needs an active location and at least one provider with working hours.</p><div class="mt-4 flex flex-wrap gap-3"><AppButton v-if="!locations.length" :href="route('business.locations.index', business.public_id)" variant="secondary">Set up location</AppButton><AppButton v-if="!readyProviders.length" :href="route('business.team.index', business.public_id)" variant="secondary">Add provider</AppButton></div></div>
-
-        <div class="mt-6">
-            <SurfaceCard title="Service catalogue" :description="`${services.length} service${services.length === 1 ? '' : 's'} · archived services retain booking history`">
-                <label class="mb-4 block max-w-sm"><span class="ds-sr-only">Search services</span><input v-model="search" type="search" class="cd-input" placeholder="Search services or categories…" /></label>
-                <div v-if="!services.length" class="rounded-xl border border-dashed border-[var(--border-strong)] p-8 text-center"><WrenchScrewdriverIcon class="mx-auto size-8 text-[var(--text-muted)]" /><p class="mt-3 font-semibold">Create your first service</p><p class="mt-1 text-sm text-[var(--text-muted)]">Start with the service clients request most often.</p></div>
-                <ul v-else class="divide-y divide-[var(--border-subtle)]"><li v-for="service in visibleServices" :key="service.public_id" class="cd-catalogue-row"><div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"><div><div class="flex flex-wrap items-center gap-2"><p class="font-semibold text-[var(--text-strong)]">{{ service.name }}</p><span :class="['rounded-full px-2.5 py-1 text-xs font-semibold', service.is_active && service.online_visible ? 'bg-[var(--status-success-soft)] text-[var(--status-success)]' : 'bg-[var(--surface-subtle)] text-[var(--text-muted)]']">{{ service.is_active ? (service.online_visible ? 'Online' : 'Internal only') : 'Archived' }}</span></div><p class="mt-1 text-sm text-[var(--text-muted)]">{{ service.category || 'Uncategorised' }} · {{ service.duration_minutes + service.processing_minutes + service.cleanup_minutes }} min · {{ money(service.price_minor) }}</p><p class="mt-2 text-xs text-[var(--text-muted)]">{{ service.locations.map(item => item.name).join(', ') || 'No location' }} · {{ service.staff.map(item => item.display_name).join(', ') || 'No provider' }}</p></div><div class="flex gap-2"><AppButton size="small" variant="secondary" :aria-label="`Edit ${service.name}`" @click="edit(service)">Edit</AppButton><AppButton size="small" variant="quiet" :aria-label="`${service.is_active ? 'Archive' : 'Restore'} ${service.name}`" @click="toggle(service)"><ArchiveBoxIcon class="size-4" />{{ service.is_active ? 'Archive' : 'Restore' }}</AppButton></div></div></li></ul>
-                <p v-if="services.length && !visibleServices.length" class="py-6 text-center text-[var(--text-muted)]">No services match your search.</p>
-            </SurfaceCard>
+<AppLayout title="Services" :business-label="business.name">
+<div class="svc-workspace">
+    <PageHeader title="Services" description="Your craft, clearly defined. One catalogue for every visit.">
+        <template #actions><AppButton variant="secondary" @click="openCategories">Categories</AppButton><AppButton @click="openEditor()"><PlusIcon class="size-4" aria-hidden="true" />Add service</AppButton></template>
+    </PageHeader>
+    <div v-if="uncertain && pending && !editorOpen" class="svc-impact mb-4" role="status"><strong>A previous save needs confirmation.</strong><p>Resume the exact request to check whether it was saved safely.</p><AppButton variant="secondary" size="small" @click="resumeSave">Resume save</AppButton></div>
+    <div class="svc-summary" aria-label="Catalogue summary">
+        <button @click="filter.status = 'all'; filter.channel = ''"><strong>{{ services.length }}</strong>in catalogue</button>
+        <button @click="filter.status = 'active'; filter.channel = ''"><span class="svc-dot" /><strong>{{ activeCount }}</strong>active</button>
+        <button @click="filter.channel = 'online'; filter.status = 'all'"><GlobeAltIcon class="size-3.5" aria-hidden="true" /><strong>{{ onlineCount }}</strong>online enabled</button>
+        <button v-if="setupCount" @click="filter.status = 'setup'; filter.channel = ''"><span class="svc-dot svc-warning" /><strong>{{ setupCount }}</strong>need setup</button>
+        <span v-if="!business.online_booking_enabled">Business online booking is off</span>
+    </div>
+    <section class="svc-shell" aria-label="Service catalogue">
+        <div class="svc-toolbar">
+            <SearchField v-model="filter.search" label="Search services" placeholder="Search name or category" />
+            <div class="svc-mobile-category"><AppSelect v-model="filter.category" aria-label="Category filter"><option value="">All categories</option><option v-for="c in categories" :key="c.public_id" :value="c.public_id">{{ c.name }}</option><option value="uncategorised">Uncategorised</option></AppSelect></div>
+            <AppButton variant="secondary" :aria-expanded="filtersOpen" aria-controls="service-filters" @click="filtersOpen = !filtersOpen"><AdjustmentsHorizontalIcon class="size-4" aria-hidden="true" />Filters<span v-if="filterCount">({{ filterCount }})</span></AppButton>
+            <div class="svc-sort"><AppSelect v-model="filter.sort" aria-label="Sort services"><option value="category">Category order</option><option value="name">Name A–Z</option><option value="price">Price: low to high</option><option value="duration">Shortest duration</option><option value="updated">Recently updated</option></AppSelect></div>
         </div>
-            <AppDialog ref="editor" drawer :title="editing ? `Edit ${editing.name}` : 'Add a service'" description="Set the price, timing and people who can deliver this service.">
+        <div v-if="filtersOpen" id="service-filters" class="svc-filters">
+            <label>Status<AppSelect v-model="filter.status"><option value="all">All statuses</option><option value="active">Active</option><option value="inactive">Inactive</option><option value="setup">Needs setup</option></AppSelect></label>
+            <label>Online booking<AppSelect v-model="filter.channel"><option value="">All channels</option><option value="online">Online enabled</option><option value="internal">Internal only</option></AppSelect></label>
+            <label>Staff<AppSelect v-model="filter.staff"><option value="">All staff</option><option v-for="p in staff" :key="p.public_id" :value="p.public_id">{{ p.display_name }}</option></AppSelect></label>
+            <label>Location<AppSelect v-model="filter.location"><option value="">All locations</option><option v-for="l in locations" :key="l.public_id" :value="l.public_id">{{ l.name }}</option></AppSelect></label>
+            <AppButton variant="quiet" @click="clearFilters">Clear filters</AppButton>
+        </div>
+        <div class="svc-body">
+            <nav class="svc-categories" aria-label="Service categories">
+                <header>Categories</header>
+                <button :aria-pressed="!filter.category" @click="filter.category = ''"><span>All services</span><small>{{ services.length }}</small></button>
+                <button v-for="c in categories" :key="c.public_id" :aria-pressed="filter.category === c.public_id" @click="filter.category = c.public_id"><span>{{ c.name }}<span v-if="!c.is_active" class="svc-meta">Archived</span></span><small>{{ c.count }}</small></button>
+                <button v-if="services.some(s => !s.category_id)" :aria-pressed="filter.category === 'uncategorised'" @click="filter.category = 'uncategorised'"><span>Uncategorised</span><small>{{ services.filter(s => !s.category_id).length }}</small></button>
+                <button class="mt-3" @click="openCategories"><span>Manage categories</span><PlusIcon class="size-3.5 shrink-0" aria-hidden="true" /></button>
+            </nav>
+            <div class="svc-catalog">
+                <div class="svc-catalog-heading"><h2>{{ categoryName }}</h2><span role="status" aria-live="polite">{{ visible.length }} {{ visible.length === 1 ? 'item' : 'items' }}</span><div class="svc-kind" aria-label="Catalogue type"><button :aria-pressed="filter.kind === ''" @click="filter.kind = ''">All</button><button :aria-pressed="filter.kind === 'service'" @click="filter.kind = 'service'">Services</button><button :aria-pressed="filter.kind === 'addon'" @click="filter.kind = 'addon'">Add-ons</button></div></div>
+                <table v-if="paged.length" class="svc-table">
+                    <caption class="ds-sr-only">Service catalogue, price, duration, staff and booking availability</caption>
+                    <thead><tr><th scope="col">Service</th><th scope="col" class="svc-price">Price</th><th scope="col">Visit time</th><th scope="col">Team</th><th scope="col">Availability</th><th scope="col"><span class="ds-sr-only">Actions</span></th></tr></thead>
+                    <tbody><tr v-for="s in paged" :key="s.public_id" @click="openEditor(s)">
+                        <td><button class="svc-identity" :aria-label="`Edit ${s.name}`" @click.stop="openEditor(s)"><strong>{{ s.name }}</strong><span class="svc-meta">{{ s.category || 'Uncategorised' }}<template v-if="s.kind === 'addon'"> · Add-on</template></span></button><span class="svc-mobile-details svc-meta">{{ durationLabel(s.duration_minutes + s.processing_minutes) }} · {{ s.staff.length }} staff</span><span class="svc-mobile-details svc-meta">{{ channelLabel(s) }} · {{ s.locations.length }} {{ s.locations.length === 1 ? 'location' : 'locations' }}</span></td>
+                        <td class="svc-price"><strong><span v-if="s.price_type === 'from'" class="svc-price-from">From </span>{{ money(s.price_minor, s.currency_code) }}</strong><span class="svc-meta" v-if="s.staff.some(p => p.price_minor != null) || s.locations.some(l => l.price_minor != null)">Overrides apply</span></td>
+                        <td><strong>{{ durationLabel(s.duration_minutes + s.processing_minutes) }}</strong><span v-if="s.cleanup_minutes" class="svc-meta">+ {{ durationLabel(s.cleanup_minutes) }} cleanup</span></td>
+                        <td><div class="svc-person"><span v-if="s.staff.length" class="svc-avatar" aria-hidden="true">{{ initials(s.staff[0].display_name) }}</span><span>{{ s.staff.length === 1 ? s.staff[0].display_name : `${s.staff.length} staff` }}</span></div><span class="svc-meta" v-if="s.staff.some(p => p.duration_minutes != null)">Duration overrides</span></td>
+                        <td><span class="svc-status" :class="{'is-warning':s.is_active && s.warnings.length, 'is-muted':!s.is_active || !s.online_visible}" :title="s.warnings.join(' · ')"><ExclamationTriangleIcon v-if="s.is_active && s.warnings.length" aria-hidden="true" /><GlobeAltIcon v-else-if="s.is_active && s.online_visible" aria-hidden="true" /><CheckCircleIcon v-else aria-hidden="true" />{{ channelLabel(s) }}</span><span class="svc-meta">{{ s.locations.length === 1 ? s.locations[0].name : `${s.locations.length} locations` }}</span></td>
+                        <td @click.stop><details class="svc-menu cd-action-menu" @toggle="event => { if (event.target.open) document.querySelectorAll('.svc-menu[open]').forEach(el => { if (el !== event.target) el.removeAttribute('open'); }); }"><summary :aria-label="`Actions for ${s.name}`"><EllipsisHorizontalIcon class="size-4" aria-hidden="true" /></summary><div class="svc-menu-panel"><button @click="openEditor(s)"><ScissorsIcon />Edit service</button><button @click="openEditor(s, true)"><DocumentDuplicateIcon />Duplicate</button><button @click="changeStatus(s)"><ArchiveBoxIcon />{{ s.is_active ? 'Deactivate' : 'Activate' }}</button></div></details></td>
+                    </tr></tbody>
+                </table>
+                <div v-else class="svc-empty"><ScissorsIcon class="size-6 mx-auto mb-3 text-[var(--text-muted)]" aria-hidden="true" /><h3>{{ services.length ? 'No services match these filters' : 'Your catalogue starts here' }}</h3><p>{{ services.length ? 'Try another search or clear your filters.' : 'Add a service, then connect the team and locations that deliver it.' }}</p><AppButton :variant="services.length ? 'secondary' : 'primary'" @click="services.length ? clearFilters() : openEditor()">{{ services.length ? 'Clear filters' : 'Add service' }}</AppButton></div>
+                <footer class="svc-footer"><a class="underline" :href="route('business.configuration.show', business.public_id)">CSV import</a><span>{{ visible.length ? `${(page - 1) * 25 + 1}–${Math.min(page * 25, visible.length)} of ${visible.length}` : '0 items' }}<span class="hidden lg:inline"> · Changes apply to new selections</span></span><div v-if="pages > 1" class="svc-pager"><button :disabled="page === 1" aria-label="Previous page" @click="page--"><ChevronLeftIcon class="size-3.5 mx-auto" /></button><span>{{ page }} / {{ pages }}</span><button :disabled="page === pages" aria-label="Next page" @click="page++"><ChevronRightIcon class="size-3.5 mx-auto" /></button></div><span v-else>History stays intact</span></footer>
+            </div>
+        </div>
+    </section>
 
-                <form id="service-form" class="grid gap-4 sm:grid-cols-2" @submit.prevent="save">
-                    <label class="text-sm font-semibold">Service name<input v-model="form.name" required class="cd-input mt-2" :aria-invalid="Boolean(form.errors.name) || undefined" :aria-describedby="form.errors.name ? 'name-error' : undefined" /></label>
-                    <label class="text-sm font-semibold">Category<input v-model="form.category" required class="cd-input mt-2" :aria-invalid="Boolean(form.errors.category) || undefined" :aria-describedby="form.errors.category ? 'category-error' : undefined" /></label>
-                    <label class="text-sm font-semibold sm:col-span-2">Description<textarea v-model="form.description" rows="2" class="cd-input mt-2" /></label>
-                    <label class="text-sm font-semibold">Price ({{ business.currency_code }})<input v-model="amount" required min="0" step="0.01" type="number" inputmode="decimal" class="cd-input mt-2" /></label>
-                    <label class="text-sm font-semibold">Price display<AppSelect v-model="form.price_type" class="cd-input mt-2" :aria-invalid="Boolean(form.errors.price_type) || undefined" :aria-describedby="form.errors.price_type ? 'price_type-error' : undefined"><option value="fixed">Fixed price</option><option value="from">Starting from</option></AppSelect></label>
-                    <label class="text-sm font-semibold">Active time (min)<input v-model="form.duration_minutes" required min="1" type="number" class="cd-input mt-2" :aria-invalid="Boolean(form.errors.duration_minutes) || undefined" :aria-describedby="form.errors.duration_minutes ? 'duration_minutes-error' : undefined" /></label>
-                    <label class="text-sm font-semibold">Cleanup time (min)<input v-model="form.cleanup_minutes" required min="0" type="number" class="cd-input mt-2" :aria-invalid="Boolean(form.errors.cleanup_minutes) || undefined" :aria-describedby="form.errors.cleanup_minutes ? 'cleanup_minutes-error' : undefined" /></label>
-                    <label class="text-sm font-semibold">Processing time (min)<input v-model="form.processing_minutes" required min="0" type="number" class="cd-input mt-2" :aria-invalid="Boolean(form.errors.processing_minutes) || undefined" :aria-describedby="form.errors.processing_minutes ? 'processing_minutes-error' : undefined" /></label>
-                    <label class="text-sm font-semibold">Book up to<AppSelect v-model="form.maximum_advance_days" class="cd-input mt-2" :aria-invalid="Boolean(form.errors.maximum_advance_days) || undefined" :aria-describedby="form.errors.maximum_advance_days ? 'maximum_advance_days-error' : undefined"><option :value="30">30 days ahead</option><option :value="60">60 days ahead</option><option :value="90">90 days ahead</option><option :value="365">1 year ahead</option></AppSelect></label>
-                    <fieldset class="sm:col-span-2"><legend class="text-sm font-semibold">Available at</legend><div class="mt-2 flex flex-wrap gap-2"><label v-for="location in locations" :key="location.public_id" class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[var(--border-subtle)] px-3 text-sm"><input v-model="form.location_ids" type="checkbox" :value="location.public_id" :aria-invalid="Boolean(form.errors.location_ids) || undefined" :aria-describedby="form.errors.location_ids ? 'location_ids-error' : undefined" />{{ location.name }}</label></div></fieldset>
-                    <fieldset class="sm:col-span-2"><legend class="text-sm font-semibold">Qualified providers</legend><div class="mt-2 flex flex-wrap gap-2"><label v-for="person in readyProviders" :key="person.public_id" class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[var(--border-subtle)] px-3 text-sm"><input v-model="form.staff_ids" type="checkbox" :value="person.public_id" :aria-invalid="Boolean(form.errors.staff_ids) || undefined" :aria-describedby="form.errors.staff_ids ? 'staff_ids-error' : undefined" />{{ person.display_name }}</label></div></fieldset>
-                    <label class="inline-flex min-h-11 items-center gap-3 text-sm font-semibold sm:col-span-2"><input v-model="form.online_visible" type="checkbox" :aria-invalid="Boolean(form.errors.online_visible) || undefined" :aria-describedby="form.errors.online_visible ? 'online_visible-error' : undefined" />Show this service in online booking</label>
-                    <ul v-if="Object.keys(form.errors).length" class="rounded-lg bg-[var(--status-danger-soft)] p-3 text-sm text-[var(--status-danger)] sm:col-span-2" role="alert"><li v-for="(message, field) in form.errors" :id="`${field}-error`" :key="field">{{ message }}</li></ul>
-                </form>
-                <template #footer><AppButton variant="secondary" @click="editor?.close()">Cancel</AppButton><AppButton type="submit" form="service-form" :disabled="form.processing || !locations.length || !readyProviders.length">{{ form.processing ? 'Saving…' : (editing ? 'Save changes' : 'Add service') }}</AppButton></template>
-            </AppDialog>
-
-        <div v-if="isReady" class="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-[var(--status-success-soft)] p-4 text-sm text-[var(--status-success)]"><span class="flex items-center gap-3"><CheckCircleIcon class="size-5" /><strong>Your first delivery path is bookable.</strong></span><AppButton :href="route('business.configuration.show', business.public_id) + '?section=preview'" variant="secondary">Review and publish</AppButton></div>
-    </AppLayout>
+    <AppDialog ref="editor" drawer class="svc-editor" :title="editing ? editing.name : 'Add service'" :can-close="canClose">
+        <div class="svc-editor-summary"><div><strong>{{ form.price_type === 'from' ? 'From ' : '' }}{{ money(previewPrice, editorCurrency) }}</strong><span>Base price</span></div><div><strong>{{ durationLabel(visitMinutes) }}</strong><span>Client visit</span></div><div><strong>{{ durationLabel(totalMinutes) }}</strong><span>Calendar span</span></div><div><strong>{{ form.staff_ids.length }} staff</strong><span>{{ form.location_ids.length }} {{ form.location_ids.length === 1 ? 'location' : 'locations' }}</span></div></div>
+        <nav class="svc-tabs" aria-label="Service configuration sections"><button type="button" :aria-pressed="tab === 'overview'" @click="tab = 'overview'">Overview</button><button type="button" :aria-pressed="tab === 'team'" @click="tab = 'team'">Team & locations</button><button type="button" :aria-pressed="tab === 'booking'" @click="tab = 'booking'">Booking & rules</button></nav>
+        <div v-if="Object.keys(form.errors).length" class="svc-errors" role="alert"><strong>Check these details before saving</strong><button v-for="(message, key) in form.errors" :key="key" @click="focusError(key)">{{ message }}</button></div>
+        <div v-if="editing?.upcoming_count && tab !== 'booking'" class="svc-impact m-4"><strong>{{ editing.upcoming_count }} upcoming appointments keep their recorded price and duration.</strong><p>Review assignments and give a reason in Booking & rules before saving impactful changes.</p><button type="button" class="underline font-semibold" @click="tab = 'booking'">Review impact</button></div>
+        <div v-if="editing?.dated_configuration" class="svc-errors">Dated configuration exists. Current editing is paused to preserve those changes.</div>
+        <div v-if="uncertain" class="svc-impact m-4" role="status"><strong>Save confirmation is pending.</strong><p>Retry the same request safely. Keep this editor open until the result is confirmed.</p></div>
+        <form id="service-form" novalidate @submit.prevent="save">
+        <fieldset :disabled="form.processing || uncertain" class="min-w-0">
+            <div v-show="tab === 'overview'">
+                <section class="svc-form-section"><h3>Service information</h3><div class="svc-fields">
+                    <FormField class="svc-span" id="svc-name" label="Service name" required :error="form.errors.name"><input id="svc-name" v-model="form.name" maxlength="255" class="cd-input" placeholder="Name clients and your team will recognise" /></FormField>
+                    <FormField id="svc-category" label="Category" :error="form.errors.category"><input id="svc-category" v-model="form.category" list="service-category-options" maxlength="255" class="cd-input" placeholder="Choose or create a category" /><datalist id="service-category-options"><option v-for="c in categories.filter(c => c.is_active)" :key="c.public_id" :value="c.name" /></datalist></FormField>
+                    <FormField id="svc-kind" label="Catalogue type" :error="form.errors.kind"><AppSelect id="svc-kind" v-model="form.kind" :disabled="Boolean(editing)"><option value="service">Standalone service</option><option value="addon">Add-on</option></AppSelect></FormField>
+                    <FormField class="svc-span" id="svc-description" label="Client-facing description" hint="What is included and who it is for. Keep it brief." :error="form.errors.description"><textarea id="svc-description" v-model="form.description" rows="2" maxlength="4000" class="cd-input" /></FormField>
+                </div></section>
+                <section class="svc-form-section"><h3>Price & duration</h3><div class="svc-fields">
+                    <FormField id="svc-price_minor" :label="`Base price (${editorCurrency})`" required :error="form.errors.price_minor"><input id="svc-price_minor" v-model="price" class="cd-input" inputmode="decimal" placeholder="0.00" /></FormField>
+                    <FormField id="svc-price_type" label="Price display" :error="form.errors.price_type"><AppSelect id="svc-price_type" v-model="form.price_type"><option value="fixed">Fixed price</option><option value="from">Starting from</option></AppSelect></FormField>
+                    <FormField id="svc-duration_minutes" label="Active service time" required :error="form.errors.duration_minutes"><DurationField id="svc-duration_minutes" v-model="form.duration_minutes" /></FormField>
+                    <FormField id="svc-cleanup_minutes" label="Cleanup / buffer" :error="form.errors.cleanup_minutes"><DurationField id="svc-cleanup_minutes" v-model="form.cleanup_minutes" allow-zero /></FormField>
+                    <FormField id="svc-processing_minutes" label="Processing time" :error="form.errors.processing_minutes"><DurationField id="svc-processing_minutes" v-model="form.processing_minutes" allow-zero /></FormField>
+                    <p class="svc-note self-end pb-1">Staff price takes priority over location price, then the base price. Set exceptions in Team & locations.</p>
+                </div><div class="svc-timeline" aria-hidden="true"><span :style="{flex:Number(form.duration_minutes)||0}" /><span :style="{flex:Number(form.processing_minutes)||0}" /><span :style="{flex:Number(form.cleanup_minutes)||0}" /></div><p class="svc-note">{{ durationLabel(visitMinutes) }} with the client · {{ durationLabel(totalMinutes) }} in Calendar. {{ editing?.processing_releases_staff === false ? 'This service’s processing segments reserve staff.' : 'Processing releases staff; active time and cleanup reserve them.' }}</p>
+                <p v-if="previewPrice === 0 && price !== ''" class="svc-note mt-2">This is a free service. It can still reserve calendar time.</p>
+                </section>
+                <section class="svc-form-section"><label class="svc-check-row"><input v-model="form.is_active" type="checkbox" /><div><strong>Active service</strong><span>Available for new bookings and added checkout lines when the team and location are eligible.</span></div></label><p v-if="editing && !editing.is_active" class="svc-note">Saving edits keeps this service inactive unless you activate it here.</p><p v-if="form.kind === 'addon'" class="svc-note">An add-on must be linked to a parent service in that service’s Booking & rules section.</p></section>
+            </div>
+            <div v-show="tab === 'team'">
+                <section class="svc-form-section"><h3>Location availability <span class="svc-meta inline">{{ form.location_ids.length }} selected</span></h3><p class="svc-note">Choose the branches that offer this service. A blank price uses the base price.</p><ul class="svc-selection"><li v-for="l in locations" :key="l.public_id"><div class="svc-selection-line"><label><input v-model="form.location_ids" type="checkbox" :value="l.public_id" :disabled="(!l.is_active || l.status !== 'active') && !form.location_ids.includes(l.public_id)" /><strong>{{ l.name }}{{ !l.is_active || l.status !== 'active' ? ' · Inactive' : '' }}</strong></label><button v-if="form.location_ids.includes(l.public_id)" type="button" @click="overrideOpen[l.public_id] = !overrideOpen[l.public_id]">{{ branchPrices[l.public_id] === '' ? 'Default price' : money(decimalToMinor(branchPrices[l.public_id])) }}</button></div><div v-if="form.location_ids.includes(l.public_id) && overrideOpen[l.public_id]" class="svc-overrides"><FormField :id="`svc-branch-${l.public_id}`" :error="form.errors[`location_overrides.${form.location_ids.indexOf(l.public_id)}.price_minor`]" :label="`Location price (${editorCurrency})`" hint="Leave blank to use the base price."><input :id="`svc-branch-${l.public_id}`" v-model="branchPrices[l.public_id]" inputmode="decimal" :placeholder="(previewPrice/100).toFixed(2)" class="cd-input" /></FormField></div></li></ul><p v-if="!locations.length" class="svc-note">No active locations. <a class="underline" :href="route('business.locations.index', business.public_id)">Set up a location</a>.</p><p v-if="!form.location_ids.length" class="svc-note mt-2">No location selected. You can save now and finish setup later.</p></section>
+                <section class="svc-form-section"><h3>Staff who can perform it <span class="svc-meta inline">{{ form.staff_ids.length }} assigned</span></h3><div class="svc-selection-tools"><SearchField v-model="staffSearch" label="Search staff" placeholder="Name or professional title" /><button type="button" @click="form.staff_ids = [...new Set([...form.staff_ids,...assignedStaff.filter(p => p.status === 'active' && p.location_ids.some(id => form.location_ids.includes(id))).map(p => p.public_id)])]">Select eligible</button><button type="button" @click="form.staff_ids = form.staff_ids.filter(id => !assignedStaff.some(p => p.public_id === id))">Clear shown</button></div>
+                    <ul class="svc-selection"><li v-for="p in assignedStaff" :key="p.public_id"><div class="svc-selection-line"><label><input v-model="form.staff_ids" type="checkbox" :value="p.public_id" :disabled="p.status !== 'active' && !form.staff_ids.includes(p.public_id)" /><span class="svc-avatar" aria-hidden="true">{{ initials(p.display_name) }}</span><span><strong>{{ p.display_name }}</strong><small>{{ p.title || 'Team member' }}{{ p.status !== 'active' ? ' · Inactive' : '' }}{{ !p.has_working_hours ? ' · Hours needed' : '' }}{{ !p.location_ids.some(id => form.location_ids.includes(id)) ? ' · No selected branch' : '' }}</small></span></label><button v-if="form.staff_ids.includes(p.public_id)" type="button" :aria-expanded="Boolean(overrideOpen[p.public_id])" @click="overrideOpen[p.public_id] = !overrideOpen[p.public_id]">{{ variants[p.public_id]?.price !== '' || variants[p.public_id]?.duration_minutes != null ? 'Custom' : 'Defaults' }} · Edit</button></div>
+                    <div v-if="form.staff_ids.includes(p.public_id) && overrideOpen[p.public_id]" class="svc-overrides"><div class="svc-fields"><FormField :id="`svc-staff-price-${p.public_id}`" :error="form.errors[`staff_overrides.${form.staff_ids.indexOf(p.public_id)}.price_minor`]" :label="`Staff price (${editorCurrency})`" hint="Blank uses the location or base price."><input :id="`svc-staff-price-${p.public_id}`" v-model="variants[p.public_id].price" inputmode="decimal" class="cd-input" :placeholder="(previewPrice/100).toFixed(2)" /></FormField><FormField :id="`svc-staff-duration-${p.public_id}`" :error="form.errors[`staff_overrides.${form.staff_ids.indexOf(p.public_id)}.duration_minutes`]" label="Active duration"><DurationField :id="`svc-staff-duration-${p.public_id}`" v-model="variants[p.public_id].duration_minutes" allow-default :default-minutes="Number(form.duration_minutes)" /></FormField><FormField :id="`svc-staff-processing-${p.public_id}`" :error="form.errors[`staff_overrides.${form.staff_ids.indexOf(p.public_id)}.processing_minutes`]" label="Processing override (min)"><input :id="`svc-staff-processing-${p.public_id}`" v-model="variants[p.public_id].processing_minutes" type="number" min="0" max="1440" class="cd-input" :placeholder="`Default: ${form.processing_minutes}`" /></FormField><FormField :id="`svc-staff-cleanup-${p.public_id}`" :error="form.errors[`staff_overrides.${form.staff_ids.indexOf(p.public_id)}.cleanup_minutes`]" label="Cleanup override (min)"><input :id="`svc-staff-cleanup-${p.public_id}`" v-model="variants[p.public_id].cleanup_minutes" type="number" min="0" max="1440" class="cd-input" :placeholder="`Default: ${form.cleanup_minutes}`" /></FormField></div><label class="svc-check-row"><input v-model="variants[p.public_id].online_visible" type="checkbox" />Online enabled for this staff member</label><p v-if="variants[p.public_id].commission_rate != null" class="svc-note">Stored commission reference: {{ Number(variants[p.public_id].commission_rate) * 100 }}%. Checkout commission is calculated by configured commission rules.</p><button type="button" class="svc-note underline" @click="resetVariant(p.public_id)">Use default price and times</button></div></li></ul>
+                    <p v-if="!assignedStaff.length" class="svc-note">{{ staff.length ? 'No staff match this search.' : 'No active team members yet.' }}</p><p v-if="!form.staff_ids.length" class="svc-note mt-2">No staff assigned. This service will need setup before it can be booked.</p>
+                </section>
+                <section v-if="editing?.resources.length" class="svc-form-section"><h3>Required rooms & equipment</h3><p v-for="(r,i) in editing.resources" :key="i" class="svc-note">{{ r.quantity }} × {{ r.name }}{{ r.segment ? ` · ${r.segment} segment` : '' }}</p><p class="svc-note mt-2">Calendar validates these requirements for every booking. Existing resource and segment rules are preserved. <a class="underline" :href="route('business.configuration.show', business.public_id)">Manage resources in Business setup</a>.</p></section>
+            </div>
+            <div v-show="tab === 'booking'">
+                <section v-if="editing?.upcoming_count" class="svc-form-section"><div class="svc-impact"><strong>{{ editing.upcoming_count }} upcoming {{ editing.upcoming_count === 1 ? 'appointment' : 'appointments' }}</strong><p>Changes apply to new bookings and newly added checkout services. Existing appointments keep their name, price, duration and performer snapshots. They are never moved or resized here.</p><a :href="route('business.calendar', {business:business.public_id, service:[editing.public_id]})">Review in Calendar</a></div><FormField class="mt-3" id="svc-reason" label="Reason for impactful changes" hint="Required for price, time, availability or assignment changes when upcoming appointments exist." :error="form.errors.reason"><textarea id="svc-reason" v-model="form.reason" rows="2" maxlength="1000" class="cd-input" /></FormField></section>
+                <section class="svc-form-section"><h3>Online booking</h3><label class="svc-check-row"><input v-model="form.online_visible" type="checkbox" /><div><strong>Enable online booking</strong><span>Requires an active service, available location, qualified online staff and a published business booking page.</span></div></label><div class="svc-fields mt-2"><FormField id="svc-client_eligibility" label="Who can book" :error="form.errors.client_eligibility"><AppSelect id="svc-client_eligibility" v-model="form.client_eligibility"><option value="all">All clients</option><option value="new">New clients only</option><option value="existing">Existing clients only</option></AppSelect></FormField><FormField id="svc-maximum_advance_days" label="Book up to (days ahead)" :error="form.errors.maximum_advance_days"><input id="svc-maximum_advance_days" v-model="form.maximum_advance_days" type="number" min="1" max="730" class="cd-input" /></FormField><FormField id="svc-minimum_notice_minutes" label="Minimum booking notice" :error="form.errors.minimum_notice_minutes"><DurationField id="svc-minimum_notice_minutes" v-model="form.minimum_notice_minutes" allow-zero :max="525600" /></FormField></div><label class="svc-check-row mt-2"><input v-model="form.consultation_required" type="checkbox" /><div><strong>Consultation service</strong><span>Marks this as a consultation service for the business’s consultation-only new-client policy.</span></div></label><p v-if="business.configuration_published_at && business.booking_slug && business.online_booking_enabled" class="svc-note"><a class="underline" :href="route('booking.business', business.booking_slug)" target="_blank" rel="noopener">Open public booking page</a>.</p><p v-if="!business.online_booking_enabled" class="svc-note">Online booking is off for this business. This service setting will be ready when it is enabled.</p></section>
+                <section class="svc-form-section"><h3>Deposits & tax</h3><div class="svc-fields"><FormField id="svc-deposit_type" label="Deposit rule" :error="form.errors.deposit_type"><AppSelect id="svc-deposit_type" v-model="form.deposit_type"><option value="none">Use business policy</option><option value="fixed">Fixed deposit</option><option value="percentage">Percentage deposit</option></AppSelect></FormField><FormField v-if="form.deposit_type !== 'none'" id="svc-deposit_value" :label="form.deposit_type === 'percentage' ? 'Deposit (%)' : `Deposit (${editorCurrency})`" :error="form.errors.deposit_value"><input id="svc-deposit_value" v-model="deposit" inputmode="decimal" class="cd-input" /></FormField></div><p class="svc-note mt-3">{{ form.deposit_type === 'none' ? `Business deposit policy: ${commerce.default_deposit_type === 'none' ? 'no default deposit' : commerce.default_deposit_type}. Client, value and no-show conditions still apply.` : 'A selected-service deposit takes priority over the business policy. Staff and location prices can change the effective amount; it is capped at the service price.' }} Online deposit payments are still being completed; deposit-required bookings cannot yet be confirmed through the public page.</p><div class="mt-4"><strong class="text-xs">Checkout tax: business default</strong><p class="svc-note">{{ Number(commerce.tax_rate_bps)/100 }}% · {{ commerce.tax_inclusive ? 'Included in checkout prices' : 'Added at checkout' }}. Service tax categories are descriptive; they do not select a separate rate.</p><FormField class="mt-3" id="svc-tax_category" label="Tax category reference" hint="Optional accounting reference. Does not make a service tax-exempt." :error="form.errors.tax_category"><input id="svc-tax_category" v-model="form.tax_category" maxlength="64" class="cd-input" /></FormField></div></section>
+                <section class="svc-form-section"><h3>{{ form.kind === 'addon' ? 'Parent services' : 'Optional add-ons' }}</h3><template v-if="form.kind === 'addon'"><p class="svc-note">{{ editing?.parent_names.length ? `Offered with: ${editing.parent_names.join(', ')}.` : 'Open a standalone service to make this add-on available with it.' }} Add-ons become explicit appointment and checkout lines.</p></template><template v-else><SearchField v-if="addons.length > 5 || addonSearch" v-model="addonSearch" label="Search add-ons" placeholder="Add-on name" /><label v-for="s in addons" :key="s.public_id" class="svc-check-row"><input v-model="form.addon_ids" type="checkbox" :value="s.public_id" /><div><strong>{{ s.name }}{{ !s.is_active ? ' · Inactive' : '' }}</strong><span>{{ money(s.price_minor, s.currency_code) }} · + {{ durationLabel(s.duration_minutes + s.processing_minutes + s.cleanup_minutes) }}</span></div></label><p v-if="!addons.length" class="svc-note">{{ addonSearch ? 'No add-ons match this search.' : 'No add-ons yet. Create a service with the Add-on type, then link it here.' }}</p><p v-else class="svc-note">Each add-on must also have eligible staff and a shared location. Booking checks the complete combination.</p></template></section>
+                <section class="svc-form-section"><h3>Memberships, packages & history</h3><p class="svc-note">Membership benefits and prepaid packages are not available in the current release. Staff commission rules and authorized checkout discounts stay in their existing workflows.</p><p class="svc-note mt-2">Deactivation keeps the service identity in client history, completed sales, receipts and service revenue reports. Category changes reorganise the current catalogue.</p></section>
+            </div>
+        </fieldset>
+        </form>
+        <template #footer><span class="svc-save-state">{{ dirty ? 'Unsaved changes' : 'Explicit save · history preserved' }}</span><AppButton variant="secondary" :disabled="form.processing || uncertain" @click="closeEditor">Cancel</AppButton><AppButton type="submit" form="service-form" :disabled="form.processing || editing?.dated_configuration">{{ form.processing ? 'Saving…' : uncertain ? 'Retry save' : editing ? 'Save changes' : 'Add service' }}</AppButton></template>
+    </AppDialog>
+    <AppDialog ref="discard" title="Discard service changes?" description="Your unsaved edits will be lost. The saved catalogue stays as it is." confirm-label="Discard changes" cancel-label="Keep editing" destructive @confirm="discardEdits" />
+    <AppDialog ref="statusDialog" :title="statusTarget?.is_active ? 'Deactivate service?' : 'Activate service?'" :confirm-label="statusTarget?.is_active ? 'Deactivate service' : 'Activate service'" :destructive="Boolean(statusTarget?.is_active)" :confirm-disabled="statusForm.processing" :close-on-confirm="false" @confirm="saveStatus"><p class="text-sm"><strong>{{ statusTarget?.name }}</strong></p><p class="svc-note mt-2">{{ statusTarget?.is_active ? 'It will no longer be available for new bookings or added checkout lines. Existing appointments, sales and reports keep their history.' : 'The service becomes available with its saved staff, location and online settings.' }}</p><p v-if="statusTarget?.upcoming_count" class="svc-note mt-3">{{ statusTarget.upcoming_count }} upcoming appointments retain their recorded service.</p><FormField v-if="statusTarget?.is_active && statusTarget?.upcoming_count" class="mt-3" id="svc-status-reason" label="Reason" required :error="statusForm.errors.reason"><textarea id="svc-status-reason" v-model="statusForm.reason" rows="2" class="cd-input" /></FormField><p v-for="(message,key) in statusForm.errors" v-show="key !== 'reason'" :key="key" role="alert" class="svc-errors">{{ message }}</p></AppDialog>
+    <AppDialog ref="categoriesDialog" title="Service categories" :can-close="() => !categoryForm.processing && !ordering"><p class="svc-note">Keep the catalogue organised. Category order is used by this catalogue and online service selection.</p><p v-if="pageContext.props.errors?.categories" class="svc-errors" role="alert">{{ pageContext.props.errors.categories }}</p><ul v-if="!categoryEditing" class="svc-category-list mt-3"><li v-for="(c,i) in categories" :key="c.public_id"><button class="svc-category-name" @click="editCategory(c)"><strong>{{ c.name }}</strong><small>{{ c.count }} {{ c.count === 1 ? 'service' : 'services' }}{{ c.is_active ? '' : ' · Archived' }}</small></button><button :aria-label="`Move ${c.name} up`" :disabled="i === 0 || ordering" @click="reorderCategory(i,-1)"><ArrowUpIcon class="size-3.5" /></button><button :aria-label="`Move ${c.name} down`" :disabled="i === categories.length-1 || ordering" @click="reorderCategory(i,1)"><ArrowDownIcon class="size-3.5" /></button><button :aria-label="`Edit category ${c.name}`" @click="editCategory(c)"><EllipsisHorizontalIcon class="size-4" /></button></li></ul><form v-else id="category-form" class="mt-4" @submit.prevent="saveCategory"><FormField id="svc-category-name" label="Category name" required :error="categoryForm.errors.name"><input id="svc-category-name" v-model="categoryForm.name" maxlength="255" class="cd-input" /></FormField><label class="svc-check-row mt-3"><input v-model="categoryForm.is_active" type="checkbox" />Active category</label><p v-if="categoryForm.errors.is_active" class="text-xs text-[var(--status-danger)]" role="alert">{{ categoryForm.errors.is_active }}</p><p class="svc-note">Move or deactivate active services before archiving a category.</p></form><template #footer><AppButton variant="secondary" :disabled="categoryForm.processing || ordering" @click="categoryEditing ? categoryEditing = false : categoriesDialog?.close()">{{ categoryEditing ? 'Back' : 'Done' }}</AppButton><AppButton v-if="categoryEditing" type="submit" form="category-form" :disabled="categoryForm.processing">{{ categoryForm.processing ? 'Saving…' : 'Save category' }}</AppButton><AppButton v-else @click="editCategory(null)"><PlusIcon class="size-4" />Add category</AppButton></template></AppDialog>
+</div>
+</AppLayout>
 </template>

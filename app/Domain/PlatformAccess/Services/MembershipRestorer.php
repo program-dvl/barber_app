@@ -6,6 +6,7 @@ use App\Domain\PlatformAccess\Enums\MembershipStatus;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Membership;
 use App\Models\User;
+use App\Notifications\WorkspaceAccessChangedNotification;
 use App\Support\Audit\AuditWriter;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
@@ -33,8 +34,8 @@ class MembershipRestorer
             throw new AuthorizationException('The actor may not restore this Membership.');
         }
 
-        return DB::transaction(function () use ($membership, $actor, $reason): Membership {
-            $membership = Membership::query()->with('business')->lockForUpdate()->findOrFail($membership->getKey());
+        $restored = DB::transaction(function () use ($membership, $actor, $reason): Membership {
+            $membership = Membership::query()->with(['business', 'user'])->lockForUpdate()->findOrFail($membership->getKey());
             if ($membership->status !== MembershipStatus::Revoked) {
                 throw ValidationException::withMessages(['membership' => 'Only revoked workspace access can be restored.']);
             }
@@ -59,5 +60,16 @@ class MembershipRestorer
 
             return $membership;
         });
+
+        $role = $restored->getRoleNames()->first();
+        $restored->user?->notify(new WorkspaceAccessChangedNotification(
+            businessId: $restored->business_id,
+            businessPublicId: $restored->business->public_id,
+            businessName: $restored->business->name,
+            change: 'restored',
+            role: $role ? str($role)->replace('_', ' ')->headline()->toString() : null,
+        ));
+
+        return $restored;
     }
 }

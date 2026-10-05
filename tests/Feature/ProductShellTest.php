@@ -69,7 +69,8 @@ it('renders the dashboard with tenant-scoped operational data', function () {
             ->where('location.name', 'Main studio')
             ->where('date', '2026-08-17')
             ->has('locations', 1)
-            ->where('calendar.counts.appointments', 0)
+            ->where('todayMetrics.cards.appointments.value', 0)
+            ->where('workspace.appointments', [])
         );
 });
 
@@ -115,7 +116,7 @@ it('renders the implemented inventory and reporting workspaces', function () {
     $this->actingAs($user)
         ->get(route('business.reports.index', $business))
         ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page->component('Shop/Reports')->where('result.report_key', 'sales')->has('catalog'));
+        ->assertInertia(fn (Assert $page) => $page->component('Shop/Reports')->where('result.report_key', 'overview')->has('catalog'));
 });
 
 it('renders the appointment-first checkout workspace', function () {

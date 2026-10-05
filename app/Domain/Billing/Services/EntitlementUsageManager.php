@@ -25,7 +25,7 @@ class EntitlementUsageManager
                 return false;
             }
 
-            [$periodStart, $periodEnd] = $this->period($subscription->current_period_started_at, $subscription->current_period_ends_at);
+            [$periodStart, $periodEnd] = $this->period($subscription->current_period_started_at, $subscription->current_period_ends_at, (bool) $subscription->capacity_snapshot);
             DB::table('entitlement_usage')->insertOrIgnore([
                 'business_id' => $business->getKey(),
                 'entitlement_definition_id' => $definition->getKey(),
@@ -87,10 +87,22 @@ class EntitlementUsageManager
     }
 
     /** @return array{0: CarbonInterface, 1: CarbonInterface} */
-    private function period(?CarbonInterface $subscriptionStart, ?CarbonInterface $subscriptionEnd): array
+    public function period(?CarbonInterface $subscriptionStart, ?CarbonInterface $subscriptionEnd, bool $monthly = false): array
     {
         $now = now();
         if ($subscriptionStart && $subscriptionEnd && $subscriptionStart->lte($now) && $subscriptionEnd->gt($now)) {
+            if ($monthly) {
+                $index = 1;
+                $start = $subscriptionStart->copy();
+                $end = $subscriptionStart->copy()->addMonthsNoOverflow($index);
+                while ($end->lte($now)) {
+                    $start = $end;
+                    $end = $subscriptionStart->copy()->addMonthsNoOverflow(++$index);
+                }
+
+                return [$start, $end->min($subscriptionEnd)];
+            }
+
             return [$subscriptionStart, $subscriptionEnd];
         }
 

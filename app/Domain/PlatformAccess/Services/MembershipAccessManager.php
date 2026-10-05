@@ -117,6 +117,11 @@ class MembershipAccessManager
         });
     }
 
+    public function hasRole(Membership $membership, string $role): bool
+    {
+        return $this->inMembershipContext($membership, fn (): bool => $membership->hasRole($role, 'web'));
+    }
+
     public function allows(Membership $membership, PermissionName $permission): bool
     {
         if (! $membership->isActive()) {

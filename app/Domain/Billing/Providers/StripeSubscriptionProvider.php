@@ -6,6 +6,7 @@ use App\Domain\Billing\Contracts\SubscriptionProvider;
 use App\Domain\Billing\Models\BillingCheckoutAttempt;
 use App\Domain\Billing\Models\BillingPlanPrice;
 use App\Domain\Billing\Models\BusinessSubscription;
+use App\Domain\Billing\Services\CapacityPricingCatalog;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
@@ -48,10 +49,11 @@ class StripeSubscriptionProvider implements SubscriptionProvider
             $parameters = [
                 'mode' => 'subscription',
                 'customer' => $customerId,
-                'line_items' => [['price' => $price->provider_price_id, 'quantity' => 1]],
+                'line_items' => $attempt->capacity_quote ? app(CapacityPricingCatalog::class)->lineItems($attempt->capacity_quote) : [['price' => $price->provider_price_id, 'quantity' => 1]],
                 'success_url' => $successUrl,
                 'cancel_url' => $cancelUrl,
-                'allow_promotion_codes' => $couponCode === null,
+                'allow_promotion_codes' => ! $attempt->capacity_quote && $couponCode === null,
+                ...($attempt->capacity_quote ? ['automatic_tax' => ['enabled' => (bool) config('capacity-billing.automatic_tax')], 'customer_update' => ['address' => 'auto']] : []),
                 'client_reference_id' => $business->public_id,
                 'metadata' => $metadata,
                 'subscription_data' => ['metadata' => $metadata],
@@ -108,6 +110,7 @@ class StripeSubscriptionProvider implements SubscriptionProvider
                         ],
                         [
                             'start_date' => $periodEnd,
+                            'duration' => ['interval' => $price->billing_interval->value === 'annual' ? 'year' : 'month', 'interval_count' => 1],
                             'items' => [['price' => $price->provider_price_id, 'quantity' => 1]],
                             'proration_behavior' => 'none',
                         ],
@@ -170,7 +173,7 @@ class StripeSubscriptionProvider implements SubscriptionProvider
 
     public function cancelAtPeriodEnd(BusinessSubscription $subscription): void
     {
-        $this->guardProviderOperation($subscription->business_id, 'cancel_at_period_end', fn () => $this->stripe()->subscriptions->update($this->providerId($subscription), ['cancel_at_period_end' => true]));
+        $this->guardProviderOperation($subscription->business_id, 'cancel_at_period_end', fn () => $this->stripe()->subscriptions->update($this->providerId($subscription), ['cancel_at_period_end' => true], ['idempotency_key' => 'clipperdesk-cancel-'.$subscription->public_id.'-'.$subscription->version]));
     }
 
     public function cancelImmediately(BusinessSubscription $subscription): void
@@ -180,7 +183,7 @@ class StripeSubscriptionProvider implements SubscriptionProvider
 
     public function reactivate(BusinessSubscription $subscription): void
     {
-        $this->guardProviderOperation($subscription->business_id, 'reactivate', fn () => $this->stripe()->subscriptions->update($this->providerId($subscription), ['cancel_at_period_end' => false]));
+        $this->guardProviderOperation($subscription->business_id, 'reactivate', fn () => $this->stripe()->subscriptions->update($this->providerId($subscription), ['cancel_at_period_end' => false], ['idempotency_key' => 'clipperdesk-reactivate-'.$subscription->public_id.'-'.$subscription->version]));
     }
 
     public function billingPortalUrl(BusinessSubscription $subscription, string $returnUrl): string
@@ -202,7 +205,7 @@ class StripeSubscriptionProvider implements SubscriptionProvider
         return [
             'customer_update' => [
                 'enabled' => true,
-                'allowed_updates' => ['address', 'name', 'phone', 'tax_id'],
+                'allowed_updates' => ['address', 'name', 'email', 'phone', 'tax_id'],
             ],
             'invoice_history' => ['enabled' => true],
             'payment_method_update' => ['enabled' => true],
@@ -337,7 +340,7 @@ class StripeSubscriptionProvider implements SubscriptionProvider
                 'provider_http_status' => $exception->getHttpStatus(),
             ]);
 
-            abort(503, 'The billing service is temporarily unavailable. No subscription change was made. Please try again shortly.');
+            abort(503, 'We could not confirm the billing request. Refresh billing to check its status before trying again.');
         }
     }
 

@@ -112,3 +112,22 @@ it('keeps payment access tenant-scoped and preserves an explicit manager waiver'
     expect(app(DepositService::class)->settleCancellation($deposit, false, false, true, 'waiver', 'Manager waiver.'))->toBeNull()
         ->and($deposit->fresh()->remainingMinor())->toBe(900);
 });
+
+it('prints receipts in the appointment time zone without rewriting the issued snapshot', function () {
+    CarbonImmutable::setTestNow('2026-10-02 06:15:00 UTC');
+    $path = commercePath();
+    activateTestSubscription($path['business']);
+    $user = User::factory()->create(['email_verified_at' => now()]);
+    $membership = Membership::factory()->create(['business_id' => $path['business']->id, 'user_id' => $user->id]);
+    app(MembershipAccessManager::class)->assignStarterRole($membership, StarterRole::Owner, $user, 'Receipt presentation fixture.');
+    $membership->locations()->attach($path['location']->id, ['business_id' => $path['business']->id]);
+    $sale = app(CheckoutService::class)->openForAppointment($path['appointment']);
+    app(CheckoutService::class)->recordTender($sale, 'cash', 3000, 'receipt-display');
+    $receipt = app(ReceiptService::class)->issue($sale->fresh());
+    $snapshot = $receipt->snapshot;
+    $hash = $receipt->content_hash;
+    $this->actingAs($user)->get(route('business.checkout.receipt', [$path['business'], $sale]))
+        ->assertOk()->assertSee('02 Oct 2026, 11:45 Asia/Kolkata')
+        ->assertSee('Unit price')->assertSee('Payments recorded')->assertSee('INR 30.00');
+    expect($receipt->fresh()->snapshot)->toBe($snapshot)->and($receipt->content_hash)->toBe($hash);
+});

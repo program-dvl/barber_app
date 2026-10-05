@@ -4,16 +4,16 @@ namespace App\Domain\Reporting\Services;
 
 final class MetricCatalog
 {
-    public const VERSION = '1.0.0';
+    public const VERSION = '2.0.0';
 
-    public const EFFECTIVE_FROM = '2026-08-15T00:00:00+00:00';
+    public const EFFECTIVE_FROM = '2026-10-04T00:00:00+00:00';
 
     /** @return array<string,array<string,mixed>> */
     public static function definitions(): array
     {
         return [
             'gross_revenue' => ['label' => 'Gross revenue', 'formula' => 'sum(completed sale line quantity × unit price)', 'source' => 'sales + sale_lines', 'drill' => 'sale_line'],
-            'net_revenue' => ['label' => 'Net revenue', 'formula' => 'gross revenue − discounts − refunds/voids', 'source' => 'sale_lines + payment_transactions', 'drill' => 'sale/payment'],
+            'net_revenue' => ['label' => 'Sales less returns', 'formula' => 'frozen sale subtotal − discounts − all recorded returns; retains tax basis; returns may include tax/tips', 'source' => 'sale_lines + payment_transactions', 'drill' => 'sale/payment'],
             'collected_revenue' => ['label' => 'Collected revenue', 'formula' => 'successful sale tenders + deposits applied − refunds/voids', 'source' => 'payment_transactions + deposit_allocations', 'drill' => 'payment_transaction'],
             'expected_revenue' => ['label' => 'Expected revenue', 'formula' => 'completed/open sale total for the governed local period', 'source' => 'sales', 'drill' => 'sale'],
             'taxes' => ['label' => 'Taxes', 'formula' => 'sum frozen sale tax_minor', 'source' => 'sales.calculation_snapshot', 'drill' => 'sale_line'],
@@ -23,8 +23,8 @@ final class MetricCatalog
             'tips' => ['label' => 'Net tips', 'formula' => 'earned tips + refund/void reversals + manager adjustments', 'source' => 'tip_entries', 'drill' => 'tip_entry'],
             'commission' => ['label' => 'Net commission', 'formula' => 'earned commission + refund/void reversals + manager adjustments', 'source' => 'commission_entries', 'drill' => 'commission_entry'],
             'outstanding_balance' => ['label' => 'Outstanding balance', 'formula' => 'sum sale balance after deposits, tenders, refunds, and corrections', 'source' => 'sales', 'drill' => 'sale'],
-            'utilisation' => ['label' => 'Staff utilisation', 'formula' => 'occupied booked service minutes ÷ available working minutes', 'source' => 'appointment_segments + staff_availability_rules', 'drill' => 'appointment_segment'],
-            'client_classification' => ['label' => 'Client classification', 'formula' => 'new when this is the client first completed appointment/sale in the business; otherwise returning', 'source' => 'appointments + sales', 'drill' => 'client/sale'],
+            'utilisation' => ['label' => 'Staff utilisation', 'formula' => 'unioned occupied service minutes within effective bookable windows ÷ unioned effective bookable minutes; excludes breaks, leave and branch closures', 'source' => 'appointment_segments + staff_availability_rules', 'drill' => 'appointment_segment'],
+            'client_classification' => ['label' => 'Client classification', 'formula' => 'distinct paying clients: new when first completed sale is in the period; returning when first sale predates the period, within accessible branches, regardless of first-sale currency', 'source' => 'appointments + sales', 'drill' => 'client/sale'],
             'no_show_rate' => ['label' => 'No-show rate', 'formula' => 'no-show appointments ÷ appointments eligible to occur, excluding cancelled and rescheduled visits', 'source' => 'appointments', 'drill' => 'appointment'],
             'reconciliation_exception' => ['label' => 'Payment reconciliation exception', 'formula' => 'open payment reconciliation tasks after provider settlement window', 'source' => 'payment_reconciliation_tasks', 'drill' => 'reconciliation_task'],
         ];
@@ -58,6 +58,6 @@ final class MetricCatalog
     /** @return list<string> */
     public static function reportKeys(): array
     {
-        return ['appointments', 'sales', 'service_revenue', 'staff_revenue', 'payment_method', 'location', 'discount', 'refund', 'tip', 'commission', 'payroll', 'client_classification', 'cancellation_no_show', 'utilisation', 'popular_service', 'visit_frequency', 'product_sales', 'stock', 'cash_close'];
+        return ['line_items', 'overview', 'payment_activity', 'tax', 'walk_ins', 'appointments', 'sales', 'service_revenue', 'staff_revenue', 'payment_method', 'location', 'discount', 'refund', 'tip', 'commission', 'payroll', 'client_classification', 'cancellation_no_show', 'utilisation', 'popular_service', 'visit_frequency', 'product_sales', 'stock', 'cash_close'];
     }
 }

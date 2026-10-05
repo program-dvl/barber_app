@@ -42,12 +42,21 @@ class SubscriptionLifecycleManager
             ];
         }, 'subscription.activated');
 
+        if (! $updated->provider_state_at?->equalTo($providerStateAt) || $updated->billing_plan_price_id !== $price->id) {
+            return $updated;
+        }
+
         $updated->changes()
             ->whereNull('applied_at')
             ->whereNull('superseded_at')
             ->where('to_billing_plan_id', $price->billing_plan_id)
             ->where('effective_at', '<=', now())
             ->update(['applied_at' => now()]);
+
+        if ($updated->provider_state_at?->equalTo($providerStateAt)) {
+            $type = $updated->status === SubscriptionStatus::CancelScheduled ? 'cancellation_scheduled' : 'subscription_activated';
+            $this->queueNotice($updated, $type, $type.':'.$updated->getKey().':'.$providerStateAt->timestamp);
+        }
 
         return $updated;
     }
@@ -86,6 +95,8 @@ class SubscriptionLifecycleManager
             }
 
             $this->audit->write('subscription.plan_change.requested', $locked->business, $actor, $change, $reason, before: ['plan_id' => $locked->billing_plan_id], after: ['plan_id' => $price->billing_plan_id, 'effective_at' => $effectiveAt->toIso8601String(), 'over_limit' => $overLimit, 'usage' => $usage, 'limits' => $limits]);
+
+            $this->queueNotice($locked, 'plan_change_requested', 'plan-change-requested:'.$change->getKey());
 
             return $change->fresh();
         });
@@ -132,28 +143,39 @@ class SubscriptionLifecycleManager
             throw new LogicException('A paid billing period is required to schedule cancellation.');
         }
 
-        return $this->localTransition($subscription, [
+        $updated = $this->localTransition($subscription, [
             'status' => SubscriptionStatus::CancelScheduled,
             'cancel_at' => $subscription->current_period_ends_at,
         ], 'subscription.cancellation.scheduled', $actor, $reason);
+
+        $this->queueNotice($updated, 'cancellation_scheduled', 'cancellation-scheduled:'.$updated->getKey().':'.$updated->version);
+
+        return $updated;
     }
 
     public function reactivate(BusinessSubscription $subscription, User $actor, string $reason): BusinessSubscription
     {
         abort_unless($subscription->status === SubscriptionStatus::CancelScheduled, 409, 'Only a scheduled cancellation can be reactivated.');
 
-        return $this->localTransition($subscription, ['status' => SubscriptionStatus::Active, 'cancel_at' => null, 'canceled_at' => null], 'subscription.reactivated', $actor, $reason);
+        $updated = $this->localTransition($subscription, ['status' => SubscriptionStatus::Active, 'cancel_at' => null, 'canceled_at' => null], 'subscription.reactivated', $actor, $reason);
+        $this->queueNotice($updated, 'subscription_reactivated', 'subscription-reactivated:'.$updated->getKey().':'.$updated->version);
+
+        return $updated;
     }
 
     public function supportCancel(BusinessSubscription $subscription, User $actor, string $reason): BusinessSubscription
     {
-        return $this->localTransition($subscription, [
+        $updated = $this->localTransition($subscription, [
             'status' => SubscriptionStatus::Canceled,
             'restriction_level' => RestrictionLevel::ReadOnly,
             'canceled_at' => now(),
             'ended_at' => now(),
             'export_available_until' => now()->addDays(config('billing.export_days_after_termination')),
         ], 'subscription.support_canceled', $actor, $reason, 'platform');
+
+        $this->queueNotice($updated, 'subscription_canceled', 'subscription-canceled:'.$updated->getKey().':'.$updated->version);
+
+        return $updated;
     }
 
     public function renewalFailed(BusinessSubscription $subscription, int $attempt, CarbonInterface $occurredAt): BusinessSubscription
@@ -164,6 +186,10 @@ class SubscriptionLifecycleManager
             'restriction_level' => RestrictionLevel::Warning,
             'grace_ends_at' => $locked->grace_ends_at ?? $occurredAt->copy()->addDays(config('billing.grace_days')),
         ], 'subscription.renewal_failed');
+
+        if (! $updated->provider_state_at?->equalTo($occurredAt) || $updated->status !== $status) {
+            return $updated;
+        }
 
         DB::table('billing_notices')->insertOrIgnore([
             'business_id' => $updated->business_id,
@@ -249,12 +275,18 @@ class SubscriptionLifecycleManager
 
     public function recover(BusinessSubscription $subscription, CarbonInterface $periodEnd, CarbonInterface $occurredAt): BusinessSubscription
     {
-        return $this->transition($subscription, $occurredAt, fn (): array => [
+        $updated = $this->transition($subscription, $occurredAt, fn (): array => [
             'status' => SubscriptionStatus::Active,
             'restriction_level' => RestrictionLevel::None,
             'grace_ends_at' => null,
             'current_period_ends_at' => $periodEnd,
         ], 'subscription.recovered');
+
+        if ($updated->provider_state_at?->equalTo($occurredAt)) {
+            $this->queueNotice($updated, 'subscription_recovered', 'subscription-recovered:'.$updated->getKey().':'.$occurredAt->timestamp);
+        }
+
+        return $updated;
     }
 
     public function providerRestricted(BusinessSubscription $subscription, CarbonInterface $occurredAt, string $providerStatus): BusinessSubscription
@@ -268,12 +300,18 @@ class SubscriptionLifecycleManager
 
     public function terminate(BusinessSubscription $subscription, CarbonInterface $occurredAt): BusinessSubscription
     {
-        return $this->transition($subscription, $occurredAt, fn (): array => [
+        $updated = $this->transition($subscription, $occurredAt, fn (): array => [
             'status' => SubscriptionStatus::Terminated,
             'restriction_level' => RestrictionLevel::Closed,
             'ended_at' => $occurredAt,
             'export_available_until' => $occurredAt->copy()->addDays(config('billing.export_days_after_termination')),
         ], 'subscription.terminated');
+
+        if ($updated->provider_state_at?->equalTo($occurredAt)) {
+            $this->queueNotice($updated, 'subscription_terminated', 'subscription-terminated:'.$updated->getKey().':'.$occurredAt->timestamp);
+        }
+
+        return $updated;
     }
 
     public function supersedePlanChange(SubscriptionChange $change, User $actor, string $reason): void

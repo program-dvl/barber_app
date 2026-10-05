@@ -40,7 +40,7 @@ const closeModal = () => {
 <template>
     <ActionSection>
         <template #title>
-            {{ $t('Delete Account') }}
+            {{ $t('Delete account') }}
         </template>
 
         <template #description>
@@ -49,36 +49,36 @@ const closeModal = () => {
 
         <template #content>
             <div class="max-w-xl text-sm">
-                {{ $t('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
+                {{ $t('This permanently removes your sign-in account, profile photo and access tokens. Download any information you need before continuing.') }}
             </div>
 
             <div class="mt-5">
                 <DangerButton @click="confirmUserDeletion">
-                    {{ $t('Delete Account') }}
+                    {{ $t('Delete account') }}
                 </DangerButton>
             </div>
 
-            <!-- Delete Account Confirmation Modal -->
+            <!-- Delete account Confirmation Modal -->
             <DialogModal :show="confirmingUserDeletion" @close="closeModal">
                 <template #title>
-                    {{ $t('Delete Account') }}
+                    {{ $t('Delete account') }}
                 </template>
 
                 <template #content>
-                    {{ $t('Are you sure you want to delete your account? Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
+                    {{ $t('This permanently deletes your sign-in account. You will lose access and cannot undo this action. Enter your password to confirm.') }}
 
                     <div class="mt-4">
+                        <label for="field-deleteuserform-form-password" class="block text-sm font-semibold">{{ $t('Current password') }}</label>
                         <TextInput
                             ref="passwordInput"
                             v-model="form.password"
                             type="password"
                             class="mt-1 block w-3/4"
-                            :placeholder="$t('Password')"
                             autocomplete="current-password"
                             @keyup.enter="deleteUser"
-                        />
+                         id="field-deleteuserform-form-password" :aria-invalid="form.errors.password ? true : undefined" :aria-describedby="form.errors.password ? 'field-deleteuserform-form-password-error' : undefined"/>
 
-                        <InputError :message="form.errors.password" class="mt-2" />
+                        <InputError :message="form.errors.password" class="mt-2"  id="field-deleteuserform-form-password-error"/>
                     </div>
                 </template>
 
@@ -93,7 +93,7 @@ const closeModal = () => {
                         :disabled="form.processing"
                         @click="deleteUser"
                     >
-                        {{ $t('Delete Account') }}
+                        {{ $t('Delete account') }}
                     </DangerButton>
                 </template>
             </DialogModal>

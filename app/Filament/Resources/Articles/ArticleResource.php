@@ -24,6 +24,12 @@ class ArticleResource extends Resource
 {
     protected static ?string $model = Article::class;
 
+    protected static ?string $modelLabel = 'article';
+
+    protected static ?string $pluralModelLabel = 'Articles';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Content';
@@ -32,8 +38,7 @@ class ArticleResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('Article Content')
-                    ->description('Create and manage your article content')
+                Section::make('Article')
                     ->schema([
                         TextInput::make('title')
                             ->required()
@@ -56,7 +61,7 @@ class ArticleResource extends Resource
                             ]),
 
                         FileUpload::make('thumbnail')
-                            ->label('Featured Image')
+                            ->label('Featured image')
                             ->disk(config('filesystems.default'))
                             ->directory('articles')
                             ->visibility('public')
@@ -68,28 +73,26 @@ class ArticleResource extends Resource
                                 '1:1',
                             ])
                             ->required()
-                            ->columnSpanFull()
-                            ->helperText('Upload a featured image for your article'),
+                            ->columnSpanFull(),
 
                         Toggle::make('active')
-                            ->label('Published')
+                            ->label('Active')
                             ->default(true)
-                            ->helperText('Toggle to publish or unpublish this article'),
+                            ->helperText('Public visibility also requires a complete editorial review.'),
                     ])
                     ->columns(2)
                     ->collapsible(),
 
-                Section::make('SEO Settings')
-                    ->description('Optimize your article for search engines')
+                Section::make('Search appearance')
                     ->schema([
                         TextInput::make('seo_title')
-                            ->label('SEO Title')
+                            ->label('Search title')
                             ->maxLength(60)
                             ->helperText('Recommended: 50-60 characters')
                             ->columnSpanFull(),
 
                         TextInput::make('seo_description')
-                            ->label('Meta Description')
+                            ->label('Search description')
                             ->maxLength(160)
                             ->helperText('Recommended: 120-160 characters')
                             ->columnSpanFull(),

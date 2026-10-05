@@ -3,8 +3,11 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
+use App\Notifications\EmailAddressChangedNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
 
@@ -45,6 +48,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
      */
     protected function updateVerifiedUser(User $user, array $input): void
     {
+        $oldEmail = $user->email;
         $user->forceFill([
             'name' => $input['name'],
             'email' => $input['email'],
@@ -52,5 +56,17 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
         ])->save();
 
         $user->sendEmailVerificationNotification();
+        Notification::route('mail', $oldEmail)->notify(new EmailAddressChangedNotification(
+            accountName: $user->name,
+            newEmailMasked: $this->maskEmail($input['email']),
+        ));
+    }
+
+    private function maskEmail(string $email): string
+    {
+        [$local, $domain] = explode('@', Str::lower($email), 2);
+        $visible = mb_substr($local, 0, min(2, mb_strlen($local)));
+
+        return $visible.str_repeat('*', max(2, min(8, mb_strlen($local) - mb_strlen($visible)))).'@'.$domain;
     }
 }

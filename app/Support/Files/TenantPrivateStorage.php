@@ -20,6 +20,33 @@ class TenantPrivateStorage
         return $key;
     }
 
+    /** @param resource $stream */
+    public function putStream(Business $business, string $path, $stream): string
+    {
+        $key = $this->authorizedKey($business, $path);
+        if (! $this->disk()->put($key, $stream)) {
+            throw new \RuntimeException('Report file could not be stored.');
+        }
+
+        return $key;
+    }
+
+    /** @return resource */
+    public function getStoredStream(Business $business, string $key)
+    {
+        $expectedPrefix = TenantFilePath::private($business, 'files/');
+        if (! str_starts_with($key, $expectedPrefix)) {
+            throw new AccessDeniedHttpException('The stored file key does not belong to this tenant.');
+        }
+        $this->authorizedKey($business, 'files/check');
+        $stream = $this->disk()->readStream($key);
+        if (! is_resource($stream)) {
+            throw new \RuntimeException('Report file could not be read.');
+        }
+
+        return $stream;
+    }
+
     public function get(Business $business, string $path): string
     {
         return $this->disk()->get($this->authorizedKey($business, $path));

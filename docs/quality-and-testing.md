@@ -168,3 +168,26 @@ General availability requires:
 - support playbooks that avoid unsafe database edits; and
 - production-like completion of every final chargeability statement in PRD
   Section 17.
+
+
+## Calendar redesign evidence — 2026-10-03
+
+The [Calendar audit](audits/2026-10-03-calendar/README.md) records the inspected
+journeys, widths, automated regression coverage, screenshots and limitations.
+343 repository tests / 3,748 assertions and 21 frontend helper tests pass; 28
+existing disabled-feature/integration skips remain. The local browser pass does
+not replace the independent accessibility/browser matrix or target-topology
+performance and MySQL concurrency release evidence.
+
+
+## Walk-in Queue redesign evidence — 2026-10-03
+
+The [Walk-in audit](audits/2026-10-03-walk-in-queue/README.md) records the business
+inspection, corrected operational risks, isolated synthetic workflow checks,
+responsive/sticky/focus measurements, polling observation and screenshots.
+Regression coverage includes canonical client reuse, add/start replay and rollback,
+Calendar state synchronization, schedule/resource conflicts, overdue/expired
+checks, branch/tenant isolation, contact/note permissions and bounded query growth.
+The 26 frontend helper tests pass. Client/SSR builds and scoped formatting pass.
+Existing intentional integration/disabled-feature skips and independent
+accessibility/browser/production-concurrency gates remain unchanged.

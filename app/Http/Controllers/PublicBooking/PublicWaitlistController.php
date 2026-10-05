@@ -27,7 +27,7 @@ class PublicWaitlistController extends Controller
             'client_name' => ['required', 'string', 'max:255'], 'client_mobile' => ['required', 'string', 'max:32', new E164Phone], 'client_email' => ['nullable', 'email'],
             'acceptable_from' => ['required', 'date', 'after_or_equal:today'], 'acceptable_until' => ['required', 'date', 'after_or_equal:acceptable_from'],
             'time_from' => ['required', 'date_format:H:i'], 'time_until' => ['required', 'date_format:H:i', 'after:time_from'],
-            'notification_method' => ['required', 'in:email,whatsapp'], 'notes' => ['nullable', 'string', 'max:1000'],
+            'notification_method' => ['required', 'in:email,sms'], 'notes' => ['nullable', 'string', 'max:1000'],
         ]);
         $location = Location::query()->where('business_id', $business->id)->where('public_id', $data['location'])->where('is_active', true)->where('status', 'active')->firstOrFail();
         $service = Service::query()->where('business_id', $business->id)->where('public_id', $data['service'])->where('is_active', true)->where('online_visible', true)->firstOrFail();
@@ -45,6 +45,7 @@ class PublicWaitlistController extends Controller
             'token' => $token, 'status' => $match->status, 'expires_at' => $match->expires_at->toIso8601String(),
             'business' => $match->request->business->name, 'location' => $match->request->location->name,
             'service' => $match->request->service->name,
+            'time_zone' => $match->request->location->time_zone,
             'starts_at' => $match->slot_starts_at_utc->setTimezone($match->request->location->time_zone)->toIso8601String(),
         ]);
     }

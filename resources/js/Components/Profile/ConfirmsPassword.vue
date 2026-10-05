@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, nextTick } from 'vue';
+import { ref, reactive, nextTick, useId } from 'vue';
 import DialogModal from './DialogModal.vue';
 import InputError from './InputError.vue';
 import PrimaryButton from './PrimaryButton.vue';
@@ -7,15 +7,16 @@ import SecondaryButton from './SecondaryButton.vue';
 import TextInput from './TextInput.vue';
 
 const emit = defineEmits(['confirmed']);
+const passwordFieldId = `confirm-password-${useId()}`;
 
 defineProps({
     title: {
         type: String,
-        default: 'Confirm Password',
+        default: 'Confirm password',
     },
     content: {
         type: String,
-        default: 'For your security, please confirm your password to continue.',
+        default: 'Enter your current password to continue.',
     },
     button: {
         type: String,
@@ -85,17 +86,18 @@ const closeModal = () => {
                 {{ content }}
 
                 <div class="mt-4">
+                    <label :for="passwordFieldId" class="block text-sm font-semibold">Current password</label>
                     <TextInput
+                        :id="passwordFieldId" :aria-invalid="form.error ? true : undefined" :aria-describedby="form.error ? `${passwordFieldId}-error` : undefined"
                         ref="passwordInput"
                         v-model="form.password"
                         type="password"
                         class="mt-1 block w-3/4"
-                        placeholder="Password"
                         autocomplete="current-password"
                         @keyup.enter="confirmPassword"
                     />
 
-                    <InputError :message="form.error" class="mt-2" />
+                    <InputError :id="`${passwordFieldId}-error`" :message="form.error" class="mt-2" />
                 </div>
             </template>
 

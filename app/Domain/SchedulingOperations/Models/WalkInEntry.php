@@ -2,7 +2,9 @@
 
 namespace App\Domain\SchedulingOperations\Models;
 
+use App\Domain\BusinessConfiguration\Models\Service;
 use App\Domain\ClientRecords\Models\Client;
+use App\Domain\PlatformAccess\Models\StaffProfile;
 use App\Support\Tenancy\BelongsToBusiness;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -45,5 +47,25 @@ class WalkInEntry extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class);
+    }
+
+    public function assignedStaff(): BelongsTo
+    {
+        return $this->belongsTo(StaffProfile::class, 'assigned_staff_profile_id');
+    }
+
+    public function preferredStaff(): BelongsTo
+    {
+        return $this->belongsTo(StaffProfile::class, 'preferred_staff_profile_id');
+    }
+
+    public function appointment(): BelongsTo
+    {
+        return $this->belongsTo(Appointment::class);
     }
 }

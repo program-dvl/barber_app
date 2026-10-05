@@ -18,21 +18,21 @@ it('publishes differentiated supported business pages', function (string $slug, 
         ->has('solution.day', 4)
         ->has('solution.limits', 2)
         ->has('features', 3)
-        ->where('solution.title', fn (string $title) => str_contains($title, $phrase)));
+        ->where('solution.title', fn (string $title) => str_contains(strtolower($title), $phrase)));
 })->with([
-    ['barbershops', 'walk-in line'],
-    ['salons', 'multi-service work'],
+    ['barbershops', 'walk-ins'],
+    ['salons', 'salon appointments'],
     ['independent-stylists', 'independent stylist'],
-    ['spas', 'reserves the room'],
-    ['nail-salons', 'Nail salon software'],
-    ['medspas', 'clinical boundaries'],
-    ['massage', 'Massage studio software'],
-    ['fitness-recovery', 'Fitness and recovery scheduling'],
-    ['physical-therapy', 'non-clinical side'],
-    ['health-practices', 'independent health practices'],
-    ['tattoo-piercing', 'Tattoo and piercing studio'],
-    ['pet-grooming', 'Pet grooming software'],
-    ['tanning-studios', 'Tanning studio software'],
+    ['spas', 'practitioners and rooms'],
+    ['nail-salons', 'nail salon appointments'],
+    ['medspas', 'medspa appointments'],
+    ['massage', 'massage appointments'],
+    ['fitness-recovery', 'fitness and recovery appointments'],
+    ['physical-therapy', 'physical therapy appointments'],
+    ['health-practices', 'health practice'],
+    ['tattoo-piercing', 'tattoo and piercing appointments'],
+    ['pet-grooming', 'pet grooming appointments'],
+    ['tanning-studios', 'tanning studio appointments'],
 ]);
 
 it('keeps unsupported keyword permutations out and regulated claims bounded', function () {

@@ -11,6 +11,7 @@ const props = defineProps({
     required: Boolean,
     autocomplete: { type: String, default: 'tel' },
 });
+defineOptions({ inheritAttrs: false });
 const emit = defineEmits(['update:modelValue', 'validity']);
 const supported = new Set(getCountries());
 const regionNames = new Intl.DisplayNames([typeof navigator === 'undefined' ? 'en' : (navigator.language || 'en')], { type: 'region' });
@@ -64,14 +65,13 @@ watch(selectedCountry, publish);
 </script>
 
 <template>
-    <div>
-        <div class="cd-phone-control grid grid-cols-[minmax(7.5rem,0.42fr)_minmax(0,1fr)] rounded-lg border border-[var(--border-default)] bg-[var(--surface-raised)] focus-within:border-[var(--action-primary)] focus-within:ring-2 focus-within:ring-[var(--focus-ring)]/20">
-            <label :for="`${id}-country`" class="ds-sr-only">Phone country</label>
+    <div :class="$attrs.class">
+        <div class="cd-phone-control grid grid-cols-[minmax(7.5rem,0.4fr)_minmax(0,1fr)] rounded-lg border border-[var(--border-default)] bg-[var(--surface-raised)] focus-within:border-[var(--action-primary)] focus-within:ring-2 focus-within:ring-[var(--focus-ring)]/20">
             <AppSelect :id="`${id}-country`" v-model="selectedCountry" class="min-h-11 min-w-0 border-0 border-r border-[var(--border-subtle)] bg-[var(--surface-subtle)] px-3 text-sm font-medium focus:ring-0" :aria-label="`Country code, currently +${getCountryCallingCode(selectedCountry)}`">
                 <option v-for="option in countryOptions" :key="option.code" :value="option.code">{{ option.name }} (+{{ option.dial }})</option>
             </AppSelect>
-            <input :id="id" v-model="localNumber" type="tel" inputmode="tel" :autocomplete="autocomplete" :required="required" class="min-h-11 min-w-0 border-0 bg-transparent px-3 focus:ring-0" placeholder="Local phone number" @input="publish" @blur="touched = true">
+            <input :id="id" :aria-label="$attrs['aria-label']" v-model="localNumber" type="tel" inputmode="tel" :autocomplete="autocomplete" :required="required" :aria-invalid="$attrs['aria-invalid'] || (touched && !valid) || undefined" :aria-describedby="[$attrs['aria-describedby'], touched && !valid ? `${id}-phone-error` : null].filter(Boolean).join(' ') || undefined" class="min-h-[var(--control-height)] min-w-0 border-0 bg-transparent px-3 text-base focus:ring-0" placeholder="Local phone number" @input="publish" @blur="touched = true">
         </div>
-        <p v-if="touched && !valid" class="mt-1.5 text-xs text-[var(--status-danger)]" role="alert">Enter a valid phone number for the selected country.</p>
+        <p v-if="touched && !valid" :id="`${id}-phone-error`" class="cd-field-error" role="alert">Enter a valid phone number for this country.</p>
     </div>
 </template>

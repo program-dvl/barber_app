@@ -4,7 +4,7 @@ Status: Canonical standard; the ClipperDesk visual and component foundation is
 implemented, while individual product surfaces may still require review against
 this document.
 
-Last standards review: 2026-09-13
+Last standards review: 2026-10-02
 
 Last verified foundation evidence: 2026-08-25
 
@@ -44,9 +44,10 @@ calendar, walk-in queue, public booking and secure self-service, Client CRM,
 forms, consent, privacy, and platform readiness surfaces now share the same
 hierarchy, tokens, controls, state language, and responsive conventions.
 
-Dashboard users may choose among **Command desk**, **Rhythm board**, and
-**Guided front desk**. The preference is remembered per signed-in user on the
-current device. These are alternate presentations of the same tenant-scoped
+Dashboard users may choose among **Appointment list**, **By staff**, and
+**Now & next**. New users start with Now & next; urgent items precede reporting
+and use a compact, expandable summary ahead of the schedule on smaller screens
+(ADR-043). The preference is remembered per signed-in user on the current device. These are alternate presentations of the same tenant-scoped
 calendar facts; they must not create separate operational truth or bypass
 permission filtering.
 
@@ -57,7 +58,8 @@ therefore outside this pattern.
 The public acquisition shell uses a white, lightly elevated sticky header over
 the cool-gray product canvas. Navy establishes trust and structure, indigo is
 reserved for primary actions, and cyan is a sparse identifying accent. The
-footer and authenticated navigation use the same deep-navy closing frame.
+footer uses a deep-navy closing frame. Authenticated navigation follows the
+blue operational navigation contract below.
 
 ## Experience standard: premium through clarity
 
@@ -897,3 +899,76 @@ request. This is menu visibility only; no domain implementation or entitlement
 contract is removed or promoted to a new delivery phase.
 
 Verified screen coverage and limitations: [workspace refinement audit](audits/2026-09-13-workspace-refinement/README.md).
+
+## Operational density refinement
+
+Use the presentation contract in `modules/product-experience.md`. Page headings
+use 24px; section headings use 17px. Standard desktop controls use 40px and
+touch controls at least 44px. Do not change root rem size or transform the UI.
+Keep public/auth inputs at 16px. Remove redundant decorative subtitles; retain
+point-of-action guidance for consent, payments, publishing and destructive acts.
+
+## Record composition follow-up (2026-10-02)
+
+The StepES-inspired follow-up uses light navigation, a pale canvas, 26px
+workspace page headings and 10px panel corners. `workspace.css` owns density;
+`workspace-records.css`, imported by authenticated layouts, owns breadcrumbs,
+search/filter toolbars, record metadata and responsive table composition. Use
+shared `SearchField` and `DataTable`; avoid shrinking action labels or splitting
+amounts to force a table to fit. Mobile metadata and hidden columns share the
+768px breakpoint; small icon buttons retain 44px width and height. Preserve
+full business-entered text and essential payment/delivery guidance.
+
+See [fresh verification and gaps](audits/2026-10-02-stepes-inspired-refinement/README.md).
+
+### Workspace surface and text hierarchy
+
+Use the shared workspace tokens to distinguish primary-blue navigation, canvas
+(`#edf1f7`), filter toolbars (`#f8faff`), table headings (`#e9eef7`) and white
+record surfaces. Use navy ink for primary information (`#17243d`), body text
+(`#34435b`), secondary text (`#53627a`) and labels (`#40516d`). Keep indigo for
+actions and identity accents; preserve semantic status colors.
+Do not make every card colorful or use low-contrast gray to create hierarchy.
+Mobile navigation uses the same surface token. Public surfaces keep their own
+existing palette. [Fresh visual evidence](audits/2026-10-02-surface-hierarchy/README.md).
+
+### Blue navigation and signed-in header
+
+The owner's brand correction selects brand-primary navy (`#172554`) for
+the desktop sidebar and mobile navigation drawer. Use the inverse brand mark,
+light navigation text, a translucent selected surface and a small cyan selection
+edge. Navigation has locally scoped inverse text/surface/border tokens so content
+colors stay unchanged. White keyboard focus outlines remain visible on blue.
+
+Signed-in headers use a restrained white-to-navy wash, compact business initial,
+and a blue account avatar with a clear menu disclosure. Keep existing setup and
+subscription states, touch targets, truncation and permissions. Collapse decorative
+identity details on small screens; do not add unsupported search/notification
+actions to make the header look busier.
+[Fresh verification](audits/2026-10-02-brand-account-menu/README.md).
+
+The public frontend distinguishes brand-primary navy from action-primary indigo
+(`#4338ca`). Navigation and header identity use the brand token; primary actions
+retain the action token. Do not substitute the action color for the brand color.
+
+Account disclosures use 14px medium-weight icon rows, a 14px semibold account name
+and 12px secondary email. Use sentence case and a divider before Sign out. For a
+single permitted billing workspace, show a direct Subscription & billing action;
+for several, group their unchanged names under Business billing. Preserve the
+existing billing permission filter. Bound the panel to the viewport, wrap long
+identity details, retain keyboard dismissal/focus restoration, and use 44px rows
+on small screens or coarse pointers.
+
+## Clients operational CRM (2026-10-03)
+
+Clients retain the shared navy navigation, account header, buttons, accessible
+selects and native dialogs. A scoped stylesheet owns the directory and profile:
+64px desktop rows, one identity target, aligned visit columns, restrained
+important-note markers, compact metrics and five profile sections. Explicit
+preferences and historical service patterns have different labels. On phones,
+next appointment and important service notes precede deeper history; history
+tables scroll within their own positioned container. Profile editing uses a
+drawer with visible audit reason, validation, focus restoration and unsaved-change
+protection. No decorative count badge or unsupported benefit program is added.
+
+[Clients evidence and practical limits](audits/2026-10-03-clients/README.md).

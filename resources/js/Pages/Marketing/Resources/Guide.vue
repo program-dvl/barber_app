@@ -19,7 +19,7 @@ defineProps({ guide: Object, seo: Object });
                     <div class="cd-family-hero-grid mt-10">
                         <div class="cd-family-hero-copy">
                             <p class="cd-eyebrow">{{ guide.topic }}</p>
-                            <h1 class="mt-5 max-w-4xl font-display text-[clamp(2.75rem,7vw,5rem)] font-semibold leading-[1] tracking-[-0.055em] text-balance">{{ guide.title }}</h1>
+                            <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[1] tracking-[-0.055em] text-balance">{{ guide.title }}</h1>
                             <p class="mt-7 max-w-3xl text-lg leading-8">{{ guide.intro }}</p>
                             <p class="mt-6 text-sm font-semibold text-white/60">Published {{ guide.published_at }} · Reviewed by {{ guide.reviewed_by }}</p>
                         </div>

@@ -3,6 +3,7 @@
 namespace App\Domain\PlatformAccess\Services;
 
 use App\Domain\Billing\Services\EntitlementEvaluator;
+use App\Domain\BusinessConfiguration\Services\BusinessSetupAccess;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Membership;
@@ -22,10 +23,10 @@ class WorkspaceAccessService
         ],
         'clients' => ['permissions' => [PermissionName::ClientView]],
         'checkout-sales' => [
-            'permissions' => [PermissionName::CheckoutManage],
+            'permissions' => [PermissionName::CheckoutManage, PermissionName::RevenueView],
             'requires_location' => true,
         ],
-        'staff' => ['permissions' => [PermissionName::StaffManage]],
+        'staff' => ['permissions' => [PermissionName::StaffManage, PermissionName::CalendarViewAll, PermissionName::CalendarViewOwn]],
         'activity' => ['permissions' => [PermissionName::AuditView]],
         'services' => ['permissions' => [PermissionName::SettingsManage]],
         'inventory' => [
@@ -45,6 +46,7 @@ class WorkspaceAccessService
             'requires_location' => true,
         ],
         'settings' => ['permissions' => [PermissionName::SettingsManage]],
+        'communications' => ['permissions' => [PermissionName::SettingsManage, PermissionName::CalendarViewAll]],
         'subscription-billing' => [
             'permissions' => [PermissionName::BillingManage],
             'entitlement' => 'billing.manage',
@@ -72,7 +74,14 @@ class WorkspaceAccessService
             return $this->denied('permission_denied', 'This area is not available to this membership.');
         }
 
+        if ($feature === 'settings' && ! app(BusinessSetupAccess::class)->allows($business, $membership)) {
+            return $this->denied('permission_denied', 'Business-wide setup requires access to every location. Use your branch settings in Team and Services.');
+        }
         $permissions = $definition['permissions'] ?? [];
+        if ($feature === 'communications' && ! $this->memberships->allows($membership, PermissionName::SettingsManage)
+            && (! $this->memberships->allows($membership, PermissionName::ClientView) || ! $this->memberships->allows($membership, PermissionName::ClientContactView))) {
+            return $this->denied('permission_denied', 'Your salon role does not include client communication history.');
+        }
         if ($permissions !== [] && ! collect($permissions)->contains(
             fn (PermissionName $permission): bool => $this->memberships->allows($membership, $permission)
         )) {

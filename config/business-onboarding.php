@@ -7,6 +7,7 @@ return [
         'hair_salon' => [
             'label' => 'Hair salon', 'short' => 'Hair', 'image' => '/images/marketing/industries/home-salon-hero.webp',
             'description' => 'Cuts, colour, styling and treatments for individuals or a full team.', 'accent' => '#6D4AFF',
+            'categories' => ['Hair', 'Styling', 'Colour', 'Treatments'],
             'services' => [
                 ['key' => 'cut_finish', 'category' => 'Hair', 'name' => 'Cut & finish', 'duration' => 60, 'price_factor' => 1.5, 'description' => 'Consultation, tailored cut and finished style.'],
                 ['key' => 'blow_dry', 'category' => 'Styling', 'name' => 'Blow-dry & style', 'duration' => 45, 'price_factor' => 1.0, 'description' => 'Wash, blow-dry and polished finish.'],
@@ -17,16 +18,18 @@ return [
         'barber_shop' => [
             'label' => 'Barbershop', 'short' => 'Barbering', 'image' => '/images/marketing/industries/barbershop.webp',
             'description' => 'Cuts, beard services, grooming and walk-in friendly schedules.', 'accent' => '#EF6A4C',
+            'categories' => ['Haircuts', 'Grooming', 'Combined services'],
             'services' => [
                 ['key' => 'signature_cut', 'category' => 'Haircuts', 'name' => 'Signature haircut', 'duration' => 45, 'price_factor' => 1.0, 'description' => 'Consultation, cut and styled finish.'],
                 ['key' => 'skin_fade', 'category' => 'Haircuts', 'name' => 'Skin fade', 'duration' => 45, 'price_factor' => 1.2, 'description' => 'Precision fade with a clean styled finish.'],
                 ['key' => 'beard_shape', 'category' => 'Grooming', 'name' => 'Beard shape & finish', 'duration' => 30, 'price_factor' => 0.7, 'description' => 'Shape, line-up and finishing care.'],
-                ['key' => 'cut_beard', 'category' => 'Packages', 'name' => 'Haircut & beard', 'duration' => 75, 'price_factor' => 1.6, 'description' => 'A complete cut and beard appointment.'],
+                ['key' => 'cut_beard', 'category' => 'Combined services', 'name' => 'Haircut & beard', 'duration' => 75, 'price_factor' => 1.6, 'description' => 'A complete cut and beard appointment.'],
             ],
         ],
         'nail_studio' => [
             'label' => 'Nail studio', 'short' => 'Nails', 'image' => '/images/marketing/industries/nail-salon.webp',
             'description' => 'Manicures, pedicures, gel, nail art and maintenance appointments.', 'accent' => '#D13C91',
+            'categories' => ['Manicure', 'Pedicure', 'Nail art'],
             'services' => [
                 ['key' => 'classic_manicure', 'category' => 'Manicure', 'name' => 'Classic manicure', 'duration' => 45, 'price_factor' => 0.8, 'description' => 'Nail shaping, cuticle care and polish.'],
                 ['key' => 'gel_manicure', 'category' => 'Manicure', 'name' => 'Gel manicure', 'duration' => 60, 'price_factor' => 1.1, 'description' => 'Long-wear gel colour with full nail preparation.'],
@@ -37,6 +40,7 @@ return [
         'beauty_studio' => [
             'label' => 'Beauty studio', 'short' => 'Beauty', 'image' => '/images/marketing/editorial/use-cases-front-desk.webp',
             'description' => 'Brows, lashes, waxing, makeup and mixed beauty services.', 'accent' => '#A53DFF',
+            'categories' => ['Brows', 'Lashes', 'Skin', 'Waxing', 'Makeup'],
             'services' => [
                 ['key' => 'brow_shape', 'category' => 'Brows', 'name' => 'Brow shape', 'duration' => 30, 'price_factor' => 0.7, 'description' => 'Consultation, shaping and a clean finish.'],
                 ['key' => 'lash_lift', 'category' => 'Lashes', 'name' => 'Lash lift', 'duration' => 60, 'price_factor' => 1.3, 'description' => 'Lift and definition tailored to the client.'],
@@ -47,6 +51,7 @@ return [
         'spa' => [
             'label' => 'Spa & sauna', 'short' => 'Spa', 'image' => '/images/marketing/industries/spa-sauna.webp',
             'description' => 'Treatments, rituals, facilities and carefully managed room capacity.', 'accent' => '#147D75',
+            'categories' => ['Massage', 'Body treatments', 'Facials', 'Facilities'],
             'services' => [
                 ['key' => 'relaxation_ritual', 'category' => 'Body treatments', 'name' => 'Relaxation ritual', 'duration' => 90, 'price_factor' => 2.2, 'description' => 'A restorative full-body treatment experience.'],
                 ['key' => 'deep_tissue', 'category' => 'Massage', 'name' => 'Deep tissue massage', 'duration' => 60, 'price_factor' => 1.6, 'description' => 'Focused massage with pressure adapted to the client.'],
@@ -57,6 +62,7 @@ return [
         'massage' => [
             'label' => 'Massage practice', 'short' => 'Massage', 'image' => '/images/marketing/industries/massage.webp',
             'description' => 'Relaxation, sports and therapeutic massage for solo or team practices.', 'accent' => '#B05C3B',
+            'categories' => ['Massage', 'Recovery'],
             'services' => [
                 ['key' => 'relaxation_60', 'category' => 'Massage', 'name' => 'Relaxation massage · 60 min', 'duration' => 60, 'price_factor' => 1.4, 'description' => 'A calming full-body massage with tailored pressure.'],
                 ['key' => 'deep_tissue_60', 'category' => 'Massage', 'name' => 'Deep tissue massage · 60 min', 'duration' => 60, 'price_factor' => 1.6, 'description' => 'Focused work for areas of persistent tension.'],
@@ -67,6 +73,7 @@ return [
         'wellness' => [
             'label' => 'Wellness & recovery', 'short' => 'Wellness', 'image' => '/images/marketing/industries/fitness-recovery.webp',
             'description' => 'Recovery sessions, coaching and appointment-led wellness services.', 'accent' => '#167A65',
+            'categories' => ['Consultations', 'Recovery', 'Mobility'],
             'services' => [
                 ['key' => 'initial_consult', 'category' => 'Consultations', 'name' => 'Initial consultation', 'duration' => 45, 'price_factor' => 1.0, 'description' => 'Goals, context and a recommended plan.'],
                 ['key' => 'recovery_session', 'category' => 'Recovery', 'name' => 'Recovery session', 'duration' => 60, 'price_factor' => 1.4, 'description' => 'A guided recovery appointment tailored to the client.'],
@@ -77,6 +84,7 @@ return [
         'skin_aesthetics' => [
             'label' => 'Skin & aesthetics', 'short' => 'Aesthetics', 'image' => '/images/marketing/industries/medspa.webp',
             'description' => 'Consultation-led skin and non-clinical aesthetic treatment journeys.', 'accent' => '#5966D8',
+            'categories' => ['Consultations', 'Facials'],
             'services' => [
                 ['key' => 'skin_consult', 'category' => 'Consultations', 'name' => 'Skin consultation', 'duration' => 30, 'price_factor' => 0.8, 'description' => 'Skin goals, history and a recommended treatment plan.'],
                 ['key' => 'signature_facial', 'category' => 'Facials', 'name' => 'Signature facial', 'duration' => 60, 'price_factor' => 1.7, 'description' => 'A customised facial selected for the client’s skin.'],
@@ -87,6 +95,7 @@ return [
         'makeup_bridal' => [
             'label' => 'Makeup & bridal', 'short' => 'Makeup', 'image' => '/images/marketing/industries/independent-stylist.webp',
             'description' => 'Trials, event makeup and longer bridal or group appointments.', 'accent' => '#C24775',
+            'categories' => ['Makeup', 'Bridal'],
             'services' => [
                 ['key' => 'occasion_makeup', 'category' => 'Makeup', 'name' => 'Occasion makeup', 'duration' => 60, 'price_factor' => 1.4, 'description' => 'A complete, camera-ready look for the occasion.'],
                 ['key' => 'bridal_consult', 'category' => 'Bridal', 'name' => 'Bridal consultation', 'duration' => 45, 'price_factor' => 0.8, 'description' => 'Discuss the day, style and practical plan.'],
@@ -97,6 +106,7 @@ return [
         'independent_professional' => [
             'label' => 'Independent professional', 'short' => 'Independent', 'image' => '/images/marketing/industries/independent-stylist.webp',
             'description' => 'A flexible starter for one professional offering appointment-based services.', 'accent' => '#7654D8',
+            'categories' => ['Appointments'],
             'services' => [
                 ['key' => 'consultation', 'category' => 'Appointments', 'name' => 'Initial consultation', 'duration' => 30, 'price_factor' => 0.6, 'description' => 'A focused introduction and plan for the client.'],
                 ['key' => 'signature_60', 'category' => 'Appointments', 'name' => 'Signature appointment', 'duration' => 60, 'price_factor' => 1.2, 'description' => 'Your core one-hour client experience.'],
@@ -107,6 +117,7 @@ return [
         'multi_service' => [
             'label' => 'Multi-service business', 'short' => 'Multi-service', 'image' => '/images/marketing/editorial/product-workday.webp',
             'description' => 'A mixed service menu, shared team and room-aware operation.', 'accent' => '#4C56D7',
+            'categories' => ['Consultations', 'Signature services', 'Appointments'],
             'services' => [
                 ['key' => 'consultation', 'category' => 'Consultations', 'name' => 'Personal consultation', 'duration' => 30, 'price_factor' => 0.6, 'description' => 'Understand the client and recommend the right service.'],
                 ['key' => 'signature_60', 'category' => 'Signature services', 'name' => 'Signature service', 'duration' => 60, 'price_factor' => 1.3, 'description' => 'A polished core service ready to rename.'],
@@ -117,6 +128,7 @@ return [
         'other' => [
             'label' => 'Another appointment business', 'short' => 'Other', 'image' => '/images/marketing/editorial/company-story.webp',
             'description' => 'Start with flexible appointments and tailor every detail later.', 'accent' => '#365E89',
+            'categories' => ['Appointments'],
             'services' => [
                 ['key' => 'consultation', 'category' => 'Appointments', 'name' => 'Initial consultation', 'duration' => 30, 'price_factor' => 0.6, 'description' => 'An introduction and plan for a new client.'],
                 ['key' => 'standard', 'category' => 'Appointments', 'name' => 'Standard appointment', 'duration' => 60, 'price_factor' => 1.0, 'description' => 'A flexible core service ready to customise.'],

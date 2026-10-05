@@ -29,11 +29,11 @@ const toneClasses = {
 
 <template>
     <div
-        :class="['cd-state-panel text-center', compact ? 'p-4' : 'px-5 py-8 sm:px-8']"
-        :role="tone === 'error' ? 'alert' : tone === 'success' ? 'status' : undefined"
+        :class="['cd-state-panel text-center', compact ? 'p-4' : 'px-4 py-6']"
+        :role="tone === 'error' ? 'alert' : ['success', 'loading'].includes(tone) ? 'status' : undefined"
         :aria-busy="tone === 'loading' || undefined"
     >
-        <span :class="[toneClasses[props.tone], 'mx-auto mb-3 grid size-10 place-items-center rounded-full']" aria-hidden="true">
+        <span :class="[toneClasses[props.tone], 'mx-auto mb-2 grid size-8 place-items-center rounded-full']" aria-hidden="true">
             <CheckCircleIcon v-if="tone === 'success'" class="size-5" />
             <ExclamationTriangleIcon v-else-if="tone === 'error'" class="size-5" />
             <span v-else-if="tone === 'loading'" class="size-5 animate-spin rounded-full border-2 border-current border-r-transparent motion-reduce:animate-none" />

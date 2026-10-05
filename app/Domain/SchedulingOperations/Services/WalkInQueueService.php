@@ -2,13 +2,13 @@
 
 namespace App\Domain\SchedulingOperations\Services;
 
+use App\Domain\BusinessConfiguration\Contracts\AvailabilityConfiguration;
 use App\Domain\BusinessConfiguration\Models\Service;
+use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\PlatformAccess\Models\StaffProfile;
 use App\Domain\SchedulingOperations\Contracts\AppointmentLifecycleCommand;
-use App\Domain\SchedulingOperations\Contracts\AvailabilityQuery;
 use App\Domain\SchedulingOperations\Contracts\BookingCommitCommand;
-use App\Domain\SchedulingOperations\Data\AvailabilitySearch;
 use App\Domain\SchedulingOperations\Data\BookingLineRequest;
 use App\Domain\SchedulingOperations\Data\BookingRequest;
 use App\Domain\SchedulingOperations\Enums\WalkInStatus;
@@ -23,7 +23,6 @@ use Illuminate\Support\Facades\DB;
 class WalkInQueueService
 {
     public function __construct(
-        private readonly AvailabilityQuery $availability,
         private readonly BookingCommitCommand $bookings,
         private readonly AppointmentLifecycleCommand $lifecycle,
     ) {}
@@ -45,22 +44,25 @@ class WalkInQueueService
     ): WalkInEntry {
         $location = Location::query()->where('business_id', $businessId)->findOrFail($locationId);
         $service = Service::query()->where('business_id', $businessId)->where('is_active', true)->findOrFail($serviceId);
+        if ($service->kind !== 'service' || ! $service->locations()->whereKey($locationId)->where('location_service.is_eligible', true)->exists()) {
+            throw new BookingRuleViolation('SERVICE_UNAVAILABLE', 'This service is not offered at this location. Choose another service.');
+        }
         if ($preferredStaffId) {
-            StaffProfile::query()->where('business_id', $businessId)->where('status', 'active')->findOrFail($preferredStaffId);
+            $preferred = StaffProfile::query()->where('business_id', $businessId)->where('status', 'active')->findOrFail($preferredStaffId);
+            app(AvailabilityConfiguration::class)->resolveService($service, $preferred, $location);
         }
         if (trim($clientName) === '' || trim($clientMobile) === '') {
             throw new BookingRuleViolation('INVALID_WALK_IN', 'Name and mobile number are required for a walk-in.');
         }
 
-        $estimate = $this->estimate($businessId, $location, $service, $preferredStaffId, $arrivedAt);
-
-        return DB::transaction(function () use ($businessId, $locationId, $serviceId, $clientName, $clientMobile, $preferredStaffId, $arrivedAt, $notes, $source, $actorType, $actorId, $estimate, $clientId, $clientEmail): WalkInEntry {
+        return DB::transaction(function () use ($businessId, $locationId, $serviceId, $clientName, $clientMobile, $preferredStaffId, $arrivedAt, $notes, $source, $actorType, $actorId, $location, $service, $clientId, $clientEmail): WalkInEntry {
             Location::query()->where('business_id', $businessId)->lockForUpdate()->findOrFail($locationId);
             $position = ((int) WalkInEntry::query()
                 ->where('business_id', $businessId)
                 ->where('location_id', $locationId)
                 ->whereIn('status', ['waiting', 'notified', 'assigned'])
                 ->max('queue_position')) + 1;
+            $estimate = $this->estimate($businessId, $location, $service, $preferredStaffId, $arrivedAt, $position);
             $entry = WalkInEntry::query()->create([
                 'business_id' => $businessId,
                 'location_id' => $locationId,
@@ -111,7 +113,7 @@ class WalkInQueueService
                 ->get();
             $currentIds = $entries->pluck('public_id')->sort()->values()->all();
             $requestedIds = collect($orderedPublicIds)->unique()->sort()->values()->all();
-            if ($currentIds !== $requestedIds) {
+            if ($currentIds !== $requestedIds || count($orderedPublicIds) !== count($currentIds)) {
                 throw new BookingRuleViolation('STALE_QUEUE', 'The queue changed in another session. Refresh and try again.');
             }
 
@@ -141,7 +143,13 @@ class WalkInQueueService
         return DB::transaction(function () use ($entry, $staffProfileId, $expectedVersion, $source, $actorType, $actorId, $reason): WalkInEntry {
             $current = WalkInEntry::query()->where('business_id', $entry->business_id)->lockForUpdate()->findOrFail($entry->id);
             $this->assertVersionAndActive($current, $expectedVersion);
-            StaffProfile::query()->where('business_id', $entry->business_id)->where('status', 'active')->findOrFail($staffProfileId);
+            if ($current->appointment_id) {
+                throw new BookingRuleViolation('LINKED_APPOINTMENT', 'This walk-in has a Calendar visit. Change staff in Calendar so the reserved time stays correct.');
+            }
+            $staff = StaffProfile::query()->where('business_id', $entry->business_id)->where('status', 'active')->whereHas('locations', fn ($q) => $q->whereKey($current->location_id))->findOrFail($staffProfileId);
+            $service = Service::query()->where('business_id', $entry->business_id)->findOrFail($current->service_id);
+            $location = Location::query()->where('business_id', $entry->business_id)->findOrFail($current->location_id);
+            app(AvailabilityConfiguration::class)->resolveService($service, $staff, $location);
             $before = ['staff_profile_id' => $current->assigned_staff_profile_id, 'status' => $current->status];
             $current->update([
                 'assigned_staff_profile_id' => $staffProfileId,
@@ -209,6 +217,7 @@ class WalkInQueueService
             [],
             null,
             $current->client_email,
+            clientPublicId: $current->client?->public_id,
         );
         // The atomic booking command revalidates against every future visit,
         // hold, staff rule, and resource immediately before capacity is claimed.
@@ -243,35 +252,60 @@ class WalkInQueueService
         ?string $actorType,
         ?int $actorId,
     ): Appointment {
-        $appointment = $entry->appointment_id
-            ? Appointment::query()->where('business_id', $entry->business_id)->findOrFail($entry->appointment_id)
-            : $this->convertToAppointment($entry, $startsAtUtc, $idempotencyKey.':convert', $expectedVersion, $staffProfileId, $source, $actorType, $actorId);
-        $entry = $entry->fresh();
-        if ($appointment->status === 'confirmed') {
-            $appointment = $this->lifecycle->transition($appointment, 'arrived', $idempotencyKey.':arrived', $appointment->version, $source, $actorType, $actorId);
-        }
-        if ($appointment->status === 'arrived') {
-            $appointment = $this->lifecycle->transition($appointment, 'in_service', $idempotencyKey.':start', $appointment->version, $source, $actorType, $actorId);
-        }
-
-        DB::transaction(function () use ($entry, $source, $actorType, $actorId): void {
-            $current = WalkInEntry::query()->where('business_id', $entry->business_id)->lockForUpdate()->findOrFail($entry->id);
-            if ($current->status === WalkInStatus::InService->value) {
-                return;
+        return DB::transaction(function () use ($entry, $startsAtUtc, $idempotencyKey, $expectedVersion, $staffProfileId, $source, $actorType, $actorId): Appointment {
+            $hash = hash('sha256', json_encode([$entry->id, $startsAtUtc->utc()->toIso8601String(), $expectedVersion, $staffProfileId, $source, $actorType, $actorId], JSON_THROW_ON_ERROR));
+            $key = app(AtomicBookingService::class)->claimCommandKey($entry->business_id, 'operation', 'queue-start:'.$idempotencyKey, $hash);
+            if ($key->result_id) {
+                return Appointment::query()->where('business_id', $entry->business_id)->findOrFail($key->result_id);
             }
-            $now = CarbonImmutable::now()->utc();
-            $previous = $current->status;
-            $actualWait = max(0, (int) $current->arrived_at->diffInMinutes($now));
-            $current->update([
-                'status' => WalkInStatus::InService->value,
-                'service_started_at' => $now,
-                'actual_wait_minutes' => $actualWait,
-                'version' => $current->version + 1,
-            ]);
-            $this->history($current, 'service_started', $previous, WalkInStatus::InService->value, $source, $actorType, $actorId, null, [], ['actual_wait_minutes' => $actualWait], $now);
-        }, 5);
+            $entry = WalkInEntry::query()->where('business_id', $entry->business_id)->lockForUpdate()->findOrFail($entry->id);
+            $this->assertVersionAndActive($entry, $expectedVersion);
+            if (! $entry->appointment_id && $startsAtUtc->lt(CarbonImmutable::now()->utc()->startOfMinute())) {
+                throw new BookingRuleViolation('STALE_AVAILABILITY', 'The availability check has expired. Check again before starting service.');
+            }
+            $chosenStaff = $staffProfileId ?: $entry->assigned_staff_profile_id ?: $entry->preferred_staff_profile_id;
+            if ($chosenStaff && Appointment::query()->where('business_id', $entry->business_id)->where('status', 'in_service')
+                ->where('ends_at_utc', '<=', now()->utc())->whereHas('segments', fn ($q) => $q->where('staff_profile_id', $chosenStaff)->where('occupies_staff', true))->exists()) {
+                throw new BookingRuleViolation('SERVICE_RUNNING_OVER', 'This staff member is still serving a client past the planned finish. Complete or adjust that visit before starting another.');
+            }
+            $appointment = $entry->appointment_id
+                ? Appointment::query()->where('business_id', $entry->business_id)->findOrFail($entry->appointment_id)
+                : $this->convertToAppointment($entry, $startsAtUtc, $idempotencyKey.':convert', $expectedVersion, $staffProfileId, $source, $actorType, $actorId);
+            $actualStaff = $appointment->segments()->where('occupies_staff', true)->pluck('staff_profile_id');
+            if (Appointment::query()->where('business_id', $entry->business_id)->whereKeyNot($appointment->id)
+                ->where('status', 'in_service')->where('ends_at_utc', '<=', now()->utc())
+                ->whereHas('segments', fn ($q) => $q->whereIn('staff_profile_id', $actualStaff)->where('occupies_staff', true))->exists()) {
+                throw new BookingRuleViolation('SERVICE_RUNNING_OVER', 'The selected staff member is still serving a client past the planned finish. Complete or adjust that visit first.');
+            }
+            $entry = $entry->fresh();
+            if ($appointment->status === 'confirmed') {
+                $appointment = $this->lifecycle->transition($appointment, 'arrived', $idempotencyKey.':arrived', $appointment->version, $source, $actorType, $actorId);
+            }
+            if ($appointment->status === 'arrived') {
+                $appointment = $this->lifecycle->transition($appointment, 'in_service', $idempotencyKey.':start', $appointment->version, $source, $actorType, $actorId);
+            }
 
-        return $appointment->fresh();
+            DB::transaction(function () use ($entry, $source, $actorType, $actorId): void {
+                $current = WalkInEntry::query()->where('business_id', $entry->business_id)->lockForUpdate()->findOrFail($entry->id);
+                if ($current->status === WalkInStatus::InService->value) {
+                    return;
+                }
+                $now = CarbonImmutable::now()->utc();
+                $previous = $current->status;
+                $actualWait = max(0, (int) $current->arrived_at->diffInMinutes($now));
+                $current->update([
+                    'status' => WalkInStatus::InService->value,
+                    'service_started_at' => $now,
+                    'actual_wait_minutes' => $actualWait,
+                    'version' => $current->version + 1,
+                ]);
+                $this->history($current, 'service_started', $previous, WalkInStatus::InService->value, $source, $actorType, $actorId, null, [], ['actual_wait_minutes' => $actualWait], $now);
+            }, 5);
+
+            DB::table('booking_command_keys')->where('id', $key->id)->update(['result_type' => 'appointment', 'result_id' => $appointment->id, 'updated_at' => now()]);
+
+            return $appointment->fresh();
+        }, 5);
     }
 
     public function markLeft(WalkInEntry $entry, int $expectedVersion, string $reason, string $source, ?string $actorType, ?int $actorId): WalkInEntry
@@ -283,6 +317,9 @@ class WalkInQueueService
         return DB::transaction(function () use ($entry, $expectedVersion, $reason, $source, $actorType, $actorId): WalkInEntry {
             $current = WalkInEntry::query()->where('business_id', $entry->business_id)->lockForUpdate()->findOrFail($entry->id);
             $this->assertVersionAndActive($current, $expectedVersion);
+            if ($current->appointment_id) {
+                throw new BookingRuleViolation('LINKED_APPOINTMENT', 'This walk-in has a Calendar visit. Cancel that visit in Calendar to release the reserved time.');
+            }
             $previous = $current->status;
             $now = CarbonImmutable::now()->utc();
             $actualWait = max(0, (int) $current->arrived_at->diffInMinutes($now));
@@ -299,41 +336,32 @@ class WalkInQueueService
     }
 
     /** @return array{estimated_service_at:?CarbonImmutable,estimated_wait_minutes:?int,evidence:array<string,mixed>} */
-    private function estimate(int $businessId, Location $location, Service $service, ?int $preferredStaffId, CarbonImmutable $arrivedAt): array
+    private function estimate(int $businessId, Location $location, Service $service, ?int $preferredStaffId, CarbonImmutable $arrivedAt, int $position): array
     {
-        $activeQueue = WalkInEntry::query()
-            ->where('business_id', $businessId)
-            ->where('location_id', $location->id)
-            ->whereIn('status', ['waiting', 'notified', 'assigned'])
-            ->count();
-        $queueMinutes = $activeQueue * max(5, (int) $service->duration_minutes);
-        $localDate = $arrivedAt->setTimezone($location->time_zone)->startOfDay();
-        $slots = $this->availability->search(new AvailabilitySearch(
-            $businessId,
-            $location->id,
-            $localDate,
-            $localDate->addDay(),
-            [new BookingLineRequest($service->id, $preferredStaffId, [], $preferredStaffId === null)],
-            'walk_in',
-            'existing',
-            100,
-            $arrivedAt->utc(),
-        ));
-        $notBefore = $arrivedAt->utc()->addMinutes($queueMinutes);
-        $slot = collect($slots)->first(fn (array $candidate) => CarbonImmutable::parse($candidate['starts_at_utc'])->gte($notBefore));
-        $estimatedAt = $slot ? CarbonImmutable::parse($slot['starts_at_utc'])->utc() : null;
-        $wait = $estimatedAt ? max(0, (int) $arrivedAt->utc()->diffInMinutes($estimatedAt)) : null;
+        $now = CarbonImmutable::now()->utc()->max($arrivedAt);
+        $entries = WalkInEntry::query()->where('business_id', $businessId)->where('location_id', $location->id)
+            ->whereIn('status', ['waiting', 'notified', 'assigned', 'in_service'])->with('appointment.segments')->orderBy('queue_position')->get();
+        $candidate = new WalkInEntry(['public_id' => 'arrival-estimate', 'service_id' => $service->id,
+            'status' => 'waiting', 'queue_position' => $position, 'preferred_staff_profile_id' => $preferredStaffId]);
+        $entries->push($candidate);
+        $staff = StaffProfile::query()->where('business_id', $businessId)->where('status', 'active')
+            ->whereHas('locations', fn ($q) => $q->whereKey($location->id))->with(['locations', 'availabilityRules'])->get();
+        $services = Service::query()->where('business_id', $businessId)->whereIn('id', $entries->pluck('service_id'))
+            ->with(['staffAssignments', 'locations', 'segments'])->get();
+        $business = Business::query()->findOrFail($businessId);
+        $board = app(WalkInWorkspaceQuery::class)->build($location, $staff, $services, $entries,
+            app(CalendarWorkspaceQuery::class)->build($location, $staff, $now, 1), $now, max(1, (int) ($business->appointment_interval_minutes ?: 15)));
+        $value = $board['forecast'][$candidate->public_id]['estimated_at'] ?? null;
+        $estimatedAt = $value ? CarbonImmutable::parse($value)->utc() : null;
 
         return [
             'estimated_service_at' => $estimatedAt,
-            'estimated_wait_minutes' => $wait,
+            'estimated_wait_minutes' => $estimatedAt ? max(0, (int) $arrivedAt->utc()->diffInMinutes($estimatedAt)) : null,
             'evidence' => [
-                'calculated_at_utc' => CarbonImmutable::now()->utc()->toIso8601String(),
-                'queue_entries_ahead' => $activeQueue,
-                'queue_minutes_assumed' => $queueMinutes,
-                'service_duration_minutes' => (int) $service->duration_minutes,
-                'future_appointments_and_staff_capacity_checked' => true,
-                'availability_slot_found' => $slot !== null,
+                'calculated_at_utc' => $now->toIso8601String(), 'queue_entries_ahead' => $entries->whereIn('status', ['waiting', 'assigned', 'notified'])->count() - 1,
+                'method' => 'ordered_qualified_staff_forecast', 'service_duration_minutes' => (int) $service->duration_minutes,
+                'future_appointments_and_staff_capacity_checked' => true, 'resources_checked' => false,
+                'availability_slot_found' => $estimatedAt !== null, 'advisory' => true,
             ],
         ];
     }

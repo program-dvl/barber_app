@@ -22,6 +22,12 @@ class ComingSoonEmailResource extends Resource
 {
     protected static ?string $model = ComingSoonEmail::class;
 
+    protected static ?string $modelLabel = 'subscriber';
+
+    protected static ?string $pluralModelLabel = 'Launch subscribers';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-envelope';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Content';
@@ -30,15 +36,13 @@ class ComingSoonEmailResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('Email Subscription')
-                    ->description('Manage coming soon email subscribers')
+                Section::make('Subscriber')
                     ->schema([
                         TextInput::make('email')
                             ->email()
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true)
-                            ->helperText('Email address of the subscriber')
                             ->columnSpanFull(),
                     ])
                     ->columns(1)

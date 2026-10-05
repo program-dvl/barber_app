@@ -6,6 +6,7 @@ use App\Domain\PlatformAccess\Enums\MembershipStatus;
 use App\Domain\PlatformAccess\Models\Membership;
 use App\Domain\PlatformAccess\Models\StaffInvitation;
 use App\Models\User;
+use App\Notifications\WorkspaceAccessChangedNotification;
 use App\Support\Audit\AuditWriter;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -18,7 +19,7 @@ class AcceptStaffInvitation
 
     public function handle(string $plainTextToken, User $user): Membership
     {
-        return DB::transaction(function () use ($plainTextToken, $user): Membership {
+        $membership = DB::transaction(function () use ($plainTextToken, $user): Membership {
             $invitation = StaffInvitation::query()
                 ->with(['business', 'role', 'locations', 'staffProfile'])
                 ->where('token_hash', hash('sha256', $plainTextToken))
@@ -87,5 +88,16 @@ class AcceptStaffInvitation
 
             return $membership;
         });
+
+        $role = $membership->getRoleNames()->first();
+        $user->notify(new WorkspaceAccessChangedNotification(
+            businessId: $membership->business_id,
+            businessPublicId: $membership->business->public_id,
+            businessName: $membership->business->name,
+            change: 'accepted',
+            role: $role ? str($role)->replace('_', ' ')->headline()->toString() : null,
+        ));
+
+        return $membership;
     }
 }

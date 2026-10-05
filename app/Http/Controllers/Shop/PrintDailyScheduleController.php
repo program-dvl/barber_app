@@ -20,6 +20,7 @@ class PrintDailyScheduleController extends Controller
         $membership = $context->membership();
         abort_unless($membership && ($membership->hasPermissionTo(PermissionName::CalendarViewAll->value, 'web') || $membership->hasPermissionTo(PermissionName::CalendarViewOwn->value, 'web')), 403);
         $location = Location::query()->where('business_id', $business->id)->where('public_id', $request->string('location'))->firstOrFail();
+        abort_unless($membership->hasRole('owner', 'web') || $membership->locations()->whereKey($location->id)->exists(), 403);
         $staffIds = [];
         if (! $membership->hasPermissionTo(PermissionName::CalendarViewAll->value, 'web')) {
             abort_unless($membership->staffProfile, 403);

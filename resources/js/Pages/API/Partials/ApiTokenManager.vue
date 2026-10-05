@@ -94,8 +94,8 @@ const deleteApiToken = () => {
                         type="text"
                         class="mt-1 block w-full"
                         autofocus
-                    />
-                    <InputError :message="createApiTokenForm.errors.name" class="mt-2" />
+                     :aria-invalid="createApiTokenForm.errors.name ? true : undefined" :aria-describedby="createApiTokenForm.errors.name ? 'name-error' : undefined"/>
+                    <InputError :message="createApiTokenForm.errors.name" class="mt-2"  id="name-error"/>
                 </div>
 
                 <!-- Token Permissions -->

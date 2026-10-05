@@ -200,13 +200,15 @@ ACCEPTANCE OUTCOME A verified owner can start a trial, choose monthly or annual 
 
 ### FR-02 Guided Onboarding and Business Setup
 
-Purpose: Minimise time-to-value and switching friction so a shop can publish a usable booking page in one session.
+Purpose: Minimise time-to-value and switching friction so a shop can run appointments quickly and explicitly publish a usable booking page in one session.
 
-#### Onboarding Wizard
+#### Guided Setup and Readiness Center
 
 - Guide the owner through business details, opening hours, services, staff, staff availability, booking rules, client import, preview and publish.
 - Save progress after every step; allow safe exit, resume and editing after publication.
-- Show launch readiness with explicit blockers and optional improvements rather than a vague completion percentage.
+- Show current operational essentials and separate online publication readiness with explicit blockers and optional improvements rather than a vague completion percentage.
+- Preserve useful versioned starter categories, selected services, opening hours, owner identity, roles and prepared templates. Make suggestions easy to review, personalize or deactivate; never fabricate clients or transactions. Allow safe empty service selection, retry and resume without duplicating or overwriting existing configuration.
+- Preparing starter data stays private. Explicit owner preview review and Go live control publication. Internal bookings and cash/manual checkout do not require optional branding, imports, online visibility or connected communication/payment providers. This approved clarification is recorded in ADR-053; Phase 2 scope is unchanged.
 
 #### Business Profile And Rules
 
@@ -460,14 +462,16 @@ Purpose: Keep clients and staff informed while respecting consent, local time an
 
 #### Events And Channels
 
-- Send booking confirmation/pending/approval/rejection, reminder, change, cancellation, deposit/payment receipt, waitlist opening, queue update, feedback request and rebooking reminder.
-- Support email and at least one mobile channel at launch; provide abstractions for SMS, WhatsApp, in-app and browser push.
+- Send booking confirmation/pending/approval/rejection, material change, cancellation, deposit/payment receipt, waitlist opening and deliberate queue updates. Send one reminder, normally 24 hours before the appointment. Keep feedback and rebooking outreach classified as marketing and disabled for the initial mobile release.
+- Expose email and SMS in the initial release. Keep other mobile providers behind a disabled application-owned channel contract until a later accepted decision promotes them; keep in-app and browser push as later compatible channels.
+- Offer a shared ClipperDesk sender for dependable business-labelled outbound texts and an entitled business-branded sender for an approved SMS identity. Free-form owner replies and a client inbox are deferred; inbound SMS remains available for STOP/START compliance.
+- Create one SMS notification for an eligible event. Do not expose cross-channel fallback or send duplicate mobile notifications in the initial release.
 - Separate transactional communications from marketing consent and unsubscribe rules.
 
 #### Templates And Timing
 
 - Allow shop-level templates with validated variables such as client, staff, service, location, date, amount and secure action link.
-- Configure reminder offsets and quiet hours in the recipient/location time zone; prevent duplicate sends after retries.
+- Use one 24-hour reminder by default, respect quiet hours in the appointment/location time zone, and prevent duplicate sends after retries or schedule changes.
 - Preview templates across channels and fall back when a variable is absent.
 
 #### Delivery Operations
@@ -475,8 +479,10 @@ Purpose: Keep clients and staff informed while respecting consent, local time an
 - Track queued, sent, delivered, failed, retried and suppressed states with provider response identifiers.
 - Retry transient failures with bounded backoff; expose failures to support without revealing unnecessary message content.
 - Record consent basis and communication history against the client where applicable.
+- Keep inbound compliance messages tenant-safe: a shared sender may accept STOP/START only when the tenant can be resolved unambiguously; business-branded SMS senders route directly to that business.
+- Apply recognised STOP/START keywords immediately, append consent evidence, and recheck consent before every send or fallback release.
 
-ACCEPTANCE OUTCOME Every critical appointment and payment event creates at most one intended notification per channel, at the correct local time, with delivery status visible for support.
+ACCEPTANCE OUTCOME Every critical appointment and payment event creates at most one intended notification per channel, at the correct local time, with delivery status visible for support; fallback never creates duplicate mobile outreach, and replies cannot cross tenant boundaries.
 
 ### FR-14 Deposits, Cancellation Rules and No-Show Protection
 
@@ -697,23 +703,35 @@ PHASE GUARDRAIL Do not pull a deferred feature into launch unless it resolves a 
 
 ## 9 Subscription Packaging and Commercial Rules
 
-Recommended pricing basis: per location plus staff bands. Avoid per-appointment pricing that penalises successful customers. Keep messaging usage and payment-processing fees transparent and separate from the software subscription.
+Approved owner direction, 2026-10-05 (ADR-054): one core plan priced by the
+business's purchased locations and bookable staff, with monthly/yearly billing
+and explicit local country/currency rates. This supersedes the earlier suggested
+staff-band/tier matrix for new subscriptions. Existing subscriptions retain their
+terms until an owner explicitly confirms a reviewed migration.
 
-| Plan | Best for | Primary limit | Capability emphasis |
-| --- | --- | --- | --- |
-| Starter | Solo and very small shops | 1 location; up to 2 staff | Calendar, booking page, CRM, email reminders, payment recording, basic reports |
-| Team | Typical barbershops and salons | 1 location; larger staff band | Roles, deposits, mobile messaging, POS, walk-ins, inventory, commissions, operational reports |
-| Business | Larger single-location operators | Higher staff and usage limits | Custom branding, advanced permissions, automation, audit/reporting, priority support and exports |
+- Base includes one active location and one active bookable staff profile; each
+  extra location and bookable staff adds the published local unit rate.
+- Count a person once across branches. Login-only administrative users, inactive
+  staff and physical chairs do not consume purchased staff capacity.
+- Show the complete recurring amount, component breakdown, cadence, tax treatment,
+  monthly pooled SMS allowance and optional prepaid text packs before commitment.
+- Include routine operational email notifications; no marketing or conversational
+  channel is promoted. Twilio destination/segment costs and SES costs must be
+  budgeted into country rate cards. No unlimited SMS or hidden automatic overages.
+- Prepare optional credit purchases now; keep automatic purchases off and retain
+  external delivery/payment/refund certification before paid launch. This expressly
+  promotes the implementation prerequisite in the earlier extra-credit rule;
+  it does not waive provider, security, legal or independent release gates.
+- Expansion requires verified payment; decreases/interval changes take effect at
+  renewal. Preserve resource, invoice, audit and subscription histories.
+- Existing entitlements, business overrides and membership permissions remain
+  separate authorities. SMS monthly windows apply even to annual subscriptions.
+- Retain a time-limited trial, self-service conversion and term-end cancellation.
+- Country prices, annual savings, text allowances and pack amounts need separate
+  commercial approval. The illustrative USD draft is not an approved rate.
+- State appointment payment processing fees separately from SaaS subscription fees.
 
-### Commercial rules
-
-- Offer monthly and annual billing, with annual savings in the 15-20% range subject to market testing.
-- Offer a time-limited free trial with clear activation steps and expiry; do not require support to convert.
-- Use entitlements for staff/location caps, messaging allowance, deposits, inventory, reporting, branding and support level.
-- Meter SMS/WhatsApp separately or include transparent allowances; show usage before overage.
-- State payment-processing charges separately from subscription fees.
-- At launch, prefer two paid plans plus an optional higher tier over a confusing plan matrix.
-- Grandfathering, plan migrations and downgrades must define what happens when current usage exceeds the new limit.
+See `modules/subscription-billing.md` for implementation and failure contracts.
 
 ## 10 Information Architecture and Minimum Navigation
 

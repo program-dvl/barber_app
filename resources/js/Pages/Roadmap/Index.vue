@@ -243,7 +243,7 @@ function toggleVote(roadmap) {
                             class="w-full rounded-lg border border-base-300 bg-base-100 px-4 py-2 text-base-content focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                             :placeholder="$t('Brief description of your feature request')"
                             required
-                        />
+                         :aria-invalid="form.errors.title ? true : undefined" :aria-describedby="form.errors.title ? 'title-error' : undefined"/>
                         <p v-if="form.errors.title" class="mt-1 text-sm text-error">{{ form.errors.title }}</p>
                     </div>
 
@@ -258,7 +258,7 @@ function toggleVote(roadmap) {
                             class="w-full rounded-lg border border-base-300 bg-base-100 px-4 py-2 text-base-content focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                             :placeholder="$t('Explain your feature request in detail...')"
                             required
-                        ></textarea>
+                         :aria-invalid="form.errors.description ? true : undefined" :aria-describedby="form.errors.description ? 'description-error' : undefined"></textarea>
                         <p v-if="form.errors.description" class="mt-1 text-sm text-error">{{ form.errors.description }}</p>
                     </div>
 

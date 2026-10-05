@@ -27,7 +27,7 @@ const submit = () => form.post(googleRegistration.value ? route('auth.google.reg
         title="Create your workspace"
         eyebrow="A considered way to begin"
         heading="Build the workspace around the way your business works."
-        description="Set up the owner account first, then shape services, people, hours and booking rules before anything goes live."
+        description="Set up your business, services and working hours."
         image="/images/marketing/editorial/company-story.webp"
         image-alt="A group of beauty, wellness and service professionals sharing a natural moment in their studio."
         image-caption="For independent owners and growing teams alike."
@@ -36,10 +36,9 @@ const submit = () => form.post(googleRegistration.value ? route('auth.google.reg
             <div class="mb-7 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <p class="text-xs font-bold uppercase tracking-[0.14em] text-[var(--brand-accent)]">Owner workspace</p>
-                    <h2 class="cd-display mt-3 text-[clamp(2.15rem,4vw,3rem)] font-semibold leading-[1.02] tracking-[-0.05em] text-[var(--text-strong)]">{{ googleRegistration ? 'Finish setting up your workspace.' : 'Start with a stronger front desk.' }}</h2>
-                    <p class="mt-3 max-w-xl text-base leading-7 text-[var(--text-muted)]">{{ googleRegistration ? 'Google verified your identity. Add the business details ClipperDesk needs to create your secure workspace.' : 'Create the owner account for your appointment-based business. No payment details are required to begin.' }}</p>
+                    <h1 class="cd-display mt-3 text-2xl font-semibold leading-tight tracking-[-0.05em] text-[var(--text-strong)]">{{ googleRegistration ? 'Finish creating your account' : 'Create your account' }}</h1>
+                    <p class="mt-3 max-w-xl text-base leading-7 text-[var(--text-muted)]">{{ googleRegistration ? 'Google verified your identity. Add the business details ClipperDesk needs to create your secure workspace.' : 'No payment details are required to start your trial.' }}</p>
                 </div>
-                <div class="inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full bg-[var(--status-success-soft)] px-3 py-1.5 text-xs font-bold text-[var(--status-success)]"><ShieldCheckIcon class="size-4" aria-hidden="true" /> Secure setup</div>
             </div>
 
             <div v-if="$page.props.errors?.google" class="mb-5 flex items-start gap-2.5 rounded-[var(--radius-md)] border border-[var(--status-danger)]/20 bg-[var(--status-danger-soft)] p-3.5 text-sm text-[var(--status-danger)]" role="alert"><ExclamationTriangleIcon class="mt-0.5 size-5 shrink-0" aria-hidden="true" /><span>{{ $page.props.errors.google }}</span></div>
@@ -58,15 +57,15 @@ const submit = () => form.post(googleRegistration.value ? route('auth.google.reg
                 <InputError :message="form.errors.selected_plan" />
 
                 <div class="grid gap-5 sm:grid-cols-2">
-                    <div><InputLabel for="business_name" :value="$t('Business name')" /><TextInput id="business_name" v-model="form.business_name" type="text" class="mt-2 block w-full" required autofocus autocomplete="organization" placeholder="North & Main Studio" /><InputError class="mt-2" :message="form.errors.business_name" /></div>
-                    <div><InputLabel for="name" :value="$t('Your full name')" /><TextInput id="name" v-model="form.name" type="text" class="mt-2 block w-full" required autocomplete="name" placeholder="Alex Morgan" /><InputError class="mt-2" :message="form.errors.name" /></div>
+                    <div><InputLabel for="business_name" :value="$t('Business name')" /><TextInput id="business_name" v-model="form.business_name" type="text" class="mt-2 block w-full" required autofocus autocomplete="organization" placeholder="North & Main Studio"  :aria-invalid="form.errors.business_name ? true : undefined" :aria-describedby="form.errors.business_name ? 'business_name-error' : undefined"/><InputError class="mt-2" :message="form.errors.business_name"  id="business_name-error"/></div>
+                    <div><InputLabel for="name" :value="$t('Your full name')" /><TextInput id="name" v-model="form.name" type="text" class="mt-2 block w-full" required autocomplete="name" placeholder="Alex Morgan"  :aria-invalid="form.errors.name ? true : undefined" :aria-describedby="form.errors.name ? 'name-error' : undefined"/><InputError class="mt-2" :message="form.errors.name"  id="name-error"/></div>
                 </div>
 
-                <div><InputLabel for="email" :value="$t('Work email')" /><TextInput id="email" v-model="form.email" type="email" class="mt-2 block w-full" :readonly="Boolean(googleRegistration)" required autocomplete="username" placeholder="name@business.com" /><p v-if="googleRegistration" class="mt-1.5 text-xs text-[var(--text-muted)]">This verified Google email will be used for account access.</p><InputError class="mt-2" :message="form.errors.email" /></div>
+                <div><InputLabel for="email" :value="$t('Work email')" /><TextInput id="email" v-model="form.email" type="email" class="mt-2 block w-full" :readonly="Boolean(googleRegistration)" required autocomplete="username" placeholder="name@business.com"  :aria-invalid="form.errors.email ? true : undefined" :aria-describedby="form.errors.email ? 'email-error' : undefined"/><p v-if="googleRegistration" class="mt-1.5 text-xs text-[var(--text-muted)]">This verified Google email will be used for account access.</p><InputError class="mt-2" :message="form.errors.email"  id="email-error"/></div>
 
                 <div v-if="!googleRegistration" class="grid gap-5 sm:grid-cols-2">
-                    <div><InputLabel for="password" :value="$t('Password')" /><TextInput id="password" v-model="form.password" type="password" class="mt-2 block w-full" required autocomplete="new-password" placeholder="At least 8 characters" /><InputError class="mt-2" :message="form.errors.password" /></div>
-                    <div><InputLabel for="password_confirmation" :value="$t('Confirm password')" /><TextInput id="password_confirmation" v-model="form.password_confirmation" type="password" class="mt-2 block w-full" required autocomplete="new-password" placeholder="Repeat your password" /><InputError class="mt-2" :message="form.errors.password_confirmation" /></div>
+                    <div><InputLabel for="password" :value="$t('Password')" /><TextInput id="password" v-model="form.password" type="password" class="mt-2 block w-full" required autocomplete="new-password" placeholder="At least 8 characters"  :aria-invalid="form.errors.password ? true : undefined" :aria-describedby="form.errors.password ? 'password-error' : undefined"/><InputError class="mt-2" :message="form.errors.password"  id="password-error"/></div>
+                    <div><InputLabel for="password_confirmation" :value="$t('Confirm password')" /><TextInput id="password_confirmation" v-model="form.password_confirmation" type="password" class="mt-2 block w-full" required autocomplete="new-password" placeholder="Repeat your password"  :aria-invalid="form.errors.password_confirmation ? true : undefined" :aria-describedby="form.errors.password_confirmation ? 'password_confirmation-error' : undefined"/><InputError class="mt-2" :message="form.errors.password_confirmation"  id="password_confirmation-error"/></div>
                 </div>
 
                 <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-subtle)] p-4">

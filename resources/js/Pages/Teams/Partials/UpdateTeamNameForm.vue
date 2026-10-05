@@ -61,9 +61,9 @@ const updateTeamName = () => {
                     type="text"
                     class="mt-1 block w-full"
                     :disabled="! permissions.canUpdateTeam"
-                />
+                 :aria-invalid="form.errors.name ? true : undefined" :aria-describedby="form.errors.name ? 'name-error' : undefined"/>
 
-                <InputError :message="form.errors.name" class="mt-2" />
+                <InputError :message="form.errors.name" class="mt-2"  id="name-error"/>
             </div>
         </template>
 

@@ -23,13 +23,13 @@ defineProps({
             <Link href="/" class="relative z-10 inline-flex w-fit min-h-11 items-center" aria-label="ClipperDesk home"><ProductMark inverse large /></Link>
 
             <div class="relative z-10 mt-auto max-w-xl pt-20">
-                <p class="cd-auth-eyebrow">{{ eyebrow }}</p>
-                <h1 class="mt-5 max-w-lg font-display text-[clamp(2.8rem,5vw,5.25rem)] font-semibold leading-[0.94] tracking-[-0.06em] text-balance">{{ heading }}</h1>
-                <p class="mt-6 max-w-lg text-lg leading-8 text-white/78">{{ description }}</p>
-                <p class="cd-auth-photo-caption mt-9">{{ imageCaption }}</p>
+
+                <h2 class="mt-4 max-w-lg text-3xl font-semibold leading-tight tracking-tight">{{ heading }}</h2>
+                <p class="mt-6 max-w-lg text-base leading-6 text-white/78">{{ description }}</p>
+
             </div>
 
-            <div class="relative z-10 mt-10 flex items-center gap-2 text-sm text-white/65"><LockClosedIcon class="size-4" aria-hidden="true" />Secure, role-aware access for your business</div>
+
         </aside>
 
         <main class="cd-auth-main relative flex min-h-screen items-center justify-center px-4 py-7 sm:px-7 lg:px-10 lg:py-10 xl:px-14">
@@ -39,7 +39,7 @@ defineProps({
                     <Link href="/" class="cd-auth-back ml-auto hidden min-h-11 items-center gap-2 text-sm font-bold text-[var(--text-muted)] hover:text-[var(--text-strong)] lg:inline-flex"><ArrowLeftIcon class="size-4" aria-hidden="true" />Back to website</Link>
                 </div>
                 <slot />
-                <p class="mx-auto mt-6 max-w-md text-center text-xs leading-5 text-[var(--text-muted)]"><LockClosedIcon class="mr-1 inline size-3.5" aria-hidden="true" />Protected by encrypted sessions, rate-limited access, and verified identities.</p>
+
             </div>
         </main>
     </div>

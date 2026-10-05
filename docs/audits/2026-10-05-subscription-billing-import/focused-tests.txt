@@ -1,0 +1,146 @@
+
+   PASS  Tests\Feature\Billing\BillingWorkspaceTest
+  ✓ it returns bounded invoice history and safe summary fields without…  0.79s  
+  ✓ it shows only approved plan prices and retains historical subscript… 0.08s  
+  ✓ it separates outstanding currencies and excludes paid invoices from… 0.05s  
+  ✓ it returns secure invoice details without provider metadata and blo… 0.07s  
+  ✓ it filters unsafe and non-provider document links                    0.04s  
+  ✓ it does not grant staff access to billing refresh or invoice eviden… 0.05s  
+  ✓ it ignores provider events without ownership identifiers             0.04s  
+  ✓ it rejects conflicting provider customer and tenant metadata with (… 0.05s  
+  ✓ it rejects conflicting provider customer and tenant metadata with (… 0.04s  
+  ✓ it preserves paid evidence against older and same-second failed inv… 0.04s  
+  ✓ it preserves paid evidence against older and same-second failed inv… 0.04s  
+  ✓ it sums all provider discounts and taxes and preserves exact retry…  0.04s  
+  ✓ it records a provider-confirmed future billing phase without granti… 0.06s  
+  ✓ it accepts optional cancellation feedback and makes exact replay a…  0.06s  
+  ✓ it rejects stale cancellation and reactivation after paid access en… 0.06s  
+  ✓ it reactivates a scheduled cancellation once and preserves replay s… 0.06s  
+  ✓ it throttles freshly verified account refresh without another provi… 0.05s  
+  ✓ it does not send a new failure notice for an older subscription sna… 0.04s  
+
+   PASS  Tests\Feature\Billing\CapacityBillingTest
+  ✓ it prices solo shops and larger teams without rounding or staff cap… 0.02s  
+  ✓ it prices solo shops and larger teams without rounding or staff cap… 0.01s  
+  ✓ it prices solo shops and larger teams without rounding or staff cap… 0.01s  
+  ✓ it prices solo shops and larger teams without rounding or staff cap… 0.01s  
+  ✓ it prices solo shops and larger teams without rounding or staff cap… 0.01s  
+  ✓ it does not present draft country prices as purchasable public pric… 0.02s  
+  ✓ it requires both approval and an exactly verified rate revision      0.02s  
+  ✓ it uses local currency rate cards without exchanging customer invoi… 0.01s  
+  ✓ it reviews expansion without granting capacity and claims the revie… 0.05s  
+  ✓ it schedules reduced capacity at renewal and prevents deleting acti… 0.05s  
+  ✓ it rejects stale and expired reviews before dispatching payment wit… 0.06s  
+  ✓ it rejects stale and expired reviews before dispatching payment wit… 0.06s  
+  ✓ it protects billing review and purchases from staff and other tenan… 0.07s  
+  ✓ it creates one capacity checkout and reuses its exact replay         0.06s  
+  ✓ it identifies the base item independently of provider item order     0.01s  
+  ✓ it rejects unknown extra items mismatched currency and duplicate co… 0.01s  
+  ✓ it rejects unknown extra items mismatched currency and duplicate co… 0.02s  
+  ✓ it rejects unknown extra items mismatched currency and duplicate co… 0.01s  
+  ✓ it applies signed active quantities and ignores stale provider expa… 0.05s  
+  ✓ it keeps current quantities when Stripe has a pending unpaid update  0.05s  
+  ✓ it reconciles a future capacity phase without reducing current acce… 0.05s  
+  ✓ it counts a bookable person once across branches and excludes login… 0.04s  
+  ✓ it resets included SMS monthly within an annual subscription and cl… 0.04s  
+  ✓ it adds prepaid credits only after exact owned payment and handles…  0.05s  
+  ✓ it rejects topup currency amount and ownership mismatches with ('cu… 0.05s  
+  ✓ it rejects topup currency amount and ownership mismatches with ('cu… 0.04s  
+  ✓ it rejects topup currency amount and ownership mismatches with ('am… 0.04s  
+  ✓ it rejects topup currency amount and ownership mismatches with ('id… 0.04s  
+  ✓ it reserves complete segment cost without overspending and releases… 0.05s  
+  ✓ it counts GSM extensions unicode and emojis as actual SMS segments   0.01s  
+  ✓ it shows the total capacity charge rather than just the base item o… 0.08s  
+  ✓ it spends prepaid credits after included allowance is fully used an… 0.05s  
+  ✓ it verifies asynchronous taxed text payments once without accepting… 0.05s  
+  ✓ it closes overlapping legacy annual allowance when explicitly migra… 0.05s  
+  ✓ it releases an expired pending expansion but ignores an older expir… 0.05s  
+  ✓ it rejects provider quantities that renew on different dates         0.01s  
+  ✓ it recovers an uncertain checkout using the same attempt and paymen… 0.06s  
+  ✓ it sends pending payment and fixed proration with all component qua… 0.11s  
+  ✓ it creates a finite renewal schedule and retains automatic tax thro… 0.05s  
+
+   PASS  Tests\Feature\Billing\StripeCatalogSyncCommandTest
+  ✓ it keeps the approved Stripe catalog centralized and does not write… 0.02s  
+  ✓ it fails closed when any required Stripe price mapping is absent     0.02s  
+  ✓ it provisions missing Stripe products and prices and synchronizes g… 0.02s  
+  ✓ it requires explicit force before provisioning against a live Strip… 0.01s  
+  ✓ it rejects a publishable Stripe key before attempting catalog provi… 0.01s  
+  ✓ it keeps the LaraFast create command as a safe alias to the Busines… 0.02s  
+
+   PASS  Tests\Feature\Billing\SubscriptionLifecycleTest
+  ✓ it starts business-owned trials on Stripe and restricts expired tri… 0.08s  
+  ✓ it creates one reusable hosted Stripe checkout from an approved ser… 0.06s  
+  ✓ it expires a competing Stripe Checkout before replacing it with ano… 0.06s  
+  ✓ it fails closed while another request is still preparing the Stripe… 0.05s  
+  ✓ it fails closed before checkout when Stripe webhook verification is… 0.05s  
+  ✓ it rejects a forged or unconfigured Stripe price before contacting…  0.05s  
+  ✓ it uses signed idempotent webhooks as the authority for checkout ac… 0.05s  
+  ✓ it converges when Stripe delivers subscription state before the Che… 0.05s  
+  ✓ it does not activate a superseded Checkout attempt delivered late b… 0.05s  
+  ✓ it moves renewal failures through past due and read-only restrictio… 0.05s  
+  ✓ it projects current Stripe invoice payloads that nest subscription…  0.04s  
+  ✓ it maps Stripe unpaid and paused states to read-only access with ('… 0.04s  
+  ✓ it maps Stripe unpaid and paused states to read-only access with ('… 0.05s  
+  ✓ it keeps subscription entitlements separate from member permissions  0.08s  
+  ✓ it prevents cross-business checkout status and billing access        0.06s  
+  ✓ it rejects invalid Stripe signatures and accepts a valid signed eve… 0.12s  
+  ✓ it schedules an over-limit downgrade without deleting business reso… 0.05s  
+  ✓ it opens a Stripe-hosted confirmation for an upgrade and clears a l… 0.06s  
+  ✓ it allows an interval switch through Stripe but does not offer self… 0.06s  
+  ✓ it reports a Stripe-confirmed plan change without waiting on a brow… 0.06s  
+  ✓ it clears a legacy direct-update record when Stripe expires its pen… 0.05s  
+
+   PASS  Tests\Feature\Communications\NotificationWorkspaceTest
+  ✓ it projects existing rules and both channels without credentials or… 0.08s  
+  ✓ it saves a first draft without suppressing the live default and pub… 0.07s  
+  ✓ it validates event-specific variables, malformed syntax, HTML and d… 0.07s  
+  ✓ it rejects stale publishes and cross-tenant template preview and pu… 0.06s  
+  ✓ it paginates history, filters local dates and searches exact encryp… 0.14s  
+  ✓ it allows reception to view branch-scoped history while denying edi… 0.12s  
+  ✓ it requires a current settings revision and audits only saved chang… 0.07s  
+  ✓ it serializes retry commands and never retries a queued or accepted… 0.07s  
+  ✓ it keeps future reminder links usable through their actual send tim… 0.09s  
+  ✓ it suppresses queued SMS when its captured sender becomes inactive…  0.05s  
+  ✓ it does not revive an elapsed day-before reminder by shifting it ou… 0.05s  
+  ✓ it opens the exact issued receipt through a signed private link and… 0.19s  
+  ✓ it retains explicit client channel withdrawals when editing other p… 0.08s  
+
+   PASS  Tests\Feature\Communications\ReliableCommunicationsTest
+  ✓ it creates at most one message per intended event channel and recip… 0.05s  
+  ✓ it keeps transactional email on by default and honours an explicit…  0.05s  
+  ✓ it kicks new operational events immediately and sweeps due delivery… 0.05s  
+  ✓ it does not contact a provider for duplicate delivery jobs once a m… 0.05s  
+  ✓ it validates allow-listed templates, uses safe fallbacks, and denie… 0.05s  
+  ✓ it calculates quiet-hour boundaries and preserves explicit offsets…  0.04s  
+  ✓ it schedules one day-before reminder and creates a replacement afte… 0.05s  
+  ✓ it separates transactional necessity, SMS opt-in, marketing consent… 0.04s  
+  ✓ it keeps promotional SMS paused even when legacy marketing settings… 0.04s  
+  ✓ it bounds provider retries, reuses one provider idempotency key, an… 0.06s  
+  ✓ it atomically enforces the plan mobile-message allowance without ch… 0.06s  
+  ✓ it deduplicates provider callbacks and ignores an older callback th… 0.05s  
+  ✓ it rejects unsigned callbacks and accepts valid Resend and Twilio w… 0.16s  
+  ✓ it suppresses invalid destinations and cancelled or rescheduled rem… 0.05s  
+  ✓ it rechecks consent immediately before delivery and safely replays…  0.11s  
+  ✓ it creates revocable purpose-bound short-lived action links and exp… 0.04s  
+  ✓ it creates only one SMS message when deferred channel data is still… 0.05s  
+  ✓ it suppresses an old queued deferred-channel message before provide… 0.05s  
+  ✓ it records SMS STOP once and withdraws text consent immediately      0.05s  
+  ✓ it prepares an entitled branded sender without exposing provider cr… 0.08s  
+  ✓ it rejects deferred channels from the owner notification settings    0.05s  
+  ✓ it keeps sms tests free and requires explicit switches before sandb… 0.01s  
+  ✓ it uses free-form whatsapp content only for an open branded convers… 0.01s  
+
+   PASS  Tests\Feature\Communications\SesClientDeliveryTest
+  ✓ it uses configured SES with a real message identifier, escaped HTML… 0.05s  
+  ✓ it only retries explicit SES throttling and holds uncertain accepta… 0.05s  
+  ✓ it accepts signed SES delivery and bounce evidence idempotently wit… 0.11s  
+  ✓ it rejects unsigned, wrong-topic and redirected certificates before… 0.07s  
+  ✓ it keeps local email simulation separate from SES delivery           0.05s  
+  ✓ it confirms only a signed subscription for the explicitly configure… 0.09s  
+  ✓ it asks SNS to retry a delivery callback that races the provider re… 0.14s  
+  ✓ it does not move uncertain historical provider attempts to SES auto… 0.05s  
+
+  Tests:    128 passed (685 assertions)
+  Duration: 7.62s
+

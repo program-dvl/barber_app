@@ -15,12 +15,12 @@ defineProps({
 
 <template>
     <AppLayout :title="module.label" :business-label="businessLabel">
-        <PageHeader eyebrow="Shop application" :title="module.label" :description="module.description" />
+        <PageHeader :title="module.label" />
         <div class="mt-6">
             <StatePanel
                 tone="info"
                 title="This area is coming later"
-                description="The navigation is reserved so the workspace remains familiar as ClipperDesk grows. No unfinished controls or sample records are exposed here."
+                description="This feature is not available yet."
             >
                 <template #actions><AppButton :href="route('business.dashboard', $page.props.tenant.public_id)" variant="secondary">Return to dashboard</AppButton></template>
             </StatePanel>
