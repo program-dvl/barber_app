@@ -103,7 +103,12 @@ class CapacityBillingController extends Controller
             $reconciler->reconcile($subscription);
         }
 
-        return response()->json($this->present($change->fresh()));
+        $change = $change->fresh();
+        $checkoutUrl = $change->kind === 'checkout' && isset($attempt) && $attempt
+            && in_array($attempt->fresh()->status, ['pending', 'processing'], true)
+            && $attempt->expires_at->isFuture() ? $attempt->provider_checkout_url : null;
+
+        return response()->json([...$this->present($change), 'checkout_url' => $checkoutUrl]);
     }
 
     public function topup(Request $request, Business $business, CapacityStripeGateway $stripe)

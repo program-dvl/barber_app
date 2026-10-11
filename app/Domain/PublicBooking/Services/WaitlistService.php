@@ -74,7 +74,8 @@ class WaitlistService
             $staffId = $request->preferred_staff_profile_id ?: $cancelled->segments->where('occupies_staff', true)->first()?->staff_profile_id;
             $slots = $this->availability->search(new AvailabilitySearch(
                 $cancelled->business_id, $cancelled->location_id, $local->startOfDay(), $local->startOfDay(),
-                [new BookingLineRequest($request->service_id, $staffId, [], $staffId === null)], 'waitlist', 'existing', 20,
+                [new BookingLineRequest($request->service_id, $staffId, [], $staffId === null)], 'waitlist', 'existing', 1,
+                exactStartUtc: $cancelled->starts_at_utc,
             ));
 
             return collect($slots)->contains(fn (array $slot) => CarbonImmutable::parse($slot['starts_at_utc'])->equalTo($cancelled->starts_at_utc));

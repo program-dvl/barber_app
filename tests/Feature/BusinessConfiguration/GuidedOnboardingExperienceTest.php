@@ -10,7 +10,10 @@ use App\Domain\BusinessConfiguration\Services\StarterWorkspaceProvisioner;
 use App\Domain\PlatformAccess\Enums\StarterRole;
 use App\Domain\PlatformAccess\Models\AuditEvent;
 use App\Support\Files\TenantFilePath;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -126,6 +129,51 @@ function starterCategoryAnswers(string $type, string $serviceKey): array
         'schedule_preset' => 'weekdays', 'service_keys' => [$serviceKey],
     ];
 }
+
+it('resumes saved onboarding after the pending booking slug migration is applied', function () {
+    [$owner, $business, $membership] = createTenantMembership(StarterRole::Owner);
+    activateTestSubscription($business);
+    $business->update(['name' => 'Recovery Salon']);
+    $onboarding = app(OnboardingManager::class);
+    $answers = starterCategoryAnswers('hair_salon', 'cut_finish');
+    foreach ([
+        'business_type' => ['business_type'],
+        'business_shape' => ['operation_model', 'team_size', 'location_scale', 'owner_bookable', 'accepts_online_bookings'],
+        'location' => ['country_code', 'time_zone', 'address', 'phone', 'schedule_preset'],
+        'starter_services' => ['service_keys'],
+    ] as $step => $keys) {
+        $onboarding->saveGuidedAnswers($business, $step, array_intersect_key($answers, array_flip($keys)));
+    }
+    $savedAnswers = $business->fresh()->onboardingSession->answers;
+
+    // Reproduce updated source running before its schema migration.
+    Schema::drop('booking_slug_reservations');
+    expect(fn () => app(StarterWorkspaceProvisioner::class)->provision($business->fresh(), $membership, $owner, $savedAnswers))
+        ->toThrow(QueryException::class);
+    expect($business->fresh()->onboardingSession->answers)->toBe($savedAnswers)
+        ->and($business->fresh()->onboardingSession->guided_completed_at)->toBeNull()
+        ->and($business->services()->count())->toBe(0)
+        ->and($business->fresh()->booking_slug)->toBeNull();
+
+    $migration = require database_path('migrations/2026_10_10_000001_reserve_public_booking_slugs.php');
+    $migration->up();
+    $migration->up();
+    $complete = route('business.configuration.guided-onboarding.complete', $business);
+    $this->actingAs($owner)->post($complete, ['service_keys' => $savedAnswers['service_keys']])
+        ->assertRedirect(route('business.configuration.show', ['business' => $business, 'welcome' => 1]))
+        ->assertSessionHasNoErrors();
+    $this->post($complete, ['service_keys' => $savedAnswers['service_keys']])
+        ->assertRedirect()->assertSessionHasNoErrors();
+
+    expect($business->fresh()->onboardingSession->guided_completed_at)->not->toBeNull()
+        ->and($business->fresh()->onboardingSession->answers)->toBe($savedAnswers)
+        ->and($business->fresh()->booking_slug)->toBe('recovery-salon')
+        ->and($business->fresh()->configuration_published_at)->toBeNull()
+        ->and($business->services()->count())->toBe(1)
+        ->and($business->staffProfiles()->count())->toBe(1)
+        ->and($business->locations()->count())->toBe(1)
+        ->and(DB::table('booking_slug_reservations')->where('slug', 'recovery-salon')->value('business_id'))->toBe($business->id);
+});
 
 it('prepares type-specific categories but only selected services for each supported business type', function (string $typeKey) {
     [$owner, $business, $membership] = createTenantMembership(StarterRole::Owner);

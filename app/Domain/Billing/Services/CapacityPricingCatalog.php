@@ -3,10 +3,18 @@
 namespace App\Domain\Billing\Services;
 
 use App\Domain\Billing\Models\BillingRateCard;
+use App\Domain\PlatformAccess\Models\Business;
 use Illuminate\Validation\ValidationException;
 
 class CapacityPricingCatalog
 {
+    public function marketFor(Business $business): string
+    {
+        return config('capacity-billing.pricing_mode') === 'usd'
+            ? (string) config('capacity-billing.default_market', 'US')
+            : strtoupper($business->country_code);
+    }
+
     public function terms(string $market, string $interval): array
     {
         $country = config('capacity-billing.markets.'.strtoupper($market));
@@ -21,13 +29,29 @@ class CapacityPricingCatalog
         }
         abort_unless(in_array($country['currency'] ?? '', ['USD', 'CAD', 'GBP', 'EUR', 'INR', 'AUD'], true), 422, 'Unsupported billing currency.');
 
-        return [
+        $terms = [
             'market' => strtoupper($market), 'currency' => $country['currency'],
             'revision' => $country['revision'], 'billing_interval' => $interval,
             ...$rates, 'sms_per_staff' => (int) $country['sms_per_staff'],
             'sms_routes' => (array) $country['sms_routes'], 'sms_packs' => (array) ($country['sms_packs'] ?? []),
             'features' => config('capacity-billing.features'),
         ];
+        // Command-managed mappings survive deployment without copying IDs to .env.
+        if (collect(['base', 'location', 'staff'])->contains(fn ($role) => blank($terms[$role.'_price_id']))) {
+            $cards = BillingRateCard::where('market', $terms['market'])->where('revision', $terms['revision'])
+                ->where('billing_interval', $interval)->latest('id')->get();
+            foreach ($cards as $card) {
+                $candidate = $terms;
+                foreach (['base', 'location', 'staff'] as $role) {
+                    $candidate[$role.'_price_id'] = $candidate[$role.'_price_id'] ?: $card->terms[$role.'_price_id'];
+                }
+                if ($this->fingerprint($candidate) === $card->fingerprint) {
+                    return $candidate;
+                }
+            }
+        }
+
+        return $terms;
     }
 
     public function fingerprint(array $terms): string
@@ -92,6 +116,9 @@ class CapacityPricingCatalog
     {
         $markets = [];
         foreach (config('capacity-billing.markets', []) as $market => $country) {
+            if (config('capacity-billing.pricing_mode') === 'usd' && $market !== config('capacity-billing.default_market')) {
+                continue;
+            }
             $intervals = [];
             foreach (['monthly', 'annual'] as $interval) {
                 if (! isset($country[$interval])) {

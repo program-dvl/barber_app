@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
-beforeEach(fn () => Carbon::setTestNow('2026-10-05 12:00:00'));
+beforeEach(fn () => Carbon::setTestNow(Carbon::now()->startOfSecond()->addMinutes(5)));
 afterEach(fn () => Carbon::setTestNow());
 
 function billingWorkspaceFixture(): array
@@ -70,11 +70,11 @@ it('returns bounded invoice history and safe summary fields without trusting ret
         ->assertInertia(fn (Assert $page) => $page->has('invoices.data', 4)->where('invoices.current_page', 2));
 });
 
-it('shows only approved plan prices and retains historical subscription prices', function () {
+it('omits tier offers while retaining historical subscription prices', function () {
     [$owner,$business,$subscription] = billingWorkspaceFixture();
     $subscription->price->update(['is_active' => false]);
     $this->actingAs($owner)->get(route('business.billing.show', $business))->assertInertia(fn (Assert $page) => $page
-        ->where('subscription.price.amount_minor', 10000)->where('plans.1.prices', []));
+        ->where('subscription.price.amount_minor', 10000)->missing('plans')->missing('planRanks'));
 });
 
 it('separates outstanding currencies and excludes paid invoices from amount due', function () {

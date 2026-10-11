@@ -7,6 +7,7 @@ use App\Domain\MoneyCommerce\Services\PaymentIntentService;
 use App\Domain\PublicBooking\Services\PublicBookingService;
 use App\Http\Controllers\Controller;
 use App\Rules\E164Phone;
+use App\Support\BookingUrl;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -21,10 +22,16 @@ class PublicBookingPaymentController extends Controller
             'communication_preferences' => ['array'], 'communication_preferences.*' => ['in:email,sms'], 'marketing_opt_in' => ['boolean'], 'policy_accepted' => ['accepted'],
         ]);
         $business = $slugs->resolve($slug);
-        abort_unless($business && $business->booking_slug === $slug, 404);
+        abort_unless($business && $business->booking_slug === $slug && $business->isActive() && $business->configuration_published_at && $business->online_booking_enabled, 404);
         $flow = $booking->resolve($business, $data['flow'], $data['secret']);
+        $shownDeposit = $flow->state['policy']['deposit']['amount_minor'] ?? null;
+        $flow = $booking->reviewDetails($business, $flow, $data);
+        if ($shownDeposit !== $flow->state['policy']['deposit']['amount_minor']) {
+            return response()->json(['code' => 'DETAILS_REVIEW_REQUIRED', 'message' => 'Review the current deposit before paying.'], 409);
+        }
         abort_unless(($flow->state['policy']['deposit_status'] ?? null) === 'payment_required' && $flow->capacity_hold_id, 422);
-        $started = $payments->startDeposit($flow->hold, $flow->state['policy']['deposit'], collect($data)->except(['flow', 'secret', 'idempotency_key'])->all(), $data['idempotency_key'], route('booking.business', $business->booking_slug));
+        $started = $payments->startDeposit($flow->hold, $flow->state['policy']['deposit'], collect($data)->except(['flow', 'secret', 'idempotency_key'])->all(), $data['idempotency_key'], BookingUrl::forSlug($business->booking_slug));
+        $flow->forceFill(['expires_at' => $started['intent']->expires_at])->save();
 
         return response()->json(['payment_intent' => $started['intent']->public_id, 'amount_minor' => $started['intent']->amount_minor, 'currency_code' => $started['intent']->currency_code, 'provider' => $started['client_payload']]);
     }

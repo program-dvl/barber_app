@@ -58,7 +58,8 @@ class HandleInertiaRequests extends Middleware
                 'logo_mark_inverse' => config('brand.logo_mark_inverse'),
                 'favicon' => config('brand.favicon'),
                 'website_url' => config('brand.website_url'),
-                'booking_host' => config('brand.booking_host'),
+                'booking_host' => config('booking.host'),
+                'booking_base_url' => config('booking.scheme').'://'.config('booking.host'),
                 'support_email' => config('brand.support_email'),
             ],
             'signupIntent' => fn () => $request->routeIs('register')

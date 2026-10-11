@@ -382,8 +382,16 @@ Purpose: Convert demand 24/7 with a low-friction, mobile-first flow that does no
 
 - Choose location, one or more services, preferred staff or any available, date/time, customer details and optional special request.
 - Collect name, mobile, email, optional date of birth, referral source and communication/marketing preferences.
+- Infer known-client eligibility privately from an unambiguous, normalized same-business name/contact match at review; do not ask customers to declare previous visits or reveal/autofill saved profiles. Revalidate service restrictions and any client-specific deposit before confirmation.
 - Present the applicable price, duration, deposit, cancellation policy, terms and consent before confirmation.
 - Confirm through payment where required and issue a booking reference and calendar-add options.
+
+#### Public Booking Links (user-approved refinement, 2026-10-10)
+
+- Promote `https://book.clipperdesk.com/{business-slug}` as the primary URL everywhere; use centralized environment-aware host/scheme configuration.
+- Keep `https://clipperdesk.com/book/{business-slug}` publicly available and rendering the same implementation without redirecting current slugs. Canonical metadata points to the primary URL.
+- Generate readable unique slugs on setup, permit reviewed customization, reserve system routes and preserve historical links without allowing another business to claim them.
+- Both forms support guest access, direct navigation, refresh and server-side tenant isolation.
 
 #### Shop Controls
 
@@ -707,7 +715,12 @@ Approved owner direction, 2026-10-05 (ADR-054): one core plan priced by the
 business's purchased locations and bookable staff, with monthly/yearly billing
 and explicit local country/currency rates. This supersedes the earlier suggested
 staff-band/tier matrix for new subscriptions. Existing subscriptions retain their
-terms until an owner explicitly confirms a reviewed migration.
+terms until an owner explicitly confirms a reviewed migration. On 2026-10-11
+(ADR-056), the owner approved the USD-only rollout described below.
+The owner confirmed before launch on 2026-10-11 (ADR-057) that the Subscription
+& billing workspace must offer only this capacity plan. Remove Starter/Pro
+selection and tier checkout/change actions; retained test billing history is
+readable and does not justify displaying alternative plans.
 
 - Base includes one active location and one active bookable staff profile; each
   extra location and bookable staff adds the published local unit rate.
@@ -728,7 +741,10 @@ terms until an owner explicitly confirms a reviewed migration.
   separate authorities. SMS monthly windows apply even to annual subscriptions.
 - Retain a time-limited trial, self-service conversion and term-end cancellation.
 - Country prices, annual savings, text allowances and pack amounts need separate
-  commercial approval. The illustrative USD draft is not an approved rate.
+  commercial approval. ADR-056 records owner approval of USD 29/19/9 monthly
+  and USD 290/190/90 yearly, before tax. New subscriptions offer verified USD
+  rates regardless of operating country; business and appointment currencies
+  remain unchanged. Other local rates and paid text packs remain unapproved.
 - State appointment payment processing fees separately from SaaS subscription fees.
 
 See `modules/subscription-billing.md` for implementation and failure contracts.

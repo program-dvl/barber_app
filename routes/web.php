@@ -64,6 +64,13 @@ use App\Http\Controllers\Webhooks\CommunicationWebhookController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// Register the booking host before domain-less acquisition routes.
+Route::get('/book', fn () => Inertia::render('Booking/Welcome'))->name('booking.welcome');
+Route::get('/manage-appointment', fn () => Inertia::render('Booking/Manage'))->name('booking.manage');
+// Domain matching uses the hostname; development URLs may also include a port.
+Route::domain(parse_url('https://'.config('booking.host'), PHP_URL_HOST))->get('/{slug}', BookingBusinessController::class)
+    ->where('slug', '(?!(?:'.implode('|', config('booking.reserved_slugs')).')$)[a-z0-9-]+')->name('booking.business');
+
 $shopModules = [
     'calendar' => [
         'label' => 'Calendar',
@@ -159,19 +166,20 @@ Route::get('/use-cases', [UseCaseController::class, 'index'])->name('marketing.u
 Route::get('/use-cases/{useCase}', [UseCaseController::class, 'show'])
     ->where('useCase', '[a-z0-9-]+')
     ->name('marketing.use-cases.show');
-Route::get('/book', fn () => Inertia::render('Booking/Welcome'))->name('booking.welcome');
-Route::get('/book/{slug}', BookingBusinessController::class)->where('slug', '[a-z0-9-]+')->name('booking.business');
+Route::get('/book/{slug}', BookingBusinessController::class)->where('slug', '[a-z0-9-]+')->name('booking.business.fallback');
 Route::get('/book/{slug}/media/{kind}', PublicBusinessMediaController::class)
     ->where(['slug' => '[a-z0-9-]+', 'kind' => 'logo|cover'])
     ->name('public.booking.media');
-Route::get('/manage-appointment', fn () => Inertia::render('Booking/Manage'))->name('booking.manage');
 Route::middleware('throttle:30,1')->prefix('/book/{slug}')->where(['slug' => '[a-z0-9-]+'])->group(function (): void {
     Route::post('/flows', [PublicBookingFlowController::class, 'start'])->name('public.booking.start');
     Route::post('/availability', [PublicBookingFlowController::class, 'search'])->name('public.booking.search');
+    Route::post('/resume', [PublicBookingFlowController::class, 'resume'])->name('public.booking.resume');
 });
 
 Route::middleware('throttle:10,1')->prefix('/book/{slug}')->where(['slug' => '[a-z0-9-]+'])->group(function (): void {
     Route::post('/hold', [PublicBookingFlowController::class, 'hold'])->name('public.booking.hold');
+    Route::post('/details', [PublicBookingFlowController::class, 'details'])->name('public.booking.details');
+    Route::post('/release', [PublicBookingFlowController::class, 'release'])->name('public.booking.release');
     Route::post('/confirm', [PublicBookingFlowController::class, 'confirm'])->name('public.booking.confirm');
     Route::post('/deposit-payment', [PublicBookingPaymentController::class, 'store'])->name('public.booking.deposit-payment');
     Route::post('/waitlist', [PublicWaitlistController::class, 'store'])->name('public.waitlist.store');
@@ -179,6 +187,7 @@ Route::middleware('throttle:10,1')->prefix('/book/{slug}')->where(['slug' => '[a
 Route::middleware('throttle:20,1')->where(['token' => '[a-f0-9]{64}', 'purpose' => 'reschedule|cancel|rebook|contact|waitlist|payment_status'])->group(function (): void {
     Route::get('/appointments/secure/{token}', [PublicAppointmentController::class, 'view'])->name('public.appointment.view');
     Route::get('/appointments/secure/{token}/calendar', [PublicAppointmentController::class, 'calendar'])->name('public.appointment.calendar');
+    Route::post('/appointments/secure/{token}/reschedule-times', [PublicAppointmentController::class, 'availability'])->name('public.appointment.availability');
     Route::get('/appointments/secure/{token}/{purpose}', [PublicAppointmentController::class, 'action'])->name('public.appointment.action');
     Route::post('/appointments/secure/{token}/{purpose}', [PublicAppointmentController::class, 'mutate'])->name('public.appointment.mutate');
     Route::get('/waitlist-offers/{token}', [PublicWaitlistController::class, 'offer'])->name('public.waitlist.offer');

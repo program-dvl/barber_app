@@ -30,6 +30,7 @@ use App\Domain\PlatformAccess\Enums\StarterRole;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\PlatformAccess\Models\StaffProfile;
+use App\Support\BookingUrl;
 use App\Support\Regional\CountryCatalog;
 use App\Support\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
@@ -149,7 +150,7 @@ it('keeps booking slugs unique and redirects every prior alias to the current sl
     expect(fn () => $manager->change($second, 'first-shop'))
         ->toThrow(ValidationException::class);
 
-    $this->get(route('booking.business', 'first-shop'))->assertRedirect(route('booking.business', 'first-shop-new'));
+    $this->get(route('booking.business', 'first-shop'))->assertRedirect(BookingUrl::forSlug('first-shop-new'));
 });
 
 it('resolves local normal and special hours with closure precedence across a DST boundary', function () {
@@ -356,3 +357,20 @@ function configuredServicePath(): array
 
     return [$business, $location, $staff, $service];
 }
+
+it('reserves current and historical readable slugs and excludes route names', function () {
+    $manager = app(BookingSlugManager::class);
+    $first = Business::factory()->create(['name' => 'Urban Cuts']);
+    $second = Business::factory()->create(['name' => 'Urban Cuts']);
+    expect($manager->generate($first)->booking_slug)->toBe('urban-cuts')
+        ->and($manager->generate($second)->booking_slug)->toBe('urban-cuts-2');
+    $manager->change($first, 'urban-studio');
+    expect(fn () => $manager->change($second, 'urban-cuts'))->toThrow(ValidationException::class);
+    foreach (['appointments', 'pricing', 'terms-of-service'] as $reserved) {
+        expect(fn () => $manager->change($second, $reserved))->toThrow(ValidationException::class);
+    }
+    $manager->change($first, 'urban-cuts');
+    expect($manager->resolve('urban-studio')->id)->toBe($first->id);
+    $short = Business::factory()->create(['name' => 'A']);
+    expect($manager->generate($short)->booking_slug)->toBe('business-a');
+});

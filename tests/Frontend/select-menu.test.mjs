@@ -34,3 +34,11 @@ test('short viewport constrains the list instead of imposing an overflowing mini
     const position = selectMenuPosition({ left: 8, top: 80, bottom: 124, width: 180 }, { width: 360, height: 200 });
     assert.ok(position.maxHeight <= 66);
 });
+
+test('compact country triggers open a readable wider menu bounded by the mobile viewport', () => {
+    const rect = { left: 240, top: 200, bottom: 244, width: 116 };
+    assert.equal(selectMenuPosition(rect, { width: 1440, height: 900 }, 320).width, 320);
+    const mobile = selectMenuPosition(rect, { width: 320, height: 700 }, 320);
+    assert.equal(mobile.width, 304);
+    assert.equal(mobile.left, 8);
+});

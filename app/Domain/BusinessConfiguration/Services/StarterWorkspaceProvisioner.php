@@ -99,8 +99,11 @@ class StarterWorkspaceProvisioner
                 'online_new_client_rule' => 'allow',
                 'cancellation_cutoff_minutes' => $preparedCommerce?->cancellation_cutoff_minutes ?? 1440,
             ]);
-            $business->booking_slug ??= $this->availableBookingSlug($business);
+
             $business->save();
+            if (! $business->booking_slug) {
+                $business = app(BookingSlugManager::class)->generate($business);
+            }
 
             CommerceSetting::query()->firstOrCreate(
                 ['business_id' => $business->getKey()],
@@ -255,17 +258,6 @@ class StarterWorkspaceProvisioner
         }, 3);
 
         return $business->fresh();
-    }
-
-    private function availableBookingSlug(Business $business): string
-    {
-        $base = Str::slug($business->name) ?: 'business';
-        $base = Str::limit($base, 68, '');
-        if (! Business::query()->where('booking_slug', $base)->whereKeyNot($business->getKey())->exists()) {
-            return $base;
-        }
-
-        return $base.'-'.Str::lower(substr((string) $business->public_id, -6));
     }
 
     private function suggestLocale(string $country): string

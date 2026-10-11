@@ -11,6 +11,7 @@ const props = defineProps({
     placeholder: {type:String,default:'Choose an option'},
     multiple: Boolean, disabled: Boolean, required: Boolean,
     searchable: { type: Boolean, default: undefined },
+    menuMinWidth: { type: Number, default: 240 },
 });
 const emit = defineEmits(['update:modelValue', 'change']);
 const attrs = useAttrs();
@@ -47,7 +48,7 @@ let typeaheadTimer;
 function synchronize() {
     if (!native.value) return;
     const next = [...native.value.options].map((option, index) => ({
-        index, label: option.textContent.trim(), selected: option.selected,
+        index, value: option.value, label: option.textContent.trim(), selected: option.selected,
         disabled: option.disabled || option.parentElement?.disabled,
         group: option.parentElement?.tagName === 'OPTGROUP' ? option.parentElement.label : '',
     }));
@@ -58,7 +59,7 @@ function position() {
     const rect = trigger.value.getBoundingClientRect();
     const height = window.visualViewport?.height || window.innerHeight;
     const width = window.visualViewport?.width || window.innerWidth;
-    const placement = selectMenuPosition(rect, { height, width });
+    const placement = selectMenuPosition(rect, { height, width }, props.menuMinWidth);
     Object.assign(panel.value.style, {
         left: `${placement.left}px`, width: `${placement.width}px`,
         maxHeight: `${placement.maxHeight}px`,
@@ -194,13 +195,13 @@ defineExpose({ focus: () => trigger.value?.focus() });
     <span :class="['cd-select', attrs.class]" :style="attrs.style">
         <select ref="native" v-model="selection" :id="ready ? `${controlId}-native` : controlId" :name="attrs.name" :multiple="multiple" :required="required" :disabled="disabled" :hidden="ready" :class="ready ? 'cd-select-native' : 'cd-input'" :aria-hidden="ready || undefined" :tabindex="ready ? -1 : undefined" @change="changed" @invalid.prevent="showInvalid"><slot /></select>
         <button v-if="ready" ref="trigger" :id="controlId" type="button" class="cd-select-trigger" role="combobox" aria-haspopup="listbox" :aria-label="attrs['aria-label'] || label" :aria-labelledby="attrs['aria-labelledby']" :aria-describedby="descriptionId" :aria-invalid="attrs['aria-invalid'] || invalid || undefined" :aria-required="required || undefined" :aria-expanded="opened" :aria-controls="`${controlId}-list`" :aria-activedescendant="!canSearch ? activeId : undefined" :disabled="disabled" @click="opened ? close() : show()" @keydown="keyboard">
-            <span class="truncate">{{ selectedLabel }}</span><ChevronDownIcon class="size-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
+            <span class="min-w-0 flex-1 truncate"><slot name="selected" :label="selectedLabel" :value="selection">{{ selectedLabel }}</slot></span><ChevronDownIcon class="size-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
         </button>
         <span v-if="invalid" :id="`${controlId}-required`" role="alert" class="mt-1 block text-xs text-[var(--status-danger)]">Choose an option to continue.</span>
         <div v-if="opened" ref="panel" popover="manual" class="cd-select-panel" @keydown="keyboard" @click.stop.prevent>
             <div v-if="canSearch" class="cd-select-search"><MagnifyingGlassIcon class="size-4 shrink-0" aria-hidden="true" /><input ref="search" v-model="query" :aria-label="`Search ${attrs['aria-label'] || label}`" role="combobox" aria-autocomplete="list" :aria-expanded="opened" :aria-controls="`${controlId}-list`" :aria-activedescendant="activeId" placeholder="Type to search…" autocomplete="off" /></div>
             <div :id="`${controlId}-list`" role="listbox" :aria-label="attrs['aria-label'] || label" :aria-multiselectable="multiple || undefined" class="cd-select-options">
-                <div v-for="(option, index) in filtered" :id="`${controlId}-option-${option.index}`" :key="option.index" role="option" :aria-selected="option.selected" :aria-disabled="option.disabled || undefined" :data-active="active === index" class="cd-select-option" @pointermove="!option.disabled && (active = index)" @mousedown.prevent @click="choose(option)"><span class="min-w-0 flex-1"><small v-if="option.group" class="block text-xs text-[var(--text-muted)]">{{ option.group }}</small>{{ option.label }}</span><CheckIcon v-if="option.selected" class="size-4 shrink-0" aria-hidden="true" /></div>
+                <div v-for="(option, index) in filtered" :id="`${controlId}-option-${option.index}`" :key="option.index" role="option" :aria-selected="option.selected" :aria-disabled="option.disabled || undefined" :data-active="active === index" class="cd-select-option" @pointermove="!option.disabled && (active = index)" @mousedown.prevent @click="choose(option)"><span class="min-w-0 flex-1"><slot name="option" :option="option"><small v-if="option.group" class="block text-xs text-[var(--text-muted)]">{{ option.group }}</small>{{ option.label }}</slot></span><CheckIcon v-if="option.selected" class="size-4 shrink-0" aria-hidden="true" /></div>
             </div>
             <p v-if="!filtered.length" class="px-3 py-5 text-center text-sm text-[var(--text-muted)]" role="status">No matches. Try another search.</p>
             <button v-if="multiple" type="button" class="cd-select-done" @click="close(true)">Done · {{ options.filter(option => option.selected).length }} selected</button>

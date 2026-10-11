@@ -7,6 +7,7 @@ use App\Domain\BusinessConfiguration\Models\ServiceResourceRequirement;
 use App\Domain\BusinessConfiguration\Models\ServiceSegment;
 use App\Domain\BusinessConfiguration\Models\StaffAvailabilityRule;
 use App\Domain\BusinessConfiguration\Models\StaffServiceAssignment;
+use App\Domain\BusinessConfiguration\Services\BookingSlugManager;
 use App\Domain\ClientRecords\Models\Client;
 use App\Domain\ClientRecords\Services\ClientIdentityService;
 use App\Domain\PlatformAccess\Models\Business;
@@ -14,6 +15,7 @@ use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\PlatformAccess\Models\StaffProfile;
 use App\Domain\PublicBooking\Models\WaitlistMatch;
 use App\Domain\PublicBooking\Models\WaitlistRequest;
+use App\Domain\PublicBooking\Services\PublicBookingService;
 use App\Domain\PublicBooking\Services\WaitlistService;
 use App\Domain\SchedulingOperations\Contracts\AppointmentLifecycleCommand;
 use App\Domain\SchedulingOperations\Contracts\AvailabilityQuery;
@@ -30,6 +32,7 @@ use App\Domain\SchedulingOperations\Models\Appointment;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 beforeEach(function () {
     if (getenv('BOOKING_MYSQL_INTEGRATION') !== '1') {
@@ -379,6 +382,8 @@ it('serializes stale concurrent lifecycle edits without losing history', functio
 })->group('mysql-booking');
 
 it('atomically awards a controlled waitlist batch to only one parallel claimant', function () {
+    // The fixture dates must remain future for expiry, search and claim clocks.
+    $this->travelTo(CarbonImmutable::parse('2026-08-25T00:00:00Z'));
     $path = mysqlSchedulingPath();
     $path['business']->update(['waitlist_offer_batch_size' => 2]);
     $appointment = app(BookingCommitCommand::class)->commit(mysqlRequest($path, $path['staff']->id), 'waitlist-race-original');
@@ -404,6 +409,7 @@ it('atomically awards a controlled waitlist batch to only one parallel claimant'
         ->and(WaitlistMatch::query()->where('status', 'claimed')->count())->toBe(1)
         ->and(WaitlistRequest::query()->where('status', 'booked')->count())->toBe(1)
         ->and(Appointment::query()->where('starts_at_utc', $appointment->starts_at_utc)->where('status', 'confirmed')->count())->toBe(1);
+    $this->travelBack();
 })->group('mysql-booking');
 
 it('measures a production-engine calendar projection with status and block cues', function () {
@@ -442,4 +448,41 @@ it('measures a production-engine calendar projection with status and block cues'
         ->and(collect($calendar['events'])->every(fn (array $event) => isset($event['statusLabel'], $event['statusCue'])))->toBeTrue();
 
     fwrite(STDERR, sprintf("\nCALENDAR_PERF events=%d ms=%.2f queries=%d\n", count($calendar['events']), $elapsedMs, $queries));
+})->group('mysql-booking');
+
+it('converges simultaneous public confirmations with different request keys into one appointment', function () {
+    $this->travelTo(CarbonImmutable::parse('2026-08-25T00:00:00Z'));
+    $path = mysqlSchedulingPath();
+    $path['business']->update(['status' => 'active', 'online_booking_enabled' => true, 'configuration_published_at' => now(), 'booking_slug' => 'parallel-public']);
+    $path['staff']->update(['online_visible' => true]);
+    $booking = app(PublicBookingService::class);
+    $started = $booking->start($path['business']->fresh());
+    $flow = $booking->hold($path['business']->fresh(), $started['flow'], [
+        'location' => $path['location']->public_id, 'services' => [$path['service']->public_id],
+        'staff' => $path['staff']->public_id, 'starts_at' => '2026-08-31T04:30:00Z', 'client_eligibility' => 'auto',
+    ], 'parallel-public-hold');
+    $details = ['client_name' => 'Concurrent Guest', 'client_mobile' => '+14155552671', 'client_email' => 'parallel@example.test'];
+    $flow = $booking->reviewDetails($path['business']->fresh(), $flow, $details);
+    $results = parallelMysqlAttempts(2, function (int $index) use ($path, $flow, $details): array {
+        $result = app(PublicBookingService::class)->confirm($path['business']->fresh(), $flow->fresh(), $details, 'public-confirm-'.$index);
+
+        return ['appointment_id' => $result['appointment']->id];
+    });
+    expect(collect($results)->where('ok', true))->toHaveCount(2)
+        ->and(collect($results)->pluck('appointment_id')->unique())->toHaveCount(1)
+        ->and(Appointment::query()->count())->toBe(1);
+    $this->travelBack();
+})->group('mysql-booking');
+
+it('reserves a booking slug across businesses under simultaneous writes', function () {
+    $businesses = [Business::factory()->create(), Business::factory()->create()];
+    $results = parallelMysqlAttempts(2, function (int $index) use ($businesses): array {
+        $business = app(BookingSlugManager::class)->change($businesses[$index], 'one-public-link');
+
+        return ['business_id' => $business->id];
+    });
+    expect(collect($results)->where('ok', true))->toHaveCount(1)
+        ->and(collect($results)->where('ok', false)->pluck('code')->all())->toBe([ValidationException::class])
+        ->and(Business::query()->where('booking_slug', 'one-public-link')->count())->toBe(1)
+        ->and(DB::table('booking_slug_reservations')->where('slug', 'one-public-link')->count())->toBe(1);
 })->group('mysql-booking');

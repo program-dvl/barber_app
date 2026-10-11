@@ -5,6 +5,7 @@ namespace App\Console\Commands\Billing;
 use App\Domain\Billing\Models\BillingPlan;
 use App\Domain\Billing\Models\BillingPlanPrice;
 use App\Domain\Billing\Models\BillingRateCard;
+use App\Domain\Billing\Services\CapacityCatalogProvisioner;
 use App\Domain\Billing\Services\CapacityPricingCatalog;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -12,9 +13,9 @@ use Stripe\StripeClient;
 
 class VerifyCapacityRates extends Command
 {
-    protected $signature = 'billing:verify-capacity-rates {market} {--apply : Read Stripe prices and install verified immutable local mappings}';
+    protected $signature = 'billing:verify-capacity-rates {market} {--apply : Read Stripe prices and install verified immutable local mappings} {--provision : Provision approved recurring components and install verified mappings} {--force : Allow catalog provisioning with a live Stripe key}';
 
-    protected $description = 'Preview or verify approved local capacity prices; never creates or changes Stripe objects.';
+    protected $description = 'Preview, verify or provision approved capacity prices; never creates subscriptions or charges.';
 
     public function handle(CapacityPricingCatalog $catalog): int
     {
@@ -23,8 +24,13 @@ class VerifyCapacityRates extends Command
             $terms = $catalog->terms($market, $interval);
             $this->line($market.' '.$interval.': '.$terms['currency'].' base '.$terms['base_minor'].'; location '.$terms['location_minor'].'; staff '.$terms['staff_minor'].' (minor units)');
         }
-        if (! $this->option('apply')) {
-            $this->info('Preview only. Commercial approval and explicit Stripe Price IDs are required before verification.');
+        if ($this->option('apply') && $this->option('provision')) {
+            $this->error('Choose either --apply or --provision.');
+
+            return self::INVALID;
+        }
+        if (! $this->option('apply') && ! $this->option('provision')) {
+            $this->info('Preview only. Use --provision to create and verify approved prices, or --apply to verify configured Price IDs.');
 
             return self::SUCCESS;
         }
@@ -33,11 +39,21 @@ class VerifyCapacityRates extends Command
 
             return self::FAILURE;
         }
-        $stripe = new StripeClient(config('billing.stripe.secret'));
         $verified = [];
         try {
+            $secret = trim((string) config('billing.stripe.secret'));
+            if (! str_starts_with($secret, 'sk_') && ! str_starts_with($secret, 'rk_')) {
+                throw new \LogicException('Configure a server-side Stripe key.');
+            }
+            if ($this->option('provision') && ! str_contains($secret, '_test_') && ! $this->option('force')) {
+                $this->error('Live catalog provisioning requires --force. No Stripe objects were changed.');
+
+                return self::FAILURE;
+            }
+            $stripe = new StripeClient($secret);
+            $prepared = $this->option('provision') ? app(CapacityCatalogProvisioner::class)->provision($catalog, $market) : [];
             foreach (['monthly', 'annual'] as $interval) {
-                $terms = $catalog->terms($market, $interval);
+                $terms = $prepared[$interval] ?? $catalog->terms($market, $interval);
                 $ids = [];
                 foreach (['base', 'location', 'staff'] as $role) {
                     $id = $terms[$role.'_price_id'];
@@ -66,7 +82,7 @@ class VerifyCapacityRates extends Command
                 $plan = BillingPlan::where('code', 'capacity')->firstOrFail();
                 foreach ($verified as $terms) {
                     $existing = BillingPlanPrice::where('provider', 'stripe')->where('provider_price_id', $terms['base_price_id'])->first();
-                    if ($existing && ($existing->billing_plan_id !== $plan->id || $existing->currency !== $terms['currency'] || $existing->amount_minor !== $terms['base_minor'])) {
+                    if ($existing && ($existing->billing_plan_id !== $plan->id || $existing->currency !== $terms['currency'] || $existing->amount_minor !== $terms['base_minor'] || $existing->billing_interval->value !== $terms['billing_interval'])) {
                         throw new \LogicException('This base price is already mapped to different subscription terms.');
                     }
                     $oldCard = $existing ? BillingRateCard::where('billing_plan_price_id', $existing->id)->first() : null;
@@ -90,7 +106,7 @@ class VerifyCapacityRates extends Command
 
             return self::FAILURE;
         }
-        $this->info('Verified local mappings installed. Existing subscriptions and remote Stripe objects were preserved.');
+        $this->info('Verified local mappings installed. Existing subscriptions were preserved.');
 
         return self::SUCCESS;
     }

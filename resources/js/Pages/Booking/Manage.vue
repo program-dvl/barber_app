@@ -1,11 +1,14 @@
 <script setup>
 import { sentenceLabel } from '@/Support/userLanguage';
-import { computed } from 'vue';
+import { computed, ref, watch, onBeforeUnmount, onMounted } from 'vue';
+import axios from 'axios';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { LockClosedIcon } from '@heroicons/vue/24/outline';
 import AppButton from '@/Components/Product/AppButton.vue';
 import FormField from '@/Components/Product/FormField.vue';
 import PhoneInput from '@/Components/Product/PhoneInput.vue';
+import BookingSkeleton from '@/Components/Booking/BookingSkeleton.vue';
+import { slotGroups } from '@/Support/publicBooking';
 import StatePanel from '@/Components/Product/StatePanel.vue';
 import SurfaceCard from '@/Components/Product/SurfaceCard.vue';
 import PublicBookingLayout from '@/Layouts/PublicBookingLayout.vue';
@@ -14,32 +17,345 @@ const props = defineProps({ appointment: Object, actions: Object, purpose: Strin
 const page = usePage();
 const localTime = computed(() => props.appointment ? new Intl.DateTimeFormat(undefined, { dateStyle: 'full', timeStyle: 'short', timeZone: props.appointment.time_zone }).format(new Date(props.appointment.starts_at)) : '');
 const money = computed(() => props.appointment ? new Intl.NumberFormat(undefined, { style: 'currency', currency: props.appointment.currency_code }).format(props.appointment.price_minor / 100) : '');
-const actionRoute = computed(() => props.actionToken ? route('public.appointment.mutate', [props.actionToken, props.purpose]) : '');
+const actionRoute = computed(() => props.actionToken ? route('public.appointment.mutate', [props.actionToken, props.purpose], false) : '');
+const rescheduleDate = ref(props.appointment ? new Intl.DateTimeFormat('en-CA', { timeZone: props.appointment.time_zone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(props.appointment.starts_at)) : '');
+const rescheduleSlots = ref([]), slotsBusy = ref(false), slotsError = ref('');
+const reschedulePeriod = ref('Morning');
+const rescheduleGroups = computed(() => slotGroups(rescheduleSlots.value, props.appointment?.time_zone || 'UTC'));
+const rescheduleGroup = computed(() => rescheduleGroups.value.find(group => group.label === reschedulePeriod.value) || rescheduleGroups.value[0]);
+let slotController, slotVersion = 0;
+const slotTime = value => new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit', timeZone: props.appointment.time_zone, timeZoneName: 'short' }).format(new Date(value));
+const loadRescheduleTimes = async () => {
+    slotController?.abort(); const version = ++slotVersion; slotController = new AbortController();
+    rescheduleSlots.value = []; rescheduleForm.starts_at = ''; rescheduleForm.confirmed = false; slotsError.value = '';
+    if (!rescheduleDate.value) return; slotsBusy.value = true;
+    try { const { data } = await axios.post(route('public.appointment.availability', props.actionToken, false), { date: rescheduleDate.value }, { signal: slotController.signal }); if (version === slotVersion) rescheduleSlots.value = data.slots; }
+    catch (error) { if (error.code !== 'ERR_CANCELED' && version === slotVersion) slotsError.value = error.response?.data?.message || 'Times could not load. Try again.'; }
+    finally { if (version === slotVersion) slotsBusy.value = false; }
+};
+watch(rescheduleDate, () => { if (props.purpose === 'reschedule') loadRescheduleTimes(); });
+onBeforeUnmount(() => slotController?.abort());
 const cancellationForm = useForm({ reason_code: '', other_reason: '', confirmed: false, idempotency_key: '' });
 const rescheduleForm = useForm({ starts_at: '', confirmed: false, idempotency_key: '' });
 const contactForm = useForm({ name: props.appointment?.client_name || '', mobile: props.appointment?.client_mobile || '', email: props.appointment?.client_email || '', idempotency_key: '' });
 const waitlistForm = useForm({ operation: 'join', acceptable_from: '', acceptable_until: '', time_from: '09:00', time_until: '18:00', notification_method: 'email', notes: '', idempotency_key: '' });
 const rebookForm = useForm({ idempotency_key: '' });
+onMounted(() => { if (props.purpose === 'reschedule') loadRescheduleTimes(); });
 const submit = form => { form.idempotency_key ||= `self-service-${props.purpose}-${crypto.randomUUID()}`; form.post(actionRoute.value, { preserveScroll: true }); };
 const leaveWaitlist = entry => useForm({ operation: 'leave', waitlist_request: entry.public_id, version: entry.version }).post(actionRoute.value, { preserveScroll: true });
 </script>
 
 <template>
     <PublicBookingLayout title="Manage an appointment" mode="self-service">
-        <template v-if="!appointment"><p class="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--action-primary)]">Manage appointment</p><h1 class="cd-display mt-2 text-2xl text-[var(--text-strong)]">Open your private appointment link</h1><SurfaceCard class="mt-8"><StatePanel tone="info" title="Use the link in your confirmation" description="For privacy, booking references cannot be searched here. Ask the business to send a fresh secure link if yours expired."><template #actions><AppButton :href="route('booking.welcome')" variant="secondary">Back to booking</AppButton></template></StatePanel></SurfaceCard></template>
+        <template v-if="!appointment">
+            <header class="text-center">
+                <p class="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--action-primary)]">Manage appointment</p>
+                <h1 class="cd-display mt-2 text-2xl text-[var(--text-strong)]">Open your private appointment link</h1>
+            </header>
+            <SurfaceCard class="mt-8">
+                <StatePanel
+                    tone="info"
+                    title="Use the link in your confirmation"
+                    description="For privacy, booking references cannot be searched here. Ask the business to send a fresh secure link if yours expired."
+                >
+                    <template #actions><AppButton :href="route('booking.welcome')" variant="secondary">Back to booking</AppButton></template>
+                </StatePanel>
+            </SurfaceCard>
+        </template>
         <template v-else>
-            <p class="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--action-primary)]"><LockClosedIcon class="mr-1 inline size-4" aria-hidden="true" />Manage appointment</p><h1 class="cd-display mt-2 text-2xl text-[var(--text-strong)]">{{ appointment.business }}</h1><p class="mt-2 text-sm text-[var(--text-muted)]">Reference {{ appointment.reference }} · Keep this page private on a shared device.</p>
-            <p v-if="page.props.flash?.status" class="mt-5 rounded-xl bg-[var(--status-success-soft)] p-4 text-sm font-semibold text-[var(--status-success)]" role="status">{{ page.props.flash.status }}</p><p v-if="page.props.errors?.appointment" class="mt-5 rounded-xl bg-[var(--status-danger-soft)] p-4 text-sm text-[var(--status-danger)]" role="alert">{{ page.props.errors.appointment }}</p>
-            <SurfaceCard class="mt-6" title="Appointment details" :description="sentenceLabel(appointment.status)"><dl class="grid gap-4 text-sm sm:grid-cols-2"><div><dt class="font-semibold text-[var(--text-muted)]">When</dt><dd class="mt-1 text-[var(--text-strong)]">{{ localTime }}<br>{{ appointment.time_zone }}</dd></div><div><dt class="font-semibold text-[var(--text-muted)]">Where</dt><dd class="mt-1 text-[var(--text-strong)]">{{ appointment.location }}</dd></div><div><dt class="font-semibold text-[var(--text-muted)]">Services</dt><dd class="mt-1 text-[var(--text-strong)]">{{ appointment.services.join(', ') }}</dd></div><div><dt class="font-semibold text-[var(--text-muted)]">Price and deposit</dt><dd class="mt-1 text-[var(--text-strong)]">{{ money }} · {{ sentenceLabel(appointment.deposit_status) }}</dd></div></dl><p class="mt-5 rounded-lg bg-[var(--surface-subtle)] p-3 text-sm"><strong>Cancellation policy:</strong> {{ appointment.cancellation_policy }}</p></SurfaceCard>
-
-            <AppButton v-if="purpose && viewUrl" class="mt-4" :href="viewUrl" variant="quiet">Back to appointment</AppButton><SurfaceCard v-if="!purpose" class="mt-5" title="What would you like to do?" ><div class="grid gap-3 sm:grid-cols-2"><AppButton v-if="actions.reschedule" :href="actions.reschedule" variant="secondary">Reschedule</AppButton><AppButton v-if="actions.cancel" :href="actions.cancel" variant="secondary">Cancel appointment</AppButton><AppButton v-if="actions.rebook" :href="actions.rebook" variant="secondary">Book again</AppButton><AppButton v-if="actions.contact" :href="actions.contact" variant="secondary">Update contact details</AppButton><AppButton v-if="actions.waitlist" :href="actions.waitlist" variant="secondary">Join waitlist</AppButton><AppButton v-if="actions.payment_status" :href="actions.payment_status" variant="secondary">Payment status</AppButton></div></SurfaceCard>
-
-            <SurfaceCard v-else-if="purpose === 'cancel'" class="mt-5" title="Cancel this appointment?" description="Tell the business why, then confirm. An opening may be offered to the waitlist."><p v-if="cancellationForm.errors.reason_code || cancellationForm.errors.other_reason" class="mb-4 rounded-lg bg-[var(--status-danger-soft)] p-3 text-sm text-[var(--status-danger)]" role="alert">{{ cancellationForm.errors.reason_code || cancellationForm.errors.other_reason }}</p><FormField id="self-cancel-reason" label="Reason for cancelling" required :error="cancellationForm.errors.reason_code"><select id="self-cancel-reason" v-model="cancellationForm.reason_code" class="cd-input" :aria-invalid="cancellationForm.errors.reason_code ? true : undefined" :aria-describedby="cancellationForm.errors.reason_code ? 'self-cancel-reason-error' : undefined"><option value="" disabled>Select a reason</option><option v-for="reason in cancellationReasons" :key="reason.value" :value="reason.value">{{ reason.label }}</option></select></FormField><FormField v-if="cancellationForm.reason_code === 'other'" id="self-cancel-other" class="mt-4" label="Other reason" required :error="cancellationForm.errors.other_reason"><textarea id="self-cancel-other" v-model="cancellationForm.other_reason" rows="3" class="cd-input" placeholder="Briefly tell the business why you need to cancel"  :aria-invalid="cancellationForm.errors.other_reason ? true : undefined" :aria-describedby="cancellationForm.errors.other_reason ? 'self-cancel-other-error' : undefined"/></FormField><label class="mt-4 flex min-h-11 items-center gap-3"><input v-model="cancellationForm.confirmed" type="checkbox" />I understand this cancels the appointment</label><AppButton class="mt-4 w-full" variant="danger" :loading="cancellationForm.processing" :disabled="!cancellationForm.confirmed || !cancellationForm.reason_code || (cancellationForm.reason_code === 'other' && !cancellationForm.other_reason.trim())" @click="submit(cancellationForm)">Cancel appointment</AppButton></SurfaceCard>
-            <SurfaceCard v-else-if="purpose === 'reschedule'" class="mt-5" title="Choose a new time" description="The new time must be available and meet the business’s booking rules."><FormField id="reschedule-time" label="New local date and time" required :error="rescheduleForm.errors.starts_at"><input id="reschedule-time" v-model="rescheduleForm.starts_at" type="datetime-local" class="cd-input"  :aria-invalid="rescheduleForm.errors.starts_at ? true : undefined" :aria-describedby="rescheduleForm.errors.starts_at ? 'reschedule-time-error' : undefined"/></FormField><label class="mt-3 flex min-h-11 items-center gap-3"><input v-model="rescheduleForm.confirmed" type="checkbox" />I want to move my appointment to this time</label><AppButton class="mt-4 w-full" :loading="rescheduleForm.processing" :disabled="!rescheduleForm.starts_at || !rescheduleForm.confirmed" @click="submit(rescheduleForm)">Reschedule</AppButton></SurfaceCard>
-            <SurfaceCard v-else-if="purpose === 'contact'" class="mt-5" title="Update contact details" description=""><div class="grid gap-4"><FormField id="contact-name" label="Name" required :error="contactForm.errors.name"><input id="contact-name" v-model="contactForm.name" autocomplete="name" class="cd-input"  :aria-invalid="contactForm.errors.name ? true : undefined" :aria-describedby="contactForm.errors.name ? 'contact-name-error' : undefined"/></FormField><FormField id="contact-mobile" label="Mobile" required :error="contactForm.errors.mobile"><PhoneInput id="contact-mobile" v-model="contactForm.mobile" required :country="appointment.business_country_code || 'IN'"  :aria-invalid="contactForm.errors.mobile ? true : undefined" :aria-describedby="contactForm.errors.mobile ? 'contact-mobile-error' : undefined"/></FormField><FormField id="contact-email" label="Email" required :error="contactForm.errors.email"><input id="contact-email" v-model="contactForm.email" type="email" autocomplete="email" class="cd-input"  :aria-invalid="contactForm.errors.email ? true : undefined" :aria-describedby="contactForm.errors.email ? 'contact-email-error' : undefined"/></FormField></div><AppButton class="mt-4 w-full" :loading="contactForm.processing" @click="submit(contactForm)">Save contact details</AppButton></SurfaceCard>
-            <SurfaceCard v-else-if="purpose === 'waitlist'" class="mt-5" title="Manage waitlist" description="Choose when you can attend and how to receive opening notifications."><div v-if="activeWaitlists.length" class="mb-5 space-y-3"><p class="text-sm font-semibold text-[var(--text-strong)]">Your active requests</p><div v-for="entry in activeWaitlists" :key="entry.public_id" class="flex flex-col gap-3 rounded-lg bg-[var(--surface-subtle)] p-3 text-sm sm:flex-row sm:items-center sm:justify-between"><span>{{ entry.service }} · {{ entry.from }} to {{ entry.until }} · {{ entry.time_from }}–{{ entry.time_until }}</span><AppButton variant="secondary" @click="leaveWaitlist(entry)">Leave waitlist</AppButton></div></div><div class="grid gap-4 sm:grid-cols-2"><FormField id="field-manage-waitlistform-acceptable-from" label="From date" required :error="waitlistForm.errors.acceptable_from"><input v-model="waitlistForm.acceptable_from" type="date" class="cd-input"  id="field-manage-waitlistform-acceptable-from" :aria-invalid="waitlistForm.errors.acceptable_from ? true : undefined" :aria-describedby="waitlistForm.errors.acceptable_from ? 'field-manage-waitlistform-acceptable-from-error' : undefined"/></FormField><FormField id="field-manage-waitlistform-acceptable-until" label="Until date" required :error="waitlistForm.errors.acceptable_until"><input v-model="waitlistForm.acceptable_until" type="date" class="cd-input"  id="field-manage-waitlistform-acceptable-until" :aria-invalid="waitlistForm.errors.acceptable_until ? true : undefined" :aria-describedby="waitlistForm.errors.acceptable_until ? 'field-manage-waitlistform-acceptable-until-error' : undefined"/></FormField><FormField id="field-manage-waitlistform-time-from" label="Earliest time" required :error="waitlistForm.errors.time_from"><input v-model="waitlistForm.time_from" type="time" class="cd-input"  id="field-manage-waitlistform-time-from" :aria-invalid="waitlistForm.errors.time_from ? true : undefined" :aria-describedby="waitlistForm.errors.time_from ? 'field-manage-waitlistform-time-from-error' : undefined"/></FormField><FormField id="field-manage-waitlistform-time-until" label="Latest time" required :error="waitlistForm.errors.time_until"><input v-model="waitlistForm.time_until" type="time" class="cd-input"  id="field-manage-waitlistform-time-until" :aria-invalid="waitlistForm.errors.time_until ? true : undefined" :aria-describedby="waitlistForm.errors.time_until ? 'field-manage-waitlistform-time-until-error' : undefined"/></FormField><FormField id="field-manage-waitlistform-notification-method" label="Notify me by" required :error="waitlistForm.errors.notification_method"><select v-model="waitlistForm.notification_method" class="cd-input" id="field-manage-waitlistform-notification-method" :aria-invalid="waitlistForm.errors.notification_method ? true : undefined" :aria-describedby="waitlistForm.errors.notification_method ? 'field-manage-waitlistform-notification-method-error' : undefined"><option value="email">Email</option><option value="sms">Text message (SMS)</option></select></FormField></div><AppButton class="mt-4 w-full" :loading="waitlistForm.processing" @click="submit(waitlistForm)">Join waitlist</AppButton></SurfaceCard>
-            <SurfaceCard v-else-if="purpose === 'payment_status'" class="mt-5" title="Deposit and payment status"><StatePanel tone="info" :title="appointment.deposit_status === 'not_required' ? 'No deposit required' : 'Deposit required by the booking policy'" :description="appointment.deposit_status === 'not_required' ? 'Contact the business for details of any payments or balance due.' : 'This page shows the policy recorded when you booked. Contact the business to confirm payments received or any balance due.'" /></SurfaceCard>
-            <SurfaceCard v-else class="mt-5" title="Book this again" description="Choose from the current services, prices and available times."><AppButton class="w-full" :loading="rebookForm.processing" @click="submit(rebookForm)">Start a new booking</AppButton></SurfaceCard>
+            <header class="text-center">
+                <p class="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--action-primary)]">
+                    <LockClosedIcon class="mr-1 inline size-4" aria-hidden="true" />
+                    Manage appointment
+                </p>
+                <h1 class="cd-display mt-2 text-2xl text-[var(--text-strong)]">{{ appointment.business }}</h1>
+                <p class="mt-2 text-sm text-[var(--text-muted)]">Reference {{ appointment.reference }}</p>
+                <p class="mt-1 text-xs text-[var(--text-muted)]">Keep this page private on a shared device.</p>
+            </header>
+            <p
+                v-if="page.props.flash?.status"
+                class="mt-5 rounded-xl bg-[var(--status-success-soft)] p-4 text-sm font-semibold text-[var(--status-success)]"
+                role="status"
+            >
+                {{ page.props.flash.status }}
+            </p>
+            <p
+                v-if="page.props.errors?.appointment"
+                class="mt-5 rounded-xl bg-[var(--status-danger-soft)] p-4 text-sm text-[var(--status-danger)]"
+                role="alert"
+            >
+                {{ page.props.errors.appointment }}
+            </p>
+            <SurfaceCard class="mt-6" title="Appointment details" :description="sentenceLabel(appointment.status)">
+                <dl class="grid gap-4 text-sm sm:grid-cols-2">
+                    <div>
+                        <dt class="font-semibold text-[var(--text-muted)]">When</dt>
+                        <dd class="mt-1 text-[var(--text-strong)]">{{ localTime }}<br>{{ appointment.time_zone }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-semibold text-[var(--text-muted)]">Where</dt>
+                        <dd class="mt-1 text-[var(--text-strong)]">{{ appointment.location }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-semibold text-[var(--text-muted)]">Services</dt>
+                        <dd class="mt-1 text-[var(--text-strong)]">{{ appointment.services.join(', ') }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-semibold text-[var(--text-muted)]">Price and deposit</dt>
+                        <dd class="mt-1 text-[var(--text-strong)]">{{ money }} · {{ sentenceLabel(appointment.deposit_status) }}</dd>
+                    </div>
+                </dl>
+                <p class="mt-5 rounded-lg bg-[var(--surface-subtle)] p-3 text-sm">
+                    <strong>Cancellation policy:</strong>
+                    {{ appointment.cancellation_policy }}
+                </p>
+            </SurfaceCard>
+            <AppButton v-if="purpose && viewUrl" class="mt-4" :href="viewUrl" variant="quiet">Back to appointment</AppButton>
+            <SurfaceCard v-if="!purpose" class="mt-5" title="What would you like to do?" >
+                <div class="grid gap-3 sm:grid-cols-2">
+                    <AppButton v-if="actions.reschedule" :href="actions.reschedule" variant="secondary">Reschedule</AppButton>
+                    <AppButton v-if="actions.cancel" :href="actions.cancel" variant="secondary">Cancel appointment</AppButton>
+                    <AppButton v-if="actions.rebook" :href="actions.rebook" variant="secondary">Book again</AppButton>
+                    <AppButton v-if="actions.contact" :href="actions.contact" variant="secondary">Update contact details</AppButton>
+                    <AppButton v-if="actions.waitlist" :href="actions.waitlist" variant="secondary">Join waitlist</AppButton>
+                    <AppButton v-if="actions.payment_status" :href="actions.payment_status" variant="secondary">Payment status</AppButton>
+                </div>
+            </SurfaceCard>
+            <SurfaceCard
+                v-else-if="purpose === 'cancel'"
+                class="mt-5"
+                title="Cancel this appointment?"
+                description="Tell the business why, then confirm. An opening may be offered to the waitlist."
+            >
+                <p
+                    v-if="cancellationForm.errors.reason_code || cancellationForm.errors.other_reason"
+                    class="mb-4 rounded-lg bg-[var(--status-danger-soft)] p-3 text-sm text-[var(--status-danger)]"
+                    role="alert"
+                >
+                    {{ cancellationForm.errors.reason_code || cancellationForm.errors.other_reason }}
+                </p>
+                <FormField id="self-cancel-reason" label="Reason for cancelling" required :error="cancellationForm.errors.reason_code">
+                    <select
+                        id="self-cancel-reason"
+                        v-model="cancellationForm.reason_code"
+                        class="cd-input"
+                        :aria-invalid="cancellationForm.errors.reason_code ? true : undefined"
+                        :aria-describedby="cancellationForm.errors.reason_code ? 'self-cancel-reason-error' : undefined"
+                    >
+                        <option value="" disabled>Select a reason</option>
+                        <option v-for="reason in cancellationReasons" :key="reason.value" :value="reason.value">{{ reason.label }}</option>
+                    </select>
+                </FormField>
+                <FormField
+                    v-if="cancellationForm.reason_code === 'other'"
+                    id="self-cancel-other"
+                    class="mt-4"
+                    label="Other reason"
+                    required
+                    :error="cancellationForm.errors.other_reason"
+                >
+                    <textarea
+                        id="self-cancel-other"
+                        v-model="cancellationForm.other_reason"
+                        rows="3"
+                        class="cd-input"
+                        placeholder="Briefly tell the business why you need to cancel"
+                        :aria-invalid="cancellationForm.errors.other_reason ? true : undefined"
+                        :aria-describedby="cancellationForm.errors.other_reason ? 'self-cancel-other-error' : undefined"
+                    />
+                </FormField>
+                <label class="mt-4 flex min-h-11 items-center gap-3">
+                    <input v-model="cancellationForm.confirmed" type="checkbox" />
+                    I understand this cancels the appointment
+                </label>
+                <AppButton
+                    class="mt-4 w-full"
+                    variant="danger"
+                    :loading="cancellationForm.processing"
+                    :disabled="!cancellationForm.confirmed || !cancellationForm.reason_code || (cancellationForm.reason_code === 'other' && !cancellationForm.other_reason.trim())"
+                    @click="submit(cancellationForm)"
+                >
+                    Cancel appointment
+                </AppButton>
+            </SurfaceCard>
+            <SurfaceCard
+                v-else-if="purpose === 'reschedule'"
+                class="mt-5"
+                title="Choose a new time"
+                :description="`All times at the location · ${appointment.time_zone.replaceAll('_', ' ')}`"
+            >
+                <FormField id="reschedule-date" label="Date" required>
+                    <input
+                        id="reschedule-date"
+                        v-model="rescheduleDate"
+                        type="date"
+                        :min="appointment.today"
+                        :disabled="rescheduleForm.processing"
+                        class="cd-input"
+                    />
+                </FormField>
+                <BookingSkeleton v-if="slotsBusy" variant="times" label="Finding available times" class="mt-4" />
+                <p v-if="slotsError" role="alert" class="mt-4 text-sm">
+                    {{ slotsError }}
+                    <button type="button" class="min-h-11 underline" @click="loadRescheduleTimes">Retry</button>
+                </p>
+                <p v-if="!slotsBusy && !slotsError && !rescheduleSlots.length" role="status" class="mt-4 text-sm text-[var(--text-muted)]">No available times. Try another date.</p>
+                <div v-if="rescheduleGroups.length" class="mt-4 flex flex-wrap gap-2" role="group" aria-label="Time of day">
+                    <button v-for="group in rescheduleGroups" :key="group.label" type="button" :aria-pressed="rescheduleGroup?.label === group.label" class="min-h-11 rounded-lg border px-3 text-sm font-medium" :class="rescheduleGroup?.label === group.label ? 'border-[var(--action-primary)] bg-[var(--status-info-soft)]' : 'border-[var(--border-default)]'" @click="reschedulePeriod = group.label">{{ group.label }} · {{ group.slots.length }}</button>
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3" role="group" aria-label="Available appointment times">
+                    <button
+                        v-for="slot in rescheduleGroup?.slots || []"
+                        :key="slot.starts_at_utc"
+                        type="button"
+                        :disabled="rescheduleForm.processing"
+                        :aria-pressed="rescheduleForm.starts_at === slot.starts_at_utc"
+                        :class="['min-h-11 rounded-lg border px-3 py-2 text-sm', rescheduleForm.starts_at === slot.starts_at_utc ? 'border-[var(--action-primary)] bg-[var(--status-info-soft)]' : 'border-[var(--border-strong)]']"
+                        @click="rescheduleForm.starts_at = slot.starts_at_utc; rescheduleForm.confirmed = false; rescheduleForm.idempotency_key = ''"
+                    >
+                        {{ slotTime(slot.starts_at_utc) }}
+                    </button>
+                </div>
+                <p v-if="rescheduleForm.errors.starts_at" role="alert" class="mt-3 text-sm text-[var(--status-danger)]">{{ rescheduleForm.errors.starts_at }}</p>
+                <label v-if="rescheduleForm.starts_at" class="mt-4 flex min-h-11 items-center gap-3 text-sm">
+                    <input v-model="rescheduleForm.confirmed" type="checkbox" :disabled="rescheduleForm.processing" />
+                    Move my appointment to
+                    {{ slotTime(rescheduleForm.starts_at) }}
+                    on
+                    {{ rescheduleDate }}
+                </label>
+                <AppButton
+                    class="mt-4 w-full"
+                    :loading="rescheduleForm.processing"
+                    :disabled="!rescheduleForm.starts_at || !rescheduleForm.confirmed"
+                    @click="submit(rescheduleForm)"
+                >
+                    Confirm new time
+                </AppButton>
+            </SurfaceCard>
+            <SurfaceCard v-else-if="purpose === 'contact'" class="mt-5" title="Update contact details" description="">
+                <div class="grid gap-4">
+                    <FormField id="contact-name" label="Name" required :error="contactForm.errors.name">
+                        <input
+                            id="contact-name"
+                            v-model="contactForm.name"
+                            autocomplete="name"
+                            class="cd-input"
+                            :aria-invalid="contactForm.errors.name ? true : undefined"
+                            :aria-describedby="contactForm.errors.name ? 'contact-name-error' : undefined"
+                        />
+                    </FormField>
+                    <FormField id="contact-mobile" label="Mobile" required :error="contactForm.errors.mobile">
+                        <PhoneInput
+                            id="contact-mobile"
+                            v-model="contactForm.mobile"
+                            required
+                            :country="appointment.business_country_code || 'IN'"
+                            :aria-invalid="contactForm.errors.mobile ? true : undefined"
+                            :aria-describedby="contactForm.errors.mobile ? 'contact-mobile-error' : undefined"
+                        />
+                    </FormField>
+                    <FormField id="contact-email" label="Email" required :error="contactForm.errors.email">
+                        <input
+                            id="contact-email"
+                            v-model="contactForm.email"
+                            type="email"
+                            autocomplete="email"
+                            class="cd-input"
+                            :aria-invalid="contactForm.errors.email ? true : undefined"
+                            :aria-describedby="contactForm.errors.email ? 'contact-email-error' : undefined"
+                        />
+                    </FormField>
+                </div>
+                <AppButton class="mt-4 w-full" :loading="contactForm.processing" @click="submit(contactForm)">Save contact details</AppButton>
+            </SurfaceCard>
+            <SurfaceCard
+                v-else-if="purpose === 'waitlist'"
+                class="mt-5"
+                title="Manage waitlist"
+                description="Choose when you can attend and how to receive opening notifications."
+            >
+                <div v-if="activeWaitlists.length" class="mb-5 space-y-3">
+                    <p class="text-sm font-semibold text-[var(--text-strong)]">Your active requests</p>
+                    <div
+                        v-for="entry in activeWaitlists"
+                        :key="entry.public_id"
+                        class="flex flex-col gap-3 rounded-lg bg-[var(--surface-subtle)] p-3 text-sm sm:flex-row sm:items-center sm:justify-between"
+                    >
+                        <span>{{ entry.service }} · {{ entry.from }} to {{ entry.until }} · {{ entry.time_from }}–{{ entry.time_until }}</span>
+                        <AppButton variant="secondary" @click="leaveWaitlist(entry)">Leave waitlist</AppButton>
+                    </div>
+                </div>
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <FormField id="field-manage-waitlistform-acceptable-from" label="From date" required :error="waitlistForm.errors.acceptable_from">
+                        <input
+                            v-model="waitlistForm.acceptable_from"
+                            type="date"
+                            class="cd-input"
+                            id="field-manage-waitlistform-acceptable-from"
+                            :aria-invalid="waitlistForm.errors.acceptable_from ? true : undefined"
+                            :aria-describedby="waitlistForm.errors.acceptable_from ? 'field-manage-waitlistform-acceptable-from-error' : undefined"
+                        />
+                    </FormField>
+                    <FormField id="field-manage-waitlistform-acceptable-until" label="Until date" required :error="waitlistForm.errors.acceptable_until">
+                        <input
+                            v-model="waitlistForm.acceptable_until"
+                            type="date"
+                            class="cd-input"
+                            id="field-manage-waitlistform-acceptable-until"
+                            :aria-invalid="waitlistForm.errors.acceptable_until ? true : undefined"
+                            :aria-describedby="waitlistForm.errors.acceptable_until ? 'field-manage-waitlistform-acceptable-until-error' : undefined"
+                        />
+                    </FormField>
+                    <FormField id="field-manage-waitlistform-time-from" label="Earliest time" required :error="waitlistForm.errors.time_from">
+                        <input
+                            v-model="waitlistForm.time_from"
+                            type="time"
+                            class="cd-input"
+                            id="field-manage-waitlistform-time-from"
+                            :aria-invalid="waitlistForm.errors.time_from ? true : undefined"
+                            :aria-describedby="waitlistForm.errors.time_from ? 'field-manage-waitlistform-time-from-error' : undefined"
+                        />
+                    </FormField>
+                    <FormField id="field-manage-waitlistform-time-until" label="Latest time" required :error="waitlistForm.errors.time_until">
+                        <input
+                            v-model="waitlistForm.time_until"
+                            type="time"
+                            class="cd-input"
+                            id="field-manage-waitlistform-time-until"
+                            :aria-invalid="waitlistForm.errors.time_until ? true : undefined"
+                            :aria-describedby="waitlistForm.errors.time_until ? 'field-manage-waitlistform-time-until-error' : undefined"
+                        />
+                    </FormField>
+                    <FormField id="field-manage-waitlistform-notification-method" label="Notify me by" required :error="waitlistForm.errors.notification_method">
+                        <select
+                            v-model="waitlistForm.notification_method"
+                            class="cd-input"
+                            id="field-manage-waitlistform-notification-method"
+                            :aria-invalid="waitlistForm.errors.notification_method ? true : undefined"
+                            :aria-describedby="waitlistForm.errors.notification_method ? 'field-manage-waitlistform-notification-method-error' : undefined"
+                        >
+                            <option value="email">Email</option>
+                            <option value="sms">Text message (SMS)</option>
+                        </select>
+                    </FormField>
+                </div>
+                <AppButton class="mt-4 w-full" :loading="waitlistForm.processing" @click="submit(waitlistForm)">Join waitlist</AppButton>
+            </SurfaceCard>
+            <SurfaceCard v-else-if="purpose === 'payment_status'" class="mt-5" title="Deposit and payment status">
+                <StatePanel
+                    tone="info"
+                    :title="appointment.deposit_status === 'not_required' ? 'No deposit required' : 'Deposit required by the booking policy'"
+                    :description="appointment.deposit_status === 'not_required' ? 'Contact the business for details of any payments or balance due.' : 'This page shows the policy recorded when you booked. Contact the business to confirm payments received or any balance due.'"
+                />
+            </SurfaceCard>
+            <SurfaceCard v-else class="mt-5" title="Book this again" description="Choose from the current services, prices and available times.">
+                <AppButton class="w-full" :loading="rebookForm.processing" @click="submit(rebookForm)">Start a new booking</AppButton>
+            </SurfaceCard>
         </template>
     </PublicBookingLayout>
 </template>
+
+<style scoped>
+:deep(.cd-surface-header) { justify-content: center; text-align: center; }
+</style>

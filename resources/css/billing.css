@@ -148,3 +148,54 @@
 .capacity-texts h3 { font-weight:600; }
 @media(max-width:700px) { .capacity-calculator { grid-template-columns:1fr; gap:20px; } }
 @media(max-width:380px) { .capacity-inputs { grid-template-columns:1fr; } }
+
+/* Focused billing workspace: each section is a separate task. */
+.billing-refined { max-width:1120px; }
+.billing-refined .billing-nav { gap:24px; margin:24px 0; }
+.billing-nav button { min-height:46px; color:var(--text-muted); font-weight:600; border-bottom:2px solid transparent; padding:0 3px; }
+.billing-nav button[aria-selected="true"] { color:var(--action-primary); border-color:var(--action-primary); }
+.billing-nav button:focus-visible { outline:2px solid var(--action-primary); outline-offset:4px; }
+.billing-overview-stack { display:grid; gap:20px; }
+.billing-current { padding:28px 32px; background:linear-gradient(115deg,var(--surface-raised) 45%,var(--surface-subtle)); border-top:3px solid var(--action-primary); }
+.billing-current-main { display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.billing-current h2 { font-size:26px; letter-spacing:-.025em; }
+.billing-current-copy { color:var(--text-muted); margin-top:14px; line-height:1.65; }
+.billing-current-copy strong { font-weight:600; color:var(--text-strong); }
+.billing-current .billing-summary-actions { margin-top:24px; padding-top:20px; border-top:1px solid var(--border-subtle); }
+.billing-refined .billing-section-heading { padding:16px 24px; }
+.billing-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); padding:20px 24px 24px; gap:28px; }
+.billing-metrics .billing-usage-item { border:0; padding:0; }
+.billing-metrics .billing-usage-item > div { font-size:13px; color:var(--text-muted); }
+.billing-metrics .billing-usage-item > strong { display:block; margin-top:10px; font-size:25px; font-weight:650; font-variant-numeric:tabular-nums; }
+.billing-metrics .billing-usage-item > strong span { color:var(--text-muted); font-size:16px; font-weight:400; }
+.billing-metrics .billing-usage-item > strong.billing-not-included { font-size:16px; color:var(--text-muted); margin-top:16px; }
+.billing-metrics .billing-usage-item progress { height:6px; }
+.billing-refined .billing-usage-item progress.full::-webkit-progress-value { background:var(--action-primary); }
+.billing-payment-row { display:flex; align-items:center; gap:16px; padding:20px 24px; }
+.billing-payment-icon { width:44px; height:44px; display:grid; place-items:center; background:var(--surface-subtle); border-radius:10px; flex-shrink:0; }
+.billing-payment-icon svg { width:24px; height:24px; color:var(--text-muted); }
+.billing-payment-info { flex:1; min-width:0; }
+.billing-payment-info h2 { font-size:14px; font-weight:600; }
+.billing-payment-info p { color:var(--text-muted); font-size:12px; margin-top:4px; overflow-wrap:anywhere; }
+.billing-recent { display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); padding:0 4px; }
+.billing-refined .capacity-panel { margin-top:0; }
+.billing-refined .capacity-panel > .capacity-calculator { margin:28px; }
+.billing-refined .capacity-calculator { gap:28px; align-items:start; }
+.billing-refined .capacity-inputs { gap:26px 20px; padding:6px 0; }
+.billing-refined .capacity-cadence { grid-column:1/-1; }
+.billing-refined .cd-segmented { display:inline-flex; gap:4px; background:var(--surface-subtle); border-radius:9px; padding:4px; }
+.billing-refined .cd-segmented button { min-height:42px; padding:8px 16px; border-radius:7px; font-size:13px; font-weight:600; }
+.billing-refined .cd-segmented button.selected { background:var(--surface-raised); color:var(--action-primary); box-shadow:0 1px 4px #17255415; }
+.billing-refined .cd-segmented span { font-size:10px; color:var(--status-success); margin-left:4px; }
+.billing-refined .capacity-total { background:var(--surface-subtle); padding:24px; gap:12px; }
+.billing-refined .capacity-amount { font-size:38px; letter-spacing:-.04em; line-height:1.2; }
+.billing-refined .capacity-total dl { padding:10px 0; border-block:1px solid var(--border-subtle); }
+.capacity-included { display:flex; align-items:start; gap:9px; }
+.capacity-included svg { width:18px; height:18px; color:var(--status-success); margin-top:2px; flex-shrink:0; }
+.billing-refined .capacity-footnote { font-size:11px; max-width:680px; }
+@media(max-width:700px) {
+ .billing-current { padding:22px; } .billing-current-main { align-items:start; } .billing-current h2 { font-size:22px; }
+ .billing-metrics { gap:22px; grid-template-columns:1fr; } .billing-metrics .billing-usage-item + .billing-usage-item { padding-top:20px; border-top:1px solid var(--border-subtle); }
+ .billing-payment-row { flex-wrap:wrap; } .billing-payment-row > :last-child { margin-left:60px; }
+ .billing-refined .capacity-panel > .capacity-calculator { margin:20px; }
+}

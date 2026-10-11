@@ -4,7 +4,7 @@ import FormField from '@/Components/Product/FormField.vue';
 import FieldError from '@/Components/Product/FieldError.vue';
 import AppSelect from '@/Components/Product/AppSelect.vue';
 import { computed, nextTick, ref, watch, onMounted, onBeforeUnmount } from 'vue';
-import { router, useForm } from '@inertiajs/vue3';
+import { router, useForm, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import {
     ArrowLeftIcon,
@@ -200,7 +200,8 @@ const searchParams = new URLSearchParams(typeof window === 'undefined' ? '' : wi
 const requestedSection = searchParams.get('section');
 const justPrepared = ref(searchParams.get('welcome') === '1');
 const copiedBookingLink = ref(false);
-const bookingUrl = computed(() => props.business.booking_slug ? route('booking.business', props.business.booking_slug) : '');
+const page = usePage();
+const bookingUrl = computed(() => props.business.booking_slug ? `${page.props.brand.booking_base_url}/${props.business.booking_slug}` : '');
 const preparedImage = computed(() => props.onboardingCatalog.business_types[props.business.business_type]?.image || '/images/marketing/editorial/product-workday.webp');
 const copyBookingLink = async () => {
     try{await navigator.clipboard.writeText(bookingUrl.value);copiedBookingLink.value=true;}catch{publishError.value='Copy isn’t available in this browser. Select the booking link below.';}
@@ -365,7 +366,7 @@ const commitImport = async () => {
         <template v-else>
         <PageHeader title="Business setup">
             <template #actions>
-                <AppButton v-if="business.configuration_published_at && business.online_booking_enabled" :href="route('booking.business', business.booking_slug)" variant="secondary">View booking page</AppButton>
+                <AppButton v-if="business.configuration_published_at && business.online_booking_enabled" :href="bookingUrl" variant="secondary">View booking page</AppButton>
             </template>
         </PageHeader>
 

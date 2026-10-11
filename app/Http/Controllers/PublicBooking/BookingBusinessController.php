@@ -5,6 +5,7 @@ namespace App\Http\Controllers\PublicBooking;
 use App\Domain\BusinessConfiguration\Services\BookingSlugManager;
 use App\Domain\PublicBooking\Services\PublicBookingService;
 use App\Http\Controllers\Controller;
+use App\Support\BookingUrl;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -16,11 +17,13 @@ class BookingBusinessController extends Controller
         $business = $slugs->resolve($slug);
         abort_unless($business?->configuration_published_at && $business->online_booking_enabled, 404);
         if ($business->booking_slug !== $slug) {
-            return redirect()->route('booking.business', $business->booking_slug, 301);
+            return redirect(BookingUrl::forSlug($business->booking_slug), 301);
         }
 
         return Inertia::render('Booking/Welcome', [
+            'seo' => ['title' => 'Book with '.$business->name, 'description' => 'Choose a service and book an appointment with '.$business->name.'.', 'canonical' => BookingUrl::forSlug($business->booking_slug)],
             'business' => [
+                'booking_url' => BookingUrl::forSlug($business->booking_slug),
                 ...$business->only(['name', 'booking_slug', 'business_type', 'description', 'brand_color', 'country_code', 'currency_code', 'phone', 'email', 'website_url', 'social_links', 'address', 'map_url']),
                 'has_logo' => filled($business->logo_path),
                 'has_cover_image' => filled($business->cover_image_path),

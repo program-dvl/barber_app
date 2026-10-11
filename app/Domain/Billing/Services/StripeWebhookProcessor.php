@@ -29,6 +29,13 @@ class StripeWebhookProcessor
         return $this->checkoutCompleted($object, $observedAt);
     }
 
+    /** Project expiry only from an authenticated provider snapshot. */
+    public function synchronizeCheckoutExpirationSnapshot(array $object): bool
+    {
+        return ($object['status'] ?? null) === 'expired'
+            && $this->checkoutFailed($object, 'checkout.session.expired');
+    }
+
     /** @param array<string, mixed> $object */
     public function synchronizeSubscriptionSnapshot(array $object, Carbon $observedAt): bool
     {

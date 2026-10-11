@@ -35,6 +35,20 @@ class AvailabilitySearchService implements AvailabilityQuery
         $interval = max(1, (int) ($business->appointment_interval_minutes ?: 15));
         $cursorUtc = $from->utc();
         $untilUtc = $until->addDay()->utc();
+        $now = ($query->asOfUtc ?? CarbonImmutable::now())->utc();
+        if ($query->exactStartUtc) {
+            $exact = $query->exactStartUtc->utc();
+            if ($exact->lt($cursorUtc) || $exact->gte($untilUtc) || $exact->lt($now)) {
+                return [];
+            }
+            $cursorUtc = $exact;
+            $untilUtc = $exact->addSecond();
+        }
+        if ($cursorUtc->lt($now)) {
+            // Do not repeatedly resolve configuration for starts already past.
+            $minutes = (int) ceil($cursorUtc->diffInMinutes($now));
+            $cursorUtc = $cursorUtc->addMinutes((int) ceil($minutes / $interval) * $interval);
+        }
         $slots = [];
         $windowCache = [];
         while ($cursorUtc->lt($untilUtc) && count($slots) < $query->limit) {
@@ -51,7 +65,7 @@ class AvailabilitySearchService implements AvailabilityQuery
                         $query->source,
                         $query->clientEligibility,
                         $query->asOfUtc,
-                    ));
+                    ), true, null, $query->excludeAppointmentId);
                     $slots[] = $plan->toArray();
                 } catch (BookingRuleViolation) {
                     // Search is advisory and intentionally omits private schedule

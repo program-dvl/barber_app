@@ -1,11 +1,13 @@
 <script setup>
-import { computed } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { LockClosedIcon } from '@heroicons/vue/24/outline';
 import ProductMark from '@/Components/Product/ProductMark.vue';
+import BookingSkeleton from '@/Components/Booking/BookingSkeleton.vue';
 
 const props = defineProps({
     title: String,
+    steps: { type: Array, default: () => ['Service', 'Staff & time', 'Your details', 'Review', 'Confirmation'] },
     currentStep: {
         type: Number,
         default: 0,
@@ -16,8 +18,15 @@ const props = defineProps({
     },
 });
 
-const steps = ['Service', 'Staff & time', 'Your details', 'Review', 'Confirmation'];
-const progress = computed(() => props.currentStep <= 0 ? 0 : Math.round((props.currentStep / steps.length) * 100));
+const navigating = ref(false);
+let stopStart, stopFinish;
+onMounted(() => {
+    stopStart = router.on('start', event => { navigating.value = event.detail.visit.method.toLowerCase() === 'get'; });
+    stopFinish = router.on('finish', () => { navigating.value = false; });
+});
+onBeforeUnmount(() => { stopStart?.(); stopFinish?.(); });
+
+const progress = computed(() => props.currentStep <= 0 ? 0 : Math.round((props.currentStep / props.steps.length) * 100));
 </script>
 
 <template>
@@ -51,8 +60,9 @@ const progress = computed(() => props.currentStep <= 0 ? 0 : Math.round((props.c
             </div>
         </div>
 
-        <main id="public-main" tabindex="-1" :class="['mx-auto w-full px-4 py-5 sm:px-6 sm:py-6', mode === 'booking' ? 'max-w-6xl' : 'max-w-3xl']">
-            <slot />
+        <main id="public-main" tabindex="-1" :class="['mx-auto w-full px-4 py-5 sm:px-6 sm:py-6 [overflow-wrap:anywhere]', mode === 'booking' ? 'max-w-6xl' : 'max-w-3xl']">
+            <div v-if="navigating" class="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-5"><BookingSkeleton /></div>
+            <slot v-else />
         </main>
 
         <footer class="mx-auto max-w-6xl px-4 pb-8 text-center text-xs leading-5 text-[var(--text-muted)] sm:px-6">

@@ -9,7 +9,9 @@ use App\Domain\PublicBooking\Services\WaitlistService;
 use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
 use App\Http\Controllers\Controller;
 use App\Rules\E164Phone;
+use App\Support\BookingUrl;
 use Carbon\CarbonImmutable;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
@@ -105,9 +107,20 @@ class PublicAppointmentController extends Controller
             }
             $link->forceFill(['used_at' => now()])->save();
 
-            return redirect()->route('booking.business', ['slug' => $link->appointment->business->booking_slug, 'rebook' => $link->appointment->booking_reference]);
+            return redirect(BookingUrl::forSlug($link->appointment->business->booking_slug));
         } catch (BookingRuleViolation $error) {
             return back()->withErrors(['appointment' => $error->getMessage()]);
+        }
+    }
+
+    public function availability(Request $request, string $token, SecureAppointmentLinkService $links, AppointmentSelfService $selfService): JsonResponse
+    {
+        $link = $links->resolve($token, 'reschedule');
+        $data = $request->validate(['date' => ['required', 'date_format:Y-m-d']]);
+        try {
+            return response()->json(['slots' => $selfService->availableRescheduleTimes($link, $data['date'])]);
+        } catch (BookingRuleViolation $error) {
+            return response()->json($error->toDomainError(), 409);
         }
     }
 
@@ -159,6 +172,7 @@ class PublicAppointmentController extends Controller
                 'starts_at' => $appointment->starts_at_utc->setTimezone($appointment->time_zone)->toIso8601String(),
                 'ends_at' => $appointment->ends_at_utc->setTimezone($appointment->time_zone)->toIso8601String(),
                 'time_zone' => $appointment->time_zone, 'services' => $appointment->serviceLines->pluck('name')->all(),
+                'today' => CarbonImmutable::now($appointment->time_zone)->toDateString(),
                 'price_minor' => $appointment->price_minor, 'currency_code' => $appointment->currency_code,
                 'client_name' => $appointment->client_name, 'client_mobile' => $appointment->client_mobile,
                 'client_email' => $appointment->client_email, 'version' => $appointment->version,

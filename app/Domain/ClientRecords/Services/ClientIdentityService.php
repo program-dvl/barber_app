@@ -18,6 +18,19 @@ use Illuminate\Validation\ValidationException;
 
 class ClientIdentityService implements ClientIdentityLinker
 {
+    /** Resolve only an unambiguous same-business contact, without public lookup or autofill. */
+    public function bookingIdentity(Business $business, array $contact): ?Client
+    {
+        $normalized = $this->normalize($contact);
+        $candidates = $this->contactCandidates($business->id, $normalized['mobile'], $normalized['email'])
+            ->filter(fn (Client $client) => $client->status === 'active'
+                && $client->normalized_name === $normalized['name']
+                && (! $client->normalized_mobile || $client->normalized_mobile === $normalized['mobile'])
+                && (! $client->normalized_email || $client->normalized_email === $normalized['email']));
+
+        return $candidates->count() === 1 ? $candidates->first() : null;
+    }
+
     public function __construct(
         private readonly SecureAppointmentLinkService $links,
         private readonly CommunicationActionLinkService $communicationLinks,

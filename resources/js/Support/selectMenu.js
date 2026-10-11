@@ -7,10 +7,10 @@ export function nextEnabledOption(options, current, direction) {
     return -1;
 }
 
-export function selectMenuPosition(rect, viewport) {
+export function selectMenuPosition(rect, viewport, minWidth = 240) {
     const margin = 8;
     const gap = 6;
-    const width = Math.min(Math.max(rect.width, 240), viewport.width - margin * 2);
+    const width = Math.min(Math.max(rect.width, minWidth), viewport.width - margin * 2);
     const below = Math.max(0, viewport.height - rect.bottom - gap - margin);
     const above = Math.max(0, rect.top - gap - margin);
     const upwards = below < 220 && above > below;

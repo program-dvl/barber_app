@@ -1,6 +1,110 @@
 # Project status
 
-Status date: 2026-10-05
+Status date: 2026-10-11
+
+## 2026-10-11 Capacity-only billing selection (ADR-057)
+
+- [x] Removed the Existing plan options disclosure, Starter/Pro cards, feature
+  comparison, tier-change dialog and tier offer payload from Subscription & billing.
+  Plan now offers only the location/bookable-staff calculator and cadence selector.
+- [x] Retired tier checkout/change POST actions with tenant-authorized 410 responses;
+  old checkout GET links redirect to Plan. Capacity purchase/change, invoices,
+  signed webhooks, reconciliation, cancellation and payment management remain.
+  No database purge or automatic test-subscription migration was performed.
+- [x] Billing suite: **95 passed / 422 assertions**. Client/SSR production builds,
+  scoped Pint and whitespace checks passed. Isolated synthetic trial browser view
+  shows the single USD calculator; no old tier section or comparison is present.
+  [Screenshot](audits/2026-10-11-billing/capacity-only-plan.jpg).
+
+## 2026-10-11 Last-step onboarding recovery (FR-02; ADR-053/055)
+
+- [x] Traced the local final-step 500 to the pending slug reservation migration,
+  rather than invalid signup answers. Saved a private snapshot of affected data
+  and applied only `2026_10_10_000001_reserve_public_booking_slugs` to local MySQL;
+  verified its table and migration record.
+- [x] The affected owner's browser subsequently completed onboarding with the
+  original saved answers and four selected services. Two authenticated completion
+  replays returned the workspace redirect and retained four services, one staff
+  profile and one location. Browser completion is retained; publication stays
+  private. No account recreation or reservation bypass was introduced.
+- [x] Added a regression covering missing-schema rollback, saved-answer recovery,
+  migration replay and duplicate-free HTTP completion. Added the deployment
+  recovery instructions and linked them from the Business setup specification.
+- [x] Focused onboarding/setup/configuration/migration recovery verification:
+  **73 tests passed / 496 assertions**; scoped PHP formatting and whitespace
+  checks passed. This repair required no frontend or dependency changes.
+
+## 2026-10-11 USD subscription rollout and billing redesign (ADR-056)
+
+- [x] Recorded owner approval of USD 29/19/9 monthly and 290/190/90 yearly.
+  New businesses use verified USD software pricing without changing operating
+  currencies. Existing paid currency changes still require separate migration.
+  Unavailable countries/draft rates are absent from the customer workspace.
+- [x] Redesigned Overview/Plan/Invoices with keyboard-accessible tabs, compact
+  trial/current plan and usage, focused billing management and bounded invoice
+  history. Existing plan options use a disclosure. Zero allowances do not show
+  false “limit reached” warnings; full location capacity is shown neutrally.
+- [x] Audited Larafast billing/tenancy/config/deployment documentation against
+  installed Cashier/Stripe and reused the Business-owned provider/portal/webhook
+  journal/reconcilers. Added idempotent verified capacity catalog provisioning and
+  correct-route managed endpoint setup with private secret recovery and live flags.
+  Open Checkout resumes its exact URL; authenticated expiry releases its request.
+- [x] Verified six approved prices in the local Stripe test account; installed two
+  local immutable rate mappings and enabled local USD billing. Synthetic Canadian
+  trial in an isolated database opened real Stripe sandbox Checkout at $56/month
+  for 1 location + 4 staff. No payment was submitted. Expiry preserved the trial.
+  Desktop and 390 px trial/plan views, tab keyboard actions and invoices inspected.
+- [x] Backend **598 passed / 5,724 assertions**, **30 skipped**; billing subset
+  **96 passed / 417 assertions**; frontend **75 passed**; Node 24 client/SSR build,
+  scoped Pint and whitespace passed. Corrected the old date-sensitive billing
+  fixtures without changing production entitlement history. Existing CSS/font
+  build warnings remain.
+- [ ] Live keys/endpoint delivery, tax policy, provider payment cases, production
+  MySQL parallel billing and independent release certification remain environment
+  gates. No live charge, real message or paid SMS credit certification occurred.
+  Use [the setup guide](deployment/subscription-billing-stripe.md) on local/server.
+  See [audit](audits/2026-10-11-billing/review.md) for source coverage and limits.
+
+## 2026-10-10 Public booking experience and URL architecture (ADR-055)
+
+- [x] Implemented the guest journey through service selection, staff/time,
+  essential details with inline review, and centered confirmation/calendar/private
+  management actions. Mobile continuation works; time groups, concise states,
+  accessible skeletons and centered management headings are locally verified.
+  Phone input uses a compact flag/dial code and a wider searchable country menu;
+  international pasted numbers infer their country. The previous-visit question
+  is removed in favor of private, unambiguous same-business contact/name matching.
+- [x] Both configured booking-host `/{slug}` and main-domain `/book/{slug}` render
+  one shared implementation without redirecting the current fallback. Centralized
+  primary URLs cover setup/copy, services, publication, rebook/payment return and
+  canonical metadata. Readable generated/custom slugs and historical aliases use
+  one unique reservation namespace with deletion tombstones. The migration also
+  removes historical raw flow secrets while retaining access digests.
+- [x] Hold replacement/release, secret-validated resume, reviewed-essential HMAC,
+  private actual eligibility/deposit evaluation, serialized confirmation and
+  authoritative commit revalidation are implemented. Public slot projections
+  exclude internal plans/configuration. Rescheduling selects actual availability
+  and respects accepted policy cutoffs; waitlist matching checks the exact opening.
+- [x] Final backend run: **583 passed / 5,626 assertions**, **30 skipped**, and
+  **3 pre-existing billing failures**, also reproduced on unchanged HEAD in an
+  isolated baseline. A separately created disposable MySQL database passed
+  **14 parallel-process tests / 55 assertions**, including simultaneous public
+  confirmations and cross-business slug claims. Frontend helpers: **75 passed**.
+  Node 24 client/SSR builds, isolated route/config cache generation, Pint and
+  whitespace checks passed. No dependency lock changes were required.
+- [x] Chromium completed synthetic guest bookings on both local origins,
+  refreshed held/confirmed flows, changed held times, inferred/search-selected
+  phone countries and committed secure rescheduling. Centered confirmation has
+  no horizontal overflow at 320/390/768/1440 px; 390 px management headings are
+  centered. Fixtures use fake communications and isolated databases; no real
+  customer data, message/payment or application-database migration was involved.
+- [ ] Production DNS/Forge/SSL, real delivery/payment certification, paid public
+  checkout (OPEN-16), target-topology performance and independent accessibility/
+  browser release gates remain open. Local search measured 726 queries for the
+  representative fixture and still needs profiling/load testing. This is not
+  paid-launch approval or verified live infrastructure.
+  [Audit and evidence](audits/2026-10-10-public-booking/README.md).
+  [Deployment runbook](deployment/public-booking.md).
 
 ## 2026-10-05 Subscription & Billing integrated into the original checkout
 

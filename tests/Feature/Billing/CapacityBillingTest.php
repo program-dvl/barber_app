@@ -32,7 +32,7 @@ use Stripe\HttpClient\ClientInterface;
 use Stripe\HttpClient\CurlClient;
 
 uses(RefreshDatabase::class);
-beforeEach(fn () => Carbon::setTestNow('2026-10-05 12:00:00'));
+beforeEach(fn () => Carbon::setTestNow(Carbon::now()->startOfSecond()->addMinutes(5)));
 afterEach(fn () => Carbon::setTestNow());
 
 function capacityRate(string $interval = 'monthly', string $market = 'US', string $currency = 'USD'): BillingRateCard
@@ -45,7 +45,7 @@ function capacityRate(string $interval = 'monthly', string $market = 'US', strin
             $config[$cadence][$role.'_price_id'] = 'price_capacity_'.$market.'_'.$cadence.'_'.$role;
         }
     }
-    $config['sms_packs']['500']['price_id'] = 'price_capacity_'.$market.'_sms';
+    $config['sms_packs']['500'] = ['credits' => 500, 'amount_minor' => 1500, 'price_id' => 'price_capacity_'.$market.'_sms'];
     config(['capacity-billing.enabled' => true, 'capacity-billing.markets.'.$market => $config,
         'billing.stripe.secret' => 'sk_test_local', 'billing.stripe.webhook_secret' => 'whsec_local']);
     $catalog = app(CapacityPricingCatalog::class);
@@ -421,11 +421,33 @@ it('creates a finite renewal schedule and retains automatic tax through the Stri
     $change = BillingCapacityChange::create(['business_id' => $business->id, 'business_subscription_id' => $subscription->id, 'actor_user_id' => $owner->id, 'subscription_version' => $subscription->version, 'kind' => 'renewal', 'status' => 'submitted', 'quote' => $quote, 'expires_at' => now()->addMinutes(10)]);
     $object = ['object' => 'subscription', 'id' => $subscription->provider_subscription_id, 'customer' => $subscription->provider_customer_id, 'status' => 'active', 'cancel_at_period_end' => false, 'pending_update' => null, 'schedule' => null, 'items' => ['object' => 'list', 'data' => capacityProvider($card, 3, 20)], 'discounts' => [], 'automatic_tax' => ['enabled' => true], 'default_tax_rates' => []];
     withCapacityStripeTransport($object, function ($client) use ($subscription, $change, $card) {
-        app(CapacityStripeGateway::class)->submit($subscription,$change);
+        app(CapacityStripeGateway::class)->submit($subscription, $change);
         $request = $client->requests[2]['params'];
         expect($request['end_behavior'])->toBe('release')->and($request['phases'][1]['duration'])->toBe(['interval' => 'month', 'interval_count' => 1])
             ->and($request['phases'][1]['automatic_tax']['enabled'])->toBe('true')
             ->and($request['phases'][1]['start_date'])->toBe($subscription->current_period_ends_at->timestamp)
-            ->and($request['phases'][1]['items'])->toBe(app(CapacityPricingCatalog::class)->items($card->terms,1,3));
+            ->and($request['phases'][1]['items'])->toBe(app(CapacityPricingCatalog::class)->items($card->terms, 1, 3));
     });
 });
+
+it('resumes an open checkout and releases the request only after provider expiry', function (string $status) {
+    [$owner, $business] = createTenantMembership();
+    $card = capacityRate();
+    $subscription = activateTestSubscription($business);
+    $subscription->update(['status' => 'trialing', 'provider_subscription_id' => null]);
+    $change = app(CapacityBillingManager::class)->review($business, $owner, 'US', 'monthly', 1, 4);
+    $change->update(['status' => 'submitted', 'submitted_at' => now()]);
+    $attempt = BillingCheckoutAttempt::create(['business_id' => $business->id, 'business_subscription_id' => $subscription->id,
+        'created_by_user_id' => $owner->id, 'billing_plan_price_id' => $card->billing_plan_price_id,
+        'provider' => 'stripe', 'provider_transaction_id' => 'cs_resume_capacity', 'provider_checkout_url' => 'https://checkout.stripe.com/resume',
+        'status' => 'pending', 'expires_at' => now()->addHours(2), 'capacity_quote' => $change->quote]);
+    $object = ['object' => 'checkout.session', 'id' => 'cs_resume_capacity', 'status' => $status, 'mode' => 'subscription', 'subscription' => null,
+        'customer' => $subscription->provider_customer_id, 'metadata' => ['application' => 'clipperdesk', 'business_public_id' => $business->public_id,
+            'billing_checkout_attempt_id' => $attempt->public_id, 'plan_price_id' => (string) $card->billing_plan_price_id]];
+    withCapacityStripeTransport($object, function () use ($owner, $business, $change, $status) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])
+            ->assertOk()->assertJsonPath('checkout_url', $status === 'open' ? 'https://checkout.stripe.com/resume' : null)
+            ->assertJsonPath('status', $status === 'open' ? 'submitted' : 'expired');
+    });
+    expect($subscription->fresh()->status->value)->toBe('trialing')->and(BillingCheckoutAttempt::count())->toBe(1);
+})->with(['open', 'expired']);

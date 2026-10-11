@@ -2031,6 +2031,71 @@ and [screenshots, six-perspective review and verification](audits/2026-10-04-bus
   webhook/communications tests. Real provider, tax, refund/dispute and MySQL
   concurrency certification remain required before release.
 
+## ADR-055 — Shared public booking origins and private contact-based eligibility
+
+- Status: Accepted; source and local validation only, external production gates retained.
+- Date: 2026-10-10. Authorization: the user requested the end-to-end booking audit, primary subdomain plus publicly available fallback, and removal of the previous-visit question with smarter contact handling.
+- Requirements: FR-01, FR-03, FR-06/07, FR-09/10, FR-19/20.
+- One `BookingBusinessController`, catalog, scheduling engine and Vue journey serve configured `BOOKING_HOST/{slug}` and `/book/{slug}`. Current fallback links render 200; historical aliases redirect to the primary current URL. All promoted links and canonical metadata use `BookingUrl`; tenant booking retains its existing noindex policy. No duplicate app, CORS exemption or weakened CSRF protection is introduced.
+- Readable starter slugs and owner customization share one unique reservation table with historical aliases. Deleted-business reservations remain unavailable; links must never silently resolve to another business. Legacy collisions require explicit operator resolution before migration completion. Migration retry is safe after MySQL nontransactional DDL.
+- Services, staff/time and essential details with inline review are the three active stages, followed by confirmation. Location and staff controls appear only when useful/permitted. The raw flow secret stays in the browser and its database digest; hold state contains an allowlist of public selections. Refresh restores holds and confirmed appointments without retaining customer contacts in browser storage. Hold replacement/release and confirmation lock business/flow and reuse the authoritative scheduling transactions.
+- Known-client eligibility is inferred at details review using active same-business normalized name and contact candidates, rejecting contradictory saved contacts and ambiguous matches. Matching is classification, not authenticated identity or proof of a completed visit. No public contact lookup, profile disclosure, history display or saved-profile autofill is offered. First-visit restrictions and actual deposit rules are rechecked before confirmation. A keyed details digest binds the reviewed quote without storing raw contacts in flow state.
+- Household/shared numbers, changed names or conflicting contacts can remain classified as new. The error offers another service or business contact; no guest profile merge is authorized. A future verified-contact recovery mechanism requires a separately reviewed privacy/identity contract.
+- The source refinement does not promote Phase 2, certify WCAG compliance, configure live infrastructure or waive OPEN-13/15/16/19/20/21/22. Required-deposit self-service payment remains blocked by OPEN-16, with an accurate contact path and no paid-confirmation bypass.
+- Evidence: [booking audit](audits/2026-10-10-public-booking/README.md), [journey](public-booking-journey.md), [deployment](deployment/public-booking.md).
+
+## ADR-056 — Approved USD subscriptions and focused billing workspace
+
+- Status: Accepted; deployed live certification remains pending.
+- Date: 2026-10-11.
+- Authorization: the owner requested usable Stripe billing, allowed USD-only
+  subscriptions, and explicitly answered “Use these USD prices”: monthly USD
+  29/19/9 and yearly USD 290/190/90 for base/extra location/extra bookable staff.
+- Decision: offer only verified USD capacity rates to new businesses, including
+  Canadian businesses. Software subscription currency is independent of operating
+  country/currency; neither sales nor business settings are converted. Existing
+  paid currencies and immutable purchased cards require reviewed migration.
+  This supersedes ADR-054's USD draft/unapproved status and initial country-bound
+  selection for the approved USD rollout. Other markets are not approved.
+- UX: Overview, Plan and Invoices are separate tasks. Show current status/date,
+  recurring total, essential usage, saved billing management and actionable debt.
+  New trials receive one subscription calculator; unfinished countries/drafts and
+  empty invoice panels are absent from Overview. Existing plan choices are folded
+  under a disclosure for retained subscribers (superseded by ADR-057). Zero allowance means “Not included,”
+  and merely using the purchased location capacity is not a billing warning.
+- Reuse: keep ADR-029's Business-owned Stripe provider, signed webhook journal,
+  scoped invoices, portal and reconcilers. Larafast Cashier's Team/User examples
+  are not this app's ledger. Do not reactivate its disabled routes/listener.
+- Setup: idempotent capacity provisioning verifies six licensed recurring prices
+  before immutable local mapping. Managed webhook setup targets only
+  `/billing/webhooks/stripe`, selects handled events, saves new secrets privately,
+  and requires explicit live mutation flags. Credentials/delivery certification
+  remain deployment duties. No charges are made by setup commands.
+- Boundaries: included SMS retains the implemented allowance; new paid packs are
+  removed from the approved catalog and stay off. USD software price approval does
+  not approve destination economics, SMS refunds/disputes, tax policy, independent
+  accessibility or live payment certification. No Phase 2 scope is promoted.
+- Evidence: `modules/subscription-billing.md`,
+  `deployment/subscription-billing-stripe.md`, and the 2026-10-11 billing audit.
+
+
+## ADR-057 — Capacity-only selection in Subscription & billing
+
+- Status: Accepted on 2026-10-11 following the owner's explicit prelaunch request.
+- Requirements: FR-01, PRD §9; supersedes ADR-056's retained-tier disclosure.
+- Decision: the owner billing workspace offers one plan based on purchased locations
+  and bookable staff, monthly or yearly. Remove Starter/Pro cards, their comparison,
+  tier-change dialog and server offer payload. No alternate tier is offered when
+  capacity pricing is unavailable; use the existing support state.
+- Old tier checkout GET links redirect to the Plan tab. Tier checkout and change
+  POST requests return 410 after tenant/permission checks, without creating provider
+  sessions or changing subscription terms. Capacity review/confirmation remains
+  the only purchase/change path in this workspace.
+- Retain financial records, provider-event processing, authenticated reconciliation,
+  invoices, payment management, cancellation and reactivation. This UI/action cleanup
+  does not purge local test data or automatically migrate a Stripe subscription.
+- Evidence: billing workspace/lifecycle/capacity tests and the billing audit.
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |
@@ -2055,4 +2120,4 @@ and [screenshots, six-perspective review and verification](audits/2026-10-04-bus
 
 | OPEN-21 | Connect deposit communication events and approve the usable client payment action | Deposit request/received handlers and templates exist, but no deposit domain events invoke them; the current public action is only information and OPEN-16 still blocks self-service payment. | Before labeling deposit notifications active or offering a payment CTA | **Open; bounded by ADR-052, OPEN-13/16.** Product/Engineering/Finance must define committed request/collection events, exact-once keys, failure/refund language and tested public action. Prepared templates are not proof of an operational automation; no synthetic event or paid-confirmation bypass is approved. |
 
-| OPEN-22 | Approve each country rate card and SMS unit economics | The pricing model is approved, but country list, local amounts, annual discounts, destination costs, allowances, pack prices and refund/dispute handling are not | Before enabling each paid market | **Open; bounded by ADR-054.** Include actual Twilio route/carrier/sender/number/registration costs, SES costs and support margin. Certify taxed/async credit payment and refund/dispute recovery; draft USD amounts remain disabled. |
+| OPEN-22 | Approve each country rate card and SMS unit economics | The pricing model is approved, but country list, local amounts, annual discounts, destination costs, allowances, pack prices and refund/dispute handling are not | Before enabling each paid market | **Partially resolved; bounded by ADR-054/056.** Include actual Twilio route/carrier/sender/number/registration costs, SES costs and support margin. Certify taxed/async credit payment and refund/dispute recovery; USD software amounts are approved by ADR-056; other markets, SMS economics and paid-pack reversals remain open. |

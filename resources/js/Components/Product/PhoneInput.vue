@@ -29,6 +29,8 @@ const inferred = () => {
     try { return parsePhoneNumberFromString(props.modelValue)?.country || null; } catch { return null; }
 };
 const selectedCountry = ref(inferred() || (supported.has(props.country) ? props.country : 'IN'));
+const countryFlag = code => String.fromCodePoint(...code.toUpperCase().split('').map(character => 127397 + character.charCodeAt(0)));
+const selectedName = computed(() => countryOptions.value.find(option => option.code === selectedCountry.value)?.name || regionNames.of(selectedCountry.value));
 const localNumber = ref('');
 const touched = ref(false);
 
@@ -44,7 +46,12 @@ const synchronize = value => {
 };
 const publish = () => {
     const digits = localNumber.value.replace(/\D/g, '');
-    const parsed = digits ? parsePhoneNumberFromString(digits, selectedCountry.value) : null;
+    const international = localNumber.value.trim().startsWith('+');
+    const parsed = digits ? parsePhoneNumberFromString(international ? localNumber.value : digits, selectedCountry.value) : null;
+    if (international && parsed?.country) {
+        selectedCountry.value = parsed.country;
+        localNumber.value = parsed.nationalNumber;
+    }
     const value = parsed?.number || (digits ? `+${getCountryCallingCode(selectedCountry.value)}${digits}` : '');
     emit('update:modelValue', value);
     emit('validity', Boolean(parsed?.isValid()));
@@ -66,11 +73,44 @@ watch(selectedCountry, publish);
 
 <template>
     <div :class="$attrs.class">
-        <div class="cd-phone-control grid grid-cols-[minmax(7.5rem,0.4fr)_minmax(0,1fr)] rounded-lg border border-[var(--border-default)] bg-[var(--surface-raised)] focus-within:border-[var(--action-primary)] focus-within:ring-2 focus-within:ring-[var(--focus-ring)]/20">
-            <AppSelect :id="`${id}-country`" v-model="selectedCountry" class="min-h-11 min-w-0 border-0 border-r border-[var(--border-subtle)] bg-[var(--surface-subtle)] px-3 text-sm font-medium focus:ring-0" :aria-label="`Country code, currently +${getCountryCallingCode(selectedCountry)}`">
+        <div class="cd-phone-control grid grid-cols-[7.25rem_minmax(0,1fr)] rounded-lg border border-[var(--border-default)] bg-[var(--surface-raised)] focus-within:border-[var(--action-primary)] focus-within:ring-2 focus-within:ring-[var(--focus-ring)]/20">
+            <AppSelect
+                :id="`${id}-country`"
+                v-model="selectedCountry"
+                :menu-min-width="320"
+                class="min-h-11 min-w-0 rounded-l-lg border-0 border-r border-[var(--border-subtle)] bg-[var(--surface-subtle)] px-2 text-sm font-medium focus:ring-0"
+                :aria-label="`Country code, ${selectedName}, +${getCountryCallingCode(selectedCountry)}`"
+            >
                 <option v-for="option in countryOptions" :key="option.code" :value="option.code">{{ option.name }} (+{{ option.dial }})</option>
+                <template #selected>
+                    <span class="flex items-center gap-1.5">
+                        <span aria-hidden="true" class="text-lg leading-none">{{ countryFlag(selectedCountry) }}</span>
+                        <span>+{{ getCountryCallingCode(selectedCountry) }}</span>
+                    </span>
+                </template>
+                <template #option="{ option }">
+                    <span class="flex items-center gap-3">
+                        <span aria-hidden="true" class="text-xl leading-none">{{ countryFlag(option.value) }}</span>
+                        <span class="min-w-0 flex-1">{{ countryOptions.find(country => country.code === option.value)?.name }}</span>
+                        <span class="shrink-0 text-[var(--text-muted)]">+{{ getCountryCallingCode(option.value) }}</span>
+                    </span>
+                </template>
             </AppSelect>
-            <input :id="id" :aria-label="$attrs['aria-label']" v-model="localNumber" type="tel" inputmode="tel" :autocomplete="autocomplete" :required="required" :aria-invalid="$attrs['aria-invalid'] || (touched && !valid) || undefined" :aria-describedby="[$attrs['aria-describedby'], touched && !valid ? `${id}-phone-error` : null].filter(Boolean).join(' ') || undefined" class="min-h-[var(--control-height)] min-w-0 border-0 bg-transparent px-3 text-base focus:ring-0" placeholder="Local phone number" @input="publish" @blur="touched = true">
+            <input
+                :id="id"
+                :aria-label="$attrs['aria-label']"
+                v-model="localNumber"
+                type="tel"
+                inputmode="tel"
+                :autocomplete="autocomplete"
+                :required="required"
+                :aria-invalid="$attrs['aria-invalid'] || (touched && !valid) || undefined"
+                :aria-describedby="[$attrs['aria-describedby'], touched && !valid ? `${id}-phone-error` : null].filter(Boolean).join(' ') || undefined"
+                class="min-h-[var(--control-height)] min-w-0 border-0 bg-transparent px-3 text-base focus:ring-0"
+                placeholder="Phone number"
+                @input="publish"
+                @blur="touched = true"
+            >
         </div>
         <p v-if="touched && !valid" :id="`${id}-phone-error`" class="cd-field-error" role="alert">Enter a valid phone number for this country.</p>
     </div>

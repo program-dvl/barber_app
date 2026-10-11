@@ -41,7 +41,7 @@ class ApplyHttpSecurity
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
 
-        if ($request->user() || $this->isTokenProtectedPath($request)) {
+        if ($request->user() || $this->isTokenProtectedPath($request) || $request->is('book', 'book/*') || $request->routeIs('booking.business')) {
             $response->headers->set('Cache-Control', 'private, no-store');
             $response->headers->set('Pragma', 'no-cache');
         }

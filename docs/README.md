@@ -5,7 +5,7 @@ It converts the approved Word PRD into searchable Markdown and provides the
 smaller, implementation-facing documents that future Codex threads and human
 developers should use.
 
-Last structured review: 2026-10-05.
+Last structured review: 2026-10-11.
 
 ## Start here
 
@@ -45,6 +45,7 @@ exists.
 | `domain-model.md` | Shared entities, relationships, state ownership, and invariants | Domain model change |
 | `glossary.md` | Canonical business vocabulary | New or changed domain term |
 | `quality-and-testing.md` | Quality attributes, testing strategy, and release evidence | Quality gate or test strategy change |
+| `deployment/public-booking.md` | Primary booking host, fallback, migration and infrastructure verification | Booking routing or deployment changes |
 | `public-booking-journey.md` | Implemented public flow, secure-link, waitlist, failure, and placeholder contract | Public booking, communications, or payment coordination change |
 | `roadmap.md` | Dependency-aware delivery sequence and prompt map | Stage ordering or scope change |
 | `decisions.md` | Accepted decisions and unresolved choices | Any durable decision |
@@ -87,3 +88,6 @@ top-level sections, 20 functional requirements, and 14 tables. The canonical
 Markdown transcription preserves all sections, tables, priorities, acceptance
 outcomes, deferred scope, quality attributes, scenarios, metrics, and launch
 checks.
+
+- [USD subscription and Stripe webhook setup](deployment/subscription-billing-stripe.md)
+- [2026-10-11 billing redesign and Larafast reuse audit](audits/2026-10-11-billing/review.md)

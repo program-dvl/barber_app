@@ -5,6 +5,7 @@ use App\Domain\Billing\Enums\BillingInterval;
 use App\Domain\Billing\Enums\RestrictionLevel;
 use App\Domain\Billing\Enums\SubscriptionStatus;
 use App\Domain\Billing\Models\BillingCheckoutAttempt;
+use App\Domain\Billing\Models\BillingInvoice;
 use App\Domain\Billing\Models\BillingPlan;
 use App\Domain\Billing\Models\BillingPlanPrice;
 use App\Domain\Billing\Models\BillingProviderEvent;
@@ -43,143 +44,38 @@ it('starts business-owned trials on Stripe and restricts expired trials without 
     $this->actingAs($owner)->get(route('business.billing.show', $business))->assertOk();
 });
 
-it('creates one reusable hosted Stripe checkout from an approved server-side price', function () {
-    [$owner, $business] = stripeTrialBusiness();
-    $price = configuredStripePrice('starter', BillingInterval::Monthly);
-    config([
-        'billing.stripe.secret' => 'sk_test_local',
-        'billing.stripe.webhook_secret' => 'whsec_test_local',
-    ]);
-
-    $provider = $this->mock(SubscriptionProvider::class, function (MockInterface $mock): void {
-        $mock->shouldReceive('createCheckout')->once()
-            ->withArgs(fn (Business $business, BillingPlanPrice $price, BillingCheckoutAttempt $attempt, string $success, string $cancel, ?string $coupon) => $business->exists
-                && $price->provider_price_id === 'price_starter_monthly_test'
-                && Str::isUlid($attempt->public_id)
-                && str_contains($success, '{CHECKOUT_SESSION_ID}')
-                && str_contains($cancel, 'checkout=canceled')
-                && $coupon === null)
-            ->andReturn(['url' => 'https://checkout.stripe.test/cs_test_approved', 'provider_session_id' => 'cs_test_approved']);
-    });
-    app()->instance(SubscriptionProvider::class, $provider);
-
-    $first = $this->actingAs($owner)->postJson(route('business.billing.checkout', $business), ['price_id' => $price->getKey()]);
-    $first->assertCreated()->assertJsonPath('url', 'https://checkout.stripe.test/cs_test_approved');
-    $second = $this->actingAs($owner)->postJson(route('business.billing.checkout', $business), ['price_id' => $price->getKey()]);
-    $second->assertOk()->assertJsonPath('attempt_id', $first->json('attempt_id'));
-
-    expect(BillingCheckoutAttempt::query()->count())->toBe(1)
-        ->and(BillingCheckoutAttempt::query()->first()->provider_transaction_id)->toBe('cs_test_approved');
-});
-
-it('expires a competing Stripe Checkout before replacing it with another plan selection', function () {
+it('retires tier checkout without creating a provider session or changing the trial', function (string $code, BillingInterval $interval) {
     [$owner, $business, $subscription] = stripeTrialBusiness();
-    $starter = configuredStripePrice('starter', BillingInterval::Monthly);
-    $pro = configuredStripePrice('pro', BillingInterval::Monthly);
-    config([
-        'billing.stripe.secret' => 'sk_test_local',
-        'billing.stripe.webhook_secret' => 'whsec_test_local',
-    ]);
-    $oldAttempt = BillingCheckoutAttempt::query()->create([
-        'business_id' => $business->getKey(),
-        'business_subscription_id' => $subscription->getKey(),
-        'billing_plan_price_id' => $starter->getKey(),
-        'created_by_user_id' => $owner->getKey(),
-        'provider' => 'stripe',
-        'provider_transaction_id' => 'cs_old_selection',
-        'provider_checkout_url' => 'https://checkout.stripe.test/cs_old_selection',
-        'status' => 'pending',
-        'expires_at' => now()->addHour(),
-    ]);
-    $provider = $this->mock(SubscriptionProvider::class, function (MockInterface $mock) use ($oldAttempt): void {
-        $mock->shouldReceive('expireCheckout')->once()->withArgs(fn (BillingCheckoutAttempt $attempt) => $attempt->is($oldAttempt));
-        $mock->shouldReceive('createCheckout')->once()
-            ->andReturn(['url' => 'https://checkout.stripe.test/cs_new_selection', 'provider_session_id' => 'cs_new_selection']);
-    });
-    app()->instance(SubscriptionProvider::class, $provider);
-
-    $this->actingAs($owner)
-        ->postJson(route('business.billing.checkout', $business), ['price_id' => $pro->getKey()])
-        ->assertCreated()
-        ->assertJsonPath('url', 'https://checkout.stripe.test/cs_new_selection');
-
-    expect($oldAttempt->fresh()->status)->toBe('superseded')
-        ->and($oldAttempt->fresh()->expires_at->isPast())->toBeTrue()
-        ->and($subscription->checkoutAttempts()->where('status', 'pending')->count())->toBe(1);
-});
-
-it('fails closed while another request is still preparing the Stripe Checkout reservation', function () {
-    [$owner, $business, $subscription] = stripeTrialBusiness();
-    $price = configuredStripePrice('starter', BillingInterval::Monthly);
-    config([
-        'billing.stripe.secret' => 'sk_test_local',
-        'billing.stripe.webhook_secret' => 'whsec_test_local',
-    ]);
-    BillingCheckoutAttempt::query()->create([
-        'business_id' => $business->getKey(),
-        'business_subscription_id' => $subscription->getKey(),
-        'billing_plan_price_id' => $price->getKey(),
-        'created_by_user_id' => $owner->getKey(),
-        'provider' => 'stripe',
-        'provider_transaction_id' => 'pending_concurrent_request',
-        'status' => 'pending',
-        'expires_at' => now()->addMinutes(2),
-    ]);
-    $provider = $this->mock(SubscriptionProvider::class, function (MockInterface $mock): void {
+    $price = configuredStripePrice($code, $interval);
+    $this->mock(SubscriptionProvider::class, function (MockInterface $mock): void {
         $mock->shouldNotReceive('createCheckout');
         $mock->shouldNotReceive('expireCheckout');
     });
-    app()->instance(SubscriptionProvider::class, $provider);
 
-    $this->actingAs($owner)
-        ->postJson(route('business.billing.checkout', $business), ['price_id' => $price->getKey()])
-        ->assertConflict()
-        ->assertJsonPath('message', 'A secure checkout is already being prepared for this account. Please wait a moment and try again.');
+    $this->actingAs($owner)->get(route('business.billing.checkout.form', [$business, 'price_id' => $price->id]))
+        ->assertRedirect(route('business.billing.show', [$business, 'section' => 'plan']));
+    $this->actingAs($owner)->postJson(route('business.billing.checkout', $business), ['price_id' => $price->id])
+        ->assertStatus(410)->assertJsonPath('message', 'Choose your subscription using locations and bookable staff.');
 
-    expect($subscription->checkoutAttempts()->count())->toBe(1);
-});
+    expect(BillingCheckoutAttempt::count())->toBe(0)
+        ->and($subscription->fresh()->status)->toBe(SubscriptionStatus::Trialing);
+})->with([
+    'starter monthly' => ['starter', BillingInterval::Monthly],
+    'starter yearly' => ['starter', BillingInterval::Annual],
+    'pro monthly' => ['pro', BillingInterval::Monthly],
+    'pro yearly' => ['pro', BillingInterval::Annual],
+]);
 
-it('fails closed before checkout when Stripe webhook verification is not configured', function () {
+it('keeps retired tier endpoints tenant and permission protected', function () {
     [$owner, $business] = stripeTrialBusiness();
-    $price = configuredStripePrice('starter', BillingInterval::Monthly);
-    config([
-        'billing.stripe.secret' => 'sk_test_local',
-        'billing.stripe.webhook_secret' => null,
-    ]);
-
-    $provider = $this->mock(SubscriptionProvider::class, fn (MockInterface $mock) => $mock->shouldNotReceive('createCheckout'));
-    app()->instance(SubscriptionProvider::class, $provider);
-
-    $this->actingAs($owner)
-        ->postJson(route('business.billing.checkout', $business), ['price_id' => $price->getKey()])
-        ->assertServiceUnavailable();
-
-    expect(BillingCheckoutAttempt::query()->count())->toBe(0);
-});
-
-it('rejects a forged or unconfigured Stripe price before contacting the provider', function () {
-    [$owner, $business] = stripeTrialBusiness();
-    $plan = BillingPlan::query()->where('code', 'starter')->firstOrFail();
-    $forged = BillingPlanPrice::query()->create([
-        'billing_plan_id' => $plan->getKey(),
-        'billing_interval' => BillingInterval::Monthly,
-        'currency' => 'USD',
-        'amount_minor' => 1,
-        'provider' => 'stripe',
-        'provider_price_id' => 'price_forged',
-        'is_active' => true,
-        'effective_from' => now()->subMinute(),
-    ]);
-    config(['billing.stripe.secret' => 'sk_test_local']);
-
-    $provider = $this->mock(SubscriptionProvider::class, fn (MockInterface $mock) => $mock->shouldNotReceive('createCheckout'));
-    app()->instance(SubscriptionProvider::class, $provider);
-
-    $this->actingAs($owner)
-        ->postJson(route('business.billing.checkout', $business), ['price_id' => $forged->getKey()])
-        ->assertUnprocessable();
-
-    expect(BillingCheckoutAttempt::query()->count())->toBe(0);
+    [, $other] = stripeTrialBusiness();
+    $this->actingAs($owner)->postJson(route('business.billing.checkout', $other), ['price_id' => 1])->assertForbidden();
+    $this->actingAs($owner)->get(route('business.billing.checkout.form', [$other, 'price_id' => 1]))->assertForbidden();
+    $this->actingAs($owner)->postJson(route('business.billing.plan-change', $other), ['price_id' => 1])->assertForbidden();
+    [$staff, $staffBusiness] = createTenantMembership(StarterRole::BarberStylist);
+    activateTestSubscription($staffBusiness);
+    $this->actingAs($staff)->postJson(route('business.billing.checkout', $staffBusiness), ['price_id' => 1])->assertForbidden();
+    $this->actingAs($staff)->postJson(route('business.billing.plan-change', $staffBusiness), ['price_id' => 1])->assertForbidden();
 });
 
 it('uses signed idempotent webhooks as the authority for checkout activation and cancellation grace', function () {
@@ -491,78 +387,29 @@ it('schedules an over-limit downgrade without deleting business resources', func
         ->and($subscription->fresh()->billing_plan_id)->toBe($pro->billing_plan_id);
 });
 
-it('opens a Stripe-hosted confirmation for an upgrade and clears a legacy stuck change', function () {
+it('retires tier changes without opening Stripe confirmation or rewriting retained terms', function () {
     [$owner, $business, $subscription] = stripeTrialBusiness();
     $starter = configuredStripePrice('starter', BillingInterval::Monthly);
     $pro = configuredStripePrice('pro', BillingInterval::Monthly);
-    $subscription = app(SubscriptionLifecycleManager::class)->activate($subscription, $starter, now(), now()->addMonth(), now(), 'cus_upgrade', 'sub_upgrade');
-    config([
-        'billing.stripe.secret' => 'sk_test_local',
-        'billing.stripe.webhook_secret' => 'whsec_test_local',
-    ]);
-
-    $legacyChange = app(SubscriptionLifecycleManager::class)->requestPlanChange(
-        $subscription,
-        $pro,
-        $owner,
-        'Legacy direct update awaiting Stripe.',
-        false,
-        true,
-    );
-
-    $provider = $this->mock(SubscriptionProvider::class, function (MockInterface $mock) use ($subscription, $pro): void {
-        $mock->shouldReceive('planChangePortalUrl')->once()
-            ->withArgs(fn (BusinessSubscription $candidate, BillingPlanPrice $price, string $returnUrl, string $completedUrl) => $candidate->is($subscription)
-                && $price->is($pro)
-                && str_contains($returnUrl, 'plan_change=canceled')
-                && str_contains($completedUrl, 'plan_change=success'))
-            ->andReturn('https://billing.stripe.test/upgrade-session');
+    $annual = configuredStripePrice('starter', BillingInterval::Annual);
+    $subscription = app(SubscriptionLifecycleManager::class)->activate($subscription, $starter, now(), now()->addMonth(), now(), 'cus_retired', 'sub_retired');
+    $invoice = BillingInvoice::create(['business_id' => $business->id, 'business_subscription_id' => $subscription->id,
+        'provider' => 'stripe', 'provider_invoice_id' => 'in_retired', 'status' => 'paid', 'currency' => 'USD',
+        'subtotal_minor' => 5000, 'tax_minor' => 0, 'total_minor' => 5000, 'amount_due_minor' => 5000, 'amount_paid_minor' => 5000, 'issued_at' => now()]);
+    $before = $subscription->fresh()->getRawOriginal();
+    $this->mock(SubscriptionProvider::class, function (MockInterface $mock): void {
+        $mock->shouldNotReceive('planChangePortalUrl');
         $mock->shouldNotReceive('changePrice');
     });
-    app()->instance(SubscriptionProvider::class, $provider);
 
-    $response = $this->actingAs($owner)->postJson(route('business.billing.plan-change', $business), [
-        'price_id' => $pro->getKey(),
-        'reason' => 'Owner self-service upgrade.',
-    ]);
+    foreach ([$pro, $annual] as $price) {
+        $this->actingAs($owner)->postJson(route('business.billing.plan-change', $business), ['price_id' => $price->id, 'reason' => 'Old tier request.'])
+            ->assertStatus(410);
+    }
 
-    $response->assertOk()
-        ->assertJsonPath('status', 'requires_confirmation')
-        ->assertJsonPath('url', 'https://billing.stripe.test/upgrade-session');
-    expect($legacyChange->fresh()->superseded_at)->not->toBeNull()
-        ->and($subscription->fresh()->billing_plan_price_id)->toBe($starter->getKey())
-        ->and($subscription->changes()->whereNull('applied_at')->whereNull('superseded_at')->count())->toBe(0);
-});
-
-it('allows an interval switch through Stripe but does not offer self-service plan downgrades', function () {
-    [$owner, $business, $subscription] = stripeTrialBusiness();
-    $starterMonthly = configuredStripePrice('starter', BillingInterval::Monthly);
-    $starterAnnual = configuredStripePrice('starter', BillingInterval::Annual);
-    $proMonthly = configuredStripePrice('pro', BillingInterval::Monthly);
-    $subscription = app(SubscriptionLifecycleManager::class)->activate($subscription, $starterMonthly, now(), now()->addMonth(), now(), 'cus_interval', 'sub_interval');
-    config(['billing.stripe.secret' => 'sk_test_local', 'billing.stripe.webhook_secret' => 'whsec_test_local']);
-
-    $provider = $this->mock(SubscriptionProvider::class, function (MockInterface $mock) use ($starterAnnual): void {
-        $mock->shouldReceive('planChangePortalUrl')->once()
-            ->withArgs(fn (BusinessSubscription $subscription, BillingPlanPrice $price): bool => $price->is($starterAnnual))
-            ->andReturn('https://billing.stripe.test/interval-session');
-    });
-    app()->instance(SubscriptionProvider::class, $provider);
-
-    $this->actingAs($owner)->postJson(route('business.billing.plan-change', $business), [
-        'price_id' => $starterAnnual->getKey(),
-        'reason' => 'Switch to annual billing.',
-    ])->assertOk()->assertJsonPath('url', 'https://billing.stripe.test/interval-session');
-
-    app(SubscriptionLifecycleManager::class)->activate($subscription->fresh(), $proMonthly, now(), now()->addMonth(), now()->addSecond(), 'cus_interval', 'sub_interval');
-
-    $provider = $this->mock(SubscriptionProvider::class, fn (MockInterface $mock) => $mock->shouldNotReceive('planChangePortalUrl'));
-    app()->instance(SubscriptionProvider::class, $provider);
-
-    $this->actingAs($owner)->postJson(route('business.billing.plan-change', $business), [
-        'price_id' => $starterMonthly->getKey(),
-        'reason' => 'Try to downgrade.',
-    ])->assertUnprocessable()->assertJsonPath('message', 'Plan downgrades are not available through self-service. Your current subscription is unchanged.');
+    expect($subscription->fresh()->getRawOriginal())->toBe($before)
+        ->and($invoice->fresh()->total_minor)->toBe(5000)
+        ->and($subscription->changes()->count())->toBe(0);
 });
 
 it('reports a Stripe-confirmed plan change without waiting on a browser redirect', function () {

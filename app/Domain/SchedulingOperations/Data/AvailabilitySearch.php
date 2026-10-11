@@ -17,5 +17,7 @@ final readonly class AvailabilitySearch
         public string $clientEligibility = 'existing',
         public int $limit = 50,
         public ?CarbonImmutable $asOfUtc = null,
+        public ?int $excludeAppointmentId = null,
+        public ?CarbonImmutable $exactStartUtc = null,
     ) {}
 }

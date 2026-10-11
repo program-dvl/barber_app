@@ -63,3 +63,30 @@ channels and Phase 2 memberships/packages are absent.
 Verification and six-perspective review live in the [dated Business Setup audit](../audits/2026-10-04-business-setup/README.md).
 Browser evidence, backend isolation/rollback/replay tests and production builds
 must be recorded before the project-status document claims verification.
+
+## Public booking link integration (2026-10-10, FR-01/03/09; ADR-055)
+
+Starter provisioning generates a readable name-based slug, with numeric suffixes
+only for collisions. Owner edits retain the existing permission/version/review
+workflow and validate length, URL safety, reserved routes and current/historical
+ownership. A single database reservation namespace prevents concurrent claims
+across businesses; deleted ownership remains reserved. Historical aliases
+redirect to the business's current primary link.
+
+The setup preview/copy action, services page, publication notification and
+rebook/payment return destinations use centralized primary booking configuration.
+The unpromoted main-domain fallback remains public and renders the same journey.
+Publication, active locations/services/staff, dated qualified assignments,
+location-local hours/breaks/exceptions/time off, lead times and advance windows
+continue through the existing readiness and scheduling services; public booking
+never substitutes a second schedule. New-client restrictions are rechecked from
+submitted contact classification, including the applicable deposit before final
+consent. Provider readiness still does not imply a usable public paid interface;
+OPEN-16 remains a launch blocker for required-deposit online booking.
+
+Readable starter booking links depend on the slug reservation migration being
+applied before onboarding completion. A source/schema mismatch can fail the
+final step while preserving saved answers. See the
+[deployment recovery instructions](../deployment/public-booking.md#last-onboarding-step-returns-500-after-a-source-update).
+`GuidedOnboardingExperienceTest` reproduces the missing table, applies the
+migration twice, and verifies saved-answer recovery and duplicate-free completion.

@@ -3,6 +3,7 @@
 namespace App\Domain\PublicBooking\Services;
 
 use App\Domain\BusinessConfiguration\Models\Service;
+use App\Domain\ClientRecords\Services\ClientIdentityService;
 use App\Domain\MoneyCommerce\Services\DepositPolicyService;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
@@ -19,6 +20,8 @@ use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
 use App\Domain\SchedulingOperations\Models\Appointment;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class PublicBookingService
 {
@@ -65,9 +68,12 @@ class PublicBookingService
     public function search(Business $business, string $locationPublicId, array $servicePublicIds, ?string $staffPublicId, string $fromDate, string $untilDate, string $clientEligibility): array
     {
         [$location, $services, $staff, $lines] = $this->resolveSelection($business, $locationPublicId, $servicePublicIds, $staffPublicId);
+        if ($clientEligibility === 'auto') {
+            $clientEligibility = $this->provisionalEligibility($business, $services);
+        }
         $this->assertClientRule($business, $services, $clientEligibility);
 
-        return $this->availability->search(new AvailabilitySearch(
+        $slots = $this->availability->search(new AvailabilitySearch(
             $business->id,
             $location->id,
             CarbonImmutable::parse($fromDate, $location->time_zone),
@@ -75,66 +81,205 @@ class PublicBookingService
             $lines,
             'online',
             $clientEligibility,
-            80,
+            200,
         ));
+
+        return array_map(fn (array $slot) => $this->publicSlot($slot), $slots);
+    }
+
+    public function publicSlot(array $slot): array
+    {
+        // Scheduling plans contain internal IDs, resource claims and private
+        // configuration snapshots. Only appointment choices cross this boundary.
+        return collect($slot)->only(['starts_at_utc', 'ends_at_utc', 'local_starts_at', 'local_ends_at', 'time_zone', 'price_minor', 'currency_code'])->all();
     }
 
     /** @param array<string, mixed> $selection */
     public function hold(Business $business, PublicBookingFlow $flow, array $selection, string $idempotencyKey): PublicBookingFlow
     {
-        [$location, $services, $staff, $lines] = $this->resolveSelection($business, $selection['location'], $selection['services'], $selection['staff'] ?? null);
-        $this->assertClientRule($business, $services, $selection['client_eligibility']);
-        $startsAt = CarbonImmutable::parse($selection['starts_at'])->utc();
-        $request = new BookingRequest(
-            $business->id, $location->id, $startsAt, $lines, 'online', $selection['client_eligibility'], null,
-            'public-flow:'.$flow->public_id,
-        );
-        $hold = $this->holds->hold($request, $idempotencyKey, 600);
-        $hold->load('lines');
-        $policy = $this->policySnapshot($business, $location, $hold->lines->pluck('configuration_snapshot')->all(), $selection['client_eligibility']);
-        $flow->forceFill([
-            'capacity_hold_id' => $hold->id,
-            'status' => 'held',
-            'last_step' => 3,
-            'state' => [...$selection, 'policy' => $policy, 'hold_expires_at' => $hold->expires_at->toIso8601String()],
-            'expires_at' => $hold->expires_at,
-        ])->save();
-        $this->track($business, $flow, 'slot_held', $flow->secret_hash, ['service_count' => count($services)]);
+        $selection = collect($selection)->only(['location', 'services', 'staff', 'starts_at', 'client_eligibility'])->all();
 
-        return $flow->fresh('hold.lines');
+        return DB::transaction(function () use ($business, $flow, $selection, $idempotencyKey): PublicBookingFlow {
+            $business = Business::query()->lockForUpdate()->findOrFail($business->id);
+            $flow = PublicBookingFlow::query()->where('business_id', $business->id)->lockForUpdate()->findOrFail($flow->id);
+            if ($flow->status === 'confirmed') {
+                throw new BookingRuleViolation('FLOW_CONFIRMED', 'This appointment is already confirmed. Open your appointment link.');
+            }
+            if ($flow->expires_at->isPast()) {
+                throw new BookingRuleViolation('BOOKING_FLOW_EXPIRED', 'This booking session expired. Choose a new time.');
+            }
+            [$location, $services, $staff, $lines] = $this->resolveSelection($business, $selection['location'], $selection['services'], $selection['staff'] ?? null);
+            if ($selection['client_eligibility'] === 'auto') {
+                $selection['client_eligibility'] = $this->provisionalEligibility($business, $services);
+            }
+            if ($flow->hold?->idempotency_key === $idempotencyKey) {
+                foreach (['location', 'services', 'staff', 'starts_at', 'client_eligibility'] as $key) {
+                    if (($flow->state[$key] ?? null) !== ($selection[$key] ?? null)) {
+                        throw new BookingRuleViolation('IDEMPOTENCY_KEY_REUSED', 'This request was already used for a different time.');
+                    }
+                }
+
+                return $flow;
+            }
+            $this->assertClientRule($business, $services, $selection['client_eligibility']);
+            $startsAt = CarbonImmutable::parse($selection['starts_at'])->utc();
+            $request = new BookingRequest(
+                $business->id, $location->id, $startsAt, $lines, 'online', $selection['client_eligibility'], null,
+                'public-flow:'.$flow->public_id,
+            );
+            // Retire the former hold atomically. A failed replacement rolls back,
+            // leaving the customer's previous choice intact.
+            $this->expireHold($flow);
+            $hold = $this->holds->hold($request, $idempotencyKey, 600);
+            if ($hold->status !== 'active' || $hold->expires_at->isPast()) {
+                throw new BookingRuleViolation('HOLD_EXPIRED', 'Choose that time again to reserve it.');
+            }
+            $hold->load('lines');
+            $policy = $this->policySnapshot($business, $location, $hold->lines->pluck('configuration_snapshot')->all(), $selection['client_eligibility']);
+            $staffNames = StaffProfile::query()->where('business_id', $business->id)->whereIn('id', $hold->lines->pluck('primary_staff_profile_id'))->pluck('display_name', 'id');
+            foreach ($hold->lines as $index => $line) {
+                $policy['services'][$index]['staff_name'] = $staffNames[$line->primary_staff_profile_id] ?? null;
+            }
+            $flow->forceFill([
+                'capacity_hold_id' => $hold->id,
+                'status' => 'held',
+                'last_step' => 3,
+                'policy_version' => max(1, (int) $business->public_booking_policy_version),
+                'state' => [...$selection, 'policy' => $policy, 'hold_expires_at' => $hold->expires_at->toIso8601String()],
+                'expires_at' => $hold->expires_at,
+            ])->save();
+            $this->track($business, $flow, 'slot_held', $flow->secret_hash, ['service_count' => count($services)]);
+
+            return $flow->fresh('hold.lines');
+        }, 3);
+    }
+
+    public function release(Business $business, PublicBookingFlow $flow): PublicBookingFlow
+    {
+        return DB::transaction(function () use ($business, $flow): PublicBookingFlow {
+            $business = Business::query()->lockForUpdate()->findOrFail($business->id);
+            $flow = PublicBookingFlow::query()->where('business_id', $business->id)->lockForUpdate()->findOrFail($flow->id);
+            $this->assertBookable($business);
+            if ($flow->status === 'confirmed') {
+                throw new BookingRuleViolation('FLOW_CONFIRMED', 'Your appointment is already confirmed.');
+            }
+            $this->expireHold($flow);
+            $flow->forceFill(['capacity_hold_id' => null, 'status' => 'started', 'last_step' => 2, 'state' => [], 'expires_at' => now()->addHours(2)])->save();
+
+            return $flow->fresh();
+        }, 3);
+    }
+
+    private function expireHold(PublicBookingFlow $flow): void
+    {
+        if (! $flow->capacity_hold_id) {
+            return;
+        }
+        if (DB::table('payment_intents')->where('capacity_hold_id', $flow->capacity_hold_id)->whereIn('status', ['pending', 'processing', 'succeeded'])->exists()) {
+            throw new BookingRuleViolation('PAYMENT_IN_PROGRESS', 'A payment is being checked. Contact the business before changing this appointment.');
+        }
+        $flow->hold()->where('business_id', $flow->business_id)->where('status', 'active')->update(['status' => 'expired', 'expires_at' => now(), 'expired_at' => now()]);
+    }
+
+    private function provisionalEligibility(Business $business, Collection $services): string
+    {
+        if ($business->online_new_client_rule === 'existing_only' || $services->contains('client_eligibility', 'existing')
+            || ($business->online_new_client_rule === 'consultation_only' && $services->contains(fn ($service) => ! $service->consultation_required))) {
+            return 'existing';
+        }
+
+        return 'new';
+    }
+
+    public function reviewDetails(Business $business, PublicBookingFlow $flow, array $details): PublicBookingFlow
+    {
+        return DB::transaction(function () use ($business, $flow, $details): PublicBookingFlow {
+            $business = Business::query()->lockForUpdate()->findOrFail($business->id);
+            $this->assertBookable($business);
+            $flow = PublicBookingFlow::query()->where('business_id', $business->id)->lockForUpdate()->findOrFail($flow->id);
+            if ($flow->status !== 'held' || $flow->expires_at->isPast()) {
+                throw new BookingRuleViolation('HOLD_EXPIRED', 'Your reserved time ended. Choose another time.');
+            }
+            $client = app(ClientIdentityService::class)->bookingIdentity($business, ['name' => $details['client_name'], 'mobile' => $details['client_mobile'], 'email' => $details['client_email']]);
+            $eligibility = $client ? 'existing' : 'new';
+            $hold = $flow->hold()->where('business_id', $business->id)->lockForUpdate()->firstOrFail();
+            $hold->load('lines');
+            $services = Service::query()->where('business_id', $business->id)->whereIn('id', $hold->lines->pluck('service_id'))->get();
+            if (($eligibility === 'new' && $business->online_new_client_rule === 'existing_only')
+                || ($eligibility === 'new' && $business->online_new_client_rule === 'consultation_only' && $services->contains(fn ($service) => ! $service->consultation_required))
+                || $services->contains(fn ($service) => $service->client_eligibility !== 'all' && $service->client_eligibility !== $eligibility)) {
+                throw ValidationException::withMessages(['booking' => 'These services have a first-visit restriction. Choose another service or contact the business to arrange your appointment.']);
+            }
+            $hold->forceFill(['client_eligibility' => $eligibility])->save();
+            $policy = $flow->state['policy'];
+            $deposit = $this->deposits->resolve($business, $hold->lines->pluck('configuration_snapshot')->all(), $eligibility, $client?->id);
+            $policy['deposit'] = $this->publicDeposit($deposit);
+            $policy['deposit_status'] = $deposit['amount_minor'] > 0 ? 'payment_required' : 'not_required';
+            $flow->forceFill(['state' => [...$flow->state, 'client_eligibility' => $eligibility, 'policy' => $policy, 'details_fingerprint' => $this->detailsFingerprint($details)]])->save();
+
+            return $flow->fresh();
+        }, 3);
+    }
+
+    private function detailsFingerprint(array $details): string
+    {
+        return hash_hmac('sha256', json_encode(collect($details)->only(['client_name', 'client_mobile', 'client_email'])->all(), JSON_THROW_ON_ERROR), config('app.key'));
+    }
+
+    private function publicDeposit(array $deposit): array
+    {
+        return collect($deposit)->except(['prior_no_show_count', 'client_eligibility'])->all();
     }
 
     /** @param array<string, mixed> $details @return array{appointment:Appointment,view_url:string,calendar_url:string} */
     public function confirm(Business $business, PublicBookingFlow $flow, array $details, string $idempotencyKey, ?int $paidDepositIntentId = null): array
     {
-        if ($flow->status === 'confirmed' && $flow->appointment_id) {
-            $appointment = Appointment::query()->where('business_id', $business->id)->findOrFail($flow->appointment_id);
-        } else {
-            if ($flow->policy_version !== max(1, (int) $business->public_booking_policy_version)) {
-                throw new BookingRuleViolation('POLICY_CHANGED', 'Booking policies changed. Review the current policy before confirming.');
+        return DB::transaction(function () use ($business, $flow, $details, $idempotencyKey, $paidDepositIntentId): array {
+            $business = Business::query()->lockForUpdate()->findOrFail($business->id);
+            $flow = PublicBookingFlow::query()->where('business_id', $business->id)->lockForUpdate()->findOrFail($flow->id);
+            if ($flow->status === 'confirmed' && $flow->appointment_id) {
+                $appointment = Appointment::query()->where('business_id', $business->id)->findOrFail($flow->appointment_id);
+            } else {
+                $this->assertBookable($business);
+                if (isset($flow->state['details_fingerprint']) && ! hash_equals($flow->state['details_fingerprint'], $this->detailsFingerprint($details))) {
+                    throw new BookingRuleViolation('DETAILS_REVIEW_REQUIRED', 'Your details changed. Review the appointment again.');
+                }
+                if (isset($flow->state['details_fingerprint']) && ! $paidDepositIntentId) {
+                    $displayedDeposit = $flow->state['policy']['deposit']['amount_minor'];
+                    $flow = $this->reviewDetails($business, $flow, $details);
+                    if ($displayedDeposit !== $flow->state['policy']['deposit']['amount_minor']) {
+                        throw new BookingRuleViolation('DETAILS_REVIEW_REQUIRED', 'The booking policy changed. Review your appointment again.');
+                    }
+                }
+                if ($flow->expires_at->isPast()) {
+                    throw new BookingRuleViolation('BOOKING_FLOW_EXPIRED', 'This booking session expired. Choose a new time.');
+                }
+                if ($flow->policy_version !== max(1, (int) $business->public_booking_policy_version)) {
+                    throw new BookingRuleViolation('POLICY_CHANGED', 'Booking policies changed. Review the current policy before confirming.');
+                }
+                if (($flow->state['policy']['deposit_status'] ?? 'not_required') === 'payment_required' && ! $paidDepositIntentId) {
+                    throw new BookingRuleViolation('PAYMENT_REQUIRED', 'Complete the displayed deposit payment before confirming this booking.');
+                }
+                if (! $flow->capacity_hold_id || $flow->status !== 'held') {
+                    throw new BookingRuleViolation('HOLD_REQUIRED', 'Choose and hold an available time before confirming.');
+                }
+                $hold = $flow->hold()->where('business_id', $business->id)->firstOrFail();
+                $appointment = $this->bookings->confirmHold($business->id, $hold->public_id, $idempotencyKey, null, [
+                    ...$details,
+                    'internal_notes' => $details['special_request'] ?? null,
+                    'public_policy_snapshot' => $flow->state['policy'] ?? [],
+                ]);
+                $flow->forceFill(['appointment_id' => $appointment->id, 'status' => 'confirmed', 'last_step' => 5, 'confirmed_at' => now()])->save();
+                $this->track($business, $flow, 'booking_completed', $flow->secret_hash, ['source' => 'online'], $appointment);
             }
-            if (($flow->state['policy']['deposit_status'] ?? 'not_required') === 'payment_required' && ! $paidDepositIntentId) {
-                throw new BookingRuleViolation('PAYMENT_REQUIRED', 'Complete the displayed deposit payment before confirming this booking.');
-            }
-            if (! $flow->capacity_hold_id || $flow->status !== 'held') {
-                throw new BookingRuleViolation('HOLD_REQUIRED', 'Choose and hold an available time before confirming.');
-            }
-            $hold = $flow->hold()->where('business_id', $business->id)->firstOrFail();
-            $appointment = $this->bookings->confirmHold($business->id, $hold->public_id, $idempotencyKey, null, [
-                ...$details,
-                'internal_notes' => $details['special_request'] ?? null,
-                'public_policy_snapshot' => $flow->state['policy'] ?? [],
-            ]);
-            $flow->forceFill(['appointment_id' => $appointment->id, 'status' => 'confirmed', 'last_step' => 5, 'confirmed_at' => now()])->save();
-            $this->track($business, $flow, 'booking_completed', $flow->secret_hash, ['source' => 'online'], $appointment);
-        }
-        $view = $this->links->issue($appointment->loadMissing('business'), 'view');
+            $view = $this->links->issue($appointment->loadMissing('business'), 'view');
 
-        return [
-            'appointment' => $appointment,
-            'view_url' => route('public.appointment.view', $view['token']),
-            'calendar_url' => route('public.appointment.calendar', $view['token']),
-        ];
+            return [
+                'appointment' => $appointment,
+                'view_url' => route('public.appointment.view', $view['token']),
+                'calendar_url' => route('public.appointment.calendar', $view['token']),
+            ];
+        }, 3);
     }
 
     /** @return array<string, mixed> */
@@ -146,7 +291,7 @@ class PublicBookingService
         $staff = StaffProfile::query()->where('business_id', $business->id)->where('status', 'active')->where('online_visible', true)->with(['locations', 'serviceAssignments'])->orderBy('display_name')->get();
 
         return [
-            'locations' => $locations->map->only(['public_id', 'name', 'address', 'time_zone']),
+            'locations' => $locations->map(fn (Location $location) => [...$location->only(['public_id', 'name', 'address', 'time_zone']), 'today' => CarbonImmutable::now($location->time_zone)->toDateString()]),
             'services' => $services->map(fn (Service $service) => [
                 'public_id' => $service->public_id, 'kind' => $service->kind, 'name' => $service->name,
                 'category' => $service->category?->name ?: 'Services',
@@ -160,6 +305,8 @@ class PublicBookingService
                 'location_prices' => $service->locations->filter(fn ($l) => $l->pivot->is_eligible && $l->is_active && $l->status === 'active')->map(fn ($l) => ['location' => $l->public_id, 'price_minor' => $l->pivot->price_minor])->values(),
                 'deposit_type' => $service->deposit_type, 'deposit_value' => $service->deposit_value,
                 'client_eligibility' => $service->client_eligibility,
+                'consultation_required' => $service->consultation_required,
+                'maximum_advance_days' => $service->maximum_advance_days,
                 'location_ids' => $service->locations->filter(fn ($location) => $location->pivot->is_eligible && $location->is_active && $location->status === 'active')->pluck('public_id')->all(),
                 'addon_ids' => $service->addons->where('is_active', true)->where('online_visible', true)->pluck('public_id')->all(),
             ]),
@@ -207,7 +354,7 @@ class PublicBookingService
             'staff_gender_request_enabled' => $business->staff_gender_request_enabled,
             'cancellation_cutoff_minutes' => $deposit['cancellation_cutoff_minutes'],
             'cancellation_policy' => $business->default_cancellation_policy,
-            'deposit' => $deposit,
+            'deposit' => $this->publicDeposit($deposit),
             'deposit_refundability' => $deposit['deposit_refundable_before_cutoff'],
             'cancellation_fee_minor' => $deposit['cancellation_fee_minor'],
             'no_show_fee_minor' => $deposit['no_show_fee_minor'],
@@ -221,6 +368,7 @@ class PublicBookingService
                     'exact' => 'fixed', 'from' => 'from', default => $snapshot['priceType'],
                 }, 'price_minor' => $snapshot['priceMinor'],
                 'currency_code' => $snapshot['currencyCode'], 'bookable_minutes' => $snapshot['bookableMinutes'],
+                'visit_minutes' => $snapshot['durationMinutes'] + $snapshot['processingMinutes'],
                 'deposit_type' => $snapshot['depositType'], 'deposit_minor' => $snapshot['depositMinor'],
             ])->all(),
             'deposit_status' => $deposit['amount_minor'] > 0 ? 'payment_required' : 'not_required',
@@ -234,6 +382,9 @@ class PublicBookingService
 
     private function assertClientRule(Business $business, $services, string $eligibility): void
     {
+        if ($services->contains(fn (Service $service) => $service->client_eligibility !== 'all' && $service->client_eligibility !== $eligibility)) {
+            throw ValidationException::withMessages(['services' => 'First-visit and returning-customer services need separate appointments.']);
+        }
         if ($eligibility === 'new' && $business->online_new_client_rule === 'existing_only') {
             abort(422, 'Online booking is currently available to returning clients only.');
         }

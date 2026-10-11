@@ -21,7 +21,7 @@ class CapacityBillingManager
             Business::whereKey($business->id)->lockForUpdate()->firstOrFail();
             $subscription = $business->subscription()->with('price')->lockForUpdate()->firstOrFail();
             $this->assertIdle($subscription);
-            abort_unless(strtoupper($business->country_code) === strtoupper($market), 422, 'Choose the pricing country recorded in your business profile.');
+            abort_unless($this->catalog->marketFor($business) === strtoupper($market), 422, 'Choose the available subscription currency.');
             $retained = $subscription->billing_rate_card_id ? BillingRateCard::findOrFail($subscription->billing_rate_card_id) : null;
             abort_if($retained && $retained->market !== strtoupper($market), 422, 'Changing the billing country requires a separate migration.');
             if ($retained && $retained->billing_interval !== $interval) {
@@ -79,7 +79,7 @@ class CapacityBillingManager
             $this->assertIdle($subscription);
             $card = BillingRateCard::findOrFail($locked->quote['rate_card_id']);
             abort_unless(config('capacity-billing.enabled') && config('capacity-billing.markets.'.$card->market.'.approved'), 503, 'New billing changes are temporarily unavailable.');
-            abort_unless(strtoupper($business->fresh()->country_code) === $locked->quote['market'], 409, 'Your business country changed. Review billing again.');
+            abort_unless($this->catalog->marketFor($business->fresh()) === $locked->quote['market'], 409, 'Subscription pricing changed. Review billing again.');
             if (filled($subscription->provider_subscription_id)) {
                 abort_unless($subscription->status->value === 'active' && $subscription->current_period_ends_at?->isFuture(), 409, 'Resolve billing before reviewing capacity again.');
                 abort_if($subscription->invoices()->whereIn('status', ['open', 'uncollectible'])

@@ -5,6 +5,8 @@ namespace App\Domain\PublicBooking\Services;
 use App\Domain\ClientRecords\Contracts\ClientIdentityLinker;
 use App\Domain\PublicBooking\Models\PublicAppointmentLink;
 use App\Domain\SchedulingOperations\Contracts\AppointmentLifecycleCommand;
+use App\Domain\SchedulingOperations\Contracts\AvailabilityQuery;
+use App\Domain\SchedulingOperations\Data\AvailabilitySearch;
 use App\Domain\SchedulingOperations\Data\BookingLineRequest;
 use App\Domain\SchedulingOperations\Data\BookingRequest;
 use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
@@ -60,6 +62,23 @@ class AppointmentSelfService
         return $replacement;
     }
 
+    public function availableRescheduleTimes(PublicAppointmentLink $link, string $date): array
+    {
+        $appointment = $link->appointment->loadMissing(['business', 'serviceLines.segments']);
+        $this->assertBeforeCutoff($appointment);
+        $lines = $appointment->serviceLines->map(fn ($line) => new BookingLineRequest(
+            $line->service_id, $line->primary_staff_profile_id,
+            $line->segments->mapWithKeys(fn ($segment) => [$segment->sequence => $segment->staff_profile_id])->all(), false,
+        ))->all();
+        $localDate = CarbonImmutable::parse($date, $appointment->time_zone);
+        $slots = app(AvailabilityQuery::class)->search(new AvailabilitySearch(
+            $appointment->business_id, $appointment->location_id, $localDate, $localDate,
+            $lines, 'self_service', 'existing', 200, excludeAppointmentId: $appointment->id,
+        ));
+
+        return array_map(fn ($slot) => app(PublicBookingService::class)->publicSlot($slot), $slots);
+    }
+
     /** @param array{name?:string,mobile?:string,email?:string} $contact */
     public function updateContact(PublicAppointmentLink $link, array $contact, string $idempotencyKey): Appointment
     {
@@ -73,7 +92,7 @@ class AppointmentSelfService
 
     private function assertBeforeCutoff(Appointment $appointment): void
     {
-        $cutoff = max(0, (int) $appointment->business->cancellation_cutoff_minutes);
+        $cutoff = max(0, (int) data_get($appointment->public_policy_snapshot, 'cancellation_cutoff_minutes', $appointment->business->cancellation_cutoff_minutes));
         if (CarbonImmutable::now()->utc()->gt($appointment->starts_at_utc->subMinutes($cutoff))) {
             throw new BookingRuleViolation('CANCELLATION_CUTOFF', 'Online changes are closed for this appointment. Contact the business for help.');
         }

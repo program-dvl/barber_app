@@ -11,6 +11,7 @@ use App\Domain\PublicBooking\Services\WaitlistService;
 use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
 use App\Http\Controllers\Controller;
 use App\Rules\E164Phone;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -18,13 +19,13 @@ use Inertia\Response;
 
 class PublicWaitlistController extends Controller
 {
-    public function store(Request $request, string $slug, BookingSlugManager $slugs, WaitlistService $waitlist): RedirectResponse
+    public function store(Request $request, string $slug, BookingSlugManager $slugs, WaitlistService $waitlist): RedirectResponse|JsonResponse
     {
         $business = $slugs->resolve($slug);
-        abort_unless($business && $business->booking_slug === $slug && $business->online_booking_enabled, 404);
+        abort_unless($business && $business->booking_slug === $slug && $business->isActive() && $business->configuration_published_at && $business->online_booking_enabled, 404);
         $data = $request->validate([
             'location' => ['required', 'string'], 'service' => ['required', 'string'], 'staff' => ['nullable', 'string'],
-            'client_name' => ['required', 'string', 'max:255'], 'client_mobile' => ['required', 'string', 'max:32', new E164Phone], 'client_email' => ['nullable', 'email'],
+            'client_name' => ['required', 'string', 'max:255'], 'client_mobile' => ['required', 'string', 'max:32', new E164Phone], 'client_email' => ['nullable', 'required_if:notification_method,email', 'email'],
             'acceptable_from' => ['required', 'date', 'after_or_equal:today'], 'acceptable_until' => ['required', 'date', 'after_or_equal:acceptable_from'],
             'time_from' => ['required', 'date_format:H:i'], 'time_until' => ['required', 'date_format:H:i', 'after:time_from'],
             'notification_method' => ['required', 'in:email,sms'], 'notes' => ['nullable', 'string', 'max:1000'],
@@ -33,6 +34,10 @@ class PublicWaitlistController extends Controller
         $service = Service::query()->where('business_id', $business->id)->where('public_id', $data['service'])->where('is_active', true)->where('online_visible', true)->firstOrFail();
         $staff = ! empty($data['staff']) ? StaffProfile::query()->where('business_id', $business->id)->where('public_id', $data['staff'])->where('status', 'active')->where('online_visible', true)->firstOrFail() : null;
         $entry = $waitlist->create($business, $location, $service, $staff, $data);
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $entry->wasRecentlyCreated ? 'You are on the waitlist.' : 'That waitlist request is already active.']);
+        }
 
         return back()->with('status', $entry->wasRecentlyCreated ? 'You are on the waitlist.' : 'That waitlist request is already active.');
     }

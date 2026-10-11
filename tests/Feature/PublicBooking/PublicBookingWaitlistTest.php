@@ -4,7 +4,10 @@ use App\Domain\BusinessConfiguration\Models\LocationHour;
 use App\Domain\BusinessConfiguration\Models\Service;
 use App\Domain\BusinessConfiguration\Models\StaffAvailabilityRule;
 use App\Domain\BusinessConfiguration\Models\StaffServiceAssignment;
+use App\Domain\BusinessConfiguration\Services\BookingSlugManager;
 use App\Domain\ClientRecords\Models\Client;
+use App\Domain\ClientRecords\Services\ClientIdentityService;
+use App\Domain\MoneyCommerce\Services\DepositPolicyService;
 use App\Domain\PlatformAccess\Enums\StarterRole;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
@@ -25,7 +28,9 @@ use App\Domain\SchedulingOperations\Data\BookingLineRequest;
 use App\Domain\SchedulingOperations\Data\BookingRequest;
 use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
 use App\Domain\SchedulingOperations\Models\Appointment;
+use App\Domain\SchedulingOperations\Models\CapacityHold;
 use App\Models\User;
+use App\Support\BookingUrl;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -339,4 +344,227 @@ it('shows visit time separately from reserved cleanup time without changing capa
     $catalog = app(PublicBookingService::class)->catalog($path['business']);
     expect($catalog['services'][0]['visit_minutes'])->toBe(50)
         ->and($catalog['services'][0]['duration_minutes'])->toBe(65);
+});
+
+it('renders both booking URL formats with one primary canonical and no redirect for the fallback', function () {
+    $path = publicBookingPath();
+    $canonical = BookingUrl::forSlug($path['business']->booking_slug);
+    foreach ([route('booking.business', $path['business']->booking_slug), route('booking.business.fallback', $path['business']->booking_slug)] as $url) {
+        $this->get($url)->assertOk()->assertHeader('X-Robots-Tag', 'noindex, follow, noarchive')
+            ->assertInertia(fn (Assert $page) => $page->component('Booking/Welcome')->where('seo.canonical', $canonical)->where('business.booking_url', $canonical));
+    }
+    expect($canonical)->toBe('https://book.clipperdesk.com/'.$path['business']->booking_slug);
+});
+
+it('keeps aliases working in both URL formats and handles paused inactive and unknown businesses safely', function () {
+    $path = publicBookingPath();
+    $old = $path['business']->booking_slug;
+    $business = app(BookingSlugManager::class)->change($path['business'], 'new-public-name');
+    foreach ([route('booking.business', $old), route('booking.business.fallback', $old)] as $url) {
+        $this->get($url)->assertRedirect(BookingUrl::forSlug('new-public-name'));
+    }
+    $business->update(['online_booking_enabled' => false]);
+    $this->get(route('booking.business', $old))->assertNotFound();
+    $this->get(route('booking.business.fallback', 'new-public-name'))->assertNotFound();
+    $business->update(['online_booking_enabled' => true, 'status' => 'suspended']);
+    $this->get(route('booking.business', 'new-public-name'))->assertNotFound();
+    $this->get(route('booking.business', 'unknown-public-name'))->assertNotFound();
+});
+
+it('releases and replaces held times atomically without leaking internal availability data', function () {
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata')->utc());
+    $path = publicBookingPath();
+    $booking = app(PublicBookingService::class);
+    $held = heldPublicFlow($path);
+    $oldHold = $held['flow']->capacity_hold_id;
+    $credentials = ['flow' => $held['flow']->public_id, 'secret' => $held['secret']];
+    $url = fn ($name) => route($name, $path['business']->booking_slug);
+    $this->postJson($url('public.booking.resume'), $credentials)->assertOk()->assertJsonPath('status', 'held')->assertJsonPath('state.policy.services.0.staff_name', 'Avery');
+    $slots = $booking->search($path['business'], $path['location']->public_id, [$path['service']->public_id], $path['staff']->public_id, '2026-08-18', '2026-08-18', 'new');
+    expect($slots[0])->not->toHaveKeys(['lines', 'resource_claims', 'staff_profile_id']);
+    $selection = [...$held['flow']->state, 'starts_at' => '2026-08-18T12:00:00+05:30'];
+    unset($selection['policy'], $selection['hold_expires_at']);
+    $replacement = $booking->hold($path['business'], $held['flow'], $selection, 'replacement-hold');
+    expect(CapacityHold::find($oldHold)->status)->toBe('expired')
+        ->and(CapacityHold::where('status', 'active')->count())->toBe(1);
+    $replay = $booking->hold($path['business'], $replacement, $selection, 'replacement-hold');
+    expect($replay->capacity_hold_id)->toBe($replacement->capacity_hold_id);
+    $this->postJson($url('public.booking.release'), $credentials)->assertOk();
+    expect($replacement->fresh()->status)->toBe('started')->and(CapacityHold::where('status', 'active')->count())->toBe(0);
+    CarbonImmutable::setTestNow();
+});
+
+it('preserves a previous hold when a replacement time fails', function () {
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata')->utc());
+    $path = publicBookingPath();
+    $held = heldPublicFlow($path);
+    $booking = app(PublicBookingService::class);
+    $selection = [...$held['flow']->state, 'starts_at' => '2026-08-18T23:00:00+05:30'];
+    expect(fn () => $booking->hold($path['business'], $held['flow'], $selection, 'invalid-replacement'))->toThrow(BookingRuleViolation::class);
+    expect($held['flow']->fresh()->hold->status)->toBe('active');
+    CarbonImmutable::setTestNow();
+});
+
+it('restores a confirmed appointment after an ambiguous response without creating another visit', function () {
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata')->utc());
+    $path = publicBookingPath();
+    $held = heldPublicFlow($path);
+    app(PublicBookingService::class)->confirm($path['business'], $held['flow'], ['client_name' => 'Test Customer', 'client_mobile' => '+14155552671', 'client_email' => 'guest@example.test'], 'confirm-recovery');
+    CarbonImmutable::setTestNow(CarbonImmutable::now()->addHours(3));
+    $this->postJson(route('public.booking.resume', $path['business']->booking_slug), ['flow' => $held['flow']->public_id, 'secret' => $held['secret']])
+        ->assertOk()->assertJsonPath('status', 'confirmed')->assertJsonPath('confirmation.staff.0', 'Avery');
+    expect(Appointment::where('business_id', $path['business']->id)->count())->toBe(1);
+    $this->postJson(route('public.booking.resume', $path['business']->booking_slug), ['flow' => $held['flow']->public_id, 'secret' => str_repeat('0', 64)])->assertNotFound();
+    CarbonImmutable::setTestNow();
+});
+
+it('rejects a held confirmation after online bookings are paused and bounds date search', function () {
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata')->utc());
+    $path = publicBookingPath();
+    $held = heldPublicFlow($path);
+    $path['business']->update(['online_booking_enabled' => false]);
+    expect(fn () => app(PublicBookingService::class)->confirm($path['business'], $held['flow'], [], 'paused-confirm'))->toThrow(HttpException::class);
+    expect(Appointment::count())->toBe(0);
+    $path['business']->update(['online_booking_enabled' => true]);
+    $this->postJson(route('public.booking.search', $path['business']->booking_slug), ['flow' => $held['flow']->public_id, 'secret' => $held['secret'], 'location' => $path['location']->public_id, 'services' => [$path['service']->public_id], 'from_date' => '2026-08-18', 'until_date' => '2027-08-18', 'client_eligibility' => 'new'])->assertUnprocessable();
+    CarbonImmutable::setTestNow();
+});
+
+it('shows available rescheduling times through purpose-bound links and revalidates on commit', function () {
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata')->utc());
+    $path = publicBookingPath();
+    $held = heldPublicFlow($path);
+    $appointment = app(PublicBookingService::class)->confirm($path['business'], $held['flow'], ['client_name' => 'Test Customer', 'client_mobile' => '+14155552671', 'client_email' => 'guest@example.test'], 'reschedule-selection')['appointment'];
+    $links = app(SecureAppointmentLinkService::class);
+    $token = $links->issue($appointment->loadMissing('business'), 'reschedule')['token'];
+    $slots = $this->postJson(route('public.appointment.availability', $token), ['date' => '2026-08-18'])->assertOk()->json('slots');
+    expect(collect($slots)->contains('starts_at_utc', $appointment->starts_at_utc->toIso8601String()))->toBeTrue();
+    $this->post(route('public.appointment.mutate', [$token, 'reschedule']), ['starts_at' => '2026-08-18T12:00:00+05:30', 'confirmed' => true, 'idempotency_key' => 'reschedule-picked-slot'])->assertRedirect()->assertSessionHasNoErrors();
+    expect($appointment->fresh()->status)->toBe('rescheduled');
+    $this->postJson(route('public.appointment.availability', $token), ['date' => '2026-08-18'])->assertStatus(410);
+    $view = $links->issue($appointment->fresh(), 'view')['token'];
+    $this->postJson(route('public.appointment.availability', $view), ['date' => '2026-08-18'])->assertNotFound();
+    CarbonImmutable::setTestNow();
+});
+
+it('returns JSON waitlist validation and success instead of redirecting an asynchronous booking form', function () {
+    $path = publicBookingPath();
+    $base = ['location' => $path['location']->public_id, 'service' => $path['service']->public_id, 'client_name' => 'Waitlist Customer', 'client_mobile' => '+14155552671', 'acceptable_from' => now()->addDay()->toDateString(), 'acceptable_until' => now()->addDays(3)->toDateString(), 'time_from' => '09:00', 'time_until' => '17:00', 'notification_method' => 'email'];
+    $url = route('public.waitlist.store', $path['business']->booking_slug);
+    $this->postJson($url, $base)->assertUnprocessable()->assertJsonValidationErrors('client_email');
+    $this->postJson($url, [...$base, 'client_email' => 'wait@example.test'])->assertOk()->assertJsonPath('message', 'You are on the waitlist.');
+    $this->postJson($url, [...$base, 'client_email' => 'wait@example.test'])->assertOk()->assertJsonPath('message', 'That waitlist request is already active.');
+});
+
+it('recognizes returning contacts only within the business and recalculates new-client deposits without a public lookup', function () {
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata')->utc());
+    $path = publicBookingPath();
+    $held = heldPublicFlow($path);
+    $settings = app(DepositPolicyService::class)->settings($path['business']);
+    $settings->update(['default_deposit_type' => 'fixed', 'default_deposit_value' => 1000, 'deposit_new_clients_only' => true]);
+    $contact = ['client_name' => 'Returning Customer', 'client_mobile' => '+14155552671', 'client_email' => 'returning@example.test'];
+    $credentials = ['flow' => $held['flow']->public_id, 'secret' => $held['secret']];
+    $other = publicBookingPath();
+    app(ClientIdentityService::class)->createManual($other['business'], ['name' => $contact['client_name'], 'mobile' => $contact['client_mobile'], 'email' => $contact['client_email']]);
+    $url = route('public.booking.details', $path['business']->booking_slug);
+    $response = $this->postJson($url, [...$credentials, ...$contact])->assertOk()->assertJsonPath('policy.deposit.amount_minor', 1000);
+    expect($response->json('policy.deposit'))->not->toHaveKeys(['prior_no_show_count', 'client_eligibility']);
+    app(ClientIdentityService::class)->createManual($path['business'], ['name' => $contact['client_name'], 'mobile' => $contact['client_mobile'], 'email' => $contact['client_email']]);
+    $this->postJson($url, [...$credentials, ...$contact])->assertOk()->assertJsonPath('policy.deposit.amount_minor', 0);
+    $payload = [...$credentials, ...$contact, 'policy_accepted' => true, 'idempotency_key' => 'smart-returning-confirm'];
+    $this->postJson(route('public.booking.confirm', $path['business']->booking_slug), $payload)->assertOk();
+    $this->postJson(route('public.booking.confirm', $path['business']->booking_slug), $payload)->assertOk();
+    expect(Appointment::where('business_id', $path['business']->id)->count())->toBe(1);
+    CarbonImmutable::setTestNow();
+});
+
+it('requires a reviewed contact quote and keeps secrets out of persisted flow state', function () {
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata')->utc());
+    $path = publicBookingPath();
+    $booking = app(PublicBookingService::class);
+    $started = $booking->start($path['business']);
+    $credentials = ['flow' => $started['flow']->public_id, 'secret' => $started['secret']];
+    $this->postJson(route('public.booking.hold', $path['business']->booking_slug), [...$credentials, 'location' => $path['location']->public_id, 'services' => [$path['service']->public_id], 'starts_at' => '2026-08-18T10:00:00+05:30', 'client_eligibility' => 'auto', 'idempotency_key' => 'auto-client-hold'])->assertOk();
+    expect($started['flow']->fresh()->state)->not->toHaveKeys(['secret', 'flow']);
+    $contact = ['client_name' => 'Guest Customer', 'client_mobile' => '+14155552671', 'client_email' => 'guest@example.test'];
+    $confirmUrl = route('public.booking.confirm', $path['business']->booking_slug);
+    $this->postJson($confirmUrl, [...$credentials, ...$contact, 'policy_accepted' => true, 'idempotency_key' => 'unreviewed-confirm'])->assertConflict()->assertJsonPath('code', 'DETAILS_REVIEW_REQUIRED');
+    $this->postJson(route('public.booking.details', $path['business']->booking_slug), [...$credentials, ...$contact])->assertOk();
+    $this->postJson($confirmUrl, [...$credentials, ...$contact, 'client_email' => 'changed@example.test', 'policy_accepted' => true, 'idempotency_key' => 'changed-contact-confirm'])->assertConflict()->assertJsonPath('code', 'DETAILS_REVIEW_REQUIRED');
+    expect(Appointment::count())->toBe(0);
+    CarbonImmutable::setTestNow();
+});
+
+it('does not let a self-declared returning client bypass first-visit restrictions', function () {
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata')->utc());
+    $path = publicBookingPath();
+    $path['business']->update(['online_new_client_rule' => 'existing_only']);
+    $booking = app(PublicBookingService::class);
+    $started = $booking->start($path['business']);
+    $flow = $booking->hold($path['business'], $started['flow'], ['location' => $path['location']->public_id, 'services' => [$path['service']->public_id], 'staff' => $path['staff']->public_id, 'starts_at' => '2026-08-18T10:00:00+05:30', 'client_eligibility' => 'existing'], 'returning-only-hold');
+    $this->postJson(route('public.booking.details', $path['business']->booking_slug), ['flow' => $flow->public_id, 'secret' => $started['secret'], 'client_name' => 'New Customer', 'client_mobile' => '+14155552671', 'client_email' => 'new@example.test'])->assertUnprocessable()->assertJsonValidationErrors('booking');
+    expect(Appointment::count())->toBe(0);
+    CarbonImmutable::setTestNow();
+});
+
+it('matches a late-day waitlist opening without truncating it behind earlier available times', function () {
+    $this->travelTo(CarbonImmutable::parse('2026-08-12T00:00:00Z'));
+    $path = publicBookingPath();
+    $booking = app(PublicBookingService::class);
+    $held = heldPublicFlow($path, '2026-08-18T16:30:00+05:30');
+    $appointment = $booking->confirm($path['business'], $held['flow'], ['client_name' => 'Opening Guest', 'client_mobile' => '+14155552671', 'client_email' => 'opening@example.test'], 'late-day-original')['appointment'];
+    $waitlist = app(WaitlistService::class);
+    $waitlist->create($path['business'], $path['location'], $path['service'], $path['staff'], [
+        'client_name' => 'Waiting Guest', 'client_mobile' => '+14155552672', 'client_email' => 'waiting@example.test',
+        'acceptable_from' => '2026-08-18', 'acceptable_until' => '2026-08-18',
+        'time_from' => '16:00', 'time_until' => '18:00', 'notification_method' => 'email',
+    ]);
+    $cancelled = app(AppointmentLifecycleCommand::class)->transition($appointment, 'cancelled_by_shop', 'late-day-cancel', 1, 'calendar', reason: 'Opening for waitlist test.');
+    $offers = $waitlist->offerForOpening($cancelled);
+    expect($offers)->toHaveCount(1)
+        ->and($offers[0]['match']->slot_starts_at_utc->equalTo($appointment->starts_at_utc))->toBeTrue();
+    $this->travelBack();
+});
+
+it('rejects incompatible first-visit and returning service combinations before searching times', function () {
+    $this->travelTo(CarbonImmutable::parse('2026-08-12T00:00:00Z'));
+    $path = publicBookingPath();
+    $path['service']->update(['client_eligibility' => 'new']);
+    $returning = $path['service']->replicate(['public_id']);
+    $returning->name = 'Returning visit';
+    $returning->client_eligibility = 'existing';
+    $returning->save();
+    $started = app(PublicBookingService::class)->start($path['business']);
+    $this->postJson(route('public.booking.search', $path['business']->booking_slug), [
+        'flow' => $started['flow']->public_id, 'secret' => $started['secret'], 'location' => $path['location']->public_id,
+        'services' => [$path['service']->public_id, $returning->public_id], 'from_date' => '2026-08-18', 'until_date' => '2026-08-18', 'client_eligibility' => 'auto',
+    ])->assertUnprocessable()->assertJsonValidationErrors('services');
+    $this->travelBack();
+});
+
+it('removes legacy raw flow secrets during a resumable booking slug backfill', function () {
+    $path = publicBookingPath();
+    $started = app(PublicBookingService::class)->start($path['business']);
+    $started['flow']->update(['state' => ['secret' => $started['secret'], 'flow' => $started['flow']->public_id, 'location' => $path['location']->public_id]]);
+    $migration = require database_path('migrations/2026_10_10_000001_reserve_public_booking_slugs.php');
+    $migration->up();
+    $migration->up();
+    expect($started['flow']->fresh()->state)->not->toHaveKeys(['secret', 'flow'])
+        ->and($started['flow']->fresh()->state['location'])->toBe($path['location']->public_id)
+        ->and(app(PublicBookingService::class)->resolve($path['business'], $started['flow']->public_id, $started['secret'])->id)->toBe($started['flow']->id);
+});
+
+it('honors the accepted cancellation cutoff when the business later changes its defaults', function () {
+    $this->travelTo(CarbonImmutable::parse('2026-08-12T00:00:00Z'));
+    $path = publicBookingPath();
+    $held = heldPublicFlow($path);
+    $appointment = app(PublicBookingService::class)->confirm($path['business'], $held['flow'], ['client_name' => 'Policy Guest', 'client_mobile' => '+14155552671', 'client_email' => 'policy@example.test'], 'frozen-cutoff')['appointment'];
+    $path['business']->update(['cancellation_cutoff_minutes' => 1440]);
+    $this->travelTo($appointment->starts_at_utc->subHours(2));
+    $token = app(SecureAppointmentLinkService::class)->issue($appointment->loadMissing('business'), 'reschedule')['token'];
+    $this->postJson(route('public.appointment.availability', $token), ['date' => '2026-08-18'])->assertOk();
+    $path['business']->update(['cancellation_cutoff_minutes' => 0]);
+    $this->travelTo($appointment->starts_at_utc->subMinutes(30));
+    $this->postJson(route('public.appointment.availability', $token), ['date' => '2026-08-18'])->assertConflict()->assertJsonPath('code', 'CANCELLATION_CUTOFF');
+    $this->travelBack();
 });

@@ -1,9 +1,10 @@
 <?php
 
 return [
-    // Draft prices are review examples. Enable only after commercial approval and
-    // `billing:verify-capacity-rates` has checked all Stripe mappings.
+    // Approved USD software prices. Purchases still require verified Stripe mappings.
     'enabled' => (bool) env('CAPACITY_BILLING_ENABLED', false),
+    'pricing_mode' => env('CAPACITY_PRICING_MODE', 'usd'),
+    'default_market' => 'US',
     // Enable separately only after top-up refund/dispute operations are certified.
     'sms_purchases_enabled' => (bool) env('CAPACITY_SMS_PURCHASES_ENABLED', false),
     'automatic_tax' => (bool) env('CAPACITY_AUTOMATIC_TAX', false),
@@ -12,8 +13,8 @@ return [
     'quote_minutes' => 10,
     'markets' => [
         'US' => [
-            'name' => 'United States', 'currency' => 'USD', 'revision' => '2026-10-05-draft-1',
-            'approved' => (bool) env('CAPACITY_US_APPROVED', false),
+            'name' => 'USD', 'currency' => 'USD', 'revision' => '2026-10-11-usd-1',
+            'approved' => (bool) env('CAPACITY_US_APPROVED', true),
             'sms_per_staff' => 100,
             // Destination routes, not the account's currency, determine credit use.
             // The +1 route must cover the actual US/Canada carrier cost ceiling.
@@ -30,9 +31,8 @@ return [
                 'location_price_id' => env('CAPACITY_US_ANNUAL_LOCATION_PRICE_ID'),
                 'staff_price_id' => env('CAPACITY_US_ANNUAL_STAFF_PRICE_ID'),
             ],
-            'sms_packs' => [
-                '500' => ['credits' => 500, 'amount_minor' => 1500, 'price_id' => env('CAPACITY_US_SMS_500_PRICE_ID')],
-            ],
+            // Paid packs need their own approved costs and reversal operations.
+            'sms_packs' => [],
         ],
     ],
     // These are already implemented core capabilities. Deferred channels and

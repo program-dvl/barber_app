@@ -34,6 +34,7 @@ class StripeCheckoutReconciler
         $sessionData['subscription'] = $providerSubscriptionId;
 
         if ($session->status === 'expired') {
+            $this->projector->synchronizeCheckoutExpirationSnapshot($sessionData);
             $attempt->update([
                 'status' => 'expired',
                 'expires_at' => now(),
