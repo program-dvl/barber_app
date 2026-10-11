@@ -2,6 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\AdminEmailVerificationPrompt;
+use App\Filament\Auth\AdminLogin;
+use App\Filament\Widgets\AdminOverview;
+use App\Filament\Widgets\UsersChart;
+use App\Http\Middleware\EnsureAdminSecurity;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -17,6 +22,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -27,7 +33,12 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(AdminLogin::class)
+            ->emailVerification(AdminEmailVerificationPrompt::class)
+            ->authenticatedRoutes(function (): void {
+                Route::redirect('/multi-factor-authentication/set-up', '/admin')
+                    ->name('auth.retired-multi-factor-setup');
+            })
             ->brandName(config('brand.product_name').' administration')
             ->favicon(config('brand.favicon'))
             ->font('Manrope', url: asset('fonts/clipperdesk/manrope.css'), provider: LocalFontProvider::class)
@@ -39,7 +50,7 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
-            ->widgets([])
+            ->widgets([AdminOverview::class, UsersChart::class])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -54,7 +65,8 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/app/theme.css')
             ->authMiddleware([
                 Authenticate::class,
-            ])
+                EnsureAdminSecurity::class,
+            ], isPersistent: true)
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Payments')

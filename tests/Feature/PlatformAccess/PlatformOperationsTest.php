@@ -210,7 +210,7 @@ it('alerts when one operator enters an unusual number of tenants in a short wind
     expect(DB::table('platform_alerts')->where('kind', 'unusual_cross_tenant_access')->where('severity', 'high')->exists())->toBeTrue();
 });
 
-it('quarantines legacy Filament identity and permission editors after the platform resource audit', function () {
+it('denies Filament identity and permission resources to guests', function () {
     expect(UserResource::canAccess())->toBeFalse()
         ->and(RoleResource::canAccess())->toBeFalse()
         ->and(PermissionResource::canAccess())->toBeFalse();

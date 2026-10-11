@@ -34,6 +34,18 @@ Source review and build success do not count as rendered-screen verification.
 Legacy/quarantined routes stay quarantined. Missing domain module specifications
 remain tracked in OPEN-14; this specification only covers presentation.
 
+### Platform account bootstrap
+
+Under FR-19/20 and ADR-059, internal staff sign in at `/admin/login`.
+Valid administrator credentials lead into the panel's email-verification screen
+when needed, then directly to `/admin`. Verified email, an active administrator
+role and platform session limits are required for operational access. This panel
+does not require authenticator enrollment or challenge a second factor.
+`make:admin` links directly to this flow. The separate `/platform` support
+workspace retains its existing MFA policy under ADR-013/023.
+See the [administrator setup guide](../deployment/platform-admin.md) for routes,
+security boundaries, session expiry and environment-specific account recovery.
+
 ## StepES-inspired record composition
 
 Use primary-blue navigation and the pale operational canvas, shared breadcrumbs,

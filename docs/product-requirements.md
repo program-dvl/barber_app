@@ -633,6 +633,11 @@ Purpose: Operate the SaaS safely across tenant onboarding, billing, support and 
 #### Risk Controls
 
 - Require stronger authentication and session controls for platform administrators.
+- Approved clarification (2026-10-11; ADR-059): internal `/admin` login uses
+  password authentication, verified email and an active administrator role, with
+  15-minute idle and eight-hour absolute session limits. The product owner
+  explicitly removed mandatory 2FA enrollment and challenges from this panel.
+  The separate `/platform` support workspace retains its existing MFA policy.
 - Separate platform roles, restrict bulk export and alert on unusual cross-tenant access.
 
 ACCEPTANCE OUTCOME Support can resolve a failed notification or billing issue without direct database manipulation, and every tenant access is attributable and visible.

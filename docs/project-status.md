@@ -2,6 +2,64 @@
 
 Status date: 2026-10-11
 
+## 2026-10-11 Internal admin menu investigation (FR-19/20)
+
+- [x] Reviewed ten related LaraFast documentation chapters and compared the local
+  account, Filament resources, widget registration and `/platform` workspace.
+  Read-only local account evidence confirms verified email and the correct active
+  `platform_administrator` role. Browser navigation matches the four retained
+  Content resources; missing identity/billing menus are explicitly disabled for
+  all administrators, and dashboard widgets are not registered.
+- [x] Recorded the split admin/platform interface and remaining platform module
+  placeholders in the [investigation](audits/2026-10-11-admin-menu/review.md).
+  No role or application behavior was changed by this review.
+- [x] Admin/bootstrap/platform-operation regression tests: **23 passed / 177
+  assertions**. This is local evidence; no live deployment was performed.
+
+## 2026-10-11 Direct internal admin login (FR-19/20; ADR-059)
+
+- [x] At the product owner's explicit request, removed required authenticator
+  enrollment and second-factor challenges from `/admin/login`. Verified internal
+  administrators enter `/admin` directly; the retired MFA setup URL redirects
+  there. Email verification, active administrator roles, persistent Livewire
+  authorization, 15-minute idle/eight-hour absolute session limits and legacy
+  resource quarantine remain enforced.
+- [x] Existing Fortify secrets/recovery codes are preserved. Separate `/platform`
+  support MFA and salon authentication retain their existing requirements.
+  No account recreation, credential reset or database migration was performed.
+- [x] Affected platform/authentication/Google/account-notification/verification/
+  registration/profile tests: **88 passed / 639 assertions**, one existing
+  intentional registration skip on isolated SQLite. Scoped Pint and whitespace
+  checks passed.
+- [x] Browser verified the user's existing verified local account reaches the
+  internal dashboard from the retired setup URL. This is local verification;
+  live deployment and real mail delivery were not certified. See the
+  [setup guide](deployment/platform-admin.md).
+
+## 2026-10-11 Internal administrator login repair (FR-19/20; ADR-058)
+
+Historical verification: the mandatory internal admin MFA portions below were
+superseded by ADR-059 and the direct-login implementation above.
+
+- [x] Repaired the `make:admin` / `/admin/login` mismatch: valid active
+  administrator credentials now reach panel-local email verification and required
+  authenticator enrollment. Operational pages remain inaccessible until both
+  steps are complete. Pending Fortify secrets do not count as confirmed MFA.
+- [x] Later logins challenge the shared encrypted Fortify authenticator or
+  single-use recovery code. Persistent Livewire middleware retains identity,
+  security readiness and platform session limits. Expiry returns to admin login;
+  stale salon redirects are cleared and an existing salon session can view the
+  admin login. Tenant membership and legacy-resource quarantine are preserved.
+- [x] Bootstrap/security/tenant/platform/Google/account-email/verification/
+  registration/profile regression run: **88 passed / 658 assertions**, one
+  existing intentional registration skip on isolated SQLite. Scoped Pint and
+  whitespace checks passed. No schema, dependency or frontend changes are needed.
+- [x] At the user's explicit request, created the missing local internal admin
+  using their supplied credentials. Browser login succeeded and rendered the
+  admin verification screen. At that verification, email verification and
+  authenticator enrollment were the remaining steps; real SES delivery and live deployment were not
+  performed or certified. See the [setup guide](deployment/platform-admin.md).
+
 ## 2026-10-11 Capacity-only billing selection (ADR-057)
 
 - [x] Removed the Existing plan options disclosure, Starter/Pro cards, feature

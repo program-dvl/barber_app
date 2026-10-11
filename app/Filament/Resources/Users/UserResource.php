@@ -2,17 +2,17 @@
 
 namespace App\Filament\Resources\Users;
 
-use App\Filament\Resources\Concerns\DisablesUnapprovedPlatformResource;
+use App\Filament\Resources\Concerns\AuthorizesPlatformAdministrator;
 use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
-use App\Filament\Resources\Users\RelationManagers\PermissionRelationManager;
 use App\Filament\Resources\Users\RelationManagers\RoleRelationManager;
 use App\Filament\Resources\Users\Widgets\UsersStats;
 use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
@@ -21,16 +21,37 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class UserResource extends Resource
 {
-    use DisablesUnapprovedPlatformResource;
+    use AuthorizesPlatformAdministrator;
 
     protected static ?string $model = User::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-users';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Users';
+
+    public static function canCreate(): bool
+    {
+        return static::canAccess();
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return static::canAccess();
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return false;
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -57,6 +78,12 @@ class UserResource extends Resource
                             ->dehydrated(fn ($state) => filled($state))
                             ->minLength(8)
                             ->helperText('Leave blank to keep current password')
+                            ->columnSpanFull(),
+                        Textarea::make('_admin_reason')
+                            ->label('Reason for this change')
+                            ->required()
+                            ->minLength(10)
+                            ->maxLength(1000)
                             ->columnSpanFull(),
                     ])
                     ->columns(1)
@@ -122,7 +149,6 @@ class UserResource extends Resource
     {
         return [
             RoleRelationManager::class,
-            PermissionRelationManager::class,
         ];
     }
 

@@ -2,12 +2,18 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
 
 class UsersChart extends ChartWidget
 {
+    public static function canView(): bool
+    {
+        return UserResource::canAccess();
+    }
+
     protected ?string $heading = 'User Growth (Last 30 Days)';
 
     protected static ?int $sort = 3;

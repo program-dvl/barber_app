@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\StripeOrders;
 
-use App\Filament\Resources\Concerns\DisablesLegacyBillingResource;
+use App\Filament\Resources\Concerns\ReadsAdminRecords;
 use App\Filament\Resources\Invoices\InvoiceResource;
 use App\Filament\Resources\StripeOrders\Pages\CreateStripeOrder;
 use App\Filament\Resources\StripeOrders\Pages\EditStripeOrder;
@@ -23,7 +23,7 @@ use Filament\Tables\Table;
 
 class StripeOrderResource extends Resource
 {
-    use DisablesLegacyBillingResource;
+    use ReadsAdminRecords;
 
     protected static ?string $model = StripeOrder::class;
 

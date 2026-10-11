@@ -17,6 +17,13 @@ class EnsurePlatformAccess
         $user = $request->user();
         abort_unless($user && $user->hasVerifiedEmail() && filled($user->two_factor_confirmed_at) && $user->activePlatformRoles()->exists(), 403);
 
+        $this->enforceSessionLimits($request);
+
+        return $next($request);
+    }
+
+    public function enforceSessionLimits(Request $request): void
+    {
         $now = now()->timestamp;
         $started = (int) $request->session()->get('platform_session_started_at', $now);
         $lastUsed = (int) $request->session()->get('platform_session_last_used_at', $now);
@@ -25,7 +32,5 @@ class EnsurePlatformAccess
             abort(403, 'The protected platform session expired. Re-authenticate to continue.');
         }
         $request->session()->put(['platform_session_started_at' => $started, 'platform_session_last_used_at' => $now]);
-
-        return $next($request);
     }
 }

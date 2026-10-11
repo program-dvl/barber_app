@@ -335,6 +335,8 @@ tests and the remaining hosting/backup choices are required.
 ### ADR-013: Launch authentication uses verified password identities and TOTP
 
 - Status: Accepted
+- Scoped amendment: ADR-059 removes mandatory MFA from the internal `/admin`
+  panel; the separate `/platform` support policy remains in force.
 - Date: 2026-08-11
 - Owners: Product, Engineering, and Operations
 - Related requirements: FR-05, FR-19, FR-20
@@ -890,6 +892,8 @@ benchmark.
 ### ADR-023: Separate safe platform summaries from scoped support sessions
 
 - Status: Accepted
+- Scoped amendment: ADR-059 removes mandatory MFA from the internal `/admin`
+  panel; support-workspace MFA, session limits and authorization remain in force.
 - Date: 2026-08-15
 - Owners: Product, Engineering, Security, and Operations
 - Related requirements: FR-19 and FR-20
@@ -2095,6 +2099,62 @@ and [screenshots, six-perspective review and verification](audits/2026-10-04-bus
   invoices, payment management, cancellation and reactivation. This UI/action cleanup
   does not purge local test data or automatically migrate a Stripe subscription.
 - Evidence: billing workspace/lifecycle/capacity tests and the billing audit.
+
+## ADR-058 — Internal admin login completes security setup within the panel
+
+- Status: Accepted; internal admin MFA superseded by ADR-059
+- Date: 2026-10-11
+- Owners: Engineering
+- Requirements: FR-19/20; implements ADR-013/023 without relaxing operational MFA.
+
+Context: The product owner confirmed `/admin/login` is the ClipperDesk internal
+staff entry point and requested repair. `make:admin` created the correct separate
+role, but the panel rejected unverified/unenrolled accounts before offering setup.
+
+Decision: Separate administrator identity admission from operational readiness.
+`canAccessPanel` admits only active administrator roles; persistent panel middleware
+allows pending identities only email verification, authenticator setup and logout.
+Every operational page still requires verified email, confirmed TOTP and existing
+platform session limits. Filament's required authenticator flow shares Fortify's
+encrypted secret/recovery codes, including single-use recovery consumption and
+security notifications. New credentials, automatic verification or fake enrollment
+are not prerequisites for repairing an existing account.
+
+Consequences: Internal staff complete setup entirely under `/admin`; salon login,
+Business membership and `/platform` are not onboarding prerequisites. Signed email
+links return to the panel; later logins challenge TOTP or recovery. Legacy resource
+quarantine and tenant-isolation rules remain in force. Installation needs no schema
+or dependency change; production deployment/delivery require separate evidence.
+
+## ADR-059 — Internal admin login proceeds directly after email verification
+
+- Status: Accepted
+- Date: 2026-10-11
+- Owners: Product and Engineering
+- Requirements: FR-19/20; approved clarification recorded in the PRD.
+- Supersedes: mandatory internal `/admin` MFA portions of ADR-013/023/058.
+
+Context: After completing email verification, the product owner explicitly
+requested disabling the internal admin 2FA step and allowing direct login.
+
+Decision: `/admin/login` accepts password credentials for an active, unexpired,
+unrevoked platform administrator role. Operational access requires verified email
+and the existing 15-minute idle/eight-hour absolute session limits. Remove the
+panel's MFA provider and enrollment gate; no second-factor setup or login challenge
+is required, including for identities with existing Fortify enrollment. Preserve
+stored secrets/recovery codes. The retired admin enrollment URL redirects to
+`/admin`, subject to the same verification and session controls.
+
+The separate `/platform` support workspace retains its verified-email, confirmed
+MFA and role requirements. Share session-limit enforcement between both entry
+points without applying the support workspace's MFA gate to internal admin pages.
+Salon login, tenant membership, support approval/audit and legacy-resource
+quarantine retain their existing contracts.
+
+Consequences: Verified internal administrators enter the dashboard directly.
+`make:admin` documents email verification as the remaining first-login step.
+No schema migration, account recreation or credential reset is required. The
+change is verified locally; source changes do not establish live deployment.
 
 ## Open decisions
 

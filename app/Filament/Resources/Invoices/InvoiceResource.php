@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Invoices;
 
-use App\Filament\Resources\Concerns\DisablesLegacyBillingResource;
+use App\Filament\Resources\Concerns\ReadsAdminRecords;
 use App\Filament\Resources\Invoices\Pages\CreateInvoice;
 use App\Filament\Resources\Invoices\Pages\EditInvoice;
 use App\Filament\Resources\Invoices\Pages\ListInvoices;
@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Notification as NotificationFacade;
 
 class InvoiceResource extends Resource
 {
-    use DisablesLegacyBillingResource;
+    use ReadsAdminRecords;
 
     protected static ?string $model = Invoice::class;
 
@@ -263,8 +263,9 @@ class InvoiceResource extends Resource
             ->label('Email Customer')
             ->icon('heroicon-o-envelope')
             ->requiresConfirmation()
-            ->visible(fn (Invoice $record) => filled($record->customer_email))
+            ->visible(fn (Invoice $record) => filled($record->customer_email) && static::canEdit($record))
             ->action(function (Invoice $record) {
+                abort_unless(static::canEdit($record), 403);
                 NotificationFacade::route('mail', $record->customer_email)
                     ->notify(new InvoiceCreatedNotification($record));
 

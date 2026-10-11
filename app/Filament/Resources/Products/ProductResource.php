@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Products;
 
-use App\Filament\Resources\Concerns\DisablesLegacyBillingResource;
+use App\Filament\Resources\Concerns\ReadsAdminRecords;
 use App\Filament\Resources\Products\Pages\CreateProduct;
 use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
@@ -22,7 +22,7 @@ use Filament\Tables\Table;
 
 class ProductResource extends Resource
 {
-    use DisablesLegacyBillingResource;
+    use ReadsAdminRecords;
 
     protected static ?string $model = Product::class;
 

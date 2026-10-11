@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\Permissions;
 
-use App\Filament\Resources\Concerns\DisablesUnapprovedPlatformResource;
+use App\Domain\PlatformAccess\Models\BusinessPermission;
+use App\Filament\Resources\Concerns\ReadsAuthorizationCatalog;
 use App\Filament\Resources\Permissions\Pages\CreatePermission;
 use App\Filament\Resources\Permissions\Pages\EditPermission;
 use App\Filament\Resources\Permissions\Pages\ListPermissions;
-use App\Filament\Resources\Permissions\RelationManagers\RoleRelationManager;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -16,13 +16,12 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Spatie\Permission\Models\Permission;
 
 class PermissionResource extends Resource
 {
-    use DisablesUnapprovedPlatformResource;
+    use ReadsAuthorizationCatalog;
 
-    protected static ?string $model = Permission::class;
+    protected static ?string $model = BusinessPermission::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -89,7 +88,6 @@ class PermissionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RoleRelationManager::class,
         ];
     }
 

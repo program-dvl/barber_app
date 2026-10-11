@@ -15,6 +15,8 @@ use function Laravel\Prompts\text;
 
 class MakeAdmin extends MakeUserCommand
 {
+    protected $description = 'Create an internal administrator account that requires email verification';
+
     protected $signature = 'make:admin
                             {--name= : The name of the user}
                             {--email= : A valid and unique email address}
@@ -65,10 +67,9 @@ class MakeAdmin extends MakeUserCommand
         return $user;
     }
 
-    public function handle(): int
+    protected function sendSuccessMessage(Authenticatable&Model $user): void
     {
-        parent::handle();
-
-        return static::SUCCESS;
+        $this->components->info('Platform administrator account created for '.$user->getAttribute('email').'.');
+        $this->line('Sign in at '.$this->panel->getLoginUrl().'. Verify your email to enter internal administration.');
     }
 }

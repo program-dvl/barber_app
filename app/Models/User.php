@@ -104,9 +104,9 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     public function canAccessPanel(Panel $panel): bool
     {
+        // Panel identity admission also permits the protected security setup screens.
+        // EnsureAdminSecurity gates operational access on verified email and session limits.
         return $panel->getId() === 'admin'
-            && $this->hasVerifiedEmail()
-            && filled($this->two_factor_confirmed_at)
             && $this->hasPlatformRole(PlatformRole::Administrator);
     }
 

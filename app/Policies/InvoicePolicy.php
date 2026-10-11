@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Domain\PlatformAccess\Enums\PlatformRole;
 use App\Models\Invoice;
 use App\Models\User;
 
@@ -9,7 +10,8 @@ class InvoicePolicy
 {
     public function view(User $user, Invoice $invoice): bool
     {
-        return $invoice->user_id !== null && (int) $invoice->user_id === (int) $user->getKey();
+        return ($user->hasVerifiedEmail() && $user->hasPlatformRole(PlatformRole::Administrator))
+            || ($invoice->user_id !== null && (int) $invoice->user_id === (int) $user->getKey());
     }
 
     public function viewAny(): bool
