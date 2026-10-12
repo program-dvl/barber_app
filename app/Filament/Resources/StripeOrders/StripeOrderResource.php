@@ -167,6 +167,7 @@ class StripeOrderResource extends Resource
             ])
             ->recordActions([
                 Action::make('generateInvoice')
+                    ->visible(fn () => InvoiceResource::canCreate())
                     ->label('Generate Invoice')
                     ->icon('heroicon-o-document-plus')
                     ->url(fn (StripeOrder $record) => InvoiceResource::stripeOrderCreateUrl($record)),

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\StripeOrders\Pages;
 
 use App\Filament\Resources\StripeOrders\StripeOrderResource;
-use App\Filament\Resources\StripeOrders\Widgets\OrdersStats;
 use Filament\Actions\CreateAction;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
@@ -24,7 +23,6 @@ class ListStripeOrders extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            OrdersStats::class,
         ];
     }
 }

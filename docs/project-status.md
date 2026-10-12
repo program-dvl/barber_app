@@ -2,6 +2,27 @@
 
 Status date: 2026-10-11
 
+## 2026-10-11 Restore administrator menus (FR-19/20; ADR-060)
+
+- [x] At the owner's explicit selection, restored all retained LaraFast menus for
+  verified active `platform_administrator` accounts: Users, Roles, Permissions,
+  seven provider billing resources and the existing Content tools. Dashboard
+  widgets now show user/business/canonical active subscription counts and growth.
+- [x] User creation/editing and actual platform-role grant/revocation are reasoned
+  and audited. Email changes clear verification; user deletion and self role
+  revocation are blocked. Custom roles use the business-bound membership service;
+  starter roles and the canonical permission catalog retain their protections.
+  Financial/provider history is readable without direct edits or deletion.
+- [x] All ten restored resource indexes return success in feature tests. Ordinary,
+  support, auditor, revoked, expired and unverified identities remain denied.
+  Affected platform/authentication/email/profile regression run: **109 passed /
+  716 assertions**, one existing intentional registration skip on isolated SQLite.
+  Scoped Pint and whitespace checks passed. No migration or frontend build needed.
+- [x] Browser signed in with the existing local account without 2FA, displayed all
+  menu groups and dashboard counts, and rendered Roles, Permissions and Invoices.
+  [Restored menu screenshot](audits/2026-10-11-admin-menu/restored-menu.jpg).
+  No real role/data mutation, account reset or live deployment was performed.
+
 ## 2026-10-11 Internal admin menu investigation (FR-19/20)
 
 - [x] Reviewed ten related LaraFast documentation chapters and compared the local

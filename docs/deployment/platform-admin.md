@@ -47,15 +47,24 @@ administrator role, rather than unfinished email verification. Confirm that the
 account exists in the database of the exact environment being accessed. Do not
 recreate an existing production account or reset its password to install this fix.
 
-## Why the menu is limited
+## Administrator menus
 
-The panel currently exposes Dashboard and four Content resources. Users, Roles,
-Permissions and legacy provider billing resources are explicitly disabled for
-every administrator under ADR-023/029; assigning a global boilerplate role does
-not enable them. Dashboard widgets are not registered. Business-aware support
-tools are implemented separately under `/platform`, with its own MFA requirement.
-See the [menu investigation](../audits/2026-10-11-admin-menu/review.md) for the
-documentation comparison, resource inventory and remaining interface gaps.
+ADR-060 enables all retained menus for verified, active `platform_administrator`
+accounts: Content, Users, Roles, Permissions and seven provider billing resources.
+Refresh `/admin` after installing the changes. No new role assignment is needed
+for an existing active administrator. The dashboard shows users, businesses,
+active business subscriptions and user growth.
+
+Users supports audited creation/editing and a **Platform roles** tab for granting
+and revoking actual platform access. Email changes require verification again;
+users cannot be deleted and operators cannot revoke their own platform role.
+Roles supports reasoned, business-bound custom-role changes. Starter roles remain
+protected. Permissions is the canonical catalog, not a global User permission tab.
+Provider billing records and invoices are readable; financial-history changes
+must use the existing billing services. These retained tables are distinct from
+Business subscriptions. Business-aware support tools remain under `/platform`,
+with their existing MFA requirement. The earlier
+[menu investigation](../audits/2026-10-11-admin-menu/review.md) records the prior state.
 
 ## Deploying the repair
 

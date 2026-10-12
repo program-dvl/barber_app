@@ -68,6 +68,7 @@ class LemonSqueezyOrderResource extends Resource
             ])
             ->recordActions([
                 Action::make('generateInvoice')
+                    ->visible(fn () => InvoiceResource::canCreate())
                     ->label('Generate Invoice')
                     ->icon('heroicon-o-document-plus')
                     ->url(fn (Order $record) => InvoiceResource::lemonSqueezyOrderCreateUrl($record)),

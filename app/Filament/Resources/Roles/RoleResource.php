@@ -21,12 +21,15 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
 
 class RoleResource extends Resource
 {
     use ReadsAuthorizationCatalog;
 
     protected static ?string $model = BusinessRole::class;
+
+    protected static ?string $navigationLabel = 'Roles';
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -56,6 +59,8 @@ class RoleResource extends Resource
                         TextInput::make('name')
                             ->required()
                             ->maxLength(255)
+                            ->regex('/^[a-z][a-z0-9_]*$/')
+                            ->rules([Rule::notIn(array_column(StarterRole::cases(), 'value'))])
                             ->disabled(fn (string $operation) => $operation === 'edit')->dehydrated()
                             ->helperText('Custom role name within the selected business')
                             ->columnSpanFull(),

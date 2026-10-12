@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\LemonSqueezyOrders\Pages;
 
 use App\Filament\Resources\LemonSqueezyOrders\LemonSqueezyOrderResource;
-use App\Filament\Resources\LemonSqueezyOrders\Widgets\OrdersStats;
 use Filament\Actions;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
@@ -24,7 +23,6 @@ class ListOrders extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            OrdersStats::class,
         ];
     }
 }

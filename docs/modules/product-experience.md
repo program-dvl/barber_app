@@ -31,7 +31,8 @@ change domain rules, or waive release gates. See [design-system](../design-syste
 The platform inventory, visual coverage, role checks, tests and explicit gaps
 are recorded in [the dated audit](../audits/2026-10-02-platform-refinement/README.md).
 Source review and build success do not count as rendered-screen verification.
-Legacy/quarantined routes stay quarantined. Missing domain module specifications
+Legacy/quarantined routes follow their accepted access decisions, including the
+administrator-only restoration in ADR-060. Missing domain module specifications
 remain tracked in OPEN-14; this specification only covers presentation.
 
 ### Platform account bootstrap
@@ -45,6 +46,13 @@ does not require authenticator enrollment or challenge a second factor.
 workspace retains its existing MFA policy under ADR-013/023.
 See the [administrator setup guide](../deployment/platform-admin.md) for routes,
 security boundaries, session expiry and environment-specific account recovery.
+
+Under ADR-060, verified active administrators see all retained Content, Users
+and Payments menus. User creation/editing and platform-role grant/revocation are
+reasoned and audited. Roles uses Business-owned custom-role services; Permissions
+and legacy provider billing records are readable with historical-data protections.
+The dashboard shows user/business/active Business subscription counts and user
+growth. The separate `/platform` workspace retains its existing entry policy.
 
 ## StepES-inspired record composition
 

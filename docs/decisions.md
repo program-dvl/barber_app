@@ -2156,6 +2156,48 @@ Consequences: Verified internal administrators enter the dashboard directly.
 No schema migration, account recreation or credential reset is required. The
 change is verified locally; source changes do not establish live deployment.
 
+## ADR-060 — Restore retained admin menus for platform administrators
+
+- Status: Accepted
+- Date: 2026-10-11
+- Owners: Product and Engineering
+- Requirements: FR-19/20; approved clarification recorded in the PRD.
+- Supersedes: ADR-023's blanket Filament menu quarantine for active verified
+  platform administrators only. Tenant and financial invariants remain in force.
+
+Context: The product owner requested full admin access for
+`platform_administrator` and selected enabling all existing LaraFast menus after
+reviewing the difference from exposing the separate ClipperDesk support workspace.
+
+Decision: Restore Users, Roles, Permissions and all seven retained provider
+billing resources under `/admin`, guarded by verified email and the existing
+active platform administrator assignment. Retain persistent panel/session
+middleware and ADR-059's direct login. Add user/business/canonical active
+subscription counts and user growth to the dashboard.
+
+User creation/editing requires a reason and writes audit evidence atomically.
+Email changes clear verification; password changes remain hashed and are only
+recorded as a boolean in the audit. User deletion is disabled to preserve account
+lineage. The user's Platform roles tab grants/revokes the actual platform role
+assignments through audited services, preserves revoked rows and prevents self
+revocation. No global Spatie User trait or tenant authorization bypass is added.
+
+Roles displays the actual Business-owned roles. Administrators may create/update
+custom roles using MembershipAccessManager with a business, enumerated permissions
+and reason. Starter roles and business bindings cannot be overwritten through the
+generic editor. Permissions displays the canonical permission catalog read-only.
+Legacy financial/provider records are readable, including invoice viewing and
+downloads, while direct create/edit/delete and invoice-status-changing email
+actions remain disabled. Their widgets cannot represent canonical Business
+revenue, so dashboard metrics use canonical aggregates and order money widgets
+are not registered on the restored list pages.
+
+Consequences: All retained menus are available to the requested platform role.
+Ordinary users, support operators, auditors and inactive/unverified administrators
+do not gain these menus. This selection does not consolidate `/platform`, change
+its MFA requirement, complete its placeholder pages, or migrate legacy billing.
+No account reset or schema change is needed.
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |

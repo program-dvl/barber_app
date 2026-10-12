@@ -638,6 +638,12 @@ Purpose: Operate the SaaS safely across tenant onboarding, billing, support and 
   15-minute idle and eight-hour absolute session limits. The product owner
   explicitly removed mandatory 2FA enrollment and challenges from this panel.
   The separate `/platform` support workspace retains its existing MFA policy.
+- Approved clarification (2026-10-11; ADR-060): verified active
+  `platform_administrator` accounts can access all retained LaraFast `/admin`
+  menus. User and platform-role changes are reasoned and audited; business-role
+  management uses the existing business-bound authorization service. The
+  permission catalog and historical provider billing records remain readable
+  without direct financial-history edits or cross-business role reassignment.
 - Separate platform roles, restrict bulk export and alert on unusual cross-tenant access.
 
 ACCEPTANCE OUTCOME Support can resolve a failed notification or billing issue without direct database manipulation, and every tenant access is attributable and visible.

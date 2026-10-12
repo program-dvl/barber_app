@@ -18,6 +18,7 @@ use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 uses(RefreshDatabase::class);
 
@@ -94,7 +95,7 @@ it('defines a custom role within one business using the audited membership servi
     [, $other] = createTenantMembership();
     $this->actingAs(resourceAdministrator());
     Livewire::test(CreateRole::class)->fillForm([
-        'business_id' => $business->id, 'name' => 'custom reviewer',
+        'business_id' => $business->id, 'name' => 'custom_reviewer',
         '_admin_permissions' => [PermissionName::ClientView->value], '_admin_reason' => 'Approved synthetic business reviewer role.',
     ])->call('create')->assertHasNoFormErrors();
     expect(BusinessRole::where('business_id', $business->id)->where('name', 'custom_reviewer')->exists())->toBeTrue()
@@ -108,4 +109,19 @@ it('keeps financial history read only even for platform administrators', functio
         ->and(InvoiceResource::canDeleteAny())->toBeFalse();
     $this->get('/admin/invoices/create')->assertForbidden();
     $this->get('/admin/permissions/create')->assertForbidden();
+});
+
+it('rejects protected starter-role editing and self revocation', function () {
+    [, $business] = createTenantMembership();
+    $admin = resourceAdministrator();
+    $this->actingAs($admin);
+    $role = BusinessRole::where('business_id', $business->id)->where('name', 'owner')->firstOrFail();
+    $this->get('/admin/roles/'.$role->id.'/edit')->assertForbidden();
+    Livewire::test(CreateRole::class)->fillForm([
+        'business_id' => $business->id, 'name' => 'owner', '_admin_permissions' => [PermissionName::ClientView->value],
+        '_admin_reason' => 'A reserved role may not be replaced.',
+    ])->call('create')->assertHasFormErrors(['name']);
+    expect(fn () => app(PlatformRoleManager::class)->revoke($admin->platformRoleAssignments()->first(), $admin, 'Do not lock out the current administrator.'))
+        ->toThrow(HttpException::class);
+    expect($admin->hasPlatformRole(PlatformRole::Administrator))->toBeTrue();
 });

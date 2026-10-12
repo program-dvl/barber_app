@@ -23,6 +23,8 @@ class PermissionResource extends Resource
 
     protected static ?string $model = BusinessPermission::class;
 
+    protected static ?string $navigationLabel = 'Permissions';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Users';

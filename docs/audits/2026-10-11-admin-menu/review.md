@@ -1,5 +1,13 @@
 # Internal admin menu investigation
 
+Historical investigation: ADR-060 subsequently restored the retained menus for
+verified active platform administrators. See the
+[current administrator guide](../../deployment/platform-admin.md) for behavior.
+The [restored menu screenshot](restored-menu.jpg) records the owner's existing
+local session after direct password login. Subsequent verification: all ten
+restored indexes and audited user/platform/custom-role flows passed in the
+**109-test / 716-assertion** affected regression run (one intentional skip).
+
 Date: 2026-10-11. Scope: FR-19/20; review of LaraFast documentation, local
 administrator assignment, panel navigation, disabled resources and platform UI.
 This investigation changes documentation only; it does not enable legacy editors

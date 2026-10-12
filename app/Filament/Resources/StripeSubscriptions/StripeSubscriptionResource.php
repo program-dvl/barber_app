@@ -159,6 +159,7 @@ class StripeSubscriptionResource extends Resource
             ])
             ->recordActions([
                 Action::make('generateInvoice')
+                    ->visible(fn () => InvoiceResource::canCreate())
                     ->label('Generate Invoice')
                     ->icon('heroicon-o-document-plus')
                     ->url(fn (Subscription $record) => InvoiceResource::stripeSubscriptionCreateUrl($record)),
