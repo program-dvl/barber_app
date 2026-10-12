@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './workspace.css';
+@import './privacy.css';
 
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';

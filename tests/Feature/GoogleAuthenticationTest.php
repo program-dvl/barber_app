@@ -39,6 +39,7 @@ class GoogleAuthenticationTest extends TestCase
 
         $this->assertSame('https://clipperdesk.example/auth/callback/google', $query['redirect_uri']);
         $this->assertNotEmpty($query['state']);
+        $this->assertEqualsCanonicalizing(['openid', 'profile', 'email'], explode(' ', $query['scope']));
     }
 
     public function test_existing_user_can_sign_in_and_google_identity_is_linked_without_storing_oauth_token(): void
@@ -103,6 +104,7 @@ class GoogleAuthenticationTest extends TestCase
         $response->assertRedirect(RouteServiceProvider::HOME);
         $this->assertAuthenticatedAs($user);
         $this->assertTrue($user->hasVerifiedEmail());
+        $this->assertNull($user->profile_photo_path);
         $this->assertDatabaseHas('social_accounts', ['user_id' => $user->id, 'provider' => 'google', 'account_id' => 'google-new-1']);
         $this->assertDatabaseHas('owner_registration_intents', ['user_id' => $user->id, 'business_name' => 'North and Main Studio', 'status' => 'completed']);
         $this->assertDatabaseHas('businesses', ['name' => 'North and Main Studio']);
@@ -162,10 +164,12 @@ class GoogleAuthenticationTest extends TestCase
             'email' => $email,
             'email_verified' => $verified,
             'name' => $name,
+            'picture' => 'https://google.example/profile-picture.jpg',
         ])->map([
             'id' => $id,
             'email' => $email,
             'name' => $name,
+            'avatar' => 'https://google.example/profile-picture.jpg',
         ]);
         $provider = Mockery::mock();
         $provider->shouldReceive('user')->once()->andReturn($googleUser);

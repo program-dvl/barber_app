@@ -7,7 +7,7 @@ import HomeLayout from '@/Layouts/HomeLayout.vue';
 import { marketingFamilyVisuals } from '@/Support/marketingVisuals';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ seo: Object });
+defineProps({ seo: Object, legalIdentity: Object });
 </script>
 
 <template>
@@ -19,7 +19,7 @@ defineProps({ seo: Object });
                 <div class="cd-family-hero-grid mt-10">
                     <div class="cd-family-hero-copy">
                         <p class="cd-eyebrow">Company</p>
-                        <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">About ClipperDesk</h1>
+                        <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">About Clipperdesk</h1>
                         <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Manage appointments, client records, team schedules and checkout for beauty, wellness, fitness, health and pet-care businesses.</p>
                     </div>
                     <figure class="cd-family-hero-media">
@@ -45,8 +45,9 @@ defineProps({ seo: Object });
             <PublicContainer class="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
                 <div>
                     <p class="cd-dark-eyebrow">Clarity as a company value</p>
-                    <h2 class="mt-4 font-display text-3xl font-semibold text-white">Operator and identity status</h2>
-                    <p class="mt-5 max-w-2xl leading-8 text-white/75">ClipperDesk is the selected product identity. Trademark clearance, the production domain and the final legal operator/contact details are not yet approved evidence. Public launch requires approval of these details.</p>
+                    <h2 class="mt-4 font-display text-3xl font-semibold text-white">Operator and contact</h2>
+                    <p class="mt-5 max-w-2xl leading-8 text-white/75">{{ legalIdentity.operator_name }} operates Clipperdesk. Postal contact: {{ legalIdentity.operator_address }}.</p>
+                    <p class="mt-4 leading-8 text-white/75">Support and privacy requests: <a :href="`mailto:${legalIdentity.privacy_email}`" class="underline underline-offset-4">{{ legalIdentity.privacy_email }}</a>.</p>
                 </div>
                 <div class="cd-dark-proof-panel">
                     <h2 class="text-xl font-extrabold text-white">Review the current evidence</h2>

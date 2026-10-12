@@ -148,3 +148,22 @@ protect configuration changes. Phone rows retain useful price/time/availability
 metadata; narrow summaries avoid broken currency values. The
 [Services audit](../audits/2026-10-03-services/README.md) records local evidence and
 remaining scope limits.
+
+## Public privacy notice (2026-10-12)
+
+Under FR-01, FR-05, FR-09–14 and FR-19/20, `/privacy-policy` uses the existing
+public MarketingLayout/Header/Footer and a complete server-rendered HTML fallback
+inside the Inertia root when the optional SSR service is unavailable. One policy
+body drives initial HTML and interactive visits. The contents menu is a native,
+compact disclosure above a centered reading column; it works without JavaScript.
+Account sign-in and registration link the same public route. OAuth behavior is
+unchanged; the notice describes only the installed openid/profile/email flow.
+
+Owner-supplied operator/contact facts live in `config/privacy.php` and are reused
+in Company, Security, Terms and Refund pages. No public review banner is shown
+on the privacy page, at the owner's request. That does not close the internal
+approval/operations checks. Effective date, indexing and sitemap eligibility
+require complete, explicitly approved publication configuration. The scoped
+privacy styles do not change the authenticated theme. Related Terms/refund remain
+separate review documents. [Audit, blockers and resubmission checklist](../audits/2026-10-12-privacy-policy/README.md)
+and ADR-062 record the contract and verification boundary.

@@ -2,6 +2,37 @@
 
 Status date: 2026-10-12
 
+## 2026-10-12 Privacy policy and Google branding remediation (FR-01/05/09–14/19/20; ADR-062)
+
+- [x] Replaced the policy's old-brand/draft/internal-blocker copy with actual
+  data categories, Google openid/profile/email disclosures, retention/deletion
+  limits, controller/business roles, international rights and the owner-supplied
+  Canadian postal contact and support@clipperdesk.com.
+- [x] Privacy uses the existing interactive public header/footer and a complete
+  HTML fallback when Vue SSR is unavailable. The public review banner is removed
+  at the owner's request; a compact native contents disclosure replaces the sidebar.
+- [x] Approval/date/provider/operations checks gate effective-date display,
+  indexation and sitemap inclusion. The current publication check correctly fails;
+  no environment, OAuth scope/credential, live provider or production deployment
+  was changed. OPEN-10 and remaining OPEN-13/15 approvals remain applicable.
+- [x] Related legal/company/security identity and provider facts corrected;
+  Terms/refund remain separate review documents. Sign-in links the same policy.
+- [x] Verification: 144 tests / 2,101 assertions pass with one existing intentional
+  registration skip; production client/SSR builds, 17-route asset budgets, scoped
+  formatting and diff whitespace checks pass. Browser checks at 320/360/390/768/1440
+  show no overflow, one h1/main and working contents/menu/focus behavior.
+  [Audit, evidence, blockers and Google resubmission checklist](audits/2026-10-12-privacy-policy/README.md).
+
+## 2026-10-12 Forge billing delivery instructions (FR-01; ADR-056)
+
+- [x] Checked current Forge Laravel/scheduler/queue documentation against the app's
+  scheduled billing commands and synchronous, signature-verified webhook handler.
+  Added exact toggle/worker/delivery verification guidance to the deployment runbook.
+- [x] The public production billing webhook URL returned HTTP 400 to an unsigned
+  empty-object POST. Reachability and rejection were observed; signed live delivery,
+  correct endpoint secret, financial projection, scheduler and workers remain
+  unverified. No production environment, Forge job or provider object was changed.
+
 ## 2026-10-12 Public capacity pricing (FR-01/13; ADR-061)
 
 - [x] Rebuilt `/pricing` around one shared capacity catalog: visible unit rates,

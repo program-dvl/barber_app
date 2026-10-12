@@ -1,9 +1,13 @@
 <script setup>
-import LegalDocument from '@/Components/Marketing/LegalDocument.vue';
+import HomeLayout from '@/Layouts/HomeLayout.vue';
+import { Head } from '@inertiajs/vue3';
 
-defineProps({ policy: String, document: Object });
+defineProps({ content: String, seo: Object });
 </script>
 
 <template>
-    <LegalDocument :document="document" :content="policy" />
+    <HomeLayout>
+        <Head :title="seo.title" />
+        <div v-html="content" />
+    </HomeLayout>
 </template>

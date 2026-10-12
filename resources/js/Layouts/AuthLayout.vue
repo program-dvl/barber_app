@@ -40,6 +40,11 @@ defineProps({
                 </div>
                 <slot />
 
+                <nav class="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-[var(--text-muted)]" aria-label="Legal information">
+                    <a :href="route('policy.show')" class="inline-flex min-h-11 items-center underline underline-offset-4">Privacy Policy</a>
+                    <a :href="route('terms.show')" class="inline-flex min-h-11 items-center underline underline-offset-4">Terms of Service</a>
+                </nav>
+
             </div>
         </main>
     </div>

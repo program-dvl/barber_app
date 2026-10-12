@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Support\Legal\PrivacyNotice;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 
@@ -17,6 +18,10 @@ class SitemapController extends Controller
             ->merge(collect(array_keys(config('frontsite.guides')))->map(fn ($slug) => route('marketing.guides.show', $slug)))
             ->merge(Article::query()->publishable()->pluck('slug')->map(fn ($slug) => route('blog.article', $slug)))
             ->unique()->sort()->values();
+
+        if (app(PrivacyNotice::class)->isPublished()) {
+            $urls = $urls->push(config('privacy.canonical_url'))->unique()->sort()->values();
+        }
 
         $body = '<?xml version="1.0" encoding="UTF-8"?>'."\n".'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
         foreach ($urls as $url) {

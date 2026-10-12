@@ -1,0 +1,49 @@
+/* Scoped legal surface; shares public typography, spacing and color tokens. */
+.cd-privacy { margin: 0; background: var(--surface-raised); color: var(--text-default); font-family: var(--font-sans); line-height: 1.75; }
+.cd-privacy a { color: var(--action-primary); text-decoration: underline; text-underline-offset: .22em; overflow-wrap: anywhere; }
+.cd-privacy a:hover { color: var(--action-primary-hover); }
+.cd-privacy :focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 4px; border-radius: 3px; }
+.cd-privacy-hero { padding-block: clamp(2rem, 5vw, 4.5rem); background: var(--surface-subtle); border-bottom: 1px solid var(--border-subtle); }
+.cd-privacy-hero .cd-eyebrow { margin-top: 2rem; }
+.cd-privacy h1 { margin-block: 1rem 1.5rem; color: var(--text-strong); font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; line-height: 1.1; letter-spacing: -.04em; }
+.cd-privacy-summary { max-width: 48rem; font-size: 1.125rem; line-height: 1.85; }
+.cd-privacy-dates { display: flex; flex-wrap: wrap; gap: 1rem 3rem; margin-top: 2rem; }
+.cd-privacy-dates dt { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+.cd-privacy-dates dd { color: var(--text-strong); font-weight: 600; }
+.cd-privacy .cd-privacy-layout { display: block; max-width: 54rem; padding-block: 2.5rem 4rem; }
+.cd-privacy-contents { margin-bottom: 2.5rem; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); background: var(--surface-subtle); }
+.cd-privacy-contents summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 64px; padding: .75rem 1.25rem; list-style: none; cursor: pointer; color: var(--text-strong); font-size: 1rem; font-weight: 700; }
+.cd-privacy-contents summary::-webkit-details-marker { display: none; }
+.cd-privacy-contents-hint { display: inline-flex; align-items: center; gap: .65rem; color: #475569; font-size: .75rem; font-weight: 600; }
+.cd-privacy-contents details[open] summary { border-bottom: 1px solid var(--border-subtle); }
+.cd-privacy-contents ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem .75rem; padding: .75rem; list-style: none; }
+.cd-privacy .cd-privacy-contents a { display: flex; align-items: center; min-height: 44px; padding: .5rem .75rem; border-radius: var(--radius-sm); color: var(--text-default); font-size: .875rem; line-height: 1.5; font-weight: 500; text-decoration: none; }
+.cd-privacy .cd-privacy-contents a:hover { background: var(--surface-raised); color: var(--action-primary); }
+.cd-privacy .cd-privacy-contents a[href="#google-sign-in-and-third-party-authentication"] { background: var(--surface-raised); color: var(--action-primary); font-weight: 700; }
+.cd-privacy-copy { min-width: 0; overflow-wrap: anywhere; }
+.cd-privacy-copy h2 { margin-block: 3.25rem 1.25rem; font-size: clamp(1.65rem, 3vw, 2.1rem); line-height: 1.25; letter-spacing: -.025em; font-weight: 700; color: var(--text-strong); scroll-margin-top: 7rem; }
+.cd-privacy-copy h2:first-child { margin-top: 0; }
+.cd-privacy-copy h3 { margin-block: 1.75rem .75rem; font-size: 1.15rem; font-weight: 700; color: var(--text-strong); line-height: 1.5; }
+.cd-privacy-copy p, .cd-privacy-copy ul { margin-block: 1rem; }
+.cd-privacy-copy ul { padding-left: 1.4rem; list-style: disc; }
+.cd-privacy-copy li { margin-block: .6rem; padding-left: .25rem; }
+.cd-privacy-copy address { font-style: normal; margin-block: 1.25rem; }
+.cd-privacy-providers dt { font-weight: 700; }
+.cd-privacy-providers div { margin-block: .75rem; }
+.cd-privacy-related { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle); }
+@media (max-width: 600px) {
+    .cd-privacy-contents ol { grid-template-columns: minmax(0, 1fr); }
+    .cd-privacy-contents-hint { font-size: .7rem; }
+}
+@media print {
+    .cd-marketing-header, .cd-marketing-footer, .cd-privacy-contents, .cd-privacy-related, .cd-skip-link { display: none; }
+    .cd-privacy-hero { background: white; padding-block: 1rem; }
+    .cd-privacy-layout { display: block; padding-block: 1rem; }
+    .cd-privacy-copy h2, .cd-privacy-copy h3 { break-after: avoid; }
+    .cd-privacy-copy p, .cd-privacy-copy li { orphans: 3; widows: 3; }
+    .cd-privacy a { color: black; }
+}
+
+.cd-privacy-native-menu summary { list-style: none; cursor: pointer; }
+.cd-privacy-native-menu summary::-webkit-details-marker { display: none; }
+.cd-privacy-native-menu nav { position: absolute; top: 5.25rem; right: 1rem; left: 1rem; display: grid; gap: .5rem; max-height: calc(100vh - 6rem); overflow-y: auto; }

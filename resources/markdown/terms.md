@@ -1,26 +1,24 @@
 <span id="status-and-scope"></span>
 ## 1. Status, scope and important definitions
 
-These proposed Terms and Conditions govern access to the ClipperDesk website,
+These proposed Terms and Conditions govern access to the Clipperdesk website,
 applications and related services (together, the **Platform**). They are a
-review draft, are not yet effective, and do not identify a contracting legal
-entity. They must not be used to accept payment or launch publicly until the
-missing operator, registered address, governing-law, notice and approval facts
-are completed by authorized owners.
+review draft and are not yet effective. The operator contact is listed below.
+Contract terms, governing law, notice handling and acceptance still require
+authorized review before these Terms take effect.
 
 In these Terms:
 
-- **ClipperDesk**, **we**, **us** or **our** means the legal operator that will
-  be identified in the approved version;
+- **Clipperdesk**, **we**, **us** or **our** means {{operator_name}}, the operator of the service;
 - **Business Customer** means a salon, barbershop or other appointment-led
-  business that creates or uses a ClipperDesk workspace;
+  business that creates or uses a Clipperdesk workspace;
 - **Authorized User** means an owner, manager, receptionist, service
   professional, accountant or other person whom a Business Customer permits to
   use its workspace;
 - **Salon Client** means a person who books, receives or pays for a Business
   Customer's services or products; and
 - **Customer Data** means information submitted to or generated through a
-  Business Customer's workspace, excluding ClipperDesk' own software,
+  Business Customer's workspace, excluding Clipperdesk' own software,
   documentation and aggregated information that cannot reasonably identify a
   person or Business Customer.
 
@@ -31,18 +29,18 @@ should control for its subject matter, followed by approved data-processing
 terms, these Terms, and then public product documentation. This priority still
 requires counsel approval.
 
-### 1.1 What ClipperDesk provides
+### 1.1 What Clipperdesk provides
 
-ClipperDesk is a web-based operating system for salons and barbershops. It helps
+Clipperdesk is a web-based operating system for salons and barbershops. It helps
 Business Customers manage configuration, staff access, scheduling, public
 booking, client records and consent evidence, communications, appointment
 payments, checkout, inventory and reporting. Available functions and limits
 depend on the current plan, configuration, permissions, provider availability
 and release status.
 
-ClipperDesk is not a salon, barber, stylist, beautician, medical provider,
+Clipperdesk is not a salon, barber, stylist, beautician, medical provider,
 accountant, tax adviser, payment card issuer or law firm. A Business Customer,
-not ClipperDesk, is responsible for the professional services and physical
+not Clipperdesk, is responsible for the professional services and physical
 products it offers to Salon Clients.
 
 <span id="accounts"></span>
@@ -62,12 +60,11 @@ Business Customers and Authorized Users must:
   appropriate;
 - use named accounts rather than sharing credentials;
 - assign roles and permissions according to each person's actual duties; and
-- notify the approved security or support contact promptly of suspected
-  unauthorized access. That public contact is not yet operationally approved.
+- notify **{{privacy_email}}** promptly of suspected unauthorized access.
 
 The Business Customer is responsible for activity performed through its
 workspace except to the extent caused by a verified Platform security incident
-or as applicable law otherwise requires. ClipperDesk may rely on instructions
+or as applicable law otherwise requires. Clipperdesk may rely on instructions
 from an authorized account owner or billing administrator.
 
 <span id="business-responsibilities"></span>
@@ -96,8 +93,7 @@ records that must lawfully be retained.
 
 A Business Customer must publish its own accurate booking terms, privacy notice
 and cancellation policy at the links shown in its booking journey. Those
-business-specific policies govern the salon service relationship. These Good
-Hours Terms do not replace them.
+business-specific policies govern the salon service relationship. These Clipperdesk Terms do not replace them.
 
 <span id="billing"></span>
 ## 4. Plans, trials, subscriptions and billing
@@ -115,9 +111,9 @@ issuing the subscription invoice are displayed by the subscription payment
 provider at checkout.
 
 The current product architecture uses Stripe-hosted Checkout and the Stripe
-Customer Portal for ClipperDesk SaaS subscriptions. Stripe's privacy notice and
+Customer Portal for Clipperdesk SaaS subscriptions. Stripe's privacy notice and
 applicable payment-service terms apply to information Stripe handles.
-ClipperDesk does not store full card numbers or security codes entered there.
+Clipperdesk does not store full card numbers or security codes entered there.
 
 Plan upgrades, downgrades, cancellation, payment failure, grace and access
 restriction follow the state and effective date shown in the billing page. A
@@ -127,7 +123,7 @@ amount already charged. See the [Refund, Return and Cancellation Policy](/refund
 
 ### 4.1 Price and service changes
 
-ClipperDesk may propose changes to plans, limits or prices. Material changes
+Clipperdesk may propose changes to plans, limits or prices. Material changes
 must be communicated and take effect only as stated in an approved order,
 renewal notice or applicable law. A change must not silently rewrite a prior
 invoice or completed transaction.
@@ -135,7 +131,7 @@ invoice or completed transaction.
 <span id="salon-payments"></span>
 ## 5. Salon-client bookings, payments and refunds
 
-ClipperDesk subscription billing is separate from payments a Salon Client makes
+Clipperdesk subscription billing is separate from payments a Salon Client makes
 to a Business Customer. The Platform's appointment-payment adapter is designed
 to use Stripe for eligible card or local payment collection. Cash, card, UPI,
 bank transfer, payment link, custom and pay-later records may also be maintained
@@ -175,7 +171,7 @@ No person may use the Platform to:
 - use automated access in a manner that creates unreasonable load or bypasses
   documented interfaces.
 
-ClipperDesk may investigate suspected abuse and may restrict affected access
+Clipperdesk may investigate suspected abuse and may restrict affected access
 where reasonably necessary to protect people, Business Customers, providers or
 the Platform. Emergency action should be proportionate, documented and followed
 by notice where lawful and safe.
@@ -183,12 +179,12 @@ by notice where lawful and safe.
 <span id="data-and-privacy"></span>
 ## 7. Customer Data, privacy and confidentiality
 
-As between ClipperDesk and the Business Customer, the Business Customer retains
-its rights in Customer Data. It grants ClipperDesk and approved service providers
+As between Clipperdesk and the Business Customer, the Business Customer retains
+its rights in Customer Data. It grants Clipperdesk and approved service providers
 the limited rights needed to host, secure, transmit, back up, support and
 otherwise provide the Platform.
 
-The roles of each party depend on the data and purpose. ClipperDesk expects to
+The roles of each party depend on the data and purpose. Clipperdesk expects to
 act as a service provider or processor for much of the salon client data a
 Business Customer controls, and as an independent controller or data fiduciary
 for account, security, subscription and direct website information. Those roles
@@ -203,30 +199,31 @@ belong in an approved order or data-processing agreement.
 
 ### 7.1 Feedback and aggregated information
 
-If a user voluntarily provides product feedback, ClipperDesk may use it to
-improve the Platform without identifying the contributor publicly. ClipperDesk
+If a user voluntarily provides product feedback, Clipperdesk may use it to
+improve the Platform without identifying the contributor publicly. Clipperdesk
 may generate aggregated or de-identified operational information only where it
 cannot reasonably identify a person or Business Customer and may not reverse
 that protection.
 
 ## 8. Intellectual property
 
-ClipperDesk and its licensors retain their rights in the Platform, brand,
+Clipperdesk and its licensors retain their rights in the Platform, brand,
 documentation and underlying technology. Subject to payment and these Terms,
 the Business Customer receives a limited, non-exclusive, non-transferable right
 for its Authorized Users to use the Platform during the subscription term for
 its internal business operations.
 
 The Business Customer retains its rights in its names, marks, content and
-Customer Data. It authorizes ClipperDesk to display that material only as needed
+Customer Data. It authorizes Clipperdesk to display that material only as needed
 to provide its configured workspace and public booking experience. Neither
 party receives ownership of the other party's marks.
 
 ## 9. Third-party services
 
-The Platform depends on third-party services such as Stripe, Resend,
-Twilio and hosting or infrastructure providers. Their availability, buyer terms
-and privacy practices may apply to the functions they perform. ClipperDesk must
+The Platform depends on Google for optional sign-in, Stripe for enabled payments,
+and configured email, SMS, hosting or infrastructure providers. See the
+[Privacy Policy](/privacy-policy) for the operating provider disclosures. Their availability, buyer terms
+and privacy practices may apply to the functions they perform. Clipperdesk must
 not materially expand a provider's use of Customer Data without the notice,
 contract and approval required by applicable law and the agreement.
 
@@ -236,7 +233,7 @@ redirect or browser message as final payment or delivery evidence.
 
 ## 10. Security, availability and support
 
-ClipperDesk uses documented tenant boundaries, role-based access, secure action
+Clipperdesk uses documented tenant boundaries, role-based access, secure action
 links, protected storage and append-only evidence for specified sensitive
 operations. These controls reduce risk but do not guarantee that the Platform
 is error-free, uninterrupted or immune from attack. The [Security page](/security)
@@ -252,7 +249,7 @@ is created by this draft.
 ## 11. Suspension, cancellation and termination
 
 The Business Customer may stop using the Platform and may cancel renewal using
-the billing controls available to an authorized owner. ClipperDesk may suspend
+the billing controls available to an authorized owner. Clipperdesk may suspend
 or terminate access for material breach, unlawful or unsafe activity,
 non-payment, provider mandate, or a security risk, subject to notice and a
 reasonable opportunity to cure where appropriate and legally permitted.
@@ -283,8 +280,7 @@ the launch market. This review draft intentionally does not invent a final
 The following contract terms are required before this document can become
 effective but cannot be responsibly inferred from application code:
 
-- the full legal name, registration details and address of the ClipperDesk
-  operator;
+- any additional legal registration details required for the operator;
 - governing law, courts or arbitration forum and a pre-dispute notice process;
 - legally appropriate warranty exclusions and service remedies;
 - a fair liability allocation and cap, including exceptions that cannot be
@@ -292,7 +288,7 @@ effective but cannot be responsibly inferred from application code:
 - any mutual or Business Customer indemnities and claim-control process; and
 - official legal, privacy, security and customer-support notice channels.
 
-Named Indian counsel and Product must supply and approve those clauses. Nothing
+Named counsel and Product must supply and approve those clauses. Nothing
 in this draft excludes a right or remedy that applicable law does not permit
 the parties to exclude.
 
@@ -312,9 +308,9 @@ assign the agreement except under the approved assignment clause.
 
 ## 15. Contact and approval gate
 
-The public legal operator, registered address, support contact and legal notice
-address are not approved. Do not send sensitive information to an invented or
-unverified address. Business Customers can currently use authenticated billing
+Operator: **{{operator_name}}**. Postal contact: {{operator_address}}.
+Support and privacy contact: **{{privacy_email}}**. Separate legal-notice
+arrangements and the final contract remain subject to review. Business Customers can currently use authenticated billing
 and account controls; Salon Clients should use the salon contact details and
 secure appointment link supplied with their booking.
 

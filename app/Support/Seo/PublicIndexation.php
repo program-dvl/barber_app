@@ -2,6 +2,7 @@
 
 namespace App\Support\Seo;
 
+use App\Support\Legal\PrivacyNotice;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -19,6 +20,9 @@ class PublicIndexation
             return 'noindex, nofollow, noarchive';
         }
         $name = $request->route()?->getName();
+        if ($name === 'policy.show' && app(PrivacyNotice::class)->isPublished()) {
+            return 'index, follow, max-image-preview:large';
+        }
         if (in_array($name, self::INDEXABLE, true)) {
             return 'index, follow, max-image-preview:large';
         }

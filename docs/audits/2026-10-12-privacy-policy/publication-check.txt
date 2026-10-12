@@ -1,0 +1,13 @@
+Missing approved effective_at
+Missing approved approval_reference
+Missing approved processing_countries
+Missing approved providers.hosting
+Missing approved providers.storage
+Missing approved providers.account_email
+Missing approved providers.client_email for live communications
+Missing approved providers.sms for live communications
+Canonical must be an HTTPS privacy-policy URL without credentials, query or fragment
+Effective date must be a valid ISO date
+This policy version has not been approved
+Provider inventory, rights intake, retention and transfer review are not verified
+Policy is a review preview. Do not deploy it as an approved notice or resubmit it to Google.

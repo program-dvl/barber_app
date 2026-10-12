@@ -48,7 +48,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'appName' => config('brand.product_name'),
             'brand' => fn () => [
-                'product_name' => config('brand.product_name'),
+                'product_name' => $request->routeIs('policy.show') ? 'Clipperdesk' : config('brand.product_name'),
                 'company_name' => config('brand.company_name'),
                 'tagline' => config('brand.tagline'),
                 'description' => config('brand.description'),

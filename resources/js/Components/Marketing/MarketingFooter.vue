@@ -26,7 +26,7 @@ const groups = computed(() => [
     {
         label: 'Company',
         links: [
-            ['About ClipperDesk', 'marketing.company'],
+            [`About ${page.props.brand?.product_name || 'ClipperDesk'}`, 'marketing.company'],
             ['Privacy policy', 'policy.show'],
             ['Terms of service', 'terms.show'],
             ['Refund policy', 'refund.show'],
@@ -43,7 +43,7 @@ const groups = computed(() => [
         <div class="cd-public-container py-14 sm:py-18">
             <div class="grid gap-12 lg:grid-cols-[1.35fr_2fr]">
                 <div>
-                    <Link :href="route('marketing.home')" class="inline-flex min-h-11 items-center rounded-lg" aria-label="ClipperDesk home">
+                    <Link :href="route('marketing.home')" class="inline-flex min-h-11 items-center rounded-lg" :aria-label="`${page.props.brand?.product_name || 'ClipperDesk'} home`">
                         <ProductMark inverse />
                     </Link>
                     <p class="mt-6 max-w-md text-sm leading-7 text-slate-400">
@@ -67,7 +67,7 @@ const groups = computed(() => [
             </div>
 
             <div class="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs leading-6 text-slate-400 sm:flex-row sm:items-center sm:justify-between">
-                <p>© {{ new Date().getFullYear() }} ClipperDesk. Preview release. Production domains and legal details await approval.</p>
+                <p>© {{ new Date().getFullYear() }} {{ page.props.brand?.product_name || 'ClipperDesk' }}.<template v-if="!page.props.legalNotice"> Preview release. Production domains and legal details await approval.</template></p>
 
             </div>
         </div>

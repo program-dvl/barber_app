@@ -3,19 +3,19 @@
 
 This proposed Refund, Return and Cancellation Policy is a review draft and is
 not yet effective. It is structured to disclose the information expected for
-an online service and India payment-provider review, but it cannot support live
-collection until the legal operator, customer-service contacts, provider
-accounts, refund execution, timelines and owner approvals are operationally
-verified.
+an online service, but it cannot support live collection until provider
+accounts, refund execution, timelines and owner approvals are operationally verified.
+Operator: **{{operator_name}}**. Postal contact: {{operator_address}}.
+Support and privacy contact: **{{privacy_email}}**.
 
-ClipperDesk has two separate payment contexts. They must not be confused:
+Clipperdesk has two separate payment contexts. They must not be confused:
 
 | Payment | Seller or service provider | Current payment role | Policy that controls |
 | --- | --- | --- | --- |
-| ClipperDesk software subscription | The approved ClipperDesk operator supplies the software; its legal identity must be published before launch | Stripe processes the subscription payment and hosts secure billing controls | The final approved ClipperDesk terms and refund policy, mandatory law and applicable Stripe payment-service terms |
+| Clipperdesk software subscription | {{operator_name}} supplies the software; contact details are listed above | Stripe processes the subscription payment and hosts secure billing controls | The final approved Clipperdesk terms and refund policy, mandatory law and applicable Stripe payment-service terms |
 | Salon appointment, deposit or in-person sale | The salon or barbershop shown on the booking/receipt provides the service or product | Stripe is the implemented online appointment-payment adapter; the Business Customer also records supported local tenders | The Business Customer's displayed booking/cancellation policy, mandatory law and the applicable payment-provider rules |
 
-ClipperDesk does not ship physical goods. Retail products recorded in ClipperDesk
+Clipperdesk does not ship physical goods. Retail products recorded in Clipperdesk
 are presently sold and fulfilled by the Business Customer in person unless
 that Business Customer separately publishes an approved delivery policy.
 
@@ -24,7 +24,7 @@ consumer right that applicable law does not permit the relevant seller or
 service provider to limit.
 
 <span id="subscription-refunds"></span>
-## 2. ClipperDesk subscription cancellations and refunds
+## 2. Clipperdesk subscription cancellations and refunds
 
 ### 2.1 Trial and first charge
 
@@ -38,7 +38,7 @@ the checkout and billing account.
 ### 2.2 Renewal and cancellation
 
 Paid monthly or annual subscriptions renew automatically until cancelled. An
-authorized owner can use the ClipperDesk billing page or Stripe Customer Portal
+authorized owner can use the Clipperdesk billing page or Stripe Customer Portal
 to schedule cancellation. Unless mandatory
 law or the checkout says otherwise, cancellation takes effect at the end of the
 current paid billing period and prevents the next renewal. Access continues
@@ -49,13 +49,14 @@ An approved refund may end access to the refunded product or period.
 
 ### 2.3 Subscription refund requests
 
-The approved ClipperDesk operator is responsible for the proposed subscription
+The approved Clipperdesk operator is responsible for the proposed subscription
 refund policy and decision; Stripe processes the payment and any provider-backed
 refund submitted by that operator. A Business Customer may review invoices and
 billing controls in the Stripe Customer Portal and may use an approved
-ClipperDesk billing-support path once that path is operational.
+Clipperdesk billing-support path. Questions can be sent to **{{privacy_email}}**;
+this contact does not create an automatic refund entitlement.
 
-Eligibility is determined by the ClipperDesk commitment shown at purchase,
+Eligibility is determined by the Clipperdesk commitment shown at purchase,
 the final approved policy and mandatory law. No draft support path may promise
 a refund until Finance and Operations have approved and certified the Stripe
 refund executor and reconciliation process.
@@ -65,7 +66,7 @@ refund executor and reconciliation process.
 
 The salon or barbershop shown on the booking page is responsible for the
 appointment, professional service, in-person product, cancellation decision and
-client support. Before payment, its ClipperDesk booking journey is designed to
+client support. Before payment, its Clipperdesk booking journey is designed to
 show:
 
 - the salon, selected service and location;
@@ -131,13 +132,13 @@ whether a refund is approved or declined, the approved amount, the policy basis
 and the provider reference when available. Cancellation of an appointment is
 not by itself evidence that money reached the client's account.
 
-### 5.2 ClipperDesk subscription request
+### 5.2 Clipperdesk subscription request
 
-Use the authenticated ClipperDesk billing page or Stripe Customer Portal. An
+Use the authenticated Clipperdesk billing page or Stripe Customer Portal. An
 authorized Business Customer owner may review subscription state, invoices and
-provider controls there. A public ClipperDesk
-Hours billing-support email, telephone number and response owner must be added
-before this draft can become effective.
+provider controls there. Send billing-support questions to **{{privacy_email}}**.
+Refund decision and submission responsibilities still require approval before
+this policy takes effect.
 
 ### 5.3 Information and decision timeline
 
@@ -164,7 +165,7 @@ of a separate credit appearing. Provider or bank failure can take longer to
 identify. Where available, the merchant should supply the refund reference so
 the customer can ask their bank to trace it.
 
-For a ClipperDesk subscription, the final approved policy must state the
+For a Clipperdesk subscription, the final approved policy must state the
 operator's submission target and the expected Stripe and bank processing
 timeline without promising a guaranteed credit date.
 
@@ -177,15 +178,15 @@ track failed refunds and arrange an appropriate alternative where required.
 <span id="returns-and-delivery"></span>
 ## 7. Returns, exchanges, shipping and service delivery
 
-ClipperDesk is a web-based software service. There is no physical ClipperDesk
-product to return and no ClipperDesk shipping or delivery charge. Subscription
+Clipperdesk is a web-based software service. There is no physical Clipperdesk
+product to return and no Clipperdesk shipping or delivery charge. Subscription
 access is delivered electronically to the registered Business Customer account
 after the provider confirms the applicable trial or paid state.
 
 Salon services are delivered at the location, date and time shown in the
 booking. In-person retail return, exchange, hygiene, opened-product and defect
 rules belong to the Business Customer and must be disclosed by that Business
-Customer before sale. ClipperDesk does not create a mail-return right or address
+Customer before sale. Clipperdesk does not create a mail-return right or address
 for a salon's physical products.
 
 <span id="disputes"></span>
@@ -201,7 +202,7 @@ open. The merchant should not retaliate for a good-faith complaint, submit
 misleading dispute evidence, or issue a second refund without checking the
 provider state.
 
-ClipperDesk is designed to use verified webhooks, provider identifiers and
+Clipperdesk is designed to use verified webhooks, provider identifiers and
 idempotency controls so the same event does not create multiple payment or
 refund records. Financial corrections remain linked to the original payment.
 However, the current application records refund allocations and internal
@@ -214,14 +215,13 @@ refund, failure, webhook, reconciliation and settlement evidence passes.
 Before this policy becomes effective, named Finance, Operations, Legal,
 Privacy and Product owners must:
 
-- identify the ClipperDesk operator, registered address and direct customer
-  service contacts;
+- verify the published operator and customer-service contact details;
 - confirm whether the live Stripe account, connected Business Customer or
   another entity is the merchant for each appointment-payment flow;
 - implement and certify provider-backed full and partial refunds, failure
   handling and reconciliation;
 - approve request acknowledgment, decision and submission timelines;
-- confirm ClipperDesk seller, Stripe processor and support language for subscriptions;
+- confirm Clipperdesk seller, Stripe processor and support language for subscriptions;
 - verify that checkout and receipts display the policy before payment; and
 - publish an effective date and retain the version accepted for each relevant
   transaction.

@@ -88,6 +88,59 @@ The normal scheduler must run every minute, for example with the appropriate PHP
 
 Existing jobs handle lifecycle, notices, failed-event replay and Checkout recovery. Check worker/scheduler health and failed provider events. A browser success URL is never payment evidence.
 
+## Forge scheduler and delivery verification
+
+In the site's Overview application panel, enable **Laravel Scheduler**. Forge
+creates the once-per-minute scheduler using the site's PHP version. This replaces
+manually adding the example cron line above; keep only one scheduler per app.
+Alternatively use Site → Processes → Scheduler → Add scheduled job, with the
+site user, every-minute frequency and the actual active application's Artisan
+path. Do not put the five leading cron fields in Forge's command field.
+
+From Site → Commands, `php artisan schedule:list` should list:
+
+- `billing:advance-lifecycle`: every five minutes;
+- `billing:reconcile-provider-events`: every five minutes;
+- `billing:reconcile-stripe-checkouts`: every five minutes;
+- `billing:send-notices`: every minute.
+
+The cron entry is not a shell command to run once and is not an environment value.
+The scheduler runs trial lifecycle, notices and recovery. This app processes
+signed subscription events immediately in the webhook HTTP request, journals
+them idempotently and returns 204 only after processing succeeds. The scheduler
+replays retained failed/pending verified events; it does not receive Stripe events.
+
+If production uses an asynchronous `QUEUE_CONNECTION`, use the site's Queues
+panel to run workers for that existing connection and queues `default,communications`.
+Billing notices use the default queue; operational messages use communications.
+With the current `sync` fallback, execution is synchronous and a queue worker is
+not used. Do not switch to a queue backend without provisioning its storage.
+Restart persistent workers after code/environment changes; `queue:restart` does
+not create a missing worker.
+
+After the endpoint command, privately obtain the **same live billing endpoint's**
+`whsec_` value and save it as `STRIPE_WEBHOOK_SECRET` in Forge Environment. A local
+Stripe CLI secret or an appointment-payment endpoint secret is different. Rebuild
+configuration with `php artisan config:cache`, then restart persistent workers.
+
+In Stripe live mode, open Workbench → Webhooks → the billing endpoint → Event
+deliveries. A matching app-owned event must return 204 and project the expected
+business subscription/invoice. Generic sample or unrelated-account events may
+be ignored, so a success response alone is not financial projection evidence.
+Resend the same event and confirm that records are not duplicated. Use the
+sandbox deployment first, then an owner-authorized live payment smoke test.
+
+An unsigned `{}` POST to the deployed `https://clipperdesk.com/billing/webhooks/stripe`
+returned **HTTP 400** on 2026-10-12. This establishes public route reachability
+and unsigned-request rejection, not the correctness of the live endpoint signing
+secret, signed delivery, prices, scheduler, workers or payment projection.
+No production environment or Forge configuration was changed by that check.
+
+Sources: [Forge Laravel integration](https://laravel.com/forge/docs/sites/laravel),
+[Forge scheduler](https://laravel.com/forge/docs/resources/scheduler),
+[Forge queues](https://laravel.com/forge/docs/sites/queues),
+[Stripe event delivery diagnostics](https://docs.stripe.com/webhooks#view-event-deliveries).
+
 ## Forge setup troubleshooting
 
 If `billing:verify-capacity-rates US --provision --force` prints the rate preview

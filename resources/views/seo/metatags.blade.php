@@ -23,8 +23,8 @@
 <meta property="og:description" content="{{ $description }}">
 <meta property="og:url" content="{{ $canonical }}">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="{{ config('brand.product_name') }}">
-<meta property="og:locale" content="en_IN">
+<meta property="og:site_name" content="{{ $seo['site_name'] ?? config('brand.product_name') }}">
+<meta property="og:locale" content="{{ $seo['locale'] ?? 'en_IN' }}">
 @if($image)
     <meta property="og:image" content="{{ $image }}">
 @endif

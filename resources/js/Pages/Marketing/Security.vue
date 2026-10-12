@@ -7,7 +7,7 @@ import { marketingFamilyVisuals } from '@/Support/marketingVisuals';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ controls: Array, seo: Object });
+defineProps({ controls: Array, seo: Object, legalIdentity: Object });
 </script>
 
 <template>
@@ -45,7 +45,7 @@ defineProps({ controls: Array, seo: Object });
         <section class="cd-public-section cd-dark-proof">
             <PublicContainer class="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
                 <div><h2 class="font-display text-3xl">Your responsibilities</h2><p class="mt-5 max-w-2xl leading-8 text-white/82">Business owners must configure accurate staff/resource rules, permissions, legal policies, provider credentials and device/account access. They should collect only needed client data and route suspected incidents through an approved support process.</p></div>
-                <div class="cd-dark-proof-panel"><h2 class="text-xl font-extrabold">Reporting and support status</h2><p class="mt-4 leading-7 text-white/78">No public security-report mailbox, contact form, support SLA or maintained status service has an approved owner yet. Publishing a fake intake or all-green status page would be less safe. Signed-in owners retain in-product billing recovery; public security/support intake is a launch action.</p></div>
+                <div class="cd-dark-proof-panel"><h2 class="text-xl font-extrabold">Reporting and support</h2><p class="mt-4 leading-7 text-white/78">Contact <a :href="`mailto:${legalIdentity.privacy_email}`" class="underline underline-offset-4">{{ legalIdentity.privacy_email }}</a> with a security or privacy concern. Include an account or business reference and a brief description; do not send passwords or sensitive client records. No response-time guarantee or public status-service commitment is stated here.</p></div>
             </PublicContainer>
         </section>
 
