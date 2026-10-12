@@ -2198,6 +2198,32 @@ do not gain these menus. This selection does not consolidate `/platform`, change
 its MFA requirement, complete its placeholder pages, or migrate legacy billing.
 No account reset or schema change is needed.
 
+
+## ADR-061 — Public capacity pricing and reviewed signup preferences
+
+- Status: Accepted on 2026-10-12 following the owner's public pricing page request.
+- Requirements: FR-01, FR-13, PRD §9; extends ADR-056/057 to acquisition.
+- Decision: public pricing uses the same verified USD capacity catalog as owner
+  billing. One calculator publishes base/additional-location/additional-staff
+  rates and complete monthly/yearly totals. Annual upfront total is primary;
+  monthly equivalent and savings are secondary. Input examples are not plan tiers.
+- Remove public Starter/Pro offers, comparison, registration selections and schema
+  offers. Unavailable capacity pricing keeps a free-trial/support path and never
+  displays drafts or a legacy fallback. Ordinary visits make no provider calls.
+- Persist validated cadence and quantity preferences through email/Google signup
+  in the business's registration intent. This is an estimate handoff, not a
+  purchased rate card or billing commitment. Existing paid terms and resource
+  provisioning stay separate; payment requires a fresh reviewed confirmation.
+- Present implemented core tools and concise commercial questions. Do not promote
+  deferred features, unlimited SMS, automatic top-ups, unapproved currencies,
+  live client payment acceptance or unsupported certifications.
+- Preserve public metadata/indexation and describe verified component prices in
+  structured data. Additional fields are private operator/owner preferences;
+  no provider identifiers or financial authority reach the public payload.
+- Evidence and deployment: [public pricing specification](modules/public-pricing.md)
+  and [review](audits/2026-10-12-public-pricing/README.md); additive signup-preference
+  migration, no new Stripe configuration or provider mutation.
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |

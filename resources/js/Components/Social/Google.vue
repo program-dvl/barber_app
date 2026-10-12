@@ -6,6 +6,8 @@ const props = defineProps({
     intent: { type: String, default: 'login', validator: value => ['login', 'register'].includes(value) },
     plan: { type: String, default: null },
     interval: { type: String, default: null },
+    locations: { type: Number, default: null },
+    staff: { type: Number, default: null },
 });
 
 const page = usePage();
@@ -14,6 +16,8 @@ const href = computed(() => route('auth.google.redirect', {
     intent: props.intent,
     ...(props.plan ? { plan: props.plan } : {}),
     ...(props.interval ? { interval: props.interval } : {}),
+    ...(props.locations ? { locations: props.locations } : {}),
+    ...(props.staff ? { staff: props.staff } : {}),
 }));
 </script>
 

@@ -82,8 +82,8 @@ class BusinessBillingController extends Controller
             'billingReadiness' => $readiness->status(),
             'signupSelection' => OwnerRegistrationIntent::query()
                 ->where('business_id', $business->getKey())
-                ->first(['selected_plan_code', 'selected_billing_interval'])
-                ?->only(['selected_plan_code', 'selected_billing_interval']),
+                ->first(['selected_plan_code', 'selected_billing_interval', 'selected_locations', 'selected_staff'])
+                ?->only(['selected_plan_code', 'selected_billing_interval', 'selected_locations', 'selected_staff']),
         ]);
     }
 

@@ -113,6 +113,25 @@ it('prevents live provisioning and webhook mutation without the explicit force f
     });
 });
 
+it('identifies missing setup prerequisites even with force and leaves the catalog untouched', function (string $option, bool $approved, ?string $secret, array $messages) {
+    withSetupStripe(function ($client) use ($option, $approved, $secret, $messages) {
+        config(['capacity-billing.markets.US.approved' => $approved, 'billing.stripe.secret' => $secret]);
+        $command = $this->artisan('billing:verify-capacity-rates US '.$option.' --force');
+        foreach ($messages as $message) {
+            $command->expectsOutputToContain($message);
+        }
+        $command->expectsOutputToContain('php artisan config:clear')->assertFailed();
+        expect($client->products)->toBe([])->and($client->prices)->toBe([])
+            ->and($client->writes)->toBe([])->and(BillingRateCard::count())->toBe(0);
+    });
+})->with(['--provision', '--apply'])->with([
+    'unapproved' => [false, 'sk_test_setup', ['CAPACITY_US_APPROVED=true']],
+    'missing secret' => [true, null, ['STRIPE_SECRET is missing']],
+    'blank secret' => [true, '   ', ['STRIPE_SECRET is missing']],
+    'publishable key' => [true, 'pk_test_setup', ['STRIPE_SECRET must be a server-side sk_ or rk_ key']],
+    'both missing' => [false, '', ['CAPACITY_US_APPROVED=true', 'STRIPE_SECRET is missing']],
+]);
+
 it('creates a narrowly scoped webhook and privately recovers its secret without duplicates', function () {
     withSetupStripe(function ($client) {
         $path = sys_get_temp_dir().'/stripe-billing-test-'.str()->uuid().'.json';

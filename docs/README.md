@@ -5,7 +5,7 @@ It converts the approved Word PRD into searchable Markdown and provides the
 smaller, implementation-facing documents that future Codex threads and human
 developers should use.
 
-Last structured review: 2026-10-11.
+Last structured review: 2026-10-12.
 
 ## Start here
 
@@ -91,3 +91,5 @@ checks.
 
 - [USD subscription and Stripe webhook setup](deployment/subscription-billing-stripe.md)
 - [2026-10-11 billing redesign and Larafast reuse audit](audits/2026-10-11-billing/review.md)
+
+- [Public capacity pricing and signup preferences](modules/public-pricing.md)

@@ -13,11 +13,11 @@ import AuthLayout from '@/Layouts/AuthLayout.vue';
 
 const page = usePage();
 const googleRegistration = computed(() => page.props.googleAuth?.pending_registration ?? null);
-const selection = googleRegistration.value ? { plan: googleRegistration.value.selected_plan, interval: googleRegistration.value.selected_interval } : page.props.signupIntent ?? null;
+const selection = googleRegistration.value ? { plan: googleRegistration.value.selected_plan, interval: googleRegistration.value.selected_interval, locations: googleRegistration.value.selected_locations, staff: googleRegistration.value.selected_staff } : page.props.signupIntent ?? null;
 const form = useForm({
     name: googleRegistration.value?.name ?? '', business_name: '', email: googleRegistration.value?.email ?? '',
     password: '', password_confirmation: '', terms: false,
-    selected_plan: selection?.plan ?? null, selected_interval: selection?.interval ?? null,
+    selected_plan: selection?.plan ?? null, selected_interval: selection?.interval ?? null, selected_locations: selection?.locations ?? null, selected_staff: selection?.staff ?? null,
 });
 const submit = () => form.post(googleRegistration.value ? route('auth.google.register') : route('register'), { onFinish: () => form.reset('password', 'password_confirmation') });
 </script>
@@ -44,7 +44,7 @@ const submit = () => form.post(googleRegistration.value ? route('auth.google.reg
             <div v-if="$page.props.errors?.google" class="mb-5 flex items-start gap-2.5 rounded-[var(--radius-md)] border border-[var(--status-danger)]/20 bg-[var(--status-danger-soft)] p-3.5 text-sm text-[var(--status-danger)]" role="alert"><ExclamationTriangleIcon class="mt-0.5 size-5 shrink-0" aria-hidden="true" /><span>{{ $page.props.errors.google }}</span></div>
 
             <template v-if="!googleRegistration">
-                <Google intent="register" :plan="selection?.plan" :interval="selection?.interval" />
+                <Google intent="register" :plan="selection?.plan" :interval="selection?.interval" :locations="selection?.locations" :staff="selection?.staff" />
                 <div v-if="$page.props.googleAuth?.enabled" class="my-6 flex items-center gap-3" aria-hidden="true"><div class="h-px flex-1 bg-[var(--border-subtle)]"></div><span class="text-[0.7rem] font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">or create with email</span><div class="h-px flex-1 bg-[var(--border-subtle)]"></div></div>
             </template>
             <div v-else class="mb-6 flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--status-success)]/20 bg-[var(--status-success-soft)] p-4">
@@ -53,8 +53,8 @@ const submit = () => form.post(googleRegistration.value ? route('auth.google.reg
             </div>
 
             <form @submit.prevent="submit" class="space-y-5">
-                <div v-if="selection?.plan && selection?.interval" class="rounded-[var(--radius-md)] border border-[var(--status-info)]/20 bg-[var(--status-info-soft)] p-3.5 text-sm leading-6 text-[var(--text-default)]" role="status">Your <strong class="capitalize">{{ selection.plan }}</strong> {{ selection.interval }} preference is saved for review after the trial starts. You will not be charged now.</div>
-                <InputError :message="form.errors.selected_plan" />
+                <div v-if="selection?.plan && selection?.interval" class="rounded-[var(--radius-md)] border border-[var(--status-info)]/20 bg-[var(--status-info-soft)] p-3.5 text-sm leading-6 text-[var(--text-default)]" role="status">Your selection: <strong>{{ selection.locations }} {{ selection.locations === 1 ? 'location' : 'locations' }} and {{ selection.staff }} bookable staff</strong>, billed {{ selection.interval === 'annual' ? 'yearly' : 'monthly' }}. You can review it after setup. No charge now.</div>
+                <InputError :message="form.errors.selected_plan" /><InputError :message="form.errors.selected_locations" /><InputError :message="form.errors.selected_staff" />
 
                 <div class="grid gap-5 sm:grid-cols-2">
                     <div><InputLabel for="business_name" :value="$t('Business name')" /><TextInput id="business_name" v-model="form.business_name" type="text" class="mt-2 block w-full" required autofocus autocomplete="organization" placeholder="North & Main Studio"  :aria-invalid="form.errors.business_name ? true : undefined" :aria-describedby="form.errors.business_name ? 'business_name-error' : undefined"/><InputError class="mt-2" :message="form.errors.business_name"  id="business_name-error"/></div>

@@ -1,6 +1,44 @@
 # Project status
 
-Status date: 2026-10-11
+Status date: 2026-10-12
+
+## 2026-10-12 Public capacity pricing (FR-01/13; ADR-061)
+
+- [x] Rebuilt `/pricing` around one shared capacity catalog: visible unit rates,
+  live monthly/yearly total, full yearly upfront charge, savings, input examples,
+  six core-tool categories and concise counting/trial/billing FAQs. Retired public
+  Starter/Pro offers, comparison and preferences; no unavailable-rate fallback.
+- [x] Email/Google signup carries validated locations/staff/cadence to the initial
+  unpaid owner calculator as preferences only. Provider-paid access still requires
+  a fresh review/confirmation. Public payload and component schema omit Stripe
+  identifiers, and ordinary page visits make no provider calls.
+- [x] Applied the additive signup-preference migration to local MySQL after a private
+  snapshot; original values for 22 intents were unchanged. Server deployment needs
+  the normal migration step; no new Stripe setup or provider object was created.
+- [x] Affected marketing/auth/registration/billing tests: **196 passed / 2,207
+  assertions**, one existing intentional registration skip; frontend **75 passed**.
+  Client/SSR builds, **17 public route budgets**, scoped Pint and whitespace passed.
+  Desktop/mobile totals and signup handoff inspected; 320/390/768 px had no
+  horizontal overflow. No browser account/payment/terms submission occurred.
+  [Review and screenshots](audits/2026-10-12-public-pricing/README.md).
+
+## 2026-10-12 Forge capacity setup diagnostics (FR-01; ADR-056)
+
+- [x] Split the capacity setup command's generic prerequisite refusal into
+  explicit commercial-approval, missing server-key and wrong key-type messages.
+  Trimmed blank keys fail before provider access. Recovery instructions explain
+  cached configuration and that `--force` permits only live provisioning.
+- [x] Database configuration selects `Pdo\Mysql::ATTR_SSL_CA` on PHP 8.4+ and
+  retains the legacy constant on older runtimes, addressing the reported PHP 8.5
+  deprecation while preserving the existing certificate environment setting.
+- [x] Focused capacity/setup tests: **61 passed / 261 assertions**, including
+  ten prerequisite failures across `--apply`/`--provision` with `--force` and
+  no provider writes or installed mappings. PHP 8.4.8 configuration smoke check
+  preserved a supplied CA path. Scoped Pint and whitespace checks passed.
+  PHP 8.5 execution and Forge configuration/deployment were not verified locally.
+- [x] Updated the [deployment guide](deployment/subscription-billing-stripe.md)
+  and module setup contract. No credentials, commercial gates, subscriptions or
+  provider objects were changed by this repair.
 
 ## 2026-10-11 Restore administrator menus (FR-19/20; ADR-060)
 

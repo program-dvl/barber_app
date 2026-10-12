@@ -34,17 +34,26 @@ class VerifyCapacityRates extends Command
 
             return self::SUCCESS;
         }
-        if (! config('capacity-billing.markets.'.$market.'.approved') || ! filled(config('billing.stripe.secret'))) {
-            $this->error('Approve the country rates and configure Stripe before installing mappings.');
+        $secret = trim((string) config('billing.stripe.secret'));
+        $missingPrerequisite = false;
+        if (! config('capacity-billing.markets.'.$market.'.approved')) {
+            $this->error('Rates for '.$market.' are not approved in the loaded configuration. Set CAPACITY_'.$market.'_APPROVED=true only for approved commercial terms.');
+            $missingPrerequisite = true;
+        }
+        if ($secret === '') {
+            $this->error('STRIPE_SECRET is missing in the loaded configuration. Configure the intended account\'s server-side Stripe key.');
+            $missingPrerequisite = true;
+        } elseif (! str_starts_with($secret, 'sk_') && ! str_starts_with($secret, 'rk_')) {
+            $this->error('STRIPE_SECRET must be a server-side sk_ or rk_ key; STRIPE_KEY is the publishable key.');
+            $missingPrerequisite = true;
+        }
+        if ($missingPrerequisite) {
+            $this->line('After updating the deployment environment, run php artisan config:clear and retry. --force only permits live catalog provisioning.');
 
             return self::FAILURE;
         }
         $verified = [];
         try {
-            $secret = trim((string) config('billing.stripe.secret'));
-            if (! str_starts_with($secret, 'sk_') && ! str_starts_with($secret, 'rk_')) {
-                throw new \LogicException('Configure a server-side Stripe key.');
-            }
             if ($this->option('provision') && ! str_contains($secret, '_test_') && ! $this->option('force')) {
                 $this->error('Live catalog provisioning requires --force. No Stripe objects were changed.');
 

@@ -732,6 +732,10 @@ The owner confirmed before launch on 2026-10-11 (ADR-057) that the Subscription
 & billing workspace must offer only this capacity plan. Remove Starter/Pro
 selection and tier checkout/change actions; retained test billing history is
 readable and does not justify displaying alternative plans.
+The owner extended this model to the public pricing page on 2026-10-12 (ADR-061):
+one calculator with exact component totals, yearly upfront billing and clear
+counting rules. Save validated signup quantities/cadence as preferences for later
+review; they do not create paid access or authorize a charge.
 
 - Base includes one active location and one active bookable staff profile; each
   extra location and bookable staff adds the published local unit rate.

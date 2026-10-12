@@ -1,6 +1,6 @@
 # Stripe subscription billing setup
 
-Updated 2026-10-11. Applies to FR-01 and ADR-029/054/056. Run from the application root with the PHP version required by composer.lock. Existing subscriptions and invoices are preserved. Commands create catalog/delivery configuration, never charges or subscriptions.
+Updated 2026-10-12. Applies to FR-01 and ADR-029/054/056. Run from the application root with the PHP version required by composer.lock. Existing subscriptions and invoices are preserved. Commands create catalog/delivery configuration, never charges or subscriptions.
 
 ## Correct route and credentials
 
@@ -88,6 +88,40 @@ The normal scheduler must run every minute, for example with the appropriate PHP
 
 Existing jobs handle lifecycle, notices, failed-event replay and Checkout recovery. Check worker/scheduler health and failed provider events. A browser success URL is never payment evidence.
 
+## Forge setup troubleshooting
+
+If `billing:verify-capacity-rates US --provision --force` prints the rate preview
+then refuses installation, check the loaded approval and server credential.
+`--force` permits live catalog provisioning; it does not override commercial
+approval or missing credentials. The command now identifies each missing
+prerequisite without printing key values.
+
+In Forge's Environment editor, set `CAPACITY_US_APPROVED=true` for the USD terms
+approved in ADR-056 and configure `STRIPE_SECRET` with the intended account's
+server-side key. `STRIPE_KEY` alone is the publishable credential and does not
+satisfy this command. Keep `CAPACITY_BILLING_ENABLED=false` during setup.
+After saving the environment, run from the active application release:
+
+```sh
+php artisan config:clear
+php artisan billing:verify-capacity-rates US --provision --force
+php artisan config:cache
+php artisan queue:restart
+```
+
+The earlier generic “Approve the country rates and configure Stripe” message
+means approval was false or the secret was absent in loaded configuration.
+Cached configuration can retain either old value after an environment edit.
+
+The `PDO::MYSQL_ATTR_SSL_CA` deprecation warning is independent of that refusal.
+The database config uses `Pdo\Mysql::ATTR_SSL_CA` on PHP 8.4 and newer, preserving
+the legacy constant on older PHP versions. Deploy this source fix before
+rebuilding config; the existing `MYSQL_ATTR_SSL_CA` environment name and TLS
+certificate setting are preserved. See the
+[PHP driver documentation](https://www.php.net/manual/en/ref.pdo-mysql.php).
+Then continue webhook setup and environment verification above before enabling
+billing. These recovery steps do not certify a live deployment.
+
 ## Release verification
 
 Before real customers pay, complete sandbox cases on the deployed environment: paid conversion, decline/3DS, duplicated/out-of-order signed events, pending upgrade payment/expiry, prorated increase, renewal reduction/yearly switch, cancellation/reactivation, invoice and portal recovery, and simultaneous requests on production MySQL. Check the same business's normalized records and entitlement limits against Stripe. Complete the approved live smoke test with the owner handling the actual payment. No real payment, refund or customer message was performed by this task.
@@ -102,3 +136,12 @@ Local evidence: six test prices verified, sandbox Checkout visibly opened with $
 - [Official Stripe CLI](https://docs.stripe.com/cli)
 
 These references explain the provider primitives; the repository's Business ownership, route and event contracts above are authoritative for this app.
+
+## Public pricing and signup preferences (2026-10-12)
+
+The public calculator uses these same verified rates; it needs no separate Stripe
+products or webhook. Deploy `2026_10_12_000001_save_capacity_signup_preferences`
+with the usual `php artisan migrate --force` before serving the updated signup
+and billing code. It adds two nullable quantity preferences and leaves old
+intent/subscription/invoice values unchanged. See the
+[public pricing contract](../modules/public-pricing.md).

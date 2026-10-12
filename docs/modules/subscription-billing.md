@@ -1,9 +1,9 @@
 # Subscription & Billing
 
-Updated: 2026-10-11. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
+Updated: 2026-10-12. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
 [FR-13](../product-requirements.md#fr-13-notifications-and-communication),
 FR-19, FR-20 and [PRD §9](../product-requirements.md#9-subscription-packaging-and-commercial-rules).
-See ADR-029/038/041/054/056/057 and `../stripe-billing.md`.
+See ADR-029/038/041/054/056/057/061 and `../stripe-billing.md`.
 
 ## Approved pricing contract
 
@@ -121,7 +121,10 @@ operational gate is met. No refunds or real provider sends were executed locally
    or `billing:configure-stripe-webhook https://your-host/billing/webhooks/stripe
    --apply` for a managed remote endpoint (also `--force` in live mode). New endpoint
    secrets are saved privately, not printed; managed repeats keep the secret.
-5. Follow [the deployment guide](../deployment/subscription-billing-stripe.md)
+5. Missing approval or server-side `STRIPE_SECRET` is reported explicitly, even
+   with `--force`. After changing deployment environment values, clear cached
+   configuration before retrying; `--force` only authorizes live provisioning.
+   Follow [the deployment guide](../deployment/subscription-billing-stripe.md)
    for environment values, signing secrets, tax/portal setup, workers/scheduler and
    rollout checks. Enable billing only after mappings and environment gates pass.
 6. Certify paid conversion, 3DS/decline, immediate proration, scheduled renewal,
@@ -132,3 +135,7 @@ Focused evidence: `CapacityBillingTest`, `BillingWorkspaceTest`, provider/lifecy
 regressions, all frontend helper tests and client/SSR production build. Local
 SQLite tests do not certify real payments, SES/Twilio delivery, concurrency or
 independent accessibility. See project status for the actual verified results.
+
+The [public pricing page](public-pricing.md) shares the capacity rates and estimate
+helpers. Initial trial selection can reuse validated signup preferences, while
+paid/pending capacity and the server billing review remain authoritative.

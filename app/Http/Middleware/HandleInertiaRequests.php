@@ -65,7 +65,9 @@ class HandleInertiaRequests extends Middleware
             'signupIntent' => fn () => $request->routeIs('register')
                 ? app(PublicPricingCatalog::class)->validSelection(
                     $request->query('plan'),
-                    $request->query('interval')
+                    $request->query('interval'),
+                    $request->query('locations', 1),
+                    $request->query('staff', 1)
                 )
                 : null,
             'googleAuth' => fn () => [

@@ -56,7 +56,19 @@ class StructuredDataGraph
             'publisher' => ['@id' => $organizationId],
         ];
         if ($request->routeIs('marketing.pricing') && data_get($props, 'catalog.available') === true) {
-            $software['offers'] = collect(data_get($props, 'catalog.plans', []))->flatMap(fn (array $plan) => collect($plan['prices'])->map(fn (array $price, string $interval) => ['@type' => 'Offer', 'name' => $plan['name'].' '.ucfirst($interval), 'price' => number_format($price['amount_minor'] / 100, 2, '.', ''), 'priceCurrency' => $price['currency'], 'availability' => 'https://schema.org/InStock', 'url' => route('marketing.pricing')]))->values()->all();
+            $software['offers'] = collect(data_get($props, 'catalog.markets', []))->flatMap(fn (array $market) => collect($market['intervals'])->map(fn (array $rate, string $interval) => [
+                '@type' => 'Offer', 'name' => 'ClipperDesk '.($interval === 'annual' ? 'yearly' : 'monthly').' subscription',
+                'url' => route('marketing.pricing'),
+                'priceSpecification' => [
+                    '@type' => 'CompoundPriceSpecification', 'priceCurrency' => $rate['currency'], 'valueAddedTaxIncluded' => false,
+                    'priceComponent' => collect(['base' => 'Base: 1 location and 1 bookable staff', 'location' => 'Each additional location', 'staff' => 'Each additional bookable staff'])->map(fn (string $name, string $component) => [
+                        '@type' => 'UnitPriceSpecification', 'name' => $name,
+                        'price' => number_format($rate[$component.'_minor'] / 100, 2, '.', ''), 'priceCurrency' => $rate['currency'],
+                        'billingDuration' => $interval === 'annual' ? 'P1Y' : 'P1M', 'valueAddedTaxIncluded' => false,
+                        'referenceQuantity' => ['@type' => 'QuantitativeValue', 'value' => 1, 'unitText' => $name],
+                    ])->values()->all(),
+                ],
+            ]))->values()->all();
         }
         $graph[] = $software;
         if ($request->routeIs('blog.article') && filled(data_get($props, 'article.title'))) {

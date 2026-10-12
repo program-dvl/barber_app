@@ -28,6 +28,8 @@ class CompleteGoogleRegistration
         $input['email'] = $google['email'];
         $input['selected_plan'] = data_get($google, 'selection.plan');
         $input['selected_interval'] = data_get($google, 'selection.interval');
+        $input['selected_locations'] = data_get($google, 'selection.locations');
+        $input['selected_staff'] = data_get($google, 'selection.staff');
 
         $validated = Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
@@ -36,11 +38,13 @@ class CompleteGoogleRegistration
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : [],
             'selected_plan' => ['nullable', 'string', 'max:32'],
             'selected_interval' => ['nullable', 'string', 'max:16'],
+            'selected_locations' => ['nullable', 'integer', 'min:1', 'max:'.config('capacity-billing.max_locations')],
+            'selected_staff' => ['nullable', 'integer', 'min:1', 'max:'.config('capacity-billing.max_staff')],
         ])->after(function ($validator) use ($input): void {
             $plan = $input['selected_plan'] ?? null;
             $interval = $input['selected_interval'] ?? null;
 
-            if (($plan !== null || $interval !== null) && ! $this->catalog->validSelection($plan, $interval)) {
+            if (($plan !== null || $interval !== null || isset($input['selected_locations']) || isset($input['selected_staff'])) && ! $this->catalog->validSelection($plan, $interval, $input['selected_locations'] ?? 1, $input['selected_staff'] ?? 1)) {
                 $validator->errors()->add('selected_plan', 'The selected public plan or billing interval is no longer available.');
             }
         })->validate();
@@ -48,6 +52,8 @@ class CompleteGoogleRegistration
         $selection = $this->catalog->validSelection(
             $validated['selected_plan'] ?? null,
             $validated['selected_interval'] ?? null,
+            $validated['selected_locations'] ?? 1,
+            $validated['selected_staff'] ?? 1,
         );
 
         return DB::transaction(function () use ($google, $validated, $selection): User {
@@ -79,6 +85,8 @@ class CompleteGoogleRegistration
                 'business_name' => $validated['business_name'],
                 'selected_plan_code' => $selection['plan'] ?? null,
                 'selected_billing_interval' => $selection['interval'] ?? null,
+                'selected_locations' => $selection['locations'] ?? null,
+                'selected_staff' => $selection['staff'] ?? null,
                 'status' => 'pending',
             ]);
 

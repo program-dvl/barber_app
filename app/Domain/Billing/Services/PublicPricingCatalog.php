@@ -2,110 +2,62 @@
 
 namespace App\Domain\Billing\Services;
 
-use App\Domain\Billing\Models\BillingPlan;
+use App\Domain\Billing\Models\BillingPlanPrice;
 use Illuminate\Support\Facades\Schema;
 
 class PublicPricingCatalog
 {
-    private const INTERVALS = ['monthly', 'annual'];
+    public function __construct(private readonly CapacityPricingCatalog $capacity) {}
 
-    public function __construct(private readonly PlanCatalog $catalog) {}
-
-    /** @return array{available: bool, currency: ?string, trial_days: int, plans: array<int, array<string, mixed>>, reason: ?string} */
     public function present(): array
     {
-        if (! Schema::hasTable('billing_plans')) {
-            return $this->unavailable('The billing catalog has not been installed in this environment.');
-        }
-
-        $now = now();
-        $provider = (string) config('billing.provider');
-        $plans = BillingPlan::query()
-            ->whereIn('code', $this->catalog->codes())
-            ->where('is_active', true)
-            ->where(fn ($query) => $query->whereNull('available_from')->orWhere('available_from', '<=', $now))
-            ->where(fn ($query) => $query->whereNull('available_until')->orWhere('available_until', '>', $now))
-            ->with([
-                'prices' => fn ($query) => $query
-                    ->where('provider', $provider)
-                    ->where('is_active', true)
-                    ->where('effective_from', '<=', $now)
-                    ->where(fn ($effective) => $effective->whereNull('effective_until')->orWhere('effective_until', '>', $now)),
-                'entitlements' => fn ($query) => $query
-                    ->where('effective_from', '<=', $now)
-                    ->where(fn ($effective) => $effective->whereNull('effective_until')->orWhere('effective_until', '>', $now))
-                    ->with('definition'),
-            ])
-            ->get()
-            ->keyBy('code');
-
-        if ($provider !== 'stripe' || $plans->keys()->sort()->values()->all() !== collect($this->catalog->codes())->sort()->values()->all()) {
-            return $this->unavailable('The approved public Stripe catalog is not fully available.');
-        }
-
-        $currencies = collect();
-        $presented = collect($this->catalog->codes())->map(function (string $code) use ($plans, $currencies): ?array {
-            $plan = $plans[$code];
-            $prices = $plan->prices->keyBy(fn ($price) => $price->billing_interval->value);
-
-            foreach (self::INTERVALS as $interval) {
-                $price = $prices->get($interval);
-                if (! $price || ! $this->catalog->allows($price)) {
-                    return null;
+        $markets = [];
+        if (Schema::hasTable('billing_rate_cards')) {
+            foreach ($this->capacity->present()['markets'] as $market) {
+                $intervals = [];
+                foreach ($market['intervals'] as $interval => $quote) {
+                    $card = $this->capacity->verified($market['code'], $interval);
+                    $price = $card ? BillingPlanPrice::find($card->billing_plan_price_id) : null;
+                    if (! $card?->verified_at || ! $price?->is_active || $price->provider !== 'stripe'
+                        || $price->provider_price_id !== $card->terms['base_price_id']
+                        || (int) $price->amount_minor !== $quote['base_minor'] || $price->currency !== $quote['currency']
+                        || $price->effective_from?->isFuture() || ($price->effective_until && $price->effective_until->lte(now()))) {
+                        continue;
+                    }
+                    $intervals[$interval] = collect($quote)->only([
+                        'currency', 'billing_interval', 'base_minor', 'location_minor', 'staff_minor',
+                        'sms_monthly_allowance', 'ready',
+                    ])->all();
                 }
-                $currencies->push(strtoupper($price->currency));
+                if ($intervals) {
+                    $markets[] = ['code' => $market['code'], 'currency' => $market['currency'], 'intervals' => $intervals];
+                }
             }
-
-            $monthly = $prices['monthly'];
-            $annual = $prices['annual'];
-            $entitlements = $plan->entitlements
-                ->filter(fn ($entitlement) => $entitlement->definition)
-                ->mapWithKeys(fn ($entitlement) => [$entitlement->definition->key => $entitlement->value]);
-
-            return [
-                'code' => $plan->code,
-                'name' => $plan->name,
-                'description' => $plan->description,
-                'prices' => [
-                    'monthly' => ['amount_minor' => $monthly->amount_minor, 'currency' => strtoupper($monthly->currency)],
-                    'annual' => ['amount_minor' => $annual->amount_minor, 'currency' => strtoupper($annual->currency)],
-                ],
-                'annual_savings_minor' => max(0, ($monthly->amount_minor * 12) - $annual->amount_minor),
-                'entitlements' => $entitlements->all(),
-            ];
-        });
-
-        $currency = strtoupper((string) config('billing.stripe.currency', 'USD'));
-        if ($presented->contains(null) || $currencies->unique()->count() !== 1 || $currencies->first() !== $currency) {
-            return $this->unavailable('The approved public prices are incomplete or use an unsupported currency.');
         }
 
         return [
-            'available' => true,
-            'currency' => $currency,
+            'available' => count($markets) > 0,
             'trial_days' => (int) config('billing.trial_days'),
-            'plans' => $presented->values()->all(),
-            'reason' => null,
+            'markets' => $markets,
+            'max_locations' => (int) config('capacity-billing.max_locations'),
+            'max_staff' => (int) config('capacity-billing.max_staff'),
         ];
     }
 
-    public function validSelection(?string $plan, ?string $interval): ?array
+    /** Preferences only: never a quote, payment authorization or entitlement. */
+    public function validSelection(mixed $plan, mixed $interval, mixed $locations = 1, mixed $staff = 1): ?array
     {
-        if (! in_array($plan, $this->catalog->codes(), true) || ! in_array($interval, self::INTERVALS, true)) {
+        if ($plan !== 'capacity' || ! in_array($interval, ['monthly', 'annual'], true)
+            || filter_var($locations, FILTER_VALIDATE_INT) === false || filter_var($staff, FILTER_VALIDATE_INT) === false
+            || $locations < 1 || $locations > config('capacity-billing.max_locations')
+            || $staff < 1 || $staff > config('capacity-billing.max_staff')) {
+            return null;
+        }
+        $market = collect($this->present()['markets'])->firstWhere('code', config('capacity-billing.default_market'));
+        if (! isset($market['intervals'][$interval])) {
             return null;
         }
 
-        $catalog = $this->present();
-        if (! $catalog['available'] || ! collect($catalog['plans'])->contains('code', $plan)) {
-            return null;
-        }
-
-        return ['plan' => $plan, 'interval' => $interval];
-    }
-
-    /** @return array{available: false, currency: null, trial_days: int, plans: array<int, never>, reason: string} */
-    private function unavailable(string $reason): array
-    {
-        return ['available' => false, 'currency' => null, 'trial_days' => (int) config('billing.trial_days'), 'plans' => [], 'reason' => $reason];
+        return ['plan' => 'capacity', 'interval' => $interval, 'locations' => (int) $locations, 'staff' => (int) $staff];
     }
 }

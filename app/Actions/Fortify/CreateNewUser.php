@@ -31,15 +31,17 @@ class CreateNewUser implements CreatesNewUsers
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
             'selected_plan' => ['nullable', 'string', 'max:32'],
             'selected_interval' => ['nullable', 'string', 'max:16'],
+            'selected_locations' => ['nullable', 'integer', 'min:1', 'max:'.config('capacity-billing.max_locations')],
+            'selected_staff' => ['nullable', 'integer', 'min:1', 'max:'.config('capacity-billing.max_staff')],
         ])->after(function ($validator) use ($catalog, $input): void {
             $plan = $input['selected_plan'] ?? null;
             $interval = $input['selected_interval'] ?? null;
-            if (($plan !== null || $interval !== null) && ! $catalog->validSelection($plan, $interval)) {
+            if (($plan !== null || $interval !== null || isset($input['selected_locations']) || isset($input['selected_staff'])) && ! $catalog->validSelection($plan, $interval, $input['selected_locations'] ?? 1, $input['selected_staff'] ?? 1)) {
                 $validator->errors()->add('selected_plan', 'The selected public plan or billing interval is no longer available.');
             }
         })->validate();
 
-        $selection = $catalog->validSelection($input['selected_plan'] ?? null, $input['selected_interval'] ?? null);
+        $selection = $catalog->validSelection($input['selected_plan'] ?? null, $input['selected_interval'] ?? null, $input['selected_locations'] ?? 1, $input['selected_staff'] ?? 1);
 
         return DB::transaction(function () use ($input, $selection): User {
             $user = User::create([
@@ -53,6 +55,8 @@ class CreateNewUser implements CreatesNewUsers
                 'business_name' => $input['business_name'],
                 'selected_plan_code' => $selection['plan'] ?? null,
                 'selected_billing_interval' => $selection['interval'] ?? null,
+                'selected_locations' => $selection['locations'] ?? null,
+                'selected_staff' => $selection['staff'] ?? null,
                 'status' => 'pending',
             ]);
 

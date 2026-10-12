@@ -36,6 +36,8 @@ class SocialiteController extends Controller
             'intent' => ['nullable', 'in:login,register'],
             'plan' => ['nullable', 'string', 'max:32'],
             'interval' => ['nullable', 'string', 'max:16'],
+            'locations' => ['nullable', 'integer', 'min:1', 'max:'.config('capacity-billing.max_locations')],
+            'staff' => ['nullable', 'integer', 'min:1', 'max:'.config('capacity-billing.max_staff')],
         ]);
 
         if (! $this->isConfigured()) {
@@ -44,7 +46,7 @@ class SocialiteController extends Controller
 
         $intent = $data['intent'] ?? 'login';
         $selection = $intent === 'register'
-            ? $catalog->validSelection($data['plan'] ?? null, $data['interval'] ?? null)
+            ? $catalog->validSelection($data['plan'] ?? null, $data['interval'] ?? null, $data['locations'] ?? 1, $data['staff'] ?? 1)
             : null;
 
         $request->session()->put(self::CONTEXT_SESSION_KEY, [
@@ -148,6 +150,8 @@ class SocialiteController extends Controller
             'email' => $pending['email'],
             'selected_plan' => data_get($pending, 'selection.plan'),
             'selected_interval' => data_get($pending, 'selection.interval'),
+            'selected_locations' => data_get($pending, 'selection.locations'),
+            'selected_staff' => data_get($pending, 'selection.staff'),
             'expires_at' => now()->createFromTimestamp((int) $pending['issued_at'])
                 ->addMinutes(self::REGISTRATION_TTL_MINUTES)
                 ->toIso8601String(),

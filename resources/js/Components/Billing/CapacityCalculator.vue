@@ -6,13 +6,13 @@ import AppSelect from '@/Components/Product/AppSelect.vue';
 import { billingMoney } from '@/Support/billingWorkspace';
 import { capacityEstimate, capacityAnnualSaving } from '@/Support/capacityPricing';
 
-const props = defineProps({ catalog: Object, country: String, current: Object, usage: Object, disabled: Boolean, actionLabel: { type: String, default: 'Review subscription' } });
+const props = defineProps({ initialSelection: Object, catalog: Object, country: String, current: Object, usage: Object, disabled: Boolean, actionLabel: { type: String, default: 'Review subscription' } });
 const emit = defineEmits(['review']);
 const markets = computed(() => (props.catalog?.markets || []).filter(item => Object.values(item.intervals).some(rate => rate.ready)));
 const marketCode = ref(markets.value.find(item => item.code === props.current?.market)?.code || markets.value[0]?.code || '');
-const interval = ref(props.current?.billing_interval || 'monthly');
-const locations = ref(props.current?.locations || Math.max(1, props.usage?.['locations.max'] || 1));
-const staff = ref(props.current?.staff || Math.max(1, props.usage?.['staff.max'] || 1));
+const interval = ref(props.current?.billing_interval || props.initialSelection?.selected_billing_interval || 'monthly');
+const locations = ref(props.current?.locations || Math.max(1, props.usage?.['locations.max'] || 1, props.initialSelection?.selected_locations || 1));
+const staff = ref(props.current?.staff || Math.max(1, props.usage?.['staff.max'] || 1, props.initialSelection?.selected_staff || 1));
 const market = computed(() => props.catalog?.markets?.find(item => item.code === marketCode.value));
 const rate = computed(() => props.current?.market === marketCode.value && props.current?.billing_interval === interval.value
     ? { ...props.current, sms_monthly_allowance: props.current.sms_monthly_allowance / props.current.staff, ready: Boolean(market.value?.intervals?.[interval.value]?.ready) } : market.value?.intervals?.[interval.value]);
