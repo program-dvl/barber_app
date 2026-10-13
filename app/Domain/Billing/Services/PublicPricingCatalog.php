@@ -26,7 +26,7 @@ class PublicPricingCatalog
                     }
                     $intervals[$interval] = collect($quote)->only([
                         'currency', 'billing_interval', 'base_minor', 'location_minor', 'staff_minor',
-                        'sms_monthly_allowance', 'ready',
+                        'sms_monthly_allowance', 'staff_tiers', 'included_locations', 'included_staff', 'ready',
                     ])->all();
                 }
                 if ($intervals) {

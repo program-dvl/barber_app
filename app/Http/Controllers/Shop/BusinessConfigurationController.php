@@ -38,6 +38,7 @@ use App\Domain\SchedulingOperations\Models\Appointment;
 use App\Http\Controllers\Controller;
 use App\Rules\E164Phone;
 use App\Support\Audit\AuditWriter;
+use App\Support\Locations\LocationData;
 use App\Support\Regional\CountryCatalog;
 use App\Support\Tenancy\TenantContext;
 use Carbon\CarbonImmutable;
@@ -193,6 +194,7 @@ class BusinessConfigurationController extends Controller
                 'accepts_online_bookings' => ['required', 'boolean'],
             ]),
             'location' => $request->validate([
+                ...LocationData::rules(),
                 'country_code' => ['required', 'string', 'size:2'],
                 'time_zone' => ['required', 'timezone:all'],
                 'address' => ['present', 'nullable', 'string', 'max:1000'],

@@ -134,3 +134,5 @@ appointments in a real business merely to smoke-test deployment.
 
 Local automated MySQL races are evidence for transaction behavior, not a
 certificate of production database topology, proxy behavior or provider delivery.
+
+Maps keys must authorize the dashboard, main-domain fallback and booking-host origins. Follow [Google Maps deployment](google-maps.md), including the additive location/snapshot migration. Successful booking pages permit same-origin geolocation only after the customer explicitly requests it.

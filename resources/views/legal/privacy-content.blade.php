@@ -12,6 +12,9 @@
                     @endif
                     <div><dt>Version</dt><dd>{{ config('privacy.version') }}</dd></div>
                 </dl>
+            @unless($published)
+                <p class="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-slate-800" role="status">This privacy policy is under review and is not yet effective.</p>
+            @endunless
             </div>
         </section>
         <div class="cd-public-container cd-privacy-layout">

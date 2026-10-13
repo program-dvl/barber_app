@@ -18,18 +18,18 @@ defineProps({ features: Array, seo: Object });
                 <div class="cd-family-hero-copy">
                     <p class="cd-eyebrow">Product</p>
                     <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">Manage the work around every appointment.</h1>
-                    <p class="mt-7 max-w-2xl text-lg leading-8">Explore the four connected jobs that carry an appointment-led service business from public demand through the working day, client history and explainable numbers.</p>
+                    <p class="mt-7 max-w-2xl text-lg leading-8">Connect online booking, your daily calendar, client records and checkout, so your team can follow each visit from arrival to receipt.</p>
                 </div>
                 <figure class="cd-family-hero-media">
                     <img class="cd-family-hero-image" :src="marketingFamilyVisuals.product.src" :alt="marketingFamilyVisuals.product.alt" width="1536" height="1024" fetchpriority="high" />
-                    <figcaption class="cd-family-hero-caption">Built around a real working day, not a disconnected feature list.</figcaption>
+                    <figcaption class="cd-family-hero-caption">Booking, client records and checkout in one workspace.</figcaption>
                 </figure>
             </PublicContainer>
         </section>
 
         <section class="cd-public-section">
             <PublicContainer>
-                <SectionHeading eyebrow="Four evidence-rich clusters" title="Follow the customer journey, not a software module list." />
+                <SectionHeading eyebrow="Connected features" title="From the first booking to the next visit." />
                 <div class="cd-visual-card-grid mt-12">
                     <article v-for="(feature, index) in features" :key="feature.slug" class="cd-visual-card">
                         <div class="cd-visual-card-media">
@@ -38,9 +38,8 @@ defineProps({ features: Array, seo: Object });
                         </div>
                         <div class="cd-visual-card-body">
                             <p class="cd-eyebrow">{{ feature.label }}</p>
-                            <h2 class="mt-4 text-2xl font-extrabold leading-tight text-[var(--text-strong)]">{{ feature.title }}</h2>
+                            <h3 class="mt-4 text-2xl font-extrabold leading-tight text-[var(--text-strong)]">{{ feature.title }}</h3>
                             <p class="mt-4 flex-1 leading-7 text-[var(--text-muted)]">{{ feature.description }}</p>
-                            <p class="mt-5 text-xs font-semibold text-[var(--text-muted)]">Evidence: {{ feature.requirements.join(', ') }}</p>
                             <Link :href="route('marketing.features.show', feature.slug)" class="cd-arrow-link mt-5">
                                 Explore {{ feature.label.toLowerCase() }}
                                 <ArrowRightIcon class="size-4" aria-hidden="true" />
@@ -51,6 +50,6 @@ defineProps({ features: Array, seo: Object });
             </PublicContainer>
         </section>
 
-        <ConversionBand title="See how the connected day fits your business." description="Start with a verified trial, configure the real operating rules, and review the client experience before publishing." context="features_hub_final" />
+        <ConversionBand title="See how the connected day fits your business." description="Add your services and team, set working hours and preview your booking page." context="features_hub_final" />
     </HomeLayout>
 </template>

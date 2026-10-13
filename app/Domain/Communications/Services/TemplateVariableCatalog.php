@@ -6,6 +6,7 @@ final class TemplateVariableCatalog
 {
     /** @var list<string> */
     public const ALLOWED = [
+        'location_address', 'arrival_instructions', 'directions_link',
         'client_name', 'staff_name', 'service_name', 'location_name', 'appointment_date',
         'appointment_time', 'time_zone', 'amount', 'currency', 'booking_reference',
         'action_link', 'unsubscribe_link', 'queue_estimate', 'feedback_link', 'business_name', 'reply_body',
@@ -13,6 +14,7 @@ final class TemplateVariableCatalog
 
     /** @var array<string,string> */
     public const SAFE_FALLBACKS = [
+        'location_address' => 'See your appointment details for the address', 'arrival_instructions' => 'Contact the business if you need arrival assistance', 'directions_link' => 'Open your appointment details for directions',
         'client_name' => 'there', 'staff_name' => 'your professional', 'service_name' => 'your service',
         'location_name' => 'the shop', 'time_zone' => 'local time', 'amount' => 'the stated amount',
         'currency' => '', 'queue_estimate' => 'soon', 'business_name' => 'the business',

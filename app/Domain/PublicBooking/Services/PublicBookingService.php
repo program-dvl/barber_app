@@ -18,7 +18,9 @@ use App\Domain\SchedulingOperations\Data\BookingLineRequest;
 use App\Domain\SchedulingOperations\Data\BookingRequest;
 use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
 use App\Domain\SchedulingOperations\Models\Appointment;
+use App\Support\Locations\LocationData;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -264,6 +266,11 @@ class PublicBookingService
                     throw new BookingRuleViolation('HOLD_REQUIRED', 'Choose and hold an available time before confirming.');
                 }
                 $hold = $flow->hold()->where('business_id', $business->id)->firstOrFail();
+                $location = Location::query()->where('business_id', $business->id)->sharedLock()->findOrFail($hold->location_id);
+                $shownLocation = $flow->state['policy']['location_details'] ?? null;
+                if ($shownLocation && Arr::except($shownLocation, ['directions_url', 'apple_maps_url', 'is_primary']) !== Arr::except(LocationData::snapshot($location), ['is_primary'])) {
+                    throw new BookingRuleViolation('POLICY_CHANGED', 'This branch updated its location details. Choose your time again to review the current address.');
+                }
                 $appointment = $this->bookings->confirmHold($business->id, $hold->public_id, $idempotencyKey, null, [
                     ...$details,
                     'internal_notes' => $details['special_request'] ?? null,
@@ -286,12 +293,17 @@ class PublicBookingService
     public function catalog(Business $business): array
     {
         $this->assertBookable($business);
-        $locations = Location::query()->where('business_id', $business->id)->where('is_active', true)->where('status', 'active')->orderBy('name')->get();
+        $locations = Location::query()->where('business_id', $business->id)->where('is_active', true)->where('status', 'active')->orderByDesc('is_primary')->orderBy('name')->get();
         $services = Service::query()->where('business_id', $business->id)->where('is_active', true)->where('online_visible', true)->where(fn ($q) => $q->whereNull('effective_from')->orWhere('effective_from', '<=', now()))->where(fn ($q) => $q->whereNull('effective_until')->orWhere('effective_until', '>', now()))->with(['category', 'locations', 'addons'])->get()->sortBy(fn ($s) => sprintf('%05d', $s->category?->display_order ?? 65535).'|'.($s->category?->name ?? '').'|'.$s->kind.'|'.$s->name)->values();
         $staff = StaffProfile::query()->where('business_id', $business->id)->where('status', 'active')->where('online_visible', true)->with(['locations', 'serviceAssignments'])->orderBy('display_name')->get();
 
+        $locations = $locations->filter(fn (Location $location) => $services->contains(fn (Service $service) => $service->kind === 'service'
+            && $service->locations->contains(fn ($branch) => $branch->id === $location->id && $branch->pivot->is_eligible)
+            && $staff->contains(fn (StaffProfile $profile) => $profile->locations->contains('id', $location->id)
+                && $profile->serviceAssignments->contains(fn ($assignment) => $assignment->service_id === $service->id && $assignment->is_active && $assignment->is_qualified && $assignment->online_visible && (! $assignment->effective_from || $assignment->effective_from->lte(now())) && (! $assignment->effective_until || $assignment->effective_until->gt(now()))))))->values();
+
         return [
-            'locations' => $locations->map(fn (Location $location) => [...$location->only(['public_id', 'name', 'address', 'time_zone']), 'today' => CarbonImmutable::now($location->time_zone)->toDateString()]),
+            'locations' => $locations->map(fn (Location $location) => [...LocationData::present(LocationData::snapshot($location)), 'today' => CarbonImmutable::now($location->time_zone)->toDateString()]),
             'services' => $services->map(fn (Service $service) => [
                 'public_id' => $service->public_id, 'kind' => $service->kind, 'name' => $service->name,
                 'category' => $service->category?->name ?: 'Services',
@@ -325,11 +337,13 @@ class PublicBookingService
     private function resolveSelection(Business $business, string $locationPublicId, array $servicePublicIds, ?string $staffPublicId): array
     {
         $this->assertBookable($business);
-        $location = Location::query()->where('business_id', $business->id)->where('public_id', $locationPublicId)->where('is_active', true)->firstOrFail();
+        $location = Location::query()->where('business_id', $business->id)->where('public_id', $locationPublicId)->where('is_active', true)->where('status', 'active')->firstOrFail();
         $ids = array_values(array_unique($servicePublicIds));
-        $services = Service::query()->where('business_id', $business->id)->whereIn('public_id', $ids)->where('is_active', true)->where('online_visible', true)->get()->keyBy('public_id');
-        abort_unless($services->count() === count($ids), 422);
-        $staff = $staffPublicId ? StaffProfile::query()->where('business_id', $business->id)->where('public_id', $staffPublicId)->where('status', 'active')->where('online_visible', true)->firstOrFail() : null;
+        $services = Service::query()->where('business_id', $business->id)->whereIn('public_id', $ids)->where('is_active', true)->where('online_visible', true)->with('locations')->get()->keyBy('public_id');
+        if ($services->count() !== count($ids) || ! $services->every(fn ($service) => $service->locations->contains(fn ($branch) => $branch->id === $location->id && $branch->pivot->is_eligible))) {
+            throw ValidationException::withMessages(['services' => 'These services are unavailable at this branch. Choose current branch services.']);
+        }
+        $staff = $staffPublicId ? StaffProfile::query()->where('business_id', $business->id)->where('public_id', $staffPublicId)->whereHas('locations', fn ($query) => $query->where('locations.id', $location->id))->where('status', 'active')->where('online_visible', true)->firstOrFail() : null;
         if ($staff && $business->online_staff_preference === 'any_only') {
             abort(422, 'This business offers first-available booking only.');
         }
@@ -363,6 +377,7 @@ class PublicBookingService
             'marketing_wording' => 'Optional: send me marketing updates. Booking messages do not depend on this choice.',
             'sms_wording' => 'Send essential appointment texts, including confirmations, important changes, cancellations, and one reminder. Message and data rates may apply. Reply STOP to opt out.',
             'location_time_zone' => $location?->time_zone,
+            'location_details' => $location ? LocationData::present(LocationData::snapshot($location)) : null,
             'services' => collect($snapshots)->map(fn (array $snapshot) => [
                 'name' => $snapshot['name'], 'price_type' => match ($business->online_price_display) {
                     'exact' => 'fixed', 'from' => 'from', default => $snapshot['priceType'],

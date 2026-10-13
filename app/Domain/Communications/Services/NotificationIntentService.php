@@ -60,6 +60,15 @@ class NotificationIntentService
                 $decision = $this->consent->decision($settings, $client, $channel, $destination, $data->category, $data->legalBasis);
                 $sender = $channel === 'email' ? null : $this->senders->resolve($business, $channel, $settings);
                 $variables = $data->variables;
+                if (in_array($data->intentType, ['booking_confirmation', 'booking_pending', 'booking_approved', 'appointment_reminder', 'appointment_changed', 'appointment_cancelled'], true)) {
+                    $footer = [];
+                    foreach (['location_address' => 'Address: ', 'arrival_instructions' => 'Arrival: ', 'directions_link' => 'Directions: '] as $name => $label) {
+                        if (filled($variables[$name] ?? null) && ! in_array($name, $template->variables, true)) {
+                            $footer[] = $label.$variables[$name];
+                        }
+                    }
+                    $variables['__location_footer'] = implode($channel === 'email' ? "\n" : ' ', $footer);
+                }
                 $actionLink = null;
                 $purpose = $data->actionPurpose ?? TemplateVariableCatalog::defaults($data->intentType)['action_purpose'];
                 if ($purpose) {

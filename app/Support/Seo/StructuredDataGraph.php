@@ -8,10 +8,11 @@ class StructuredDataGraph
 {
     public function for(Request $request, array $props): array
     {
-        if (! app(PublicIndexation::class)->isIndexableRouteName($request->route()?->getName())) {
+        if ($request->attributes->get('force_noindex') === true
+            || ! app(PublicIndexation::class)->isIndexableRouteName($request->route()?->getName())) {
             return [];
         }
-        $root = rtrim(config('app.url'), '/');
+        $root = rtrim(app()->environment('production') ? config('brand.website_url') : config('app.url'), '/');
         $canonical = data_get($props, 'seo.canonical', $request->url());
         $organizationId = $root.'/#organization';
         $websiteId = $root.'/#website';
@@ -58,15 +59,17 @@ class StructuredDataGraph
         if ($request->routeIs('marketing.pricing') && data_get($props, 'catalog.available') === true) {
             $software['offers'] = collect(data_get($props, 'catalog.markets', []))->flatMap(fn (array $market) => collect($market['intervals'])->map(fn (array $rate, string $interval) => [
                 '@type' => 'Offer', 'name' => 'ClipperDesk '.($interval === 'annual' ? 'yearly' : 'monthly').' subscription',
-                'url' => route('marketing.pricing'),
+                'url' => PublicUrl::canonical(route('marketing.pricing')),
+                'price' => number_format($rate['base_minor'] / 100, 2, '.', ''),
+                'priceCurrency' => $market['currency'],
+                'description' => 'Starting price includes one location and one bookable staff member. Additional locations and progressive staff charges apply.',
                 'priceSpecification' => [
-                    '@type' => 'CompoundPriceSpecification', 'priceCurrency' => $rate['currency'], 'valueAddedTaxIncluded' => false,
-                    'priceComponent' => collect(['base' => 'Base: 1 location and 1 bookable staff', 'location' => 'Each additional location', 'staff' => 'Each additional bookable staff'])->map(fn (string $name, string $component) => [
-                        '@type' => 'UnitPriceSpecification', 'name' => $name,
-                        'price' => number_format($rate[$component.'_minor'] / 100, 2, '.', ''), 'priceCurrency' => $rate['currency'],
-                        'billingDuration' => $interval === 'annual' ? 'P1Y' : 'P1M', 'valueAddedTaxIncluded' => false,
-                        'referenceQuantity' => ['@type' => 'QuantitativeValue', 'value' => 1, 'unitText' => $name],
-                    ])->values()->all(),
+                    '@type' => 'UnitPriceSpecification',
+                    'name' => 'Starting subscription: one location and one bookable staff member',
+                    'price' => number_format($rate['base_minor'] / 100, 2, '.', ''),
+                    'priceCurrency' => $market['currency'],
+                    'billingDuration' => $interval === 'annual' ? 'P1Y' : 'P1M',
+                    'valueAddedTaxIncluded' => false,
                 ],
             ]))->values()->all();
         }
@@ -77,7 +80,7 @@ class StructuredDataGraph
         }
         if ($request->routeIs('marketing.guides.show') && filled(data_get($props, 'guide.title'))) {
             $guide = data_get($props, 'guide', []);
-            $graph[] = ['@type' => 'Article', '@id' => $canonical.'#article', 'headline' => $guide['title'], 'description' => $guide['description'], 'datePublished' => $guide['published_at'], 'author' => ['@type' => 'Organization', 'name' => $guide['reviewed_by']], 'publisher' => ['@id' => $organizationId], 'mainEntityOfPage' => ['@id' => $canonical.'#webpage']];
+            $graph[] = ['@type' => 'Article', '@id' => $canonical.'#article', 'headline' => $guide['title'], 'description' => $guide['description'], 'datePublished' => $guide['published_at'], 'dateModified' => $guide['reviewed_at'] ?? $guide['published_at'], 'author' => ['@type' => 'Organization', 'name' => $guide['reviewed_by']], 'publisher' => ['@id' => $organizationId], 'mainEntityOfPage' => ['@id' => $canonical.'#webpage']];
         }
 
         return ['@context' => 'https://schema.org', '@graph' => $graph];

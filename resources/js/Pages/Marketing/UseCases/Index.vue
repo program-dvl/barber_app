@@ -21,7 +21,7 @@ defineProps({ useCases: Array, seo: Object });
                     <div class="cd-family-hero-copy">
                         <p class="cd-eyebrow">Use cases</p>
                         <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">Make daily work easier.</h1>
-                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Use these practical guides to diagnose recurring scheduling and service-day problems, improve the process and see where verified ClipperDesk behavior can help.</p>
+                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Find practical ways to handle scheduling conflicts, walk-ins, booking policies and client history, with clear steps your team can use.</p>
                     </div>
                     <figure class="cd-family-hero-media">
                         <img class="cd-family-hero-image" :src="marketingFamilyVisuals.useCases.src" :alt="marketingFamilyVisuals.useCases.alt" width="1536" height="1024" fetchpriority="high" />
@@ -33,7 +33,7 @@ defineProps({ useCases: Array, seo: Object });
 
         <section class="cd-public-section">
             <PublicContainer>
-                <SectionHeading eyebrow="Four distinct jobs" title="Useful guidance, with the product limits beside it" description="Each page answers one problem and links to the exact supporting workflow—without promising a guaranteed business outcome." />
+                <SectionHeading eyebrow="Four distinct jobs" title="Solve common front-desk problems" description="Choose a challenge to explore useful steps and the ClipperDesk features that support them." />
                 <div class="cd-visual-card-grid mt-12">
                     <article v-for="(item, index) in useCases" :key="item.slug" class="cd-visual-card">
                         <div class="cd-visual-card-media">
@@ -42,7 +42,7 @@ defineProps({ useCases: Array, seo: Object });
                         </div>
                         <div class="cd-visual-card-body">
                             <p class="cd-eyebrow">{{ item.label }}</p>
-                            <h2 class="mt-5 text-2xl font-extrabold leading-tight text-[var(--text-strong)]">{{ item.title }}</h2>
+                            <h3 class="mt-5 text-2xl font-extrabold leading-tight text-[var(--text-strong)]">{{ item.title }}</h3>
                             <p class="mt-4 grow leading-7 text-[var(--text-muted)]">{{ item.description }}</p>
                             <Link :href="route('marketing.use-cases.show', item.slug)" class="cd-arrow-link mt-6">Read the practical guide <ArrowRightIcon class="size-4" aria-hidden="true" /></Link>
                         </div>
@@ -51,6 +51,6 @@ defineProps({ useCases: Array, seo: Object });
             </PublicContainer>
         </section>
 
-        <ConversionBand title="Ready to connect the workflow?" description="Explore ClipperDesk with a verified trial, then configure the rules for your Business before publishing booking." context="use_cases_hub_final" />
+        <ConversionBand title="Ready to connect the workflow?" description="Add services, staff and working hours to try the workflow in your own workspace." context="use_cases_hub_final" />
     </HomeLayout>
 </template>

@@ -10,11 +10,13 @@ use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
 use App\Http\Controllers\Controller;
 use App\Rules\E164Phone;
 use App\Support\BookingUrl;
+use App\Support\Locations\LocationData;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -135,8 +137,8 @@ class PublicAppointmentController extends Controller
             'DTSTART:'.$appointment->starts_at_utc->utc()->format('Ymd\THis\Z'),
             'DTEND:'.$appointment->ends_at_utc->utc()->format('Ymd\THis\Z'),
             'SUMMARY:'.$escape($appointment->business->name.' appointment'),
-            'LOCATION:'.$escape((string) $appointment->location->address),
-            'DESCRIPTION:'.$escape($appointment->serviceLines->pluck('name')->join(', ').' · Reference '.$appointment->booking_reference),
+            'LOCATION:'.$escape((string) (LocationData::forAppointment($appointment)['address'] ?? '')),
+            'DESCRIPTION:'.$escape($appointment->serviceLines->pluck('name')->join(', ').' · Reference '.$appointment->booking_reference."\n".implode("\n", array_filter(Arr::only(LocationData::forAppointment($appointment), ['address_line_2', 'entrance_instructions', 'parking_instructions', 'directions_url'])))),
             'END:VEVENT', 'END:VCALENDAR', '',
         ]);
 
@@ -168,7 +170,8 @@ class PublicAppointmentController extends Controller
         return [
             'appointment' => [
                 'reference' => $appointment->booking_reference, 'status' => $appointment->status,
-                'business' => $appointment->business->name, 'business_country_code' => $appointment->business->country_code, 'location' => $appointment->location->name,
+                'business' => $appointment->business->name, 'business_country_code' => $appointment->business->country_code, 'location' => LocationData::forAppointment($appointment)['name'],
+                'location_details' => LocationData::forAppointment($appointment),
                 'starts_at' => $appointment->starts_at_utc->setTimezone($appointment->time_zone)->toIso8601String(),
                 'ends_at' => $appointment->ends_at_utc->setTimezone($appointment->time_zone)->toIso8601String(),
                 'time_zone' => $appointment->time_zone, 'services' => $appointment->serviceLines->pluck('name')->all(),

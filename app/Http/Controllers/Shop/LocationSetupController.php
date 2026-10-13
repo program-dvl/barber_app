@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Shop;
 
 use App\Domain\Billing\Services\EntitlementEvaluator;
 use App\Domain\BusinessConfiguration\Services\BusinessActivationManager;
+use App\Domain\BusinessConfiguration\Services\BusinessSetupAccess;
 use App\Domain\BusinessConfiguration\Services\OnboardingManager;
 use App\Domain\BusinessConfiguration\Services\ReadinessEvaluator;
-use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Http\Controllers\Controller;
 use App\Rules\E164Phone;
+use App\Support\Locations\LocationData;
+use App\Support\Regional\CountryCatalog;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -36,10 +38,12 @@ class LocationSetupController extends Controller
         return Inertia::render('Activation/Location', [
             'business' => $business->only(['public_id', 'name', 'address', 'phone', 'email', 'country_code', 'time_zone']),
             'locations' => $business->locations()->with('hours')->orderBy('name')->get()->map(fn ($location): array => [
-                ...$location->only(['public_id', 'name', 'address', 'phone', 'email', 'time_zone', 'status', 'is_active']),
+                ...$location->only(['public_id', 'name', 'address', 'phone', 'email', 'time_zone', 'status', 'is_active', ...LocationData::FIELDS]),
+                'location_revision' => LocationData::revision($location),
                 'hours' => $location->hours->map->only(['day_of_week', 'opens_at', 'closes_at', 'sequence'])->values(),
             ]),
             'readiness' => $this->readiness->evaluate($business)->toArray(),
+            'countries' => app(CountryCatalog::class)->countries(),
             'timeZones' => config('reference-data.time_zones', []),
             'locationAllowance' => [
                 'can_add' => $locationDecision->allowed,
@@ -54,8 +58,10 @@ class LocationSetupController extends Controller
     {
         $this->authorizeManage();
         $data = $request->validate([
+            ...LocationData::rules(),
             'location' => ['nullable', 'string'],
             'create_new' => ['nullable', 'boolean'],
+            'keep_hours' => ['sometimes', 'boolean'],
             'name' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:1000'],
             'time_zone' => ['required', 'timezone:all'],
@@ -76,6 +82,6 @@ class LocationSetupController extends Controller
 
     private function authorizeManage(): void
     {
-        abort_unless($this->context->membership()?->hasPermissionTo(PermissionName::SettingsManage->value, 'web'), 403);
+        abort_unless(app(BusinessSetupAccess::class)->allows($this->context->business(), $this->context->membership()), 403);
     }
 }

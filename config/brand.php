@@ -18,7 +18,7 @@ return [
         'ClipperDesk is appointment scheduling and service business management software for beauty, wellness, personal care, fitness, recovery, health and pet-care teams—from online booking to checkout and reporting.'
     ),
 
-    'logo' => '/images/brand/clipperdesk-logo.svg',
+    'logo' => '/images/brand/clipperdesk-logo.png',
     'logo_inverse' => '/images/brand/clipperdesk-logo-inverse.svg',
     'logo_mark' => '/images/brand/clipperdesk-mark.svg',
     'logo_mark_inverse' => '/images/brand/clipperdesk-mark-inverse.svg',

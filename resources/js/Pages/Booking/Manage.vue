@@ -1,4 +1,7 @@
 <script setup>
+import { inject as injectRoute } from 'vue';
+const route = injectRoute('route');
+import LocationCard from '@/Components/Locations/LocationCard.vue';
 import { sentenceLabel } from '@/Support/userLanguage';
 import { computed, ref, watch, onBeforeUnmount, onMounted } from 'vue';
 import axios from 'axios';
@@ -105,6 +108,7 @@ const leaveWaitlist = entry => useForm({ operation: 'leave', waitlist_request: e
                         <dd class="mt-1 text-[var(--text-strong)]">{{ money }} · {{ sentenceLabel(appointment.deposit_status) }}</dd>
                     </div>
                 </dl>
+                <LocationCard v-if="appointment.location_details" class="mt-5" :location="appointment.location_details" />
                 <p class="mt-5 rounded-lg bg-[var(--surface-subtle)] p-3 text-sm">
                     <strong>Cancellation policy:</strong>
                     {{ appointment.cancellation_policy }}

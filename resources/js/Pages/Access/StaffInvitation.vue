@@ -1,4 +1,6 @@
 <script setup>
+import { inject as injectRoute } from 'vue';
+const route = injectRoute('route');
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { BuildingOffice2Icon, CheckCircleIcon, KeyIcon, MapPinIcon, ShieldCheckIcon } from '@heroicons/vue/24/outline';

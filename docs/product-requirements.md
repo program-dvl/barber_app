@@ -234,6 +234,23 @@ Purpose: Model where and when services can be delivered and prevent overbooking 
 - Support holidays, full-day closure, special opening hours and temporary closure, including an impact preview for existing appointments.
 - Allow location-specific staff, services and prices even if the launch plan exposes only one active location.
 
+#### Google-powered locations (user-approved refinement, 2026-10-12)
+
+Use the existing setup and Locations workflows for supported Places (New) search,
+reviewed structured/manual addresses, interactive Google entrance pins, primary
+branches, arrival/parking notes and location-local time zones. Owners must not be
+required to enter coordinates or complete a complex address questionnaire. Preserve
+legacy data, tenant permissions, paid location limits, hours and appointment truth.
+Customer booking skips single-branch selection, offers inline multi-branch search
+and explicitly requested nearby sorting, preserves eligible service choices, and
+uses assigned-location snapshots for confirmation, self-service, email/SMS and
+calendar directions. Both booking origins remain supported. Google-derived content
+storage, attribution, key restrictions and outage fallback must follow applicable
+provider rules. No Routes dependency, mandatory customer geolocation/account,
+Google Business Profile claim, billing change or WhatsApp promotion is approved.
+See [the location module](modules/location-intelligence.md) for the implementation
+contract and [Google Cloud setup](deployment/google-maps.md) for deployment.
+
 #### Resources
 
 - Create reusable resource types such as barber chair, salon station, treatment room, nail station, wash basin and equipment.
@@ -737,8 +754,18 @@ one calculator with exact component totals, yearly upfront billing and clear
 counting rules. Save validated signup quantities/cadence as preferences for later
 review; they do not create paid access or authorize a charge.
 
-- Base includes one active location and one active bookable staff profile; each
-  extra location and bookable staff adds the published local unit rate.
+Approved owner upgrade, 2026-10-12 (ADR-063): retain USD 29/month base and
+USD 19/month per additional location. Replace flat additional-staff pricing with
+progressive business-wide bands: first bookable staff included, staff 2–5 USD 9
+each, 6–10 USD 6 each, and 11 onward USD 4 each. Earlier staff retain their band
+rate. Annual billing charges exactly ten monthly subscription amounts (two
+months free, approximately 16.7% savings). Use integer minor-unit arithmetic.
+Public discovery leads with the starting price and trial, followed by core
+features, transparent growth pricing and an optional collapsed estimator.
+Keep existing paid terms until explicit reviewed confirmation at renewal.
+
+- Base includes one active location and one active bookable staff profile; extra
+  locations use the location unit rate and extra staff use progressive bands.
 - Count a person once across branches. Login-only administrative users, inactive
   staff and physical chairs do not consume purchased staff capacity.
 - Show the complete recurring amount, component breakdown, cadence, tax treatment,
@@ -756,8 +783,8 @@ review; they do not create paid access or authorize a charge.
   separate authorities. SMS monthly windows apply even to annual subscriptions.
 - Retain a time-limited trial, self-service conversion and term-end cancellation.
 - Country prices, annual savings, text allowances and pack amounts need separate
-  commercial approval. ADR-056 records owner approval of USD 29/19/9 monthly
-  and USD 290/190/90 yearly, before tax. New subscriptions offer verified USD
+  commercial approval. ADR-063 supersedes ADR-056’s flat additional-staff rate;
+  base/location amounts remain USD 29/19 monthly and USD 290/190 yearly, before tax. New subscriptions offer verified USD
   rates regardless of operating country; business and appointment currencies
   remain unchanged. Other local rates and paid text packs remain unapproved.
 - State appointment payment processing fees separately from SaaS subscription fees.

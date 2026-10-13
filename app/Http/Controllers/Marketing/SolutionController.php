@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Controller;
-use Inertia\Inertia;
+use App\Support\Seo\PublicPage;
 use Inertia\Response;
 
 class SolutionController extends Controller
@@ -21,7 +21,7 @@ class SolutionController extends Controller
                 'accent' => $solution['accent'],
             ])->values();
 
-        return Inertia::render('Marketing/Solutions/Index', [
+        return PublicPage::render('Marketing/Solutions/Index', [
             'solutions' => $solutions,
             'seo' => [
                 'title' => 'Software for appointment-led service businesses | ClipperDesk',
@@ -39,8 +39,8 @@ class SolutionController extends Controller
         $content = $solutions[$solution];
         $features = config('frontsite.features');
 
-        return Inertia::render('Marketing/Solutions/Show', [
-            'solution' => [...$content, 'slug' => $solution],
+        return PublicPage::render('Marketing/Solutions/Show', [
+            'solution' => [...collect($content)->except('requirements')->all(), 'slug' => $solution],
             'features' => collect($content['features'])->map(fn (string $slug): array => [
                 'slug' => $slug,
                 'label' => $features[$slug]['label'],

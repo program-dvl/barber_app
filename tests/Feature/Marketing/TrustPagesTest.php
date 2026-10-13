@@ -17,8 +17,8 @@ it('publishes factual company and security pages without invented assurance', fu
 it('keeps stable legal acceptance routes and publishes substantive versioned review drafts', function () {
     $this->get(route('terms.show'))->assertOk()->assertInertia(fn (Assert $page) => $page
         ->component('TermsOfService')
-        ->where('document.version', '0.3-review')
-        ->where('document.effective_at', 'Pending legal and Product approval')
+        ->where('document.version', '0.4-review')
+        ->where('document.effective_at', 'Not yet effective')
         ->where('document.canonical', route('terms.show'))
         ->where('seo.canonical', route('terms.show'))
         ->where('terms', fn (string $terms) => str_contains($terms, 'Plans, trials, subscriptions and billing')
@@ -33,14 +33,14 @@ it('publishes a Stripe-aware refund policy with a clear request and timing frame
         ->assertHeader('X-Robots-Tag', 'noindex, follow, noarchive')
         ->assertInertia(fn (Assert $page) => $page
             ->component('RefundPolicy')
-            ->where('document.version', '0.2-review')
+            ->where('document.version', '0.3-review')
             ->where('document.canonical', route('refund.show'))
             ->where('seo.canonical', route('refund.show'))
             ->where('refund', fn (string $refund) => str_contains($refund, 'Clipperdesk subscription cancellations and refunds')
                 && str_contains($refund, 'Salon appointments, deposits and sale cancellations')
                 && str_contains($refund, '5 to 10 business days')
                 && str_contains($refund, 'original payment method')
-                && str_contains($refund, 'without a certified end-to-end Stripe refund executor')));
+                && str_contains($refund, 'does not send money to a bank or card provider')));
 });
 
 it('links the refund policy from evaluation checkout and the public footer', function () {

@@ -3,20 +3,23 @@
 Updated: 2026-10-12. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
 [FR-13](../product-requirements.md#fr-13-notifications-and-communication),
 FR-19, FR-20 and [PRD §9](../product-requirements.md#9-subscription-packaging-and-commercial-rules).
-See ADR-029/038/041/054/056/057/061 and `../stripe-billing.md`.
+See ADR-029/038/041/054/056/057/061/063 and `../stripe-billing.md`.
 
 ## Approved pricing contract
 
 One core software plan. The recurring amount is base (one location and one
 bookable staff profile) plus extra locations times the location rate plus extra
-bookable staff times the staff rate. An active StaffProfile counts once across
+bookable staff priced progressively by their position in the business-wide team. An active StaffProfile counts once across
 branches. Login-only reception/admin users, inactive profiles and physical chairs
 do not count. Existing active-location and staff entitlement guards remain the
 server authority. Archive/deactivate preserves history; purchasing capacity does
 not create staff or branches.
 
 The owner approved USD-only software billing on 2026-10-11 (ADR-056): monthly
-USD 29 base / 19 extra location / 9 extra staff, yearly USD 290 / 190 / 90.
+USD 29 base / 19 extra location. ADR-063 (2026-10-12) replaces flat staff pricing:
+first person included, positions 2–5 USD 9 each, 6–10 USD 6 each, 11+ USD 4 each.
+Annual component amounts are exactly ten times monthly; the full annual amount
+is charged upfront, with a rounded monthly equivalent displayed separately.
 Only approved, remotely verified immutable rates are public. The default USD
 pricing mode selects the US rate card for new businesses regardless of operating
 country. Business/sales currencies remain unchanged. Existing paid currency or
@@ -55,6 +58,13 @@ not grant access. Provider state must be verified by signed webhooks or an
 owner-authorized provider read; stale events cannot overwrite newer state.
 
 New purchases use three licensed recurring Stripe items, omitting zero addons.
+The staff Price is graduated with additional-staff bounds 4/9/infinity and unit
+amounts 900/600/400 cents monthly, 9000/6000/4000 annually. Quantity is total
+bookable staff minus one. Verification expands and checks every tier; webhook
+projection accepts verified tiered/graduated IDs without requiring expanded tiers.
+Per-unit staff Prices remain supported only for retained immutable cards.
+An owner may explicitly select current pricing and review/confirm a migration;
+all rate-card switches take effect at renewal. Quotes alone never change access.
 Same-interval increases use pending-if-incomplete with immediate proration.
 Decreases, mixed increases/decreases, interval changes and cheaper migrations are
 scheduled at renewal. Owners must first fit active resources into the requested
@@ -113,7 +123,7 @@ operational gate is met. No refunds or real provider sends were executed locally
    rollback of financial history. Take the normal verified backup first.
 3. Configure the intended test/live Stripe account and run
    `billing:verify-capacity-rates US --provision` (live mutations require `--force`).
-   This creates/reuses and verifies six components, then installs local mappings
+   This creates/reuses and verifies six components (four per-unit and two graduated staff Prices), then installs local mappings
    transactionally. Explicit configured IDs can instead use `--apply` (read-only
    provider verification). Command-managed IDs reload from matching rate cards;
    changing amounts/features never silently reuses a mismatched fingerprint.
@@ -139,3 +149,14 @@ independent accessibility. See project status for the actual verified results.
 The [public pricing page](public-pricing.md) shares the capacity rates and estimate
 helpers. Initial trial selection can reuse validated signup preferences, while
 paid/pending capacity and the server billing review remain authoritative.
+
+
+## Progressive pricing upgrade
+
+Deploy the new revision and provision its Stripe mappings before publishing new
+purchasable rates. No additional schema migration is required for progressive
+terms: existing JSON rate cards/snapshots retain their original terms. See the
+[rollout and migration steps](../deployment/subscription-billing-stripe.md#progressive-pricing-upgrade-2026-10-12).
+The old rate card is not rewritten, archived or mass-swapped. Included monthly
+SMS remains 100 credits per purchased bookable staff member; a team of 20 keeps
+2,000. Existing overrides and retained-plan allowances stay authoritative.

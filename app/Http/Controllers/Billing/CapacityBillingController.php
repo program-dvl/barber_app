@@ -25,8 +25,8 @@ class CapacityBillingController extends Controller
     {
         $this->authorizeBilling($request, $business);
         $data = $request->validate(['market' => ['required', 'string', 'size:2'], 'billing_interval' => ['required', 'in:monthly,annual'],
-            'locations' => ['required', 'integer', 'min:1'], 'staff' => ['required', 'integer', 'min:1']]);
-        $change = $manager->review($business, $request->user(), $data['market'], $data['billing_interval'], $data['locations'], $data['staff']);
+            'locations' => ['required', 'integer', 'min:1'], 'staff' => ['required', 'integer', 'min:1'], 'use_current_rates' => ['sometimes', 'boolean']]);
+        $change = $manager->review($business, $request->user(), $data['market'], $data['billing_interval'], $data['locations'], $data['staff'], (bool) ($data['use_current_rates'] ?? false));
 
         return response()->json($this->present($change));
     }

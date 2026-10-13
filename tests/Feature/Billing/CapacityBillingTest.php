@@ -7,6 +7,7 @@ use App\Domain\Billing\Models\BillingPlan;
 use App\Domain\Billing\Models\BillingPlanPrice;
 use App\Domain\Billing\Models\BillingRateCard;
 use App\Domain\Billing\Models\SmsCreditPurchase;
+use App\Domain\Billing\Providers\StripeSubscriptionProvider;
 use App\Domain\Billing\Services\CapacityBillingManager;
 use App\Domain\Billing\Services\CapacityPricingCatalog;
 use App\Domain\Billing\Services\CapacityStripeGateway;
@@ -81,9 +82,10 @@ function capacityProvider(BillingRateCard $card, int $locations = 1, int $staff 
     foreach (app(CapacityPricingCatalog::class)->items($card->terms, $locations, $staff) as $index => $item) {
         $role = $index === 0 ? 'base' : ($item['price'] === $card->terms['location_price_id'] ? 'location' : 'staff');
         $items[] = ['id' => 'si_'.$role, 'quantity' => $item['quantity'], 'price' => ['id' => $item['price'],
-            'currency' => strtolower($card->currency), 'unit_amount' => $card->terms[$role.'_minor'],
+            'currency' => strtolower($card->currency),
+            ...(($role === 'staff' && ! empty($card->terms['staff_tiers'])) ? ['unit_amount' => null, 'billing_scheme' => 'tiered', 'tiers_mode' => 'graduated'] : ['unit_amount' => $card->terms[$role.'_minor']]),
             'recurring' => ['interval' => $card->billing_interval === 'annual' ? 'year' : 'month', 'interval_count' => 1]],
-            'current_period_start' => now()->subDays(10)->timestamp, 'current_period_end' => now()->addDays(20)->timestamp];
+            'current_period_start' => now()->subDays(10)->timestamp, 'current_period_end' => ($card->billing_interval === 'annual' ? now()->subDays(10)->addYear() : now()->addDays(20))->timestamp];
     }
 
     return $items;
@@ -92,7 +94,7 @@ function capacityProvider(BillingRateCard $card, int $locations = 1, int $staff 
 it('prices solo shops and larger teams without rounding or staff caps', function (int $locations, int $staff, int $total) {
     $quote = app(CapacityPricingCatalog::class)->quote('US', 'monthly', $locations, $staff);
     expect($quote['total_minor'])->toBe($total)->and($quote['ready'])->toBeFalse();
-})->with([[1, 1, 2900], [1, 3, 4700], [1, 8, 9200], [3, 20, 23800], [5, 50, 54600]]);
+})->with([[1, 1, 2900], [1, 3, 4700], [1, 2, 3800], [1, 5, 6500], [1, 6, 7100], [1, 10, 9500], [1, 11, 9900], [1, 20, 13500], [3, 20, 17300], [4, 20, 19200], [5, 50, 33100]]);
 
 it('does not present draft country prices as purchasable public prices', function () {
     expect(app(CapacityPricingCatalog::class)->present()['available'])->toBeFalse()
@@ -174,7 +176,7 @@ it('identifies the base item independently of provider item order', function () 
     $card = capacityRate();
     $items = array_reverse(capacityProvider($card, 3, 20));
     $result = app(CapacitySubscriptionProjector::class)->resolve($items);
-    expect($result['quote']['total_minor'])->toBe(23800)->and($result['quote']['locations'])->toBe(3)->and($result['quote']['staff'])->toBe(20);
+    expect($result['quote']['total_minor'])->toBe(17300)->and($result['quote']['locations'])->toBe(3)->and($result['quote']['staff'])->toBe(20);
 });
 
 it('rejects unknown extra items mismatched currency and duplicate components', function (string $kind) {
@@ -287,7 +289,7 @@ it('counts GSM extensions unicode and emojis as actual SMS segments', function (
 it('shows the total capacity charge rather than just the base item on billing', function () {
     [$owner,$business] = capacityFixture(3, 20);
     $this->actingAs($owner)->get(route('business.billing.show', $business))->assertInertia(fn (Assert $page) => $page
-        ->where('subscription.price.amount_minor', 23800)->where('entitlements', fn ($items) => $items['staff.max'] === 20 && $items['messaging.monthly_allowance'] === 2000)
+        ->where('subscription.price.amount_minor', 17300)->where('entitlements', fn ($items) => $items['staff.max'] === 20 && $items['messaging.monthly_allowance'] === 2000)
         ->where('subscription.capacity.locations', 3)->where('smsCredits', 0));
 });
 
@@ -388,6 +390,9 @@ function withCapacityStripeTransport(array $subscription, callable $operation): 
         {
             $this->requests[] = ['method' => $method, 'url' => $url, 'headers' => $headers, 'params' => $params];
             $object = str_contains($url, 'subscription_schedules') ? ['object' => 'subscription_schedule', 'id' => 'sub_sched_capacity'] : $this->subscription;
+            if ($method === 'post' && str_contains($url, '/checkout/sessions')) {
+                $object = ['object' => 'checkout.session', 'id' => 'cs_graduated_sdk', 'url' => 'https://checkout.stripe.com/graduated'];
+            }
 
             return [json_encode($object), 200, []];
         }
@@ -402,7 +407,7 @@ function withCapacityStripeTransport(array $subscription, callable $operation): 
 
 it('sends pending payment and fixed proration with all component quantities through the Stripe SDK', function () {
     [$owner,$business,$subscription,$card] = capacityFixture(2, 3);
-    $quote = app(CapacityPricingCatalog::class)->quote('US', 'monthly', 3, 5, $card);
+    $quote = app(CapacityPricingCatalog::class)->quote('US', 'monthly', 3, 20, $card);
     $quote['proration_date'] = now()->timestamp;
     $change = BillingCapacityChange::create(['business_id' => $business->id, 'business_subscription_id' => $subscription->id, 'actor_user_id' => $owner->id, 'subscription_version' => $subscription->version, 'kind' => 'immediate', 'status' => 'submitted', 'quote' => $quote, 'expires_at' => now()->addMinutes(10)]);
     $object = ['object' => 'subscription', 'id' => $subscription->provider_subscription_id, 'customer' => $subscription->provider_customer_id, 'status' => 'active', 'cancel_at_period_end' => false, 'pending_update' => null, 'schedule' => null, 'items' => ['object' => 'list', 'data' => capacityProvider($card, 2, 3)], 'discounts' => []];
@@ -411,7 +416,7 @@ it('sends pending payment and fixed proration with all component quantities thro
         $request = $client->requests[1]['params'];
         expect($request['payment_behavior'])->toBe('pending_if_incomplete')->and($request['proration_date'])->toBe(now()->timestamp)
             ->and($request['proration_behavior'])->toBe('always_invoice')->and($request['items'][1])->toBe(['id' => 'si_location', 'quantity' => 2])
-            ->and($request['items'][2])->toBe(['id' => 'si_staff', 'quantity' => 4]);
+            ->and($request['items'][2])->toBe(['id' => 'si_staff', 'quantity' => 19]);
     });
 });
 
@@ -451,3 +456,88 @@ it('resumes an open checkout and releases the request only after provider expiry
     });
     expect($subscription->fresh()->status->value)->toBe('trialing')->and(BillingCheckoutAttempt::count())->toBe(1);
 })->with(['open', 'expired']);
+
+it('charges exactly ten months for annual progressive capacity', function (int $locations, int $staff, int $monthly) {
+    $catalog = app(CapacityPricingCatalog::class);
+    expect($catalog->quote('US', 'monthly', $locations, $staff)['total_minor'])->toBe($monthly)
+        ->and($catalog->quote('US', 'annual', $locations, $staff)['total_minor'])->toBe($monthly * 10);
+})->with([[1, 1, 2900], [1, 2, 3800], [1, 5, 6500], [1, 6, 7100], [1, 10, 9500], [1, 11, 9900], [1, 20, 13500], [4, 20, 19200], [5, 50, 33100]]);
+
+it('rejects invalid capacity before quoting or invoking Stripe', function (int $locations, int $staff) {
+    expect(fn () => app(CapacityPricingCatalog::class)->quote('US', 'monthly', $locations, $staff))->toThrow(ValidationException::class);
+})->with([[0, 1], [1, 0], [-1, 1], [1, -1], [1001, 1], [1, 10001]]);
+
+it('preserves immutable flat staff terms and allows only a reviewed renewal migration', function () {
+    [$owner, $business, $subscription, $modern] = capacityFixture(1, 20);
+    $catalog = app(CapacityPricingCatalog::class);
+    $terms = $modern->terms;
+    unset($terms['staff_tiers']);
+    $terms['revision'] = 'retained-flat';
+    foreach (['base', 'location', 'staff'] as $role) {
+        $terms[$role.'_price_id'] = 'price_retained_'.$role;
+    }
+    $price = BillingPlanPrice::create(['billing_plan_id' => $subscription->billing_plan_id, 'provider' => 'stripe', 'provider_price_id' => $terms['base_price_id'], 'currency' => 'USD', 'billing_interval' => 'monthly', 'amount_minor' => 2900, 'is_active' => true, 'effective_from' => now()->subDays(2)]);
+    $legacy = BillingRateCard::create(['fingerprint' => $catalog->fingerprint($terms), 'market' => 'US', 'currency' => 'USD', 'revision' => $terms['revision'], 'billing_interval' => 'monthly', 'billing_plan_price_id' => $price->id, 'terms' => $terms, 'verified_at' => now()]);
+    $quote = $catalog->quote('US', 'monthly', 1, 20, $legacy);
+    $subscription->update(['billing_plan_price_id' => $price->id, 'billing_rate_card_id' => $legacy->id, 'capacity_snapshot' => $quote]);
+    expect($quote['total_minor'])->toBe(20000)->and($quote['sms_monthly_allowance'])->toBe(2000);
+    expect(app(CapacitySubscriptionProjector::class)->resolve(capacityProvider($legacy, 1, 20))['quote']['total_minor'])->toBe(20000);
+    $this->mock(CapacityStripeGateway::class)->shouldReceive('preview')->once()->withArgs(fn ($s, $q, $kind) => $q['total_minor'] === 20900 && $kind === 'immediate')->andReturn(['due_today_minor' => 600, 'currency' => 'USD', 'tax_minor' => 0]);
+    $retained = app(CapacityBillingManager::class)->review($business, $owner, 'US', 'monthly', 1, 21);
+    expect($retained->quote['revision'])->toBe('retained-flat');
+    $this->mock(CapacityStripeGateway::class)->shouldReceive('preview')->once()->withArgs(fn ($s, $q, $kind) => $q['total_minor'] === 13500 && $kind === 'renewal')->andReturn(['due_today_minor' => 0, 'currency' => 'USD', 'tax_minor' => null]);
+    $this->actingAs($owner)->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => 'monthly', 'locations' => 1, 'staff' => 20, 'use_current_rates' => true, 'total_minor' => 1])
+        ->assertOk()->assertJsonPath('kind', 'renewal')->assertJsonPath('quote.total_minor', 13500);
+    expect($subscription->fresh()->capacity_snapshot['total_minor'])->toBe(20000)->and($legacy->fresh()->terms)->toBe($terms);
+});
+
+it('rejects volume pricing and malformed progressive provider evidence', function (string $kind) {
+    $card = capacityRate();
+    $items = capacityProvider($card, 1, 20);
+    if ($kind === 'volume') {
+        $items[1]['price']['tiers_mode'] = 'volume';
+    }
+    if ($kind === 'per_unit') {
+        $items[1]['price']['billing_scheme'] = 'per_unit';
+    }
+    if ($kind === 'tiers') {
+        $items[1]['price']['tiers'] = [['up_to' => 4, 'unit_amount' => 900], ['up_to' => 9, 'unit_amount' => 600], ['up_to' => null, 'unit_amount' => 500]];
+    }
+    expect(app(CapacitySubscriptionProjector::class)->resolve($items))->toBeNull();
+})->with(['volume', 'per_unit', 'tiers']);
+
+it('fails closed on malformed progressive pricing configuration', function (array $tiers) {
+    config(['capacity-billing.markets.US.monthly.staff_tiers' => $tiers]);
+    expect(fn () => app(CapacityPricingCatalog::class)->quote('US', 'monthly', 1, 20))->toThrow(ValidationException::class);
+})->with([
+    [[]],
+    [[['up_to' => 4, 'unit_minor' => 900]]],
+    [[['up_to' => 4, 'unit_minor' => 900], ['up_to' => 3, 'unit_minor' => 600], ['up_to' => null, 'unit_minor' => 400]]],
+    [[['up_to' => null, 'unit_minor' => -1]]],
+    [[['up_to' => null, 'unit_minor' => 4.5]]],
+]);
+
+it('uses server priced graduated items for annual Stripe checkout and preserves the trial until provider confirmation', function () {
+    [$owner, $business, $subscription, $card] = capacityFixture(1, 1, 'annual');
+    $subscription->update(['provider_subscription_id' => null, 'status' => 'trialing', 'capacity_snapshot' => null, 'billing_rate_card_id' => null]);
+    $quote = app(CapacityPricingCatalog::class)->quote('US', 'annual', 5, 50, $card);
+    $attempt = BillingCheckoutAttempt::create(['business_id' => $business->id, 'business_subscription_id' => $subscription->id, 'created_by_user_id' => $owner->id,
+        'billing_plan_price_id' => $card->billing_plan_price_id, 'provider' => 'stripe', 'provider_transaction_id' => 'pending_graduated_sdk', 'status' => 'pending', 'expires_at' => now()->addHour(), 'capacity_quote' => $quote]);
+    withCapacityStripeTransport([], function ($client) use ($business, $card, $attempt) {
+        $result = app(StripeSubscriptionProvider::class)->createCheckout($business, $attempt->price, $attempt, 'https://example.test/success', 'https://example.test/cancel');
+        expect($result['provider_session_id'])->toBe('cs_graduated_sdk');
+        $params = $client->requests[0]['params'];
+        expect($params['line_items'])->toBe([['price' => $card->terms['base_price_id'], 'quantity' => 1], ['price' => $card->terms['location_price_id'], 'quantity' => 4], ['price' => $card->terms['staff_price_id'], 'quantity' => 49]])
+            ->and($params['mode'])->toBe('subscription')->and($params['allow_promotion_codes'])->toBe('false');
+    });
+    expect($quote['total_minor'])->toBe(331000)->and($subscription->fresh()->status->value)->toBe('trialing')->and($subscription->fresh()->capacity_snapshot)->toBeNull();
+    $attempt->update(['provider_transaction_id' => 'cs_graduated_sdk']);
+    app(StripeWebhookProcessor::class)->receiveVerified(['id' => 'evt_graduated_checkout', 'type' => 'checkout.session.completed', 'created' => now()->timestamp,
+        'data' => ['object' => ['object' => 'checkout.session', 'id' => 'cs_graduated_sdk', 'mode' => 'subscription', 'subscription' => 'sub_graduated_paid', 'customer' => $subscription->provider_customer_id,
+            'client_reference_id' => $business->public_id, 'metadata' => ['business_public_id' => $business->public_id, 'billing_checkout_attempt_id' => $attempt->public_id, 'plan_price_id' => (string) $card->billing_plan_price_id]]]]);
+    expect($subscription->fresh()->status->value)->toBe('trialing')->and($attempt->fresh()->status)->toBe('processing');
+    $object = ['id' => 'sub_graduated_paid', 'object' => 'subscription', 'customer' => $subscription->provider_customer_id, 'status' => 'active',
+        'metadata' => ['business_public_id' => $business->public_id], 'items' => ['data' => capacityProvider($card, 5, 50)]];
+    expect(app(StripeWebhookProcessor::class)->synchronizeSubscriptionSnapshot($object, now()))->toBeTrue();
+    expect($subscription->fresh()->status->value)->toBe('active')->and($subscription->fresh()->capacity_snapshot['total_minor'])->toBe(331000);
+});

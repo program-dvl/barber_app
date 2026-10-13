@@ -1,4 +1,6 @@
 <script setup>
+import { inject as injectRoute } from 'vue';
+const route = injectRoute('route');
 import { ref } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/Profile/AuthenticationCard.vue';

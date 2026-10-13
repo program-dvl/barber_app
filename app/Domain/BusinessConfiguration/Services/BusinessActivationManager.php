@@ -13,7 +13,9 @@ use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\PlatformAccess\Models\Membership;
 use App\Domain\PlatformAccess\Models\StaffProfile;
+use App\Domain\SchedulingOperations\Models\Appointment;
 use App\Support\Audit\AuditWriter;
+use App\Support\Locations\LocationData;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -42,6 +44,12 @@ class BusinessActivationManager
                 $location = new Location(['business_id' => $lockedBusiness->getKey()]);
             }
 
+            if (($data['keep_hours'] ?? false) && ! $location->exists) {
+                throw ValidationException::withMessages(['working_days' => 'Set opening hours for your new location.']);
+            }
+            if ($location->exists && $location->time_zone !== $data['time_zone'] && Appointment::query()->where('business_id', $lockedBusiness->id)->where('location_id', $location->id)->where('starts_at_utc', '>', now())->whereNotIn('status', ['cancelled_by_shop', 'cancelled_by_client', 'completed', 'no_show', 'rescheduled'])->exists()) {
+                throw ValidationException::withMessages(['time_zone' => 'This branch has upcoming appointments. Keep its time zone until those appointments are resolved.']);
+            }
             $locationName = trim($data['name']);
             $duplicateName = $lockedBusiness->locations()
                 ->whereRaw('lower(name) = ?', [mb_strtolower($locationName)])
@@ -54,42 +62,54 @@ class BusinessActivationManager
             }
             $data['name'] = $locationName;
 
-            if ($location->exists && $lockedBusiness->configuration_published_at
+            if (! ($data['keep_hours'] ?? false) && $location->exists && $lockedBusiness->configuration_published_at
                 && $this->storedLocationWindows($location) !== $this->requestedWindows($data['working_days'], $data['opens_at'], $data['closes_at'])) {
                 throw ValidationException::withMessages([
                     'working_days' => 'Published opening-hour changes require an appointment impact preview before they can be applied.',
                 ]);
             }
 
-            $before = $location->exists ? $location->only(['name', 'address', 'time_zone', 'phone', 'email']) : [];
-            $location->fill(Arr::only($data, ['name', 'address', 'time_zone', 'phone', 'email']));
+            if ($location->exists && filled($data['location_revision'] ?? null) && ! hash_equals(LocationData::revision($location), $data['location_revision'])) {
+                throw ValidationException::withMessages(['location' => 'This location changed. Reload it before saving.']);
+            }
+            if (($data['is_primary'] ?? false)) {
+                $lockedBusiness->locations()->whereKeyNot($location->id ?? 0)->update(['is_primary' => false]);
+            }
+            $before = $location->exists ? $location->only(['name', 'address', 'time_zone', 'phone', 'email', ...LocationData::FIELDS]) : [];
+            $location->fill(Arr::only($data, ['name', 'address', 'time_zone', 'phone', 'email', ...LocationData::FIELDS]));
             $location->forceFill(['status' => 'active', 'is_active' => true])->save();
+            if ($location->is_primary || $lockedBusiness->locations()->where('is_active', true)->count() === 1) {
+                $before['business_address'] = $lockedBusiness->address;
+                $lockedBusiness->update(['address' => $location->address]);
+            }
             $membership->locations()->syncWithoutDetaching([
                 $location->getKey() => ['business_id' => $lockedBusiness->getKey()],
             ]);
 
-            $location->hours()->delete();
-            foreach (array_values(array_unique($data['working_days'])) as $day) {
-                LocationHour::query()->create([
-                    'business_id' => $lockedBusiness->getKey(),
-                    'location_id' => $location->getKey(),
-                    'day_of_week' => $day,
-                    'opens_at' => $data['opens_at'],
-                    'closes_at' => $data['closes_at'],
-                    'sequence' => 1,
-                ]);
-            }
+            if (! ($data['keep_hours'] ?? false) && $this->storedLocationWindows($location) !== $this->requestedWindows($data['working_days'], $data['opens_at'], $data['closes_at'])) {
+                $location->hours()->delete();
+                foreach (array_values(array_unique($data['working_days'])) as $day) {
+                    LocationHour::query()->create([
+                        'business_id' => $lockedBusiness->getKey(),
+                        'location_id' => $location->getKey(),
+                        'day_of_week' => $day,
+                        'opens_at' => $data['opens_at'],
+                        'closes_at' => $data['closes_at'],
+                        'sequence' => 1,
+                    ]);
+                }
 
+            }
             $this->audit->write(
                 'activation.location.saved',
                 $lockedBusiness,
                 target: $location,
                 before: $before,
                 after: [
-                    ...$location->only(['name', 'address', 'time_zone', 'phone', 'email']),
-                    'working_days' => array_values(array_unique($data['working_days'])),
-                    'opens_at' => $data['opens_at'],
-                    'closes_at' => $data['closes_at'],
+                    ...$location->only(['name', 'address', 'time_zone', 'phone', 'email', ...LocationData::FIELDS]),
+                    'business_address' => $lockedBusiness->address,
+                    'hours_preserved' => (bool) ($data['keep_hours'] ?? false),
+                    'hours' => $this->storedLocationWindows($location),
                 ],
             );
             $this->onboarding->saveStep($lockedBusiness, 'hours');

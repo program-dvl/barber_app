@@ -27,12 +27,28 @@ class CapacityPricingCatalog
                 throw ValidationException::withMessages(['market' => 'This rate card needs review.']);
             }
         }
+        if (array_key_exists('staff_tiers', $rates)) {
+            $previous = 0;
+            $tiers = $rates['staff_tiers'];
+            if (! is_array($tiers) || ! array_is_list($tiers) || empty($tiers)) {
+                throw ValidationException::withMessages(['market' => 'Progressive staff rates need review.']);
+            }
+            foreach ($tiers as $index => $tier) {
+                $bound = $tier['up_to'] ?? null;
+                if (! is_int($tier['unit_minor'] ?? null) || $tier['unit_minor'] < 1
+                    || ($index === array_key_last($tiers) ? $bound !== null : (! is_int($bound) || $bound <= $previous))) {
+                    throw ValidationException::withMessages(['market' => 'Progressive staff rates need review.']);
+                }
+                $previous = $bound ?? $previous;
+            }
+        }
         abort_unless(in_array($country['currency'] ?? '', ['USD', 'CAD', 'GBP', 'EUR', 'INR', 'AUD'], true), 422, 'Unsupported billing currency.');
 
         $terms = [
             'market' => strtoupper($market), 'currency' => $country['currency'],
             'revision' => $country['revision'], 'billing_interval' => $interval,
-            ...$rates, 'sms_per_staff' => (int) $country['sms_per_staff'],
+            ...$rates, 'included_locations' => (int) config('capacity-billing.included_locations'),
+            'included_staff' => (int) config('capacity-billing.included_staff'), 'sms_per_staff' => (int) $country['sms_per_staff'],
             'sms_routes' => (array) $country['sms_routes'], 'sms_packs' => (array) ($country['sms_packs'] ?? []),
             'features' => config('capacity-billing.features'),
         ];
@@ -77,7 +93,8 @@ class CapacityPricingCatalog
         $terms = $retainedCard?->terms ?? $this->terms($market, $interval);
         abort_unless($terms['market'] === strtoupper($market) && $terms['billing_interval'] === $interval, 422, 'The retained billing terms do not match.');
         $card = $retainedCard ?? $this->verified($market, $interval);
-        $total = $terms['base_minor'] + ($locations - 1) * $terms['location_minor'] + ($staff - 1) * $terms['staff_minor'];
+        $staffLines = $this->staffLines($terms, $staff);
+        $total = $terms['base_minor'] + max(0, $locations - ($terms['included_locations'] ?? 1)) * $terms['location_minor'] + array_sum(array_column($staffLines, 'total_minor'));
 
         return [
             'rate_card_id' => $card?->id, 'fingerprint' => $this->fingerprint($terms),
@@ -85,10 +102,71 @@ class CapacityPricingCatalog
             'billing_interval' => $interval, 'locations' => $locations, 'staff' => $staff,
             'total_minor' => $total, 'base_minor' => $terms['base_minor'],
             'location_minor' => $terms['location_minor'], 'staff_minor' => $terms['staff_minor'],
+            'staff_tiers' => $terms['staff_tiers'] ?? null, 'staff_lines' => $staffLines,
+            'included_locations' => $terms['included_locations'] ?? 1, 'included_staff' => $terms['included_staff'] ?? 1,
             'sms_monthly_allowance' => $terms['sms_per_staff'] * $staff,
             'sms_routes' => $terms['sms_routes'], 'features' => $terms['features'],
             'ready' => (bool) $card && (bool) config('capacity-billing.enabled'),
         ];
+    }
+
+    /** Cumulative bounds count additional staff; the first person is included. */
+    public function staffLines(array $terms, int $staff): array
+    {
+        $tiers = $terms['staff_tiers'] ?? [['up_to' => null, 'unit_minor' => $terms['staff_minor']]];
+        $included = $terms['included_staff'] ?? 1;
+        $lines = [];
+        $previous = 0;
+        foreach ($tiers as $tier) {
+            $quantity = max(0, min($staff - $included, $tier['up_to'] ?? ($staff - $included)) - $previous);
+            if ($quantity > 0) {
+                $lines[] = ['from' => $previous + $included + 1, 'to' => $previous + $quantity + $included,
+                    'quantity' => $quantity, 'unit_minor' => $tier['unit_minor'], 'total_minor' => $quantity * $tier['unit_minor']];
+            }
+            $previous = $tier['up_to'] ?? ($staff - $included);
+        }
+
+        return $lines;
+    }
+
+    /** Stripe owns recurring totals, invoices and proration using these immutable terms. */
+    public function stripePriceParameters(array $terms, string $role): array
+    {
+        if ($role === 'staff' && ! empty($terms['staff_tiers'])) {
+            return ['billing_scheme' => 'tiered', 'tiers_mode' => 'graduated',
+                'tiers' => array_map(fn ($tier) => ['up_to' => $tier['up_to'] ?? 'inf', 'unit_amount' => $tier['unit_minor']], $terms['staff_tiers'])];
+        }
+
+        return ['billing_scheme' => 'per_unit', 'unit_amount' => $terms[$role.'_minor']];
+    }
+
+    public function matchesStripePrice(array $price, array $terms, string $role, bool $requireTiers = false): bool
+    {
+        $graduated = $role === 'staff' && ! empty($terms['staff_tiers']);
+        if (($price['billing_scheme'] ?? 'per_unit') !== ($graduated ? 'tiered' : 'per_unit')
+            || ! empty($price['transform_quantity']) || ! empty($price['custom_unit_amount'])) {
+            return false;
+        }
+        if (! $graduated) {
+            return ($price['unit_amount'] ?? null) === $terms[$role.'_minor'];
+        }
+        if (($price['tiers_mode'] ?? null) !== 'graduated' || ($price['unit_amount'] ?? null) !== null) {
+            return false;
+        }
+        if (! isset($price['tiers'])) {
+            // Subscription webhook price objects omit expanded tiers. Their IDs must
+            // already match a remotely verified immutable rate card.
+            return ! $requireTiers;
+        }
+        $tiers = array_map(fn ($tier) => ['up_to' => $tier['up_to'] ?? null,
+            'unit_minor' => $tier['unit_amount'] ?? null], $price['tiers']);
+        foreach ($price['tiers'] as $tier) {
+            if (($tier['flat_amount'] ?? 0) != 0 || ($tier['flat_amount_decimal'] ?? '0') != 0 || (isset($tier['unit_amount_decimal']) && $tier['unit_amount_decimal'] != $tier['unit_amount'])) {
+                return false;
+            }
+        }
+
+        return $tiers === $terms['staff_tiers'];
     }
 
     public function lineItems(array $quote): array
@@ -102,11 +180,11 @@ class CapacityPricingCatalog
     public function items(array $terms, int $locations, int $staff): array
     {
         $items = [['price' => $terms['base_price_id'], 'quantity' => 1]];
-        if ($locations > 1) {
-            $items[] = ['price' => $terms['location_price_id'], 'quantity' => $locations - 1];
+        if ($locations > ($terms['included_locations'] ?? 1)) {
+            $items[] = ['price' => $terms['location_price_id'], 'quantity' => $locations - ($terms['included_locations'] ?? 1)];
         }
-        if ($staff > 1) {
-            $items[] = ['price' => $terms['staff_price_id'], 'quantity' => $staff - 1];
+        if ($staff > ($terms['included_staff'] ?? 1)) {
+            $items[] = ['price' => $terms['staff_price_id'], 'quantity' => $staff - ($terms['included_staff'] ?? 1)];
         }
 
         return $items;

@@ -36,8 +36,8 @@ class CapacitySubscriptionProjector
                 return null;
             }
         }
-        $locations = 1;
-        $staff = 1;
+        $locations = $card->terms['included_locations'] ?? 1;
+        $staff = $card->terms['included_staff'] ?? 1;
         foreach ($items as $item) {
             $id = data_get($item, 'price.id') ?? $item['price'];
             $quantity = $item['quantity'] ?? null;
@@ -57,11 +57,10 @@ class CapacitySubscriptionProjector
             }
             if (is_array($item['price'])) {
                 if (strtoupper($item['price']['currency'] ?? '') !== $card->currency
-                    || ($item['price']['unit_amount'] ?? null) !== $card->terms[$role.'_minor']
+                    || ! app(CapacityPricingCatalog::class)->matchesStripePrice($item['price'], $card->terms, $role)
                     || data_get($item, 'price.recurring.interval') !== ($card->billing_interval === 'annual' ? 'year' : 'month')
                     || data_get($item, 'price.recurring.interval_count', 1) !== 1
-                    || data_get($item, 'price.recurring.usage_type', 'licensed') !== 'licensed'
-                    || data_get($item, 'price.billing_scheme', 'per_unit') !== 'per_unit') {
+                    || data_get($item, 'price.recurring.usage_type', 'licensed') !== 'licensed') {
                     return null;
                 }
             }

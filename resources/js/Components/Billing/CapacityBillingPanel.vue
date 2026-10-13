@@ -22,7 +22,7 @@ async function review(estimate) {
     if (busy.value) return;
     error.value = ''; busy.value = 'review';
     try {
-        const response = await axios.post(url('capacity.review'), { market: estimate.market, billing_interval: estimate.billing_interval, locations: estimate.locations, staff: estimate.staff }, { signal: abort.signal });
+        const response = await axios.post(url('capacity.review'), { market: estimate.market, billing_interval: estimate.billing_interval, locations: estimate.locations, staff: estimate.staff, use_current_rates: estimate.use_current_rates || false }, { signal: abort.signal });
         reviewed.value = response.data; reviewDialog.value?.open();
     } catch (exception) { if (!axios.isCancel(exception)) fail(exception); }
     finally { busy.value = ''; }

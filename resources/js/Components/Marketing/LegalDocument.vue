@@ -48,7 +48,7 @@ const printDocument = () => window.print();
                             <ExclamationTriangleIcon class="mt-0.5 size-6 shrink-0 text-[var(--status-warning)]" aria-hidden="true" />
                             <div>
                                 <p class="font-extrabold text-[var(--text-strong)]">{{ document.status }}</p>
-                                <p class="mt-2 max-w-4xl text-sm leading-6 text-[var(--text-muted)]">This document is a substantive operating draft for named-owner review. It does not become a binding promise, privacy notice, or payment policy until the missing operator, contact, jurisdiction and approval details are completed and the draft status is removed.</p>
+                                <p class="mt-2 max-w-4xl text-sm leading-6 text-[var(--text-muted)]">This document is under review and is not yet effective. An approved version will state its effective date.</p>
                             </div>
                         </div>
                     </div>
@@ -57,7 +57,7 @@ const printDocument = () => window.print();
                         <div class="border-b border-[var(--border-subtle)] p-5 sm:border-r xl:border-b-0"><dt class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">Version</dt><dd class="mt-2 font-semibold text-[var(--text-strong)]">{{ document.version }}</dd></div>
                         <div class="border-b border-[var(--border-subtle)] p-5 xl:border-b-0 xl:border-r"><dt class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">Last reviewed</dt><dd class="mt-2 font-semibold text-[var(--text-strong)]">{{ document.reviewed_at }}</dd></div>
                         <div class="border-b border-[var(--border-subtle)] p-5 sm:border-b-0 sm:border-r"><dt class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">Effective date</dt><dd class="mt-2 font-semibold text-[var(--text-strong)]">{{ document.effective_at }}</dd></div>
-                        <div class="p-5"><dt class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">Approval owner</dt><dd class="mt-2 font-semibold leading-6 text-[var(--text-strong)]">{{ document.owner }}</dd></div>
+                        <div class="p-5"><dt class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">Review status</dt><dd class="mt-2 font-semibold leading-6 text-[var(--text-strong)]">{{ document.owner }}</dd></div>
                     </dl>
 
                     <div class="mt-12 grid gap-12 lg:grid-cols-[15rem_minmax(0,48rem)] lg:justify-center xl:gap-16">

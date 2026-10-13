@@ -1,0 +1,36 @@
+full-tests.txt
+Tests:    30 skipped, 741 passed (6868 assertions)
+  Duration: 55.55s
+
+
+
+frontend-tests.txt
+ℹ tests 98
+ℹ suites 0
+ℹ pass 98
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 221.682375
+
+
+budgets.txt
+
+> check:frontsite-budgets
+> node scripts/check-frontsite-budgets.mjs
+
+Frontsite budgets passed for 17 route entries.
+
+
+build.txt
+Client and SSR production builds passed on Node 24.19.0.
+Existing build warnings: DaisyUI @property optimization warning; Manrope font files deferred to runtime (files exist and browser media checks pass).
+kB │ gzip: 42.74 kB
+bootstrap/ssr/assets/Onboarding-DjmXSre3.js                      342.57 kB │ gzip: 49.24 kB
+
+✓ built in 580ms
+
+
+Browser: 47 URLs × 360/768/1440 = 141 visits, no violations or page errors.
+The 141-visit sweep predates the explicit SSR route-helper fix. The final focused server HTML/mobile check passed after that fix. A further full crawler pass was declined at permission.

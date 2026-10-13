@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Controller;
-use Inertia\Inertia;
+use App\Support\Seo\PublicPage;
 use Inertia\Response;
 
 class TrustController extends Controller
 {
     public function company(): Response
     {
-        return Inertia::render('Marketing/Company', [
+        return PublicPage::render('Marketing/Company', [
             'legalIdentity' => $this->legalIdentity(),
             'seo' => [
-                'title' => 'About Clipperdesk service business software',
-                'description' => 'Learn why Clipperdesk connects booking, daily operations and reporting for appointment-led service businesses—and see the limits kept in view.',
+                'title' => 'About ClipperDesk | Service business management software',
+                'description' => 'Learn how ClipperDesk connects appointments, client records, team schedules and recorded sales for independent professionals and growing service businesses.',
                 'canonical' => route('marketing.company'),
                 'image' => url('/images/marketing/editorial/company-story.webp'),
             ],
@@ -23,19 +23,17 @@ class TrustController extends Controller
 
     public function security(): Response
     {
-        return Inertia::render('Marketing/Security', [
+        return PublicPage::render('Marketing/Security', [
             'legalIdentity' => $this->legalIdentity(),
             'controls' => [
-                ['title' => 'Tenant and permission boundaries', 'body' => 'Business-owned records are resolved through tenant context, membership permissions and server-side entitlement checks; identifiers alone do not grant access.', 'state' => 'Implemented and covered by isolation tests'],
-                ['title' => 'Account security', 'body' => 'Account access uses email/password or optional Google Sign-In, with optional TOTP and recovery codes. The separate support workspace requires confirmed TOTP; the internal admin panel uses verified email, active administrator roles and session limits.', 'state' => 'Implemented; independent identity audit pending'],
-                ['title' => 'Sensitive links and files', 'body' => 'Appointment, form and file actions use purpose-bound expiring tokens. Private attachments use tenant-scoped storage and expiring delivery.', 'state' => 'Implemented; malware scanning remains a launch blocker'],
-                ['title' => 'Change and financial history', 'body' => 'Sensitive changes produce audit evidence, and completed commerce corrections use append-only or compensating records rather than erasing history.', 'state' => 'Implemented and tested locally'],
-                ['title' => 'Provider and operational assurance', 'body' => 'Stripe payment processing, Amazon SES email and enabled Twilio SMS paths require target-environment verification. Historical Resend support and deferred WhatsApp adapters do not establish active production use.', 'state' => 'Production assurance requires deployment evidence'],
-                ['title' => 'Recovery and independent review', 'body' => 'Production backup/restore, disaster recovery, on-call monitoring, penetration testing and independent accessibility/security review are not yet evidenced.', 'state' => 'Open launch controls'],
+                ['title' => 'Separate business records', 'body' => 'Your business records are kept separate from other workspaces. Team members can access only the locations and records permitted by their role.'],
+                ['title' => 'Account protection', 'body' => 'Sign in with email and password or Google when enabled. Optional authenticator verification and recovery codes add protection to your account.'],
+                ['title' => 'Private links and attachments', 'body' => 'Appointment and form links expire and allow only their intended actions. Client photos and PDFs are restricted to authorised team members. Do not upload files from untrusted sources.'],
+                ['title' => 'A history of important changes', 'body' => 'Sensitive changes record who made them. Payment and refund adjustments keep the original transaction history.'],
             ],
             'seo' => [
-                'title' => 'Service business software security | Clipperdesk',
-                'description' => 'Review Clipperdesk tenant isolation, account security, audit history and sensitive-link controls alongside current assurance limits.',
+                'title' => 'Account and data security | ClipperDesk',
+                'description' => 'Understand ClipperDesk business data separation, role-based team access, account protection, private appointment links and payment change history.',
                 'canonical' => route('marketing.security'),
                 'image' => url('/images/marketing/editorial/security-trust.webp'),
             ],

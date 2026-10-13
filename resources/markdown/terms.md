@@ -31,10 +31,9 @@ requires counsel approval.
 
 ### 1.1 What Clipperdesk provides
 
-Clipperdesk is a web-based operating system for salons and barbershops. It helps
+Clipperdesk is web-based appointment scheduling and service business management software. It helps
 Business Customers manage configuration, staff access, scheduling, public
-booking, client records and consent evidence, communications, appointment
-payments, checkout, inventory and reporting. Available functions and limits
+booking, client records and consent evidence, enabled client notifications, received-payment records, checkout, inventory and reporting. Available functions and limits
 depend on the current plan, configuration, permissions, provider availability
 and release status.
 
@@ -100,18 +99,17 @@ business-specific policies govern the salon service relationship. These Clipperd
 
 The public Pricing page and the checkout review show the available plan,
 billing interval, currency, included capabilities and then-current price. A
-verified owner registration currently starts a 14-day trial without charging a
+verified owner registration currently starts a {{trial_days}}-day trial without charging a
 payment method. A plan selection made during registration is a preference only;
 the Business Customer reviews the actual order before payment.
 
 Unless the checkout says otherwise, paid subscriptions renew automatically for
 the same interval until cancelled. Monthly and annual prices are stated in USD
-in the approved server catalog. Applicable taxes, payment options and the party
+on the Pricing page and billing review. Applicable taxes, payment options and the party
 issuing the subscription invoice are displayed by the subscription payment
 provider at checkout.
 
-The current product architecture uses Stripe-hosted Checkout and the Stripe
-Customer Portal for Clipperdesk SaaS subscriptions. Stripe's privacy notice and
+Clipperdesk uses Stripe-hosted Checkout and the Stripe Customer Portal for Clipperdesk SaaS subscriptions. Stripe's privacy notice and
 applicable payment-service terms apply to information Stripe handles.
 Clipperdesk does not store full card numbers or security codes entered there.
 
@@ -132,8 +130,7 @@ invoice or completed transaction.
 ## 5. Salon-client bookings, payments and refunds
 
 Clipperdesk subscription billing is separate from payments a Salon Client makes
-to a Business Customer. The Platform's appointment-payment adapter is designed
-to use Stripe for eligible card or local payment collection. Cash, card, UPI,
+to a Business Customer. Checkout currently records payments received outside Clipperdesk. It does not charge cards or send refunds to a bank or card provider. Online deposit collection is not currently available. Cash, card, UPI,
 bank transfer, payment link, custom and pay-later records may also be maintained
 by the Business Customer.
 
@@ -145,11 +142,7 @@ quality, taxes, receipts, cancellations, no-shows and refund decisions. Stripe
 or another provider processes payment information under its own terms and
 privacy notice.
 
-Payment success is determined from verified provider evidence, not a browser
-success screen. The Platform is designed to prevent duplicate processing and
-to retain original payment, refund and correction records. Live Stripe refund,
-webhook and settlement certification remains required before production card
-collection. See the [Refund, Return and Cancellation Policy](/refund-policy)
+Original payment and correction records remain available when a Business Customer records an adjustment. See the [Refund, Return and Cancellation Policy](/refund-policy)
 for the proposed request and timing rules.
 
 <span id="acceptable-use"></span>
@@ -220,6 +213,9 @@ party receives ownership of the other party's marks.
 
 ## 9. Third-party services
 
+Clipperdesk includes optional Google Maps address-search, map and navigation features. Use of Google Maps features and content is subject to the then-current [Google Maps End User Additional Terms of Service](https://maps.google.com/help/terms_maps/) and [Google Privacy Policy](https://policies.google.com/privacy). Business Customers must review their public address, set accurate entrance details and provide arrival instructions where needed. Map navigation may end at a street or building rather than the precise entrance. Manual address entry and booking without customer geolocation remain available.
+
+
 The Platform depends on Google for optional sign-in, Stripe for enabled payments,
 and configured email, SMS, hosting or infrastructure providers. See the
 [Privacy Policy](/privacy-policy) for the operating provider disclosures. Their availability, buyer terms
@@ -237,13 +233,9 @@ Clipperdesk uses documented tenant boundaries, role-based access, secure action
 links, protected storage and append-only evidence for specified sensitive
 operations. These controls reduce risk but do not guarantee that the Platform
 is error-free, uninterrupted or immune from attack. The [Security page](/security)
-states the current evidence and open production controls; it does not claim a
-certification or uptime history.
+describes the available safeguards; it does not claim a certification or guaranteed uptime.
 
-Support channels, service levels, maintenance notices, security-reporting
-addresses and incident commitments must be stated only after accountable
-Operations and Security owners approve and operate them. No public support SLA
-is created by this draft.
+Contact {{privacy_email}} for support or security concerns. This draft does not provide a service-level or response-time guarantee.
 
 <span id="termination"></span>
 ## 11. Suspension, cancellation and termination
@@ -259,8 +251,7 @@ rights that accrued before termination, or records that must be retained. The
 current product lifecycle provides a dated export-availability window of up to
 30 days after subscription termination where the account remains eligible.
 This is not a promise to delete all Customer Data after 30 days. The final
-record-specific retention and anonymisation schedule remains blocked pending
-OPEN-10 approval.
+record-specific retention and anonymisation schedule remains under review. Requests are reviewed before any deletion is authorised.
 
 ## 12. Service disclaimers
 
@@ -277,20 +268,7 @@ the launch market. This review draft intentionally does not invent a final
 <span id="legal-terms"></span>
 ## 13. Liability, indemnities, governing law and disputes
 
-The following contract terms are required before this document can become
-effective but cannot be responsibly inferred from application code:
-
-- any additional legal registration details required for the operator;
-- governing law, courts or arbitration forum and a pre-dispute notice process;
-- legally appropriate warranty exclusions and service remedies;
-- a fair liability allocation and cap, including exceptions that cannot be
-  limited by law;
-- any mutual or Business Customer indemnities and claim-control process; and
-- official legal, privacy, security and customer-support notice channels.
-
-Named counsel and Product must supply and approve those clauses. Nothing
-in this draft excludes a right or remedy that applicable law does not permit
-the parties to exclude.
+Governing law, dispute procedures and liability terms remain under legal review. This draft is not an effective contract. Nothing in it excludes a right or remedy that applicable law does not permit the parties to exclude.
 
 ## 14. Changes, notices and complete agreement
 
@@ -306,7 +284,7 @@ a term once is not a permanent waiver. Invalid terms should be narrowed or
 removed without invalidating the rest where law allows. Neither party may
 assign the agreement except under the approved assignment clause.
 
-## 15. Contact and approval gate
+## 15. Contact
 
 Operator: **{{operator_name}}**. Postal contact: {{operator_address}}.
 Support and privacy contact: **{{privacy_email}}**. Separate legal-notice
@@ -314,7 +292,4 @@ arrangements and the final contract remain subject to review. Business Customers
 and account controls; Salon Clients should use the salon contact details and
 secure appointment link supplied with their booking.
 
-This draft may move to an effective version only after named Legal, Product,
-Privacy, Finance and Operations owners approve it, the Stripe provider
-roles match the live accounts, registration records the accepted version, and
-the public contact paths are tested.
+An effective version will state its approval status and effective date.

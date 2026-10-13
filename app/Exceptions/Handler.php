@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
+use App\Support\Seo\PublicPage;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
@@ -74,7 +75,19 @@ class Handler extends ExceptionHandler
         if (! $request->expectsJson() && in_array($response->getStatusCode(), [403, 404, 410, 500, 503], true)) {
             $request->attributes->set('force_noindex', true);
 
-            return Inertia::render('Error', ['status' => $response->getStatusCode()])->toResponse($request)->setStatusCode($response->getStatusCode());
+            $status = $response->getStatusCode();
+            $title = match ($status) {
+                403 => 'You do not have access to this page',
+                404 => 'Page not found',
+                410 => 'This page is no longer available',
+                503 => 'ClipperDesk is temporarily unavailable',
+                default => 'Something went wrong',
+            };
+
+            return PublicPage::render('Error', [
+                'status' => $status,
+                'seo' => ['title' => $title.' | ClipperDesk', 'description' => 'The requested page is unavailable. Return to ClipperDesk to continue or try again later.', 'canonical' => null],
+            ])->toResponse($request)->setStatusCode($status);
         }
 
         return $response;

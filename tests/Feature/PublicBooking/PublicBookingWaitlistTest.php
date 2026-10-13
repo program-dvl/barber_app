@@ -32,7 +32,9 @@ use App\Domain\SchedulingOperations\Models\CapacityHold;
 use App\Models\User;
 use App\Support\BookingUrl;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Validation\ValidationException;
 use Inertia\Testing\AssertableInertia as Assert;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -567,4 +569,51 @@ it('honors the accepted cancellation cutoff when the business later changes its 
     $this->travelTo($appointment->starts_at_utc->subMinutes(30));
     $this->postJson(route('public.appointment.availability', $token), ['date' => '2026-08-18'])->assertConflict()->assertJsonPath('code', 'CANCELLATION_CUTOFF');
     $this->travelBack();
+});
+
+it('exposes only eligible branches and preserves the assigned location snapshot across self-service rescheduling', function () {
+    $this->travelTo(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata'));
+    $path = publicBookingPath();
+    $path['location']->update(['address' => '18 Original Lane', 'entrance_latitude' => 12.97, 'entrance_longitude' => 77.59]);
+    $unavailable = Location::factory()->create(['business_id' => $path['business']->id, 'name' => 'No services branch', 'is_primary' => true]);
+    $catalog = app(PublicBookingService::class)->catalog($path['business']);
+    expect($catalog['locations'])->toHaveCount(1)->and($catalog['locations'][0]['public_id'])->toBe($path['location']->public_id);
+    $held = heldPublicFlow($path);
+    $result = app(PublicBookingService::class)->confirm($path['business'], $held['flow'], ['client_name' => 'Entrance guest', 'client_mobile' => '+919000000001', 'client_email' => 'entrance@example.test'], 'entrance-confirm');
+    expect($result['appointment']->location_id)->toBe($path['location']->id)->and($result['appointment']->location_snapshot['address'])->toBe('18 Original Lane');
+    $path['location']->update(['address' => '99 Updated Lane', 'entrance_latitude' => 13]);
+    $link = app(SecureAppointmentLinkService::class)->issue($result['appointment'], 'reschedule');
+    $resolved = app(SecureAppointmentLinkService::class)->resolve($link['token'], 'reschedule');
+    $replacement = app(AppointmentSelfService::class)->reschedule($resolved, $result['appointment']->starts_at_utc->addDays(1), 'entrance-reschedule');
+    expect($replacement->location_id)->toBe($path['location']->id)->and($replacement->location_snapshot['address'])->toBe('18 Original Lane')->and($replacement->location_snapshot['entrance_latitude'])->toBe('12.9700000');
+    $this->travelBack();
+});
+
+it('rejects services and staff that belong to another branch without bypassing tenant scheduling', function () {
+    $this->travelTo(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata'));
+    $path = publicBookingPath();
+    $branch = Location::factory()->create(['business_id' => $path['business']->id]);
+    $booking = app(PublicBookingService::class);
+    expect(fn () => $booking->search($path['business'], $branch->public_id, [$path['service']->public_id], null, '2026-08-18', '2026-08-18', 'auto'))->toThrow(ValidationException::class);
+    $path['service']->locations()->syncWithoutDetaching([$branch->id => ['business_id' => $path['business']->id, 'is_eligible' => true]]);
+    expect(fn () => $booking->search($path['business'], $branch->public_id, [$path['service']->public_id], $path['staff']->public_id, '2026-08-18', '2026-08-18', 'auto'))->toThrow(ModelNotFoundException::class);
+    expect(Appointment::query()->count())->toBe(0);
+    $this->travelBack();
+});
+
+it('requires fresh location review if the branch address changes while the customer holds a time', function () {
+    $this->travelTo(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata'));
+    $path = publicBookingPath();
+    $held = heldPublicFlow($path);
+    $path['location']->update(['address' => 'Changed while booking']);
+    expect(fn () => app(PublicBookingService::class)->confirm($path['business'], $held['flow'], ['client_name' => 'Location guest', 'client_mobile' => '+919000000001', 'client_email' => 'location@example.test'], 'changed-location-confirm'))->toThrow(BookingRuleViolation::class, 'location details');
+    expect(Appointment::query()->count())->toBe(0);
+    $this->travelBack();
+});
+
+it('permits user-initiated geolocation only on successful public booking pages', function () {
+    $this->withoutVite();
+    $path = publicBookingPath();
+    $this->get(route('booking.business.fallback', $path['business']->booking_slug))->assertOk()->assertHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), payment=(self)');
+    $this->get('/book/unknown-location-business')->assertNotFound()->assertHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(self)');
 });

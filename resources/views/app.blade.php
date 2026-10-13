@@ -7,7 +7,14 @@
         <meta name="theme-color" content="#0f172a">
         <link rel="icon" href="{{ config('brand.favicon') }}" type="image/svg+xml">
 
-        @include('seo.metatags', ['seo' => $page['props']['seo'] ?? null])
+        @inertiaHead
+        @unless($__inertiaSsrResponse)
+            <title data-inertia="">{{ $page['props']['seo']['title'] ?? $page['props']['seoDefaults']['title'] ?? config('brand.product_name') }}</title>
+            @include('seo.metatags', ['seo' => array_merge($page['props']['seoDefaults'] ?? [], $page['props']['seo'] ?? [])])
+            @if(!empty($page['props']['structuredData']))
+                <script type="application/ld+json" data-inertia="structured-data">{!! json_encode($page['props']['structuredData'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+            @endif
+        @endunless
         <!-- Scripts -->
         @routes
 
@@ -16,14 +23,9 @@
 
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
 
-        @inertiaHead
     </head>
     <body class="antialiased">
         @inertia
 
-        @php($structuredData = app(\App\Support\Seo\StructuredDataGraph::class)->for(request(), $page['props'] ?? []))
-        @if($structuredData)
-            <script type="application/ld+json">{!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
-        @endif
     </body>
 </html>

@@ -90,3 +90,5 @@ final step while preserving saved answers. See the
 [deployment recovery instructions](../deployment/public-booking.md#last-onboarding-step-returns-500-after-a-source-update).
 `GuidedOnboardingExperienceTest` reproduces the missing table, applies the
 migration twice, and verifies saved-answer recovery and duplicate-free completion.
+
+Google address search and entrance setup share the existing guided location step and Locations editor; the sole/primary branch maintains the business address summary. See [Locations](location-intelligence.md) and ADR-064. Coordinate entry is deliberately absent.

@@ -6,10 +6,10 @@
     <meta name="application-name" content="Clipperdesk">
     @inertiaHead
     @unless($__inertiaSsrResponse)
-        <title>{{ $seo['title'] }}</title>
+        <title data-inertia="">{{ $seo['title'] }}</title>
+        @include('seo.metatags', ['seo' => $seo])
     @endunless
     <link rel="icon" href="{{ config('brand.favicon') }}" type="image/svg+xml">
-    @include('seo.metatags', ['seo' => $seo])
     @routes
     @vite(['resources/js/app.js', 'resources/js/Pages/PrivacyPolicy.vue'])
 </head>

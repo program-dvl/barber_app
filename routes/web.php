@@ -208,19 +208,15 @@ Route::middleware('throttle:10,1')->where(['token' => '[A-Za-z0-9]{64}'])->group
 Route::get('/sitemap.xml', [SitemapController::class, 'xml'])->name('sitemap.xml');
 Route::get('/sitemap', [SitemapController::class, 'legacy'])->name('sitemap');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
-Route::get('changelog', [ChangelogController::class, 'index'])->name('changelog');
-
-// Demo Coming Soon Page
-Route::get('coming-soon', function () {
-    return Inertia::render('ComingSoon');
-})->name('coming-soon');
-
-Route::post('coming-soon', [ComingSoonController::class, 'index'])->name('coming-soon.store');
+// Retain route identities and historical records without publishing boilerplate.
+Route::get('changelog', fn () => abort(410))->name('changelog');
+Route::get('coming-soon', fn () => abort(410))->name('coming-soon');
+Route::post('coming-soon', fn () => abort(410))->name('coming-soon.store');
 
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{article:slug}', [BlogController::class, 'article'])->name('blog.article');
 
-Route::get('/roadmap', [RoadmapController::class, 'index'])->name('roadmap.index');
+Route::get('/roadmap', fn () => abort(410))->name('roadmap.index');
 
 if (app()->environment('local')) {
     Route::get('og-image/{title?}/{description?}', OgImageController::class)->name('og-image');
@@ -472,7 +468,7 @@ Route::middleware([
     Route::get('/invoices/{invoice}/download', DownloadInvoiceController::class)->name('invoices.download');
 
     // Roadmap authenticated routes
-    Route::post('/roadmap', [RoadmapController::class, 'store'])->name('roadmap.store');
-    Route::post('/roadmap/{roadmap}/vote', [RoadmapController::class, 'vote'])->name('roadmap.vote');
+    Route::post('/roadmap', fn () => abort(410))->name('roadmap.store');
+    Route::post('/roadmap/{roadmap}/vote', fn () => abort(410))->name('roadmap.vote');
 
 });

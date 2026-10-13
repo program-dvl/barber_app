@@ -34,7 +34,8 @@ class ApplyHttpSecurity
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-Frame-Options', 'DENY');
         $response->headers->set('Referrer-Policy', $response->headers->get('Referrer-Policy') === 'no-referrer' ? 'no-referrer' : 'strict-origin-when-cross-origin');
-        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(self)');
+        $geolocation = $response->getStatusCode() === 200 && $request->routeIs('booking.business', 'booking.business.fallback') ? '(self)' : '()';
+        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation='.$geolocation.', payment=(self)');
         $response->headers->set('X-Robots-Tag', $this->indexation->directive($request, $response));
 
         if (app()->environment('production') && $request->isSecure()) {

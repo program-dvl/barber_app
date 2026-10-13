@@ -14,12 +14,12 @@ it('crawls every curated sitemap URL as a canonical indexable 200 page', functio
         $path = parse_url($url, PHP_URL_PATH) ?: '/';
         $response = $this->get($path);
         $response->assertOk()->assertHeader('X-Robots-Tag', 'index, follow, max-image-preview:large')
-            ->assertSee('<link rel="canonical" href="'.$url.'">', false);
+            ->assertSee('<link rel="canonical" href="'.$url.'" data-inertia="canonical">', false);
     }
 });
 
 it('keeps attribution-like query values out of canonical identity', function () {
     $this->get('/pricing?utm_source=%3Cscript%3E&email=private%40example.test')
-        ->assertOk()->assertSee('<link rel="canonical" href="'.route('marketing.pricing').'">', false)
+        ->assertOk()->assertSee('<link rel="canonical" href="'.route('marketing.pricing').'" data-inertia="canonical">', false)
         ->assertDontSee('private@example.test', false)->assertDontSee('&lt;script&gt;', false);
 });

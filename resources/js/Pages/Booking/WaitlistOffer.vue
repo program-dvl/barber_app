@@ -1,4 +1,6 @@
 <script setup>
+import { inject as injectRoute } from 'vue';
+const route = injectRoute('route');
 import { useForm, usePage } from '@inertiajs/vue3';
 import AppButton from '@/Components/Product/AppButton.vue';
 import StatePanel from '@/Components/Product/StatePanel.vue';

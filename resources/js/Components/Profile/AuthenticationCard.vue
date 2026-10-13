@@ -6,7 +6,7 @@ defineProps({
 </script>
 
 <template>
-    <div :class="['flex flex-col', embedded ? 'items-stretch' : 'min-h-screen items-center pt-6 sm:justify-center sm:pt-0']">
+    <component :is="embedded ? 'div' : 'main'" :class="['flex flex-col', embedded ? 'items-stretch' : 'min-h-screen items-center pt-6 sm:justify-center sm:pt-0']">
         <div v-if="$slots.logo">
             <slot name="logo" />
         </div>
@@ -18,5 +18,5 @@ defineProps({
         ]">
             <slot />
         </div>
-    </div>
+    </component>
 </template>

@@ -1,6 +1,105 @@
 # Project status
 
-Status date: 2026-10-12
+## 2026-10-13 Public website content and SEO audit (ADR-065)
+
+- [x] Audited all 32 curated marketing URLs and 15 public utility/auth/legal/
+  retired/error URLs. Reviewed token-based booking/form/waitlist/invitation and
+  receipt route families against implementation and isolated regressions.
+- [x] Removed visible requirement evidence and excluded requirement mappings
+  from all feature/solution/use-case response props. Replaced internal release/
+  QA copy with customer workflows and accurate received-payment, deposit,
+  communication, privacy and regulated-industry limits.
+- [x] Quarantined the retained roadmap, changelog and coming-soon public/write
+  endpoints with 410 responses, preserving stored records. Editorial publication
+  now excludes blank/incomplete, future-review and internal/placeholder content
+  across detail, listing, counts and sitemap. Article body H1s are demoted.
+- [x] Shared server/client SEO updates metadata and JSON-LD across navigation;
+  no-SSR responses have a real title. Errors fail closed without product schema;
+  configured primary production host owns canonical/sitemap/entity identity.
+  Public/auth/booking setup functions now use the injected route helper, fixing
+  silent server-render failures from the browser-global helper.
+- [x] 47 URLs at 360/768/1440 produced 141 browser visits without internal-copy,
+  heading, metadata, overflow, empty-link, media or page-error violations.
+  Pricing monthly/yearly/progressive/yearly-only interactions pass with isolated
+  test rates. Mobile menu and focused final server HTML checks pass. The full
+  browser sweep predates the explicit SSR-helper fix; a further full crawler
+  pass after that fix was declined at permission and is not claimed complete.
+- [x] Latest full suite: **741 passed / 6,868 assertions**, 30 existing
+  integration/disabled-feature skips. **98 frontend checks** pass; client/SSR
+  production builds, 17 frontsite budget entries and diff whitespace checks pass.
+- [ ] **Not deployed; public launch remains NO-GO.** Live baseline still showed
+  internal footer copy, old flat staff pricing and a failing changelog. Legal
+  effectiveness/version acceptance, regional/provider certification, unfinished
+  deposit/provider-refund journeys and independent operational release evidence
+  remain unwaived. Production SSR supervision and a final live HTML crawl are
+  required. [Complete page register and concerns](audits/2026-10-13-public-content/README.md).
+
+Status date: 2026-10-13
+
+## 2026-10-13 Google Maps and location intelligence (FR-02/03/05/06/09/13/19; ADR-064)
+
+- [x] Existing guided onboarding and Locations share supported Places (New)
+  business/address search, manual fallback, optional address/arrival corrections,
+  a keyboard/touch entrance marker and customer preview. No coordinate-entry
+  controls or additional onboarding system were introduced. Google does not
+  overwrite operating hours, contacts or time zones.
+- [x] Public booking automatically selects the only eligible branch; multiple
+  branches use inline search and optional, explicitly requested nearby sorting.
+  Branch changes preserve eligible services and recheck branch-specific staff /
+  availability. Address, arrival notes, directions and a reusable lazy Google map
+  use the central product design tokens across mobile and desktop.
+- [x] Appointments retain their actual assigned location snapshot through
+  confirmation, self-service, same-branch rescheduling, calendar and newly
+  generated confirmation/reminder email/SMS. A changed held address requires
+  fresh review. Tenant authorization, duplicate protection, primary selection,
+  stale-write checks, existing hours and future-booking timezone guards remain
+  in the existing business command. Billing rules were not changed.
+- [x] Additive migration applied to local MySQL and the separate 8027 SQLite
+  preview after private backups. All 23 MySQL locations' legacy fields and 141
+  appointment assignments remain unchanged; all 141 received snapshots.
+- [x] Verification: complete backend suite **730 passed / 6,545 assertions**,
+  with **30 existing intentional skips**; **97 frontend tests** pass, including
+  mocked Google failures and compiled Vue interaction tests. Privacy/SEO checks
+  after the v1.1 disclosure update pass **33 tests / 542 assertions**. Client/SSR
+  builds, 17-route asset budgets, scoped Pint and whitespace checks pass.
+- [x] Real Places selection, entrance movement and Google map attribution work
+  on the authorized 8027 origin. Synthetic one-/two-branch booking, branch
+  service retention, staff/time review, lazy maps and 320/390/768/1440px layouts
+  were checked without a real booking, message or customer geolocation grant.
+- [ ] Production/staging Cloud keys, owned Map IDs, API/referrer restrictions,
+  quotas/alerts, DNS/TLS and environment-specific provider/device certification
+  remain manual deployment steps. Privacy v1.1 retains existing legal approval
+  gates. WhatsApp remains disabled; relocation/amendment policy is OPEN-23.
+  [Audit and screenshots](audits/2026-10-12-location-intelligence/README.md),
+  [Google Cloud and rollback guide](deployment/google-maps.md).
+
+## 2026-10-12 Progressive subscription pricing and public pricing page (FR-01/13; ADR-063)
+
+- [x] Integer-cent progressive staff bands and annual ten-month amounts are shared
+  by public/owner estimates, authoritative quotes and new graduated Stripe Price
+  provisioning/verification. Base USD 29 and additional locations USD 19 remain.
+- [x] Public discovery leads with starting price/trial in the shared SEO hero and
+  a navy price panel. Features and transparent growth rates precede the optional
+  collapsed estimator; copy removes repetition. Hero signup has no quantities.
+- [x] Existing immutable flat rates/allowances remain readable and billable.
+  Owners can explicitly review/confirm migration to current rates at renewal;
+  no existing customer, provider object or financial record was migrated.
+- [x] Verification: full suite 711 passed / 6,410 assertions with 30 existing
+  intentional skips; 86 frontend tests, client/SSR builds, 17-route budgets,
+  scoped formatting and whitespace pass. Browser checks at 320/390/768/1440 px
+  verify counts, presets, annual charges, reset, invalid inputs and signup.
+- [ ] Activate the new Stripe revision in the intended account/mode and certify
+  real checkout/proration/renewal/tax behavior before production. Public prices
+  correctly remain unavailable without verified current mappings.
+  [Evidence and rollout](audits/2026-10-12-progressive-pricing/README.md).
+
+## 2026-10-12 Public PNG logo (ADR-027)
+
+- [x] Saved the owner-supplied 422×106 PNG unchanged as the configured primary
+  logo and used it in the shared public header and privacy HTML fallback.
+- [x] Verified the PNG loads without overflow at 320/390/768/1440px. Client/SSR
+  builds, public asset budgets and 24 focused tests / 221 assertions pass.
+  [Asset provenance and screenshots](audits/2026-10-12-public-logo/README.md).
 
 ## 2026-10-12 Privacy policy and Google branding remediation (FR-01/05/09–14/19/20; ADR-062)
 

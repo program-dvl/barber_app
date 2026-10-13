@@ -22,6 +22,9 @@ class VerifyCapacityRates extends Command
         $market = strtoupper($this->argument('market'));
         foreach (['monthly', 'annual'] as $interval) {
             $terms = $catalog->terms($market, $interval);
+            if (! empty($terms['staff_tiers'])) {
+                $this->line('Progressive additional-staff bands: '.json_encode($terms['staff_tiers']));
+            }
             $this->line($market.' '.$interval.': '.$terms['currency'].' base '.$terms['base_minor'].'; location '.$terms['location_minor'].'; staff '.$terms['staff_minor'].' (minor units)');
         }
         if ($this->option('apply') && $this->option('provision')) {
@@ -70,9 +73,9 @@ class VerifyCapacityRates extends Command
                         throw new \LogicException('Use distinct, configured Stripe Price IDs for each component.');
                     }
                     $ids[] = $id;
-                    $price = $stripe->prices->retrieve($id, []);
-                    if (! $price->active || $price->type !== 'recurring' || $price->billing_scheme !== 'per_unit' || $price->tax_behavior !== 'exclusive'
-                        || strtoupper($price->currency) !== $terms['currency'] || $price->unit_amount !== $terms[$role.'_minor']
+                    $price = $stripe->prices->retrieve($id, ['expand' => ['tiers']]);
+                    if (! $price->active || $price->type !== 'recurring' || ! $catalog->matchesStripePrice($price->toArray(), $terms, $role, true) || $price->tax_behavior !== 'exclusive'
+                        || strtoupper($price->currency) !== $terms['currency']
                         || $price->recurring->interval !== ($interval === 'annual' ? 'year' : 'month')
                         || $price->recurring->interval_count !== 1 || $price->recurring->usage_type !== 'licensed') {
                         throw new \LogicException('Stripe price does not match the approved country, amount, interval and quantity model.');

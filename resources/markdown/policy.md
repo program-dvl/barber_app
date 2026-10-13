@@ -64,6 +64,14 @@ You can remove Clipperdesk's connection through your [Google Account connections
 
 Clipperdesk does not currently offer a self-service Google unlink control. To request removal of your Google account link, account closure or deletion of account data, contact **{{privacy_email}}** from your account email and specify your request. We verify identity and explain any records that must be retained. If you need to continue using your account without Google, use the email password-reset option to establish access before removing the connection.
 
+## Google Maps and location features
+
+Business owners can search Google for their business or address and position a customer entrance pin. When you use address search or load an interactive map, Google receives the search text, map requests and browser/network information needed to provide that feature. Google handles these requests under its [Privacy Policy](https://policies.google.com/privacy). The use of Google Maps features is also subject to [Google Maps End User Additional Terms](https://maps.google.com/help/terms_maps/).
+
+Clipperdesk saves the business's reviewed address, Google Place ID, owner-positioned entrance coordinates and optional arrival/parking instructions. Appointment records keep the assigned branch details so a later branch edit does not change historical directions. Google search suggestions and returned place geometry remain temporary in the browser; we do not retain a Google business-profile catalogue, reviews or photos.
+
+Customers may choose **Use my location** to order known branches by straight-line distance. Browser permission is requested only after that action. These coordinates stay in memory on the booking page and are not sent to Clipperdesk, added to booking state or stored in the customer's record. Booking also works without sharing location. Opening external navigation shares the selected destination with the chosen map provider.
+
 ## How we use information
 
 We use the information described above to:

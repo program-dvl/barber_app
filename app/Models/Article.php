@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Domain\Marketing\Services\PublicContentPolicy;
 use App\Observers\ArticleObserver;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -56,10 +57,13 @@ class Article extends Model
 
     public function scopePublishable(Builder $query): Builder
     {
-        return $query->where('active', true)->where('status', 'published')
+        return app(PublicContentPolicy::class)->constrainArticles($query)
+            ->where('active', true)->where('status', 'published')
             ->whereNotNull('published_at')->where('published_at', '<=', now())
-            ->whereNotNull('reviewed_at')->whereNotNull('content_owner')
+            ->whereNotNull('reviewed_at')->where('reviewed_at', '<=', now())
+            ->whereNotNull('content_owner')->whereRaw("TRIM(content_owner) <> ''")
+            ->whereHas('user', fn (Builder $author) => $author->whereNotNull('name')->whereRaw("TRIM(name) <> ''"))
             ->whereNotNull('excerpt')->whereNotNull('seo_title')
-            ->whereNotNull('seo_description')->whereNotNull('thumbnail');
+            ->whereNotNull('seo_description')->whereNotNull('thumbnail')->whereRaw("TRIM(thumbnail) <> ''");
     }
 }

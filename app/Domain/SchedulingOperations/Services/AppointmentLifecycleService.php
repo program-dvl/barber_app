@@ -12,6 +12,7 @@ use App\Domain\SchedulingOperations\Models\AppointmentStatusHistory;
 use App\Domain\SchedulingOperations\Models\OperationalNotificationEvent;
 use App\Domain\SchedulingOperations\Models\WalkInEntry;
 use App\Domain\SchedulingOperations\Models\WalkInHistory;
+use App\Support\Locations\LocationData;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
@@ -196,7 +197,9 @@ class AppointmentLifecycleService implements AppointmentLifecycleCommand
             $this->bookings->lockCapacityRoots($request);
             $plan = $this->rules->plan($request, true, null, $current->id);
             $replacement = $this->bookings->persistAppointment($request, $plan, $idempotencyKey, $hash, $current->client_id);
-            $replacement->update(['rescheduled_from_appointment_id' => $current->id]);
+            $replacement->update(['rescheduled_from_appointment_id' => $current->id,
+                'location_snapshot' => $request->locationId === $current->location_id ? ($current->location_snapshot ?: LocationData::snapshot($current->location)) : $replacement->location_snapshot,
+            ]);
             $walkIns = WalkInEntry::query()->where('business_id', $current->business_id)->where('appointment_id', $current->id)
                 ->whereIn('status', ['waiting', 'assigned', 'notified', 'in_service'])->lockForUpdate()->get();
             foreach ($walkIns as $walkIn) {

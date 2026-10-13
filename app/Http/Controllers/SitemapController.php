@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Support\Legal\PrivacyNotice;
+use App\Support\Seo\PublicUrl;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 
@@ -17,7 +18,7 @@ class SitemapController extends Controller
             ->merge(collect(array_keys(config('frontsite.use_cases')))->map(fn ($slug) => route('marketing.use-cases.show', $slug)))
             ->merge(collect(array_keys(config('frontsite.guides')))->map(fn ($slug) => route('marketing.guides.show', $slug)))
             ->merge(Article::query()->publishable()->pluck('slug')->map(fn ($slug) => route('blog.article', $slug)))
-            ->unique()->sort()->values();
+            ->map(fn (string $url) => PublicUrl::canonical($url))->unique()->sort()->values();
 
         if (app(PrivacyNotice::class)->isPublished()) {
             $urls = $urls->push(config('privacy.canonical_url'))->unique()->sort()->values();
@@ -39,7 +40,7 @@ class SitemapController extends Controller
 
     public function robots(): Response
     {
-        return response("User-agent: OAI-SearchBot\nAllow: /\n\nUser-agent: ChatGPT-User\nAllow: /\n\nUser-agent: *\nAllow: /\n\nSitemap: ".route('sitemap.xml')."\n")
+        return response("User-agent: OAI-SearchBot\nAllow: /\n\nUser-agent: ChatGPT-User\nAllow: /\n\nUser-agent: *\nAllow: /\n\nSitemap: ".PublicUrl::canonical(route('sitemap.xml'))."\n")
             ->header('Content-Type', 'text/plain; charset=UTF-8');
     }
 }

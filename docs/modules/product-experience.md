@@ -167,3 +167,11 @@ require complete, explicitly approved publication configuration. The scoped
 privacy styles do not change the authenticated theme. Related Terms/refund remain
 separate review documents. [Audit, blockers and resubmission checklist](../audits/2026-10-12-privacy-policy/README.md)
 and ADR-062 record the contract and verification boundary.
+
+### Public logo asset
+
+The public header uses the owner-supplied PNG from `config/brand.php` through
+ProductMark's explicit image option, with its intrinsic dimensions, accessible
+name and responsive width. The privacy HTML fallback uses the same asset.
+The attached lettering/tagline is preserved; no duplicate text is rendered.
+[Asset provenance and verification](../audits/2026-10-12-public-logo/README.md).

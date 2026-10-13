@@ -198,3 +198,50 @@ with the usual `php artisan migrate --force` before serving the updated signup
 and billing code. It adds two nullable quantity preferences and leaves old
 intent/subscription/invoice values unchanged. See the
 [public pricing contract](../modules/public-pricing.md).
+
+
+## Progressive pricing upgrade (2026-10-12)
+
+Revision `2026-10-12-progressive-1` requires new immutable Stripe Prices. Do not
+edit the old staff Price or swap customers directly in Stripe Dashboard.
+
+1. Deploy source/builds with the existing capacity billing gates. Preserve old
+   rate cards, provider price IDs and snapshots. No new database migration is
+   required for this pricing revision; existing signup migrations still apply.
+2. Check the intended Stripe account/mode privately. Clear any six explicit
+   `CAPACITY_US_{MONTHLY,ANNUAL}_{BASE,LOCATION,STAFF}_PRICE_ID` values pointing at
+   the old revision. They must either be absent for managed provisioning or map
+   to **new** prices for every component, including the unchanged base amounts.
+3. Clear cached config. Preview with `php artisan billing:verify-capacity-rates US`.
+   Provision/test with `php artisan billing:verify-capacity-rates US --provision`.
+   Live provisioning requires the deliberately selected live key and `--force`.
+   The command creates catalog objects only; it never charges/migrates customers.
+4. Verify two new base Prices (USD 29/month, 290/year), two location Prices
+   (USD 19/month, 190/year) and two staff Prices. Staff uses `billing_scheme=tiered`,
+   `tiers_mode=graduated`, licensed recurring quantities and tax exclusive.
+   Cumulative **additional-staff** tiers are 4/9/infinity, with 900/600/400 cents
+   monthly and 9000/6000/4000 cents annually. Do not use volume pricing. Stripe
+   Dashboard manual creation must use those exact fields; then configure all six
+   new IDs and run `--apply` for expanded-tier verification.
+5. Run sandbox checkout, fixed-date proration across 5/6 and 10/11 staff, annual
+   renewal, failed-payment/pending update, cancellation, and signed-event replay.
+   Verify invoice subtotals against the documented examples and tax separately.
+   Confirm the existing webhook event set and scheduler/worker setup above.
+6. Rebuild config/restart workers. New public prices become visible only after
+   the immutable local mappings pass verification and publication gates. A source
+   deploy alone intentionally leaves pricing unavailable when mappings are absent.
+
+Existing-customer migration: owners retain old flat rates and monthly allowances.
+In Plan, explicitly select “Review a switch to current pricing at renewal,”
+review the server quote and confirm the dated change. Current resource-fit,
+currency, outstanding-debt, discount, schedule, expiry and version checks still
+apply. Migration creates the existing two-phase schedule with no proration today;
+signed renewal evidence switches the snapshot/entitlements. If a provider call
+is uncertain, reconcile the existing request before retrying. Never bulk-update
+rate-card foreign keys or stored snapshots. Keep old Prices active while retained
+customers use them. Reverting source does not reverse already-confirmed schedules;
+resolve those through the reviewed support/provider recovery procedure.
+
+This task verified mocked SDK contracts and isolated local UI fixtures. It did
+not create real Stripe Prices, change a deployed catalog, charge a customer or
+certify tax/live provider behavior. Complete the sandbox steps before production.

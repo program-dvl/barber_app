@@ -46,6 +46,8 @@ it('turns four short owner decisions into an editable private starter workspace'
     $this->actingAs($owner)->patch(route('business.configuration.guided-onboarding.update', $business), [
         'step' => 'location', 'country_code' => 'IN', 'time_zone' => 'Asia/Kolkata',
         'address' => '18 Garden Lane, Ahmedabad 380009', 'phone' => '+919876543210',
+        'google_place_id' => 'Confirmed-place', 'address_line_2' => 'Second floor', 'city' => 'Ahmedabad',
+        'entrance_latitude' => 23.02, 'entrance_longitude' => 72.57, 'entrance_instructions' => 'Entrance beside the courtyard',
         'schedule_preset' => 'tuesday_saturday',
     ])->assertRedirect()->assertSessionHasNoErrors();
     $this->actingAs($owner)->post(route('business.configuration.guided-onboarding.complete', $business), [
@@ -69,6 +71,10 @@ it('turns four short owner decisions into an editable private starter workspace'
         ->and($session->generated_data['categories'])->toHaveCount(4)
         ->and($location->hours()->count())->toBe(5)
         ->and($location->address)->toBe('18 Garden Lane, Ahmedabad 380009')
+        ->and($location->google_place_id)->toBe('Confirmed-place')
+        ->and($location->entrance_latitude)->toBe('23.0200000')
+        ->and($location->address_line_2)->toBe('Second floor')
+        ->and($location->entrance_instructions)->toBe('Entrance beside the courtyard')
         ->and($staff->membership_id)->toBe($membership->id)
         ->and($staff->user_id)->toBe($owner->id)
         ->and($staff->online_visible)->toBeTrue()

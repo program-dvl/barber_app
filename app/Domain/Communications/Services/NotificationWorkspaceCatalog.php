@@ -28,7 +28,7 @@ final class NotificationWorkspaceCatalog
     public static function variables(string $intent): array
     {
         $common = ['client_name', 'business_name'];
-        $appointment = ['staff_name', 'service_name', 'location_name', 'appointment_date', 'appointment_time', 'time_zone', 'booking_reference', 'amount', 'currency'];
+        $appointment = ['location_address', 'arrival_instructions', 'directions_link', 'staff_name', 'service_name', 'location_name', 'appointment_date', 'appointment_time', 'time_zone', 'booking_reference', 'amount', 'currency'];
         $specific = match ($intent) {
             'waitlist_opening' => ['service_name', 'location_name', 'appointment_date', 'appointment_time', 'time_zone'],
             'queue_update' => ['queue_estimate', 'location_name'],
@@ -44,6 +44,7 @@ final class NotificationWorkspaceCatalog
     public static function samples(Business $business): array
     {
         return ['client_name' => 'Sarah', 'staff_name' => 'Emma', 'service_name' => 'Haircut & style',
+            'location_address' => '18 Example Lane, Toronto, ON', 'arrival_instructions' => 'Suite 2, entrance on the left', 'directions_link' => 'https://www.google.com/maps/dir/?api=1&destination=43.65,-79.38',
             'location_name' => 'Main studio', 'appointment_date' => '10 October 2026', 'appointment_time' => '14:30',
             'time_zone' => $business->time_zone ?: 'UTC', 'amount' => '45.00', 'currency' => $business->currency_code ?: 'USD',
             'booking_reference' => 'BK-1042', 'action_link' => 'https://example.test/your-secure-link',

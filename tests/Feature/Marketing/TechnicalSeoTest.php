@@ -7,10 +7,10 @@ uses(RefreshDatabase::class);
 it('renders centralized metadata and a truthful schema graph for an indexable page', function () {
     $response = $this->get(route('marketing.home'));
     $response->assertOk()->assertHeader('X-Robots-Tag', 'index, follow, max-image-preview:large')
-        ->assertSee('<link rel="canonical" href="'.route('marketing.home').'">', false)
-        ->assertSee('<meta property="og:url" content="'.route('marketing.home').'">', false)
+        ->assertSee('<link rel="canonical" href="'.route('marketing.home').'" data-inertia="canonical">', false)
+        ->assertSee('<meta property="og:url" content="'.route('marketing.home').'" data-inertia="og:url">', false)
         ->assertSee('application/ld+json', false);
-    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $response->getContent(), $matches);
+    preg_match('/<script type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $response->getContent(), $matches);
     $graph = json_decode($matches[1], true, flags: JSON_THROW_ON_ERROR);
     expect(collect($graph['@graph'])->pluck('@type')->all())->toContain('Organization', 'WebSite', 'WebPage', 'SoftwareApplication');
     $software = collect($graph['@graph'])->firstWhere('@type', 'SoftwareApplication');
@@ -50,8 +50,8 @@ it('publishes unique useful search titles and descriptions across the curated pu
 
     foreach ($urls as $url) {
         $html = $this->get(parse_url($url, PHP_URL_PATH) ?: '/')->assertOk()->getContent();
-        preg_match('/<meta property="og:title" content="([^"]+)">/', $html, $titleMatch);
-        preg_match('/<meta name="description" content="([^"]+)">/', $html, $descriptionMatch);
+        preg_match('/<meta property="og:title" content="([^"]+)"[^>]*>/', $html, $titleMatch);
+        preg_match('/<meta name="description" content="([^"]+)"[^>]*>/', $html, $descriptionMatch);
 
         expect($titleMatch[1] ?? null)->not->toBeNull()
             ->and($descriptionMatch[1] ?? null)->not->toBeNull();

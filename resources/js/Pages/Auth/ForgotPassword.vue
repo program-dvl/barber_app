@@ -1,4 +1,6 @@
 <script setup>
+import { inject as injectRoute } from 'vue';
+const route = injectRoute('route');
 import { Head, useForm } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/Profile/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/Profile/AuthenticationCardLogo.vue';
@@ -22,6 +24,7 @@ const submit = () => {
 
 <template>
     <AuthenticationCard>
+        <Head title="Reset your password" />
         <template #logo>
             <AuthenticationCardLogo />
         </template>

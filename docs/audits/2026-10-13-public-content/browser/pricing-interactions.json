@@ -1,0 +1,27 @@
+[
+  {
+    "width": 360,
+    "monthly": "$135\n/ month",
+    "annual": "$1,350\n/ year",
+    "href": "http://127.0.0.1:8014/register?plan=capacity&interval=annual&locations=1&staff=20",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "monthly": "$135\n/ month",
+    "annual": "$1,350\n/ year",
+    "href": "http://127.0.0.1:8014/register?plan=capacity&interval=annual&locations=1&staff=20",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "monthly": "$135\n/ month",
+    "annual": "$1,350\n/ year",
+    "href": "http://127.0.0.1:8014/register?plan=capacity&interval=annual&locations=1&staff=20",
+    "overflow": false
+  },
+  {
+    "annualOnly": true,
+    "selected": true
+  }
+]

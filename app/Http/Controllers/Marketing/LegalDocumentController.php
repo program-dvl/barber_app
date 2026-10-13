@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Controller;
 use App\Support\Legal\PrivacyNotice;
+use App\Support\Seo\PublicPage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -42,7 +43,7 @@ class LegalDocumentController extends Controller
         ];
         $content = view('legal.privacy-content', $data)->render();
 
-        return Inertia::render('PrivacyPolicy', [
+        return PublicPage::render('PrivacyPolicy', [
             'content' => $content,
             'seo' => $data['seo'],
             // Keep legal-page identity and footer presentation scoped to this page.
@@ -69,6 +70,7 @@ class LegalDocumentController extends Controller
         foreach (['operator_name', 'operator_address', 'privacy_email'] as $field) {
             $html = str_replace('{{'.$field.'}}', e(config('privacy.'.$field)), $html);
         }
+        $html = str_replace('{{trial_days}}', (string) (int) config('billing.trial_days'), $html);
 
         $related = collect($document['related'])
             ->map(fn (array $item): array => [
@@ -77,7 +79,7 @@ class LegalDocumentController extends Controller
             ])
             ->all();
 
-        return Inertia::render($document['component'], [
+        return PublicPage::render($document['component'], [
             $document['prop'] => $html,
             'document' => [
                 ...collect($document)->except(['file', 'prop', 'component', 'route', 'related'])->all(),

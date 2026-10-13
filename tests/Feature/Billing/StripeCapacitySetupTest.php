@@ -27,6 +27,8 @@ function withSetupStripe(callable $operation): void
 
         public bool $wrongPrice = false;
 
+        public ?string $wrongTiers = null;
+
         public function request($method, $url, $headers, $params, $hasFile, $apiMode = 'v1', $maxNetworkRetries = null)
         {
             $path = parse_url($url, PHP_URL_PATH);
@@ -43,7 +45,12 @@ function withSetupStripe(callable $operation): void
             } elseif ($path === '/v1/prices') {
                 if ($method === 'post') {
                     $object = $params + ['id' => 'price_setup_'.count($this->prices), 'object' => 'price', 'active' => true, 'type' => 'recurring'];
-                    $object['unit_amount'] = (int) $object['unit_amount'];
+                    if ($object['billing_scheme'] === 'tiered') {
+                        $object['unit_amount'] = null;
+                        $object['tiers'] = array_map(fn ($tier) => ['up_to' => $tier['up_to'] === 'inf' ? null : (int) $tier['up_to'], 'unit_amount' => (int) $tier['unit_amount'], 'flat_amount' => null], $object['tiers']);
+                    } else {
+                        $object['unit_amount'] = (int) $object['unit_amount'];
+                    }
                     $object['recurring']['interval_count'] = (int) $object['recurring']['interval_count'];
                     $this->prices[$object['id']] = $object;
                 } else {
@@ -51,6 +58,20 @@ function withSetupStripe(callable $operation): void
                 }
             } elseif (str_starts_with($path, '/v1/prices/')) {
                 $object = $this->prices[basename($path)];
+                if ($object['billing_scheme'] === 'tiered' && $this->wrongTiers) {
+                    if ($this->wrongTiers === 'volume') {
+                        $object['tiers_mode'] = 'volume';
+                    }
+                    if ($this->wrongTiers === 'amount') {
+                        $object['tiers'][2]['unit_amount']++;
+                    }
+                    if ($this->wrongTiers === 'bound') {
+                        $object['tiers'][0]['up_to']++;
+                    }
+                    if ($this->wrongTiers === 'flat') {
+                        $object['tiers'][0]['flat_amount'] = 1;
+                    }
+                }
                 if ($this->wrongPrice) {
                     $object['unit_amount']++;
                 }
@@ -175,5 +196,34 @@ it('offers ready USD subscriptions to Canadian businesses without changing opera
         $price = BillingPlanPrice::create(['billing_plan_id' => $subscription->billing_plan_id, 'provider' => 'stripe', 'provider_price_id' => 'price_existing_cad', 'billing_interval' => 'monthly', 'currency' => 'CAD', 'amount_minor' => 5000, 'is_active' => true, 'effective_from' => now()->subHour()]);
         $subscription->update(['billing_plan_price_id' => $price->id]);
         $this->actingAs($owner)->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => 'monthly', 'locations' => 1, 'staff' => 1])->assertUnprocessable();
+    });
+});
+
+it('verifies exact graduated staff bands before installing either rate card', function (string $kind) {
+    withSetupStripe(function ($client) use ($kind) {
+        $client->wrongTiers = $kind;
+        $this->artisan('billing:verify-capacity-rates US --provision')->assertFailed();
+        expect(BillingRateCard::count())->toBe(0);
+    });
+})->with(['volume', 'amount', 'bound', 'flat']);
+
+it('provisions graduated staff prices and fresh immutable base prices for revised rates', function () {
+    withSetupStripe(function ($client) {
+        $this->artisan('billing:verify-capacity-rates US --provision')->assertSuccessful();
+        $cards = BillingRateCard::all();
+        foreach (['monthly' => [900, 600, 400], 'annual' => [9000, 6000, 4000]] as $interval => $amounts) {
+            $card = $cards->firstWhere('billing_interval', $interval);
+            $price = $client->prices[$card->terms['staff_price_id']];
+            expect($price['billing_scheme'])->toBe('tiered')->and($price['tiers_mode'])->toBe('graduated')
+                ->and(array_column($price['tiers'], 'up_to'))->toBe([4, 9, null])
+                ->and(array_column($price['tiers'], 'unit_amount'))->toBe($amounts);
+        }
+        $this->travel(2)->seconds();
+        config(['capacity-billing.markets.US.revision' => 'reviewed-future-revision']);
+        $this->artisan('billing:verify-capacity-rates US --provision')->assertSuccessful();
+        expect(BillingRateCard::count())->toBe(4)->and(count($client->prices))->toBe(12);
+        foreach ($cards as $card) {
+            expect($card->fresh()->terms)->toBe($card->terms);
+        }
     });
 });

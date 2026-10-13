@@ -1,4 +1,6 @@
 <script setup>
+import { inject as injectRoute } from 'vue';
+const route = injectRoute('route');
 import { computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 

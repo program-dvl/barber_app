@@ -5,6 +5,7 @@ namespace App\Domain\PlatformAccess\Models;
 use App\Domain\BusinessConfiguration\Models\LocationHour;
 use App\Domain\BusinessConfiguration\Models\LocationScheduleException;
 use App\Domain\BusinessConfiguration\Models\PhysicalResource;
+use App\Support\Locations\LocationData;
 use App\Support\Tenancy\BelongsToBusiness;
 use Database\Factories\LocationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,6 +32,7 @@ class Location extends Model
         'latitude',
         'longitude',
         'is_active',
+        ...LocationData::FIELDS,
     ];
 
     protected static function booted(): void
@@ -42,7 +44,7 @@ class Location extends Model
 
     protected function casts(): array
     {
-        return ['is_active' => 'boolean'];
+        return ['is_active' => 'boolean', 'is_primary' => 'boolean', 'entrance_latitude' => 'decimal:7', 'entrance_longitude' => 'decimal:7'];
     }
 
     protected static function newFactory(): LocationFactory

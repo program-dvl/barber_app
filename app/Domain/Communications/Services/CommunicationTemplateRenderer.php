@@ -21,7 +21,7 @@ class CommunicationTemplateRenderer
 
         $replace = fn (string $text): string => preg_replace_callback('/\{\{\s*([a-z_]+)\s*\}\}/', fn (array $match) => $values[$match[1]] ?? throw ValidationException::withMessages(['variables.'.$match[1] => 'A value is required for '.$match[1].'.']), $text) ?? $text;
 
-        return ['subject' => $replace((string) $template->subject), 'body' => $replace($template->body), 'variables' => $values];
+        return ['subject' => $replace((string) $template->subject), 'body' => $replace($template->body).(filled($variables['__location_footer'] ?? null) ? "\n".$variables['__location_footer'] : ''), 'variables' => $values];
     }
 
     /** @return list<string> */

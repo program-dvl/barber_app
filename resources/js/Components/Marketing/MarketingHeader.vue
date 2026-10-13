@@ -69,8 +69,8 @@ onBeforeUnmount(() => {
     <header class="cd-marketing-header sticky top-0 z-40 backdrop-blur">
         <div class="cd-public-container py-2.5">
             <div class="cd-header-shell flex min-h-16 items-center justify-between gap-4 px-3 sm:px-4">
-            <Link :href="route('marketing.home')" class="inline-flex min-h-11 items-center rounded-lg" :aria-label="`${page.props.brand?.product_name || 'ClipperDesk'} home`">
-                <ProductMark />
+            <Link :href="route('marketing.home')" class="inline-flex min-h-11 min-w-0 items-center rounded-lg" :aria-label="`${page.props.brand?.product_name || 'ClipperDesk'} home`">
+                <ProductMark use-logo-image />
             </Link>
 
             <nav aria-label="Primary" class="cd-header-nav hidden items-center gap-0.5 lg:flex">

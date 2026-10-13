@@ -1,4 +1,6 @@
 <script setup>
+import { inject as injectRoute } from 'vue';
+const route = injectRoute('route');
 import { computed } from 'vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { CheckBadgeIcon, ExclamationTriangleIcon, ShieldCheckIcon } from '@heroicons/vue/24/outline';

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Controller;
-use Inertia\Inertia;
+use App\Support\Seo\PublicPage;
 use Inertia\Response;
 
 class FeatureController extends Controller
@@ -16,11 +16,10 @@ class FeatureController extends Controller
                 'label' => $feature['label'],
                 'title' => $feature['title'],
                 'description' => $feature['description'],
-                'requirements' => $feature['requirements'],
             ])
             ->values();
 
-        return Inertia::render('Marketing/Features/Index', [
+        return PublicPage::render('Marketing/Features/Index', [
             'features' => $features,
             'seo' => [
                 'title' => 'Service business management software features | ClipperDesk',
@@ -45,8 +44,8 @@ class FeatureController extends Controller
             ])
             ->values();
 
-        return Inertia::render('Marketing/Features/Show', [
-            'feature' => [...$content, 'slug' => $feature],
+        return PublicPage::render('Marketing/Features/Show', [
+            'feature' => [...collect($content)->except('requirements')->all(), 'slug' => $feature],
             'related' => $related,
             'seo' => [
                 'title' => $content['seo_title'],

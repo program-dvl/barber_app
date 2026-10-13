@@ -17,7 +17,9 @@ use App\Domain\PlatformAccess\Models\StaffProfile;
 use App\Domain\SchedulingOperations\Models\Appointment;
 use App\Models\User;
 use App\Support\Audit\AuditWriter;
+use App\Support\Locations\LocationData;
 use App\Support\Regional\CountryCatalog;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -118,6 +120,7 @@ class StarterWorkspaceProvisioner
                 ]);
             }
             $location->forceFill([
+                ...Arr::only($answers, LocationData::FIELDS),
                 'name' => $location->name ?: $business->name,
                 'time_zone' => $timeZone,
                 'status' => 'active',

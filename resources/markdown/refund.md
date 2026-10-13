@@ -2,9 +2,7 @@
 ## 1. Status, scope and payment roles
 
 This proposed Refund, Return and Cancellation Policy is a review draft and is
-not yet effective. It is structured to disclose the information expected for
-an online service, but it cannot support live collection until provider
-accounts, refund execution, timelines and owner approvals are operationally verified.
+not yet effective. Refund eligibility and service timelines remain under review.
 Operator: **{{operator_name}}**. Postal contact: {{operator_address}}.
 Support and privacy contact: **{{privacy_email}}**.
 
@@ -13,7 +11,7 @@ Clipperdesk has two separate payment contexts. They must not be confused:
 | Payment | Seller or service provider | Current payment role | Policy that controls |
 | --- | --- | --- | --- |
 | Clipperdesk software subscription | {{operator_name}} supplies the software; contact details are listed above | Stripe processes the subscription payment and hosts secure billing controls | The final approved Clipperdesk terms and refund policy, mandatory law and applicable Stripe payment-service terms |
-| Salon appointment, deposit or in-person sale | The salon or barbershop shown on the booking/receipt provides the service or product | Stripe is the implemented online appointment-payment adapter; the Business Customer also records supported local tenders | The Business Customer's displayed booking/cancellation policy, mandatory law and the applicable payment-provider rules |
+| Salon appointment, deposit or in-person sale | The service business shown on the booking or receipt provides the service or product | Checkout records payments received elsewhere. Online deposit collection and provider refunds are not currently available | The Business Customer's displayed booking/cancellation policy, mandatory law and the applicable payment-provider rules |
 
 Clipperdesk does not ship physical goods. Retail products recorded in Clipperdesk
 are presently sold and fulfilled by the Business Customer in person unless
@@ -28,12 +26,10 @@ service provider to limit.
 
 ### 2.1 Trial and first charge
 
-A verified owner registration currently begins a 14-day trial and does not
+A verified owner registration currently begins a {{trial_days}}-day trial and does not
 charge a payment method. A Business Customer reviews the plan, billing interval,
 currency, amount and applicable provider information before entering payment
-details. To avoid a first paid charge, the Business Customer must not complete
-paid checkout or must cancel any converting trial before the deadline shown in
-the checkout and billing account.
+details. The trial does not charge automatically. A Business Customer must separately review and confirm a paid subscription.
 
 ### 2.2 Renewal and cancellation
 
@@ -57,14 +53,12 @@ Clipperdesk billing-support path. Questions can be sent to **{{privacy_email}}**
 this contact does not create an automatic refund entitlement.
 
 Eligibility is determined by the Clipperdesk commitment shown at purchase,
-the final approved policy and mandatory law. No draft support path may promise
-a refund until Finance and Operations have approved and certified the Stripe
-refund executor and reconciliation process.
+the final approved policy and mandatory law. This draft does not create an automatic refund entitlement or guarantee.
 
 <span id="appointment-refunds"></span>
 ## 3. Salon appointments, deposits and sale cancellations
 
-The salon or barbershop shown on the booking page is responsible for the
+The service business shown on the booking page is responsible for the
 appointment, professional service, in-person product, cancellation decision and
 client support. Before payment, its Clipperdesk booking journey is designed to
 show:
@@ -80,10 +74,9 @@ The exact policy shown and accepted at booking is retained with the appointment
 and controls the normal refund decision. A later policy change must not
 retroactively reduce the rights shown for that transaction.
 
-Where permitted by the displayed policy, a deposit may be applied to the final
-sale, transferred to an approved replacement appointment, refunded, forfeited
-against an applicable cancellation/no-show rule, or converted to an approved
-credit. Its total value must not be allocated more than once.
+A verified deposit can be applied to the final sale. Any cancellation, refund
+or forfeiture must follow the policy accepted at booking and applicable law.
+Recording an adjustment does not transfer money through a payment provider.
 
 <span id="eligibility"></span>
 ## 4. Proposed appointment-payment eligibility rules
@@ -108,7 +101,7 @@ A refund is not normally automatic for:
   deposit forfeiture or fee;
 - a completed service or consumed in-person product merely because the client
   changed their mind;
-- the portion of a service, package or product already properly supplied; or
+- the portion of a service or product already properly supplied; or
 - a request that cannot be matched to a transaction or safely verified.
 
 These exclusions never override a mandatory remedy for a service or product
@@ -142,17 +135,12 @@ this policy takes effect.
 
 ### 5.3 Information and decision timeline
 
-The final approved policy should require the responsible seller or service
-provider to acknowledge a complete request within 2 business days and approve,
-decline or request necessary information within 7 business days. These are
-proposed service targets only; they are not operational promises until named
-Support/Operations owners approve staffing, escalation and tracking.
+Contact the responsible seller for the status of your request. Acknowledgment, decision and submission timelines are under review; this draft provides no response-time guarantee.
 
 <span id="processing-times"></span>
 ## 6. Processing and bank timelines
 
-Once an appointment refund is approved, the responsible merchant should submit
-it to the original payment provider within 7 business days. Refunds should be
+Ask the responsible merchant when an approved refund will be submitted to the payment provider. Refunds should be
 returned to the original payment method wherever the provider supports it. A
 different destination must not be used merely for convenience; if the original
 method cannot receive the refund, the merchant and provider must verify a safe,
@@ -202,30 +190,8 @@ open. The merchant should not retaliate for a good-faith complaint, submit
 misleading dispute evidence, or issue a second refund without checking the
 provider state.
 
-Clipperdesk is designed to use verified webhooks, provider identifiers and
-idempotency controls so the same event does not create multiple payment or
-refund records. Financial corrections remain linked to the original payment.
-However, the current application records refund allocations and internal
-refund transactions without a certified end-to-end Stripe refund executor.
-Production appointment collection must remain disabled until Stripe test-mode
-refund, failure, webhook, reconciliation and settlement evidence passes.
+Financial corrections remain linked to the original payment. Recording a refund in Clipperdesk does not send money to a bank or card provider; the responsible merchant must arrange the actual refund and confirm its status.
 
-## 9. Approval gate and changes
+## 9. Policy status and changes
 
-Before this policy becomes effective, named Finance, Operations, Legal,
-Privacy and Product owners must:
-
-- verify the published operator and customer-service contact details;
-- confirm whether the live Stripe account, connected Business Customer or
-  another entity is the merchant for each appointment-payment flow;
-- implement and certify provider-backed full and partial refunds, failure
-  handling and reconciliation;
-- approve request acknowledgment, decision and submission timelines;
-- confirm Clipperdesk seller, Stripe processor and support language for subscriptions;
-- verify that checkout and receipts display the policy before payment; and
-- publish an effective date and retain the version accepted for each relevant
-  transaction.
-
-Material changes must not retroactively reduce rights for a completed purchase.
-The policy version shown when a booking, subscription or payment is confirmed
-should remain reproducible with the related transaction evidence.
+This policy remains under review and has no effective date. An approved version will state the operator’s refund terms and service timelines. Material changes must not retroactively reduce rights for a completed purchase. The policy shown when a purchase is confirmed should remain available with its transaction record.

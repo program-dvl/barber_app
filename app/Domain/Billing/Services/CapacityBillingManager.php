@@ -15,16 +15,16 @@ class CapacityBillingManager
 {
     public function __construct(private readonly CapacityPricingCatalog $catalog, private readonly CapacityStripeGateway $stripe, private readonly EntitlementEvaluator $entitlements, private readonly AuditWriter $audit) {}
 
-    public function review(Business $business, User $actor, string $market, string $interval, int $locations, int $staff): BillingCapacityChange
+    public function review(Business $business, User $actor, string $market, string $interval, int $locations, int $staff, bool $useCurrentRates = false): BillingCapacityChange
     {
-        return DB::transaction(function () use ($business, $actor, $market, $interval, $locations, $staff): BillingCapacityChange {
+        return DB::transaction(function () use ($business, $actor, $market, $interval, $locations, $staff, $useCurrentRates): BillingCapacityChange {
             Business::whereKey($business->id)->lockForUpdate()->firstOrFail();
             $subscription = $business->subscription()->with('price')->lockForUpdate()->firstOrFail();
             $this->assertIdle($subscription);
             abort_unless($this->catalog->marketFor($business) === strtoupper($market), 422, 'Choose the available subscription currency.');
             $retained = $subscription->billing_rate_card_id ? BillingRateCard::findOrFail($subscription->billing_rate_card_id) : null;
             abort_if($retained && $retained->market !== strtoupper($market), 422, 'Changing the billing country requires a separate migration.');
-            if ($retained && $retained->billing_interval !== $interval) {
+            if ($retained && ($useCurrentRates || $retained->billing_interval !== $interval)) {
                 $retained = null;
             }
             $quote = $this->catalog->quote($market, $interval, $locations, $staff, $retained);
@@ -36,10 +36,10 @@ class CapacityBillingManager
                 abort_unless($subscription->status->value === 'active' && $subscription->current_period_ends_at?->isFuture(), 409, 'Resolve billing or cancellation before changing capacity.');
                 abort_unless($subscription->price && $subscription->price->currency === $quote['currency'], 422, 'Currency changes require a separate migration.');
                 $current = $subscription->capacity_snapshot;
-                if ($current && $current['locations'] === $locations && $current['staff'] === $staff && $subscription->billing_interval->value === $interval) {
+                if ($current && $current['locations'] === $locations && $current['staff'] === $staff && $subscription->billing_interval->value === $interval && $current['fingerprint'] === $quote['fingerprint']) {
                     throw ValidationException::withMessages(['staff' => 'You already have this capacity.']);
                 }
-                if ($subscription->billing_interval->value !== $interval || ($current && ($locations < $current['locations'] || $staff < $current['staff']))
+                if (($current && $current['fingerprint'] !== $quote['fingerprint']) || $subscription->billing_interval->value !== $interval || ($current && ($locations < $current['locations'] || $staff < $current['staff']))
                     || ($quote['total_minor'] < ($current['total_minor'] ?? $subscription->price->amount_minor))) {
                     $kind = 'renewal';
                 }

@@ -130,3 +130,7 @@ resolve the appointment's issued receipt. Viewing creates no payment/receipt and
 uses private no-store/no-referrer/noindex headers. Future notification action-link
 expiry is based on intended delivery time; existing revocation/tenant checks and
 single-use mutation actions remain. See [Communications](modules/communications.md).
+
+## Location intelligence (2026-10-12; ADR-064)
+
+[Locations](modules/location-intelligence.md) specifies the shared owner-confirmed entrance, inline branch picker, optional memory-only nearby sort and snapshot-based arrival card. Single eligible branches skip selection; common services survive branch switching. Maps load on request. Held location changes require a fresh address review; confirmed and same-branch rescheduled visits keep their original location details.

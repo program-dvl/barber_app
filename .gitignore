@@ -6,6 +6,7 @@
 /public/storage
 /storage/*.key
 /vendor
+/tmp/public-content-audit/
 .env
 .env.backup
 .env.production

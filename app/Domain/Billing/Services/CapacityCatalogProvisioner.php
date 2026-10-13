@@ -36,12 +36,12 @@ class CapacityCatalogProvisioner
                 if (! $product->active) {
                     throw new LogicException('The capacity product is archived; review it before provisioning.');
                 }
-                $identity = hash('sha256', json_encode([$market, $terms['revision'], $interval, $role, $terms[$role.'_minor'], $terms['currency']]));
+                $identity = hash('sha256', json_encode([$market, $terms['revision'], $interval, $role, $catalog->stripePriceParameters($terms, $role), $terms['currency']]));
                 $lookup = 'clipperdesk_capacity_'.$identity;
                 $matches = $stripe->prices->all(['lookup_keys' => [$lookup], 'limit' => 2]);
                 $price = $matches->data[0] ?? $stripe->prices->create([
                     'product' => $product->id, 'currency' => strtolower($terms['currency']),
-                    'unit_amount' => $terms[$role.'_minor'], 'billing_scheme' => 'per_unit',
+                    ...$catalog->stripePriceParameters($terms, $role),
                     'tax_behavior' => 'exclusive', 'lookup_key' => $lookup,
                     'recurring' => ['interval' => $interval === 'annual' ? 'year' : 'month', 'interval_count' => 1, 'usage_type' => 'licensed'],
                     'metadata' => $metadata + ['revision' => $terms['revision']],

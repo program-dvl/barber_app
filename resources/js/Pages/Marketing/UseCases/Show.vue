@@ -37,7 +37,7 @@ defineProps({ useCase: Object, feature: Object, solution: Object, seo: Object })
 
         <section class="-mt-8 px-4 pb-4 sm:-mt-12">
             <div class="cd-answer-panel relative z-10 mx-auto max-w-4xl">
-                <p class="cd-eyebrow">The direct answer</p>
+                <p class="cd-eyebrow">At a glance</p>
                 <p class="mt-4 text-lg leading-8 text-[var(--text-default)]">{{ useCase.answer }}</p>
             </div>
         </section>
@@ -54,7 +54,7 @@ defineProps({ useCase: Object, feature: Object, solution: Object, seo: Object })
                     </ul>
                 </div>
                 <div>
-                    <h2 class="font-display text-3xl font-semibold leading-tight text-[var(--text-strong)]">A practical operating approach</h2>
+                    <h2 class="font-display text-3xl font-semibold leading-tight text-[var(--text-strong)]">Steps your team can take</h2>
                     <ol class="cd-story-list mt-7">
                         <li v-for="(step, index) in useCase.practice" :key="step.title" class="grid grid-cols-[3rem_1fr] gap-4 border-b border-[var(--border-default)] py-5">
                             <span class="font-display text-2xl font-semibold text-[var(--brand-secondary)]" aria-hidden="true">0{{ index + 1 }}</span>
@@ -91,20 +91,20 @@ defineProps({ useCase: Object, feature: Object, solution: Object, seo: Object })
 
         <section class="cd-public-section">
             <PublicContainer>
-                <SectionHeading eyebrow="Continue evaluating" title="See the supporting product workflow and business fit" />
+                <SectionHeading eyebrow="Related features" title="Explore the tools and business workflows" />
                 <div class="cd-visual-card-grid mt-10">
                     <article class="cd-visual-card">
                         <div class="cd-visual-card-media"><img class="cd-visual-card-image" :src="visualFor(featureVisuals, feature.slug, marketingFamilyVisuals.product).src" :alt="visualFor(featureVisuals, feature.slug, marketingFamilyVisuals.product).alt" width="1536" height="1024" loading="lazy" /></div>
-                        <div class="cd-visual-card-body min-h-0"><p class="cd-eyebrow">Supporting feature</p><h2 class="mt-4 text-xl font-extrabold text-[var(--text-strong)]">{{ feature.title }}</h2><Link :href="route('marketing.features.show', feature.slug)" class="cd-arrow-link mt-5">Explore {{ feature.label.toLowerCase() }}</Link></div>
+                        <div class="cd-visual-card-body min-h-0"><p class="cd-eyebrow">Supporting feature</p><h3 class="mt-4 text-xl font-extrabold text-[var(--text-strong)]">{{ feature.title }}</h3><Link :href="route('marketing.features.show', feature.slug)" class="cd-arrow-link mt-5">Explore {{ feature.label.toLowerCase() }}</Link></div>
                     </article>
                     <article class="cd-visual-card">
                         <div class="cd-visual-card-media"><img class="cd-visual-card-image" :src="visualFor(solutionVisuals, solution.slug, marketingFamilyVisuals.useCases).src" :alt="visualFor(solutionVisuals, solution.slug, marketingFamilyVisuals.useCases).alt" width="1536" height="1024" loading="lazy" /></div>
-                        <div class="cd-visual-card-body min-h-0"><p class="cd-eyebrow">Relevant fit</p><h2 class="mt-4 text-xl font-extrabold text-[var(--text-strong)]">{{ solution.title }}</h2><Link :href="route('marketing.solutions.show', solution.slug)" class="cd-arrow-link mt-5">See the {{ solution.label.toLowerCase() }} workflow</Link></div>
+                        <div class="cd-visual-card-body min-h-0"><p class="cd-eyebrow">Relevant fit</p><h3 class="mt-4 text-xl font-extrabold text-[var(--text-strong)]">{{ solution.title }}</h3><Link :href="route('marketing.solutions.show', solution.slug)" class="cd-arrow-link mt-5">See the {{ solution.label.toLowerCase() }} workflow</Link></div>
                     </article>
                 </div>
             </PublicContainer>
         </section>
 
-        <ConversionBand :title="`Put this ${useCase.label.toLowerCase()} workflow into practice.`" description="Start with a verified trial and configure the operating rules before publishing the Business booking experience." :context="`use_case_${useCase.slug}_final`" />
+        <ConversionBand :title="`Make your next working day easier to manage.`" description="Try the workflow with your services, team and working hours." :context="`use_case_${useCase.slug}_final`" />
     </HomeLayout>
 </template>

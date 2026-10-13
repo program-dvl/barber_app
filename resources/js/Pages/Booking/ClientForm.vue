@@ -1,4 +1,6 @@
 <script setup>
+import { inject as injectRoute } from 'vue';
+const route = injectRoute('route');
 import FieldError from '@/Components/Product/FieldError.vue';
 import { useForm } from '@inertiajs/vue3';
 import AppButton from '@/Components/Product/AppButton.vue';

@@ -1,4 +1,6 @@
 <script setup>
+import { inject as injectRoute } from 'vue';
+const route = injectRoute('route');
 import { Link, useForm } from '@inertiajs/vue3';
 import { CheckCircleIcon, ExclamationTriangleIcon, LockClosedIcon } from '@heroicons/vue/24/outline';
 import AuthenticationCard from '@/Components/Profile/AuthenticationCard.vue';

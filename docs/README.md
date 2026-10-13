@@ -93,3 +93,7 @@ checks.
 - [2026-10-11 billing redesign and Larafast reuse audit](audits/2026-10-11-billing/review.md)
 
 - [Public capacity pricing and signup preferences](modules/public-pricing.md)
+
+- [Google Maps location intelligence](modules/location-intelligence.md) and [Google Cloud setup](deployment/google-maps.md).
+
+- [Public website content, claims and SEO](modules/public-website.md).

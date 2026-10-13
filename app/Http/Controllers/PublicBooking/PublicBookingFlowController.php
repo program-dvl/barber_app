@@ -7,6 +7,7 @@ use App\Domain\PublicBooking\Services\PublicBookingService;
 use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
 use App\Http\Controllers\Controller;
 use App\Rules\E164Phone;
+use App\Support\Locations\LocationData;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -144,7 +145,9 @@ class PublicBookingFlowController extends Controller
             'reference' => $result['appointment']->booking_reference,
             'starts_at' => $result['appointment']->starts_at_utc->setTimezone($result['appointment']->time_zone)->toIso8601String(),
             'view_url' => $result['view_url'], 'calendar_url' => $result['calendar_url'],
-            'location' => $appointment->location->name, 'address' => $appointment->location->address,
+            'location' => LocationData::forAppointment($appointment)['name'],
+            'address' => LocationData::forAppointment($appointment)['address'],
+            'location_details' => LocationData::forAppointment($appointment),
             'time_zone' => $appointment->time_zone, 'currency_code' => $appointment->currency_code,
             'price_minor' => $appointment->price_minor,
             'services' => $appointment->serviceLines->pluck('name'),

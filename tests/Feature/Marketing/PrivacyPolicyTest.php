@@ -67,9 +67,9 @@ it('makes an approved notice indexable with effective metadata and sitemap inclu
     approvePrivacyFixture();
     $this->get('/privacy-policy?email=private@example.test')
         ->assertOk()->assertHeader('X-Robots-Tag', 'index, follow, max-image-preview:large')
-        ->assertSee('<meta name="robots" content="index, follow, max-image-preview:large">', false)
-        ->assertSee('<link rel="canonical" href="https://clipperdesk.com/privacy-policy">', false)
-        ->assertSee('<title>Clipperdesk Privacy Policy</title>', false)
+        ->assertSee('<meta name="robots" content="index, follow, max-image-preview:large" data-inertia="robots">', false)
+        ->assertSee('<link rel="canonical" href="https://clipperdesk.com/privacy-policy" data-inertia="canonical">', false)
+        ->assertSee('<title data-inertia="">Clipperdesk Privacy Policy</title>', false)
         ->assertSee('Effective date')->assertSee('Operating service providers')
         ->assertDontSee('Review preview')->assertDontSee('private@example.test');
     $this->get('/sitemap.xml')->assertOk()->assertSee('https://clipperdesk.com/privacy-policy', false);

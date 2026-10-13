@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Controller;
-use Inertia\Inertia;
+use App\Support\Seo\PublicPage;
 use Inertia\Response;
 
 class UseCaseController extends Controller
@@ -19,7 +19,7 @@ class UseCaseController extends Controller
             ])
             ->values();
 
-        return Inertia::render('Marketing/UseCases/Index', [
+        return PublicPage::render('Marketing/UseCases/Index', [
             'useCases' => $useCases,
             'seo' => [
                 'title' => 'Service business operations use cases | ClipperDesk',
@@ -39,8 +39,8 @@ class UseCaseController extends Controller
         $features = config('frontsite.features');
         $solutions = config('frontsite.solutions');
 
-        return Inertia::render('Marketing/UseCases/Show', [
-            'useCase' => [...$content, 'slug' => $useCase],
+        return PublicPage::render('Marketing/UseCases/Show', [
+            'useCase' => [...collect($content)->except('requirements')->all(), 'slug' => $useCase],
             'feature' => [
                 'slug' => $content['feature'],
                 'label' => $features[$content['feature']]['label'],

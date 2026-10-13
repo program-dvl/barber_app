@@ -6,6 +6,7 @@ use App\Domain\ClientRecords\Models\Client;
 use App\Domain\ClientRecords\Models\ClientFormRequest;
 use App\Domain\MoneyCommerce\Models\Sale;
 use App\Domain\PlatformAccess\Models\Location;
+use App\Support\Locations\LocationData;
 use App\Support\Tenancy\BelongsToBusiness;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,7 +22,7 @@ class Appointment extends Model
         'business_id', 'location_id', 'client_id', 'rescheduled_from_appointment_id', 'rescheduled_to_appointment_id',
         'public_id', 'booking_reference', 'idempotency_key', 'request_hash', 'status', 'source', 'client_name',
         'client_mobile', 'client_email', 'client_date_of_birth', 'referral_source', 'communication_preferences',
-        'marketing_opt_in', 'special_request', 'public_policy_snapshot', 'internal_notes', 'starts_at_utc', 'ends_at_utc', 'time_zone',
+        'location_snapshot', 'marketing_opt_in', 'special_request', 'public_policy_snapshot', 'internal_notes', 'starts_at_utc', 'ends_at_utc', 'time_zone',
         'local_starts_at', 'local_ends_at', 'price_minor', 'currency_code', 'confirmed_at',
         'version', 'arrived_at', 'checked_in_at', 'service_started_at', 'completed_at', 'cancelled_at',
     ];
@@ -29,6 +30,12 @@ class Appointment extends Model
     protected static function booted(): void
     {
         static::creating(function (Appointment $appointment): void {
+            if (! $appointment->location_snapshot) {
+                $location = Location::query()->where('business_id', $appointment->business_id)->find($appointment->location_id);
+                if ($location) {
+                    $appointment->location_snapshot = LocationData::snapshot($location);
+                }
+            }
             $appointment->public_id ??= (string) Str::ulid();
             $appointment->booking_reference ??= 'GH-'.substr($appointment->public_id, -10);
         });
@@ -42,7 +49,7 @@ class Appointment extends Model
             'checked_in_at' => 'immutable_datetime', 'service_started_at' => 'immutable_datetime',
             'completed_at' => 'immutable_datetime', 'cancelled_at' => 'immutable_datetime',
             'client_date_of_birth' => 'immutable_date', 'communication_preferences' => 'array',
-            'marketing_opt_in' => 'boolean', 'public_policy_snapshot' => 'array',
+            'location_snapshot' => 'array', 'marketing_opt_in' => 'boolean', 'public_policy_snapshot' => 'array',
             'price_minor' => 'integer', 'version' => 'integer',
         ];
     }

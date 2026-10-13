@@ -44,11 +44,11 @@ defineProps({ feature: Object, related: Array, seo: Object });
 
         <section class="cd-public-section">
             <PublicContainer>
-                <SectionHeading eyebrow="How it works" title="How it works" />
+                <SectionHeading eyebrow="Your workflow" title="How it works" />
                 <ol class="cd-story-list mt-12">
                     <li v-for="(step, index) in feature.workflow" :key="step.title" class="cd-story-row">
                         <span class="cd-story-number" aria-hidden="true">0{{ index + 1 }}</span>
-                        <h2 class="font-display text-2xl font-bold leading-tight text-[var(--text-strong)]">{{ step.title }}</h2>
+                        <h3 class="font-display text-2xl font-bold leading-tight text-[var(--text-strong)]">{{ step.title }}</h3>
                         <p class="leading-8 text-[var(--text-muted)]">{{ step.body }}</p>
                     </li>
                 </ol>
@@ -87,7 +87,7 @@ defineProps({ feature: Object, related: Array, seo: Object });
                         <div class="cd-visual-card-media"><img class="cd-visual-card-image" :src="visualFor(featureVisuals, item.slug, marketingFamilyVisuals.product).src" :alt="visualFor(featureVisuals, item.slug, marketingFamilyVisuals.product).alt" width="1536" height="1024" loading="lazy" /></div>
                         <div class="cd-visual-card-body min-h-0">
                             <p class="cd-eyebrow">{{ item.label }}</p>
-                            <h2 class="mt-4 text-xl font-extrabold text-[var(--text-strong)]">{{ item.title }}</h2>
+                            <h3 class="mt-4 text-xl font-extrabold text-[var(--text-strong)]">{{ item.title }}</h3>
                             <Link :href="route('marketing.features.show', item.slug)" class="cd-arrow-link mt-5">Read this feature</Link>
                         </div>
                     </article>
@@ -95,6 +95,6 @@ defineProps({ feature: Object, related: Array, seo: Object });
             </PublicContainer>
         </section>
 
-        <ConversionBand :title="`Put ${feature.label.toLowerCase()} in the same operating day.`" description="Start with a verified trial and review the rules before the Business publishes its booking experience." :context="`feature_${feature.slug}_final`" />
+        <ConversionBand :title="`Bring ${feature.label.toLowerCase()} into your working day.`" description="Set up your services and team, then preview your booking page before sharing it." :context="`feature_${feature.slug}_final`" />
     </HomeLayout>
 </template>

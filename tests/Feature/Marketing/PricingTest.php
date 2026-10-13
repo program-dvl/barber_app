@@ -36,6 +36,7 @@ it('publishes the same verified capacity components without exposing provider id
         ->where('catalog.markets.0.currency', 'USD')->where('catalog.markets.0.intervals.monthly.base_minor', 2900)
         ->where('catalog.markets.0.intervals.monthly.location_minor', 1900)->where('catalog.markets.0.intervals.monthly.staff_minor', 900)
         ->where('catalog.markets.0.intervals.annual.base_minor', 29000)->where('catalog.markets.0.intervals.annual.staff_minor', 9000)
+        ->where('catalog.markets.0.intervals.monthly.staff_tiers', [['up_to' => 4, 'unit_minor' => 900], ['up_to' => 9, 'unit_minor' => 600], ['up_to' => null, 'unit_minor' => 400]])
         ->where('catalog.trial_days', 14)->missing('catalog.plans')->missing('capacityPricing')
         ->missing('catalog.markets.0.intervals.monthly.rate_card_id')->missing('catalog.markets.0.intervals.monthly.base_price_id')
         ->missing('catalog.markets.0.intervals.monthly.fingerprint')->where('seo.canonical', route('marketing.pricing')));
@@ -105,17 +106,17 @@ it('exposes only the current owners own saved preference to the billing calculat
 
 it('publishes component pricing in structured data and omits unavailable offers', function () {
     $response = $this->get(route('marketing.pricing'))->assertOk();
-    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $response->getContent(), $matches);
+    preg_match('/<script type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $response->getContent(), $matches);
     $graph = json_decode($matches[1], true, flags: JSON_THROW_ON_ERROR);
     $software = collect($graph['@graph'])->firstWhere('@type', 'SoftwareApplication');
     expect($software['offers'])->toHaveCount(2)
-        ->and($software['offers'][0]['priceSpecification']['@type'])->toBe('CompoundPriceSpecification')
-        ->and(array_column($software['offers'][0]['priceSpecification']['priceComponent'], 'price'))->toBe(['29.00', '19.00', '9.00'])
-        ->and(array_column($software['offers'][1]['priceSpecification']['priceComponent'], 'price'))->toBe(['290.00', '190.00', '90.00'])
-        ->and($software['offers'][1]['priceSpecification']['priceComponent'][0]['billingDuration'])->toBe('P1Y');
+        ->and($software['offers'][0]['priceSpecification']['@type'])->toBe('UnitPriceSpecification')
+        ->and($software['offers'][0]['price'])->toBe('29.00')
+        ->and($software['offers'][1]['price'])->toBe('290.00')
+        ->and($software['offers'][1]['priceSpecification']['billingDuration'])->toBe('P1Y');
     config(['capacity-billing.enabled' => false]);
     $html = $this->get(route('marketing.pricing'))->assertOk()->getContent();
-    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
+    preg_match('/<script type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $html, $matches);
     $graph = json_decode($matches[1], true, flags: JSON_THROW_ON_ERROR);
     expect(collect($graph['@graph'])->firstWhere('@type', 'SoftwareApplication'))->not->toHaveKey('offers');
 });

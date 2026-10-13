@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Domain\Marketing\Services\SafeArticleRenderer;
 use App\Models\Article;
+use App\Support\Seo\PublicPage;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
 use Inertia\Response;
 
 class BlogController extends Controller
@@ -16,7 +16,7 @@ class BlogController extends Controller
             ->publishable()->latest('published_at')->paginate(12)
             ->through(fn (Article $article): array => $this->summary($article));
 
-        return Inertia::render('Blog', [
+        return PublicPage::render('Blog', [
             'articles' => $articles,
             'seo' => [
                 'title' => 'Service business operations blog | ClipperDesk',
@@ -38,9 +38,9 @@ class BlogController extends Controller
             $seoTitle .= ' | ClipperDesk';
         }
 
-        return Inertia::render('Article', [
+        return PublicPage::render('Article', [
             'article' => [...$this->summary($article), 'html' => $renderer->render($article->content),
-                'materially_updated_at' => $article->materially_updated_at?->toIso8601String(), 'content_owner' => $article->content_owner],
+                'materially_updated_at' => $article->materially_updated_at?->toIso8601String()],
             'related' => $related,
             'seo' => [
                 'title' => $seoTitle,

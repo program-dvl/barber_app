@@ -5,6 +5,7 @@ import createServer from '@inertiajs/vue3/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/index.js';
 import { i18nVue } from 'laravel-vue-i18n';
+import { renderPublicApp } from './Components/PublicHead';
 
 createServer((page) =>
     createInertiaApp({
@@ -17,7 +18,7 @@ createServer((page) =>
         },
         resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
         setup({ App, props, plugin }) {
-            return createSSRApp({ render: () => h(App, props) })
+            return createSSRApp({ render: () => renderPublicApp(App, props) })
                 .use(plugin)
                 .use(ZiggyVue, {
                     ...page.props.ziggy,

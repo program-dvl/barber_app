@@ -1,4 +1,9 @@
 <script setup>
+import { inject as injectRoute } from 'vue';
+const route = injectRoute('route');
+import { retainBranchServices } from '@/Support/locationIntelligence';
+import LocationCard from '@/Components/Locations/LocationCard.vue';
+import BranchPicker from '@/Components/Locations/BranchPicker.vue';
 import { computed, nextTick, onMounted, onBeforeUnmount, ref, watch } from 'vue';
 import axios from 'axios';
 import { ArrowLeftIcon, ArrowRightIcon, CalendarDaysIcon, CheckCircleIcon, ClockIcon, MapPinIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
@@ -102,8 +107,7 @@ const restore = async () => {
     } finally { restoring.value = false; }
 };
 const pruneServices = () => {
-    selection.value.services = selection.value.services.filter(id => availableServices.value.some(item => item.public_id === id));
-    selection.value.services = selection.value.services.filter(id => allowedAddon(props.catalog.services.find(item => item.public_id === id)));
+    selection.value.services = retainBranchServices(selection.value.services, availableServices.value);
     if (!eligibleStaff.value.some(member => member.public_id === selection.value.staff)) selection.value.staff = '';
     if (!categories.value.includes(category.value)) category.value = 'All';
     if (selection.value.date < today.value || selection.value.date > lastDate.value) selection.value.date = today.value;
@@ -140,7 +144,13 @@ const search = async () => {
     } finally { if (version === searchVersion) loadingSlots.value = false; }
 };
 const continueToTimes = async () => { if (!canContinue.value) return; await go(2); await search(); };
-watch(() => [selection.value.location, selection.value.client_eligibility], () => { pruneServices(); });
+watch(() => selection.value.location, () => {
+    const before = selection.value.services.length;
+    searchController?.abort(); ++searchVersion; slots.value = []; selection.value.date = today.value;
+    pruneServices();
+    notice.value = before > selection.value.services.length ? 'Some selected services are unavailable at this branch. Your other services are kept.' : '';
+});
+watch(() => selection.value.client_eligibility, pruneServices);
 watch(() => [selection.value.date, selection.value.staff], () => { if (step.value === 2 && !busy.value) { clearTimeout(searchTimer); slots.value = []; loadingSlots.value = true; searchTimer = setTimeout(search, 200); } });
 const hold = async slot => {
     if (busy.value) return;
@@ -230,13 +240,9 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                 <section v-if="restoring" class="booking-panel"><BookingSkeleton label="Restoring your booking" /></section>
                 <section v-else-if="step === 1" class="booking-panel">
                     <h2 id="booking-heading" tabindex="-1" class="cd-section-title">Choose your services</h2>
-                    <div v-if="catalog.locations.length > 1" class="mt-5">
-                        <FormField id="booking-location" label="Location">
-                            <select id="booking-location" v-model="selection.location" class="cd-input">
-                                <option v-for="item in catalog.locations" :key="item.public_id" :value="item.public_id">{{ item.name }} · {{ item.address }}</option>
-                            </select>
-                        </FormField>
-                    </div>
+                    <BranchPicker v-if="catalog.locations.length > 1" class="mt-5" :branches="catalog.locations" v-model="selection.location" />
+                    <LocationCard v-if="location && catalog.locations.length === 1" class="mt-4 lg:hidden" :location="location" />
+                    <details v-else-if="location" class="mt-3 rounded-lg border border-[var(--border-subtle)] p-3 lg:hidden"><summary class="cursor-pointer text-sm font-semibold">Arrival &amp; directions · {{ location.name }}</summary><LocationCard class="mt-3" :location="location" /></details>
                     <FormField v-if="catalog.services.length > 8" id="service-search" label="Find a service" class="mt-5">
                         <div class="relative">
                             <MagnifyingGlassIcon class="absolute left-3 top-3 size-5 text-[var(--text-muted)]" aria-hidden="true" />
@@ -405,6 +411,7 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                     <div class="booking-review mt-4">
                         <strong>{{ fullTime(held.state.starts_at) }}</strong>
                         <p class="mt-1 text-sm">{{ location?.name }} · {{ zone.replaceAll('_', ' ') }}</p>
+                        <LocationCard v-if="held.policy.location_details" class="mt-3" :location="held.policy.location_details" />
                         <ul class="mt-4 space-y-3">
                             <li v-for="(service, index) in held.policy.services" :key="index" class="flex justify-between gap-3 text-sm">
                                 <span class="min-w-0">
@@ -517,7 +524,7 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                     <p class="mt-2 text-sm text-[var(--text-muted)]">Reference {{ confirmation.reference }}</p>
                     <div class="booking-review mt-5">
                         <strong>{{ fullTime(confirmation.starts_at) }}</strong>
-                        <p class="mt-2">{{ confirmation.location }}</p>
+                        <LocationCard class="mt-4 text-left" :location="confirmation.location_details" />
                         <p class="text-sm text-[var(--text-muted)]">{{ confirmation.address }}</p>
                         <p class="mt-3 text-sm">{{ confirmation.services?.join(', ') }}</p>
                         <p v-if="confirmation.staff?.length" class="mt-1 text-sm text-[var(--text-muted)]">With {{ confirmation.staff.join(', ') }}</p>
@@ -533,8 +540,7 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                 </section>
                 <aside v-if="step < 4" class="booking-panel booking-aside" aria-label="Your appointment">
                     <h2 class="font-semibold">Your appointment</h2>
-                    <p class="mt-3 text-sm">{{ location?.name }}</p>
-                    <p v-if="location?.address" class="mt-1 text-xs text-[var(--text-muted)]">{{ location.address }}</p>
+                    <LocationCard v-if="location" class="mt-3" :location="location" />
                     <ul class="mt-5 space-y-4">
                         <li v-for="service in selectedServices" :key="service.public_id" class="flex justify-between gap-3 text-sm">
                             <span>{{ service.name }}</span>

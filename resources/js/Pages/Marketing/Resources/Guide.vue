@@ -21,7 +21,7 @@ defineProps({ guide: Object, seo: Object });
                             <p class="cd-eyebrow">{{ guide.topic }}</p>
                             <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[1] tracking-[-0.055em] text-balance">{{ guide.title }}</h1>
                             <p class="mt-7 max-w-3xl text-lg leading-8">{{ guide.intro }}</p>
-                            <p class="mt-6 text-sm font-semibold text-white/60">Published {{ guide.published_at }} · Reviewed by {{ guide.reviewed_by }}</p>
+                            <p class="mt-6 text-sm font-semibold text-white/60">Published {{ guide.published_at }} · Updated {{ guide.reviewed_at }} · {{ guide.reviewed_by }}</p>
                         </div>
                         <figure class="cd-family-hero-media">
                             <img class="cd-family-hero-image" :src="visualFor(guideVisuals, guide.slug, marketingFamilyVisuals.resources).src" :alt="visualFor(guideVisuals, guide.slug, marketingFamilyVisuals.resources).alt" width="1536" height="1024" fetchpriority="high" />

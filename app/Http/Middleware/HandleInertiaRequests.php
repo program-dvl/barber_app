@@ -12,6 +12,7 @@ use App\Domain\PlatformAccess\Models\SupportAccessSession;
 use App\Domain\PlatformAccess\Services\MembershipAccessManager;
 use App\Domain\PlatformAccess\Services\WorkspaceAccessService;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Support\Seo\PublicIndexation;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -47,6 +48,36 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'appName' => config('brand.product_name'),
+            'seoDefaults' => fn () => [
+                'title' => match ($request->route()?->getName()) {
+                    'login' => 'Sign in | ClipperDesk',
+                    'register' => 'Create your account | ClipperDesk',
+                    'password.request' => 'Reset your password | ClipperDesk',
+                    'password.reset' => 'Choose a new password | ClipperDesk',
+                    'booking.welcome' => 'Book an appointment | ClipperDesk',
+                    'booking.manage', 'public.appointment.view', 'public.appointment.action' => 'Manage your appointment | ClipperDesk',
+                    'client-forms.completed' => 'Form received | ClipperDesk',
+                    'two-factor.login' => 'Verify your sign-in | ClipperDesk',
+                    'staff-invitations.show' => 'Join your team | ClipperDesk',
+                    default => config('brand.product_name'),
+                },
+                'description' => match ($request->route()?->getName()) {
+                    'login' => 'Sign in to your ClipperDesk workspace to manage appointments, client records, team schedules and recorded sales.',
+                    'register' => 'Create your ClipperDesk account and start a free trial after email verification. No credit card is required.',
+                    'password.request', 'password.reset' => 'Reset your ClipperDesk password to regain access to your business workspace.',
+                    'booking.welcome' => 'Open the booking link shared by your business to choose services and an available appointment time.',
+                    'booking.manage', 'public.appointment.view', 'public.appointment.action' => 'Use your private appointment link to review booking details and the changes allowed by your business’s policy.',
+                    'client-forms.completed' => 'Your form has been sent to the business. You can close this page.',
+                    'two-factor.login' => 'Use your authenticator app or a saved recovery code to finish signing in to ClipperDesk.',
+                    'staff-invitations.show' => 'Review your private invitation to join your team’s ClipperDesk workspace.',
+                    default => config('brand.description'),
+                },
+                'image' => url(config('brand.social_image')),
+                'site_name' => config('brand.product_name'),
+                'locale' => 'en_IN',
+                'robots' => app(PublicIndexation::class)->directive($request),
+                'canonical' => null,
+            ],
             'brand' => fn () => [
                 'product_name' => $request->routeIs('policy.show') ? 'Clipperdesk' : config('brand.product_name'),
                 'company_name' => config('brand.company_name'),

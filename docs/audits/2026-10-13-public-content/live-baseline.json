@@ -1,0 +1,698 @@
+{
+  "base": "https://clipperdesk.com",
+  "sitemapCount": 32,
+  "records": [
+    {
+      "path": "/",
+      "status": 200,
+      "h1": [
+        "Your whole day,beautifully run."
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/blog",
+      "status": 200,
+      "h1": [
+        "Articles"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/blog"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/company",
+      "status": 200,
+      "h1": [
+        "About Clipperdesk"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/company"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/features",
+      "status": 200,
+      "h1": [
+        "Manage the work around every appointment."
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/features"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/features/calendar-and-walk-ins",
+      "status": 200,
+      "h1": [
+        "Manage appointments and walk-ins together"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/features/calendar-and-walk-ins"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/features/checkout-and-reporting",
+      "status": 200,
+      "h1": [
+        "Complete checkout and understand your reports"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/features/checkout-and-reporting"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/features/client-management",
+      "status": 200,
+      "h1": [
+        "Keep client history and preferences together"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/features/client-management"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/features/online-booking",
+      "status": 200,
+      "h1": [
+        "Book appointments online"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/features/online-booking"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/guides/booking-policy-basics",
+      "status": 200,
+      "h1": [
+        "Set a clear booking policy"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/guides/booking-policy-basics"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/guides/salon-opening-checklist",
+      "status": 200,
+      "h1": [
+        "Prepare your business for online booking"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/guides/salon-opening-checklist"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/pricing",
+      "status": 200,
+      "h1": [
+        "One plan.Built around your business."
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/pricing"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/resources",
+      "status": 200,
+      "h1": [
+        "Practical guides for your business."
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/resources"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/security",
+      "status": 200,
+      "h1": [
+        "How we protect your business data."
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/security"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions",
+      "status": 200,
+      "h1": [
+        "Built around the way you work."
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions/barbershops",
+      "status": 200,
+      "h1": [
+        "Manage barbershop appointments and walk-ins"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions/barbershops"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions/fitness-recovery",
+      "status": 200,
+      "h1": [
+        "Schedule fitness and recovery appointments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions/fitness-recovery"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions/health-practices",
+      "status": 200,
+      "h1": [
+        "Manage appointments for your health practice"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions/health-practices"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions/independent-stylists",
+      "status": 200,
+      "h1": [
+        "Manage your appointments as an independent stylist"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions/independent-stylists"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions/massage",
+      "status": 200,
+      "h1": [
+        "Manage massage appointments and room availability"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions/massage"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions/medspas",
+      "status": 200,
+      "h1": [
+        "Manage medspa appointments and client records"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions/medspas"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions/nail-salons",
+      "status": 200,
+      "h1": [
+        "Manage nail salon appointments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions/nail-salons"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions/pet-grooming",
+      "status": 200,
+      "h1": [
+        "Manage pet grooming appointments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions/pet-grooming"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions/physical-therapy",
+      "status": 200,
+      "h1": [
+        "Schedule physical therapy appointments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions/physical-therapy"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions/salons",
+      "status": 200,
+      "h1": [
+        "Manage salon appointments and services"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions/salons"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions/spas",
+      "status": 200,
+      "h1": [
+        "Manage spa appointments, practitioners and rooms"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions/spas"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions/tanning-studios",
+      "status": 200,
+      "h1": [
+        "Manage tanning studio appointments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions/tanning-studios"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/solutions/tattoo-piercing",
+      "status": 200,
+      "h1": [
+        "Manage tattoo and piercing appointments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/solutions/tattoo-piercing"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/use-cases",
+      "status": 200,
+      "h1": [
+        "Make daily work easier."
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/use-cases"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/use-cases/keep-client-history-together",
+      "status": 200,
+      "h1": [
+        "Keep client history together"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/use-cases/keep-client-history-together"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/use-cases/manage-walk-ins-and-appointments",
+      "status": 200,
+      "h1": [
+        "Manage walk-ins alongside appointments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/use-cases/manage-walk-ins-and-appointments"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/use-cases/protect-time-with-deposits",
+      "status": 200,
+      "h1": [
+        "Set clear deposit rules"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/use-cases/protect-time-with-deposits"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/use-cases/reduce-scheduling-conflicts",
+      "status": 200,
+      "h1": [
+        "Avoid scheduling conflicts"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/use-cases/reduce-scheduling-conflicts"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/terms-of-service",
+      "status": 200,
+      "h1": [
+        "Terms and Conditions"
+      ],
+      "robots": [
+        "noindex, follow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/terms-of-service"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/privacy-policy",
+      "status": 200,
+      "h1": [
+        "Privacy Policy"
+      ],
+      "robots": [
+        "noindex, follow, noarchive"
+      ],
+      "canonical": [
+        "https://www.clipperdesk.com/privacy-policy"
+      ],
+      "violations": []
+    },
+    {
+      "path": "/refund-policy",
+      "status": 200,
+      "h1": [
+        "Refund, Return and Cancellation Policy"
+      ],
+      "robots": [
+        "noindex, follow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/refund-policy"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/login",
+      "status": 200,
+      "h1": [
+        "Sign in"
+      ],
+      "robots": [
+        "noindex, follow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/login"
+      ],
+      "violations": []
+    },
+    {
+      "path": "/register",
+      "status": 200,
+      "h1": [
+        "Create your account"
+      ],
+      "robots": [
+        "noindex, follow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/register"
+      ],
+      "violations": []
+    },
+    {
+      "path": "/forgot-password",
+      "status": 200,
+      "h1": [
+        "Forgot password?"
+      ],
+      "robots": [
+        "noindex, nofollow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/forgot-password"
+      ],
+      "violations": []
+    },
+    {
+      "path": "/book",
+      "status": 200,
+      "h1": [
+        "Book an appointment"
+      ],
+      "robots": [
+        "noindex, follow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/book"
+      ],
+      "violations": []
+    },
+    {
+      "path": "/manage-appointment",
+      "status": 200,
+      "h1": [
+        "Open your private appointment link"
+      ],
+      "robots": [
+        "noindex, nofollow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/manage-appointment"
+      ],
+      "violations": []
+    },
+    {
+      "path": "/roadmap",
+      "status": 200,
+      "h1": [
+        "Shape Our Future Together"
+      ],
+      "robots": [
+        "noindex, nofollow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/roadmap"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/changelog",
+      "status": 500,
+      "h1": [
+        "Something went wrong"
+      ],
+      "robots": [
+        "noindex, nofollow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/changelog"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    },
+    {
+      "path": "/coming-soon",
+      "status": 200,
+      "h1": [
+        "Launch your Startup in Days, Not Months"
+      ],
+      "robots": [
+        "noindex, nofollow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/coming-soon"
+      ],
+      "violations": [
+        "main landmark"
+      ]
+    },
+    {
+      "path": "/missing-public-page",
+      "status": 404,
+      "h1": [
+        "Page not found"
+      ],
+      "robots": [
+        "noindex, nofollow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/missing-public-page"
+      ],
+      "violations": [
+        "internal copy"
+      ]
+    }
+  ]
+}

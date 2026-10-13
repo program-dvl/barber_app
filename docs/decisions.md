@@ -2254,6 +2254,109 @@ OPEN-10, remaining OPEN-13 items and OPEN-15 are retained. The notice candidly
 discloses that customer-record deletion execution and full exports are incomplete.
 See [the audit and resubmission checklist](audits/2026-10-12-privacy-policy/README.md).
 
+## ADR-063 — Progressive staff pricing and pricing discovery before configuration
+
+- Status: Accepted; owner direction on 2026-10-12.
+- Requirements: FR-01, FR-13, PRD §9; supersedes flat staff pricing in ADR-056
+  and the calculator-led presentation in ADR-061. Release gates remain in force.
+- One plan: USD 29 base includes one location/person, USD 19 per extra location,
+  progressive bookable staff positions 2–5 at USD 9, 6–10 at USD 6, 11+ at USD 4.
+  Count active bookable staff once across all branches. Annual charges ten months.
+- Config owns integer amounts, included counts and cumulative additional-staff
+  bounds. Derive annual terms by multiplying every component by ten. Trial
+  duration remains owned by billing config. Public and authenticated estimates
+  read server terms; no client amount authorizes billing.
+- Reuse the three-item Stripe architecture. Staff quantity remains total staff
+  minus one; the staff Price becomes licensed recurring `tiered`/`graduated`
+  with cumulative additional quantities 4, 9, infinity. Base and location remain
+  per-unit. Publish new immutable base and component Prices for this revision;
+  verify expanded Stripe tiers, tax behavior, currency and cadence before mapping.
+  Signed subscription objects may omit expanded tiers but must match verified IDs
+  and tiered/graduated mode. Retained flat cards continue to reconcile unchanged.
+- No bulk or automatic customer migration. Owners can opt into current verified
+  prices in the existing review/confirm flow; any rate-card switch is scheduled
+  at renewal with no immediate charge. Normal retained-card quantity increases
+  continue to use the old rates and established pending-payment/proration rules.
+- Reuse the public SEO-page hero, breadcrumbs, typography and marketing shell.
+  The starting-price/trial panel earns the hero's secondary column; no decorative
+  stock photo is needed. Features precede growth rates; estimator defaults to
+  one location/person/monthly and starts closed. Presets and reset only change
+  local inputs. Main trial CTA has no quantity preference; estimator signup
+  optionally saves non-binding preferences requiring later billing confirmation.
+- Keep actual current SMS allowances: 100 credits per capacity staff per month,
+  including 2,000 for a 20-person team, and existing subscription allowances.
+  Do not promote unlimited messaging or silently increase solo allowances.
+- Evidence, safe rollout and sandbox limits:
+  [progressive-pricing review](audits/2026-10-12-progressive-pricing/README.md).
+
+## ADR-064 — Google location search with owner entrance pins and appointment snapshots
+
+- Date: 2026-10-12. Status: Accepted for this owner-authorized implementation.
+- Requirements: FR-02/03/05/06/09/13/19; retains ADR-041/053/055/056.
+- Use the existing Vue/Inertia setup, activation, booking and communication paths.
+  Supported Places (New) widget manages session tokens/attribution; only selected
+  address fields and geometry are requested. Google hours/contacts/names are not
+  imported into operational records. No server Google secret is required.
+- Keep provider geometry and suggestions transient; retain Place IDs and reviewed
+  owner address data. Only owner-positioned entrance pins become durable operational
+  coordinates. Legacy coordinates with unknown provenance remain untouched and are
+  excluded from new nearby/nav/snapshot projections. Applicable legal/EEA review
+  remains part of existing privacy/provider launch gates, not a storage waiver.
+- Simple owner path: search, review address, place entrance, save. No coordinate
+  entry UI, second address/map-URL questionnaire or new onboarding system. Optional
+  address corrections and unit/arrival/parking details stay behind disclosures.
+  Saving the sole/primary branch synchronizes the legacy business address summary.
+- Inline branch selection retains applicable services, removes orphan add-ons and
+  uses existing branch staff/service/hour/resource rules. Nearby ordering is local
+  Haversine distance; customer coordinates are memory-only. Successful public booking
+  documents allow same-origin geolocation under Permissions-Policy, with the existing
+  user-triggered browser consent. Other pages continue denying geolocation.
+- Freeze assigned branch operational details on every new appointment and backfill
+  legacy visits from their best known current address. Same-branch replacement keeps
+  the snapshot; a deliberate new branch captures new details. A public hold cannot
+  confirm against changed location details. Primary/address edits never silently
+  move an appointment or rewrite history. Upcoming appointments block timezone edits.
+- Location-rich new notification intents capture the existing snapshot; an immutable
+  footer supplements older/custom templates unless their variables already cover
+  it. Existing queued messages/templates remain unchanged. The shared renderer and
+  SMS segment accounting include the actual final content. No Google call occurs.
+- Preserve commercial rules and SMS-only scope. API quotas, environment restrictions,
+  real browser/device/provider behavior and production legal approval require target
+  environment certification. A controlled relocation/amendment interface is future
+  work; it cannot be inferred from a location edit.
+- Contract/evidence: [Locations](modules/location-intelligence.md),
+  [deployment](deployment/google-maps.md),
+  [audit](audits/2026-10-12-location-intelligence/README.md).
+
+## ADR-065 — Keep public content separate from implementation evidence
+
+- Status: Accepted
+- Date: 2026-10-13
+- Basis: Product owner's comprehensive public content and SEO audit request.
+- Requirements: PRD sections 1–4, FR-01–FR-20; preserves ADR-024/026/033/063.
+
+Requirement mappings remain server-side documentation evidence. Public presenters
+strip them before serialization, and public copy describes customer workflows
+without internal QA, delivery-phase or acceptance language. A shared publication
+policy blocks internal markers/obvious placeholders in editorial records across
+detail, listing, counts and sitemap, while preserving stored history. Content and
+SSR/browser SEO regression checks enforce this boundary.
+
+One server SEO projection is rendered by the shared client/SSR head; navigation
+must update canonical, descriptions, social tags, robots and JSON-LD together.
+Production URL identity uses the configured primary brand host. Error/auth/private
+responses must not retain indexable product schema from a previous page.
+
+The retained Larafast roadmap/changelog/coming-soon GET surfaces and write entry
+points return 410 without exposing or changing their data. This is quarantine,
+not destructive cleanup; OPEN-09 remains. Payment recording, unavailable online
+deposit collection, gated communications and regulated-industry limitations remain
+visible in customer language. Legal review status cannot be removed through an
+editorial task: OPEN-10/13/15 and live provider/release gates remain unwaived.
+
+Specification and evidence: [Public website](modules/public-website.md) and
+[dated audit](audits/2026-10-13-public-content/README.md).
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |
@@ -2279,3 +2382,5 @@ See [the audit and resubmission checklist](audits/2026-10-12-privacy-policy/READ
 | OPEN-21 | Connect deposit communication events and approve the usable client payment action | Deposit request/received handlers and templates exist, but no deposit domain events invoke them; the current public action is only information and OPEN-16 still blocks self-service payment. | Before labeling deposit notifications active or offering a payment CTA | **Open; bounded by ADR-052, OPEN-13/16.** Product/Engineering/Finance must define committed request/collection events, exact-once keys, failure/refund language and tested public action. Prepared templates are not proof of an operational automation; no synthetic event or paid-confirmation bypass is approved. |
 
 | OPEN-22 | Approve each country rate card and SMS unit economics | The pricing model is approved, but country list, local amounts, annual discounts, destination costs, allowances, pack prices and refund/dispute handling are not | Before enabling each paid market | **Partially resolved; bounded by ADR-054/056.** Include actual Twilio route/carrier/sender/number/registration costs, SES costs and support margin. Certify taxed/async credit payment and refund/dispute recovery; USD software amounts are approved by ADR-056; other markets, SMS economics and paid-pack reversals remain open. |
+
+| OPEN-23 | Define intentional branch relocation and amendment of already-booked arrival details | Saved appointment location snapshots deliberately retain the booked address; a branch move must not silently redirect past or upcoming appointments | Before exposing an appointment location-amendment/relocation workflow | **Open; bounded by ADR-064.** Product/Operations must define permission, versioned evidence, client notice, reschedule/cancellation treatment and provider retry behavior. Current location edits preserve snapshots; owners must coordinate affected bookings through existing reviewed operations. |

@@ -51,19 +51,19 @@ const faqs = [
     },
     {
         question: 'Who is ClipperDesk built for?',
-        answer: 'The first release is designed for independent professionals and single-location appointment-led businesses, including teams with a shared front desk. Dedicated pages explain the fit and limits for each supported business type.',
+        answer: 'ClipperDesk supports independent professionals and appointment-led businesses with one or more locations, including teams with a shared front desk. Dedicated pages explain the fit and limits for each supported business type.',
     },
     {
         question: 'How is this different from a booking-only tool?',
         answer: 'Appointments connect to your calendar, client history, checkout and reports. You can also manage walk-ins alongside scheduled visits.',
     },
     {
-        question: 'Are payments and reminders ready for live use?',
-        answer: 'Live card payments, email and text messages require connected providers and final delivery checks before launch. You can record payments received outside ClipperDesk.',
+        question: 'How do payments and client notifications work?',
+        answer: 'Checkout records payments received outside ClipperDesk; it does not charge cards or send provider refunds. Online deposit collection is not currently available. Email and SMS notifications require enabled delivery providers, and SMS also requires client consent and available credits.',
     },
     {
         question: 'Can I bring existing data with me?',
-        answer: 'ClipperDesk includes reviewed CSV imports for clients, staff, services and products. Imports preview validation errors and duplicate candidates before valid rows are added to your business.',
+        answer: 'ClipperDesk includes CSV imports for clients, staff, services and products. Imports preview validation errors and duplicate candidates before valid rows are added to your business.',
     },
 ];
 
@@ -100,7 +100,7 @@ const resetPerspective = (event) => {
                         Your whole day,<br><span class="cd-hero-highlight">beautifully</span> run.
                     </h1>
                     <p class="mt-7 max-w-xl text-lg leading-8 text-slate-300 sm:text-xl">
-                        Manage appointments, walk-ins, clients, your team and payments in one place.
+                        Manage appointments, walk-ins, clients, team schedules and recorded payments in one place.
                     </p>
                     <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
                         <PublicCta context="homepage_hero" />
@@ -143,7 +143,7 @@ const resetPerspective = (event) => {
 
                 <div class="cd-home-story-note">
                     <span aria-hidden="true">✦</span>
-                    <p><strong>One continuous record.</strong> No repeated entry. No end-of-day detective work.</p>
+                    <p><strong>One continuous record.</strong> Appointments, client history and recorded sales stay together.</p>
                     <Link :href="route('marketing.features')">See how the product connects <ArrowRightIcon class="size-4" aria-hidden="true" /></Link>
                 </div>
             </PublicContainer>
@@ -174,14 +174,14 @@ const resetPerspective = (event) => {
                     </figure>
                     <div class="max-w-lg lg:order-2 lg:justify-self-center">
                         <p class="cd-eyebrow">Client context</p>
-                        <h2 class="mt-4 font-display cd-public-section-title font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text-strong)] text-balance">Know every client. Delight every visit.</h2>
+                        <h2 class="mt-4 font-display cd-public-section-title font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text-strong)] text-balance">Remember what matters to your clients.</h2>
                         <p class="mt-6 text-lg leading-8 text-[var(--text-muted)]">Keep client history, preferences, forms and notes available to team members with permission.</p>
                         <ul class="mt-7 space-y-3">
-                            <li v-for="item in ['Service and product history in one record', 'Preferences, allergies, forms and notes in context', 'Automated reminders and secure self-service']" :key="item" class="flex gap-3 leading-7 text-[var(--text-default)]">
+                            <li v-for="item in ['Service and product history in one record', 'Preferences, allergies, forms and notes in context', 'Secure links for clients to manage appointments']" :key="item" class="flex gap-3 leading-7 text-[var(--text-default)]">
                                 <CheckCircleIcon class="mt-1 size-5 shrink-0 text-[var(--brand-accent)]" aria-hidden="true" />{{ item }}
                             </li>
                         </ul>
-                        <Link :href="route('marketing.features.show', 'online-booking')" class="mt-7 inline-flex min-h-11 items-center font-extrabold text-[var(--brand-secondary)] hover:underline">Explore the client experience <ArrowRightIcon class="ml-2 size-4" aria-hidden="true" /></Link>
+                        <Link :href="route('marketing.features.show', 'client-management')" class="mt-7 inline-flex min-h-11 items-center font-extrabold text-[var(--brand-secondary)] hover:underline">Explore the client experience <ArrowRightIcon class="ml-2 size-4" aria-hidden="true" /></Link>
                     </div>
                 </article>
 
@@ -191,7 +191,7 @@ const resetPerspective = (event) => {
                         <h2 class="mt-4 font-display cd-public-section-title font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text-strong)] text-balance">Record payments. Understand your business.</h2>
                         <p class="mt-6 text-lg leading-8 text-[var(--text-muted)]">Review services, products and totals at checkout. Record payments and issue receipts, then follow each sale in your reports.</p>
                         <ul class="mt-7 space-y-3">
-                            <li v-for="item in ['Checkout totals and payment history', 'Recorded adjustments and refunds', 'Revenue, stock and commission reports']" :key="item" class="flex gap-3 leading-7 text-[var(--text-default)]">
+                            <li v-for="item in ['Checkout totals and payment history', 'Recorded payment and refund adjustments', 'Sales, payment and commission reports']" :key="item" class="flex gap-3 leading-7 text-[var(--text-default)]">
                                 <CheckCircleIcon class="mt-1 size-5 shrink-0 text-[var(--action-primary)]" aria-hidden="true" />{{ item }}
                             </li>
                         </ul>
@@ -245,7 +245,7 @@ const resetPerspective = (event) => {
 
         <ConversionBand
             title="Run the next working day with confidence."
-            description="Start with a verified owner account, configure the business rules, and review the booking experience before publishing it."
+            description="Create your account, add services and working hours, and preview your booking page before sharing it."
             context="homepage_final"
         />
     </HomeLayout>

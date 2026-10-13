@@ -47,7 +47,7 @@ const groups = computed(() => [
                         <ProductMark inverse />
                     </Link>
                     <p class="mt-6 max-w-md text-sm leading-7 text-slate-400">
-                        Appointments, clients, team schedules and checkout for barber shops and salons.
+                        Booking, client records, team schedules and checkout for appointment-led service businesses.
                     </p>
 
                 </div>
@@ -67,7 +67,7 @@ const groups = computed(() => [
             </div>
 
             <div class="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs leading-6 text-slate-400 sm:flex-row sm:items-center sm:justify-between">
-                <p>© {{ new Date().getFullYear() }} {{ page.props.brand?.product_name || 'ClipperDesk' }}.<template v-if="!page.props.legalNotice"> Preview release. Production domains and legal details await approval.</template></p>
+                <p>© {{ new Date().getFullYear() }} {{ page.props.brand?.product_name || 'ClipperDesk' }}.</p>
 
             </div>
         </div>

@@ -1,0 +1,114 @@
+[
+  {
+    "controls": [
+      {
+        "height": 48,
+        "label": "Decrease locations",
+        "width": 44
+      },
+      {
+        "height": 48,
+        "label": "Increase locations",
+        "width": 44
+      },
+      {
+        "height": 48,
+        "label": "Decrease bookable staff",
+        "width": 44
+      },
+      {
+        "height": 48,
+        "label": "Increase bookable staff",
+        "width": 44
+      }
+    ],
+    "documentWidth": 320,
+    "h1Count": 1,
+    "starting": "$29",
+    "width": 320
+  },
+  {
+    "controls": [
+      {
+        "height": 48,
+        "label": "Decrease locations",
+        "width": 44
+      },
+      {
+        "height": 48,
+        "label": "Increase locations",
+        "width": 44
+      },
+      {
+        "height": 48,
+        "label": "Decrease bookable staff",
+        "width": 44
+      },
+      {
+        "height": 48,
+        "label": "Increase bookable staff",
+        "width": 44
+      }
+    ],
+    "documentWidth": 390,
+    "h1Count": 1,
+    "starting": "$29",
+    "width": 390
+  },
+  {
+    "controls": [
+      {
+        "height": 48,
+        "label": "Decrease locations",
+        "width": 44
+      },
+      {
+        "height": 48,
+        "label": "Increase locations",
+        "width": 44
+      },
+      {
+        "height": 48,
+        "label": "Decrease bookable staff",
+        "width": 44
+      },
+      {
+        "height": 48,
+        "label": "Increase bookable staff",
+        "width": 44
+      }
+    ],
+    "documentWidth": 768,
+    "h1Count": 1,
+    "starting": "$29",
+    "width": 768
+  },
+  {
+    "controls": [
+      {
+        "height": 48,
+        "label": "Decrease locations",
+        "width": 44
+      },
+      {
+        "height": 48,
+        "label": "Increase locations",
+        "width": 44
+      },
+      {
+        "height": 48,
+        "label": "Decrease bookable staff",
+        "width": 44
+      },
+      {
+        "height": 48,
+        "label": "Increase bookable staff",
+        "width": 44
+      }
+    ],
+    "documentWidth": 1440,
+    "h1Count": 1,
+    "starting": "$29",
+    "width": 1440
+  }
+]

@@ -280,3 +280,7 @@ destinations suppress sending. Preserve SMS-only client channels, consent and
 existing provider gates. Routine SES account emails remain included. Optional
 prepaid purchases require verified payment, with automatic purchases off. See
 `subscription-billing.md` for financial, release and refund/dispute boundaries.
+
+## Appointment arrival details (2026-10-12; ADR-064)
+
+New appointment intents capture assigned-location snapshots, address, optional arrival/parking notes and key-free directions. A captured footer supplies those details to existing templates without rewriting published versions or queued messages. The actual final content is used for SMS segment accounting. [Locations contract](location-intelligence.md). WhatsApp remains disabled under ADR-041.

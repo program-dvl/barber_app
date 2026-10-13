@@ -6,8 +6,8 @@ return [
     'operator_address' => env('LEGAL_OPERATOR_ADDRESS', '111 Galileo Dr, Stoney Creek, ON L8E 0B5, Canada'),
     'privacy_email' => env('LEGAL_PRIVACY_EMAIL', 'support@clipperdesk.com'),
     'canonical_url' => rtrim((string) env('BRAND_WEBSITE_URL', env('APP_URL', 'http://localhost')), '/').'/privacy-policy',
-    'version' => '1.0',
-    'updated_at' => '2026-10-12',
+    'version' => '1.1',
+    'updated_at' => '2026-10-13',
     'effective_at' => env('LEGAL_PRIVACY_EFFECTIVE_DATE'),
     // Set only after reviewing this exact version and completing the audit checklist.
     'approved' => (bool) env('LEGAL_PRIVACY_APPROVED', false),

@@ -10,17 +10,20 @@ defineProps({
     large: Boolean,
     small: Boolean,
     showTagline: { type: Boolean, default: true },
+    useLogoImage: Boolean,
 });
 
 const page = usePage();
 const brand = computed(() => page.props.brand ?? {
     product_name: 'ClipperDesk',
     tagline: 'Run the day. Grow the business.',
+    logo: '/images/brand/clipperdesk-logo.png',
 });
 </script>
 
 <template>
-    <span class="inline-flex max-w-full flex-wrap items-center gap-2.5" :class="inverse ? 'text-white' : 'text-[var(--text-strong)]'" :aria-label="compact ? brand.product_name : undefined">
+    <img v-if="useLogoImage" :src="brand.logo" :alt="brand.product_name" width="422" height="106" class="block h-auto w-[17.5rem] max-w-full object-contain">
+    <span v-else class="inline-flex max-w-full flex-wrap items-center gap-2.5" :class="inverse ? 'text-white' : 'text-[var(--text-strong)]'" :aria-label="compact ? brand.product_name : undefined">
         <img :src="inverse ? clipperDeskMarkInverse : clipperDeskMark" alt="" width="64" height="64" class="w-auto shrink-0 object-contain" :class="large ? 'h-[48px]' : small ? 'h-[28px]' : 'h-[40px]'" aria-hidden="true">
         <span v-if="!compact" class="min-w-0 whitespace-nowrap leading-tight">
             <span class="cd-display block font-bold leading-none tracking-[-0.04em]" :class="large ? 'text-2xl' : small ? 'text-lg' : 'text-xl'">{{ brand.product_name }}</span>

@@ -1,4 +1,7 @@
 <script setup>
+import LocationEditor from '@/Components/Locations/LocationEditor.vue';
+import LocationCard from '@/Components/Locations/LocationCard.vue';
+import { locationDefaults } from '@/Support/locationIntelligence';
 import FieldError from '@/Components/Product/FieldError.vue';
 import AppSelect from '@/Components/Product/AppSelect.vue';
 import { computed } from 'vue';
@@ -10,11 +13,14 @@ import PhoneInput from '@/Components/Product/PhoneInput.vue';
 import SurfaceCard from '@/Components/Product/SurfaceCard.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
-const props = defineProps({ business: Object, locations: Array, readiness: Object, timeZones: Array, locationAllowance: Object });
+const props = defineProps({ business: Object, locations: Array, readiness: Object, timeZones: Array, locationAllowance: Object, countries: Object });
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const first = props.locations[0];
 const firstHours = first?.hours || [];
 const form = useForm({
+    ...locationDefaults(first),
+    location_revision: first?.location_revision || null,
+    keep_hours: !!firstHours.length,
     location: first?.public_id || null,
     create_new: false,
     name: first?.name || props.business.name || '',
@@ -33,6 +39,9 @@ const resetLocation = (location = null) => {
     const hours = location?.hours || [];
     form.clearErrors();
     Object.assign(form, {
+        ...locationDefaults(location || {}),
+        location_revision: location?.location_revision || null,
+        keep_hours: !!hours.length,
         location: location?.public_id || null,
         create_new: !location,
         name: location?.name || nextLocationName(),
@@ -52,7 +61,7 @@ const selectLocation = event => {
 const startNew = () => props.locationAllowance?.can_add && resetLocation();
 const save = () => form.post(route('business.locations.activation.store', props.business.public_id), {
     preserveScroll: true,
-    onSuccess: () => { if (editingNew.value) form.create_new = false; },
+    onSuccess: () => { const saved = props.locations.find(item => item.name === form.name); if (saved) resetLocation(saved); },
 });
 </script>
 
@@ -65,19 +74,21 @@ const save = () => form.post(route('business.locations.activation.store', props.
         <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
             <SurfaceCard :title="editingNew ? 'Add another location' : 'Location details'" :description="editingNew ? 'We copied useful business defaults; review them and save.' : 'These details appear in public booking, confirmations and calendar context.'">
                 <form class="cd-form-width grid gap-4 sm:grid-cols-2" @submit.prevent="save">
-                    <label v-if="locations.length && !editingNew" class="text-sm font-semibold sm:col-span-2">Location to edit<AppSelect v-model="form.location" class="cd-input mt-2" @change="selectLocation" id="field-location-form-location" :aria-invalid="form.errors.location ? true : undefined" :aria-describedby="form.errors.location ? 'field-location-form-location-error' : undefined"><option v-for="location in locations" :key="location.public_id" :value="location.public_id">{{ location.name }}</option></AppSelect><FieldError id="field-location-form-location-error" :message="form.errors.location" /></label>
+                    <label v-if="locations.length > 1 && !editingNew" class="text-sm font-semibold sm:col-span-2">Location to edit<AppSelect v-model="form.location" class="cd-input mt-2" @change="selectLocation" id="field-location-form-location" :aria-invalid="form.errors.location ? true : undefined" :aria-describedby="form.errors.location ? 'field-location-form-location-error' : undefined"><option v-for="location in locations" :key="location.public_id" :value="location.public_id">{{ location.name }}</option></AppSelect><FieldError id="field-location-form-location-error" :message="form.errors.location" /></label>
                     <label class="text-sm font-semibold">Location name<span aria-hidden="true" class="text-[var(--status-danger)]"> *</span><span class="ds-sr-only"> required</span><input v-model="form.name" required :class="['cd-input mt-2', form.errors.name ? 'border-[var(--status-danger)]' : '']"  id="field-location-form-name" :aria-invalid="form.errors.name ? true : undefined" :aria-describedby="form.errors.name ? 'field-location-form-name-error' : undefined"/><FieldError id="field-location-form-name-error" :message="form.errors.name" /></label>
                     <label class="text-sm font-semibold">Time zone<span aria-hidden="true" class="text-[var(--status-danger)]"> *</span><span class="ds-sr-only"> required</span><AppSelect v-model="form.time_zone" required class="cd-input mt-2" id="field-location-form-time-zone" :aria-invalid="form.errors.time_zone ? true : undefined" :aria-describedby="form.errors.time_zone ? 'field-location-form-time-zone-error' : undefined"><option value="" disabled>Choose a time zone</option><option v-for="zone in timeZones" :key="zone" :value="zone">{{ zone.replaceAll('_', ' ') }}</option></AppSelect><FieldError id="field-location-form-time-zone-error" :message="form.errors.time_zone" /></label>
-                    <label class="text-sm font-semibold sm:col-span-2">Address<span aria-hidden="true" class="text-[var(--status-danger)]"> *</span><span class="ds-sr-only"> required</span><textarea v-model="form.address" required rows="2" class="cd-input mt-2"  id="field-location-form-address" :aria-invalid="form.errors.address ? true : undefined" :aria-describedby="form.errors.address ? 'field-location-form-address-error' : undefined"/><FieldError id="field-location-form-address-error" :message="form.errors.address" /></label>
+                    <LocationEditor :key="form.location || 'new'" class="sm:col-span-2" :id="`branch-${form.location || 'new'}`" :model-value="form" :errors="form.errors" :countries="countries" @update:model-value="Object.assign(form, $event)" />
+                    <label v-if="locations.length > 1 || editingNew" class="flex min-h-11 items-center gap-2 text-sm sm:col-span-2"><input v-model="form.is_primary" type="checkbox" />Primary location · shown first in booking</label>
                     <label class="text-sm font-semibold" for="location-phone">Public phone<PhoneInput id="location-phone" v-model="form.phone" class="mt-2" :country="business.country_code || 'IN'"  :aria-invalid="form.errors.phone ? true : undefined" :aria-describedby="form.errors.phone ? 'location-phone-error' : undefined"/><FieldError id="location-phone-error" :message="form.errors.phone" /></label>
                     <label class="text-sm font-semibold">Public email<input v-model="form.email" type="email" class="cd-input mt-2"  id="field-location-form-email" :aria-invalid="form.errors.email ? true : undefined" :aria-describedby="form.errors.email ? 'field-location-form-email-error' : undefined"/><FieldError id="field-location-form-email-error" :message="form.errors.email" /></label>
-                    <div class="sm:col-span-2 border-t border-[var(--border-subtle)] pt-5">
+                    <div v-if="editingNew || !form.keep_hours" class="sm:col-span-2 border-t border-[var(--border-subtle)] pt-5">
                         <h3 class="font-semibold text-[var(--text-strong)]">Normal opening hours</h3>
                         <p class="mt-1 text-sm text-[var(--text-muted)]">These opening and closing times apply to every selected day.</p>
                     </div>
-                    <fieldset class="sm:col-span-2" :aria-invalid="form.errors.working_days ? true : undefined" :aria-describedby="form.errors.working_days ? 'location-working-days-error' : undefined"><legend class="ds-sr-only">Working days</legend><div class="flex flex-wrap gap-2"><label v-for="(day, index) in days" :key="day" :class="['inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border px-3 text-sm font-semibold', form.working_days.includes(index + 1) ? 'border-[var(--action-primary)] bg-[var(--surface-subtle)] text-[var(--action-primary)]' : 'border-[var(--border-subtle)]']"><input v-model="form.working_days" class="sr-only" type="checkbox" :value="index + 1" />{{ day }}</label></div><FieldError id="location-working-days-error" :message="form.errors.working_days" /></fieldset>
-                    <label class="text-sm font-semibold">Opens<span aria-hidden="true" class="text-[var(--status-danger)]"> *</span><span class="ds-sr-only"> required</span><input v-model="form.opens_at" required type="time" class="cd-input mt-2"  id="field-location-form-opens-at" :aria-invalid="form.errors.opens_at ? true : undefined" :aria-describedby="form.errors.opens_at ? 'field-location-form-opens-at-error' : undefined"/><FieldError id="field-location-form-opens-at-error" :message="form.errors.opens_at" /></label>
-                    <label class="text-sm font-semibold">Closes<span aria-hidden="true" class="text-[var(--status-danger)]"> *</span><span class="ds-sr-only"> required</span><input v-model="form.closes_at" required type="time" class="cd-input mt-2"  id="field-location-form-closes-at" :aria-invalid="form.errors.closes_at ? true : undefined" :aria-describedby="form.errors.closes_at ? 'field-location-form-closes-at-error' : undefined"/><FieldError id="field-location-form-closes-at-error" :message="form.errors.closes_at" /></label>
+                    <fieldset v-if="editingNew || !form.keep_hours" class="sm:col-span-2" :aria-invalid="form.errors.working_days ? true : undefined" :aria-describedby="form.errors.working_days ? 'location-working-days-error' : undefined"><legend class="ds-sr-only">Working days</legend><div class="flex flex-wrap gap-2"><label v-for="(day, index) in days" :key="day" :class="['inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border px-3 text-sm font-semibold', form.working_days.includes(index + 1) ? 'border-[var(--action-primary)] bg-[var(--surface-subtle)] text-[var(--action-primary)]' : 'border-[var(--border-subtle)]']"><input v-model="form.working_days" class="sr-only" type="checkbox" :value="index + 1" />{{ day }}</label></div><FieldError id="location-working-days-error" :message="form.errors.working_days" /></fieldset>
+                    <label v-if="editingNew || !form.keep_hours" class="text-sm font-semibold">Opens<span aria-hidden="true" class="text-[var(--status-danger)]"> *</span><span class="ds-sr-only"> required</span><input v-model="form.opens_at" required type="time" class="cd-input mt-2"  id="field-location-form-opens-at" :aria-invalid="form.errors.opens_at ? true : undefined" :aria-describedby="form.errors.opens_at ? 'field-location-form-opens-at-error' : undefined"/><FieldError id="field-location-form-opens-at-error" :message="form.errors.opens_at" /></label>
+                    <label v-if="editingNew || !form.keep_hours" class="text-sm font-semibold">Closes<span aria-hidden="true" class="text-[var(--status-danger)]"> *</span><span class="ds-sr-only"> required</span><input v-model="form.closes_at" required type="time" class="cd-input mt-2"  id="field-location-form-closes-at" :aria-invalid="form.errors.closes_at ? true : undefined" :aria-describedby="form.errors.closes_at ? 'field-location-form-closes-at-error' : undefined"/><FieldError id="field-location-form-closes-at-error" :message="form.errors.closes_at" /></label>
+                    <p v-if="form.keep_hours" class="text-sm text-[var(--text-muted)] sm:col-span-2">Your opening hours are saved separately. <a :href="route('business.configuration.show', business.public_id) + '?section=hours'" class="underline">Review opening hours</a></p>
                     <p v-if="Object.keys(form.errors).length" class="rounded-lg bg-[var(--status-danger-soft)] p-3 text-sm text-[var(--status-danger)] sm:col-span-2" role="alert">Review the highlighted location and hours fields.</p>
                     <div class="flex flex-wrap justify-end gap-3 sm:col-span-2"><AppButton v-if="editingNew && locations.length" variant="quiet" @click="resetLocation(first)">Discard</AppButton><AppButton type="submit" :disabled="form.processing">{{ form.processing ? 'Saving…' : (editingNew ? 'Add location' : 'Save changes') }}</AppButton><AppButton v-if="isReady && !editingNew" :href="route('business.team.index', business.public_id)" variant="secondary">Add team member</AppButton></div>
                 </form>
@@ -85,7 +96,7 @@ const save = () => form.post(route('business.locations.activation.store', props.
 
             <div class="space-y-5">
                 <SurfaceCard title="Your locations" compact><ul class="space-y-2"><li v-for="location in locations" :key="location.public_id"><button type="button" class="flex min-h-11 w-full items-center gap-3 rounded-xl px-2 text-left hover:bg-[var(--surface-subtle)]" @click="resetLocation(location)"><span class="grid size-9 place-items-center rounded-full bg-[var(--surface-subtle)] text-[var(--action-primary)]"><BuildingStorefrontIcon class="size-5" /></span><span><strong class="block text-sm">{{ location.name }}</strong><span class="block text-xs text-[var(--text-muted)]">{{ location.time_zone }}</span></span></button></li></ul><button v-if="locationAllowance?.can_add" type="button" class="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--border-strong)] text-sm font-semibold text-[var(--action-primary)]" @click="startNew"><PlusIcon class="size-4" />Add location</button><div v-else class="mt-3 rounded-xl bg-[var(--surface-subtle)] p-3 text-xs leading-5 text-[var(--text-muted)]"><strong class="text-[var(--text-strong)]">{{ locationAllowance?.used }} of {{ locationAllowance?.limit || locationAllowance?.used }} locations active.</strong><br>Your plan’s location limit is reached. <a :href="route('business.billing.show', business.public_id)" class="font-semibold text-[var(--action-primary)]">Review plan options</a>.</div></SurfaceCard>
-                <SurfaceCard title="What clients see" compact><div class="flex gap-3"><MapPinIcon class="size-5 shrink-0 text-[var(--action-primary)]" /><div><p class="font-semibold">{{ form.name || 'Your location' }}</p><p class="mt-1 text-sm leading-6 text-[var(--text-muted)]">{{ form.address || 'Add the public address' }}<br>{{ form.time_zone || 'Choose a time zone' }}</p></div></div></SurfaceCard>
+                <LocationCard :location="form" preview />
             </div>
         </div>
     </AppLayout>

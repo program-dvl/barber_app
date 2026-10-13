@@ -9,7 +9,9 @@ use App\Domain\PublicBooking\Models\WaitlistMatch;
 use App\Domain\SchedulingOperations\Models\Appointment;
 use App\Domain\SchedulingOperations\Models\OperationalNotificationEvent;
 use App\Domain\SchedulingOperations\Models\WalkInEntry;
+use App\Support\Locations\LocationData;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -139,7 +141,10 @@ class OperationalCommunicationService
             [
                 'client_name' => $appointment->client_name, 'service_name' => $appointment->serviceLines->pluck('name')->join(', '),
                 'staff_name' => $appointment->serviceLines->pluck('primaryStaff.display_name')->filter()->unique()->join(', '),
-                'location_name' => $appointment->location->name, 'appointment_date' => $local->isoFormat('D MMMM YYYY'),
+                'location_name' => LocationData::forAppointment($appointment)['name'],
+                'location_address' => LocationData::forAppointment($appointment)['address'] ?? '',
+                'arrival_instructions' => implode(' · ', array_filter(Arr::only(LocationData::forAppointment($appointment), ['address_line_2', 'entrance_instructions', 'parking_instructions']))),
+                'directions_link' => LocationData::forAppointment($appointment)['directions_url'] ?? '', 'appointment_date' => $local->isoFormat('D MMMM YYYY'),
                 'appointment_time' => $local->format('H:i'), 'time_zone' => $appointment->time_zone,
                 'booking_reference' => $appointment->booking_reference, 'amount' => number_format(((int) data_get($payload, 'amount_minor', $appointment->price_minor)) / 100, 2, '.', ''),
                 'currency' => data_get($payload, 'currency', $appointment->currency_code), 'business_name' => $appointment->business->name,
