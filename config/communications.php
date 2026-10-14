@@ -22,7 +22,7 @@ return [
     'email_transport_mode' => env('COMMUNICATIONS_EMAIL_TRANSPORT_MODE', 'ses'),
     'ses' => [
         'from_address' => env('SES_CLIENT_FROM_ADDRESS', env('MAIL_FROM_ADDRESS')),
-        'from_name' => env('SES_CLIENT_FROM_NAME', env('MAIL_FROM_NAME', 'ClipperDesk')),
+        'from_name' => config('brand.product_name', 'ClipperDesk'),
         'configuration_set' => env('AWS_SES_CONFIGURATION_SET'),
         'sns_topic_arn' => env('AWS_SES_CLIENT_SNS_TOPIC_ARN'),
     ],

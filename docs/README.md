@@ -58,7 +58,7 @@ exists.
 | `modules/client-records.md` | Restored salon CRM aggregate, directory/profile projections, protected records and operational handoffs | Clients and Calendar/queue linkage changes |
 | `modules/services.md` | Salon catalogue, categories, reviewed price/time/assignment changes and booking/commerce handoffs | Services configuration changes |
 | `modules/team-availability.md` | Workforce workspace, regular/dated hours, exact impact review, service versions and operational access | Team, availability and assignment changes |
-| `modules/communications.md` | Client automation, templates, scoped history, SES/Twilio and reliable delivery contracts | Client messaging or provider/workspace change |
+| `modules/communications.md` | Platform-managed client email/SMS, simple preferences, scoped history and reliable SES/Twilio delivery | Client messaging or provider/workspace change |
 | `modules/reports.md` | Historical analytics, exact metric bases, scope, comparisons, capacity and export contracts | Reports or analytical projection changes |
 | `modules/dashboard.md` | Permission-aware daily workspace projection, operations, time and performance contract | Dashboard behavior or data change |
 | `modules/product-experience.md` | Shared presentation, terminology and interaction contract with dated route/screen evidence | Product-wide UI refinement |

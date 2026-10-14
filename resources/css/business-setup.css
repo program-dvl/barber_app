@@ -13,3 +13,9 @@
 @media(max-width:767px){#bs-hours,#business_details{overflow:visible}#bs-hours>.bs-save-bar,.bs-profile-form>.bs-save-bar{bottom:calc(65px + max(.25rem,env(safe-area-inset-bottom)));box-shadow:0 -4px 14px #1725540a;background:var(--surface-raised);border-radius:0 0 10px 10px}.bs-profile-form>.bs-save-bar{padding-inline:12px}}
 .bs-home-aside{align-items:start}
 html:has(.bs-workspace){scroll-padding-bottom:180px}
+
+.bs-booking-preview{width:100%;max-width:100%;margin-inline:auto;border:1px solid var(--border-strong);border-radius:12px;overflow:hidden;background:var(--surface-canvas)}
+.bs-booking-preview.mobile{width:390px}
+.bs-booking-preview-frame{display:block;width:100%;height:740px;border:0}
+.cd-location-search{overflow:hidden}.cd-location-search gmp-place-autocomplete{display:block;width:100%;border:0;border-radius:8px;box-shadow:none}
+@media(max-width:639px){.bs-booking-preview-frame{height:620px}}

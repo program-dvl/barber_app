@@ -70,7 +70,7 @@ class StarterWorkspaceProvisioner
                 throw ValidationException::withMessages(['time_zone' => 'Choose a time zone for the selected country.']);
             }
 
-            $scheduleKey = (string) ($answers['schedule_preset'] ?? 'tuesday_saturday');
+            $scheduleKey = (string) ($answers['schedule_preset'] ?? 'daily_9_21');
             $schedule = config('business-onboarding.schedule_presets.'.$scheduleKey);
             if (! $schedule) {
                 throw ValidationException::withMessages(['schedule_preset' => 'Choose a starter schedule.']);

@@ -5,11 +5,14 @@ namespace App\Domain\Communications\Services;
 use App\Domain\Communications\Models\CommunicationSetting;
 use App\Domain\Communications\Models\CommunicationTemplate;
 use App\Domain\PlatformAccess\Models\Business;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class CommunicationTemplateService
 {
+    public const PLATFORM_REVISION = '2026-10-14';
+
     public function __construct(private readonly CommunicationTemplateRenderer $renderer) {}
 
     public function settings(Business|int $business): CommunicationSetting
@@ -21,6 +24,7 @@ class CommunicationTemplateService
 
         return CommunicationSetting::query()->firstOrCreate(['business_id' => $businessId], [
             'email_provider' => 'ses', 'mobile_provider' => 'twilio',
+            'email_enabled' => true, 'sms_enabled' => true,
             'default_locale' => $locale, 'mobile_channel' => 'sms', 'fallback_mobile_channel' => null,
             'sender_mode' => 'platform', 'smart_fallback_enabled' => false, 'two_way_enabled' => false,
             'reminder_offsets_minutes' => config('communications.default_reminder_offsets_minutes', [1440]),
@@ -51,6 +55,9 @@ class CommunicationTemplateService
 
     public function resolve(int $businessId, string $intent, string $channel, string $locale): CommunicationTemplate
     {
+        if (in_array($channel, ['email', 'sms'], true) && isset(NotificationWorkspaceCatalog::automations()[$intent])) {
+            return $this->platformTemplate($businessId, $intent, $channel, $locale);
+        }
         $settings = $this->settings($businessId);
         $locales = array_unique([$locale, $settings->default_locale, 'en-US', 'en']);
         foreach ($locales as $candidate) {
@@ -75,6 +82,30 @@ class CommunicationTemplateService
         }
 
         return $fallback;
+    }
+
+    public function platformTemplate(int $businessId, string $intent, string $channel, string $locale): CommunicationTemplate
+    {
+        return DB::transaction(function () use ($businessId, $intent, $channel, $locale): CommunicationTemplate {
+            Business::query()->whereKey($businessId)->lockForUpdate()->firstOrFail();
+            $query = CommunicationTemplate::query()->where('business_id', $businessId)
+                ->where('intent_type', $intent)->where('channel', $channel)->where('locale', $locale);
+            $existing = (clone $query)->where('fallbacks->__platform_revision', self::PLATFORM_REVISION)->where('status', 'published')->first();
+            if ($existing) {
+                return $existing;
+            }
+            $defaults = TemplateVariableCatalog::defaults($intent);
+            $body = config('brand.product_name', 'ClipperDesk').($channel === 'sms' ? ': ' : ' · ').$defaults['body'];
+            $variables = $this->renderer->variables($defaults['subject'], $body);
+
+            return CommunicationTemplate::query()->create([
+                'business_id' => $businessId, 'intent_type' => $intent, 'channel' => $channel, 'locale' => $locale,
+                'version' => ((int) (clone $query)->max('version')) + 1, 'status' => 'published',
+                'subject' => $defaults['subject'], 'body' => $body, 'variables' => $variables,
+                'fallbacks' => [...collect(TemplateVariableCatalog::SAFE_FALLBACKS)->only($variables)->all(), '__platform_revision' => self::PLATFORM_REVISION],
+                'published_at' => now(),
+            ]);
+        });
     }
 
     /** @param array<string,string> $fallbacks */

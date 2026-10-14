@@ -191,7 +191,7 @@ class BusinessConfigurationController extends Controller
                 'team_size' => ['required', Rule::in(array_keys(config('business-onboarding.team_sizes')))],
                 'location_scale' => ['required', Rule::in(array_keys(config('business-onboarding.location_scales')))],
                 'owner_bookable' => ['required', 'boolean'],
-                'accepts_online_bookings' => ['required', 'boolean'],
+                'accepts_online_bookings' => ['sometimes', 'boolean'],
             ]),
             'location' => $request->validate([
                 ...LocationData::rules(),
@@ -227,7 +227,7 @@ class BusinessConfigurationController extends Controller
         $serviceAnswers = $this->validateStarterServices($request, $business);
         $session = $this->onboarding->saveGuidedAnswers($business, 'starter_services', $serviceAnswers);
         $answers = [...($session->answers ?? []), ...$serviceAnswers];
-        foreach (['business_type', 'operation_model', 'team_size', 'location_scale', 'owner_bookable', 'accepts_online_bookings', 'country_code', 'time_zone', 'address', 'phone', 'schedule_preset', 'service_keys'] as $required) {
+        foreach (['business_type', 'operation_model', 'team_size', 'location_scale', 'owner_bookable', 'country_code', 'time_zone', 'address', 'phone', 'schedule_preset', 'service_keys'] as $required) {
             if (! array_key_exists($required, $answers)) {
                 throw ValidationException::withMessages(['onboarding' => 'Return to the first incomplete onboarding step.']);
             }

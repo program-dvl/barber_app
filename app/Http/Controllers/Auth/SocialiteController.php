@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Actions\Auth\CompleteGoogleRegistration;
+use App\Domain\Billing\Models\OwnerRegistrationIntent;
 use App\Domain\Billing\Services\OwnerOnboardingService;
 use App\Domain\Billing\Services\PublicPricingCatalog;
 use App\Http\Controllers\Controller;
@@ -129,9 +130,10 @@ class SocialiteController extends Controller
         $user = $registration->handle($pending, $request->all());
 
         $request->session()->forget([self::CONTEXT_SESSION_KEY, self::REGISTRATION_SESSION_KEY]);
-        $response = $this->authenticate($request, $user);
+        $business = OwnerRegistrationIntent::query()->where('user_id', $user->getKey())->with('business')->firstOrFail()->business;
+        $request->session()->forget('url.intended');
 
-        return $response;
+        return $this->authenticate($request, $user, route('business.configuration.show', $business));
     }
 
     /** @return array<string, mixed>|null */
@@ -226,12 +228,15 @@ class SocialiteController extends Controller
         return is_array($pending) ? $pending : null;
     }
 
-    private function authenticate(Request $request, User $user): RedirectResponse
+    private function authenticate(Request $request, User $user, ?string $destination = null): RedirectResponse
     {
         if (Features::enabled(Features::twoFactorAuthentication())
             && filled($user->two_factor_secret)
             && filled($user->two_factor_confirmed_at)) {
             $request->session()->regenerate();
+            if ($destination) {
+                $request->session()->put('url.intended', $destination);
+            }
             $request->session()->put(['login.id' => $user->getKey(), 'login.remember' => false]);
             TwoFactorAuthenticationChallenged::dispatch($user);
 
@@ -241,7 +246,7 @@ class SocialiteController extends Controller
         Auth::guard('web')->login($user);
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return $destination ? redirect()->to($destination) : redirect()->intended(RouteServiceProvider::HOME);
     }
 
     private function redirectWithError(Request $request, string $message): RedirectResponse

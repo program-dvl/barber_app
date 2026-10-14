@@ -1,5 +1,51 @@
 # Project status
 
+## 2026-10-14 Platform-managed client notifications (ADR-067)
+
+- [x] Owner email/SMS builders and branded-sender onboarding are retired in the UI
+  and authenticated mutation routes. New events use immutable platform content
+  and a shared sender; queued custom versions and historical callbacks remain.
+- [x] Notifications offers top-level email/SMS switches, quiet hours, coverage cards
+  and read-only sample messages; Delivery history retains tenant/branch/finance
+  scopes. Audited revision-checked pauses stop waiting work and release its SMS
+  reservation; re-enable never resends stopped records. Consent/STOP still wins.
+- [x] SES sends ClipperDesk HTML with status-specific copy, visit/payment details,
+  arrival guidance and labelled secure actions, plus plain text. Old captured text
+  is escaped in a branded wrapper. Verified sender address/credentials are retained.
+- [x] Additive local MySQL migration applied after a private settings snapshot:
+  all 8 original settings rows and counts of 153 messages, 23 templates, 11 sender
+  profiles and 80 intents are unchanged; both added switches default enabled.
+- [x] Backend **750 passed / 7,021 assertions**, 30 existing skips; focused
+  communications **48 passed / 390 assertions**; **98 frontend checks**, client/SSR
+  builds, scoped formatting and whitespace checks pass. Synthetic desktop/390px
+  browser inspection verifies workspace, preference saves and email/SMS examples.
+- [ ] Not deployed; no real customer message sent or environment/provider credential
+  changed. Real inbox/carrier/device certification and existing launch gates remain.
+  [Evidence and rollout](audits/2026-10-14-platform-notifications/README.md).
+
+## 2026-10-14 Setup usability and booking confirmation repair (ADR-066)
+
+- [x] New Google signup enters the saved “Let’s prepare your business” introduction
+  directly; email signup retains verification before setup. Stale intended
+  navigation is ignored for new registration.
+- [x] Owner-provider wording now explains team/calendar preparation; the existing
+  online-provider question is removed. Search/manual address modes use one full
+  address, a bordered search, optional map/arrival corrections, and an address
+  card above profile fields. Every introduction step reminds owners they can edit.
+- [x] New introductions prepare editable daily 09:00–21:00 location/owner hours
+  without an hours questionnaire. Saved presets and established schedules remain.
+- [x] Desktop/mobile preview renders the real public services page/catalog with
+  private authorized branding. It cannot restore booking sessions, reserve times,
+  initialize commerce, confirm or publish; explicit review/go-live remain separate.
+- [x] Held/current location comparison ignores JSON object-key order while retaining
+  strict values. Reviewed reordered snapshots confirm and replay once; actual
+  address/policy changes still block. Full backend **746 passed / 6,956 assertions**,
+  30 existing skips; **98 frontend checks** pass. Client/SSR builds, 17 route budgets,
+  scoped Pint and whitespace checks pass. Synthetic desktop/mobile browser review
+  confirms the controls and address placement; preview fits 320px.
+- [ ] Not deployed. No real booking, customer message, primary database edit or
+  production MySQL/provider certification performed. [Evidence and limits](audits/2026-10-14-setup-refinement/README.md).
+
 ## 2026-10-13 Public website content and SEO audit (ADR-065)
 
 - [x] Audited all 32 curated marketing URLs and 15 public utility/auth/legal/
@@ -34,7 +80,7 @@
   remain unwaived. Production SSR supervision and a final live HTML crawl are
   required. [Complete page register and concerns](audits/2026-10-13-public-content/README.md).
 
-Status date: 2026-10-13
+Status date: 2026-10-14
 
 ## 2026-10-13 Google Maps and location intelligence (FR-02/03/05/06/09/13/19; ADR-064)
 

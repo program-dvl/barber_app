@@ -156,6 +156,7 @@ return [
     ],
     'location_scales' => ['single' => 'One location', 'multiple' => 'Multiple locations'],
     'schedule_presets' => [
+        'daily_9_21' => ['label' => 'Every day', 'days' => [1, 2, 3, 4, 5, 6, 7], 'opens_at' => '09:00', 'closes_at' => '21:00'],
         'weekdays' => ['label' => 'Monday–Friday', 'days' => [1, 2, 3, 4, 5], 'opens_at' => '09:00', 'closes_at' => '18:00'],
         'tuesday_saturday' => ['label' => 'Tuesday–Saturday', 'days' => [2, 3, 4, 5, 6], 'opens_at' => '09:00', 'closes_at' => '18:00'],
         'every_day' => ['label' => 'Every day', 'days' => [1, 2, 3, 4, 5, 6, 7], 'opens_at' => '09:00', 'closes_at' => '18:00'],

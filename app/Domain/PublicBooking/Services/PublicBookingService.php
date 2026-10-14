@@ -268,7 +268,13 @@ class PublicBookingService
                 $hold = $flow->hold()->where('business_id', $business->id)->firstOrFail();
                 $location = Location::query()->where('business_id', $business->id)->sharedLock()->findOrFail($hold->location_id);
                 $shownLocation = $flow->state['policy']['location_details'] ?? null;
-                if ($shownLocation && Arr::except($shownLocation, ['directions_url', 'apple_maps_url', 'is_primary']) !== Arr::except(LocationData::snapshot($location), ['is_primary'])) {
+                // MySQL JSON storage sorts object keys. Compare keyed values,
+                // preserving strict types without treating key order as a change.
+                $shownAddress = Arr::except($shownLocation ?? [], ['directions_url', 'apple_maps_url', 'is_primary']);
+                $currentAddress = Arr::except(LocationData::snapshot($location), ['is_primary']);
+                ksort($shownAddress);
+                ksort($currentAddress);
+                if ($shownLocation && $shownAddress !== $currentAddress) {
                     throw new BookingRuleViolation('POLICY_CHANGED', 'This branch updated its location details. Choose your time again to review the current address.');
                 }
                 $appointment = $this->bookings->confirmHold($business->id, $hold->public_id, $idempotencyKey, null, [
@@ -293,6 +299,20 @@ class PublicBookingService
     public function catalog(Business $business): array
     {
         $this->assertBookable($business);
+
+        return $this->catalogData($business);
+    }
+
+    /** Read-only catalog for the separately authorized owner preview. */
+    public function previewCatalog(Business $business): array
+    {
+        abort_unless($business->isActive(), 404);
+
+        return $this->catalogData($business, privatePreview: true);
+    }
+
+    private function catalogData(Business $business, bool $privatePreview = false): array
+    {
         $locations = Location::query()->where('business_id', $business->id)->where('is_active', true)->where('status', 'active')->orderByDesc('is_primary')->orderBy('name')->get();
         $services = Service::query()->where('business_id', $business->id)->where('is_active', true)->where('online_visible', true)->where(fn ($q) => $q->whereNull('effective_from')->orWhere('effective_from', '<=', now()))->where(fn ($q) => $q->whereNull('effective_until')->orWhere('effective_until', '>', now()))->with(['category', 'locations', 'addons'])->get()->sortBy(fn ($s) => sprintf('%05d', $s->category?->display_order ?? 65535).'|'.($s->category?->name ?? '').'|'.$s->kind.'|'.$s->name)->values();
         $staff = StaffProfile::query()->where('business_id', $business->id)->where('status', 'active')->where('online_visible', true)->with(['locations', 'serviceAssignments'])->orderBy('display_name')->get();
@@ -329,7 +349,11 @@ class PublicBookingService
                 'service_ids' => $services->whereIn('id', $profile->serviceAssignments->filter(fn ($a) => $a->is_active && $a->is_qualified && $a->online_visible && (! $a->effective_from || $a->effective_from->lte(now())) && (! $a->effective_until || $a->effective_until->gt(now())))->sortByDesc('effective_from')->unique('service_id')->pluck('service_id'))->pluck('public_id')->all(),
                 'service_variants' => $profile->serviceAssignments->filter(fn ($a) => $a->is_active && $a->is_qualified && $a->online_visible && (! $a->effective_from || $a->effective_from->lte(now())) && (! $a->effective_until || $a->effective_until->gt(now())))->sortByDesc('effective_from')->unique('service_id')->filter(fn ($a) => $services->contains('id', $a->service_id))->map(fn ($a) => ['service' => $services->firstWhere('id', $a->service_id)->public_id, ...$a->only(['price_minor', 'duration_minutes', 'processing_minutes', 'cleanup_minutes'])])->values(),
             ]),
-            'policy' => $this->policySnapshot($business, null, []),
+            // The preview cannot proceed to client/payment review. Use the
+            // saved selection rules without initializing commerce records.
+            'policy' => $privatePreview
+                ? $business->only(['online_staff_preference', 'online_price_display', 'online_new_client_rule', 'staff_gender_request_enabled'])
+                : $this->policySnapshot($business, null, []),
         ];
     }
 

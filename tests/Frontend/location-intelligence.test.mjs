@@ -60,6 +60,8 @@ test('actual editor makes one minimal selected details request, does not persist
  const mounted=mountEditor(Component,async()=>({importLibrary:async name=>name==='places'?{PlaceAutocompleteElement:Widget}:name==='maps'?{Map}:{AdvancedMarkerElement:Marker}}));await flush();
  await widget.handlers['gmp-select']({placePrediction:{toPlace:()=>({id:'Chosen',formattedAddress:'18 New Lane',addressComponents:[],location:{lat:()=>43.65,lng:()=>-79.38},fetchFields:async({fields})=>{calls++;mask=fields}})}});await flush();
  assert.equal(calls,1);assert.deepEqual(mask,['id','formattedAddress','addressComponents','location']);assert.equal(mounted.events[0].address,'18 New Lane');assert.equal(mounted.events[0].entrance_latitude,'');
+ assert.equal(map, undefined);
+ await mounted.nodes.find(node=>node.type==='button'&&node.props.onClick&&node.children.some(child=>child.text?.includes('entrance pin'))).props.onClick();await flush();
  map.handlers.click({latLng:{lat:()=>43.651,lng:()=>-79.381}});assert.equal(mounted.events.at(-1).entrance_latitude,43.651);
  marker.position={lat:43.652,lng:-79.382};marker.handlers.dragend();assert.equal(mounted.events.at(-1).entrance_longitude,-79.382);mounted.app.unmount();
 });

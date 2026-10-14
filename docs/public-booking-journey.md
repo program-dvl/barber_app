@@ -134,3 +134,14 @@ single-use mutation actions remain. See [Communications](modules/communications.
 ## Location intelligence (2026-10-12; ADR-064)
 
 [Locations](modules/location-intelligence.md) specifies the shared owner-confirmed entrance, inline branch picker, optional memory-only nearby sort and snapshot-based arrival card. Single eligible branches skip selection; common services survive branch switching. Maps load on request. Held location changes require a fresh address review; confirmed and same-branch rescheduled visits keep their original location details.
+
+
+## Confirmation snapshot comparison (2026-10-14; ADR-066)
+
+The held address is compared with the current branch by sorted keys and strict
+values. MySQL JSON key ordering can no longer reject an otherwise unchanged
+address as `POLICY_CHANGED`. The existing exclusions for derived direction links
+and business-primary selection remain. Actual address/entrance/arrival changes
+and policy-version changes still block confirmation; contacts, deposits, capacity,
+expiry and idempotency are revalidated. The regression reviews client details,
+confirms a reordered snapshot and repeats the same request to prove one appointment.

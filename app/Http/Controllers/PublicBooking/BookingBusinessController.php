@@ -5,6 +5,7 @@ namespace App\Http\Controllers\PublicBooking;
 use App\Domain\BusinessConfiguration\Services\BookingSlugManager;
 use App\Domain\PublicBooking\Services\PublicBookingService;
 use App\Http\Controllers\Controller;
+use App\Support\BookingPageData;
 use App\Support\BookingUrl;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -22,19 +23,7 @@ class BookingBusinessController extends Controller
 
         return Inertia::render('Booking/Welcome', [
             'seo' => ['title' => 'Book with '.$business->name, 'description' => 'Choose a service and book an appointment with '.$business->name.'.', 'canonical' => BookingUrl::forSlug($business->booking_slug)],
-            'business' => [
-                'booking_url' => BookingUrl::forSlug($business->booking_slug),
-                ...$business->only(['name', 'booking_slug', 'business_type', 'description', 'brand_color', 'country_code', 'currency_code', 'phone', 'email', 'website_url', 'social_links', 'address', 'map_url']),
-                'has_logo' => filled($business->logo_path),
-                'has_cover_image' => filled($business->cover_image_path),
-                'logo_url' => filled($business->logo_path) ? route('public.booking.media', [$business->booking_slug, 'logo']) : null,
-                'cover_url' => filled($business->cover_image_path)
-                    ? route('public.booking.media', [$business->booking_slug, 'cover'])
-                    : config('business-onboarding.business_types.'.$business->business_type.'.image', '/images/marketing/editorial/product-workday.webp'),
-                'cover_alt' => filled($business->cover_image_path)
-                    ? $business->name.' booking page cover'
-                    : config('business-onboarding.business_types.'.$business->business_type.'.label', 'Appointment business').' workspace atmosphere',
-            ],
+            'business' => app(BookingPageData::class)->business($business),
             'catalog' => $booking->catalog($business),
         ]);
     }

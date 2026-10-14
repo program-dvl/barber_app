@@ -216,6 +216,23 @@ Purpose: Minimise time-to-value and switching friction so a shop can run appoint
 - Configure tax-inclusive or tax-exclusive pricing, default cancellation policy, terms/privacy links and a unique, editable booking-page slug.
 - Preview desktop and mobile booking views before publishing; preserve existing links when a slug changes through redirect or alias.
 
+#### Setup usability (user-approved refinement, 2026-10-14)
+
+- New Google signup enters “Let’s prepare your business” directly; email signup
+  retains verification before entering that same saved introduction.
+- Explain whether the owner personally provides services and therefore needs a
+  bookable team profile. Remove the existing-online-booking question from the UI;
+  imports remain available to every authorized business.
+- Offer one address path: Google search with a bordered field and a selected
+  address review, or manual full-address entry. Entrance pins and address/arrival
+  corrections are optional. Show the business address near the top of its profile.
+- New introductions start with editable 9 AM–9 PM hours every day without a
+  schedule-choice questionnaire. Keep saved presets and established hours intact.
+  Remind owners at every introduction step that they can return and edit later.
+- Desktop/mobile previews render the actual saved public services page privately.
+  They may browse services but cannot reserve or confirm appointments; explicit
+  preview review and publication remain required. See ADR-066.
+
 #### Import
 
 - Provide CSV templates, mapping, validation preview and error export for clients, staff, services and products.
@@ -489,15 +506,15 @@ Purpose: Keep clients and staff informed while respecting consent, local time an
 
 - Send booking confirmation/pending/approval/rejection, material change, cancellation, deposit/payment receipt, waitlist opening and deliberate queue updates. Send one reminder, normally 24 hours before the appointment. Keep feedback and rebooking outreach classified as marketing and disabled for the initial mobile release.
 - Expose email and SMS in the initial release. Keep other mobile providers behind a disabled application-owned channel contract until a later accepted decision promotes them; keep in-app and browser push as later compatible channels.
-- Offer a shared ClipperDesk sender for dependable business-labelled outbound texts and an entitled business-branded sender for an approved SMS identity. Free-form owner replies and a client inbox are deferred; inbound SMS remains available for STOP/START compliance.
+- Use the shared ClipperDesk sender and platform-managed content for client email and SMS. Include the business identity and relevant visit details automatically. Business-owned sender onboarding, owner message builders, free-form replies and a client inbox are unavailable; retain historical sender records and inbound STOP/START routing for compliance (owner-approved simplification, 2026-10-14; ADR-067).
 - Create one SMS notification for an eligible event. Do not expose cross-channel fallback or send duplicate mobile notifications in the initial release.
 - Separate transactional communications from marketing consent and unsubscribe rules.
 
 #### Templates And Timing
 
-- Allow shop-level templates with validated variables such as client, staff, service, location, date, amount and secure action link.
+- Manage versioned notification content centrally in ClipperDesk, with validated client, staff, service, location, date, recorded amount and secure action values. Provide professional responsive HTML email and a plain-text alternative; SMS remains concise text. Owners cannot edit, draft or publish content (ADR-067).
 - Use one 24-hour reminder by default, respect quiet hours in the appointment/location time zone, and prevent duplicate sends after retries or schedule changes.
-- Preview templates across channels and fall back when a variable is absent.
+- Provide read-only sample email/SMS examples without contacting providers or creating message records. Offer only top-level email/SMS enablement, one-reminder timing and quiet hours. Channel pauses stop waiting work and never bypass client consent or resend stopped messages on re-enable. Preserve safe fallbacks for absent optional values (ADR-067).
 
 #### Delivery Operations
 

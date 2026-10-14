@@ -6,13 +6,13 @@ use App\Domain\Communications\Jobs\DeliverCommunicationMessage;
 use App\Domain\Communications\Models\CommunicationIntent;
 use App\Domain\Communications\Models\CommunicationMessage;
 use App\Domain\Communications\Models\CommunicationSenderProfile;
-use App\Domain\Communications\Models\CommunicationTemplate;
 use App\Domain\Communications\Services\CommunicationActionLinkService;
 use App\Domain\Communications\Services\CommunicationConsentService;
 use App\Domain\Communications\Services\CommunicationDeliveryService;
 use App\Domain\Communications\Services\CommunicationSupportService;
 use App\Domain\Communications\Services\CommunicationTemplateService;
 use App\Domain\Communications\Services\NotificationIntentService;
+use App\Domain\Communications\Services\NotificationWorkspaceCatalog;
 use App\Domain\Communications\Services\NotificationWorkspaceQuery;
 use App\Domain\Communications\Services\OperationalCommunicationService;
 use App\Domain\MoneyCommerce\Models\Sale;
@@ -53,45 +53,85 @@ it('projects existing rules and both channels without credentials or secure link
     config(['services.ses.key' => 'secret-email-key', 'services.ses.secret' => 'secret-email-secret', 'communications.twilio.auth_token' => 'secret-text-token']);
     workspaceMessage($this->business, $this->client);
     $response = $this->getJson(route('business.communications.index', $this->business))->assertOk();
-    $response->assertJsonCount(12, 'automations')->assertJsonPath('history.total', 1)->assertJsonPath('history.data.0.client_name', 'Synthetic Sarah');
+    $response->assertJsonCount(10, 'automations')->assertJsonPath('history.total', 1)->assertJsonPath('history.data.0.client_name', 'Synthetic Sarah');
     expect($response->getContent())->not->toContain('secret-email-key', 'secret-email-secret', 'secret-text-token', 'template_variables', '__action_link_id');
 });
 
-it('saves a first draft without suppressing the live default and publishes without mutating queued snapshots', function () {
-    $payload = ['intent_type' => 'booking_pending', 'channel' => 'email', 'locale' => 'en-US', 'subject' => 'Hello {{client_name}}', 'body' => '{{business_name}}: Pending for {{client_name}}.', 'base_version' => 0];
-    $draft = $this->postJson(route('business.communications.templates.store', $this->business), $payload)->assertCreated()->json('template');
-    expect($draft['version'])->toBe(2);
-    $queued = workspaceMessage($this->business, $this->client);
-    expect($queued->status)->toBe('queued')->and($queued->template->version)->toBe(1);
-    $this->postJson(route('business.communications.templates.publish', [$this->business, $draft['public_id']]))->assertOk()->assertJsonPath('template.status', 'published');
-    expect(workspaceMessage($this->business, $this->client, 'second')->template->id)->toBe($draft['id'])
-        ->and($queued->fresh()->communication_template_id)->not->toBe($draft['id']);
-    $this->postJson(route('business.communications.templates.store', $this->business), $payload)->assertUnprocessable()->assertJsonValidationErrors('body');
-    expect(AuditEvent::query()->where('action', 'communication.template_saved')->count())->toBe(1)
-        ->and(AuditEvent::query()->where('action', 'communication.template_published')->count())->toBe(1);
-    $this->postJson(route('business.communications.templates.publish', [$this->business, $draft['public_id']]))->assertOk();
-    expect(AuditEvent::query()->where('action', 'communication.template_published')->count())->toBe(1);
-});
-
-it('validates event-specific variables, malformed syntax, HTML and deferred channels', function () {
-    $base = ['intent_type' => 'queue_update', 'channel' => 'sms', 'locale' => 'en-US', 'base_version' => 0];
-    foreach (['{{action_link}}', '{{client-name}}', '<b>Hi</b>', '{{private_notes}}'] as $body) {
-        $this->postJson(route('business.communications.templates.store', $this->business), [...$base, 'body' => $body])->assertUnprocessable()->assertJsonValidationErrors('body');
-    }
-    $this->postJson(route('business.communications.templates.store', $this->business), [...$base, 'channel' => 'whatsapp', 'body' => 'Hi'])->assertUnprocessable();
-    $this->postJson(route('business.communications.templates.store', $this->business), [...$base, 'intent_type' => 'rebooking_reminder', 'body' => 'Hi'])->assertUnprocessable();
-    expect(CommunicationTemplate::query()->count())->toBe(0);
-});
-
-it('rejects stale publishes and cross-tenant template preview and publication', function () {
+it('retires template mutations and previews without changing retained versions', function () {
     $templates = app(CommunicationTemplateService::class);
-    $old = $templates->save($this->business, 'booking_pending', 'email', 'en-US', 'Subject', 'Body');
-    $new = $templates->save($this->business, 'booking_pending', 'email', 'en-US', 'New subject', 'New body');
-    $this->postJson(route('business.communications.templates.publish', [$this->business, $old]))->assertUnprocessable();
+    $existing = $templates->save($this->business, 'booking_pending', 'email', 'en-US', 'Retained subject', 'Retained body');
+    $snapshot = $existing->fresh()->getAttributes();
+    $this->postJson(route('business.communications.templates.store', $this->business), ['body' => 'Replacement'])->assertGone();
+    $this->postJson(route('business.communications.templates.publish', [$this->business, $existing]))->assertGone();
+    $this->postJson(route('business.communications.templates.preview', [$this->business, $existing]))->assertGone();
+    expect($existing->fresh()->getAttributes())->toBe($snapshot);
+    expect(AuditEvent::query()->whereIn('action', ['communication.template_saved', 'communication.template_published'])->count())->toBe(0);
     [$otherUser, $other] = createTenantMembership();
     activateTestSubscription($other);
-    $this->actingAs($otherUser)->postJson(route('business.communications.templates.publish', [$other, $new]))->assertNotFound();
-    $this->postJson(route('business.communications.templates.preview', [$other, $new]))->assertNotFound();
+    $this->actingAs($otherUser)->postJson(route('business.communications.templates.publish', [$other, $existing]))->assertNotFound();
+    $this->postJson(route('business.communications.templates.preview', [$other, $existing]))->assertNotFound();
+});
+
+it('uses immutable platform content for new events while keeping queued historical snapshots', function () {
+    $templates = app(CommunicationTemplateService::class);
+    $custom = $templates->save($this->business, 'booking_pending', 'email', 'en-US', 'Owner subject', 'Owner body');
+    $templates->publish($this->business, $custom);
+    $queued = workspaceMessage($this->business, $this->client);
+    $queued->update(['communication_template_id' => $custom->id]);
+    $fresh = workspaceMessage($this->business, $this->client, 'fresh');
+    $again = workspaceMessage($this->business, $this->client, 'again');
+    expect($fresh->template->body)->toStartWith('ClipperDesk · ')
+        ->and($fresh->template->fallbacks['__platform_revision'])->toBe(CommunicationTemplateService::PLATFORM_REVISION)
+        ->and($again->communication_template_id)->toBe($fresh->communication_template_id)
+        ->and($queued->fresh()->communication_template_id)->toBe($custom->id)
+        ->and($custom->fresh()->body)->toBe('Owner body');
+    $page = $this->getJson(route('business.communications.index', $this->business))->assertOk();
+    $page->assertJsonMissingPath('templates')->assertJsonMissingPath('variableCatalog')->assertJsonMissingPath('defaults')->assertJsonPath('capabilities.branded_sender', false);
+});
+
+it('returns sample-only branded examples for connected rules without creating delivery records', function () {
+    $before = CommunicationMessage::query()->count();
+    foreach (NotificationWorkspaceCatalog::automations() as $type => $rule) {
+        if ($rule['prepared'] ?? false) {
+            continue;
+        }
+        $response = $this->getJson(route('business.communications.example', $this->business).'?type='.$type)->assertOk();
+        expect($response->json('html'))->toContain('ClipperDesk', '<table', $this->business->name)
+            ->not->toContain($this->client->name, $this->client->email, 'NotificationsReview');
+    }
+    $this->getJson(route('business.communications.example', $this->business).'?type=deposit_request')->assertUnprocessable();
+    expect(CommunicationMessage::query()->count())->toBe($before);
+});
+
+it('pauses new and waiting messages per channel without bypassing opt-outs or reviving old work', function () {
+    app(CommunicationConsentService::class)->recordSmsOptIn($this->client, 'booking');
+    $email = workspaceMessage($this->business, $this->client, 'queued-email');
+    $sms = workspaceMessage($this->business, $this->client, 'queued-sms', 'sms');
+    $settings = app(CommunicationTemplateService::class)->settings($this->business);
+    $payload = collect($this->getJson(route('business.communications.index', $this->business))->json('settings'))->except(['email_provider', 'mobile_provider', 'fallback_mobile_channel'])->all();
+    $this->patchJson(route('business.communications.update', $this->business), [...$payload, 'email_enabled' => false, 'sms_enabled' => false])->assertOk();
+    expect($email->fresh()->status)->toBe('suppressed')->and($sms->fresh()->status)->toBe('suppressed');
+    expect(workspaceMessage($this->business, $this->client, 'paused-email')->suppression_reason)->toBe('channel_paused');
+    expect(workspaceMessage($this->business, $this->client, 'paused-sms', 'sms')->suppression_reason)->toBe('channel_paused');
+    foreach ([$email, $sms] as $message) {
+        $result = app(CommunicationDeliveryService::class)->deliver($message);
+        expect($result->suppression_reason)->toBe('channel_paused')->and($result->attempt_count)->toBe(0);
+    }
+    $settings->refresh()->update(['email_enabled' => true, 'sms_enabled' => true]);
+    expect(app(CommunicationDeliveryService::class)->deliver($email)->attempt_count)->toBe(0);
+    $this->client->update(['communication_preferences' => ['email' => false, 'sms' => false]]);
+    $withdrawn = workspaceMessage($this->business, $this->client, 'withdrawn', 'sms');
+    expect(app(CommunicationDeliveryService::class)->deliver($withdrawn)->suppression_reason)->toBe('channel_preference_withdrawn');
+});
+
+it('forces new messages onto the platform sender despite a retained branded preference', function () {
+    $settings = app(CommunicationTemplateService::class)->settings($this->business);
+    $settings->update(['sender_mode' => 'branded']);
+    app(CommunicationConsentService::class)->recordSmsOptIn($this->client, 'booking');
+    $message = workspaceMessage($this->business, $this->client, 'platform-sms', 'sms');
+    expect(CommunicationSenderProfile::query()->findOrFail($message->communication_sender_profile_id)->mode)->toBe('platform');
+    $payload = collect($this->getJson(route('business.communications.index', $this->business))->json('settings'))->except(['email_provider', 'mobile_provider', 'fallback_mobile_channel'])->all();
+    $this->patchJson(route('business.communications.update', $this->business), [...$payload, 'sender_mode' => 'branded'])->assertUnprocessable()->assertJsonValidationErrors('sender_mode');
 });
 
 it('paginates history, filters local dates and searches exact encrypted destinations', function () {
@@ -127,7 +167,7 @@ it('allows reception to view branch-scoped history while denying edits and forei
     $allowed = workspaceMessage($business, $client, 'allowed', appointment: $makeAppointment($location));
     $hidden = workspaceMessage($business, $client, 'hidden', appointment: $makeAppointment($otherLocation));
     workspaceMessage($business, $client, 'payment', intent: 'deposit_received', appointment: $makeAppointment($location));
-    $this->actingAs($user)->get(route('business.communications.page', $business))->assertOk()->assertInertia(fn (Assert $p) => $p->where('capabilities.manage', false)->has('templates', 0)->where('history.total', 1));
+    $this->actingAs($user)->get(route('business.communications.page', $business))->assertOk()->assertInertia(fn (Assert $p) => $p->where('capabilities.manage', false)->missing('templates')->where('history.total', 1));
     $this->getJson(route('business.communications.messages.show', [$business, $hidden]))->assertNotFound();
     $this->getJson(route('business.communications.messages.show', [$business, $allowed]))->assertOk();
     $this->postJson(route('business.communications.templates.store', $business), [])->assertForbidden();

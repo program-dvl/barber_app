@@ -45,7 +45,7 @@ final class NotificationWorkspaceCatalog
     {
         return ['client_name' => 'Sarah', 'staff_name' => 'Emma', 'service_name' => 'Haircut & style',
             'location_address' => '18 Example Lane, Toronto, ON', 'arrival_instructions' => 'Suite 2, entrance on the left', 'directions_link' => 'https://www.google.com/maps/dir/?api=1&destination=43.65,-79.38',
-            'location_name' => 'Main studio', 'appointment_date' => '10 October 2026', 'appointment_time' => '14:30',
+            'location_name' => 'Main studio', 'appointment_date' => now()->setTimezone($business->time_zone ?: 'UTC')->addDays(3)->format('j F Y'), 'appointment_time' => '14:30',
             'time_zone' => $business->time_zone ?: 'UTC', 'amount' => '45.00', 'currency' => $business->currency_code ?: 'USD',
             'booking_reference' => 'BK-1042', 'action_link' => 'https://example.test/your-secure-link',
             'queue_estimate' => '15 minutes', 'business_name' => $business->name];

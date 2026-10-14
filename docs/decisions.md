@@ -2357,6 +2357,78 @@ editorial task: OPEN-10/13/15 and live provider/release gates remain unwaived.
 Specification and evidence: [Public website](modules/public-website.md) and
 [dated audit](audits/2026-10-13-public-content/README.md).
 
+## ADR-066 — Clear introduction decisions and real private booking previews
+
+- Date: 2026-10-14. Status: Accepted from the owner's eight setup requests and
+  booking-confirmation bug report.
+- Requirements: FR-01/02/03/05/09/19; clarifies ADR-035/053/064.
+- Google signup clears stale intended navigation and enters the saved Business
+  setup introduction. Email verification remains the prerequisite to tenant setup.
+- Retain the owner-provider decision with an explicit explanation of its team,
+  calendar, hours and service-assignment effect. Remove the online-provider
+  question; preserve historical answers and compatibility with older requests.
+- Use search-or-manual address entry with one authoritative full address, a
+  bordered Google search, selected-address review, optional entrance map and
+  optional corrections/arrival notes. Keep the canonical location editor.
+- A new immutable `daily_9_21` starter preset replaces the opening-hours choices
+  for new introductions. Saved legacy presets, established days/hours and booked
+  history are preserved. The setup message instructs reviewing exact hours before
+  accepting bookings; no implicit publication is introduced.
+- Replace duplicate mock device cards with the actual `Booking/Welcome` services
+  page and shared public catalog/presentation. Private settings-authorized routes
+  serve previews and branding, with no-store/noindex and same-origin framing only
+  on a successful preview response. Browser storage restoration, booking actions
+  and header navigation are disabled in preview; viewing does not mark review,
+  create commerce records, reserve a slot or publish. Availability/deposit review
+  remains part of the real booking journey.
+- Compare held/current location snapshots by sorted keyed values with strict
+  types, excluding only the existing derived links/primary flag. JSON object-key
+  ordering cannot imply a policy change; actual address, entrance, arrival and
+  policy-version changes still require new review.
+- No production deployment, existing-business hours change, financial-history
+  rewrite or Phase 2 promotion. Evidence: [setup refinement audit](audits/2026-10-14-setup-refinement/README.md).
+
+## ADR-067 — Platform-managed client notifications with simple channel controls
+
+- Status: Accepted
+- Date: 2026-10-14
+- Basis: Product owner's explicit removal of owner email/SMS builders and business-branded notifications, with professional ClipperDesk client email requested.
+- Requirements: FR-13, FR-06/08/19; replaces the owner template editing and branded sender clauses of ADR-039/041/052. The approved FR-13 scope is updated in the same change.
+
+Client notifications offers Notifications and Delivery history. Managers save
+only top-level email/SMS choices and quiet hours with current-revision checks;
+there are no owner content, variable, draft, publish or sender-brand controls.
+Retained owner mutation endpoints return authenticated 410 responses, with
+foreign template/conversation scope still denied. Read-only examples contain
+sample visit values and use the actual platform email renderer in a sandboxed
+iframe; they never create delivery work or contact providers.
+
+New email/SMS intents resolve a separately identified immutable platform content
+revision and SMS uses the shared sender even when a saved legacy preference is
+branded. Existing queued template references, historical sender profiles,
+provider callbacks, consent and append-only financial evidence remain intact.
+The platform identity supplies the SES display name; the configured verified
+SES address and provider credentials remain in their existing configuration.
+
+New platform client email has a branded responsive table layout, preheader,
+event-specific status/copy, visit or payment details, arrival guidance and a
+purpose-labelled secure action when available. All interpolated values are
+escaped; only validated HTTP(S) URLs can become links. Plain text is retained.
+Older captured/custom content uses a branded escaped wrapper instead of being
+rewritten into a different event statement. No translation is implied.
+
+Channel pauses suppress queued/retried/held work under locks, release only its
+existing mobile reservation and record the manager settings audit. Already
+claimed provider work cannot be recalled. Creation and dispatch both check the
+channel setting alongside consent/STOP/preferences. Re-enable does not revive
+suppressed history. Additive default-true columns preserve existing delivery
+behavior; this does not enable an environment transport or certify live sending.
+Prepared deposit handlers remain internal under OPEN-21. Registration, legal,
+live-provider, privacy and public-payment gates remain unwaived.
+
+[Specification](modules/communications.md) and
+[review evidence](audits/2026-10-14-platform-notifications/README.md).
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |

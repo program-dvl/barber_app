@@ -569,7 +569,7 @@ it('records SMS STOP once and withdraws text consent immediately', function () {
         ->and(ClientConsent::query()->where('type', 'sms')->orderByDesc('occurred_at')->orderByDesc('id')->value('status'))->toBe('withdrawn');
 });
 
-it('prepares an entitled branded sender without exposing provider credentials in the owner workspace', function () {
+it('retires owner branded-sender setup without exposing retained credentials', function () {
     [$user, $business] = createTenantMembership(StarterRole::Owner);
     activateTestSubscription($business, 'pro');
     config(['communications.transport_mode' => 'fake']);
@@ -577,12 +577,12 @@ it('prepares an entitled branded sender without exposing provider credentials in
 
     $this->actingAs($user)->post(route('business.communications.senders.branded', $business), [
         'channels' => ['sms'], 'display_name' => 'North Shore Studio',
-    ])->assertRedirect();
+    ])->assertGone();
     $this->actingAs($user)->get(route('business.communications.page', $business))
         ->assertOk()->assertInertia(fn ($page) => $page->component('Communications/Index')
-        ->where('capabilities.branded_sender', true)
+        ->where('capabilities.branded_sender', false)
         ->where('senderReadiness.transport_mode', 'fake')
-        ->has('senderReadiness.profiles', 2)
+        ->has('senderReadiness.profiles', 1)
         ->missing('senderReadiness.profiles.0.provider_api_key_secret'));
 });
 
@@ -593,7 +593,7 @@ it('rejects deferred channels from the owner notification settings', function ()
 
     $this->actingAs($user)->from(route('business.communications.page', $business))->post(route('business.communications.senders.branded', $business), [
         'channels' => ['whatsapp'], 'display_name' => 'North Shore Studio',
-    ])->assertSessionHasErrors('channels.0');
+    ])->assertGone();
 
     expect($business->communicationSenderProfiles()->where('channel', 'whatsapp')->exists())->toBeFalse();
 });

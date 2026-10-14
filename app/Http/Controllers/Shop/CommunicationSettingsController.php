@@ -5,15 +5,15 @@ namespace App\Http\Controllers\Shop;
 use App\Domain\Billing\Services\EntitlementEvaluator;
 use App\Domain\Communications\Models\CommunicationConversation;
 use App\Domain\Communications\Models\CommunicationMessage;
-use App\Domain\Communications\Models\CommunicationSenderProfile;
 use App\Domain\Communications\Models\CommunicationSetting;
 use App\Domain\Communications\Models\CommunicationTemplate;
 use App\Domain\Communications\Providers\SesEmailProvider;
+use App\Domain\Communications\Services\ClientNotificationEmail;
+use App\Domain\Communications\Services\CommunicationDeliveryService;
 use App\Domain\Communications\Services\CommunicationSenderService;
 use App\Domain\Communications\Services\CommunicationSupportService;
 use App\Domain\Communications\Services\CommunicationTemplateRenderer;
 use App\Domain\Communications\Services\CommunicationTemplateService;
-use App\Domain\Communications\Services\ConversationReplyService;
 use App\Domain\Communications\Services\NotificationWorkspaceCatalog;
 use App\Domain\Communications\Services\NotificationWorkspaceQuery;
 use App\Domain\Communications\Services\TemplateVariableCatalog;
@@ -63,14 +63,11 @@ class CommunicationSettingsController extends Controller
             'mobile_channel' => ['required', 'in:sms'],
             'fallback_mobile_channel' => ['prohibited'],
             'smart_fallback_enabled' => ['required', 'declined'],
-            'sender_mode' => ['required', 'in:platform,branded'],
+            'sender_mode' => ['required', 'in:platform'],
+            'email_enabled' => ['required', 'boolean'], 'sms_enabled' => ['required', 'boolean'],
             'two_way_enabled' => ['required', 'declined'],
             'settings_revision' => ['required', 'string', 'size:64'],
         ]);
-        if ($data['sender_mode'] === 'branded') {
-            abort_unless($entitlements->decide($business, 'messaging.branded_sender')->allowed, 403, 'Branded messaging requires an eligible plan.');
-            abort_unless(CommunicationSenderProfile::query()->where('business_id', $business->id)->where('mode', 'branded')->where('channel', $data['mobile_channel'])->where('status', 'active')->exists(), 422, 'The branded sender must be ready before it can be activated.');
-        }
         $data = [...$data,
             'mobile_channel' => 'sms',
             'fallback_mobile_channel' => null,
@@ -90,6 +87,11 @@ class CommunicationSettingsController extends Controller
             $settings->fill($data);
             if ($settings->isDirty()) {
                 $settings->save();
+                foreach (['email', 'sms'] as $channel) {
+                    if (! $data[$channel.'_enabled']) {
+                        app(CommunicationDeliveryService::class)->pauseChannel($business->id, $channel);
+                    }
+                }
                 app(AuditWriter::class)->write('communication.settings_updated', $business, target: $settings, before: $before, after: $settings->only(array_keys($data)));
             }
         });
@@ -102,125 +104,34 @@ class CommunicationSettingsController extends Controller
     public function requestBrandedSender(Request $request, Business $business, TenantContext $context, EntitlementEvaluator $entitlements): RedirectResponse|JsonResponse
     {
         $this->authorizeSettings($context);
-        abort_unless($entitlements->decide($business, 'messaging.branded_sender')->allowed, 403, 'Branded messaging requires an eligible plan.');
-        if (! in_array(config('communications.transport_mode'), ['fake', 'live'], true)) {
-            throw ValidationException::withMessages([
-                'channels' => 'This provider mode uses a shared or unsupported sender identity. Complete branded text-line onboarding in the live environment; test mode can only use ClipperDesk notifications.',
-            ]);
-        }
-        $data = $request->validate([
-            'channels' => ['required', 'array', 'size:1'],
-            'channels.*' => ['required', 'distinct', 'in:sms'],
-            'display_name' => ['required', 'string', 'max:255'],
-        ]);
-        $simulation = config('communications.transport_mode', 'fake') === 'fake';
-        DB::transaction(function () use ($data, $business, $simulation): void {
-            Business::query()->whereKey($business->id)->lockForUpdate()->firstOrFail();
-            foreach ($data['channels'] as $channel) {
-                if (CommunicationSenderProfile::query()->where('business_id', $business->id)->where('channel', $channel)->where('mode', 'branded')->whereIn('status', ['active', 'pending'])->exists()) {
-                    continue;
-                }
-                $identifier = $simulation ? 'fake:'.$business->public_id.':'.$channel : null;
-                $profile = CommunicationSenderProfile::query()->updateOrCreate([
-                    'business_id' => $business->id, 'channel' => $channel, 'mode' => 'branded',
-                ], [
-                    'provider' => $simulation ? 'fake' : 'twilio', 'status' => $simulation ? 'active' : 'pending',
-                    'country_code' => $business->country_code, 'display_name' => $data['display_name'],
-                    'sender_identifier' => $identifier,
-                    'sender_identifier_hash' => $identifier ? CommunicationSenderService::identifierHash($channel, $identifier) : null,
-                    'capabilities' => ['outbound' => true, 'inbound' => $channel === 'sms', 'templates' => false, 'simulation' => $simulation],
-                    'metadata' => ['onboarding_stage' => $simulation ? 'simulated_ready' : 'provider_verification_required'],
-                    'verified_at' => $simulation ? now() : null,
-                ]);
-                app(AuditWriter::class)->write('communication.sender_setup_requested', $business, target: $profile, after: $profile->only(['channel', 'mode', 'status']));
-            }
-        });
-
-        $message = $simulation
-            ? 'Your branded text line is ready in local simulation. Production verification is still required before live sending.'
-            : 'Branded text-line setup has started. Provider and business verification must complete before activation.';
-
-        return $request->expectsJson() ? response()->json(['status' => $message], 202) : back()->with('status', $message);
+        abort(410, 'Client notifications use the ClipperDesk sender.');
     }
 
-    public function reply(Request $request, Business $business, CommunicationConversation $communicationConversation, TenantContext $context, ConversationReplyService $replies): RedirectResponse
+    public function reply(Request $request, Business $business, CommunicationConversation $communicationConversation, TenantContext $context): RedirectResponse
     {
         $this->authorizeSettings($context);
         abort_unless($communicationConversation->business_id === $business->id, 404);
-        $data = $request->validate([
-            'body' => ['required', 'string', 'max:1000'],
-            'client_request_id' => ['required', 'uuid'],
-        ]);
-        $replies->send($business, $communicationConversation, $data['body'], $data['client_request_id']);
-
-        return back()->with('status', 'Reply queued for delivery.');
+        abort(410, 'Client messaging is managed by ClipperDesk.');
     }
 
     public function storeTemplate(Request $request, Business $business, TenantContext $context, CommunicationTemplateService $templates): JsonResponse
     {
         $this->authorizeSettings($context);
-        $data = $request->validate([
-            'intent_type' => ['required', Rule::in(array_keys(NotificationWorkspaceCatalog::automations()))], 'channel' => ['required', 'in:email,sms'],
-            'locale' => ['required', 'regex:/^[a-z]{2}(?:-[A-Z]{2})?$/'], 'subject' => ['nullable', 'string', 'max:255'],
-            'body' => ['required', 'string', 'max:5000'], 'fallbacks' => ['array'], 'fallbacks.*' => ['nullable', 'string', 'max:255'],
-            'base_version' => ['required', 'integer', 'min:0'], 'provider_template_id' => ['prohibited'], 'provider_template_status' => ['prohibited'],
-        ]);
-        $variables = app(CommunicationTemplateRenderer::class)->variables($data['subject'] ?? '', $data['body']);
-        if (array_diff($variables, NotificationWorkspaceCatalog::variables($data['intent_type']))) {
-            throw ValidationException::withMessages(['body' => 'This variable is not available for this notification. Choose from the variable picker.']);
-        }
-        if (preg_match('/<\/?[a-z][^>]*>/i', $data['body'])) {
-            throw ValidationException::withMessages(['body' => 'Use plain message text. HTML formatting is not supported.']);
-        }
-        $template = DB::transaction(function () use ($business, $data, $templates) {
-            Business::query()->whereKey($business->id)->lockForUpdate()->firstOrFail();
-            $latest = (int) CommunicationTemplate::query()->where('business_id', $business->id)->where('intent_type', $data['intent_type'])->where('channel', $data['channel'])->where('locale', $data['locale'])->max('version');
-            if ($latest !== $data['base_version']) {
-                throw ValidationException::withMessages(['body' => 'This template changed in another session. Close and refresh before editing again. Your text has not been overwritten.']);
-            }
-            $template = $templates->save($business, $data['intent_type'], $data['channel'], $data['locale'], $data['subject'] ?? null, $data['body'], $data['fallbacks'] ?? []);
-            app(AuditWriter::class)->write('communication.template_saved', $business, target: $template, after: $template->only(['intent_type', 'channel', 'locale', 'version', 'status']));
-
-            return $template;
-        });
-
-        return response()->json(['template' => $template], 201);
+        abort(410, 'Client notification content is managed by ClipperDesk.');
     }
 
     public function preview(Request $request, Business $business, CommunicationTemplate $communicationTemplate, TenantContext $context, CommunicationTemplateService $templates): JsonResponse
     {
         $this->authorizeSettings($context);
-        $data = $request->validate(['variables' => ['array'], 'variables.*' => ['nullable', 'string', 'max:2000']]);
-
-        return response()->json(['preview' => $templates->preview($business, $communicationTemplate, $data['variables'] ?? [])]);
+        abort_unless($communicationTemplate->business_id === $business->id, 404);
+        abort(410, 'Client notification content is managed by ClipperDesk.');
     }
 
     public function publish(Business $business, CommunicationTemplate $communicationTemplate, TenantContext $context, CommunicationTemplateService $templates): JsonResponse
     {
         $this->authorizeSettings($context);
-
         abort_unless($communicationTemplate->business_id === $business->id, 404);
-        abort_unless(in_array($communicationTemplate->channel, ['email', 'sms'], true) && array_key_exists($communicationTemplate->intent_type, NotificationWorkspaceCatalog::automations()), 422);
-        $template = DB::transaction(function () use ($business, $communicationTemplate, $templates) {
-            Business::query()->whereKey($business->id)->lockForUpdate()->firstOrFail();
-            $latest = CommunicationTemplate::query()->where('business_id', $business->id)->where('intent_type', $communicationTemplate->intent_type)->where('channel', $communicationTemplate->channel)->where('locale', $communicationTemplate->locale)->max('version');
-            if ($communicationTemplate->version !== (int) $latest) {
-                throw ValidationException::withMessages(['template' => 'A newer draft exists. Refresh and review it before publishing.']);
-            }
-            if ($communicationTemplate->fresh()->status === 'published') {
-                return $communicationTemplate->fresh();
-            }
-            $variables = app(CommunicationTemplateRenderer::class)->variables($communicationTemplate->subject ?? '', $communicationTemplate->body);
-            if (array_diff($variables, NotificationWorkspaceCatalog::variables($communicationTemplate->intent_type))) {
-                throw ValidationException::withMessages(['template' => 'This draft contains variables unavailable for this notification. Edit and save it before publishing.']);
-            }
-            $template = $templates->publish($business, $communicationTemplate);
-            app(AuditWriter::class)->write('communication.template_published', $business, target: $template, after: $template->only(['intent_type', 'channel', 'locale', 'version', 'status']));
-
-            return $template;
-        });
-
-        return response()->json(['template' => $template]);
+        abort(410, 'Client notification content is managed by ClipperDesk.');
     }
 
     public function diagnostic(Business $business, CommunicationMessage $communicationMessage, TenantContext $context, CommunicationSupportService $support): JsonResponse
@@ -259,6 +170,25 @@ class CommunicationSettingsController extends Controller
         return response()->json(['history' => $query->history($business, $context->membership(), $filters)]);
     }
 
+    public function example(Request $request, Business $business, TenantContext $context): JsonResponse
+    {
+        $this->authorizeView($context);
+        $types = collect(NotificationWorkspaceCatalog::automations())->reject(fn ($row) => $row['prepared'] ?? false)->keys()->all();
+        $data = $request->validate(['type' => ['required', Rule::in($types)]]);
+        $defaults = TemplateVariableCatalog::defaults($data['type']);
+        $variables = NotificationWorkspaceCatalog::samples($business);
+        $template = new CommunicationTemplate([
+            'subject' => $defaults['subject'], 'body' => config('brand.product_name').': '.$defaults['body'],
+            'variables' => app(CommunicationTemplateRenderer::class)->variables($defaults['subject'], $defaults['body']),
+        ]);
+        $rendered = app(CommunicationTemplateRenderer::class)->render($template, $variables);
+
+        return response()->json([
+            'subject' => $rendered['subject'], 'text' => $rendered['body'],
+            'html' => app(ClientNotificationEmail::class)->render($data['type'], $variables, $rendered['body'], $rendered['subject']),
+        ])->header('Cache-Control', 'private, no-store');
+    }
+
     private function authorizeView(TenantContext $context): void
     {
         $membership = $context->membership();
@@ -273,7 +203,7 @@ class CommunicationSettingsController extends Controller
 
     private function settingsRevision(CommunicationSetting $settings): string
     {
-        return hash('sha256', json_encode($settings->only(['sender_mode', 'default_locale', 'quiet_hours_start', 'quiet_hours_end'])));
+        return hash('sha256', json_encode($settings->only(['email_enabled', 'sms_enabled', 'default_locale', 'quiet_hours_start', 'quiet_hours_end'])));
     }
 
     /** @return array<string, mixed> */
@@ -283,9 +213,10 @@ class CommunicationSettingsController extends Controller
         $manage = $membership->hasPermissionTo(PermissionName::SettingsManage->value, 'web');
         $settings = $templates->settings($business);
         $allowance = $entitlements->value($business, 'messaging.monthly_allowance');
-        $visibleSettings = $settings->only(['email_provider', 'mobile_provider', 'sender_mode', 'default_locale', 'quiet_hours_start', 'quiet_hours_end']);
+        $visibleSettings = $settings->only(['email_provider', 'mobile_provider', 'sender_mode', 'email_enabled', 'sms_enabled', 'default_locale', 'quiet_hours_start', 'quiet_hours_end']);
         $visibleSettings = [...$visibleSettings,
             'email_provider' => 'ses',
+            'sender_mode' => 'platform',
             'settings_revision' => $this->settingsRevision($settings),
             'mobile_channel' => 'sms',
             'fallback_mobile_channel' => null,
@@ -302,17 +233,13 @@ class CommunicationSettingsController extends Controller
             'capabilities' => [
                 'manage' => $manage,
                 'contact' => $membership->hasPermissionTo(PermissionName::ClientContactView->value, 'web'),
-                'branded_sender' => $manage && $entitlements->decide($business, 'messaging.branded_sender')->allowed,
+                'branded_sender' => false,
             ],
             'usage' => [
                 'used' => $entitlements->usage($business, 'messaging.monthly_allowance'),
                 'included' => is_numeric($allowance) ? (int) $allowance : 0,
             ],
-            'automations' => collect(NotificationWorkspaceCatalog::automations())->map(fn ($row, $type) => ['type' => $type, ...$row])->values(),
-            'sampleValues' => NotificationWorkspaceCatalog::samples($business),
-            'variableCatalog' => collect(NotificationWorkspaceCatalog::automations())->mapWithKeys(fn ($row, $type) => [$type => NotificationWorkspaceCatalog::variables($type)]),
-            'defaults' => collect(NotificationWorkspaceCatalog::automations())->mapWithKeys(fn ($row, $type) => [$type => TemplateVariableCatalog::defaults($type)]),
-            'templates' => $manage ? CommunicationTemplate::query()->where('business_id', $business->id)->whereIn('channel', ['email', 'sms'])->whereIn('intent_type', array_keys(NotificationWorkspaceCatalog::automations()))->whereIn('id', CommunicationTemplate::query()->selectRaw('MAX(id)')->where('business_id', $business->id)->groupBy('intent_type', 'channel', 'locale', 'status'))->orderByDesc('version')->get()->map->only(['public_id', 'intent_type', 'channel', 'locale', 'version', 'status', 'subject', 'body', 'variables', 'fallbacks']) : [],
+            'automations' => collect(NotificationWorkspaceCatalog::automations())->reject(fn ($row) => $row['prepared'] ?? false)->map(fn ($row, $type) => ['type' => $type, ...$row])->values(),
             'overview' => app(NotificationWorkspaceQuery::class)->overview($business, $membership),
             'historyFilters' => ['client' => request()->query('client') ?: '', 'appointment' => request()->query('appointment') ?: ''],
             'history' => app(NotificationWorkspaceQuery::class)->history($business, $membership, ['client' => request()->query('client') ?: '', 'appointment' => request()->query('appointment') ?: '']),

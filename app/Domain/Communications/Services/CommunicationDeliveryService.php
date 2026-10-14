@@ -178,6 +178,10 @@ class CommunicationDeliveryService
                 $message->intent->correlation_id, $message->template->provider_template_id, $rendered['variables'],
                 $message->channel, $message->business_id, $message->communication_sender_profile_id,
                 $message->intent->intent_type === 'conversation_reply',
+                $message->channel === 'email' ? app(ClientNotificationEmail::class)->render(
+                    data_get($message->template->fallbacks, '__platform_revision') === CommunicationTemplateService::PLATFORM_REVISION ? $message->intent->intent_type : null,
+                    [...$variables, ...$rendered['variables']], $rendered['body'], $rendered['subject'],
+                ) : null,
             );
             $result = $message->channel === 'email' ? $this->email->send($outbound) : $this->mobile->send($outbound);
             DB::transaction(function () use ($message, $attempt, $result, $rendered): void {
@@ -210,6 +214,21 @@ class CommunicationDeliveryService
         }
 
         return $message->fresh(['attempts', 'intent']);
+    }
+
+    /** Stop waiting work atomically when a manager pauses a channel. */
+    public function pauseChannel(int $businessId, string $channel): void
+    {
+        DB::transaction(function () use ($businessId, $channel): void {
+            CommunicationMessage::query()->where('business_id', $businessId)->where('channel', $channel)
+                ->whereIn('status', ['queued', 'retried', 'held'])->orderBy('id')->lockForUpdate()->get()
+                ->each(function (CommunicationMessage $message): void {
+                    $updates = ['status' => 'suppressed', 'suppression_reason' => 'channel_paused', 'next_attempt_at' => null];
+                    $this->releaseMobileAllowance($message, $updates);
+                    $message->update($updates);
+                    $this->refreshIntent($message);
+                });
+        });
     }
 
     /** @return array<string,mixed> */

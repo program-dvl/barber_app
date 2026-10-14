@@ -6,6 +6,7 @@ use App\Domain\Communications\Contracts\EmailChannelProvider;
 use App\Domain\Communications\Data\OutboundCommunication;
 use App\Domain\Communications\Data\ProviderSendResult;
 use App\Domain\Communications\Exceptions\CommunicationProviderException;
+use App\Domain\Communications\Services\ClientNotificationEmail;
 use Aws\Exception\AwsException;
 use Aws\Ses\SesClient;
 use Throwable;
@@ -35,13 +36,13 @@ class SesEmailProvider implements EmailChannelProvider
             throw new CommunicationProviderException('provider_not_configured', false);
         }
         $source = config('communications.ses.from_address');
-        $name = trim(str_replace(["\r", "\n", '<', '>', '"'], '', (string) config('communications.ses.from_name')));
+        $name = trim(str_replace(["\r", "\n", '<', '>', '"'], '', (string) config('brand.product_name', 'ClipperDesk')));
         $payload = [
             'Source' => $name !== '' ? '"'.$name.'" <'.$source.'>' : $source,
             'Destination' => ['ToAddresses' => [$message->destination]],
             'Message' => ['Subject' => ['Charset' => 'UTF-8', 'Data' => $message->subject], 'Body' => [
                 'Text' => ['Charset' => 'UTF-8', 'Data' => $message->body],
-                'Html' => ['Charset' => 'UTF-8', 'Data' => nl2br(e($message->body))],
+                'Html' => ['Charset' => 'UTF-8', 'Data' => $message->htmlBody ?? app(ClientNotificationEmail::class)->render(null, [], $message->body, $message->subject)],
             ]],
             'Tags' => [['Name' => 'client_message', 'Value' => $message->idempotencyKey]],
         ];

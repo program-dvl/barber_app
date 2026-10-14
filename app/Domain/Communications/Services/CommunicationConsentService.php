@@ -21,6 +21,9 @@ class CommunicationConsentService
         if ($suppressed) {
             return ['allowed' => false, 'reason' => 'destination_suppressed', 'basis' => $legalBasis];
         }
+        if (($channel === 'email' && ! $settings->email_enabled) || ($channel === 'sms' && ! $settings->sms_enabled)) {
+            return ['allowed' => false, 'reason' => 'channel_paused', 'basis' => $legalBasis];
+        }
         if ($category === 'marketing') {
             if (! $settings->marketing_enabled || ! $client || $client->marketing_status !== 'subscribed' || ! $this->prefers($client, $channel)) {
                 return ['allowed' => false, 'reason' => 'marketing_consent_missing', 'basis' => 'explicit_consent_required'];

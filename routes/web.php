@@ -9,10 +9,8 @@ use App\Http\Controllers\Billing\CapacityBillingController;
 use App\Http\Controllers\Billing\PlatformBillingSupportController;
 use App\Http\Controllers\Billing\StripeWebhookController;
 use App\Http\Controllers\BlogController;
-use App\Http\Controllers\ChangelogController;
 use App\Http\Controllers\ClientAttachmentDownloadController;
 use App\Http\Controllers\ClientFormPublicController;
-use App\Http\Controllers\ComingSoonController;
 use App\Http\Controllers\CommunicationActionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Invoices\DownloadInvoiceController;
@@ -32,8 +30,8 @@ use App\Http\Controllers\PublicBooking\PublicBookingFlowController;
 use App\Http\Controllers\PublicBooking\PublicBookingPaymentController;
 use App\Http\Controllers\PublicBooking\PublicBusinessMediaController;
 use App\Http\Controllers\PublicBooking\PublicWaitlistController;
-use App\Http\Controllers\RoadmapController;
 use App\Http\Controllers\Shop\AppointmentOperationsController;
+use App\Http\Controllers\Shop\BookingPreviewController;
 use App\Http\Controllers\Shop\BusinessConfigurationController;
 use App\Http\Controllers\Shop\CalendarController;
 use App\Http\Controllers\Shop\CheckoutController;
@@ -316,6 +314,7 @@ Route::middleware([
 
             Route::get('/app/communications', [CommunicationSettingsController::class, 'page'])->middleware('workspace.feature:communications')->name('business.communications.page');
             Route::get('/communications/history', [CommunicationSettingsController::class, 'history'])->name('business.communications.history');
+            Route::get('/communications/example', [CommunicationSettingsController::class, 'example'])->name('business.communications.example');
             Route::get('/communications/settings', [CommunicationSettingsController::class, 'index'])->name('business.communications.index');
             Route::patch('/communications/settings', [CommunicationSettingsController::class, 'update'])->name('business.communications.update');
             Route::post('/communications/senders/branded', [CommunicationSettingsController::class, 'requestBrandedSender'])->name('business.communications.senders.branded');
@@ -390,6 +389,8 @@ Route::middleware([
                 Route::get('/imports/templates/{entityType}', [BusinessConfigurationController::class, 'importTemplate'])->where('entityType', 'clients|staff|services|products')->name('imports.template');
                 Route::post('/imports/{configurationImport}/commit', [BusinessConfigurationController::class, 'commitImport'])->name('imports.commit');
                 Route::post('/change-previews/{subjectType}/{subjectId}', [BusinessConfigurationController::class, 'previewChange'])->where('subjectType', 'location|staff|resource')->name('change-previews.store');
+                Route::get('/booking-preview', [BookingPreviewController::class, 'show'])->name('booking-preview');
+                Route::get('/booking-preview/media/{kind}', [BookingPreviewController::class, 'media'])->where('kind', 'logo|cover')->name('booking-preview.media');
                 Route::post('/preview', [BusinessConfigurationController::class, 'preview'])->name('preview');
                 Route::post('/publish', [BusinessConfigurationController::class, 'publish'])->name('publish');
             });

@@ -17,5 +17,6 @@ final readonly class OutboundCommunication
         public ?int $businessId = null,
         public ?int $senderProfileId = null,
         public bool $conversationReply = false,
+        public ?string $htmlBody = null,
     ) {}
 }

@@ -292,3 +292,16 @@ it('serves private booking artwork only for a live public business', function ()
     $business->forceFill(['configuration_published_at' => null])->save();
     $this->get(route('public.booking.media', [$business->booking_slug, 'logo']))->assertNotFound();
 });
+
+it('prepares daily nine to nine hours without asking about an existing booking provider', function () {
+    [$owner, $business] = createTenantMembership(StarterRole::Owner);
+    activateTestSubscription($business);
+    $this->actingAs($owner)->patch(route('business.configuration.guided-onboarding.update', $business), ['step' => 'business_type', 'business_type' => 'hair_salon'])->assertSessionHasNoErrors();
+    $this->patch(route('business.configuration.guided-onboarding.update', $business), ['step' => 'business_shape', 'operation_model' => 'at_location', 'team_size' => '1', 'location_scale' => 'single', 'owner_bookable' => true])->assertSessionHasNoErrors();
+    $this->patch(route('business.configuration.guided-onboarding.update', $business), ['step' => 'location', 'country_code' => 'CA', 'time_zone' => 'America/Toronto', 'address' => '', 'phone' => '', 'schedule_preset' => 'daily_9_21'])->assertSessionHasNoErrors();
+    $this->post(route('business.configuration.guided-onboarding.complete', $business), ['service_keys' => ['cut_finish']])->assertSessionHasNoErrors();
+    $location = $business->locations()->sole();
+    expect($location->hours()->count())->toBe(7)->and($location->hours()->pluck('closes_at')->unique()->all())->toBe(['21:00']);
+    expect($business->staffProfiles()->sole()->availabilityRules()->where('kind', 'working')->count())->toBe(7);
+    expect($business->fresh()->configuration_published_at)->toBeNull();
+});

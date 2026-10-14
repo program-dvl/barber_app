@@ -11,11 +11,13 @@ class CommunicationSenderService
     public function resolve(Business|int $business, string $channel, CommunicationSetting $settings): ?CommunicationSenderProfile
     {
         $business = $business instanceof Business ? $business : Business::query()->findOrFail($business);
-        $mode = $settings->sender_mode === 'branded' ? 'branded' : 'platform';
+        // New client notifications always use the platform identity. Retain
+        // historical branded profiles for callback routing and audit evidence.
+        $mode = 'platform';
         $profile = CommunicationSenderProfile::query()->where('business_id', $business->id)
             ->where('channel', $channel)->where('mode', $mode)->where('status', 'active')->first();
 
-        if ($profile || $mode === 'branded') {
+        if ($profile) {
             return $profile;
         }
 
@@ -81,8 +83,8 @@ class CommunicationSenderService
             'network_sends' => $transport !== 'fake',
             'live_send_enabled' => (bool) config('communications.live_send_enabled'),
             'sms_test_configured' => $this->smsTestReady(),
-            'branded_onboarding_available' => in_array($transport, ['fake', 'live'], true),
-            'profiles' => CommunicationSenderProfile::query()->where('business_id', $business->id)->where('channel', 'sms')->get()
+            'branded_onboarding_available' => false,
+            'profiles' => CommunicationSenderProfile::query()->where('business_id', $business->id)->where('channel', 'sms')->where('mode', 'platform')->get()
                 ->map(fn (CommunicationSenderProfile $profile) => [
                     'public_id' => $profile->public_id,
                     'channel' => $profile->channel,

@@ -7,8 +7,9 @@ Related contracts: [Business setup](business-setup.md),
 ## Owner journey
 
 The existing guided `location` step and Locations page share `LocationEditor`.
-Search a business name or address, choose a Google suggestion, review the public
-address, position the customer entrance and save. Manual address entry remains
+Choose Google search or manual full-address entry. Search uses a bordered field;
+choosing a suggestion shows one selected-address summary with an edit action.
+Review the address, optionally position the customer entrance, then save. Manual address entry remains
 usable without Google or a Google Business Profile. Country, time zone, hours and
 contacts remain business decisions. Google does not replace operational data.
 
@@ -22,8 +23,9 @@ Saving location details preserves hours, including split periods. Manual address
 corrections retain the owner entrance and prompt a pin review; selecting the same
 Place ID retains the saved entrance, while selecting a different place prepares
 a new entrance selection. Stale structured city/postal data is cleared when the
-full address is manually replaced. Initial hours
-remain part of initial location setup; subsequent hours use the existing reviewed
+full address is manually replaced. Guided introductions now prepare the editable daily 09:00–21:00 preset
+without a schedule questionnaire (ADR-066); saved presets remain intact. Initial
+hours remain part of the standalone location editor; subsequent hours use the existing reviewed
 hours command. The only location or an explicitly selected primary location
 updates the legacy business address summary for setup/publication compatibility.
 Business profile links to the canonical location editor instead of asking for a

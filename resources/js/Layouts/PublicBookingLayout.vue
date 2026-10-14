@@ -7,6 +7,7 @@ import BookingSkeleton from '@/Components/Booking/BookingSkeleton.vue';
 
 const props = defineProps({
     title: String,
+    preview: Boolean,
     steps: { type: Array, default: () => ['Service', 'Staff & time', 'Your details', 'Review', 'Confirmation'] },
     currentStep: {
         type: Number,
@@ -36,11 +37,11 @@ const progress = computed(() => props.currentStep <= 0 ? 0 : Math.round((props.c
 
         <header class="border-b border-[var(--border-subtle)] bg-[var(--surface-raised)]/95 backdrop-blur">
             <div class="mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-2 sm:px-6">
-                <Link :href="route('booking.welcome')" class="inline-flex min-h-11 max-w-full items-center rounded-lg" aria-label="ClipperDesk booking home"><ProductMark :show-tagline="false" /></Link>
-                <Link v-if="mode === 'booking'" :href="route('booking.manage')" aria-label="Manage appointment" class="inline-flex min-h-11 max-w-full shrink-0 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-[var(--text-strong)] hover:bg-[var(--surface-subtle)]">
+                <component :is="preview ? 'span' : Link" :href="preview ? undefined : route('booking.welcome')" class="inline-flex min-h-11 max-w-full items-center rounded-lg" aria-label="ClipperDesk booking home"><ProductMark :show-tagline="false" /></component>
+                <component :is="preview ? 'span' : Link" v-if="mode === 'booking'" :href="preview ? undefined : route('booking.manage')" aria-label="Manage appointment" class="inline-flex min-h-11 max-w-full shrink-0 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-[var(--text-strong)] hover:bg-[var(--surface-subtle)]">
                     <LockClosedIcon class="size-4 shrink-0" aria-hidden="true" />
                     <span class="hidden sm:inline">Manage appointment</span><span class="sm:hidden">Manage</span>
-                </Link>
+                </component>
                 <span v-else class="inline-flex items-center gap-2 rounded-full bg-[var(--status-success-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--status-success)]">
                     <LockClosedIcon class="size-4 shrink-0" aria-hidden="true" /> Appointment link
                 </span>

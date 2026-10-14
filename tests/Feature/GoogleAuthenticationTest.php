@@ -94,14 +94,16 @@ class GoogleAuthenticationTest extends TestCase
             ->where('googleAuth.pending_registration.name', 'New Owner')
         );
 
-        $response = $this->post(route('auth.google.register'), [
+        $response = $this->withSession(['url.intended' => '/unrelated-old-tab'])->post(route('auth.google.register'), [
             'name' => 'New Owner',
             'business_name' => 'North and Main Studio',
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature(),
         ]);
 
         $user = User::query()->where('email', 'new.owner@example.com')->firstOrFail();
-        $response->assertRedirect(RouteServiceProvider::HOME);
+        $business = OwnerRegistrationIntent::query()->where('user_id', $user->id)->firstOrFail()->business;
+        $response->assertRedirect(route('business.configuration.show', $business));
+        $this->get($response->headers->get('Location'))->assertInertia(fn (Assert $page) => $page->component('Configuration/Onboarding')->where('onboarding.current_step', 'business_type'));
         $this->assertAuthenticatedAs($user);
         $this->assertTrue($user->hasVerifiedEmail());
         $this->assertNull($user->profile_photo_path);

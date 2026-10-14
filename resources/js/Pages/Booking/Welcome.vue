@@ -15,7 +15,7 @@ import PhoneInput from '@/Components/Product/PhoneInput.vue';
 import BookingSkeleton from '@/Components/Booking/BookingSkeleton.vue';
 import PublicBookingLayout from '@/Layouts/PublicBookingLayout.vue';
 
-const props = defineProps({ business: Object, catalog: Object });
+const props = defineProps({ business: Object, catalog: Object, preview: Boolean });
 const step = ref(props.business ? 1 : 0);
 const busy = ref(false), loadingSlots = ref(false), restoring = ref(false), error = ref(''), notice = ref(''), fieldErrors = ref({});
 const flow = ref(null), secret = ref(null), expiresAt = ref(null), held = ref(null), confirmation = ref(null);
@@ -47,7 +47,7 @@ const priceLabel = item => {
     return `${item.price_type === 'from' || amounts.some(amount => amount !== low) ? 'From ' : ''}${money(low, item.currency_code)}`;
 };
 const duration = computed(() => selectedServices.value.reduce((sum, item) => sum + estimate(item).visit_minutes, 0));
-const canContinue = computed(() => selection.value.services.length > 0 && !busy.value && !restoring.value);
+const canContinue = computed(() => !props.preview && selection.value.services.length > 0 && !busy.value && !restoring.value);
 const needsStaff = computed(() => props.catalog?.policy.online_staff_preference === 'preferred_required');
 const canSearch = computed(() => canContinue.value && selection.value.date >= today.value && selection.value.date <= lastDate.value && (!needsStaff.value || selection.value.staff));
 const groups = computed(() => slotGroups(slots.value, zone.value));
@@ -75,6 +75,7 @@ const reportError = async (requestError, fallback) => {
 };
 let startingFlow;
 const ensureFlow = async () => {
+    if (props.preview) return;
     if (flow.value && Date.parse(expiresAt.value) > Date.now() + 5000) return;
     if (!startingFlow) startingFlow = axios.post(api('public.booking.start')).then(response => {
         flow.value = response.data.flow; secret.value = response.data.secret; expiresAt.value = response.data.expires_at; held.value = null; remember();
@@ -82,6 +83,7 @@ const ensureFlow = async () => {
     await startingFlow;
 };
 const restore = async () => {
+    if (props.preview) return;
     const saved = safeRead(storageKey.value, sessionStorage);
     if (!saved?.flow || !saved.secret) return;
     if (saved.selection) {
@@ -206,7 +208,7 @@ const joinWaitlist = async () => {
     finally { busy.value = false; }
 };
 const openWaitlist = () => { waitlist.value.acceptable_from = selection.value.date; waitlist.value.acceptable_until = selection.value.date; waitlistOpen.value = true; };
-onMounted(() => { if (props.business) restore(); clockTimer = setInterval(() => { clock.value = Date.now(); }, 1000); });
+onMounted(() => { if (props.preview) return; if (props.business) restore(); clockTimer = setInterval(() => { clock.value = Date.now(); }, 1000); });
 onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); searchController?.abort(); });
 </script>
 
@@ -214,6 +216,7 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
     <PublicBookingLayout
         :title="business ? `Book with ${business.name}` : 'Book an appointment'"
         :current-step="step"
+        :preview="preview"
         :steps="['Services', 'Staff & time', 'Confirm', 'Booked']"
     >
         <section v-if="!business" class="booking-panel mx-auto max-w-lg">
@@ -221,6 +224,7 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
             <p class="mt-3 text-[var(--text-muted)]">Open the booking link shared by your business.</p>
         </section>
         <template v-else>
+            <p v-if="preview" class="booking-message" role="status">Private preview · Browse your saved services. Booking is disabled here.</p>
             <header class="booking-business" :class="{ compact: step !== 1, 'booking-business-complete': step === 4 }">
                 <img v-if="step === 1 && business.cover_url" :src="business.cover_url" :alt="business.cover_alt" class="booking-cover" />
                 <div class="min-w-0">
@@ -240,6 +244,7 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                 <section v-if="restoring" class="booking-panel"><BookingSkeleton label="Restoring your booking" /></section>
                 <section v-else-if="step === 1" class="booking-panel">
                     <h2 id="booking-heading" tabindex="-1" class="cd-section-title">Choose your services</h2>
+                    <p v-if="!catalog.locations.length" class="mt-3 text-sm text-[var(--text-muted)]">No services are ready for online booking yet. Review services, team assignments and opening hours in Business setup.</p>
                     <BranchPicker v-if="catalog.locations.length > 1" class="mt-5" :branches="catalog.locations" v-model="selection.location" />
                     <LocationCard v-if="location && catalog.locations.length === 1" class="mt-4 lg:hidden" :location="location" />
                     <details v-else-if="location" class="mt-3 rounded-lg border border-[var(--border-subtle)] p-3 lg:hidden"><summary class="cursor-pointer text-sm font-semibold">Arrival &amp; directions · {{ location.name }}</summary><LocationCard class="mt-3" :location="location" /></details>

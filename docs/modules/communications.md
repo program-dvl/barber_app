@@ -1,21 +1,23 @@
 # Communications module
 
 Status: Client notification workspace, SES email and SMS-only mobile release
-implemented and locally verified (2026-10-04);
+implemented and locally verified; platform-managed simplification 2026-10-14 (ADR-067);
 live provider, country-registration and legal certification remain launch gates.
 
 Authoritative scope: [FR-13](../product-requirements.md#fr-13-notifications-and-communication),
 [subscription packaging](../product-requirements.md#9-subscription-packaging-and-commercial-rules),
 [ADR-039](../decisions.md#adr-039-multi-region-messaging-uses-safe-transport-promotion-and-optional-business-owned-senders),
 and [ADR-041](../decisions.md#adr-041-launch-client-mobile-notifications-as-essential-sms-only),
-and [ADR-052](../decisions.md#adr-052-client-notifications-is-an-operational-workspace-with-ses-and-twilio).
+and [ADR-052](../decisions.md#adr-052-client-notifications-is-an-operational-workspace-with-ses-and-twilio),
+and [ADR-067](../decisions.md#adr-067--platform-managed-client-notifications-with-simple-channel-controls).
 
 ## Product outcome
 
 ClipperDesk sends calm, useful appointment notifications by email and SMS. The
-owner-facing **Client notifications** workspace offers either the shared
-ClipperDesk text sender or an entitled, provider-approved branded text line.
-Every text names the business. Pricing for extra credits is outside this phase.
+owner-facing **Client notifications** workspace offers simple email/SMS channel
+choices, quiet hours, sample messages and delivery history. ClipperDesk manages
+all new message wording and sender identity. Every text names the business.
+SMS credits follow the capacity subscription contract below.
 
 The initial mobile release is deliberately SMS-only. Deferred mobile channels,
 fallback selection, promotional texting and a conversational inbox are not
@@ -39,8 +41,8 @@ evidence exists. The supported service events are:
 - a turn-approaching queue update deliberately triggered by the business.
 
 Deposit request/received templates and intent handlers exist, but no deposit
-domain event currently calls them. They are labeled **Prepared**, excluded from
-the ten connected rules and have no active toggle. OPEN-16/21 governs connecting
+domain event currently calls them. They stay internal, excluded from
+the ten connected rules and owner examples, and have no active toggle. OPEN-16/21 governs connecting
 these events and a usable public payment action. A deposit-information link must
 not be presented as a working payment interface.
 
@@ -70,9 +72,10 @@ cannot be resurrected by moving them into a later quiet-hours window.
 
 ## Sender experience
 
-**ClipperDesk text notifications** use a platform sender and identify the
-business in the message body. **Your branded text line** requires the relevant
-country's provider registration and an active tenant-owned SMS sender profile.
+**ClipperDesk text notifications** use the shared platform sender and identify
+the business in each message. New notifications never select an owner-branded
+profile. Retained branded sender records remain tenant scoped for historical
+callbacks and compliance routing; there is no owner onboarding or activation.
 Provider credentials are never accepted or returned by the owner workspace.
 
 Inbound SMS is retained only as needed for STOP/START compliance in this release;
@@ -131,13 +134,12 @@ Public HTTPS callbacks remain:
 - delivery status: `POST /communications/webhooks/twilio`
 - inbound compliance messages: `POST /communications/webhooks/twilio/inbound`
 
-## Branded text-line onboarding
+## Retained sender history
 
-`fake` simulates an active branded SMS profile. Provider test mode uses a shared
-identity and cannot activate branding. Live onboarding creates a pending profile
-and keeps platform notifications active until an audited process verifies the
-business, country, sender registration, webhook routing, STOP/START handling and
-delivery evidence. Only then may the profile become active.
+Owner branded-sender onboarding is retired by ADR-067. The authenticated legacy
+endpoint returns 410 without creating or changing a profile. Existing profiles
+and inbound routing are preserved; new operational intents use the platform
+sender regardless of a retained legacy preference.
 
 ## Verification and launch gates
 
@@ -151,15 +153,14 @@ for each supported country, including actual delivery, STOP/START, registration,
 duplicate callbacks, number reassignment, usage reconciliation, support recovery
 and emergency send-disable.
 
-## Operational workspace (ADR-052)
+## Operational workspace (ADR-067; replaces ADR-052 owner editing)
 
-**Automations** presents ten connected rules plus two visibly prepared deposit
-handlers, searchable by name/purpose/group. Each shows actual trigger, timing,
-channel readiness and independent email/SMS previews. A compact journey explains
-confirmation, one reminder, material changes and receipt; upcoming cards use
-actual queued records. No per-rule pause, multiple-reminder control, free-form
-client sender or test-send endpoint is implied by a button. Provider connection
-and consent are distinct from automation availability.
+**Notifications** has one platform-managed introduction, email/SMS switches,
+quiet hours and three grouped coverage cards. Only the ten connected essential
+rules are presented. The existing single 24-hour reminder remains; per-rule
+controls, extra reminder offsets, deposit triggers and test sends are not added.
+Read-only email/SMS examples use synthetic values and create no provider work.
+The HTML example uses the same Blade renderer as delivery in a sandboxed iframe.
 
 **Delivery history** uses a 25-record server page with channel/status/type,
 business-local date range and exact client/appointment deep-link filters. Name
@@ -171,12 +172,16 @@ source reference, safe explanatory reason and recorded timestamps. Raw provider
 exceptions, credentials, message bodies, template variables and secure URLs are
 excluded. Sent means provider acceptance, not confirmed recipient delivery.
 
-**Channels & timing** supplies explicit, revision-checked saves for the existing
-one-reminder policy, quiet hours, locale and sender preference. Owners/settings
-managers edit and retry; receptionists with CalendarViewAll, ClientView and
-ClientContactView can investigate only assigned locations. Finance types require
-RevenueView. Tenant/source scope is enforced for history, overview, retry and
-Calendar summaries. Provider credentials remain environment configuration.
+Managers save top-level channel choices and quiet hours explicitly with stale
+revision protection. Disabling a channel suppresses waiting queued/retried/held
+work and releases reserved SMS allowance; already claimed work cannot be recalled.
+Dispatch rechecks channel state, consent and client preference. Re-enable never
+resends suppressed work. Existing records default to both channels enabled,
+without changing provider transport gates. The owner's template-language field
+and sender selector are removed; platform content currently uses English and does
+not claim automatic translation. Receptionists retain scoped read-only access.
+Finance types require RevenueView; tenant/source boundaries cover history,
+retries, examples and Calendar handoffs. Credentials remain configuration.
 
 Client profiles show six recent notifications with a link to filtered history.
 Calendar appointment drawers show latest confirmation/reminder/change states
@@ -186,22 +191,25 @@ handles both. Saved checkbox choices persist explicit email/SMS booleans,
 preserving withdrawn channels and deferred historical preferences. SMS selection
 never substitutes for consent. Queued delivery rechecks withdrawal.
 
-## Template editing and publication
+## Platform content and client email
 
-Templates use existing immutable versions. Opening an editor shows the trigger,
-plain email subject/body or SMS body, event-specific labeled variables/examples,
-raw/sample preview and a confirmed restore-default action. SMS segment estimates
-apply GSM-7 extension/UTF-16 counting to sample substitutions and are labeled
-estimates. Email preview mirrors escaped text/line-break transport; no unsupported
-branding, preview-text or button contract is claimed. New templates retain the
-published system default as v1 while the first custom draft becomes v2.
+New email/SMS intents lazily resolve an immutable platform content revision,
+identified internally in template fallbacks. A tenant lock and version increment
+avoid clashes with retained versions; published owner custom content is not
+selected for new operational events. Queued messages retain their captured
+version. No owner template payload/variable catalog is projected. Retired save,
+preview and publish endpoints return authenticated 410; foreign records return
+404, and unauthorized roles remain 403.
 
-Draft saves require the currently viewed version; publishing requires the latest
-draft. A stale editor cannot silently overwrite another manager. Publication only
-affects newly created intents: queued messages retain their captured version and
-content. Meaningful saves/publication/preferences/retry commands record tenant
-activity metadata without bodies or secure links. Dirty close/navigation and
-validation focus protect work. Duplicate publish produces no extra audit event.
+SES receives responsive, inline-styled HTML and plain text. The structured email
+uses ClipperDesk branding, a status/preheader, purpose-specific introduction,
+local date/time/timezone, available visit/recorded payment facts, location arrival
+information and a labelled action button. Buttons are omitted when no validated
+HTTP(S) action exists. Pending bookings never claim confirmation; cancellation
+and waitlist messages do not imply a booked or paid state. All values are escaped.
+Legacy captured content receives a branded escaped wrapper without changing its
+statement. The verified mail address remains configured; display name uses the
+platform brand, never the business. Inbox/carrier certification remains separate.
 
 ## SES email transport and signed delivery evidence
 
@@ -209,13 +217,13 @@ The product owner selected AWS SES on 2026-10-04. Client email uses the existing
 AWS SDK and `services.ses` credentials, distinct from the account/security email
 ledger. Shared mail configuration supplies the sender; the old `.local` client
 placeholder is not used. Credentials are never returned in workspace projections.
-Optional client-only overrides are supported without duplicate secrets:
+The verified address, configuration set and topic may be overridden without
+duplicate secrets; the display name is owned by the platform brand:
 
 ```dotenv
 COMMUNICATIONS_EMAIL_TRANSPORT_MODE=ses
 # Set fake for isolated, network-free verification.
 # SES_CLIENT_FROM_ADDRESS=verified-sender@example.com
-# SES_CLIENT_FROM_NAME=ClipperDesk
 # AWS_SES_CONFIGURATION_SET=client-notifications
 # AWS_SES_CLIENT_SNS_TOPIC_ARN=arn:aws:sns:REGION:ACCOUNT:TOPIC
 ```

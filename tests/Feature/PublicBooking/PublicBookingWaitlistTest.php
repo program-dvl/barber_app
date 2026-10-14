@@ -617,3 +617,22 @@ it('permits user-initiated geolocation only on successful public booking pages',
     $this->get(route('booking.business.fallback', $path['business']->booking_slug))->assertOk()->assertHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), payment=(self)');
     $this->get('/book/unknown-location-business')->assertNotFound()->assertHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(self)');
 });
+
+it('confirms reviewed contacts after JSON storage reorders an unchanged entrance address', function () {
+    $this->travelTo(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata'));
+    $path = publicBookingPath();
+    $path['location']->update(['entrance_latitude' => 43.65, 'entrance_longitude' => -79.38, 'entrance_instructions' => 'Side door', 'parking_instructions' => 'Rear lot']);
+    $held = heldPublicFlow($path);
+    $state = $held['flow']->state;
+    ksort($state['policy']['location_details']);
+    $held['flow']->update(['state' => $state]);
+    $credentials = ['flow' => $held['flow']->public_id, 'secret' => $held['secret']];
+    $details = ['client_name' => 'JSON Guest', 'client_mobile' => '+14155552671', 'client_email' => 'json@example.test'];
+    $this->postJson(route('public.booking.details', $path['business']->booking_slug), [...$credentials, ...$details])->assertOk();
+    $payload = [...$credentials, ...$details, 'policy_accepted' => true, 'idempotency_key' => 'sorted-json-confirm'];
+    $url = route('public.booking.confirm', $path['business']->booking_slug);
+    $this->postJson($url, $payload)->assertOk();
+    $this->postJson($url, $payload)->assertOk();
+    expect(Appointment::query()->count())->toBe(1)->and($held['flow']->fresh()->status)->toBe('confirmed');
+    $this->travelBack();
+});

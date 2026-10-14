@@ -92,3 +92,34 @@ final step while preserving saved answers. See the
 migration twice, and verifies saved-answer recovery and duplicate-free completion.
 
 Google address search and entrance setup share the existing guided location step and Locations editor; the sole/primary branch maintains the business address summary. See [Locations](location-intelligence.md) and ADR-064. Coordinate entry is deliberately absent.
+
+
+## Introduction and private preview refinement (2026-10-14; ADR-066)
+
+FR-01/02/03/05/09/19: Google registration enters the introduction directly,
+ignoring stale intended navigation. Password registration retains verification
+and the existing verified-email setup redirect. Four saved steps remain. The
+owner-provider question explains bookable team/calendar preparation; the online
+provider question is removed without erasing historical answers. Imports remain
+optional for all authorized businesses.
+
+New unsaved introductions use `daily_9_21`: all seven days, 09:00–21:00, applied
+consistently to starter location and owner working hours. Saved legacy presets
+and all completed/established schedules remain unchanged. There is no hours
+questionnaire; the visible note directs exact editing before accepting bookings.
+Every step shares the go-back/edit-later reminder.
+
+Address entry chooses Google search or manual entry; the selected address is a
+review summary, not another competing input. Entrance maps open only on request.
+The Business profile shows its address/action above the profile groups.
+
+Private desktop/mobile preview uses the real public services component and shared
+catalog/business presentation, including private branding assets. It shows saved
+services, branch choices, prices and address; it cannot continue to availability,
+client details or payment. No browser booking session is restored, no commerce
+record is initialized and no appointment is reserved. A successful preview may
+be framed only by the same origin; branding and preview retain business-wide
+settings authorization, tenant isolation, no-store and noindex. Preview viewing
+and explicit “I reviewed this preview” remain separate. Publication stays explicit.
+
+[Evidence and limitations](../audits/2026-10-14-setup-refinement/README.md).

@@ -7,6 +7,7 @@ use App\Domain\Communications\Exceptions\CommunicationProviderException;
 use App\Domain\Communications\Models\CommunicationProviderEvent;
 use App\Domain\Communications\Models\CommunicationSuppression;
 use App\Domain\Communications\Providers\SesEmailProvider;
+use App\Domain\Communications\Services\ClientNotificationEmail;
 use App\Domain\Communications\Services\CommunicationDeliveryService;
 use App\Domain\Communications\Services\CommunicationSupportService;
 use App\Domain\Communications\Services\NotificationIntentService;
@@ -65,7 +66,7 @@ it('uses configured SES with a real message identifier, escaped HTML and no inte
     $result = $provider->send(new OutboundCommunication('sarah@example.test', 'Your booking', "Hi Sarah\n<script>private</script>", str_repeat('a', 64), 'correlation'));
     expect($provider->name())->toBe('ses')->and($result->providerMessageId)->toBe('ses-accepted')->and($result->providerRequestId)->toBe('request-1');
     $command = $handler->getLastCommand();
-    expect($command['Source'])->toBe('"Synthetic Salon" <notifications@example.test>')->and($command['Destination']['ToAddresses'])->toBe(['sarah@example.test'])->and($command['Message']['Body']['Html']['Data'])->toContain('&lt;script&gt;')->and($command['ConfigurationSetName'])->toBe('client-delivery')->and($command['Tags'][0]['Value'])->toBe(str_repeat('a', 64));
+    expect($command['Source'])->toBe('"ClipperDesk" <notifications@example.test>')->and($command['Destination']['ToAddresses'])->toBe(['sarah@example.test'])->and($command['Message']['Body']['Html']['Data'])->toContain('&lt;script&gt;')->and($command['ConfigurationSetName'])->toBe('client-delivery')->and($command['Tags'][0]['Value'])->toBe(str_repeat('a', 64));
     config(['services.ses.key' => '']);
     expect(fn () => $provider->send(new OutboundCommunication('sarah@example.test', 'test', 'test', 'key', 'correlation')))->toThrow(CommunicationProviderException::class, 'provider_not_configured');
 });
@@ -83,6 +84,31 @@ it('only retries explicit SES throttling and holds uncertain acceptance for inve
     app()->instance(SesClient::class, sesTestClient($handler));
     $message = app(CommunicationDeliveryService::class)->deliver(sesTestMessage($this->business, $this->client));
     expect($message->provider)->toBe('ses')->and($message->status)->toBe('failed')->and($message->last_error_code)->toBe('ses_outcome_unknown')->and($message->attempt_count)->toBe(1)->and($message->next_attempt_at)->toBeNull()->and(app(CommunicationSupportService::class)->canReplay($message))->toBeFalse()->and(count($handler))->toBe(1);
+});
+
+it('sends the structured platform email through SES with the retained plain-text alternative', function () {
+    $handler = new MockHandler([new Result(['MessageId' => 'ses-platform'])]);
+    app()->instance(SesClient::class, sesTestClient($handler));
+    $message = sesTestMessage($this->business, $this->client, 'platform-email');
+    $sent = app(CommunicationDeliveryService::class)->deliver($message);
+    $command = $handler->getLastCommand();
+    $html = $command['Message']['Body']['Html']['Data'];
+    expect($sent->status)->toBe('sent')->and($html)->toContain('Your request is in.', 'Haircut', '14:30', 'UTC', 'ClipperDesk', '<table')
+        ->and($command['Message']['Body']['Text']['Data'])->toStartWith('ClipperDesk · ')
+        ->and($html)->not->toContain('View appointment', 'Your appointment is confirmed.');
+});
+
+it('escapes client details and omits dangerous or unavailable action links from rich email', function () {
+    $renderer = app(ClientNotificationEmail::class);
+    $html = $renderer->render('booking_confirmation', [
+        'client_name' => '<script>private</script>', 'business_name' => '<b>Business</b>',
+        'service_name' => 'Cut & finish', 'location_address' => '<img src=x onerror=alert(1)>',
+        'action_link' => 'javascript:alert(1)', 'directions_link' => 'https://user:password@example.test/',
+    ], 'Plain text', 'Your appointment');
+    expect($html)->toContain('&lt;script&gt;', '&lt;b&gt;', 'Cut &amp; finish', '&lt;img')
+        ->not->toContain('href="javascript:', 'href="https://user:', '<script>', 'onerror=alert(1)>', '>View appointment</a>');
+    $valid = $renderer->render('booking_confirmation', ['action_link' => 'https://example.test/private?expires=1&signature=synthetic'], 'text', 'Subject');
+    expect($valid)->toContain('>View appointment</a>', 'expires=1&amp;signature=synthetic');
 });
 
 it('accepts signed SES delivery and bounce evidence idempotently without storing callback contents', function () {
