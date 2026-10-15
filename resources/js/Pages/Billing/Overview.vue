@@ -5,6 +5,8 @@ import axios from 'axios';
 import { CreditCardIcon, ArrowDownTrayIcon, ArrowTopRightOnSquareIcon, ExclamationCircleIcon, DocumentTextIcon } from '@heroicons/vue/24/outline';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import AppButton from '@/Components/Product/AppButton.vue';
+import AppNotice from '@/Components/Product/AppNotice.vue';
+import { markBillingDeparture, consumeBillingDeparture } from '@/Support/billingRecovery';
 import AppDialog from '@/Components/Product/AppDialog.vue';
 import AppSelect from '@/Components/Product/AppSelect.vue';
 import CapacityBillingPanel from '@/Components/Billing/CapacityBillingPanel.vue';
@@ -98,6 +100,7 @@ async function manageBilling() {
     busy.value = 'portal'; error.value = '';
     try {
         const response = await axios.get(url('business.billing.portal'), { signal: controller.signal });
+        markBillingDeparture(page.props.tenant.public_id);
         window.location.assign(response.data.url);
     } catch (exception) {
         if (!axios.isCancel(exception)) error.value = exception.response?.data?.message && exception.response.data.message !== 'Server Error'
@@ -111,9 +114,13 @@ async function refreshAccount() {
     catch (exception) { if (!axios.isCancel(exception)) error.value = exception.response?.data?.message || 'Billing details could not be verified yet. Please check again shortly.'; }
     finally { busy.value = ''; }
 }
-function restoreReturnedPage(event) { if (event.persisted) { busy.value = ''; refresh(); } }
-onMounted(() => { window.addEventListener('pageshow', restoreReturnedPage); reconcile(); if (props.portalReturned) refreshAccount(); });
-onUnmounted(() => { window.removeEventListener('pageshow', restoreReturnedPage); mounted = false; controller.abort(); window.clearTimeout(timer); });
+function restoreReturnedPage(event = {}) {
+    if (consumeBillingDeparture(page.props.tenant.public_id)) { busy.value = ''; window.location.reload(); return true; }
+    if (event.persisted) { busy.value = ''; refresh(); return true; }
+    return false;
+}
+onMounted(() => { window.addEventListener('pageshow', restoreReturnedPage); window.addEventListener('popstate', restoreReturnedPage); if (!restoreReturnedPage()) reconcile(); if (props.portalReturned) refreshAccount(); });
+onUnmounted(() => { window.removeEventListener('pageshow', restoreReturnedPage); window.removeEventListener('popstate', restoreReturnedPage); mounted = false; controller.abort(); window.clearTimeout(timer); });
 </script>
 
 <template>
@@ -121,8 +128,8 @@ onUnmounted(() => { window.removeEventListener('pageshow', restoreReturnedPage);
         <div class="billing-workspace billing-refined">
             <PageHeader title="Subscription & billing" description="Manage your plan and payments." />
             <nav class="billing-nav" role="tablist" aria-label="Billing sections"><button v-for="(tab, index) in tabs" :key="tab" :id="`billing-tab-${tab.toLowerCase()}`" role="tab" :aria-selected="section === tab.toLowerCase()" :aria-controls="`billing-panel-${tab.toLowerCase()}`" :tabindex="section === tab.toLowerCase() ? 0 : -1" @click="selectSection(tab.toLowerCase())" @keydown="tabKey($event, index)">{{ tab }}</button></nav>
-            <p v-if="notice" class="billing-alert success" role="status">{{ notice }}</p>
-            <p v-if="error" class="billing-alert warning" role="alert">{{ error }}</p>
+            <AppNotice v-if="notice" class="mb-5" tone="success" title="Your billing is up to date" :description="notice" />
+            <AppNotice v-if="error" class="mb-5" tone="warning" title="We couldn’t complete that step" :description="error" urgent />
             <p v-if="recovery === 'checking'" class="billing-alert" role="status">Confirming your subscription… This page is checking the billing service. Please wait before starting another request.</p>
             <div v-if="recovery === 'pending'" class="billing-alert warning" role="status"><strong>Confirmation is taking longer than expected.</strong><p>Payment has not been marked as failed. Refresh billing to check the latest verified status before trying again.</p><AppButton variant="secondary" @click="refresh">Check billing status</AppButton></div>
             <p v-if="recovery === 'closed'" class="billing-alert warning" role="status">This checkout is no longer active. Review your current plan below before starting another checkout.</p>
@@ -155,7 +162,7 @@ onUnmounted(() => { window.removeEventListener('pageshow', restoreReturnedPage);
                     <footer class="billing-pagination" v-if="invoices.last_page > 1"><span>{{ invoices.from }}–{{ invoices.to }} of {{ invoices.total }}</span><div><AppButton variant="secondary" :href="invoicePage(invoices.prev_page_url)" :disabled="!invoices.prev_page_url" preserve-scroll>Previous</AppButton><AppButton variant="secondary" :href="invoicePage(invoices.next_page_url)" :disabled="!invoices.next_page_url" preserve-scroll>Next</AppButton></div></footer></template>
                     <div v-else class="billing-empty"><DocumentTextIcon aria-hidden="true"/><div><h3>No invoices yet</h3><p>Your subscription invoices will appear here once issued.</p></div></div>
                 </section>
-            <AppDialog id="billing-cancel" ref="cancelDialog" title="Cancel subscription" :description="`Your ${name(subscription.plan)} plan remains active until ${date(subscription.current_period_ends_at)}. Renewal charges stop after that date. Existing unpaid invoices still need to be paid.`" :confirm-label="busy ? 'Confirming cancellation…' : 'Cancel at renewal'" cancel-label="Keep subscription" :confirm-disabled="Boolean(busy) || !billingReadiness.secret_configured" :close-on-confirm="false" :can-close="()=>!busy" destructive @confirm="subscriptionAction('cancel')"><p class="billing-subtext">Your business records remain stored. You can keep this subscription before the end date; after it ends, a new subscription is needed. The existing export policy continues to apply.</p><label class="billing-reason">Reason <span>(optional)</span><AppSelect v-model="cancellationReason" class="cd-input"><option value="">Prefer not to say</option><option>Too expensive</option><option>No longer needed</option><option>Missing a feature</option><option>Closing the business</option><option>Other</option></AppSelect></label><p v-if="error" class="billing-alert warning" role="alert">{{ error }}</p></AppDialog>
+            <AppDialog id="billing-cancel" ref="cancelDialog" title="Cancel subscription" :description="`Your ${name(subscription.plan)} plan remains active until ${date(subscription.current_period_ends_at)}. Renewal charges stop after that date. Existing unpaid invoices still need to be paid.`" :confirm-label="busy ? 'Confirming cancellation…' : 'Cancel at renewal'" cancel-label="Keep subscription" :confirm-disabled="Boolean(busy) || !billingReadiness.secret_configured" :close-on-confirm="false" :can-close="()=>!busy" destructive @confirm="subscriptionAction('cancel')"><p class="billing-subtext">Your business records remain stored. You can keep this subscription before the end date; after it ends, a new subscription is needed. The existing export policy continues to apply.</p><label class="billing-reason">Reason <span>(optional)</span><AppSelect v-model="cancellationReason" class="cd-input"><option value="">Prefer not to say</option><option>Too expensive</option><option>No longer needed</option><option>Missing a feature</option><option>Closing the business</option><option>Other</option></AppSelect></label><AppNotice v-if="error" class="mb-5" tone="warning" title="We couldn’t complete that step" :description="error" urgent /></AppDialog>
             <AppDialog id="billing-invoice" ref="invoiceDialog" :title="selectedInvoice?.number || 'Subscription invoice'" description="Invoice for your ClipperDesk account." @cancel="invoiceRequest++"><div v-if="invoiceLoading" class="billing-skeleton" role="status">Loading invoice details…</div><p v-else-if="invoiceError" class="billing-alert warning" role="alert">{{ invoiceError }}</p><div v-else-if="selectedInvoice" class="billing-invoice-detail"><p>{{ date(selectedInvoice.issued_at) }} · {{ invoiceStatus(selectedInvoice) }}</p><ul v-if="selectedInvoice.line_items?.length"><li v-for="(line,i) in selectedInvoice.line_items" :key="i"><span>{{ line.description }}<small v-if="line.period_started_at">{{ date(line.period_started_at*1000) }} – {{ date(line.period_ends_at*1000) }}</small></span><strong>{{ money(line.amount_minor,selectedInvoice.currency) }}</strong></li></ul><dl><div v-for="item in [['Subtotal','subtotal_minor'],['Discount','discount_minor'],['Tax','tax_minor'],['Total','total_minor'],['Amount paid','amount_paid_minor']]" :key="item[1]"><dt>{{ item[0] }}</dt><dd>{{ item[1]==='discount_minor' && selectedInvoice[item[1]]>0 ? '−' : '' }}{{ money(selectedInvoice[item[1]],selectedInvoice.currency) }}</dd></div><div><dt>Remaining</dt><dd>{{ money(selectedInvoice.amount_remaining_minor ?? Math.max(0,selectedInvoice.amount_due_minor-selectedInvoice.amount_paid_minor),selectedInvoice.currency) }}</dd></div></dl><p v-if="selectedInvoice.hosted_url">The secure invoice contains the complete tax, credit and payment breakdown.</p><p v-else>Document download is not available for this recorded invoice. Contact support if you need the complete billing document.</p></div><template #footer><AppButton variant="secondary" @click="invoiceRequest++; invoiceDialog?.close()">Close</AppButton><a v-if="selectedInvoice?.pdf_url || selectedInvoice?.hosted_url" :href="selectedInvoice.pdf_url || selectedInvoice.hosted_url" target="_blank" rel="noopener noreferrer" class="billing-link">{{ selectedInvoice.pdf_url ? 'Download PDF' : 'Open secure invoice' }}</a></template></AppDialog>
         </div>
     </AppLayout>

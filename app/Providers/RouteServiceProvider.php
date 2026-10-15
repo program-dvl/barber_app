@@ -28,6 +28,17 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
 
+        foreach (['status' => 30, 'restart' => 5, 'review' => 10, 'confirm' => 5] as $action => $perMinute) {
+            RateLimiter::for('billing-capacity-'.$action, function (Request $request) use ($perMinute) {
+                return Limit::perMinute($perMinute)->by((string) ($request->user()?->id ?? $request->ip()))
+                    ->response(fn (Request $request, array $headers) => response()->json([
+                        'code' => 'billing_retry_later',
+                        'message' => 'Please wait a moment before trying again. Your selection is saved.',
+                        'retry_after' => (int) ($headers['Retry-After'] ?? 60),
+                    ], 429, $headers));
+            });
+        }
+
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api')

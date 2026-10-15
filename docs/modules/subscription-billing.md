@@ -3,7 +3,7 @@
 Updated: 2026-10-15. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
 [FR-13](../product-requirements.md#fr-13-notifications-and-communication),
 FR-19, FR-20 and [PRD §9](../product-requirements.md#9-subscription-packaging-and-commercial-rules).
-See ADR-029/038/041/054/056/057/061/063/068 and `../stripe-billing.md`.
+See ADR-029/038/041/054/056/057/061/063/068/069 and `../stripe-billing.md`.
 
 ## Approved pricing contract
 
@@ -187,3 +187,29 @@ Portal errors remain inside billing, including direct-URL navigation failures.
 
 See [recovery operations](../deployment/subscription-billing-stripe.md#abandoned-checkout-and-credential-recovery-2026-10-15)
 and [verified evidence](../audits/2026-10-15-billing-recovery/README.md).
+
+## Customer-first recovery refinement (ADR-069)
+
+FR-01/19/20: a stale test Checkout on an otherwise unconverted trial no longer
+blocks first live purchase. Under live credentials, status/restart locally
+supersedes the cs_test_ attempt, retains its test-customer evidence and removes
+only the current test customer binding. No real subscription, invoice, card,
+capacity, balance, schedule, other pending/confirmed attempt or confirmed checkout
+may exist. The next reviewed/confirmed purchase creates the live customer/session.
+Genuine live/unknown attempts still need authoritative original-account evidence.
+
+Capacity actions have independent named per-user limits. The frontend performs
+one entry check and explicit later checks; background polling cannot exhaust
+restart. Errors supply a typed code, safe reference, support link where needed
+and Retry-After. The UI preserves estimates and shows a visible wait; persistent
+operator-required cases replace ineffective restart with Contact support.
+Checkout departure closes the review dialog. A transient per-business return
+marker forces one authoritative document reload after Stripe; stale Inertia
+history props cannot expose a fresh review over an existing payable checkout.
+
+Inline billing feedback, shared workspace notices/Feedback alerts and ToastRegion
+follow [the product-wide notice contract](../design-system.md#customer-first-recovery-and-notification-composition-2026-10-15).
+The neutral notice includes a semantic icon, concise heading/body and separately
+spaced action row, with alert/status semantics and 44px mobile controls.
+`billing:inspect-checkout` provides redacted read-only operator diagnostics; see
+[the recovery runbook](../deployment/subscription-billing-stripe.md#customer-recovery-refinement-2026-10-15).

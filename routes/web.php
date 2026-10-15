@@ -397,10 +397,10 @@ Route::middleware([
 
             Route::prefix('billing')->name('business.billing.')->group(function (): void {
                 Route::get('/', [BusinessBillingController::class, 'show'])->middleware('workspace.feature:subscription-billing')->name('show');
-                Route::post('/capacity/review', [CapacityBillingController::class, 'review'])->middleware('throttle:10,1')->name('capacity.review');
-                Route::post('/capacity/confirm', [CapacityBillingController::class, 'confirm'])->middleware('throttle:5,1')->name('capacity.confirm');
-                Route::post('/capacity/restart', [CapacityBillingController::class, 'restart'])->middleware('throttle:5,1')->name('capacity.restart');
-                Route::post('/capacity/status', [CapacityBillingController::class, 'status'])->middleware('throttle:10,1')->name('capacity.status');
+                Route::post('/capacity/review', [CapacityBillingController::class, 'review'])->middleware('throttle:billing-capacity-review')->name('capacity.review');
+                Route::post('/capacity/confirm', [CapacityBillingController::class, 'confirm'])->middleware('throttle:billing-capacity-confirm')->name('capacity.confirm');
+                Route::post('/capacity/restart', [CapacityBillingController::class, 'restart'])->middleware('throttle:billing-capacity-restart')->name('capacity.restart');
+                Route::post('/capacity/status', [CapacityBillingController::class, 'status'])->middleware('throttle:billing-capacity-status')->name('capacity.status');
                 Route::post('/sms/topup', [CapacityBillingController::class, 'topup'])->middleware('throttle:5,1')->name('sms.topup');
                 Route::post('/sms/status', [CapacityBillingController::class, 'topupStatus'])->middleware('throttle:6,1')->name('sms.status');
                 Route::get('/checkout', [BusinessBillingController::class, 'checkoutForm'])->name('checkout.form');

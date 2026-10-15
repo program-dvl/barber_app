@@ -26,6 +26,7 @@ use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\PlatformAccess\Models\StaffProfile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -599,6 +600,13 @@ function withCheckoutRecoveryStripe(array $session, callable $operation): void
                 $this->session['status'] = 'expired';
                 $this->session['url'] = null;
                 $object = $this->session;
+            } elseif ($path === '/v1/customers' && strtolower($method) === 'post') {
+                $object = ['object' => 'customer', 'id' => 'cus_live_recovered', 'metadata' => $params['metadata']];
+            } elseif ($path === '/v1/checkout/sessions' && strtolower($method) === 'post') {
+                $this->session = [...$this->session, 'id' => 'cs_live_recovered', 'status' => 'open', 'livemode' => true,
+                    'customer' => $params['customer'], 'metadata' => $params['metadata'], 'client_reference_id' => $params['client_reference_id'],
+                    'url' => 'https://checkout.stripe.com/recovered'];
+                $object = $this->session;
             } elseif (str_contains($path, '/customers/')) {
                 $object = ['object' => 'customer', 'id' => basename($path), 'metadata' => ['business_public_id' => $this->session['metadata']['business_public_id']]];
             } elseif ($path === '/v1/checkout/sessions') {
@@ -775,4 +783,111 @@ it('keeps checkout recovery available while new purchases and webhook readiness 
         expect(collect($client->requests)->filter(fn ($request) => str_ends_with($request['path'], '/expire')))->toHaveCount(1);
     });
     expect($subscription->fresh()->status->value)->toBe('trialing')->and($attempt->fresh()->status)->toBe('expired');
+});
+
+it('retires a stale test checkout on an unpaid trial after switching back to live', function (string $action, bool $legacy) {
+    [$owner, $business, $subscription, , $change, $attempt, $session] = abandonedCapacityCheckout();
+    $customer = $subscription->provider_customer_id;
+    if ($legacy) {
+        $attempt->update(['capacity_quote' => $change->quote]);
+    }
+    config(['billing.stripe.secret' => 'sk_live_restored']);
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $action) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.'.$action, $business), ['change_id' => $change->public_id])
+            ->assertOk()->assertJsonPath('status', $action === 'restart' ? 'cancelled' : 'expired')->assertJsonPath('checkout_url', null);
+        expect($client->requests)->toBe([]);
+        $this->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => 'monthly', 'locations' => 4, 'staff' => 20])
+            ->assertOk()->assertJsonPath('quote.total_minor', 19200);
+    });
+    expect($subscription->fresh()->provider_customer_id)->toBeNull()->and($subscription->fresh()->status->value)->toBe('trialing')
+        ->and($attempt->fresh()->status)->toBe('superseded')->and($attempt->fresh()->capacity_quote['retired_test_customer_id'])->toBe($customer);
+    expect(DB::table('audit_events')->where('action', 'subscription.checkout.test_retired')->exists())->toBeTrue();
+})->with([['restart', false], ['status', false], ['restart', true]]);
+
+it('starts a fresh live checkout with a live customer after retiring test setup', function () {
+    [$owner, $business, $subscription, , $change, $attempt, $session] = abandonedCapacityCheckout();
+    $oldCustomer = $subscription->provider_customer_id;
+    config(['billing.stripe.secret' => 'sk_live_restored']);
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $oldCustomer) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertOk();
+        $review = $this->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => 'monthly', 'locations' => 4, 'staff' => 20])->assertOk();
+        $this->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $review->json('change_id')])
+            ->assertCreated()->assertJsonPath('url', 'https://checkout.stripe.com/recovered');
+        $writes = collect($client->requests)->where('method', 'post');
+        expect($writes->where('path', '/v1/customers'))->toHaveCount(1);
+        $checkout = $writes->firstWhere('path', '/v1/checkout/sessions');
+        expect($checkout['params']['customer'])->toBe('cus_live_recovered')->not->toBe($oldCustomer);
+        $this->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $review->json('change_id')])->assertOk();
+        expect(collect($client->requests)->where('method', 'post')->where('path', '/v1/checkout/sessions'))->toHaveCount(1);
+    });
+    expect($subscription->fresh()->provider_customer_id)->toBe('cus_live_recovered')
+        ->and($subscription->fresh()->status->value)->toBe('trialing')->and(BillingCheckoutAttempt::count())->toBe(2);
+    $this->get(route('business.billing.show', $business))->assertDontSee('retired_test_customer_id');
+    app(StripeWebhookProcessor::class)->receiveVerified(['id' => 'evt_retired_test_completion', 'type' => 'checkout.session.completed', 'created' => now()->timestamp, 'data' => ['object' => [...$session, 'status' => 'complete', 'subscription' => 'sub_test_late']]]);
+    expect($subscription->fresh()->provider_customer_id)->toBe('cus_live_recovered')->and($subscription->fresh()->provider_subscription_id)->toBeNull();
+});
+
+it('never discards commercial history or another pending checkout to retire test setup', function (string $history) {
+    [$owner, $business, $subscription, , $change, $attempt, $session] = abandonedCapacityCheckout();
+    $customer = $subscription->provider_customer_id;
+    if ($history === 'invoice') {
+        $subscription->invoices()->create(['business_id' => $business->id, 'provider' => 'stripe', 'provider_invoice_id' => 'in_retained', 'status' => 'paid', 'currency' => 'USD', 'subtotal_minor' => 2900, 'discount_minor' => 0, 'tax_minor' => 0, 'total_minor' => 2900, 'amount_due_minor' => 2900, 'amount_paid_minor' => 2900]);
+    } elseif ($history === 'other_attempt') {
+        $other = $attempt->replicate(['public_id']);
+        $other->provider_transaction_id = 'cs_live_unresolved';
+        $other->capacity_quote = [...$attempt->capacity_quote, 'capacity_change_id' => (string) str()->ulid()];
+        $other->save();
+    } else {
+        $subscription->update(match ($history) {
+            'paid' => ['status' => 'active', 'provider_subscription_id' => 'sub_retained'],
+            'capacity' => ['capacity_snapshot' => $change->quote],
+            'card' => ['payment_method_last_four' => '4242'],
+        });
+    }
+    config(['billing.stripe.secret' => 'sk_live_restored']);
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])
+            ->assertConflict()->assertJsonPath('code', 'billing_review_required')->assertJsonPath('support_required', true)
+            ->assertDontSee('payment environment')->assertDontSee('Restore');
+        expect($client->requests)->toBe([]);
+    });
+    expect($subscription->fresh()->provider_customer_id)->toBe($customer)->and($attempt->fresh()->status)->toBe('pending')->and($change->fresh()->status)->toBe('submitted');
+})->with(['paid', 'invoice', 'capacity', 'card', 'other_attempt']);
+
+it('keeps status polling from consuming restart or review limits and returns a usable retry delay', function () {
+    [$owner, $business, , , $change, , $session] = abandonedCapacityCheckout('cs_live_abandoned');
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change) {
+        $this->actingAs($owner);
+        $payload = ['change_id' => $change->public_id];
+        for ($i = 0; $i < 30; $i++) {
+            $this->postJson(route('business.billing.capacity.status', $business), $payload)->assertConflict();
+        }
+        $limited = $this->postJson(route('business.billing.capacity.status', $business), $payload)
+            ->assertStatus(429)->assertJsonPath('code', 'billing_retry_later')->assertHeader('Retry-After');
+        expect($limited->json('retry_after'))->toBeGreaterThan(0)->and($limited->json('retry_after'))->toBeLessThanOrEqual(60);
+        config(['billing.stripe.secret' => 'sk_live_restored']);
+        $this->postJson(route('business.billing.capacity.restart', $business), $payload)->assertOk()->assertJsonPath('status', 'cancelled');
+        $this->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => 'monthly', 'locations' => 1, 'staff' => 1])->assertOk();
+    });
+});
+
+it('gives operators safe checkout and cached configuration diagnostics without exposing credentials', function () {
+    [$owner, $business, , , $change, $attempt] = abandonedCapacityCheckout('cs_live_original');
+    $file = tempnam(sys_get_temp_dir(), 'billing-diagnostic-');
+    file_put_contents($file, "STRIPE_SECRET=sk_live_fake_private_for_diagnostic\nUNRELATED_SECRET=do_not_print\n");
+    $environmentPath = app()->environmentPath();
+    $environmentFile = app()->environmentFile();
+    try {
+        app()->useEnvironmentPath(dirname($file))->loadEnvironmentFrom(basename($file));
+        Artisan::call('billing:inspect-checkout', ['business' => $business->public_id]);
+        $output = Artisan::output();
+        $report = json_decode($output, true, flags: JSON_THROW_ON_ERROR);
+        expect($report['configured_mode'])->toBe('test')->and($report['checkout_mode'])->toBe('live')
+            ->and($report['environment_file_mode'])->toBe('live')->and($report['configured_secret_matches_environment_file'])->toBeFalse()
+            ->and($report['reference'])->toBe($change->public_id)->and($output)->not->toContain('sk_live_', 'fake_private', 'do_not_print');
+        expect($attempt->fresh()->status)->toBe('pending')->and($change->fresh()->status)->toBe('submitted');
+    } finally {
+        app()->useEnvironmentPath($environmentPath)->loadEnvironmentFrom($environmentFile);
+        unlink($file);
+    }
 });

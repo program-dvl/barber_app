@@ -1,5 +1,28 @@
 # Project status
 
+## 2026-10-15 Customer-first billing recovery and shared notices (ADR-069)
+
+- [x] AGENTS.md, design-system, documentation entry point and quality gates now
+  require customer-first failure recovery and shared notification/action layout
+  on every prompt. Neutral AppNotice replaces stacked billing warnings and is
+  reused by Feedback alerts, ToastRegion and shared workspace notices.
+- [x] Unpaid trial test setup can be retired when returning to live credentials,
+  preserving history and requiring fresh review/confirmation. Paid/unknown/live
+  outcomes remain protected. New purchase creates the correct live customer.
+- [x] Independent named billing action limits fix shared status/restart budgets.
+  One entry check, saved estimates, Retry-After countdown and a support reference
+  replace blind polling/retry. Read-only redacted operator diagnosis identifies
+  checkout/config modes and private cached-secret/.env mismatch.
+- [x] Backend **785 passed / 7,286 assertions**, 30 existing skips; focused Billing
+  **176 passed / 848 assertions**; **104 frontend tests**, client/SSR builds, Pint
+  and whitespace checks pass. Synthetic desktop/390px/320px browser verification
+  covers outage/wait, test-to-live restart through fresh Checkout, support fallback
+  and separated 44px mobile actions. Browser-back no longer restores old review.
+- [ ] Not deployed; production checkout/account/cache state remains unverified.
+  A genuinely live session under test credentials still requires original-account
+  operator recovery. No real payment, provider/credential or primary database
+  change. [Evidence, scope and rollout](audits/2026-10-15-customer-billing/README.md).
+
 ## 2026-10-15 Abandoned checkout and billing portal recovery (ADR-068)
 
 - [x] Status and continuation recheck the original owned Stripe checkout; Start

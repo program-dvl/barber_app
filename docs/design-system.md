@@ -4,7 +4,7 @@ Status: Canonical standard; the ClipperDesk visual and component foundation is
 implemented, while individual product surfaces may still require review against
 this document.
 
-Last standards review: 2026-10-02
+Last standards review: 2026-10-15
 
 Last verified foundation evidence: 2026-08-25
 
@@ -378,6 +378,39 @@ decision, and dialogs only when the user's attention must block the current
 flow. Notifications must be dismissible when safe, accessible to assistive
 technology, and must not be the sole record of a consequential outcome.
 
+### Customer-first recovery and notification composition (2026-10-15)
+
+This contract applies to every product module and future prompt. Use the shared
+`AppNotice` for persistent inline workflow feedback; legacy `Feedback/Alert*`
+components delegate to it. `ToastRegion` uses the same visual language for brief,
+dismissible confirmations. Shared workspace access, platform/support and flash
+notices follow this pattern. Existing module-specific banners must adopt it when
+touched; this rule is not evidence that every old surface has been migrated.
+
+- Use a raised neutral surface, subtle border, 12px radius and 16–20px padding.
+  A 19px semantic icon on a small, softly tinted field supplies status colour.
+  Keep the body in normal readable text. Do not fill an entire failure banner
+  with saturated/pale yellow or red or rely on colour alone.
+- Write a short customer-oriented heading and one or two sentences explaining
+  the outcome, what is saved and the next useful action. Never display provider
+  diagnostics, payment-environment instructions or generic Server Error text.
+- Combine the error and its recovery actions into one notice. Replace stale
+  success/previous error states instead of stacking contradictory banners.
+  Keep a concise original purchase summary when continuing has financial meaning.
+- Place actions below the text in a wrapping flex row: at least 14px above it,
+  at least 10px between controls, never touching. One primary action at most;
+  use secondary for alternatives and quiet for status checks. Preserve 44px
+  touch targets on mobile and visible keyboard focus; avoid narrow full-width
+  decorative cards or excessive animation.
+- Use `role=status` for information/success and `role=alert` for a new blocking
+  failure. Countdown text is not a live announcement each second. Do not dismiss
+  consequential unresolved feedback automatically or represent it only as a toast.
+- Own platform failures. A customer must not repair server credentials or keep
+  clicking a known dead end. Preserve input, stop background retries on persistent
+  failure, honor Retry-After with a visible countdown, and provide a working
+  support link plus a safe reference where self-recovery needs an operator.
+  Never promise a payment failed unless provider evidence proves that outcome.
+
 ## Data-heavy and operational surfaces
 
 ### Dashboards
@@ -687,6 +720,7 @@ handling, reply handling, and provider verification are complete.
 | `DataTable` | Requires a screen-reader caption and receives keyboard horizontal scrolling when content exceeds the container. |
 | `SurfaceCard` | Raised grouped content with optional heading, description, and actions. Do not nest cards for decoration. |
 | `AppDialog` | Native modal dialog, labelled title/description, cancel receives initial focus, Escape cancels, destructive confirmation uses danger language and styling. |
+| `AppNotice` | Shared neutral inline notice with semantic icon, heading/body and a spaced wrapping action slot; colour never carries meaning alone. |
 | `ToastRegion` | Polite live region by default; error messages use alert semantics; every message has a 44px dismiss action. |
 | `SkeletonBlock` | Announces loading with `role="status"` and `aria-busy`; animation stops under reduced motion. |
 | `StatePanel` | Shared empty, loading, information, error, and success structure with icon plus text so status never relies on colour alone. |

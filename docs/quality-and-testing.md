@@ -13,6 +13,17 @@ Quality is part of product scope. A feature is not complete when its happy-path
 screen works; it is complete when its rules, failure modes, permissions,
 observability, recovery, and documentation are proven.
 
+## Customer journey acceptance — required for every prompt
+
+Read [AGENTS.md](../AGENTS.md#customer-experience-comes-first--every-task) and the
+[notification standard](design-system.md#customer-first-recovery-and-notification-composition-2026-10-15).
+Completion requires evidence that the reported customer can progress from the
+failing state. Test abandonment, browser-back, saved input, repeat clicks,
+rate-limit isolation, Retry-After and a reachable support alternative. A safe
+backend rejection with an unhelpful message or a retry loop is not a completed
+recovery experience. Verify actual notice text and separated controls on desktop
+and mobile; record local versus deployed/provider evidence explicitly.
+
 ## Phase 1 quality attributes
 
 | Attribute | Launch requirement | Priority |

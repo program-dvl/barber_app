@@ -1,4 +1,5 @@
 <script setup>
+import AppNotice from '@/Components/Product/AppNotice.vue';
 import '../../css/workspace-records.css';
 import { computed, nextTick, provide, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
@@ -278,23 +279,20 @@ const logout = () => router.post(route('logout'));
                 </div>
             </header>
 
-            <div v-for="session in $page.props.supportAccessBanner" :key="`${session.operator}-${session.expires_at}`" class="border-b border-[var(--status-warning)]/30 bg-[var(--status-warning-soft)] px-4 py-3 text-sm text-[var(--status-warning)] sm:px-6 lg:px-8" role="status">
-                <strong>{{ session.operator }} from ClipperDesk Support is viewing this account.</strong>
-                Ticket {{ session.ticket_reference }} · {{ session.reason }} · access expires {{ new Date(session.expires_at).toLocaleString() }}.
-            </div>
-            <div v-for="notice in $page.props.platformNotices" :key="notice.public_id" class="border-b border-[var(--border-subtle)] bg-[var(--surface-subtle)] px-4 py-3 text-sm sm:px-6 lg:px-8" role="status">
-                <strong>{{ notice.title }}</strong> {{ notice.message }}
-            </div>
-            <div v-if="accessNotice" class="border-b border-[var(--status-warning)]/30 bg-[var(--status-warning-soft)] px-4 py-3 text-sm text-[var(--status-warning)] sm:px-6 lg:px-8" role="status">
-                <strong>Subscription notice.</strong> {{ accessNotice }}
-                <Link v-if="$page.props.tenant?.can_manage_billing" :href="route('business.billing.show', businessRouteParameter)" class="ml-2 font-semibold underline underline-offset-2">Review billing</Link>
+            <div v-if="$page.props.supportAccessBanner?.length || $page.props.platformNotices?.length || accessNotice" class="space-y-3 px-4 pt-4 sm:px-6">
+                <AppNotice v-for="session in $page.props.supportAccessBanner" :key="`${session.operator}-${session.expires_at}`" tone="warning" :title="`${session.operator} from ClipperDesk Support is viewing this account`">
+                    Ticket {{ session.ticket_reference }} · {{ session.reason }} · access expires {{ new Date(session.expires_at).toLocaleString() }}.
+                </AppNotice>
+                <AppNotice v-for="notice in $page.props.platformNotices" :key="notice.public_id" :title="notice.title" :description="notice.message" />
+                <AppNotice v-if="accessNotice" tone="warning" title="Your subscription needs attention" :description="accessNotice">
+                    <template v-if="$page.props.tenant?.can_manage_billing" #actions><Link :href="route('business.billing.show', businessRouteParameter)" class="inline-flex min-h-11 items-center font-semibold text-[var(--action-primary)]">Review billing →</Link></template>
+                </AppNotice>
             </div>
 
             <main id="main-content" tabindex="-1" class="cd-workspace-main mx-auto w-full max-w-[96rem] px-4 py-5 pb-28 sm:px-6 lg:pb-8">
-                <div v-if="$page.props.flash?.status" role="status" class="mb-5 rounded-xl border border-[var(--status-success)]/30 bg-[var(--status-success-soft)] p-4 text-sm">
-                    <p class="font-semibold text-[var(--text-strong)]">{{ $page.props.flash.status }}</p>
-                    <a v-if="$page.props.flash.secure_url" :href="$page.props.flash.secure_url" class="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--action-primary)]">Open secure link</a>
-                </div>
+                <AppNotice v-if="$page.props.flash?.status" class="mb-5" tone="success" :title="$page.props.flash.status">
+                    <template v-if="$page.props.flash.secure_url" #actions><a :href="$page.props.flash.secure_url" class="inline-flex min-h-11 items-center font-semibold text-[var(--action-primary)]">Open secure link</a></template>
+                </AppNotice>
                 <slot />
             </main>
         </div>

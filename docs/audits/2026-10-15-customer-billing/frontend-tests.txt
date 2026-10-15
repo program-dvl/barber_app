@@ -1,0 +1,10 @@
+590875ms)
+✔ arrival input follows the branch even when the device is in another zone (8.790166ms)
+ℹ tests 104
+ℹ suites 0
+ℹ pass 104
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 199.99525

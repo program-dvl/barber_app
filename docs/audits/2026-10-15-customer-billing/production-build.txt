@@ -1,0 +1,6 @@
+Client/SSR production builds completed on Node 24.19.0.
+                     252.71 kB │ gzip: 45.18 kB
+bootstrap/ssr/assets/Calendar-tB_2ecW6.js                        304.75 kB │ gzip: 42.74 kB
+bootstrap/ssr/assets/Onboarding-BLw-Rp62.js                      340.29 kB │ gzip: 49.49 kB
+
+✓ built in 620ms

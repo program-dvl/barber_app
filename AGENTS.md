@@ -43,3 +43,40 @@ Before planning or changing product behavior:
 - Do not implement a later prompt until its prerequisite exit evidence is
   satisfied or the dependency is explicitly waived in a decision record.
 
+## Customer experience comes first — every task
+
+- Evaluate every change from the customer's goal, confidence and effort, not
+  only whether the feature or API exists. This applies to every prompt.
+- A recovery action must actually advance the customer toward completion.
+  Do not label a button Start again, Retry or Continue when a known condition
+  makes it repeat the same failure with no possible progress.
+- Own infrastructure/configuration problems within the platform. Customer copy
+  must explain what happened, what remains saved and a useful next action;
+  never ask customers to repair credentials, environments or server settings.
+- Preserve entered work through failures and return navigation. Prevent duplicate
+  requests, stop polling on persistent errors, respect Retry-After and show an
+  understandable wait before enabling retry. Do not turn normal recovery into
+  repeated clicks followed by a Too many attempts dead end.
+- Verify the reported failing journey, including abandonment, retry, provider
+  mismatch/outage and mobile behavior. Happy-path mocks, passing tests and a
+  successful build alone do not establish that the customer's problem is fixed.
+- Keep financial safety and tenant isolation intact while removing friction.
+  Where customer self-recovery is genuinely impossible, provide a specific,
+  reachable support path with a safe reference and actionable operator recovery.
+- Report precisely what was verified locally versus on the deployed system;
+  never describe a deployed customer issue as resolved without that evidence.
+
+## Shared notifications and action layout — every UI task
+
+- Read `docs/design-system.md` before changing UI; its Notifications contract
+  applies across every module. Use `AppNotice` for persistent inline feedback and
+  `ToastRegion` only for brief confirmations. Reuse shared tokens/components.
+- Notifications use a restrained surface, a small semantic icon, a concise
+  heading and useful body copy. Avoid large yellow/red blocks, stacked messages
+  for the same problem, raw server errors and decorative emphasis.
+- Group related actions in an explicit wrapping row with at least 10px gaps and
+  14px separation from copy. Actions must never touch; preserve a clear primary,
+  secondary and quiet hierarchy, visible focus and 44px mobile touch targets.
+- Update shared experience documentation in the same change. Verify the actual
+  failing/loading/success notice with real button labels at desktop and mobile,
+  including long text, support links and retry cooldowns.

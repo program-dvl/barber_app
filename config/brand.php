@@ -31,7 +31,7 @@ return [
 
     'website_url' => env('BRAND_WEBSITE_URL', env('APP_URL', 'http://localhost')),
     'booking_host' => env('BRAND_BOOKING_HOST', 'book.clipperdesk.com'),
-    'support_email' => env('BRAND_SUPPORT_EMAIL'),
+    'support_email' => env('BRAND_SUPPORT_EMAIL') ?: 'support@clipperdesk.com',
 
     // Server-rendered and framework-owned surfaces that cannot consume the
     // application CSS variables use this small public palette projection.

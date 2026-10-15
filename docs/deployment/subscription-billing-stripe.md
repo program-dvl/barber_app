@@ -1,6 +1,6 @@
 # Stripe subscription billing setup
 
-Updated 2026-10-15. Applies to FR-01 and ADR-029/054/056/061/068. Run from the application root with the PHP version required by composer.lock. Existing subscriptions and invoices are preserved. Commands create catalog/delivery configuration, never charges or subscriptions.
+Updated 2026-10-15. Applies to FR-01 and ADR-029/054/056/061/068/069. Run from the application root with the PHP version required by composer.lock. Existing subscriptions and invoices are preserved. Commands create catalog/delivery configuration, never charges or subscriptions.
 
 ## Correct route and credentials
 
@@ -297,3 +297,57 @@ Provider contracts: [expire Checkout](https://docs.stripe.com/api/checkout/sessi
 only closes open sessions; [Stripe API keys](https://docs.stripe.com/keys) isolate
 live and sandbox objects. These constraints are why an API failure cannot safely
 be treated as cancellation.
+
+## Customer recovery refinement (2026-10-15)
+
+The earlier recovery guard still blocked a stale test Checkout after returning to
+live credentials; unprefixed numeric throttles also shared the same user counter.
+Deploy the ADR-069 source and rebuilt assets together, rebuild cached routes and
+configuration, and restart persistent processes/workers using the deployment's
+normal procedure. This refinement needs no database migration or new Stripe Prices.
+
+First inspect the affected business on the deployed server (read only):
+
+```sh
+php artisan billing:inspect-checkout BUSINESS_PUBLIC_ID
+```
+
+The report prints configured mode, saved checkout mode, status/reference,
+configuration-cache state and whether the configured secret equals the private
+`.env` secret. It never prints credentials, hashes, Stripe customer/session IDs or
+customer contact details. `unknown` or null file comparison means a managed secret
+source may be authoritative; it is not evidence that no secret exists.
+
+- `checkout_mode=test`, `configured_mode=live`: an unconverted trial with no paid
+  records can recover via Check billing status or Start again. The test attempt
+  is retained as superseded, its former customer reference is stored privately,
+  and the customer can review/confirm a fresh selection. No remote test session
+  expiry is claimed. New Checkout uses a new live customer binding.
+- `checkout_mode=live`, `configured_mode=test`: restore the **original** intended
+  live account's deployment configuration. Customers cannot repair this. If the
+  `.env` file is live but configured mode is test, investigate cache/process or
+  managed-environment overrides. After verifying the intended source, rebuild
+  with `php artisan config:cache`, refresh the deployment's route cache, restart
+  workers (`php artisan queue:restart`) and persistent servers, then check/close
+  the original Checkout. Never clear live attempt/customer IDs to unlock payment.
+- Same-mode missing object: confirm the original Stripe account/sandbox and
+  request history. A key prefix alone does not identify the account. Use original
+  provider evidence before reopening a potentially payable purchase.
+- Paid history, uncertain creation or another unresolved attempt: the safe guard
+  remains. Use the original-account verification procedure above. No mass reset,
+  credential guessing, silent paid migration or automatic duplicate payment.
+
+Keep BRAND_SUPPORT_EMAIL pointed at the monitored support inbox. The default is
+support@clipperdesk.com, consistent with the existing operator contact. Contact
+support opens a draft with the safe checkout reference; it does not automatically
+send mail or create a ticket. Operators correlate that reference with the
+redacted recovery log and the retained business/change records. Inbox delivery
+and response handling must be verified by operations, not inferred from the UI.
+
+Capacity status (30/min), restart (5/min), review (10/min) and confirm (5/min)
+have independent named limits. A 429 returns Retry-After plus customer-safe JSON.
+The client checks once on entry, avoids repeat polling and displays a countdown
+before enabling retry. These changes retain abuse protection. Repeated page
+reloads are not an operator recovery procedure.
+
+[Evidence and limitations](../audits/2026-10-15-customer-billing/README.md).

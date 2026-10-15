@@ -118,12 +118,24 @@ class CapacityBillingController extends Controller
         Log::warning('Capacity checkout recovery needs verification.', ['business_id' => $change->business_id, 'change_id' => $change->public_id,
             'exception' => $error::class, 'provider_code' => $error instanceof ApiErrorException ? $error->getStripeCode() : null]);
         $status = $error instanceof HttpExceptionInterface ? $error->getStatusCode() : 503;
-        $message = $status < 500 ? $error->getMessage() : 'Secure billing could not be reached. Your previous checkout is still recorded. Try checking again or choose Start again to safely close it before a new checkout.';
-        if ($error instanceof ApiErrorException && $error->getStripeCode() === 'resource_missing') {
-            $message = 'Your previous checkout could not be found in the connected payment account. Restore the original payment configuration and check again, or contact support. No new payment was started.';
+        $fresh = $change->fresh();
+        if (! in_array($fresh->status, ['submitted', 'scheduled'], true)) {
+            return response()->json([...$this->present($fresh), 'checkout_url' => null]);
         }
+        $needsReview = $status === 409 || ($error instanceof ApiErrorException && $error->getStripeCode() === 'resource_missing');
+        $email = config('brand.support_email');
+        $supportUrl = filter_var($email, FILTER_VALIDATE_EMAIL)
+            ? 'mailto:'.$email.'?subject='.rawurlencode('Checkout help — '.$change->public_id)
+                .'&body='.rawurlencode('Please help me continue my subscription checkout. Reference: '.$change->public_id.'.')
+            : null;
+        $message = $needsReview
+            ? 'We couldn’t reopen your previous checkout. Your selection is saved. '.($supportUrl ? 'Contact support so we can help you continue safely.' : 'Please try again later.')
+            : 'We couldn’t reach secure checkout. Your selection is saved. Please try again in a moment.';
 
-        return response()->json(['message' => $message, 'status' => $change->fresh()->status, 'checkout_url' => null], $status);
+        return response()->json(['message' => $message, 'code' => $needsReview ? 'billing_review_required' : 'billing_temporarily_unavailable',
+            'support_required' => $needsReview, 'support_url' => $supportUrl, 'reference' => $change->public_id,
+            'retry_after' => $needsReview ? 60 : 15, 'status' => $fresh->status, 'checkout_url' => null], $status,
+            ['Retry-After' => $needsReview ? '60' : '15']);
     }
 
     public function topup(Request $request, Business $business, CapacityStripeGateway $stripe)

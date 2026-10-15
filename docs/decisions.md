@@ -2463,6 +2463,53 @@ responsibility; swapping keys cannot prove that an earlier payment failed.
 No database migration, live payment, paid customer reset or automatic migration
 is part of this repair. Evidence and rollout: [billing recovery audit](audits/2026-10-15-billing-recovery/README.md).
 
+## ADR-069 — Customer-first recovery and shared product notices
+
+- Status: Accepted
+- Date: 2026-10-15
+- Basis: Product owner reports that Start again/status still dead-end on a payment mode mismatch, repeated clicks hit throttling, and touching buttons/yellow error banners undermine customer trust. Requests durable rules for every future prompt.
+- Requirements: FR-01/19/20 and product-wide experience under FR-01–20; refines ADR-068 without weakening financial history or live payment verification.
+
+Every task follows the customer-first acceptance and notification composition
+rules in AGENTS.md, docs/design-system.md and quality-and-testing.md. A recovery
+button must advance the customer, infrastructure fixes belong to operators,
+input survives failure, and local versus deployed evidence is explicit.
+AppNotice supplies restrained inline heading/icon/body/actions. Shared Feedback
+alerts, ToastRegion, workspace notices and changed billing feedback reuse it.
+Actions wrap with 10px gaps and 14px separation from text. Existing bespoke module
+notices adopt this contract when touched; no unverified universal migration is
+claimed.
+
+A stored cs_test_ Checkout cannot move real money. When it blocks an unconverted
+trial under live credentials, status or restart may retire it locally, retain its
+original test-customer reference on the historical attempt, and detach only the
+test setup binding. This is permitted only with no provider subscription,
+confirmed attempt, paid capacity/rate card, saved card, customer balance, invoice,
+future schedule or other unresolved/confirmed checkout. The trial and all records
+remain. The next purchase requires a fresh server review and confirmation, then
+creates the current live customer/session through the existing provider. Late
+retired test events cannot rebind the live customer. Unknown preparations,
+cs_live_ sessions, paid accounts and unresolved live outcomes are never discarded.
+
+The previous unprefixed numeric throttles shared a user/domain key across billing
+actions. Replace capacity status/restart/review/confirm with separate named
+per-user limits. Status cannot spend restart/review budget. The frontend checks
+once on entry, does not poll repeatedly, disables duplicate in-flight actions,
+honors Retry-After with a visible wait and preserves editable estimates. A
+persistent 409/missing original object offers support with a safe reference and
+hides ineffective Start again; a later explicit check can observe an operator fix.
+Do not ask customers to restore credentials or expose raw provider diagnostics.
+Close the review dialog before departure. A transient per-business session marker
+causes one authoritative document reload on return from Stripe, avoiding stale
+Inertia history props; no quantities, prices or payment details are stored.
+
+Add a read-only billing:inspect-checkout operator command showing modes, status,
+config-cache state and whether the private environment-file secret matches
+configured values. No secret/fingerprint/provider ID/customer data is printed;
+no payment/configuration is changed. Source-of-secret and original-account repair
+remain operator responsibilities. No schema migration or price change is needed.
+Evidence: [customer billing recovery audit](audits/2026-10-15-customer-billing/README.md).
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |

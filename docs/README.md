@@ -17,7 +17,9 @@ For every new task:
 3. Follow its links into `product-requirements.md`.
 4. Check `decisions.md` for resolved and unresolved choices.
 5. Use `quality-and-testing.md` for the required evidence.
-6. Update the affected documents when the task changes behavior, architecture,
+6. Apply the customer-first and notification/action layout rules in `../AGENTS.md`
+   and `design-system.md` to every task; verify the reported failure journey.
+7. Update the affected documents when the task changes behavior, architecture,
    scope, terminology, or verified status.
 
 ## Authority order

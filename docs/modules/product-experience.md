@@ -26,6 +26,18 @@ change domain rules, or waive release gates. See [design-system](../design-syste
 - Views named Appointment list, By staff, and Now & next represent the same
   permission-filtered schedule. Internal saved preference keys remain compatible.
 
+## Customer-first notifications and recovery
+
+Every prompt follows the [shared notification and recovery contract](../design-system.md#customer-first-recovery-and-notification-composition-2026-10-15)
+and the persistent [agent rules](../../AGENTS.md). `AppNotice` provides neutral,
+icon-led inline feedback with a concise heading/body and spaced action slot.
+Workspace notices, shared Feedback alerts and ToastRegion use it. Related
+recovery states belong in one notice, controls wrap with 10px gaps and 14px
+separation from text, and customers never receive server configuration tasks.
+Persistent errors stop retries; waits are explained and support is reachable.
+Existing bespoke module notices adopt the standard when touched, without claiming
+an unverified product-wide replacement. FR-01–20 scope and financial rules remain.
+
 ## Review and evidence
 
 The platform inventory, visual coverage, role checks, tests and explicit gaps
