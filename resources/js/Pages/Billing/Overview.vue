@@ -23,7 +23,7 @@ const invoicePage = link => { if (!link) return undefined; const value = new URL
 const hasCapacityPricing = computed(() => Boolean(props.capacityPricing?.available));
 const recurringTotal = computed(() => props.subscription.capacity?.total_minor ?? props.subscription.price?.amount_minor);
 const busy = ref('');
-const error = ref('');
+const error = ref(page.props.errors?.billing || '');
 const notice = ref('');
 const cancelDialog = ref(null);
 const invoiceDialog = ref(null);
@@ -93,6 +93,17 @@ async function reconcile() {
     }
     if (mounted) recovery.value = 'pending';
 }
+async function manageBilling() {
+    if (busy.value) return;
+    busy.value = 'portal'; error.value = '';
+    try {
+        const response = await axios.get(url('business.billing.portal'), { signal: controller.signal });
+        window.location.assign(response.data.url);
+    } catch (exception) {
+        if (!axios.isCancel(exception)) error.value = exception.response?.data?.message && exception.response.data.message !== 'Server Error'
+            ? exception.response.data.message : 'Payment details could not be opened. Please try again shortly.';
+    } finally { busy.value = ''; }
+}
 async function refreshAccount() {
     if (busy.value || !props.billingReadiness.secret_configured) return;
     busy.value = 'refresh'; error.value = '';
@@ -100,8 +111,9 @@ async function refreshAccount() {
     catch (exception) { if (!axios.isCancel(exception)) error.value = exception.response?.data?.message || 'Billing details could not be verified yet. Please check again shortly.'; }
     finally { busy.value = ''; }
 }
-onMounted(() => { reconcile(); if (props.portalReturned) refreshAccount(); });
-onUnmounted(() => { mounted = false; controller.abort(); window.clearTimeout(timer); });
+function restoreReturnedPage(event) { if (event.persisted) { busy.value = ''; refresh(); } }
+onMounted(() => { window.addEventListener('pageshow', restoreReturnedPage); reconcile(); if (props.portalReturned) refreshAccount(); });
+onUnmounted(() => { window.removeEventListener('pageshow', restoreReturnedPage); mounted = false; controller.abort(); window.clearTimeout(timer); });
 </script>
 
 <template>
@@ -127,14 +139,14 @@ onUnmounted(() => { mounted = false; controller.abort(); window.clearTimeout(tim
                     <div v-if="needsAttention" class="billing-attention" role="status"><ExclamationCircleIcon aria-hidden="true"/><div><strong>Payment needs attention</strong><p v-for="item in attention" :key="item.currency">{{ money(item.amount_minor, item.currency) }} outstanding<span v-if="item.next_retry_at"> · Next retry {{ date(item.next_retry_at) }}</span>.</p><p v-if="subscription.grace_ends_at">Resolve payment by {{ date(subscription.grace_ends_at) }} to keep your account active.</p></div></div>
                     <p v-if="pendingChange" class="billing-alert">{{ pendingChange.plan_name }} starts {{ date(pendingChange.effective_at) }}.</p>
                     <p v-if="subscription.customer_balance_minor < 0 && subscription.balance_currency" class="billing-credit">Billing credit: <strong>{{ money(-subscription.customer_balance_minor, subscription.balance_currency) }}</strong></p>
-                    <div class="billing-summary-actions"><div><AppButton @click="selectSection('plan')">{{ isTrial || ended || !subscription.has_provider_subscription ? 'Choose subscription' : 'Change subscription' }}</AppButton><AppButton v-if="needsAttention && subscription.has_billing_account" :href="url('business.billing.portal')" variant="secondary" :disabled="Boolean(busy) || !billingReadiness.secret_configured">Resolve payment</AppButton><span v-if="isTrial" class="billing-meta">No automatic charge during your trial</span></div><AppButton v-if="subscription.status === 'cancel_scheduled'" variant="secondary" :disabled="Boolean(busy) || !billingReadiness.secret_configured" @click="subscriptionAction('reactivate')">Keep subscription</AppButton><AppButton v-else-if="subscription.status === 'active' && subscription.has_provider_subscription" variant="quiet" :disabled="Boolean(busy) || recovery === 'checking'" @click="error = ''; cancelDialog?.open()">Cancel subscription</AppButton></div>
+                    <div class="billing-summary-actions"><div><AppButton @click="selectSection('plan')">{{ isTrial || ended || !subscription.has_provider_subscription ? 'Choose subscription' : 'Change subscription' }}</AppButton><AppButton v-if="needsAttention && subscription.has_billing_account" @click="manageBilling" variant="secondary" :disabled="Boolean(busy) || !billingReadiness.secret_configured">Resolve payment</AppButton><span v-if="isTrial" class="billing-meta">No automatic charge during your trial</span></div><AppButton v-if="subscription.status === 'cancel_scheduled'" variant="secondary" :disabled="Boolean(busy) || !billingReadiness.secret_configured" @click="subscriptionAction('reactivate')">Keep subscription</AppButton><AppButton v-else-if="subscription.status === 'active' && subscription.has_provider_subscription" variant="quiet" :disabled="Boolean(busy) || recovery === 'checking'" @click="error = ''; cancelDialog?.open()">Cancel subscription</AppButton></div>
                 </section>
                 <section class="billing-panel" aria-labelledby="usage-title"><header class="billing-section-heading"><div><h2 id="usage-title">Your usage</h2></div><button class="billing-link" @click="selectSection('plan')">Adjust capacity</button></header><div class="billing-metrics"><div v-for="item in limits" :key="item.key" class="billing-usage-item"><div><span>{{ item.key === 'messaging.monthly_allowance' ? 'Text credits' : subscription.capacity && item.key === 'staff.max' ? 'Bookable staff' : item.label }}</span></div><strong v-if="item.limit !== 0">{{ item.used.toLocaleString(billingLocale) }}<span v-if="typeof item.limit === 'number'"> / {{ item.limit.toLocaleString(billingLocale) }}</span></strong><strong v-else class="billing-not-included">Not included</strong><progress v-if="typeof item.limit === 'number' && item.limit > 0" :value="Math.min(item.used, item.limit)" :max="item.limit" :aria-label="`${item.label}: ${item.used} of ${item.limit}`" :class="{ over: item.state === 'over' }"/><p v-if="item.state === 'over' && item.limit > 0" class="billing-warning">Over your allowance. Adjust your capacity.</p><p v-else-if="item.key === 'messaging.monthly_allowance' && subscription.capacity">Resets monthly<span v-if="smsCredits"> · {{ smsCredits }} extra credits available</span></p></div></div></section>
-                <section v-if="subscription.has_billing_account" class="billing-panel billing-payment-row"><div class="billing-payment-icon"><CreditCardIcon aria-hidden="true"/></div><div class="billing-payment-info"><h2>{{ cardLabel }}</h2><p v-if="subscription.payment_method_expiry_month">Expires {{ String(subscription.payment_method_expiry_month).padStart(2, '0') }}/{{ subscription.payment_method_expiry_year }}<span v-if="expiry"> · {{ expiry === 'expired' ? 'Card expired' : 'Expires soon' }}</span></p><p v-if="subscription.billing_email">{{ subscription.billing_email }}</p></div><AppButton variant="secondary" :href="url('business.billing.portal')" :disabled="Boolean(busy) || !billingReadiness.secret_configured">Manage billing<ArrowTopRightOnSquareIcon class="size-4" aria-hidden="true"/></AppButton></section>
+                <section v-if="subscription.has_billing_account" class="billing-panel billing-payment-row"><div class="billing-payment-icon"><CreditCardIcon aria-hidden="true"/></div><div class="billing-payment-info"><h2>{{ cardLabel }}</h2><p v-if="subscription.payment_method_expiry_month">Expires {{ String(subscription.payment_method_expiry_month).padStart(2, '0') }}/{{ subscription.payment_method_expiry_year }}<span v-if="expiry"> · {{ expiry === 'expired' ? 'Card expired' : 'Expires soon' }}</span></p><p v-if="subscription.billing_email">{{ subscription.billing_email }}</p></div><AppButton variant="secondary" @click="manageBilling" :disabled="Boolean(busy) || !billingReadiness.secret_configured">Manage billing<ArrowTopRightOnSquareIcon class="size-4" aria-hidden="true"/></AppButton></section>
                 <div v-if="invoices.total" class="billing-recent"><span>{{ invoices.total }} {{ invoices.total === 1 ? 'invoice' : 'invoices' }}</span><button class="billing-link" @click="selectSection('invoices')">View invoices →</button></div>
             </div>
             <div id="billing-panel-plan" v-show="section === 'plan'" role="tabpanel" aria-labelledby="billing-tab-plan" tabindex="0">
-                <CapacityBillingPanel v-if="hasCapacityPricing || subscription.capacity" :catalog="capacityPricing" :country="billingCountry" :initial-selection="!subscription.has_provider_subscription && signupSelection?.selected_plan_code === 'capacity' ? signupSelection : null" :current="subscription.capacity" :usage="usage" :business-id="page.props.tenant.public_id" :request="capacityRequest" :credits="smsCredits" :packs="smsPacks" :purchase="smsPurchase" :ready="billingReadiness.checkout_ready" :has-provider="subscription.has_provider_subscription" :time-zone="billingTimeZone"/>
+                <CapacityBillingPanel v-if="hasCapacityPricing || subscription.capacity || capacityRequest" :catalog="capacityPricing" :country="billingCountry" :initial-selection="!subscription.has_provider_subscription && signupSelection?.selected_plan_code === 'capacity' ? signupSelection : null" :current="subscription.capacity" :usage="usage" :business-id="page.props.tenant.public_id" :request="capacityRequest" :credits="smsCredits" :packs="smsPacks" :purchase="smsPurchase" :ready="billingReadiness.checkout_ready" :has-provider="subscription.has_provider_subscription" :time-zone="billingTimeZone"/>
                 <div v-else class="billing-panel billing-empty"><DocumentTextIcon aria-hidden="true"/><div><h3>Need help with your subscription?</h3><p>Contact our team to arrange your plan.</p><a v-if="page.props.brand?.support_email" class="billing-link" :href="`mailto:${page.props.brand.support_email}`">Contact support</a></div></div>
                 <p v-if="hasCapacityPricing && !billingReadiness.checkout_ready" class="billing-alert warning" role="status">Checkout is temporarily unavailable. Please try again shortly or contact support.</p>
             </div>

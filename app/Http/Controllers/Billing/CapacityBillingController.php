@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers\Billing;
 
-use App\Domain\Billing\Contracts\SubscriptionProvider;
 use App\Domain\Billing\Models\BillingCapacityChange;
-use App\Domain\Billing\Models\BillingCheckoutAttempt;
 use App\Domain\Billing\Models\BillingRateCard;
 use App\Domain\Billing\Models\SmsCreditPurchase;
 use App\Domain\Billing\Services\CapacityBillingManager;
+use App\Domain\Billing\Services\CapacityCheckoutRecovery;
 use App\Domain\Billing\Services\CapacityStripeGateway;
 use App\Domain\Billing\Services\SmsCreditWallet;
 use App\Domain\Billing\Services\StripeBillingReadiness;
-use App\Domain\Billing\Services\StripeCheckoutReconciler;
 use App\Domain\Billing\Services\StripeSubscriptionReconciler;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Stripe\Exception\ApiErrorException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Throwable;
 
 class CapacityBillingController extends Controller
 {
@@ -31,7 +33,7 @@ class CapacityBillingController extends Controller
         return response()->json($this->present($change));
     }
 
-    public function confirm(Request $request, Business $business, CapacityBillingManager $manager, CapacityStripeGateway $stripe, SubscriptionProvider $provider, StripeBillingReadiness $readiness)
+    public function confirm(Request $request, Business $business, CapacityBillingManager $manager, CapacityStripeGateway $stripe, StripeBillingReadiness $readiness)
     {
         $this->authorizeBilling($request, $business);
         $data = $request->validate(['change_id' => ['required', 'string', 'size:26']]);
@@ -39,15 +41,11 @@ class CapacityBillingController extends Controller
         abort_unless($readiness->status()['checkout_ready'], 503, 'Secure billing is not configured.');
         $claim = $manager->claim($business, $request->user(), $change);
         $change = $claim['change'];
+        if ($change->kind === 'checkout' && $change->status !== 'applied') {
+            return $this->checkoutResponse($change, created: $claim['dispatch']);
+        }
         if (! $claim['dispatch']) {
-            if ($change->kind === 'checkout') {
-                $attempt = BillingCheckoutAttempt::where('business_subscription_id', $change->business_subscription_id)->where('capacity_quote->fingerprint', $change->quote['fingerprint'])->where('capacity_quote->locations', $change->quote['locations'])->where('capacity_quote->staff', $change->quote['staff'])->whereIn('status', ['pending', 'processing'])->latest('id')->first();
-                if ($attempt?->provider_checkout_url) {
-                    return response()->json(['url' => $attempt->provider_checkout_url, 'attempt_id' => $attempt->public_id]);
-                }
-            }
-
-            return response()->json($this->present($change), $change->status === 'applied' || $change->status === 'scheduled' ? 200 : 202);
+            return response()->json($this->present($change), in_array($change->status, ['applied', 'scheduled'], true) ? 200 : 202);
         }
         $subscription = $business->subscription()->firstOrFail();
         if ($change->kind !== 'checkout') {
@@ -57,58 +55,75 @@ class CapacityBillingController extends Controller
 
             return response()->json($this->present($change->fresh()), 202);
         }
-        $card = BillingRateCard::findOrFail($change->quote['rate_card_id']);
-        $attempt = DB::transaction(function () use ($business, $request, $subscription, $card, $change) {
-            $business->subscription()->lockForUpdate()->firstOrFail();
-
-            return BillingCheckoutAttempt::create([
-                'business_id' => $business->id, 'business_subscription_id' => $subscription->id,
-                'created_by_user_id' => $request->user()->id, 'billing_plan_price_id' => $card->billing_plan_price_id,
-                'provider' => 'stripe', 'provider_transaction_id' => 'pending_capacity_'.$change->public_id,
-                'status' => 'pending', 'expires_at' => now()->addHours(2), 'capacity_quote' => $change->quote,
-            ]);
-        });
-        $price = $attempt->price;
-        $checkout = $provider->createCheckout($business, $price, $attempt,
-            route('business.billing.show', $business).'?checkout=success&attempt='.$attempt->public_id.'&session_id={CHECKOUT_SESSION_ID}',
-            route('business.billing.show', $business).'?checkout=canceled');
-        $attempt->update(['provider_transaction_id' => $checkout['provider_session_id'], 'provider_checkout_url' => $checkout['url']]);
-
-        return response()->json(['url' => $checkout['url'], 'attempt_id' => $attempt->public_id], 201);
     }
 
-    public function status(Request $request, Business $business, StripeSubscriptionReconciler $reconciler, SubscriptionProvider $provider)
+    private function checkoutResponse(BillingCapacityChange $change, bool $created = false)
+    {
+        try {
+            $attempt = app(CapacityCheckoutRecovery::class)->synchronize($change);
+            if ($attempt->provider_checkout_url && in_array($attempt->status, ['pending', 'processing'], true)) {
+                return response()->json(['url' => $attempt->provider_checkout_url, 'attempt_id' => $attempt->public_id], $created ? 201 : 200);
+            }
+
+            return response()->json($this->present($change->fresh()), 202);
+        } catch (Throwable $error) {
+            return $this->providerError($change, $error);
+        }
+    }
+
+    public function status(Request $request, Business $business, StripeSubscriptionReconciler $reconciler)
     {
         $this->authorizeBilling($request, $business);
         $data = $request->validate(['change_id' => ['required', 'string', 'size:26']]);
         $change = BillingCapacityChange::where('business_id', $business->id)->where('public_id', $data['change_id'])->firstOrFail();
-        $subscription = $business->subscription()->firstOrFail();
-        if ($change->kind === 'checkout') {
-            $attempt = BillingCheckoutAttempt::where('business_subscription_id', $subscription->id)->where('capacity_quote->fingerprint', $change->quote['fingerprint'])->where('capacity_quote->locations', $change->quote['locations'])->where('capacity_quote->staff', $change->quote['staff'])->whereIn('status', ['pending', 'processing'])->latest('id')->first();
-            if ($attempt && str_starts_with($attempt->provider_transaction_id, 'pending_capacity_') && $attempt->expires_at->isFuture()) {
-                // Recover this exact operation; never choose another quote/payment key.
-                $checkout = $provider->createCheckout($business, $attempt->price, $attempt,
-                    route('business.billing.show', $business).'?checkout=success&attempt='.$attempt->public_id.'&session_id={CHECKOUT_SESSION_ID}',
-                    route('business.billing.show', $business).'?checkout=canceled');
-                $attempt->update(['provider_transaction_id' => $checkout['provider_session_id'], 'provider_checkout_url' => $checkout['url']]);
-
-                return response()->json([...$this->present($change->fresh()), 'checkout_url' => $checkout['url']]);
+        try {
+            $attempt = null;
+            if ($change->kind === 'checkout' && $change->status === 'submitted') {
+                $attempt = app(CapacityCheckoutRecovery::class)->synchronize($change);
             }
-            if ($attempt && str_starts_with($attempt->provider_transaction_id, 'cs_')) {
-                app(StripeCheckoutReconciler::class)->reconcile($attempt);
+            $subscription = $business->subscription()->firstOrFail();
+            if ($change->kind !== 'checkout' && in_array($change->status, ['submitted', 'scheduled'], true) && $subscription->provider_subscription_id
+                && (! $change->last_checked_at || $change->last_checked_at->lte(now()->subSeconds(10)))) {
+                $change->update(['last_checked_at' => now()]);
+                $reconciler->reconcile($subscription);
             }
+            $checkoutUrl = $attempt && in_array($attempt->status, ['pending', 'processing'], true) ? $attempt->provider_checkout_url : null;
+
+            return response()->json([...$this->present($change->fresh()), 'checkout_url' => $checkoutUrl]);
+        } catch (Throwable $error) {
+            return $this->providerError($change, $error);
         }
-        if (in_array($change->status, ['submitted', 'scheduled'], true) && $subscription->provider_subscription_id && (! $change->last_checked_at || $change->last_checked_at->lte(now()->subSeconds(10)))) {
-            $change->update(['last_checked_at' => now()]);
-            $reconciler->reconcile($subscription);
+    }
+
+    public function restart(Request $request, Business $business)
+    {
+        $this->authorizeBilling($request, $business);
+        $data = $request->validate(['change_id' => ['required', 'string', 'size:26']]);
+        $change = BillingCapacityChange::where('business_id', $business->id)->where('public_id', $data['change_id'])->firstOrFail();
+        abort_unless($change->kind === 'checkout', 409, 'Only an unfinished checkout can be restarted here.');
+        if (! in_array($change->status, ['submitted', 'scheduled'], true)) {
+            return response()->json([...$this->present($change), 'checkout_url' => null]);
+        }
+        try {
+            app(CapacityCheckoutRecovery::class)->synchronize($change, restart: true, actor: $request->user());
+
+            return response()->json([...$this->present($change->fresh()), 'checkout_url' => null]);
+        } catch (Throwable $error) {
+            return $this->providerError($change, $error);
+        }
+    }
+
+    private function providerError(BillingCapacityChange $change, Throwable $error)
+    {
+        Log::warning('Capacity checkout recovery needs verification.', ['business_id' => $change->business_id, 'change_id' => $change->public_id,
+            'exception' => $error::class, 'provider_code' => $error instanceof ApiErrorException ? $error->getStripeCode() : null]);
+        $status = $error instanceof HttpExceptionInterface ? $error->getStatusCode() : 503;
+        $message = $status < 500 ? $error->getMessage() : 'Secure billing could not be reached. Your previous checkout is still recorded. Try checking again or choose Start again to safely close it before a new checkout.';
+        if ($error instanceof ApiErrorException && $error->getStripeCode() === 'resource_missing') {
+            $message = 'Your previous checkout could not be found in the connected payment account. Restore the original payment configuration and check again, or contact support. No new payment was started.';
         }
 
-        $change = $change->fresh();
-        $checkoutUrl = $change->kind === 'checkout' && isset($attempt) && $attempt
-            && in_array($attempt->fresh()->status, ['pending', 'processing'], true)
-            && $attempt->expires_at->isFuture() ? $attempt->provider_checkout_url : null;
-
-        return response()->json([...$this->present($change), 'checkout_url' => $checkoutUrl]);
+        return response()->json(['message' => $message, 'status' => $change->fresh()->status, 'checkout_url' => null], $status);
     }
 
     public function topup(Request $request, Business $business, CapacityStripeGateway $stripe)

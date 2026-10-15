@@ -15,6 +15,7 @@ use App\Domain\Billing\Services\CapacitySubscriptionProjector;
 use App\Domain\Billing\Services\EntitlementEvaluator;
 use App\Domain\Billing\Services\EntitlementUsageManager;
 use App\Domain\Billing\Services\SmsCreditWallet;
+use App\Domain\Billing\Services\StripeCheckoutReconciler;
 use App\Domain\Billing\Services\StripeWebhookProcessor;
 use App\Domain\Communications\Models\CommunicationIntent;
 use App\Domain\Communications\Models\CommunicationMessage;
@@ -31,6 +32,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 use Stripe\ApiRequestor;
 use Stripe\HttpClient\ClientInterface;
 use Stripe\HttpClient\CurlClient;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 uses(RefreshDatabase::class);
 beforeEach(fn () => Carbon::setTestNow(Carbon::now()->startOfSecond()->addMinutes(5)));
@@ -168,6 +170,7 @@ it('creates one capacity checkout and reuses its exact replay', function () {
     $this->mock(SubscriptionProvider::class)->shouldReceive('createCheckout')->once()->withArgs(fn ($b, $price, $attempt) => $attempt->capacity_quote['locations'] === 2 && $attempt->capacity_quote['staff'] === 3)->andReturn(['url' => 'https://checkout.stripe.com/test', 'provider_session_id' => 'cs_capacity']);
     $payload = ['change_id' => $change->public_id];
     $this->actingAs($owner)->postJson(route('business.billing.capacity.confirm', $business), $payload)->assertCreated();
+    $this->mock(StripeCheckoutReconciler::class)->shouldReceive('reconcile')->once()->andReturnUsing(fn ($attempt) => $attempt);
     $this->actingAs($owner)->postJson(route('business.billing.capacity.confirm', $business), $payload)->assertOk()->assertJsonPath('url', 'https://checkout.stripe.com/test');
     expect(BillingCheckoutAttempt::count())->toBe(1)->and($subscription->fresh()->capacity_snapshot)->toBeNull();
 });
@@ -540,4 +543,236 @@ it('uses server priced graduated items for annual Stripe checkout and preserves 
         'metadata' => ['business_public_id' => $business->public_id], 'items' => ['data' => capacityProvider($card, 5, 50)]];
     expect(app(StripeWebhookProcessor::class)->synchronizeSubscriptionSnapshot($object, now()))->toBeTrue();
     expect($subscription->fresh()->status->value)->toBe('active')->and($subscription->fresh()->capacity_snapshot['total_minor'])->toBe(331000);
+});
+
+function abandonedCapacityCheckout(string $sessionId = 'cs_test_abandoned'): array
+{
+    [$owner, $business] = createTenantMembership();
+    $card = capacityRate();
+    $subscription = activateTestSubscription($business);
+    $subscription->update(['status' => 'trialing', 'provider_subscription_id' => null]);
+    $change = app(CapacityBillingManager::class)->review($business, $owner, 'US', 'monthly', 3, 10);
+    $change->update(['status' => 'submitted', 'submitted_at' => now()]);
+    $attempt = BillingCheckoutAttempt::create(['business_id' => $business->id, 'business_subscription_id' => $subscription->id,
+        'created_by_user_id' => $owner->id, 'billing_plan_price_id' => $card->billing_plan_price_id,
+        'provider' => 'stripe', 'provider_transaction_id' => $sessionId, 'provider_checkout_url' => 'https://checkout.stripe.com/abandoned',
+        'status' => 'pending', 'expires_at' => now()->addHours(2), 'capacity_quote' => [...$change->quote, 'capacity_change_id' => $change->public_id,
+            'stripe_mode' => 'test', 'stripe_credential_fingerprint' => hash('sha256', config('billing.stripe.secret'))]]);
+    $session = ['object' => 'checkout.session', 'id' => $sessionId, 'status' => 'open', 'mode' => 'subscription', 'subscription' => null,
+        'customer' => $subscription->provider_customer_id, 'client_reference_id' => $business->public_id, 'livemode' => str_starts_with($sessionId, 'cs_live_'),
+        'url' => $attempt->provider_checkout_url, 'expires_at' => now()->addDay()->timestamp,
+        'metadata' => ['application' => 'clipperdesk', 'business_public_id' => $business->public_id,
+            'billing_checkout_attempt_id' => $attempt->public_id, 'plan_price_id' => (string) $card->billing_plan_price_id]];
+
+    return [$owner, $business, $subscription->fresh(), $card, $change, $attempt, $session];
+}
+
+function withCheckoutRecoveryStripe(array $session, callable $operation): void
+{
+    $client = new class($session) implements ClientInterface
+    {
+        public array $requests = [];
+
+        public ?string $failure = null;
+
+        public bool $raceCompletion = false;
+
+        public array $listed = [];
+
+        public bool $hasMore = false;
+
+        public function __construct(public array $session) {}
+
+        public function request($method, $url, $headers, $params, $hasFile, $apiMode = 'v1', $maxNetworkRetries = null)
+        {
+            $path = parse_url($url, PHP_URL_PATH);
+            $this->requests[] = ['method' => $method, 'path' => $path, 'params' => $params, 'headers' => $headers];
+            if ($this->failure) {
+                return [json_encode(['error' => ['type' => 'invalid_request_error', 'code' => $this->failure, 'message' => 'Private provider diagnostic']]), $this->failure === 'resource_missing' ? 404 : 503, []];
+            }
+            if (str_ends_with($path, '/expire')) {
+                if ($this->raceCompletion) {
+                    $this->session['status'] = 'complete';
+
+                    return [json_encode(['error' => ['type' => 'invalid_request_error', 'message' => 'Already completed']]), 400, []];
+                }
+                $this->session['status'] = 'expired';
+                $this->session['url'] = null;
+                $object = $this->session;
+            } elseif (str_contains($path, '/customers/')) {
+                $object = ['object' => 'customer', 'id' => basename($path), 'metadata' => ['business_public_id' => $this->session['metadata']['business_public_id']]];
+            } elseif ($path === '/v1/checkout/sessions') {
+                $object = ['object' => 'list', 'data' => $this->listed, 'has_more' => $this->hasMore, 'url' => $path];
+            } else {
+                $object = $this->session;
+            }
+
+            return [json_encode($object), 200, []];
+        }
+    };
+    ApiRequestor::setHttpClient($client);
+    try {
+        $operation($client);
+    } finally {
+        ApiRequestor::setHttpClient(CurlClient::instance());
+    }
+}
+
+it('expires abandoned checkout before unlocking a new review and retains evidence', function () {
+    [$owner, $business, $subscription, , $change, $attempt, $session] = abandonedCapacityCheckout();
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $subscription, $change, $attempt) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertOk()->assertJsonPath('status', 'cancelled');
+        expect($client->session['status'])->toBe('expired')->and($attempt->fresh()->status)->toBe('expired')
+            ->and($subscription->fresh()->status->value)->toBe('trialing')->and($subscription->fresh()->capacity_snapshot)->toBeNull();
+        expect(DB::table('audit_events')->where('action', 'subscription.checkout.closed')->where('actor_user_id', $owner->id)->exists())->toBeTrue();
+        $writes = count($client->requests);
+        $this->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertOk();
+        expect(count($client->requests))->toBe($writes);
+        $this->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => 'monthly', 'locations' => 1, 'staff' => 5])->assertOk()->assertJsonPath('quote.total_minor', 6500);
+        expect(BillingCheckoutAttempt::count())->toBe(1);
+    });
+});
+
+it('shows useful errors without releasing an uncertain checkout on provider failure', function (string $failure) {
+    [$owner, $business, , , $change, $attempt, $session] = abandonedCapacityCheckout();
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $attempt, $failure) {
+        $client->failure = $failure;
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])->assertStatus(503)->assertJsonPath('checkout_url', null)->assertDontSee('Private provider diagnostic');
+        $this->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertStatus(503);
+        expect($change->fresh()->status)->toBe('submitted')->and($attempt->fresh()->status)->toBe('pending');
+        $this->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => 'monthly', 'locations' => 1, 'staff' => 1])->assertConflict();
+        $client->failure = null;
+        $this->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertOk()->assertJsonPath('status', 'cancelled');
+    });
+})->with(['resource_missing', 'api_error']);
+
+it('blocks a live checkout under test credentials and recovers after restoring the original mode', function () {
+    [$owner, $business, , , $change, , $session] = abandonedCapacityCheckout('cs_live_abandoned');
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])->assertConflict()->assertJsonPath('checkout_url', null);
+        expect($client->requests)->toBe([])->and($change->fresh()->status)->toBe('submitted');
+        config(['billing.stripe.secret' => 'sk_live_restored']);
+        $this->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertOk()->assertJsonPath('status', 'cancelled');
+    });
+});
+
+it('uses Stripe expiry instead of a shorter local checkout deadline', function () {
+    [$owner, $business, , , $change, $attempt, $session] = abandonedCapacityCheckout();
+    $attempt->update(['expires_at' => now()->subHour()]);
+    withCheckoutRecoveryStripe($session, function () use ($owner, $business, $change, $attempt, $session) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])->assertOk()->assertJsonPath('checkout_url', 'https://checkout.stripe.com/abandoned');
+        expect($attempt->fresh()->expires_at->timestamp)->toBe($session['expires_at']);
+    });
+});
+
+it('does not expire or reconcile another business or mismatched checkout response', function (string $field) {
+    [$owner, $business, , , $change, $attempt, $session] = abandonedCapacityCheckout();
+    data_set($session, $field, 'unrelated');
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $attempt) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertConflict();
+        expect(count($client->requests))->toBe(1)->and($attempt->fresh()->status)->toBe('pending')->and($change->fresh()->status)->toBe('submitted');
+    });
+})->with(['customer', 'client_reference_id', 'metadata.business_public_id', 'metadata.billing_checkout_attempt_id', 'metadata.plan_price_id']);
+
+it('recovers a lost Checkout create response before safely closing it', function (bool $exists) {
+    [$owner, $business, , , $change, $attempt, $session] = abandonedCapacityCheckout();
+    $attempt->update(['provider_transaction_id' => 'pending_capacity_'.$change->public_id, 'provider_checkout_url' => null]);
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $attempt, $session, $exists) {
+        $client->listed = $exists ? [$session] : [];
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertOk()->assertJsonPath('status', 'cancelled');
+        expect($attempt->fresh()->status)->toBe('expired')->and(BillingCheckoutAttempt::count())->toBe(1);
+        expect(collect($client->requests)->contains(fn ($r) => $r['method'] === 'post' && $r['path'] === '/v1/checkout/sessions'))->toBeFalse();
+    });
+})->with([true, false]);
+
+it('does not abandon an incomplete provider listing or an unknown create in another mode', function (string $case) {
+    [$owner, $business, , , $change, $attempt, $session] = abandonedCapacityCheckout();
+    $attempt->update(['provider_transaction_id' => 'pending_capacity_'.$change->public_id, 'provider_checkout_url' => null]);
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $attempt, $case) {
+        $client->hasMore = $case === 'listing';
+        if ($case === 'mode') {
+            config(['billing.stripe.secret' => 'sk_live_other']);
+        }
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertConflict();
+        expect($attempt->fresh()->status)->toBe('pending')->and($change->fresh()->status)->toBe('submitted');
+    });
+})->with(['listing', 'mode']);
+
+it('reconciles a payment which completes while restart is expiring checkout', function (bool $race) {
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout();
+    $session['subscription'] = ['object' => 'subscription', 'id' => 'sub_recovered_checkout', 'customer' => $subscription->provider_customer_id,
+        'status' => 'active', 'metadata' => $session['metadata'], 'items' => ['data' => capacityProvider($card, 3, 10)], 'latest_invoice' => null];
+    if (! $race) {
+        $session['status'] = 'complete';
+    }
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $subscription, $change, $attempt, $race) {
+        $client->raceCompletion = $race;
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertOk()->assertJsonPath('status', 'applied');
+        expect($subscription->fresh()->status->value)->toBe('active')->and($subscription->fresh()->capacity_snapshot['total_minor'])->toBe(13300)
+            ->and($attempt->fresh()->status)->toBe('confirmed')->and(BillingCheckoutAttempt::count())->toBe(1);
+    });
+})->with([true, false]);
+
+it('protects checkout restart from staff and cross-business access', function () {
+    [$owner, $business, , , $change] = abandonedCapacityCheckout();
+    [$other, $otherBusiness] = createTenantMembership();
+    activateTestSubscription($otherBusiness);
+    $this->actingAs($other)->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertForbidden();
+    $this->postJson(route('business.billing.capacity.restart', $otherBusiness), ['change_id' => $change->public_id])->assertNotFound();
+    [$staff, $staffBusiness] = createTenantMembership(StarterRole::BarberStylist);
+    activateTestSubscription($staffBusiness);
+    $this->actingAs($staff)->postJson(route('business.billing.capacity.restart', $staffBusiness), ['change_id' => $change->public_id])->assertForbidden();
+});
+
+it('recovers a confirmed claim even if the response failed before creating its attempt', function () {
+    [$owner, $business] = createTenantMembership();
+    capacityRate();
+    $subscription = activateTestSubscription($business);
+    $subscription->update(['status' => 'trialing', 'provider_subscription_id' => null]);
+    $manager = app(CapacityBillingManager::class);
+    $change = $manager->review($business, $owner, 'US', 'monthly', 3, 10);
+    $manager->claim($business, $owner, $change);
+    $this->mock(SubscriptionProvider::class)->shouldReceive('createCheckout')->once()->andReturn(['url' => 'https://checkout.stripe.com/gap', 'provider_session_id' => 'cs_test_gap']);
+    $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])->assertOk()->assertJsonPath('checkout_url', 'https://checkout.stripe.com/gap');
+    expect(BillingCheckoutAttempt::count())->toBe(1);
+    $this->get(route('business.billing.show', $business))->assertOk()->assertDontSee('stripe_credential_fingerprint')->assertDontSee(hash('sha256', config('billing.stripe.secret')));
+});
+
+it('retains a newly bound customer when checkout creation times out', function () {
+    [$owner, $business] = createTenantMembership();
+    capacityRate();
+    $subscription = activateTestSubscription($business);
+    $subscription->update(['status' => 'trialing', 'provider_subscription_id' => null, 'provider_customer_id' => null]);
+    $change = app(CapacityBillingManager::class)->review($business, $owner, 'US', 'monthly', 1, 2);
+    $this->mock(SubscriptionProvider::class)->shouldReceive('createCheckout')->once()->andReturnUsing(function () use ($subscription) {
+        $subscription->update(['provider_customer_id' => 'cus_created_before_timeout']);
+        throw new HttpException(503, 'Provider timeout');
+    });
+    $this->actingAs($owner)->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $change->public_id])->assertStatus(503);
+    expect($subscription->fresh()->provider_customer_id)->toBe('cus_created_before_timeout')->and(BillingCheckoutAttempt::count())->toBe(1);
+    expect(BillingCheckoutAttempt::first()->capacity_quote['capacity_change_id'])->toBe($change->public_id);
+});
+
+it('does not let an old expiration unlock a newer checkout with the same pricing', function () {
+    [$owner, $business, , , $change, $attempt, $session] = abandonedCapacityCheckout();
+    withCheckoutRecoveryStripe($session, function () use ($owner, $business, $change) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertOk();
+    });
+    $new = app(CapacityBillingManager::class)->review($business, $owner, 'US', 'monthly', 3, 10);
+    $new->update(['status' => 'submitted', 'submitted_at' => now()]);
+    app(StripeWebhookProcessor::class)->receiveVerified(['id' => 'evt_old_expiry_after_restart', 'type' => 'checkout.session.expired', 'created' => now()->timestamp, 'data' => ['object' => [...$session, 'status' => 'expired']]]);
+    expect($new->fresh()->status)->toBe('submitted')->and($attempt->fresh()->status)->toBe('expired');
+});
+
+it('keeps checkout recovery available while new purchases and webhook readiness are paused', function () {
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout();
+    config(['capacity-billing.enabled' => false, 'billing.stripe.webhook_secret' => '']);
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])
+            ->assertOk()->assertJsonPath('status', 'submitted');
+        $this->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])
+            ->assertOk()->assertJsonPath('status', 'cancelled');
+        expect(collect($client->requests)->filter(fn ($request) => str_ends_with($request['path'], '/expire')))->toHaveCount(1);
+    });
+    expect($subscription->fresh()->status->value)->toBe('trialing')->and($attempt->fresh()->status)->toBe('expired');
 });

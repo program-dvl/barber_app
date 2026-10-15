@@ -1,6 +1,6 @@
 # Stripe subscription billing setup
 
-Updated 2026-10-12. Applies to FR-01 and ADR-029/054/056. Run from the application root with the PHP version required by composer.lock. Existing subscriptions and invoices are preserved. Commands create catalog/delivery configuration, never charges or subscriptions.
+Updated 2026-10-15. Applies to FR-01 and ADR-029/054/056/061/068. Run from the application root with the PHP version required by composer.lock. Existing subscriptions and invoices are preserved. Commands create catalog/delivery configuration, never charges or subscriptions.
 
 ## Correct route and credentials
 
@@ -14,7 +14,9 @@ Approved software pricing is USD, independent of the business's operating countr
 | --- | --- | --- |
 | Base: 1 location + 1 bookable staff | $29 | $290 |
 | Each extra location | $19 | $190 |
-| Each extra bookable staff | $9 | $90 |
+| Bookable staff 2–5, each | $9 | $90 |
+| Bookable staff 6–10, each | $6 | $60 |
+| Bookable staff 11 onward, each | $4 | $40 |
 
 The included allowance remains 100 text credits per bookable staff per month on supported destinations; verify actual delivery costs and routes before SMS launch. Paid text packs remain unavailable.
 
@@ -245,3 +247,53 @@ resolve those through the reviewed support/provider recovery procedure.
 This task verified mocked SDK contracts and isolated local UI fixtures. It did
 not create real Stripe Prices, change a deployed catalog, charge a customer or
 certify tax/live provider behavior. Complete the sandbox steps before production.
+
+## Abandoned checkout and credential recovery (2026-10-15)
+
+Deploy the source and rebuilt client/SSR assets together. This repair needs no
+schema migration or Stripe price change. It does not migrate or replace paid
+subscriptions. Retain all attempt/customer/subscription IDs and payment history.
+
+1. Keep test/sandbox and live work on separate application databases. If keys
+   were changed on a database with unfinished live checkout, restore the original
+   Stripe account's live secret/publishable keys, subscription webhook signing
+   secret and verified rate-card mappings together. Do not provision another
+   account's prices over these records to clear an error. Check values privately;
+   never copy credentials into logs, tickets or commands.
+2. Rebuild cached configuration with `php artisan config:cache`, restart queue
+   workers with `php artisan queue:restart`, and reload any persistent application
+   server/SSR process through the deployment's normal process manager. Editing
+   `.env` alone does not refresh cached configuration. For uncached local work,
+   use `php artisan config:clear` instead. Verify scheduler/webhook health under
+   the restored configuration.
+3. In Subscription & billing → Plan, use Check billing status. Continue secure
+   checkout verifies the stored original session before redirecting. To change
+   quantities, edit the estimate and choose Start again. Stripe must confirm
+   expiration of an open session before Review subscription becomes available.
+   A completed payment updates the existing subscription instead.
+4. An outage, missing object under another account/mode, or ambiguous creation
+   remains pending with an actionable error. Restore the original environment
+   and retry. Never delete local attempts, clear customer IDs or mark a request
+   unpaid merely to unlock the UI: the original URL could still accept payment.
+5. If a create response was lost, recovery reads the original customer and its
+   sessions using the attempt metadata. An incomplete session list is not proof
+   of absence. With no saved customer, only the original credential fingerprint
+   and original idempotency keys within 23 hours can be replayed. Older or
+   ambiguous cases require support to verify the original Stripe request/event
+   history; do not manually reopen payment without proving the old session is
+   no longer payable and checking for a completed subscription/invoice.
+6. Manage billing uses the existing restricted portal configuration. It opens
+   normally when that Stripe account/customer/configuration is available; an
+   error is displayed within billing. Verify portal permissions/configuration in
+   the same account, then retry. No paid customer is silently recreated.
+
+Verify sandbox abandonment, restored configuration, expiration, continuation,
+completion races, portal success/failure and duplicate webhook delivery before
+release. Real live/test account certification and production MySQL concurrency
+remain deployment checks. Local synthetic browser verification and mocked SDK
+transport tests are recorded in the [recovery audit](../audits/2026-10-15-billing-recovery/README.md).
+
+Provider contracts: [expire Checkout](https://docs.stripe.com/api/checkout/sessions/expire)
+only closes open sessions; [Stripe API keys](https://docs.stripe.com/keys) isolate
+live and sandbox objects. These constraints are why an API failure cannot safely
+be treated as cancellation.

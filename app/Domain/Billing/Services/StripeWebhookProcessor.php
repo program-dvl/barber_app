@@ -215,8 +215,21 @@ class StripeWebhookProcessor
             return false;
         }
 
+        if (! in_array($attempt->status, ['pending', 'processing'], true)) {
+            return true;
+        }
         if ($attempt->capacity_quote) {
-            BillingCapacityChange::where('business_subscription_id', $attempt->business_subscription_id)->where('kind', 'checkout')->where('status', 'submitted')->where('quote->fingerprint', $attempt->capacity_quote['fingerprint'])->update(['status' => 'expired']);
+            $changes = BillingCapacityChange::where('business_subscription_id', $attempt->business_subscription_id)
+                ->where('kind', 'checkout')->where('status', 'submitted');
+            if ($id = $attempt->capacity_quote['capacity_change_id'] ?? null) {
+                $changes->where('public_id', $id);
+            } else {
+                $changes->where('quote->fingerprint', $attempt->capacity_quote['fingerprint'])
+                    ->where('quote->locations', $attempt->capacity_quote['locations'])
+                    ->where('quote->staff', $attempt->capacity_quote['staff'])
+                    ->where('submitted_at', '<=', $attempt->created_at);
+            }
+            $changes->update(['status' => 'expired']);
         }
         $attempt->update([
             'status' => $eventType === 'checkout.session.expired' ? 'expired' : 'failed',

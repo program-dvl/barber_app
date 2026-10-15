@@ -6,7 +6,7 @@ import AppSelect from '@/Components/Product/AppSelect.vue';
 import { billingMoney } from '@/Support/billingWorkspace';
 import { capacityEstimate, capacityAnnualSaving, capacityMonthlyEquivalent } from '@/Support/capacityPricing';
 
-const props = defineProps({ initialSelection: Object, catalog: Object, country: String, current: Object, usage: Object, disabled: Boolean, actionLabel: { type: String, default: 'Review subscription' } });
+const props = defineProps({ initialSelection: Object, catalog: Object, country: String, current: Object, usage: Object, disabled: Boolean, reviewDisabled: Boolean, actionLabel: { type: String, default: 'Review subscription' } });
 const emit = defineEmits(['review']);
 const markets = computed(() => (props.catalog?.markets || []).filter(item => Object.values(item.intervals).some(rate => rate.ready)));
 const marketCode = ref(markets.value.find(item => item.code === props.current?.market)?.code || markets.value[0]?.code || '');
@@ -22,7 +22,7 @@ const estimate = computed(() => { const value = capacityEstimate(rate.value, loc
 const saving = computed(() => !useCurrentRates.value && props.current && props.current.revision !== market.value?.intervals?.[interval.value]?.revision ? 0 : capacityAnnualSaving(market.value, locations.value, staff.value));
 const savingPercent = computed(() => { const monthly = capacityEstimate(market.value?.intervals?.monthly, locations.value, staff.value); return monthly?.total_minor ? (saving.value / (monthly.total_minor * 12) * 100).toFixed(1) : ''; });
 const money = value => billingMoney(value, estimate.value?.currency || market.value?.currency || 'USD');
-watch(() => props.current, value => { if (value) { marketCode.value = value.market; interval.value = value.billing_interval; locations.value = value.locations; staff.value = value.staff; } });
+watch(() => [props.current?.market, props.current?.billing_interval, props.current?.locations, props.current?.staff].join('|'), () => { const value = props.current; if (value) { marketCode.value = value.market; interval.value = value.billing_interval; locations.value = value.locations; staff.value = value.staff; } });
 </script>
 
 <template>
@@ -42,7 +42,7 @@ watch(() => props.current, value => { if (value) { marketCode.value = value.mark
             <p v-if="interval === 'annual'">Equivalent to {{ money(capacityMonthlyEquivalent(estimate.total_minor)) }} / month. The full yearly amount is charged upfront.</p>
             <p v-if="interval === 'annual' && saving">Save {{ money(saving) }} a year compared with monthly billing.</p>
             <p class="capacity-included"><CheckCircleIcon aria-hidden="true"/><span>{{ estimate.sms_monthly_allowance.toLocaleString() }} text credits each month<br/>Email notifications included</span></p>
-            <AppButton :disabled="disabled || !estimate.ready" @click="emit('review', estimate)">{{ actionLabel }}</AppButton>
+            <AppButton :disabled="disabled || reviewDisabled || !estimate.ready" @click="emit('review', estimate)">{{ actionLabel }}</AppButton>
         </div>
         <p v-else class="billing-alert neutral" role="status">{{ market ? 'Enter whole numbers: at least one location and one bookable staff member.' : 'Please contact support to set up your subscription.' }}</p>
         <p class="capacity-footnote">Receptionists and administrators who do not take appointments are included. Text usage varies by message length and destination.</p>

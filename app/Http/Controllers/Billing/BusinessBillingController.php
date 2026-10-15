@@ -222,14 +222,26 @@ class BusinessBillingController extends Controller
         }, 3);
     }
 
-    public function portal(Request $request, Business $business, SubscriptionProvider $provider): RedirectResponse
+    public function portal(Request $request, Business $business, SubscriptionProvider $provider): RedirectResponse|JsonResponse
     {
         $this->authorizeBilling($request, $business);
         $subscription = $business->subscription()->firstOrFail();
-        abort_unless($subscription->provider === 'stripe' && filled($subscription->provider_customer_id), 409, 'Complete Stripe checkout before opening the billing portal.');
-        $url = $provider->billingPortalUrl($subscription, route('business.billing.show', [$business, 'billing' => 'returned']));
+        try {
+            abort_unless($subscription->provider === 'stripe' && filled($subscription->provider_customer_id), 409, 'Start secure checkout before managing payment details.');
+            $url = $provider->billingPortalUrl($subscription, route('business.billing.show', [$business, 'billing' => 'returned']));
 
-        return redirect()->away($url);
+            return $request->expectsJson() ? response()->json(['url' => $url]) : redirect()->away($url);
+        } catch (Throwable $error) {
+            Log::warning('Billing portal could not be opened.', ['business_id' => $business->id, 'exception' => $error::class]);
+            $message = 'Payment details could not be opened. Your subscription is unchanged. Please try again shortly or contact support.';
+            if (! $subscription->provider_customer_id) {
+                $message = 'Start secure checkout before managing payment details.';
+            }
+
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 503)
+                : redirect()->route('business.billing.show', [$business, 'section' => 'overview'])->withErrors(['billing' => $message]);
+        }
     }
 
     public function refreshBilling(Request $request, Business $business, StripeSubscriptionReconciler $reconciler, AuditWriter $audit): JsonResponse

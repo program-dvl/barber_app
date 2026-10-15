@@ -18,6 +18,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 uses(RefreshDatabase::class);
 beforeEach(fn () => Carbon::setTestNow(Carbon::now()->startOfSecond()->addMinutes(5)));
@@ -202,4 +203,24 @@ it('does not send a new failure notice for an older subscription snapshot', func
     $subscription->update(['provider_state_at' => now()]);
     app(SubscriptionLifecycleManager::class)->renewalFailed($subscription, 2, now()->subMinute());
     expect($subscription->fresh()->status)->toBe(SubscriptionStatus::Active)->and(DB::table('billing_notices')->count())->toBe(0);
+});
+
+it('keeps billing portal provider failures inside the workspace for both navigation and JSON requests', function () {
+    [$owner, $business] = billingWorkspaceFixture();
+    $this->mock(SubscriptionProvider::class)->shouldReceive('billingPortalUrl')->twice()->andThrow(new HttpException(503, 'Private provider error'));
+    $this->actingAs($owner)->getJson(route('business.billing.portal', $business))->assertStatus(503)->assertJsonPath('message', 'Payment details could not be opened. Your subscription is unchanged. Please try again shortly or contact support.');
+    $this->get(route('business.billing.portal', $business))->assertRedirect(route('business.billing.show', [$business, 'section' => 'overview']))->assertSessionHasErrors('billing');
+});
+
+it('opens a verified billing portal without leaving the workspace on an AJAX failure', function () {
+    [$owner, $business] = billingWorkspaceFixture();
+    $this->mock(SubscriptionProvider::class)->shouldReceive('billingPortalUrl')->once()->andReturn('https://billing.stripe.com/p/session_verified');
+    $this->actingAs($owner)->getJson(route('business.billing.portal', $business))->assertOk()->assertJsonPath('url', 'https://billing.stripe.com/p/session_verified');
+});
+
+it('does not call Stripe for another business billing portal', function () {
+    [$owner] = createTenantMembership();
+    [, $business] = billingWorkspaceFixture();
+    $this->mock(SubscriptionProvider::class)->shouldNotReceive('billingPortalUrl');
+    $this->actingAs($owner)->getJson(route('business.billing.portal', $business))->assertForbidden();
 });

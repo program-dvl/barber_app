@@ -1,9 +1,9 @@
 # Subscription & Billing
 
-Updated: 2026-10-12. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
+Updated: 2026-10-15. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
 [FR-13](../product-requirements.md#fr-13-notifications-and-communication),
 FR-19, FR-20 and [PRD §9](../product-requirements.md#9-subscription-packaging-and-commercial-rules).
-See ADR-029/038/041/054/056/057/061/063 and `../stripe-billing.md`.
+See ADR-029/038/041/054/056/057/061/063/068 and `../stripe-billing.md`.
 
 ## Approved pricing contract
 
@@ -160,3 +160,30 @@ terms: existing JSON rate cards/snapshots retain their original terms. See the
 The old rate card is not rewritten, archived or mass-swapped. Included monthly
 SMS remains 100 credits per purchased bookable staff member; a team of 20 keeps
 2,000. Existing overrides and retained-plan allowances stay authoritative.
+
+## Abandoned checkout and portal recovery (ADR-068)
+
+FR-01/19/20: initial capacity Checkout now has tenant-authorized status,
+continuation and Start again recovery through `CapacityCheckoutRecovery` and the
+existing Stripe reconciler/projector. The operation is committed before dispatch;
+a lost response preserves its customer binding and original idempotency key.
+Open sessions are explicitly expired before a new purchase can be reviewed.
+Completed sessions reconcile the existing subscription. Authoritative Stripe
+expiration replaces a shorter local estimate of the session lifetime.
+
+Inputs remain editable for estimation while a submitted checkout blocks a second
+review. The banner states the original checkout quantities/price. Start again
+retains edited quantities, clears only the verified closed request and requires
+another explicit review/confirmation. Failure leaves recovery actions available;
+provider errors never become a raw Server Error or an unverified fresh purchase.
+
+New attempts identify the exact capacity change. Old attempts use matching
+quantity/fingerprint/time bounds; a stale expiry cannot close a newer request.
+No customer/subscription, invoice, paid capacity or historical quote is deleted.
+Wrong-mode/account objects require restored original configuration; unresolved
+creation without a customer may replay only the original keys within 23 hours,
+otherwise support must verify it. Private credential fingerprints stay server-side.
+Portal errors remain inside billing, including direct-URL navigation failures.
+
+See [recovery operations](../deployment/subscription-billing-stripe.md#abandoned-checkout-and-credential-recovery-2026-10-15)
+and [verified evidence](../audits/2026-10-15-billing-recovery/README.md).

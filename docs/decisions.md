@@ -2429,6 +2429,40 @@ live-provider, privacy and public-payment gates remain unwaived.
 [Specification](modules/communications.md) and
 [review evidence](audits/2026-10-14-platform-notifications/README.md).
 
+## ADR-068 — Provider-verified abandoned checkout recovery
+
+- Status: Accepted
+- Date: 2026-10-15
+- Basis: Product owner requests a recoverable billing flow after abandoning payment, including Stripe credential changes and portal outages.
+- Requirements: FR-01, FR-19, FR-20; extends ADR-029/054/061 without changing prices, proration, renewals or existing paid subscriptions.
+
+Owners can edit estimates while an initial Checkout is pending. The pending
+banner identifies its original quantities and total; continuing always rechecks
+that original session. A separate authenticated, tenant-scoped Start again
+command expires an open owned Stripe session before closing its exact local
+request and permitting a new reviewed purchase. A completed session is reconciled
+instead. Unknown outcomes, wrong accounts/modes, incomplete lookup results and
+provider outages never authorize a second potentially payable checkout.
+
+Persist an attempt before provider dispatch, including recovery of a committed
+capacity claim without an attempt. Preserve the original idempotency key and a
+customer binding obtained before a lost response. Recover uncertain creation by
+reading the original owned customer and sessions; replay a no-customer outcome
+only with the same credential fingerprint within 23 hours. Retain closed attempts,
+quotes, audit records and append-only financial history. New attempts carry an
+exact change reference and private mode/credential fingerprint in their existing
+JSON; public billing payloads never expose those verification fields. Legacy
+attempts retain a bounded quantity/time match. Late expiration cannot unlock a
+newer request or overwrite a confirmed attempt.
+
+Status/continue/restart return safe actionable errors. Portal failures stay in
+the billing workspace (JSON for interactive actions, redirected validation error
+for direct navigation). Returning from browser history refreshes authoritative
+billing state. Production credential/configuration repair remains an operator
+responsibility; swapping keys cannot prove that an earlier payment failed.
+No database migration, live payment, paid customer reset or automatic migration
+is part of this repair. Evidence and rollout: [billing recovery audit](audits/2026-10-15-billing-recovery/README.md).
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |

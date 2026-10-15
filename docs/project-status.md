@@ -1,5 +1,26 @@
 # Project status
 
+## 2026-10-15 Abandoned checkout and billing portal recovery (ADR-068)
+
+- [x] Status and continuation recheck the original owned Stripe checkout; Start
+  again expires it before releasing the exact request. Completion races reconcile
+  the existing payment. Estimates remain editable, including after an outage.
+- [x] Committed attempts/idempotency and lost-response customer bindings survive
+  recovery; wrong mode/account and ambiguous outcomes cannot start a second
+  payment. Expiration uses provider lifetime; late events cannot unlock a newer
+  request. Private verification fingerprints are excluded from public responses.
+- [x] Portal failures remain inside billing with a retryable message; browser-back
+  returns refresh billing. Existing paid subscriptions and financial records remain.
+- [x] Backend **774 passed / 7,146 assertions**, 30 existing intentional skips;
+  focused Billing **165 passed / 708 assertions**; **98 frontend tests**, client/SSR
+  production builds, scoped formatting and whitespace checks pass. Synthetic
+  browser review verified pending/edit/status/continue/back/restart/review and
+  portal failure at desktop, 390px and 320px widths.
+- [ ] Not deployed. The screenshot business is absent from the local database;
+  its production state and original Stripe account were not changed or certified.
+  No real payment, provider credential change or schema migration.
+  [Evidence and credential recovery steps](audits/2026-10-15-billing-recovery/README.md).
+
 ## 2026-10-14 Platform-managed client notifications (ADR-067)
 
 - [x] Owner email/SMS builders and branded-sender onboarding are retired in the UI
