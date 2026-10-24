@@ -1,0 +1,57 @@
+{
+  "slug": "clients-add-find",
+  "title": "Find or add a client",
+  "summary": "Keep one useful client record and avoid accidental duplicates.",
+  "category": "clients",
+  "keywords": [
+    "client",
+    "customer",
+    "add client",
+    "new customer",
+    "find client",
+    "search customer",
+    "duplicate contact"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "find",
+      "title": "Find someone already in your directory",
+      "body": "Open **Clients**. Use **Search clients** with a name, or a phone number or email if your role allows contact access. Choose a client to open their profile. Use relationship or preferred-staff filters and **Sort clients** to focus the directory; clear search and filters if a person seems missing.\n\nPersonal-calendar access can limit you to clients connected to your own visits and assigned locations. A missing contact field can be an access restriction, rather than missing data."
+    },
+    {
+      "id": "add",
+      "title": "Create a client",
+      "body": "1. Select **Add client**.\n2. Enter required **Full name** and provide a **Mobile number** or **Email** so the person can be identified.\n3. Review any **Review an existing client first** matches.\n4. Open the existing profile if it is the same person. Select **This is a different person sharing these contact details** only after confirming they really are different people.\n5. Optionally expand **Referral source** and enter **How they found you**.\n6. Select **Add client** and check the resulting profile.\n\nAn exact name and contact match opens the existing profile. ClipperDesk does not automatically merge different people who share contact information."
+    },
+    {
+      "id": "next",
+      "title": "After adding",
+      "body": "Use **Edit profile** for preferences, tags and additional details, or **Book appointment** to start a visit. A new profile does not subscribe the client to marketing or prove SMS consent.\n\nIf the client already exists, choose that record in Calendar or Walk-in queue. Reusing the record keeps visits, notes and payment history together."
+    }
+  ],
+  "related": [
+    "clients-edit-preferences",
+    "clients-duplicates",
+    "appointments-add"
+  ],
+  "action": {
+    "key": "clients",
+    "label": "Go to Clients"
+  },
+  "screenshots": [
+    {
+      "key": "clients-directory",
+      "alt": "Client directory with sample client records",
+      "caption": "Search before adding so the client’s history stays together.",
+      "section": "find"
+    }
+  ]
+}

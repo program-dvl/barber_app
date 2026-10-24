@@ -1,0 +1,275 @@
+{
+  "audit": [
+    {
+      "key": "dashboard",
+      "path": "/businesses/01M5P5QK7MZZX0AW1A3H7WAGYS/dashboard",
+      "h1": [
+        "Daily workspace"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "calendar",
+      "path": "/businesses/01M5P5QK7MZZX0AW1A3H7WAGYS/app/calendar",
+      "h1": [
+        "Calendar"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "appointment-create",
+      "path": "/businesses/01M5P5QK7MZZX0AW1A3H7WAGYS/app/calendar",
+      "h1": [
+        "Calendar"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "walk-in-queue",
+      "path": "/businesses/01M5P6M7MJM2HY881M1VB2QA9T/app/walk-in-queue",
+      "h1": [
+        "Walk-in queue"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "walk-in-add",
+      "path": "/businesses/01M5P6M7MJM2HY881M1VB2QA9T/app/walk-in-queue",
+      "h1": [
+        "Walk-in queue"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "team-directory",
+      "path": "/businesses/01M5P5QKRXFJAN7VHC7QTJVX5T/app/team",
+      "h1": [
+        "Team & availability"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "team-add-member",
+      "path": "/businesses/01M5P5QKRXFJAN7VHC7QTJVX5T/app/team",
+      "h1": [
+        "Team & availability"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "team-weekly-coverage",
+      "path": "/businesses/01M5P5QKRXFJAN7VHC7QTJVX5T/app/team",
+      "h1": [
+        "Team & availability"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "team-schedule",
+      "path": "/businesses/01M5P5QKRXFJAN7VHC7QTJVX5T/app/team",
+      "h1": [
+        "Team & availability"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "team-access",
+      "path": "/businesses/01M5P5QKRXFJAN7VHC7QTJVX5T/app/team",
+      "h1": [
+        "Team & availability"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "services-catalogue",
+      "path": "/businesses/01M5P5QKRXFJAN7VHC7QTJVX5T/app/services",
+      "h1": [
+        "Services"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "services-editor",
+      "path": "/businesses/01M5P5QKRXFJAN7VHC7QTJVX5T/app/services",
+      "h1": [
+        "Services"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "service-assignments",
+      "path": "/businesses/01M5P5QKRXFJAN7VHC7QTJVX5T/app/services",
+      "h1": [
+        "Services"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "service-booking-rules",
+      "path": "/businesses/01M5P5QKRXFJAN7VHC7QTJVX5T/app/services",
+      "h1": [
+        "Services"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "clients-directory",
+      "path": "/businesses/01M5P5QM32G7PVV5WWV8M4728R/app/clients",
+      "h1": [
+        "Clients"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "client-profile",
+      "path": "/businesses/01M5P5QM32G7PVV5WWV8M4728R/app/clients/01M5P5QM4NXKACMH3034RVAAFF",
+      "h1": [
+        "Alex Taylor"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "checkout",
+      "path": "/businesses/01M5P5QMBKFXPYX3Y3RXKV5BEE/app/checkout-sales",
+      "h1": [
+        "Checkout & sales"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "checkout-payment",
+      "path": "/businesses/01M5P5QMBKFXPYX3Y3RXKV5BEE/app/checkout-sales",
+      "h1": [
+        "Checkout & sales"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "notifications",
+      "path": "/businesses/01M5P5QK7MZZX0AW1A3H7WAGYS/app/communications",
+      "h1": [
+        "Client notifications"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "notification-history",
+      "path": "/businesses/01M5P5QK7MZZX0AW1A3H7WAGYS/app/communications",
+      "h1": [
+        "Client notifications"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "billing-overview",
+      "path": "/businesses/01M5P5QK7MZZX0AW1A3H7WAGYS/billing",
+      "h1": [
+        "Subscription & billing"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "booking-services",
+      "path": "/book/service-catalog-review",
+      "h1": [
+        "Atelier Studio"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "account-security",
+      "path": "/user/profile",
+      "h1": [
+        "Profile & security"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "setup-readiness",
+      "path": "/businesses/01M5P5QQQ149EGQ6ZGY7V0VCNK/configuration",
+      "h1": [
+        "Business setup"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "business-hours",
+      "path": "/businesses/01M5P5QQQ149EGQ6ZGY7V0VCNK/configuration",
+      "h1": [
+        "Business setup"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "business-booking-preferences",
+      "path": "/businesses/01M5P5QQQ149EGQ6ZGY7V0VCNK/configuration",
+      "h1": [
+        "Business setup"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "business-preview",
+      "path": "/businesses/01M5P5QQQ149EGQ6ZGY7V0VCNK/configuration",
+      "h1": [
+        "Business setup"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "business-locations",
+      "path": "/businesses/01M5P5QQQ149EGQ6ZGY7V0VCNK/app/locations",
+      "h1": [
+        "Locations"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "setup-introduction",
+      "path": "/businesses/01M5P5QQP3EP2AEWRPS1Z6ZW2X/configuration",
+      "h1": [
+        "Let’s prepare your business"
+      ],
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "key": "reports",
+      "path": "/businesses/01M5P5QMHFDH0A4GNVFJBHNRP6/app/reports",
+      "h1": [
+        "Reports"
+      ],
+      "overflow": false,
+      "broken": []
+    }
+  ],
+  "errors": []
+}

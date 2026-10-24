@@ -1,0 +1,50 @@
+{
+  "slug": "checkout-deposits-taxes-tips",
+  "title": "Review deposits, tax and staff tips at checkout",
+  "summary": "Understand how existing deposits, configured tax and explicit tips affect the amount due.",
+  "category": "checkout",
+  "keywords": [
+    "deposit",
+    "apply deposit",
+    "tax included",
+    "tax added",
+    "tip",
+    "gratuity",
+    "tip allocation",
+    "commission"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "deposit",
+      "title": "Apply an existing appointment deposit",
+      "body": "The checkout can offer a verified, unallocated deposit from this same appointment. Before saving, review **Deposit already paid** and its **Apply** choice. On an already saved sale, use **Apply appointment deposit** when shown.\n\nOnly the amount up to the sale balance is applied. Any excess remains separately identified; it is not another payment due and is not silently transferred from an unrelated visit. Never enter the same deposit again as another received payment."
+    },
+    {
+      "id": "tips",
+      "title": "Add a staff tip",
+      "body": "1. Before saving the sale, select **Add tip** or **Add / edit tip**.\n2. Under **Tip for**, choose the staff member.\n3. Enter **Tip amount**, or use an offered percentage. Percentages use the discounted subtotal.\n4. Select **Save tip**. Add a separate allocation for another staff member if needed.\n5. Review the total and staff allocations before **Review & save sale**.\n\nTips are separate from commission. Recorded staff attribution and discounts can affect commission; do not change a performer merely to move someone else’s earnings."
+    },
+    {
+      "id": "tax",
+      "title": "Understand the totals and limits",
+      "body": "The sale shows **Tax included** or **Tax added**, using the business’s supported commerce settings and the recorded item values. A service’s tax-category label does not independently select a different tax rate in this release.\n\nCheckout records payments already received. A deposit-status page is not necessarily a supported payment interface, and customer cancellation does not itself execute a refund. Ask an owner to review an unexpected amount before saving the fixed sale; this workspace cannot amend a saved basket."
+    }
+  ],
+  "related": [
+    "checkout-review",
+    "checkout-record-payments",
+    "reports-capacity-commission"
+  ],
+  "action": {
+    "key": "checkout",
+    "label": "Go to Checkout / Sales"
+  }
+}

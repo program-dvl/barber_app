@@ -1,0 +1,56 @@
+{
+  "slug": "billing-access",
+  "title": "Why is a feature missing or the workspace read-only?",
+  "summary": "Distinguish permissions, branch scope, setup requirements and subscription restrictions.",
+  "category": "billing",
+  "keywords": [
+    "missing feature",
+    "plan restriction",
+    "trial expired",
+    "read only",
+    "past due",
+    "grace",
+    "upgrade required",
+    "access denied"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager",
+    "Team member",
+    "Billing administrator"
+  ],
+  "sections": [
+    {
+      "id": "check",
+      "title": "Check these causes in order",
+      "body": "1. Confirm you signed in with the correct email and opened the correct business.\n2. Ask an owner to review your role, specific capabilities and accessible locations. Professional titles do not grant access.\n3. If the message says setup is incomplete, use **Continue business setup** when offered.\n4. If a feature is not included or a numeric limit is reached, an authorized billing user should review **Subscription & billing**.\n5. Read any trial, payment or read-only notice in the workspace."
+    },
+    {
+      "id": "states",
+      "title": "Trial and payment states",
+      "body": "A trial has a displayed end date and no automatic charge during the trial. After trial expiry, protected changes require active subscription access while existing information remains readable. A failed renewal can have a recovery grace period; resolve it by the date shown. A restricted workspace remains read-only until subscription billing is resolved."
+    },
+    {
+      "id": "permissions",
+      "title": "Subscription and access are independent",
+      "body": "An active subscription does not let every team member view revenue, issue refunds, export clients, change settings or manage billing. Owners choose these responsibilities. Business-wide settings also require authority across all locations, so a branch manager may have only their local operational tools."
+    },
+    {
+      "id": "next",
+      "title": "Choose a useful next step",
+      "body": "Use the page’s authorized setup or billing action if offered. Otherwise contact your owner with the page name and visible message. If the owner cannot resolve a billing issue, use Contact support and its safe reference. Do not create another business or account to bypass a restriction."
+    }
+  ],
+  "related": [
+    "team-roles-permissions",
+    "setup-readiness",
+    "billing-recovery"
+  ],
+  "action": {
+    "key": "billing",
+    "label": "Go to Subscription & billing"
+  },
+  "order": 37
+}

@@ -1,5 +1,6 @@
 <script setup>
 import AppNotice from '@/Components/Product/AppNotice.vue';
+import ContextualHelp from '@/Components/Help/ContextualHelp.vue';
 import '../../css/workspace-records.css';
 import { computed, nextTick, provide, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
@@ -241,6 +242,7 @@ const logout = () => router.post(route('logout'));
                     <span v-if="tenantSubscription && subscriptionStatusLabel" :class="['cd-status hidden shrink-0 text-xs sm:inline-flex', subscriptionStatusTone]">{{ subscriptionStatusLabel }}</span>
                 </div>
                 <div class="flex shrink-0 items-center gap-2">
+                    <ContextualHelp />
                     <button v-if="setupProgress" ref="setupButton" type="button" class="group hidden min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 text-sm font-semibold text-[var(--text-strong)] shadow-sm hover:border-[var(--brand-primary)] sm:inline-flex" aria-controls="business-setup-drawer" :aria-expanded="setupOpen" @click="openSetup">
                         <span :class="['grid size-7 place-items-center rounded-full text-xs font-bold', setupProgress.required_complete ? 'bg-[var(--status-success-soft)] text-[var(--status-success)]' : 'bg-[var(--brand-primary)] text-white']">
                             <CheckCircleIcon v-if="setupProgress.required_complete" class="size-4" aria-hidden="true" />

@@ -2510,6 +2510,57 @@ no payment/configuration is changed. Source-of-secret and original-account repai
 remain operator responsibilities. No schema migration or price change is needed.
 Evidence: [customer billing recovery audit](audits/2026-10-15-customer-billing/README.md).
 
+## ADR-070 — Reviewed public Help Center with contextual workspace guidance
+
+- Status: Accepted
+- Date: 2026-10-24
+- Basis: Product owner explicitly requests complete, accurate self-service help,
+  genuine application captures, smart search and links to existing workspaces.
+- Requirements: FR-21 and existing FR-01–FR-20; additive product guidance only.
+
+Store reviewed article metadata and section Markdown in version-controlled JSON
+under `content/help`, with category/action/synonym policy in `config/help.php`.
+Use the installed Markdown renderer with raw HTML stripped and unsafe protocols
+disabled. Publish only valid, published, non-future files. This fits the existing
+modular monolith and makes workflow changes and content review one change; an
+additional authoring panel, external search vendor or generative support service
+is not justified for the current corpus. Revisit indexed search after measured
+request latency or corpus size warrants it, retaining the same public contract.
+
+Use `/help`, `/help/category/{category}` and `/help/articles/{slug}` on the primary
+website/application origin. Keep search queries and authenticated handoffs
+noindex; include only published help pages in the existing sitemap. Meaningful
+initial HTML must remain readable when optional SSR or JavaScript is unavailable.
+The separate booking origin retains its existing business-slug contract; this
+change does not reserve `help` or invalidate existing booking addresses. Public
+Help entry links belong to the primary website/application. Any future booking
+host alias requires checking current/previous business slugs before reservation.
+
+Contextual Help shares reviewed topic suggestions. Article actions resolve only
+active owned memberships, show a choice for multiple workspaces, explain denied
+access and then use existing protected destinations. Public help never changes
+membership, subscription or branch authority and never searches tenant data.
+
+Use synthetic isolated SQLite fixtures with fake communications and no worker,
+real browser captures and a local media manifest (dimensions, capture date and
+checksum). Screenshots must be reviewed with the instructions. Missing/stale
+assets fail the maintenance gate; no invented screenshot replaces them. Preserve
+existing unavailable UI/provider boundaries in customer guidance and the coverage
+audit. This authorizes isolated verification alongside existing release work;
+none of the production chargeability or provider gates is waived.
+
+Feedback accepts a bounded yes/no answer, deduplicated by an opaque session HMAC
+per article revision, without account, tenant, IP or free-text fields. Operators
+receive aggregate counts through `help:feedback`. Apply the additive migration
+before deploying feedback. Search and feedback have independent rate limits;
+the interface respects Retry-After and stops repeated suggestion requests on
+persistent errors. No analytics vendor, support ticket or outbound message is
+introduced.
+
+See [Help Center specification](modules/help-center.md),
+[coverage and local evidence](audits/2026-10-24-help-center/README.md) and
+[maintenance runbook](audits/2026-10-24-help-center/maintenance.md).
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |

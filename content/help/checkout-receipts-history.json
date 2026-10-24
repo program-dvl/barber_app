@@ -1,0 +1,49 @@
+{
+  "slug": "checkout-receipts-history",
+  "title": "Find sales, outstanding balances and receipts",
+  "summary": "Search saved sales, inspect payment history and print the original issued receipt.",
+  "category": "checkout",
+  "keywords": [
+    "receipt",
+    "invoice visit",
+    "sales history",
+    "print receipt",
+    "save pdf",
+    "outstanding sale",
+    "payment history"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "history",
+      "title": "Find the sale",
+      "body": "Business-wide **Sales history** requires revenue access; checkout access still permits the operational visit’s authorized details and receipt.\n\n1. Open **Checkout / Sales** and choose **Sales history**.\n2. Search the client or appointment reference, and narrow by status, method, staff or local-date range where needed.\n3. Open the sale to view **Sale detail**.\n4. Check **Original items**, **Original total**, deposits, payments, refunds and **Amount due**.\n5. Inspect **Payment history** for method, time, recorded actor and any adjustment reason."
+    },
+    {
+      "id": "receipt",
+      "title": "Print or save the receipt",
+      "body": "For a completed sale, select **Print / view receipt**. Use your browser’s print controls to print it or save it as a PDF. An outstanding sale offers **Continue checkout** instead of a final paid receipt.\n\nAn issued receipt preserves the original completed sale. Later refunds are visible in sale detail without rewriting that original receipt. Review the sale’s current history alongside the receipt when you need the full picture."
+    },
+    {
+      "id": "questions",
+      "title": "Missing or changed records",
+      "body": "Clear filters and check the selected location, local-date range and your permissions if a sale is missing. A completed visit without a saved sale belongs in **Ready to checkout** rather than paid sales history.\n\nPrinting a receipt does not itself send an email or text. Eligible receipt notifications use the client’s permitted channels and recorded consent. A visit receipt is different from an invoice for the business’s ClipperDesk subscription."
+    }
+  ],
+  "related": [
+    "checkout-record-payments",
+    "checkout-refund",
+    "clients-payments"
+  ],
+  "action": {
+    "key": "checkout",
+    "label": "Go to Checkout / Sales"
+  }
+}

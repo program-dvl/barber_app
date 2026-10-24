@@ -1,0 +1,61 @@
+{
+  "slug": "billing-start-subscription",
+  "title": "Review and start a paid subscription",
+  "summary": "Choose capacity and billing cycle, review the complete price, then continue to secure checkout.",
+  "category": "billing",
+  "keywords": [
+    "subscribe",
+    "trial conversion",
+    "start paid plan",
+    "payment",
+    "secure checkout",
+    "monthly",
+    "yearly"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Billing administrator"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Before you pay",
+      "body": "Use an owner account or a role with subscription-management permission. Your ClipperDesk subscription pays for the software; it is separate from payments your clients make for appointments. Starting a paid subscription ends your free trial."
+    },
+    {
+      "id": "steps",
+      "title": "Review and subscribe",
+      "body": "1. Open **Subscription & billing** and choose **Plan**.\n2. Under **Choose your subscription**, choose **Billing cycle → Monthly** or **Yearly**.\n3. Enter the number of **Locations** and **Bookable staff**. Count each person once across locations.\n4. Read the recurring total, billing currency, component breakdown and included monthly text credits. Yearly billing charges the full annual amount upfront. Amounts shown here are before tax.\n5. Select **Review subscription**. Read **Review your subscription** and the final selection.\n6. Select **Continue to secure checkout**. Review the final tax and total before paying.\n7. Return to ClipperDesk and wait for verification. Check the subscription status and purchased capacity."
+    },
+    {
+      "id": "verify",
+      "title": "Confirm the subscription is active",
+      "body": "Access changes only after the payment has been verified. A successful browser return alone is not proof of payment. Review the current subscription and invoice status. Do not start another checkout simply because verification is delayed."
+    },
+    {
+      "id": "trouble",
+      "title": "If payment or checkout is unavailable",
+      "body": "Keep your estimate and read the notice. Use **Check billing status** or the offered recovery action when available. Wait for any displayed cooldown. If a support reference appears, use **Contact support** and include that reference without sharing card details."
+    }
+  ],
+  "related": [
+    "billing-capacity",
+    "billing-recovery",
+    "billing-invoices"
+  ],
+  "action": {
+    "key": "billing",
+    "label": "Go to Subscription & billing"
+  },
+  "screenshots": [
+    {
+      "key": "billing-overview",
+      "alt": "Subscription and billing overview showing current subscription and usage",
+      "caption": "Review current access and usage before choosing your subscription.",
+      "section": "steps"
+    }
+  ],
+  "order": 30
+}

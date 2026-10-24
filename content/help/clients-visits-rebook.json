@@ -1,0 +1,48 @@
+{
+  "slug": "clients-visits-rebook",
+  "title": "Review a client’s visits and book their next appointment",
+  "summary": "Follow past and upcoming visits, then rebook using today’s eligible services.",
+  "category": "clients",
+  "keywords": [
+    "client history",
+    "visit history",
+    "returning customer",
+    "rebook client",
+    "book again",
+    "next appointment"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "review",
+      "title": "Read the profile",
+      "body": "Open **Clients** and choose the person. **Overview** leads with their current or next appointment, recent visits, explicit preferences and important visible notes. Future appointments are separate from past visits.\n\nOpen **Visits** for appointment history. Each visit shows its local date, service, staff, status and source. Converted walk-ins appear as appointments. **Queue activity without an appointment** is separate and does not count as a completed visit. Use history pagination to see older records."
+    },
+    {
+      "id": "rebook",
+      "title": "Book again",
+      "body": "1. From Overview, select **Book appointment**, or select **Rebook** beside a suitable previous visit.\n2. Review the Calendar creation drawer with the client already chosen.\n3. Choose the new date and time and check all current services and eligible staff.\n4. Review the price and duration, then select **Add appointment**.\n5. Verify the new visit in Calendar and the client’s upcoming appointments.\n\nRebooking uses today’s available catalogue. Inactive services or staff are not silently copied; choose a supported replacement when prompted."
+    },
+    {
+      "id": "scope",
+      "title": "Why history can look different for different people",
+      "body": "The history follows assigned locations and personal-calendar access. Contact information, notes and payment values have additional permissions. A manager can help check whether a missing record belongs to another branch or staff scope.\n\n**View in Calendar** retains the exact visit and its location-local date. For completed unpaid work, **Checkout** leads to the authorized payment workflow rather than creating another appointment."
+    }
+  ],
+  "related": [
+    "appointments-add",
+    "appointments-change",
+    "clients-payments"
+  ],
+  "action": {
+    "key": "clients",
+    "label": "Go to Clients"
+  }
+}

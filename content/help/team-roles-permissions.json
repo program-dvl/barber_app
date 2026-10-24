@@ -1,0 +1,62 @@
+{
+  "slug": "team-roles-permissions",
+  "title": "Understand roles, capabilities and location access",
+  "summary": "Give people the tools they need without confusing professional titles with permissions.",
+  "category": "team",
+  "keywords": [
+    "permissions",
+    "roles",
+    "administrator",
+    "receptionist",
+    "manager",
+    "owner",
+    "access denied",
+    "custom capabilities"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "meaning",
+      "title": "Three independent settings",
+      "body": "A **Professional title** describes a person, such as stylist or receptionist. Their **Workspace role** determines login capabilities. **Locations they can access** limits where those capabilities apply. Their working branches, services and hours are managed separately."
+    },
+    {
+      "id": "steps",
+      "title": "Review or change access",
+      "body": "1. Open **Team & availability → Access**, or open the person’s profile and choose **Access**.\n2. Review their current role and locations.\n3. Choose an available **Workspace role**, or select **Customize capabilities** for an exact set of responsibilities.\n4. Review each selected capability, especially client contact details, sensitive notes, exports, refunds, revenue, team management and billing.\n5. Choose **Locations they can access** and select **Save access**. Add a reason when useful."
+    },
+    {
+      "id": "limits",
+      "title": "Access safeguards",
+      "body": "You cannot grant capabilities you are not allowed to manage. Only owners can change another owner’s access. Manage your own security in **Profile & security** rather than changing your own workspace role here. A branch manager’s authority stays within their assigned scope. A person with own-calendar access may see only their linked working profile."
+    },
+    {
+      "id": "trouble",
+      "title": "Why a page or record is missing",
+      "body": "Check the signed-in email, business, role, accessible locations and the business’s subscription features. Client details, financial information and private records can have separate restrictions even when a page is visible. Ask an owner to review the specific responsibility instead of broadly enabling every capability."
+    }
+  ],
+  "related": [
+    "team-invite-login",
+    "team-disable-restore-login",
+    "billing-access"
+  ],
+  "action": {
+    "key": "team",
+    "label": "Go to Team & availability"
+  },
+  "order": 15,
+  "screenshots": [
+    {
+      "key": "team-access",
+      "alt": "Team Access section with workspace accounts and invitations",
+      "caption": "Working profiles and permission to sign in are managed separately.",
+      "section": "steps"
+    }
+  ]
+}

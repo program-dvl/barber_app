@@ -1,0 +1,50 @@
+{
+  "slug": "reports-capacity-commission",
+  "title": "Read team capacity, tips and commission reports",
+  "summary": "Separate configured working time from attendance and compensation records from payroll.",
+  "category": "reports",
+  "keywords": [
+    "utilisation",
+    "utilization",
+    "capacity",
+    "staff performance",
+    "commission",
+    "tips",
+    "compensation",
+    "payroll"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "capacity",
+      "title": "Understand Capacity & utilisation",
+      "body": "Choose **Capacity & utilisation** in Reports. Configured capacity follows the retained team schedule intersected with branch hours, excluding breaks, leave, closures and schedule blocks. Occupied service time counts only the parts within those windows, with overlapping occupied time counted once.\n\nUnused capacity is configured time minus occupied service time. It is not a record of physical attendance, a guarantee of a bookable future slot or a score of a person’s effort. Service time outside the configured windows remains visible and is excluded from utilisation."
+    },
+    {
+      "id": "history",
+      "title": "Historical limitations",
+      "body": "Past availability uses saved working schedules, rather than a daily attendance record. Inactive staff may have no reliable available-time total. Zero available time makes the percentage unavailable.\n\nPrior-period capacity comparison is not offered without the required historical schedule snapshots. Do not compare an unavailable percentage as if it were zero or assume a changed schedule recreates the exact hours that existed months ago."
+    },
+    {
+      "id": "compensation",
+      "title": "Review tips and commission",
+      "body": "Choose **Tip statement**, **Commission statement** or **Compensation records** if your permission allows them. Personal access shows your own permitted records; broader access is separate.\n\nThese reports read earned entries, return reversals and recorded adjustments. They do not recalculate commission rules. Tips remain separate from commission. **Compensation records** provides source entries; it is not a wage, deduction, tax or payroll calculation.\n\nCommission-rule editing and manual compensation adjustments are not currently exposed through a complete self-service business screen. Ask the business owner to review the supported arrangement instead of looking for a payroll setup button."
+    }
+  ],
+  "related": [
+    "reports-run",
+    "checkout-deposits-taxes-tips",
+    "calendar-availability"
+  ],
+  "action": {
+    "key": "reports",
+    "label": "Go to Reports"
+  }
+}

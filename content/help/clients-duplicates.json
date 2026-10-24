@@ -1,0 +1,48 @@
+{
+  "slug": "clients-duplicates",
+  "title": "Review and merge duplicate client profiles",
+  "summary": "Keep the right profile and preserve connected history after a careful comparison.",
+  "category": "clients",
+  "keywords": [
+    "merge clients",
+    "duplicate customer",
+    "same phone",
+    "duplicate profiles",
+    "combine records",
+    "survivor"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Confirm it is one person",
+      "body": "A shared phone or email does not always mean two records are the same person. Families and colleagues may share contact details. Only merge after checking identity and history with appropriate access.\n\nMerge controls require separate permission and appear when **Possible duplicates** are available in the client’s **Client records** section."
+    },
+    {
+      "id": "steps",
+      "title": "Review and confirm",
+      "body": "1. Open the profile you intend to keep.\n2. Choose **Client records → Possible duplicates**.\n3. Read the candidate’s name and matching reasons, then select **Preview merge**.\n4. Carefully check **Keep [client name]**, the other profile, the missing fields to fill and the connected-record counts.\n5. Enter **Required merge reason**.\n6. Select **Merge into this profile** only when the retained profile is correct.\n7. Open the resulting profile and verify visits and supporting records.\n\nThe duplicate profile is retired while its registered appointment, sale, deposit, note, form, file, consent and privacy links are preserved."
+    },
+    {
+      "id": "issues",
+      "title": "If the preview becomes stale",
+      "body": "Someone may have changed either record while you reviewed it. Refresh, compare the current profiles and generate another preview. Do not keep confirming an outdated comparison.\n\nMerging is not a way to remove an incorrect payment or a privacy request. Those records keep their own history and correction process. Where identity is uncertain, leave the profiles separate and ask an authorized owner to review."
+    }
+  ],
+  "related": [
+    "clients-add-find",
+    "clients-visits-rebook",
+    "clients-privacy"
+  ],
+  "action": {
+    "key": "clients",
+    "label": "Go to Clients"
+  }
+}

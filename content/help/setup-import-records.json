@@ -1,0 +1,59 @@
+{
+  "slug": "setup-import-records",
+  "title": "Import clients, staff, services or products",
+  "summary": "Use a CSV template, review the preview and choose how duplicate rows should be handled.",
+  "category": "getting-started",
+  "keywords": [
+    "import",
+    "CSV",
+    "spreadsheet",
+    "upload",
+    "migration",
+    "duplicate",
+    "mapping",
+    "bulk"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Prepare a clean file",
+      "body": "You need business-wide settings access. Importing is optional. Download the template for the record type you intend to import and keep a copy of your original file. Include only information your business is entitled to use."
+    },
+    {
+      "id": "required-fields",
+      "title": "Required information and price format",
+      "body": "Clients need a name; staff need a name and email; services need a name, price and duration; products need a name and SKU. Keep a stable external reference when your source file supplies one.\n\nFor service and product prices, the template’s price field uses the currency’s smallest unit: for a currency with two decimal places, enter 2500 for 25.00. Follow the selected currency’s format, and check the preview before importing."
+    },
+    {
+      "id": "steps",
+      "title": "Preview and import",
+      "body": "1. Open **Business setup → Optional setup → Import records**.\n2. Choose **Record type**: Clients, Staff, Services or Products.\n3. Select the matching link under **Download a template** and use its headings as a starting point.\n4. Choose your **CSV file**. In **Map columns**, match each field to a column in the file. Choose **Do not import** for fields you intentionally omit.\n5. Select **Validate and preview**. Read the invalid-row and duplicate counts.\n6. For each **Duplicate decision**, choose **Update matched record**, **Create separately** or **Skip row** deliberately. Correct invalid values in the source file and preview again when necessary.\n7. Select **Start import** for the reviewed preview.\n\nFor existing services, choose **Skip row**. Change their price, duration and future availability through Services, where you can review the effect on appointments."
+    },
+    {
+      "id": "verify",
+      "title": "Verify the result",
+      "body": "Read the import result and inspect several affected records in Clients, Team & availability, Services or Inventory. An import does not publish your booking page. Imported team or service records may still need branch assignments and working hours before they are bookable."
+    },
+    {
+      "id": "trouble",
+      "title": "If rows need attention",
+      "body": "Use the row number and message to correct the file, then validate it again. Avoid creating a separate record for a known existing client just to remove a duplicate warning. Do not assume all rows were imported because the upload completed."
+    }
+  ],
+  "related": [
+    "setup-readiness",
+    "team-service-assignments",
+    "services-online-availability"
+  ],
+  "action": {
+    "key": "setup",
+    "label": "Go to Business setup"
+  },
+  "order": 4
+}

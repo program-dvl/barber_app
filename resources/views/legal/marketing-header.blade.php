@@ -1,5 +1,5 @@
 {{-- No-JavaScript equivalent of MarketingHeader; hydrated visits reuse that component. --}}
-@php($navigation = [['Product', 'marketing.features'], ['Industries', 'marketing.solutions'], ['Use cases', 'marketing.use-cases'], ['Pricing', 'marketing.pricing'], ['Resources', 'marketing.resources']])
+@php($navigation = [['Product', 'marketing.features'], ['Industries', 'marketing.solutions'], ['Use cases', 'marketing.use-cases'], ['Pricing', 'marketing.pricing'], ['Resources', 'marketing.resources'], ['Help', 'help.index']])
 <header class="cd-marketing-header sticky top-0 z-40 backdrop-blur">
     <div class="cd-public-container py-2.5">
         <div class="cd-header-shell flex min-h-16 items-center justify-between gap-4 px-3 sm:px-4">

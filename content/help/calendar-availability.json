@@ -1,0 +1,50 @@
+{
+  "slug": "calendar-availability",
+  "title": "Understand staff availability and booking conflicts",
+  "summary": "Find out why visible space on the calendar may not be bookable.",
+  "category": "calendar",
+  "keywords": [
+    "availability",
+    "conflict",
+    "double booking",
+    "staff missing",
+    "no free slots",
+    "working hours",
+    "resources",
+    "first available"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "basis",
+      "title": "What makes a time available?",
+      "body": "A bookable visit needs an active service, qualified bookable staff, an allowed location, sufficient working time and any required resources. The full service span, processing or cleanup time, breaks, time off, location closures, other appointments and active booking holds all matter.\n\nA person working at several locations cannot be booked twice at the same time. Filtering out an appointment does not release the time it occupies."
+    },
+    {
+      "id": "checks",
+      "title": "Check an unavailable time",
+      "body": "1. Confirm the Calendar location, local date and displayed time zone.\n2. Clear staff, service and status filters to understand the visible schedule.\n3. Ask an authorized manager to check the location’s hours and dated closures.\n4. Check the person’s regular hours, breaks, temporary changes and time off in **Team**.\n5. Check the service’s staff assignment, location availability and duration in **Services**.\n6. Try an eligible different person or another time, then let the booking form validate it.\n\nInactive or former staff may still appear because they have visits in the selected range. Their presence does not make them available for new bookings."
+    },
+    {
+      "id": "questions",
+      "title": "Why did an available time stop working?",
+      "body": "Another booking or temporary hold may have taken the opening while you were deciding. Refresh and choose again; do not keep submitting the same conflict.\n\n**First available** chooses qualified staff based on the complete booking checks. It is not a guarantee that any visible calendar gap will fit the service. On daylight-saving clock-change dates, use the precise booking controls where a wall-clock grid cannot safely distinguish times."
+    }
+  ],
+  "related": [
+    "appointments-add",
+    "calendar-views",
+    "appointments-no-slots"
+  ],
+  "action": {
+    "key": "calendar",
+    "label": "Go to Calendar"
+  }
+}

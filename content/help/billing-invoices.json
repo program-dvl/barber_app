@@ -1,0 +1,54 @@
+{
+  "slug": "billing-invoices",
+  "title": "View subscription invoices and manage your payment method",
+  "summary": "Read invoice history and open the secure billing portal for account payment details.",
+  "category": "billing",
+  "keywords": [
+    "invoice",
+    "receipt",
+    "download PDF",
+    "card",
+    "payment method",
+    "billing email",
+    "billing portal",
+    "tax"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Billing administrator"
+  ],
+  "sections": [
+    {
+      "id": "invoices",
+      "title": "Find an invoice",
+      "body": "1. Open **Subscription & billing → Invoices**.\n2. Check the invoice number or label, issue date, **Status** and **Total**, including the currency.\n3. Select the invoice name to view its details.\n4. Use its download or secure-view action when available. If no external document exists, the details view remains available.\n5. Use the page controls for additional invoices."
+    },
+    {
+      "id": "method",
+      "title": "Manage billing details",
+      "body": "1. Open **Overview** and review the saved payment-method summary.\n2. Select **Manage billing** when available.\n3. In the secure billing portal, review or update the payment method and billing details offered for your account.\n4. Return to ClipperDesk and check the refreshed subscription information."
+    },
+    {
+      "id": "meaning",
+      "title": "Understand invoice status",
+      "body": "An invoice can be open, paid or in another recorded state. Read the status alongside the total; an invoice appearing in the list does not mean it has been paid. Outstanding invoices still require attention after scheduling cancellation. Subscription invoices are separate from client sale receipts."
+    },
+    {
+      "id": "trouble",
+      "title": "If the portal or document does not open",
+      "body": "Keep your current billing page and read its recovery message. Use the available check or contact action rather than starting another subscription. If no invoice has been issued, the page shows **No invoices yet**. A private account may not have a payment-method summary until a billing account exists."
+    }
+  ],
+  "related": [
+    "billing-recovery",
+    "billing-cancel",
+    "billing-access"
+  ],
+  "action": {
+    "key": "billing",
+    "label": "Go to Subscription & billing"
+  },
+  "order": 34
+}

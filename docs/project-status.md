@@ -1,5 +1,42 @@
 # Project status
 
+## 2026-10-24 Public Help Center and contextual guidance (FR-21; ADR-070)
+
+- [x] Audited current routes/screens/domain rules and published 80 focused guides
+  across 14 categories, with explicit permission/plan/prerequisite differences,
+  FAQs, recovery and unavailable-feature boundaries. Detailed inventories map
+  setup/workforce/catalogue/billing/account and operational/CRM/commerce/reporting
+  behavior to current code and requirements. No Phase 2 workflow is promoted.
+- [x] Public `/help`, category/article pages, natural-question search with synonyms,
+  prefix/typo matching, suggestions and related guides share reviewed file content.
+  Authenticated header Help is contextual; actual-screen actions retain membership,
+  location, authorization and subscription gates. Multiple businesses receive a
+  safe chooser. Crawlable initial HTML, canonical/schema/sitemap and search noindex
+  use existing public SEO policy.
+- [x] Captured 30 genuine screens from isolated synthetic SQLite fixtures and
+  integrated them into 28 guides. Intrinsic sizes, lazy images, expandable native
+  dialogs, captions and checksum/dimension validation prevent fabricated or stale
+  assets. Repeatable capture, content validation, feedback aggregates and an explicit
+  list of remaining text-guided workflows are documented.
+- [x] Article feedback uses revision/session-deduplicated yes/no records without
+  tenant/account/IP/free-text fields. Search and feedback limits are separate;
+  query input survives failures, Retry-After is visible and persistent suggestion
+  failures stop requests. Negative votes offer a concrete search/support path.
+- [x] Full local suite: **822 passed / 8,847 assertions**, 30 existing skips;
+  **104 frontend tests**, production client/SSR builds, scoped Pint, whitespace and
+  **21 public route budgets** pass. Focused Help: **37 tests / 323 assertions**.
+  Local Chromium checks recorded **42 responsive/journey cases** across 320–1440px
+  and **3 additional recovery cases**, including no-JavaScript article reading,
+  keyboard/lightbox focus, real local feedback, 429 cooldowns and persistent failure.
+  Fresh-catalogue search measured approximately 9–13 ms locally across 80 articles.
+- [ ] Not deployed. Feedback's additive migration has not been applied to the
+  primary database and must accompany normal deployment. Detailed form/refund/
+  invitation/import/MFA/provider-return steps remain text-guided visual gaps.
+  No real payment, customer message, primary data change, provider certification
+  or independent WCAG/cross-browser certification. Existing general-launch and
+  provider/region/privacy gates remain unchanged.
+  [Coverage, evidence, limitations and maintenance](audits/2026-10-24-help-center/README.md).
+
 ## 2026-10-15 Customer-first billing recovery and shared notices (ADR-069)
 
 - [x] AGENTS.md, design-system, documentation entry point and quality gates now

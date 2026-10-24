@@ -1,0 +1,50 @@
+{
+  "slug": "appointments-status-cancel",
+  "title": "Record visit progress, cancellation and no-shows",
+  "summary": "Keep arrivals, service progress and appointment history accurate.",
+  "category": "appointments",
+  "keywords": [
+    "arrive",
+    "check in",
+    "start service",
+    "complete",
+    "cancel appointment",
+    "no show",
+    "pending approval",
+    "status"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Record what has happened",
+      "body": "1. Open the visit from **Dashboard** or **Calendar**.\n2. Check the client and service before using the available next action, such as confirmation, arrival, check-in, service start or completion.\n3. Wait for the status to update before making another change.\n4. After completion, open **Checkout** if payment needs recording and your role permits it.\n\nOnly transitions valid for the visit’s present state are offered. Completing an appointment does not mean its sale has been paid."
+    },
+    {
+      "id": "cancel",
+      "title": "Cancel a visit or record a no-show",
+      "body": "1. Open the appointment in Calendar and choose its cancellation action.\n2. In **Cancel this appointment?**, choose **Why is this appointment being cancelled?**. If you select **Other**, enter **Other reason**.\n3. Check the client and time, then select **Cancel appointment**. Select **Keep appointment** to leave it unchanged.\n4. If the client did not attend, use the no-show action and confirm **Mark no-show** instead.\n\nCancellation and a confirmed no-show release reserved time and retain history. A past scheduled time alone does not establish a no-show. Cancellation reasons distinguish client-requested and business cancellations in reports."
+    },
+    {
+      "id": "questions",
+      "title": "Payments and notifications",
+      "body": "Cancelling a visit does not prove that a deposit or payment was returned. Review payment records separately and follow the business’s cancellation policy.\n\nEligible status changes may create client notifications according to channel choices and consent. A saved appointment status is not proof that the client received the message; check **Client notifications → Delivery history** when delivery matters."
+    }
+  ],
+  "related": [
+    "appointments-change",
+    "checkout-refund",
+    "notifications-delivery"
+  ],
+  "action": {
+    "key": "calendar",
+    "label": "Go to Calendar"
+  }
+}

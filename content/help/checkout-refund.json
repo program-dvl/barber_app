@@ -1,0 +1,48 @@
+{
+  "slug": "checkout-refund",
+  "title": "Record money returned through the original payment method",
+  "summary": "Review refund or void amounts, reasons and product disposition without rewriting the original sale.",
+  "category": "checkout",
+  "keywords": [
+    "refund",
+    "void payment",
+    "return product",
+    "restock",
+    "refund history",
+    "returned money"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Return the money through the proper channel first",
+      "body": "You need refund permission. This action records money already returned through the original method; it does not send a refund to a bank or card processor.\n\nPayments controlled by a payment provider can be blocked for approved reconciliation instead of offering this manual action. Do not record a manual return to bypass that restriction or imply a provider refund succeeded."
+    },
+    {
+      "id": "steps",
+      "title": "Review and record the return",
+      "body": "1. Open **Checkout / Sales → Sales history**, open the sale and find the original payment in **Payment history**.\n2. Select **Record refund / void** when available.\n3. Choose **Adjustment** and enter **Total to record**, no more than the shown refundable amount.\n4. Review item refund amounts. For products, enter **Returned quantity** and **Stock disposition**: **Client keeps product**, **Return to stock** or **Returned · write off**.\n5. Enter required **Reason**.\n6. Confirm that the amount was returned through the original method and stock disposition was reviewed.\n7. Select **Confirm refund record** and check the new history entry."
+    },
+    {
+      "id": "after",
+      "title": "Verify without charging again",
+      "body": "The original sale and receipt remain. Refunds and voids add adjustment records; a completed sale is not reopened for another charge just because its displayed recorded balance reflects those adjustments.\n\nPreviously returned quantity or value cannot be returned twice. Unallocated return amounts can represent tax or tip; do not invent an item allocation. If saving was interrupted, use **Recover pending refund**, **Retry same refund** or **Check sale history** for that exact request before recording another return."
+    }
+  ],
+  "related": [
+    "checkout-receipts-history",
+    "checkout-payment-recovery",
+    "reports-money"
+  ],
+  "action": {
+    "key": "checkout",
+    "label": "Go to Checkout / Sales"
+  }
+}

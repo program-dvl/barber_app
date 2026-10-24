@@ -187,3 +187,15 @@ ProductMark's explicit image option, with its intrinsic dimensions, accessible
 name and responsive width. The privacy HTML fallback uses the same asset.
 The attached lettering/tagline is preserved; no duplicate text is rendered.
 [Asset provenance and verification](../audits/2026-10-12-public-logo/README.md).
+
+## Public and contextual Help (2026-10-24)
+
+FR-21/ADR-070 adds one public Help library and a shared header Help disclosure for
+existing business workflows. Context suggestions, actual-screen handoffs and
+feedback follow the same authorization, customer-first recovery and notification
+contracts as the workspace. The module documents current unavailable features
+without presenting internal APIs as usable screens. The reading layout, contents,
+related guides and real screenshot dialog reuse the existing semantic design
+system. No customer records enter search. [Help contract](help-center.md) and
+[local verification/coverage gaps](../audits/2026-10-24-help-center/README.md) define
+the maintenance boundary; this is not a claim of deployment or provider readiness.

@@ -1,0 +1,48 @@
+{
+  "slug": "business-booking-link",
+  "title": "Change and share your booking link",
+  "summary": "Choose a readable unique link while preserving previously used business links.",
+  "category": "business",
+  "keywords": [
+    "URL",
+    "slug",
+    "booking link",
+    "share",
+    "website link",
+    "rename",
+    "reserved"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Edit the booking link",
+      "body": "1. Open **Business setup → Business profile → Identity & contact**.\n2. Review **Booking link**. Enter a short, readable business name using the permitted letters, numbers and hyphens.\n3. Select **Save business profile**. If the name is unavailable or reserved, choose another name.\n4. In **Online booking**, use **Copy booking link** after the page is live. Share that complete link on your website or business materials."
+    },
+    {
+      "id": "history",
+      "title": "What happens to old links",
+      "body": "Previously owned business links redirect to your current primary link. Changing the link does not transfer another business’s address to you. A link is not public booking permission by itself: publication and online availability still apply."
+    },
+    {
+      "id": "trouble",
+      "title": "If the link does not accept bookings",
+      "body": "Check the **Live** state and **Accept online bookings**, then check service and staff eligibility. Share the complete business booking link, never a client’s private appointment-management link. If a validation message says the name is taken, changing capitalization does not make it a different available name."
+    }
+  ],
+  "related": [
+    "business-publish",
+    "business-profile",
+    "services-online-availability"
+  ],
+  "action": {
+    "key": "setup",
+    "label": "Go to Business setup"
+  },
+  "order": 11
+}

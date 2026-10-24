@@ -1,0 +1,61 @@
+{
+  "slug": "team-coverage",
+  "title": "Read live availability and weekly coverage",
+  "summary": "Understand free staff time, booked time, breaks, time off and running visits.",
+  "category": "team",
+  "keywords": [
+    "weekly coverage",
+    "available now",
+    "reserved time",
+    "utilization",
+    "on break",
+    "off today",
+    "staff missing"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Find the right person and day",
+      "body": "1. Open **Team & availability** and choose **Location** and **Working day**.\n2. Use **Team** for the directory, **Weekly coverage** for the week or **Time off** for upcoming absences.\n3. Search with **Find a team member**. Combine **Show**, **Can perform** and **Professional role** filters.\n4. Select a person to inspect today’s appointments, **Available booking gaps** and upcoming shifts.\n5. Use **View calendar** to review the complete operational schedule."
+    },
+    {
+      "id": "meaning",
+      "title": "Understand the numbers",
+      "body": "**Available now** refers to free staff time today. A service must still fit its duration and required rooms or equipment. Reserved time includes reservations within usable working windows; it is not a payroll or attendance measure. A service running beyond its expected finish needs review before another client can safely be assigned."
+    },
+    {
+      "id": "trouble",
+      "title": "If someone is missing or appears off",
+      "body": "Confirm the location, date and filters; use **Reset filters** or **Everyone**. Check active status, working branch, weekly hours and dated time off. If **Availability needs refresh** appears, use the refresh control before assigning work. Where a display limit warning appears, inspect the full Calendar."
+    },
+    {
+      "id": "access",
+      "title": "Why colleagues see different coverage",
+      "body": "Managers see only authorized branches. Own-calendar staff see their linked working profile. Private leave reasons and login settings are not included in read-only coverage views."
+    }
+  ],
+  "related": [
+    "team-weekly-hours",
+    "team-time-off",
+    "team-add-member"
+  ],
+  "action": {
+    "key": "team",
+    "label": "Go to Team & availability"
+  },
+  "order": 21,
+  "screenshots": [
+    {
+      "key": "team-weekly-coverage",
+      "alt": "Weekly team coverage showing working windows and time off",
+      "caption": "Weekly coverage helps you compare scheduled staff time across days.",
+      "section": "steps"
+    }
+  ]
+}

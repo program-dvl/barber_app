@@ -1,0 +1,71 @@
+{
+    "scope": "Local PHP in-process search; fresh catalogue per query. No HTTP, provider, target topology or load certification.",
+    "articles": 80,
+    "results": [
+        {
+            "question": "How do I add another location?",
+            "milliseconds": 12.8,
+            "first_result": "business-location"
+        },
+        {
+            "question": "staff",
+            "milliseconds": 9.15,
+            "first_result": "team-service-assignments"
+        },
+        {
+            "question": "employee",
+            "milliseconds": 9.2,
+            "first_result": "team-add-member"
+        },
+        {
+            "question": "add worker",
+            "milliseconds": 10.23,
+            "first_result": "team-add-member"
+        },
+        {
+            "question": "How do I invite staff?",
+            "milliseconds": 10.49,
+            "first_result": "team-invite-login"
+        },
+        {
+            "question": "locaton",
+            "milliseconds": 10.71,
+            "first_result": "business-location"
+        },
+        {
+            "question": "service not available for booking",
+            "milliseconds": 11.59,
+            "first_result": "appointments-no-slots"
+        },
+        {
+            "question": "no time slots",
+            "milliseconds": 11.79,
+            "first_result": "appointments-no-slots"
+        },
+        {
+            "question": "cancel subscription",
+            "milliseconds": 11.04,
+            "first_result": "billing-cancel"
+        },
+        {
+            "question": "forgot password",
+            "milliseconds": 11.73,
+            "first_result": "account-recovery"
+        },
+        {
+            "question": "refund payment",
+            "milliseconds": 11.25,
+            "first_result": "reports-money"
+        },
+        {
+            "question": "stock inventory",
+            "milliseconds": 11.59,
+            "first_result": "inventory-availability"
+        },
+        {
+            "question": "appointment reminders",
+            "milliseconds": 10.47,
+            "first_result": "notifications-preferences"
+        }
+    ]
+}

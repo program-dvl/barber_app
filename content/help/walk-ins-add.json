@@ -1,0 +1,57 @@
+{
+  "slug": "walk-ins-add",
+  "title": "Add a walk-in to the queue",
+  "summary": "Check in a new or existing client with their requested service and preferred staff.",
+  "category": "walk-ins",
+  "keywords": [
+    "walk in",
+    "walkin",
+    "queue",
+    "add walk-in",
+    "check in customer",
+    "arrival",
+    "walk-in client"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Before check-in",
+      "body": "Open **Walk-in queue** and choose the location. You need walk-in management access and an eligible active service at that branch. A queue entry records a waiting client; it does not reserve a service time or record money."
+    },
+    {
+      "id": "steps",
+      "title": "Add the client",
+      "body": "1. Select **Add walk-in**.\n2. Choose an existing client and use **Find a client**, or choose a new client.\n3. For a new client, enter required **Client name** and **Mobile number**. **Email (optional)** can be added under the additional details.\n4. Select **Requested service** and, if wanted, **Preferred staff**.\n5. Check **Arrival time**. Add **Visit note (optional)** only when your role permits it.\n6. Select **Add to queue**.\n7. Confirm the client is in the waiting list at the intended location.\n\nExisting-client selection reuses that person’s profile. If a saved mobile is invalid, correct it through the authorized client-profile workflow before adding the walk-in."
+    },
+    {
+      "id": "estimate",
+      "title": "Explain the waiting estimate",
+      "body": "The displayed waiting range is an estimate based on the queue, configured staff and other commitments. It is not an appointment, a promise or a reserved slot. A preferred staff member can make one client’s wait longer while another person starts sooner.\n\nIf saving is interrupted, refresh the queue and check for the client before adding them again. Contacts and notes are hidden when your role does not allow them."
+    }
+  ],
+  "related": [
+    "walk-ins-serve",
+    "walk-ins-order-alerts",
+    "clients-add-find"
+  ],
+  "action": {
+    "key": "walk-ins",
+    "label": "Go to Walk-in queue"
+  },
+  "screenshots": [
+    {
+      "key": "walk-in-add",
+      "alt": "Add walk-in form with requested service and preferred staff",
+      "caption": "Check the location and client identity before selecting Add to queue.",
+      "section": "steps"
+    }
+  ]
+}

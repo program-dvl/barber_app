@@ -1,0 +1,48 @@
+{
+  "slug": "team-accept-invitation",
+  "title": "Accept a team invitation",
+  "summary": "Join the correct business using the email address named in your invitation.",
+  "category": "team",
+  "keywords": [
+    "join team",
+    "accept invitation",
+    "wrong email",
+    "invitation expired",
+    "staff register"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Join the business",
+      "body": "1. Open your secure ClipperDesk invitation. Check the business name, role, listed locations and expiry.\n2. If you already have an account for the invited email, select **Sign in to accept**. You return to the invitation after signing in.\n3. If you are already signed in with the matching email, select **Join** followed by the business name.\n4. If you need a new account, enter **Your name**, **Create password** and **Confirm password**. Read and accept the linked terms and privacy information, then select **Create account and join** followed by the business name."
+    },
+    {
+      "id": "wrong",
+      "title": "Signed in with a different email",
+      "body": "Use **Sign out**, then sign in as the address shown on the invitation. An invitation cannot be accepted by a different account. Ask the manager to correct the invite if they used the wrong address."
+    },
+    {
+      "id": "verify",
+      "title": "After joining",
+      "body": "Your access follows the workspace role and locations chosen by the business. Missing pages do not mean the invitation failed: the owner controls which tools you can use. Your manager separately manages your working profile, services and hours."
+    },
+    {
+      "id": "expired",
+      "title": "Expired or cancelled invitations",
+      "body": "Ask the business owner or team manager to send a new secure invitation. Creating a separate owner workspace will not restore access to their business."
+    }
+  ],
+  "related": [
+    "team-invite-login",
+    "team-roles-permissions",
+    "account-sign-in"
+  ],
+  "order": 14
+}

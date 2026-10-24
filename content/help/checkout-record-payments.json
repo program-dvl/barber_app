@@ -1,0 +1,58 @@
+{
+  "slug": "checkout-record-payments",
+  "title": "Record received, split or partial payments",
+  "summary": "Save money you have actually received and keep unpaid balances visible.",
+  "category": "checkout",
+  "keywords": [
+    "record payment",
+    "cash",
+    "external card",
+    "bank transfer",
+    "split tender",
+    "partial payment",
+    "pay later",
+    "payment link"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Confirm the money was received",
+      "body": "Start with the correct saved sale. Check any payments and applied deposit already recorded. Successful external card, transfer or online payments must already have happened before you record them here. A pending or failed payment is not a receipt."
+    },
+    {
+      "id": "steps",
+      "title": "Record one or more methods",
+      "body": "1. Under **Record payment received**, choose the actual payment method, such as **Cash**, **External card** or **Bank transfer**. **Payment link** records a successful external link payment; it does not create or send a payment link. **UPI** is shown for supported India or INR contexts.\n2. Enter **Amount received** in the sale’s currency.\n3. For cash, **Cash tendered (optional)** can calculate change. Record the amount allocated to the sale, rather than the full banknote handed over.\n4. For another method, optionally enter its terminal or transfer **Reference**.\n5. If the client used several methods, select **Add to split payment** for each received part. Review the staged amounts and remaining balance.\n6. Confirm **I have received [amount]** only after checking the money.\n7. Select the **Record** button for the shown amount and wait for completion."
+    },
+    {
+      "id": "result",
+      "title": "Verify the result",
+      "body": "A full payment completes the sale and makes the final receipt available. A partial payment leaves the rest outstanding on the same sale. **Pay later** keeps the saved sale outstanding and records no successful payment.\n\nCheck **Payments recorded** or **Review sale & payments** before recording another amount. The sale’s saved balance limits what can be recorded. If the response is interrupted, use the pending-request recovery controls and do not take money again."
+    }
+  ],
+  "related": [
+    "checkout-review",
+    "checkout-payment-recovery",
+    "checkout-receipts-history"
+  ],
+  "action": {
+    "key": "checkout",
+    "label": "Go to Checkout / Sales"
+  },
+  "screenshots": [
+    {
+      "key": "checkout-payment",
+      "alt": "Saved sale with payment method and received amount controls",
+      "caption": "Only confirm amounts that have actually been received.",
+      "section": "steps"
+    }
+  ]
+}

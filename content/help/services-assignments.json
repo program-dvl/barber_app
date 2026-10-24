@@ -1,0 +1,60 @@
+{
+  "slug": "services-assignments",
+  "title": "Choose service locations and qualified staff",
+  "summary": "Configure eligibility and price or timing exceptions without changing existing appointments.",
+  "category": "services",
+  "keywords": [
+    "service location",
+    "qualified",
+    "assign staff",
+    "branch prices",
+    "staff variants",
+    "missing staff"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Configure Team & locations",
+      "body": "1. Open **Services**, choose the service and select **Team & locations**.\n2. Choose the locations that can offer it.\n3. Select qualified staff who work at an eligible branch.\n4. Review optional location prices and the staff price, active-time, processing, cleanup and online controls shown for each selected person. Blank exception fields inherit defaults.\n5. Use **Use default price and times** where the person should inherit the standard values.\n6. Review any upcoming appointment impact in **Booking & rules**, enter a reason where required and select **Save changes**."
+    },
+    {
+      "id": "verify",
+      "title": "Check availability",
+      "body": "Verify the person’s **Branches they work at** and **Schedule** in Team & availability. Qualification does not add working hours. A staff member and service must share the selected location and have enough usable time and required resources."
+    },
+    {
+      "id": "access",
+      "title": "Why you may not be able to edit",
+      "body": "A manager needs authority over every configured service branch and the working branches of its qualified staff. A branch-only role may be able to use a service while being unable to change a service shared across other branches."
+    },
+    {
+      "id": "history",
+      "title": "Existing visits and pending bookings",
+      "body": "Removing a person or branch does not cancel or reassign existing visits. Active booking holds can block changes that would invalidate a client’s reserved selection. Future-dated service settings can also pause current editing; ask an authorized manager to review them."
+    }
+  ],
+  "related": [
+    "team-service-assignments",
+    "team-weekly-hours",
+    "services-online-availability"
+  ],
+  "action": {
+    "key": "services",
+    "label": "Go to Services"
+  },
+  "order": 25,
+  "screenshots": [
+    {
+      "key": "service-assignments",
+      "alt": "Service Team and locations section",
+      "caption": "Choose eligible locations and qualified team members for the service.",
+      "section": "steps"
+    }
+  ]
+}

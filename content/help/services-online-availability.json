@@ -1,0 +1,62 @@
+{
+  "slug": "services-online-availability",
+  "title": "Why is a service missing online or showing no times?",
+  "summary": "Check publication, visibility, eligibility, assignments, hours and booking rules in order.",
+  "category": "services",
+  "keywords": [
+    "not bookable",
+    "service unavailable",
+    "no slots",
+    "no availability",
+    "missing service",
+    "online visibility",
+    "customer cannot book"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "catalogue",
+      "title": "If the service is missing entirely",
+      "body": "1. In **Business setup**, confirm the booking page is published and **Accept online bookings** is enabled.\n2. In **Services**, open the service. It must be active, within its available dates and have **Enable online booking** selected.\n3. In **Team & locations**, confirm an active eligible location and a qualified active person who is enabled online at that location.\n4. In Team & availability, check the person’s **Clients can choose them online** setting.\n5. Review **Who can book** and the business’s **New clients** rule. A client may be ineligible for a particular service."
+    },
+    {
+      "id": "times",
+      "title": "If the service appears but no times are offered",
+      "body": "1. Check location opening hours and the person’s working hours in the location’s time zone.\n2. Review breaks, dated temporary hours, time off and closures.\n3. In **Booking & rules**, review **Minimum booking notice** and **Book up to (days ahead)**.\n4. Check the full duration, cleanup and any required rooms or equipment. Existing appointments, temporary reservations and work at another branch can occupy capacity.\n5. Try a different day or qualified person after correcting configuration. Do not reduce the duration merely to force a time to appear."
+    },
+    {
+      "id": "deposits",
+      "title": "If confirmation stops at a deposit",
+      "body": "Online deposit payment is not yet available for completing deposit-required public bookings. The client should contact the business. Review whether your policy should require a public deposit; do not tell clients they have a confirmed appointment without a confirmation."
+    },
+    {
+      "id": "verify",
+      "title": "Verify the correction",
+      "body": "Use the actual published booking link and follow the same location, services, person and date as the client. A private preview verifies presentation, not available times. Ask for the visible message and choices used; never request the client’s password or another client’s secure link."
+    }
+  ],
+  "related": [
+    "business-publish",
+    "business-booking-preferences",
+    "team-weekly-hours",
+    "services-assignments"
+  ],
+  "action": {
+    "key": "services",
+    "label": "Go to Services"
+  },
+  "order": 26,
+  "screenshots": [
+    {
+      "key": "service-booking-rules",
+      "alt": "Service booking rules including online visibility and booking windows",
+      "caption": "Online visibility still requires matching staff and location availability.",
+      "section": "catalogue"
+    }
+  ]
+}

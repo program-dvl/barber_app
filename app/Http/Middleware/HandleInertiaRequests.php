@@ -6,6 +6,7 @@ use App\Domain\Billing\Services\EntitlementEvaluator;
 use App\Domain\Billing\Services\PublicPricingCatalog;
 use App\Domain\BusinessConfiguration\Services\BusinessSetupAccess;
 use App\Domain\BusinessConfiguration\Services\BusinessSetupProgress;
+use App\Domain\HelpCenter\HelpContext;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\PlatformNotice;
 use App\Domain\PlatformAccess\Models\SupportAccessSession;
@@ -48,6 +49,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'appName' => config('brand.product_name'),
+            'help' => fn () => app(HelpContext::class)->for($request),
             'seoDefaults' => fn () => [
                 'title' => match ($request->route()?->getName()) {
                     'login' => 'Sign in | ClipperDesk',

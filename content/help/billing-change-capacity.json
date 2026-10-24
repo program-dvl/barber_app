@@ -1,0 +1,54 @@
+{
+  "slug": "billing-change-capacity",
+  "title": "Change capacity or switch monthly and yearly billing",
+  "summary": "Review when a change takes effect and what is due before confirming it.",
+  "category": "billing",
+  "keywords": [
+    "upgrade",
+    "downgrade",
+    "change plan",
+    "reduce staff",
+    "increase locations",
+    "annual",
+    "renewal",
+    "switch billing"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Billing administrator"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Review a change",
+      "body": "1. Open **Subscription & billing → Plan**.\n2. Change **Locations**, **Bookable staff** or **Billing cycle**.\n3. If shown, select **Review a switch to current pricing at renewal** only if you want to review moving from retained rates to current pricing.\n4. Select **Review subscription**.\n5. Read **Due today**, the recurring total, included credits and effective date.\n6. Select **Confirm billing change**, or **Continue to secure checkout** when the review asks for payment.\n7. Return to billing and verify the applied or scheduled state."
+    },
+    {
+      "id": "timing",
+      "title": "When changes apply",
+      "body": "Expansion requires verified payment before extra capacity becomes available. Decreases and billing-cycle changes take effect at renewal. Existing paid terms stay in place until a reviewed change is explicitly confirmed. Your records are not removed to fit a smaller subscription."
+    },
+    {
+      "id": "reduction",
+      "title": "Before reducing capacity",
+      "body": "Check active location and staff usage first. If usage is above the requested capacity, safely review future bookings and deactivate only the records that should stop taking new work. Disabling a login alone does not make an active bookable profile inactive."
+    },
+    {
+      "id": "pending",
+      "title": "If another change is pending",
+      "body": "An unfinished checkout or scheduled change can block another confirmation. Read the existing selection and status. Use the provided recovery actions; changing the visible estimate does not change a submitted payment request."
+    }
+  ],
+  "related": [
+    "billing-capacity",
+    "billing-recovery",
+    "team-edit-profile"
+  ],
+  "action": {
+    "key": "billing",
+    "label": "Go to Subscription & billing"
+  },
+  "order": 32
+}

@@ -1,0 +1,48 @@
+{
+  "slug": "clients-payments",
+  "title": "Understand a client’s payments and outstanding balance",
+  "summary": "Read recorded spending, payments and unfinished checkouts without confusing them with visit prices.",
+  "category": "clients",
+  "keywords": [
+    "client payments",
+    "lifetime spend",
+    "outstanding balance",
+    "payment follow up",
+    "customer spend",
+    "refund history"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "view",
+      "title": "Open the payment information",
+      "body": "Open the client profile and choose **Payments**. The tab appears only with appropriate financial access, and records still follow assigned-location and personal-appointment boundaries.\n\nReview **Net spend**, **Average completed sale**, **Outstanding · open checkouts** and **Refunds / tips**. Amounts in different currencies are shown separately. **Payment history** lists recorded payments and refunds with date, reference, method, status and amount."
+    },
+    {
+      "id": "meaning",
+      "title": "Understand the amounts",
+      "body": "Net spend uses completed sales and applied deposits, less refunds. It is not the total of every appointment’s quoted price. An appointment can be completed while still waiting for Checkout.\n\nOutstanding describes positive balances on saved open checkouts. A completed visit without a saved sale is shown separately as awaiting checkout; it should not be read as a zero balance or a free service."
+    },
+    {
+      "id": "follow",
+      "title": "Follow up on an unpaid visit",
+      "body": "1. Review **Payment follow-up** in Overview or the awaiting-checkout message in Payments.\n2. Open **Visits** and identify the completed visit by reference, branch and date.\n3. Select **Checkout** when offered.\n4. Review the sale and existing payment history before taking or recording additional money.\n\nIf you cannot see payment details, ask an owner to check your access. Do not create another visit or client profile to make an outstanding amount disappear."
+    }
+  ],
+  "related": [
+    "checkout-review",
+    "checkout-record-payments",
+    "clients-visits-rebook"
+  ],
+  "action": {
+    "key": "clients",
+    "label": "Go to Clients"
+  }
+}

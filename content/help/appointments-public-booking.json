@@ -1,0 +1,56 @@
+{
+  "slug": "appointments-public-booking",
+  "title": "Understand the customer’s online booking journey",
+  "summary": "Learn what customers choose and what makes a booking confirmed.",
+  "category": "appointments",
+  "keywords": [
+    "online booking",
+    "customer booking",
+    "booking page",
+    "public booking",
+    "customer details",
+    "confirm booking"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Prepare the customer-facing page",
+      "body": "The business owner must prepare services, qualified staff, location hours and booking policies, then explicitly publish online booking. A private preview does not publish the business or reserve an appointment.\n\nCustomers use the business’s own booking link. They do not need the business team’s sign-in details."
+    },
+    {
+      "id": "flow",
+      "title": "What customers do",
+      "body": "1. Open the business’s booking link and choose a location if more than one eligible location is available.\n2. In **Services**, select services and eligible add-ons, then choose **Continue**. Use **Find a service** when the catalogue offers search.\n3. Under **Staff & time**, choose **Professional** and **Date**, then select an offered time. **Anyone available · More appointment options** is offered when the business permits an automatic choice.\n4. In **Confirm**, enter required **Full name**, **Mobile** and **Email**. Optional details include **Special request**, **Date of birth** and **How did you hear about us?**.\n5. Select **Review appointment**, check the details and cancellation policy, and accept the booking terms. Choose SMS only if wanted.\n6. Select **Confirm appointment** and wait for **You’re booked** with the reference and visit details.\n\nChanging location rechecks services, staff and availability. The temporary time reservation has a countdown; choosing a time alone is not a confirmed booking."
+    },
+    {
+      "id": "confirmation",
+      "title": "How to know the booking succeeded",
+      "body": "A selected time or entered contact form is not a confirmed appointment. Keep the reference and private appointment link from the final result, and use **Add to calendar** if wanted. Staff can verify the visit in Calendar at its actual location and local date.\n\nWhen a deposit is required, the current public page explains that online payment is unavailable and asks the customer to contact the business. The appointment is not confirmed in that state. Do not ask the customer to search for a card form or promise that payment-status information can collect money.\n\nFor an uncertain confirmation, use **Check confirmation** to safely check the same appointment. If the time reservation expires or policies change, follow **Change services or time** and review the newly offered details. Before taking any money again, have the business check the saved outcome."
+    }
+  ],
+  "related": [
+    "appointments-self-service",
+    "appointments-no-slots",
+    "appointments-waitlist"
+  ],
+  "action": {
+    "key": "calendar",
+    "label": "Go to Calendar"
+  },
+  "screenshots": [
+    {
+      "key": "booking-services",
+      "alt": "ClipperDesk customer booking page with example services",
+      "caption": "Customers start by choosing services at the intended business location.",
+      "section": "flow"
+    }
+  ]
+}

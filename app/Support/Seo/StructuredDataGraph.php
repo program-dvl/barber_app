@@ -83,6 +83,16 @@ class StructuredDataGraph
             $graph[] = ['@type' => 'Article', '@id' => $canonical.'#article', 'headline' => $guide['title'], 'description' => $guide['description'], 'datePublished' => $guide['published_at'], 'dateModified' => $guide['reviewed_at'] ?? $guide['published_at'], 'author' => ['@type' => 'Organization', 'name' => $guide['reviewed_by']], 'publisher' => ['@id' => $organizationId], 'mainEntityOfPage' => ['@id' => $canonical.'#webpage']];
         }
 
+        if ($request->routeIs('help.article') && filled(data_get($props, 'article.title'))) {
+            $article = $props['article'];
+            $graph[] = ['@type' => 'TechArticle', '@id' => $canonical.'#article', 'headline' => $article['title'], 'description' => $article['summary'], 'dateModified' => $article['updated_at'], 'publisher' => ['@id' => $organizationId], 'mainEntityOfPage' => ['@id' => $canonical.'#webpage']];
+            $graph[] = ['@type' => 'BreadcrumbList', 'itemListElement' => [
+                ['@type' => 'ListItem', 'position' => 1, 'name' => 'Help Center', 'item' => PublicUrl::canonical(route('help.index'))],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => $props['category']['title'], 'item' => PublicUrl::canonical(route('help.category', $article['category']))],
+                ['@type' => 'ListItem', 'position' => 3, 'name' => $article['title'], 'item' => $canonical],
+            ]];
+        }
+
         return ['@context' => 'https://schema.org', '@graph' => $graph];
     }
 }

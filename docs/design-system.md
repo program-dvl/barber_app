@@ -1006,3 +1006,21 @@ drawer with visible audit reason, validation, focus restoration and unsaved-chan
 protection. No decorative count badge or unsupported benefit program is added.
 
 [Clients evidence and practical limits](audits/2026-10-03-clients/README.md).
+
+## Help Center and contextual guidance (2026-10-24)
+
+Under FR-21 and ADR-070, Help reuses the public MarketingLayout and shared semantic
+surface, typography, action and focus tokens. Its reading column, restrained topic
+cards, labelled search, breadcrumbs, contents links and related guides are a
+product surface rather than a second theme. Persistent search/feedback failures
+use AppNotice with useful browse/support paths; suggestions stop on persistent
+failures and honor Retry-After. Preserve query text and prevent duplicate votes.
+
+Authenticated headers use one labelled Help disclosure with relevant guides and
+all-help discovery. It remains reachable by keyboard and on phones. Article
+screenshots use intrinsic dimensions, lazy loading, meaningful alternatives and
+native modal expansion with Escape/focus restoration; enlargement scrolls inside
+the dialog instead of overflowing the page. Minimum 44px actions, 10px wrapping
+gaps and 14px text/action separation apply. No-JavaScript articles retain numbered
+steps, real images and the public navigation. Verify actual notices and long text
+at phone and desktop widths after changes. [Evidence and gaps](audits/2026-10-24-help-center/README.md).

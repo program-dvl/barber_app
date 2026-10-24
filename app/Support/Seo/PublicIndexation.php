@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PublicIndexation
 {
-    private const INDEXABLE = ['marketing.home', 'marketing.features', 'marketing.features.show', 'marketing.solutions', 'marketing.solutions.show', 'marketing.use-cases', 'marketing.use-cases.show', 'marketing.pricing', 'marketing.company', 'marketing.security', 'marketing.resources', 'marketing.guides.show', 'blog.index', 'blog.article'];
+    private const INDEXABLE = ['help.index', 'help.category', 'help.article', 'marketing.home', 'marketing.features', 'marketing.features.show', 'marketing.solutions', 'marketing.solutions.show', 'marketing.use-cases', 'marketing.use-cases.show', 'marketing.pricing', 'marketing.company', 'marketing.security', 'marketing.resources', 'marketing.guides.show', 'blog.index', 'blog.article'];
 
     public function directive(Request $request, ?Response $response = null): string
     {

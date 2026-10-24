@@ -1,0 +1,61 @@
+{
+  "slug": "business-hours",
+  "title": "Set opening hours and split opening periods",
+  "summary": "Review the opening week and check affected appointments before saving.",
+  "category": "business",
+  "keywords": [
+    "opening hours",
+    "business hours",
+    "closed",
+    "split hours",
+    "working days",
+    "lunch",
+    "week"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Understand the two schedules",
+      "body": "Location opening hours say when the branch is open. Team working hours say when a person can take appointments. Bookable time needs both. You need business-wide settings access to change location hours."
+    },
+    {
+      "id": "steps",
+      "title": "Review and save your week",
+      "body": "1. Open **Business setup → Opening hours**. Choose the location if you have more than one.\n2. Select the open days and enter each day’s opening and closing times in the displayed location time zone.\n3. Use **Add period** for a split day, such as 9 AM–1 PM and 2 PM–6 PM. Periods must not overlap.\n4. Use **Copy to weekdays** only when the receiving weekdays should share those hours.\n5. Select **Review hours**. Open any affected appointment in Calendar.\n6. If you retain those visits, enter **Reason for retaining these appointments**.\n7. Select **Save business hours**."
+    },
+    {
+      "id": "verify",
+      "title": "Verify availability afterward",
+      "body": "Reopen the week to confirm it was saved, then inspect Calendar for a representative day. Review staff working hours if your business week changed; they are not automatically rewritten."
+    },
+    {
+      "id": "trouble",
+      "title": "When review or save fails",
+      "body": "Your edited week remains available after a recoverable review error. Resolve field messages and review again. Existing appointments keep their booked times; saving opening hours does not cancel or reschedule them. Save or discard the current week before switching locations."
+    }
+  ],
+  "related": [
+    "team-weekly-hours",
+    "business-location",
+    "setup-readiness"
+  ],
+  "action": {
+    "key": "setup",
+    "label": "Go to Business setup"
+  },
+  "screenshots": [
+    {
+      "key": "business-hours",
+      "alt": "Opening hours editor with daily opening periods and Review hours",
+      "caption": "Review each day in the branch’s local time before saving.",
+      "section": "steps"
+    }
+  ],
+  "order": 7
+}

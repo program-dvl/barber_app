@@ -1,0 +1,58 @@
+{
+  "slug": "notifications-preferences",
+  "title": "Choose client notification channels and quiet hours",
+  "summary": "Manage email and SMS preferences while ClipperDesk handles message wording and sending.",
+  "category": "notifications",
+  "keywords": [
+    "client notifications",
+    "email",
+    "sms",
+    "text messages",
+    "quiet hours",
+    "reminder",
+    "turn off messages",
+    "preview message"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "channels",
+      "title": "Save your channel choices",
+      "body": "Open **Client notifications → Notifications**. You need management access to change preferences; other permitted accounts may see a view-only page.\n\n1. Review **Email notifications** and **SMS notifications**.\n2. Turn each channel on or off as appropriate for the business.\n3. Under **A little quiet time**, set **Quiet hours begin** and **Quiet hours end**.\n4. Select **Save preferences** and check the saved confirmation.\n\nTurning a channel off also stops waiting messages on that channel. Turning it back on does not resend those stopped messages. Existing sent messages and their history are retained."
+    },
+    {
+      "id": "reminders",
+      "title": "Understand quiet hours and reminders",
+      "body": "ClipperDesk normally schedules one reminder 24 hours before the appointment. Visits created less than 24 hours ahead receive their eligible confirmation but not an extra late reminder. Rescheduling replaces obsolete reminders with the new visit’s relevant reminder.\n\nQuiet hours use the appointment’s local time. Matching start and end times turn quiet hours off. Existing reminders keep their already scheduled time. Confirmations, changes and requested time-sensitive alerts follow their event timing rather than being ordinary reminder messages."
+    },
+    {
+      "id": "examples",
+      "title": "Preview the client experience",
+      "body": "Select **See a client message**. Choose **Notification** and **Email** or **SMS** to inspect sample wording. These are examples and do not send anything to a client.\n\nClipperDesk manages new message wording, design and sender identity. The current workspace does not include a custom template builder, promotional texting or a conversational inbox. Every text names the business. Check channel status and Delivery history rather than assuming that an enabled switch proves live delivery."
+    }
+  ],
+  "related": [
+    "notifications-delivery",
+    "notifications-consent",
+    "appointments-status-cancel"
+  ],
+  "action": {
+    "key": "notifications",
+    "label": "Go to Client notifications"
+  },
+  "screenshots": [
+    {
+      "key": "notifications",
+      "alt": "Client notification channel switches and quiet-hour controls",
+      "caption": "Save channel and quiet-hour changes together.",
+      "section": "channels"
+    }
+  ]
+}

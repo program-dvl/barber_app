@@ -1,0 +1,53 @@
+{
+  "slug": "billing-text-credits",
+  "title": "Understand monthly text credits and optional credit packs",
+  "summary": "Track included usage, prepaid balances and credit purchases shown for your account.",
+  "category": "billing",
+  "keywords": [
+    "SMS credits",
+    "text allowance",
+    "extra credits",
+    "top up",
+    "text packs",
+    "segments",
+    "messages limit"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Billing administrator"
+  ],
+  "sections": [
+    {
+      "id": "allowance",
+      "title": "How text credits work",
+      "body": "Included text credits reset monthly, including on yearly subscriptions. Message length and destination affect usage; one client notification can require more than one text segment. Routine operational email notifications are included separately. Automatic credit purchases are off."
+    },
+    {
+      "id": "steps",
+      "title": "Review usage",
+      "body": "1. Open **Subscription & billing → Overview** and check **Text credits** in **Your usage**.\n2. Open **Plan** and, if available, review **Text allowance & extra credits**.\n3. Read included credits used this month and the prepaid balance separately.\n4. If your account offers a credit pack, select **Add** followed by its credit amount and price. Read **Add text credits** before selecting **Continue to secure payment**.\n5. Credits are added only after the payment is verified. Use **Check text payment** for a pending purchase."
+    },
+    {
+      "id": "limits",
+      "title": "Availability and delivery",
+      "body": "Credit packs appear only when an approved offer is available for your account. Do not assume every business has a buy button. Prepaid credits carry over while the billing account is retained. Buying credits does not override client consent, STOP requests, channel pauses or delivery problems."
+    },
+    {
+      "id": "trouble",
+      "title": "If credits or messages are pending",
+      "body": "Do not repurchase a pack just because a payment is awaiting verification. Read the saved status and contact support if needed. Use Notifications delivery history to investigate an individual message; a balance alone does not prove a message reached the client."
+    }
+  ],
+  "related": [
+    "billing-invoices",
+    "billing-recovery",
+    "billing-capacity"
+  ],
+  "action": {
+    "key": "billing",
+    "label": "Go to Subscription & billing"
+  },
+  "order": 36
+}

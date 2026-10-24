@@ -1,0 +1,49 @@
+{
+  "slug": "business-branding",
+  "title": "Add your logo, cover image and accent colour",
+  "summary": "Personalize the booking experience without delaying internal setup.",
+  "category": "business",
+  "keywords": [
+    "logo",
+    "cover",
+    "image",
+    "photo",
+    "branding",
+    "colour",
+    "color",
+    "upload"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Update your branding",
+      "body": "1. Open **Business setup**. Change **Accent colour** under **Business profile → Identity & contact**, then select **Save business profile**.\n2. Open **Optional setup → Branding**.\n3. Under **Business logo** or **Booking cover**, select **Choose image**, or **Replace image** for an existing asset. Choose a PNG, JPEG or WebP image.\n4. The chosen image uploads immediately. Wait for completion and correct any file message shown.\n5. Open **Online booking** and inspect both **Desktop** and **Mobile** previews."
+    },
+    {
+      "id": "access",
+      "title": "Access and subscription checks",
+      "body": "Brand uploads require settings permission and the custom branding feature for your business. If upload controls are unavailable, ask your owner or billing administrator to review the current entitlement. Do not assume changing the business type enables branding."
+    },
+    {
+      "id": "verify",
+      "title": "Check the result",
+      "body": "Confirm the saved image appears clearly in the real preview and that text remains readable. A logo and cover image are optional: internal appointments and recording payments can start without them. Branding does not publish a private page."
+    }
+  ],
+  "related": [
+    "business-profile",
+    "business-publish",
+    "billing-access"
+  ],
+  "action": {
+    "key": "setup",
+    "label": "Go to Business setup"
+  },
+  "order": 9
+}

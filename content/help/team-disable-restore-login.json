@@ -1,0 +1,52 @@
+{
+  "slug": "team-disable-restore-login",
+  "title": "Disable or restore a team login",
+  "summary": "End workspace access while preserving the person’s working profile and history.",
+  "category": "team",
+  "keywords": [
+    "remove user",
+    "revoke access",
+    "disable login",
+    "restore login",
+    "reactivate",
+    "offboarding"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Choose the correct action",
+      "body": "Disable login to end access to the workspace. Change the working profile to inactive to stop new bookings. These are separate actions; disabling login alone does not remove future bookability."
+    },
+    {
+      "id": "disable",
+      "title": "Disable access",
+      "body": "1. Open **Team & availability → Access**, or the person’s profile **Access** section.\n2. Select **Disable login…**.\n3. Read the confirmation, enter the **Required reason** and select **Disable login**.\n4. Confirm the state becomes **Disabled**. Their sessions end, while their working profile and appointment history remain."
+    },
+    {
+      "id": "restore",
+      "title": "Restore access",
+      "body": "1. Open the disabled person’s **Access** section.\n2. Enter **Reason to restore access**.\n3. Select **Reactivate login**.\n4. Review their role, capabilities and accessible locations before they resume work."
+    },
+    {
+      "id": "limits",
+      "title": "Protected access",
+      "body": "You cannot use this screen to disable your own account. Only an owner can change another owner’s access. If you are removing a person from daily operations, also review their future appointments, working profile and service assignments."
+    }
+  ],
+  "related": [
+    "team-edit-profile",
+    "team-roles-permissions",
+    "team-activity"
+  ],
+  "action": {
+    "key": "team",
+    "label": "Go to Team & availability"
+  },
+  "order": 16
+}

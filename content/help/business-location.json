@@ -1,0 +1,63 @@
+{
+  "slug": "business-location",
+  "title": "Add or edit a location",
+  "summary": "Set the branch address, time zone, public contacts and initial opening hours.",
+  "category": "business",
+  "keywords": [
+    "add another location",
+    "branch",
+    "second salon",
+    "address",
+    "Google Maps",
+    "entrance",
+    "parking",
+    "multi location"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Before you begin",
+      "body": "You need business-wide settings access. An additional active location also needs available subscription capacity. A location identifies where work happens; it does not automatically assign people or services."
+    },
+    {
+      "id": "steps",
+      "title": "Save location details",
+      "body": "1. Open **Locations**. Choose **Add location**, or use **Location to edit** for an existing branch.\n2. Enter the required **Location name** and **Time zone**.\n3. In the address editor, choose a Google suggestion or enter the full address manually. Review the selected address. Add entrance, unit, floor, parking or arrival details when useful.\n4. Review **Public phone** and **Public email**. These contacts are optional in the form, but clients need a reliable way to reach your business.\n5. For a new location, select working days and enter **Opens** and **Closes**. The closing time must be after opening.\n6. If appropriate, select **Primary location · shown first in booking**.\n7. Select **Add location** for a new branch, or **Save changes** for an existing one."
+    },
+    {
+      "id": "verify",
+      "title": "Make the location usable",
+      "body": "Check its saved name, address and time zone. Then assign working branches in Team & availability and eligible locations in Services. Use Business setup’s Opening hours for different daily or split hours."
+    },
+    {
+      "id": "trouble",
+      "title": "Common location questions",
+      "body": "If **Review location limit** replaces Add location, an authorized billing user must review capacity. If address search is unavailable, use manual entry. Changing a time zone may be blocked by upcoming appointments; review those visits rather than assuming their times will move automatically. Saved appointments retain the address captured for their assigned location."
+    }
+  ],
+  "related": [
+    "business-hours",
+    "team-edit-profile",
+    "services-assignments",
+    "billing-capacity"
+  ],
+  "action": {
+    "key": "locations",
+    "label": "Go to Locations"
+  },
+  "screenshots": [
+    {
+      "key": "business-locations",
+      "alt": "Location details with address, time zone and opening-hour fields",
+      "caption": "Review the branch details clients will use to find your business.",
+      "section": "steps"
+    }
+  ],
+  "order": 6
+}

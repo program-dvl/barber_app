@@ -1,0 +1,49 @@
+{
+  "slug": "clients-forms",
+  "title": "Create form templates and request a client form",
+  "summary": "Publish clear questions and keep completed forms tied to the wording the client saw.",
+  "category": "clients",
+  "keywords": [
+    "client form",
+    "consultation form",
+    "consent form",
+    "intake",
+    "form template",
+    "signature",
+    "questionnaire"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "template",
+      "title": "Publish a template",
+      "body": "You need form-management permission. Open a client profile, choose **Client records** and expand **Manage form templates**.\n\n1. In **Start or revise**, choose **New template** or an existing template.\n2. Enter required **Internal name**, **Purpose** and **Title shown to clients**. **Introduction** and **Associated services** are optional.\n3. For each field, enter **Question or wording** and choose **Answer type**. Supported choices include Text, Number, Date, Yes/no, Multiple choice and Signature.\n4. For Multiple choice, enter **Choices** one per line. Choose **Required answer** where needed.\n5. Use **Add field** or **Remove field** to shape the form.\n6. Select **Publish new version**.\n\nA revised version does not rewrite the wording retained with previously completed forms."
+    },
+    {
+      "id": "request",
+      "title": "Request a form for a client",
+      "body": "1. In **Client records → Forms and consent**, choose **Form template**.\n2. Choose **Originating appointment**, or leave **No appointment link** if this is a general request.\n3. Select **Create form link**.\n4. Use the secure link shown by the application and share it privately through an appropriate permitted channel. Creating a link alone is not proof that a message was sent.\n5. Check the form’s status in **Forms and consent** after the client responds.\n\nThe client completes the published form through its private link; they do not need a team login."
+    },
+    {
+      "id": "consent",
+      "title": "Read consent carefully",
+      "body": "**Consent history** records the type, status and time of captured consent. A completed consultation form is not automatically permission for every kind of communication or use of photographs.\n\nIf a private form link expired or no longer permits an answer, return to the client record and create an appropriate new request. Never reuse one person’s form link for someone else."
+    }
+  ],
+  "related": [
+    "clients-private-files",
+    "clients-privacy",
+    "notifications-consent"
+  ],
+  "action": {
+    "key": "clients",
+    "label": "Go to Clients"
+  }
+}

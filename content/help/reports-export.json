@@ -1,0 +1,48 @@
+{
+  "slug": "reports-export",
+  "title": "Export or print a report",
+  "summary": "Create a CSV with the report’s actual filters and download it when ready.",
+  "category": "reports",
+  "keywords": [
+    "export csv",
+    "download report",
+    "print report",
+    "spreadsheet",
+    "export pending",
+    "check status"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "csv",
+      "title": "Create and download a CSV",
+      "body": "You need export permission as well as access to the selected report.\n\n1. Open **Reports** and choose the correct report, dates, location, currency and filters.\n2. Wait for the selected result to load, then select **Export CSV**.\n3. Keep the export status visible while it prepares.\n4. When **CSV ready** appears, select **Download CSV**.\n5. Open the file and check the report and period before sharing it.\n\nThe export uses all matching authorized records, rather than only the displayed page. It does not expand your branch, personal-calendar or compensation access."
+    },
+    {
+      "id": "print",
+      "title": "Print a readable summary",
+      "body": "Select **Print** to open the report’s printable summary. Use your browser’s printing options to print it or save a PDF. The summary can limit the displayed detail rows while retaining full filtered totals.\n\nUse CSV when you need the complete matching data for further analysis. Keep financial and team information private when sharing or storing either format."
+    },
+    {
+      "id": "recovery",
+      "title": "If preparation or checking stops",
+      "body": "If the status says it is still preparing, use **Check status** for that existing export. If checking failed, the export may still be running; check its status before starting another export.\n\nChanging the selected report or filters changes the context. Create the export from the intended loaded result. If export access is unavailable, ask the owner to review your permissions rather than using another person’s account."
+    }
+  ],
+  "related": [
+    "reports-run",
+    "reports-money",
+    "reports-capacity-commission"
+  ],
+  "action": {
+    "key": "reports",
+    "label": "Go to Reports"
+  }
+}

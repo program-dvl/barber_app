@@ -1,0 +1,57 @@
+{
+  "slug": "reports-run",
+  "title": "Run and compare a report",
+  "summary": "Choose a report, date range, location and permitted filters, then inspect the details.",
+  "category": "reports",
+  "keywords": [
+    "reports",
+    "analytics",
+    "business overview",
+    "filters",
+    "compare period",
+    "sales report",
+    "date range"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "access",
+      "title": "Choose the right scope",
+      "body": "Open **Reports**. Available reports follow your access: financial reports require revenue access, while personal schedule or compensation access can show a narrower set. A professional job title does not automatically grant financial information.\n\nReports use local calendar dates and the displayed time zone. When accessible locations have different time zones, choose one location. Monetary reports use one recorded currency at a time; they do not convert currencies."
+    },
+    {
+      "id": "steps",
+      "title": "Run a report",
+      "body": "1. Choose **Report** from the grouped selector.\n2. Choose a **Range** preset or set **From** and **To**. A custom range can cover up to 367 days.\n3. Select **Location**, then **Apply**.\n4. Choose **Compare**: **Previous equal period**, **Same dates last year** or **No comparison**, when supported.\n5. Open **More filters** for the report’s available Staff, Service, Status, payment-method or search controls.\n6. Read the metric explanations and select a row or chart detail to investigate the underlying records.\n7. Use **Clear filters** if a restrictive selection is hiding the data you need."
+    },
+    {
+      "id": "read",
+      "title": "Read totals and comparisons correctly",
+      "body": "Totals cover all matching permitted records, independently of the page of rows shown. Sorting or moving between pages does not redefine the total. A comparison is unavailable where there is no valid basis; an unavailable value is not zero.\n\nHistorical sale prices and descriptions remain recorded values even if you later rename services or change prices. Use the report’s source note before comparing money, booking counts or team capacity."
+    }
+  ],
+  "related": [
+    "reports-money",
+    "reports-bookings-clients",
+    "reports-export"
+  ],
+  "action": {
+    "key": "reports",
+    "label": "Go to Reports"
+  },
+  "screenshots": [
+    {
+      "key": "reports",
+      "alt": "Reports workspace with date range, metrics and detailed rows",
+      "caption": "Match the report, local date range and filters to the question you want to answer.",
+      "section": "steps"
+    }
+  ]
+}

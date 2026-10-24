@@ -1,0 +1,56 @@
+{
+  "slug": "business-profile",
+  "title": "Edit your business profile and regional settings",
+  "summary": "Update public identity, contact details, booking policies and local formats.",
+  "category": "business",
+  "keywords": [
+    "business settings",
+    "name",
+    "phone",
+    "email",
+    "country",
+    "currency",
+    "time zone",
+    "language",
+    "tax",
+    "policy"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "access",
+      "title": "Before making changes",
+      "body": "Use **Business setup → Business profile**. You need settings access for the whole business. Business identity is separate from your personal Profile & security information."
+    },
+    {
+      "id": "steps",
+      "title": "Update the profile",
+      "body": "1. Select **Identity & contact**. Review **Business name**, **Booking link**, **Business type**, **Accent colour**, **Business description**, **Public phone** and **Email**.\n2. Use **Edit address & entrance** or **Add business address** to edit the location’s address.\n3. Select **Region & money** to review **Country**, **Language & region**, **Currency** and **Time zone**, **Week starts**, **Appointment interval**, **Tax treatment** and **Default tax rate** when shown. Review whether prices include tax, tax is added at checkout, or the business is not tax registered.\n4. Select **Client-facing policies** and review **Cancellation policy**, **Terms link** and **Privacy link** your clients will read.\n5. Select **Save business profile**."
+    },
+    {
+      "id": "verify",
+      "title": "Check the saved result",
+      "body": "Reopen the profile and review the public preview. Check contact links, currency and times before accepting appointments. Existing appointments retain their recorded policies; a profile edit does not rewrite their past details."
+    },
+    {
+      "id": "money",
+      "title": "Changing currency or time zone",
+      "body": "Changing the country can suggest new regional defaults. Review every suggestion before saving. Existing service prices retain their recorded currency; a business currency change does not convert old services or financial history. Check the specific location’s time zone when troubleshooting a booking time."
+    }
+  ],
+  "related": [
+    "business-location",
+    "business-booking-link",
+    "business-booking-preferences"
+  ],
+  "action": {
+    "key": "setup",
+    "label": "Go to Business setup"
+  },
+  "order": 5
+}

@@ -1,0 +1,53 @@
+{
+  "slug": "team-service-assignments",
+  "title": "Assign services and staff-specific prices or durations",
+  "summary": "Choose what a person can perform and whether that assignment is available online.",
+  "category": "team",
+  "keywords": [
+    "qualify staff",
+    "staff services",
+    "assignment",
+    "staff price",
+    "duration override",
+    "online staff",
+    "employee service"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Update the person’s services",
+      "body": "1. Open **Team & availability**, choose the person and select **Services**.\n2. Use **Find a service** to locate the service. Select its qualification checkbox; **Select shown** applies to the displayed category group.\n3. For a selected service, review **Online booking**.\n4. Enter optional **Duration (min)** and **Price** overrides. Leave an override blank to inherit the service’s value; zero is a real price. Use the currency displayed beside the price.\n5. If removing a capability used by future appointments, enter **Reason for removing a capability**.\n6. Select **Save capabilities**."
+    },
+    {
+      "id": "verify",
+      "title": "Check the full booking combination",
+      "body": "The person needs an active working profile, a shared service location and overlapping hours. Public booking also requires the service and person to be visible online. Check the Calendar service/staff choices after saving."
+    },
+    {
+      "id": "history",
+      "title": "Effect on existing appointments",
+      "body": "Changes apply to new selections. Existing appointment and completed-sale details retain their recorded performer, price and duration. Removing a capability does not automatically reassign existing visits."
+    },
+    {
+      "id": "trouble",
+      "title": "If the assignment cannot be changed",
+      "body": "Active booking holds can protect their selected capability. Resolve or wait for those holds, then refresh and review. A service with a future-dated configuration may require an authorized review rather than an immediate overwrite."
+    }
+  ],
+  "related": [
+    "services-assignments",
+    "services-prices-duration",
+    "team-weekly-hours"
+  ],
+  "action": {
+    "key": "team",
+    "label": "Go to Team & availability"
+  },
+  "order": 20
+}

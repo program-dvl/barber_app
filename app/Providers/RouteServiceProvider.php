@@ -39,6 +39,17 @@ class RouteServiceProvider extends ServiceProvider
             });
         }
 
+        foreach (['search' => 120, 'feedback' => 15] as $action => $perMinute) {
+            RateLimiter::for('help-'.$action, function (Request $request) use ($perMinute, $action) {
+                return Limit::perMinute($perMinute)->by((string) ($request->user()?->id ?? $request->ip()))
+                    ->response(fn (Request $request, array $headers) => response()->json([
+                        'code' => 'help_retry_later',
+                        'message' => $action === 'search' ? 'Please wait a moment before searching again. You can still browse all topics.' : 'Please wait a moment before sending feedback again. You can continue reading.',
+                        'retry_after' => (int) ($headers['Retry-After'] ?? 60),
+                    ], 429, $headers));
+            });
+        }
+
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api')

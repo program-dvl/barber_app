@@ -1,0 +1,453 @@
+{
+  "records": [
+    {
+      "path": "/help",
+      "width": 320,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/category/team",
+      "width": 320,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/category/team"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/team-add-member",
+      "width": 320,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/team-add-member"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/checkout-record-payments",
+      "width": 320,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/checkout-record-payments"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/billing-recovery",
+      "width": 320,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/billing-recovery"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help?q=add+worker",
+      "width": 320,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help?q=zzzzzxxyy",
+      "width": 320,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help",
+      "width": 390,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/category/team",
+      "width": 390,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/category/team"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/team-add-member",
+      "width": 390,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/team-add-member"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/checkout-record-payments",
+      "width": 390,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/checkout-record-payments"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/billing-recovery",
+      "width": 390,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/billing-recovery"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help?q=add+worker",
+      "width": 390,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help?q=zzzzzxxyy",
+      "width": 390,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help",
+      "width": 768,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/category/team",
+      "width": 768,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/category/team"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/team-add-member",
+      "width": 768,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/team-add-member"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/checkout-record-payments",
+      "width": 768,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/checkout-record-payments"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/billing-recovery",
+      "width": 768,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/billing-recovery"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help?q=add+worker",
+      "width": 768,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help?q=zzzzzxxyy",
+      "width": 768,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help",
+      "width": 1024,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/category/team",
+      "width": 1024,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/category/team"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/team-add-member",
+      "width": 1024,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/team-add-member"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/checkout-record-payments",
+      "width": 1024,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/checkout-record-payments"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/billing-recovery",
+      "width": 1024,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/billing-recovery"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help?q=add+worker",
+      "width": 1024,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help?q=zzzzzxxyy",
+      "width": 1024,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help",
+      "width": 1440,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/category/team",
+      "width": 1440,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/category/team"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/team-add-member",
+      "width": 1440,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/team-add-member"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/checkout-record-payments",
+      "width": 1440,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/checkout-record-payments"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help/articles/billing-recovery",
+      "width": 1440,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help/articles/billing-recovery"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help?q=add+worker",
+      "width": 1440,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "path": "/help?q=zzzzzxxyy",
+      "width": 1440,
+      "h1": 1,
+      "main": 1,
+      "overflow": false,
+      "broken": [],
+      "canonical": [
+        "http://127.0.0.1:8139/help"
+      ],
+      "unlabelledButtons": 0
+    },
+    {
+      "check": "keyboard suggestions",
+      "passed": true
+    },
+    {
+      "check": "image Escape and focus return",
+      "passed": true
+    },
+    {
+      "check": "Retry-After blocks requests while typing",
+      "requests": 1
+    },
+    {
+      "check": "real local feedback saved",
+      "passed": true
+    },
+    {
+      "check": "feedback cooldown desktop and phones",
+      "passed": true
+    },
+    {
+      "check": "authenticated workspace chooser",
+      "passed": true
+    },
+    {
+      "check": "article readable without JavaScript and SSR",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,49 @@
+{
+  "slug": "appointments-self-service",
+  "title": "Help customers manage an appointment securely",
+  "summary": "Use private confirmation links for permitted changes without exposing a customer’s booking.",
+  "category": "appointments",
+  "keywords": [
+    "manage appointment",
+    "secure link",
+    "cancel booking",
+    "customer reschedule",
+    "contact correction",
+    "calendar download",
+    "payment status"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "link",
+      "title": "Open the right link",
+      "body": "Customers open the private appointment link from their confirmation. The general **Manage appointment** page does not allow searching bookings by reference, because a reference alone does not establish who may view the visit.\n\nThe link shows the business, reference, time zone, location, services and cancellation policy. Keep it private on shared devices."
+    },
+    {
+      "id": "actions",
+      "title": "Use the available actions",
+      "body": "1. Check the visit details before selecting an action.\n2. Use **Reschedule** to select **Date** and an offered new time, then review and confirm. New times must still meet policy and availability rules.\n3. Use **Cancel appointment** to choose **Reason for cancelling**, provide **Other reason** when needed and confirm the cancellation checkbox.\n4. Use **Update contact details** for a permitted correction, or **Book again** to start a separate future visit.\n5. **Join waitlist** and **Payment status** appear only when available for that appointment.\n\nAn action may be absent because of the visit’s state, policy, timing or the link’s purpose. Do not share a staff account to get around a missing customer action."
+    },
+    {
+      "id": "expired",
+      "title": "If a link no longer works",
+      "body": "Ask the business to help using the appointment reference and intended date. The business can verify the visit and make an authorized change from Calendar. Do not post a private link in public messages.\n\nA time selected for rescheduling is checked again on confirmation and can become unavailable. A cancellation frees the appointment time but does not by itself confirm a refund. **Payment status** explains recorded status; it should not be treated as proof of bank settlement or as a way to make an unsupported payment."
+    }
+  ],
+  "related": [
+    "appointments-public-booking",
+    "appointments-waitlist",
+    "appointments-status-cancel"
+  ],
+  "action": {
+    "key": "calendar",
+    "label": "Go to Calendar"
+  }
+}

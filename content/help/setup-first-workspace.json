@@ -1,0 +1,62 @@
+{
+  "slug": "setup-first-workspace",
+  "title": "Prepare your first workspace",
+  "summary": "Choose your business type, owner working profile, region and starter services.",
+  "category": "getting-started",
+  "keywords": [
+    "onboarding",
+    "initial setup",
+    "business type",
+    "salon",
+    "barbershop",
+    "starter services",
+    "owner"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "What the introduction prepares",
+      "body": "The four decisions prepare an editable location, service categories, selected starter services and working hours. If you personally provide services, they also prepare your team profile and assignments. Your booking page stays private."
+    },
+    {
+      "id": "steps",
+      "title": "Complete the four decisions",
+      "body": "1. In **Let’s prepare your business**, choose your **Business type** and select **Continue**.\n2. Review **Business details**, including **Locations** and **Will you personally provide services to clients?** Choose **Yes, clients can book me** to prepare your working profile, or **No, I manage the business** if you do not take appointments.\n3. In **Where do you work?**, choose **Country** and **Time zone**. Add your address and **Public phone** now, or complete public contacts before online publication.\n4. In **Starter services**, select the services you actually offer. Review the suggested prices and durations. Selecting no services is allowed; add your own later.\n5. Select **Prepare my workspace** and review the resulting **Business setup** page."
+    },
+    {
+      "id": "defaults",
+      "title": "Review the prepared information",
+      "body": "New introductions prepare 9 AM–9 PM opening and owner hours every day. Change them to match your actual week before taking bookings. Starter categories vary by business type. They are editable; changing business type later does not replace your customized catalogue."
+    },
+    {
+      "id": "resume",
+      "title": "Leave and resume safely",
+      "body": "Progress saves when you continue. **Explore now, finish later** opens the workspace; **Continue introduction** returns to the saved decisions. If the final step fails, keep the saved answers and use the support path shown. Do not recreate your business to retry setup."
+    }
+  ],
+  "related": [
+    "setup-readiness",
+    "business-hours",
+    "services-create",
+    "team-add-member"
+  ],
+  "action": {
+    "key": "setup",
+    "label": "Go to Business setup"
+  },
+  "order": 2,
+  "screenshots": [
+    {
+      "key": "setup-introduction",
+      "alt": "Business introduction with supported business types",
+      "caption": "Your choices prepare editable services, hours and team information.",
+      "section": "steps"
+    }
+  ]
+}

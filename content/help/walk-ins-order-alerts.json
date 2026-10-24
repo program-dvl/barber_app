@@ -1,0 +1,49 @@
+{
+  "slug": "walk-ins-order-alerts",
+  "title": "Notify waiting clients, reorder the queue or mark a client as left",
+  "summary": "Use explicit front-desk actions while preserving the queue’s real order.",
+  "category": "walk-ins",
+  "keywords": [
+    "notify queue",
+    "turn approaching",
+    "queue order",
+    "reorder",
+    "left queue",
+    "remove walk-in",
+    "priority"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "notify",
+      "title": "Request a turn notification",
+      "body": "Open the waiting client’s details and select **Notify client**. Review **Notify client?**, then confirm **Notify client**. The queue records that the notification was requested.\n\nA request is not proof of delivery. The client’s channel choice, consent and available sending capacity still apply. Check **Client notifications → Delivery history** when delivery matters; use the customer’s permitted contact channel if direct follow-up is needed."
+    },
+    {
+      "id": "order",
+      "title": "Change the waiting order",
+      "body": "Only users with both queue-management and schedule-override access can reorder.\n\n1. Open **Reorder queue**.\n2. Use the move-up or move-down controls to arrange the complete waiting list.\n3. Enter the required **Reason**.\n4. Select **Save order** and verify the resulting positions.\n\nSearch and filters do not change queue order. Position and **NEXT** refer to the real saved order. Starting a later client does not silently reorder everyone else. If the queue changed during review, refresh and review the new order."
+    },
+    {
+      "id": "left",
+      "title": "Record a departure",
+      "body": "For a waiting client who has left, use the departure action, enter **Reason** and confirm **Mark as left**. The client leaves the active queue while their waiting and visit history remains.\n\nDo not mark a client as left to cancel a visit that already exists in Calendar. Use that appointment’s normal cancellation process. Recently finished records can be expanded for follow-up, including authorized Checkout links."
+    }
+  ],
+  "related": [
+    "walk-ins-serve",
+    "notifications-delivery",
+    "appointments-status-cancel"
+  ],
+  "action": {
+    "key": "walk-ins",
+    "label": "Go to Walk-in queue"
+  }
+}

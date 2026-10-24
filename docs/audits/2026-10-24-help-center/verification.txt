@@ -1,0 +1,22 @@
+Local verification, 2026-10-24
+
+Backend: 
+  Tests:    30 skipped, 822 passed (8847 assertions)
+  Duration: 64.85s
+
+Frontend: ℹ tests 104
+ℹ suites 0
+ℹ pass 104
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 298.765208
+
+Client and SSR production builds passed on Node v24.19.0.
+Public route budgets: 21 entries including all four Help entries.
+help:validate: 80 published articles,14 categories,30 referenced media assets with correct actual dimensions/checksums.
+Final focused Help + SEO/crawl/privacy regression: 72 passed / 2,237 assertions.
+Scoped Pint and git diff --check passed.
+Browser: 42 responsive/journey checks +3 recovery checks; no page errors.
+No production deployment, real charge, customer messaging or primary database mutation.

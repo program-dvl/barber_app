@@ -1,0 +1,55 @@
+{
+  "slug": "account-security",
+  "title": "Set up two-factor authentication and review devices",
+  "summary": "Protect sign-in with an authenticator app and remove other browser sessions.",
+  "category": "account",
+  "keywords": [
+    "2FA",
+    "MFA",
+    "authenticator",
+    "two factor",
+    "recovery codes",
+    "devices",
+    "sessions",
+    "security"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "enable",
+      "title": "Enable two-factor authentication",
+      "body": "1. Open **Profile & security** and find **Two-factor authentication**.\n2. Select **Enable two-factor authentication** and confirm your password if asked.\n3. Scan the QR code or enter the setup key in your authenticator app.\n4. Enter its six-digit **Code** and select **Confirm**.\n5. Verify the heading says **Two-factor authentication is on**.\n6. Store the recovery codes in a secure password manager. They help you regain access if your phone is lost."
+    },
+    {
+      "id": "codes",
+      "title": "Manage recovery codes",
+      "body": "Use **Show Recovery codes** to view saved codes after confirming your password. **Regenerate Recovery codes** replaces the previous set, so save the new set securely. Never include codes, the QR image or setup key in support screenshots."
+    },
+    {
+      "id": "devices",
+      "title": "Sign out other devices",
+      "body": "1. Find **Signed-in devices** in Profile & security and review the devices listed.\n2. Select **Sign out other devices**.\n3. Enter your current password in the confirmation and confirm **Sign out other devices**.\n4. Your current session remains; the other browser sessions are ended."
+    },
+    {
+      "id": "trouble",
+      "title": "If an authenticator code fails",
+      "body": "Check that you are using the correct account in your authenticator and that your device time is accurate. At sign-in, use **Use a recovery code** if you have a saved code. If you have neither, use the support route; resetting a password does not provide an authenticator recovery code."
+    }
+  ],
+  "related": [
+    "account-recovery",
+    "account-profile",
+    "team-disable-restore-login"
+  ],
+  "action": {
+    "key": "profile",
+    "label": "Go to Profile & security"
+  },
+  "order": 40
+}

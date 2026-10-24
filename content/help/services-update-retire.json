@@ -1,0 +1,54 @@
+{
+  "slug": "services-update-retire",
+  "title": "Update, duplicate, activate or deactivate a service",
+  "summary": "Manage catalogue changes while preserving booked visits and financial history.",
+  "category": "services",
+  "keywords": [
+    "edit service",
+    "duplicate",
+    "copy service",
+    "deactivate",
+    "activate",
+    "delete service",
+    "stale save",
+    "retry save"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "edit",
+      "title": "Edit and save deliberately",
+      "body": "1. Open **Services**, select the service and make changes in **Overview**, **Team & locations** or **Booking & rules**.\n2. If there are upcoming appointments, select **Review impact** and inspect the visits in Calendar.\n3. Enter **Reason for impactful changes** when changing price, timing, availability or assignments for an upcoming service.\n4. Select **Save changes**. Existing visits keep their recorded name, price, duration and performer."
+    },
+    {
+      "id": "copy",
+      "title": "Duplicate a service",
+      "body": "Use the service row’s **Duplicate** action. Review the copy’s new name and settings before saving. The copy starts inactive and internal; activate and enable online booking only after checking assignments. Booking and financial history are not copied."
+    },
+    {
+      "id": "status",
+      "title": "Activate or deactivate",
+      "body": "Use the service row’s activate/deactivate action and read the confirmation. Deactivating prevents new bookings and newly added checkout lines while keeping history. If upcoming appointments exist, provide the required reason. Activating an internal service does not publish it online. There is no service-delete or service-merge action."
+    },
+    {
+      "id": "recovery",
+      "title": "Recover from a pending or stale save",
+      "body": "If **Save confirmation is pending** appears, keep the editor open and use **Retry save** to confirm the same request. Do not change the proposal or create a second service. If configuration is stale, close and reopen it after preserving your intended changes. Active holds or dated settings can require review before a change can proceed."
+    }
+  ],
+  "related": [
+    "services-create",
+    "services-categories",
+    "services-online-availability"
+  ],
+  "action": {
+    "key": "services",
+    "label": "Go to Services"
+  },
+  "order": 29
+}

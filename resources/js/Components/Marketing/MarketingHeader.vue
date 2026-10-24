@@ -18,6 +18,7 @@ const navigation = computed(() => {
         { label: 'Use cases', route: 'marketing.use-cases', prefix: '/use-cases' },
         { label: 'Pricing', route: 'marketing.pricing', prefix: '/pricing' },
         { label: 'Resources', route: 'marketing.resources', prefix: '/resources' },
+        { label: 'Help', route: 'help.index', prefix: '/help' },
     ];
 
     return candidates

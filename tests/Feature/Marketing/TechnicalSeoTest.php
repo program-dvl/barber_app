@@ -1,8 +1,11 @@
 <?php
 
+use App\Domain\HelpCenter\HelpCatalog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+// The curated marketing baseline is extended only by published Help content.
 
 it('renders centralized metadata and a truthful schema graph for an indexable page', function () {
     $response = $this->get(route('marketing.home'));
@@ -33,7 +36,9 @@ it('publishes a deterministic curated sitemap and canonical robots reference', f
     $document->registerXPathNamespace('sm', 'http://www.sitemaps.org/schemas/sitemap/0.9');
     $urls = collect($document->xpath('//sm:url/sm:loc'))->map(fn ($url) => (string) $url);
     expect($urls)->toContain(route('marketing.home'), route('marketing.pricing'), route('marketing.resources'))->not->toContain(route('register'))->not->toContain(url('/book'))->not->toContain(url('/roadmap'));
-    expect($urls->count())->toBe(32);
+    $help = app(HelpCatalog::class);
+    $helpUrls = 1 + count($help->articles()) + collect($help->categories())->where('article_count', '>', 0)->count();
+    expect($urls->count())->toBe(32 + $helpUrls);
     $this->get('/sitemap')->assertRedirect(route('sitemap.xml'))->assertStatus(301);
     $this->get('/robots.txt')->assertOk()
         ->assertSee("User-agent: OAI-SearchBot\nAllow: /", false)

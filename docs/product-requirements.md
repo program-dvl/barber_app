@@ -682,6 +682,37 @@ Purpose: Operate the SaaS safely across tenant onboarding, billing, support and 
 
 ACCEPTANCE OUTCOME Support can resolve a failed notification or billing issue without direct database manipulation, and every tenant access is attributable and visible.
 
+### FR-21 Help Center and product guidance (approved addition, 2026-10-24)
+
+The product owner approved a comprehensive public Help Center with contextual
+help inside the business application. Document implemented workflows across all
+existing modules; do not promote unfinished, inaccessible or Phase 2 behavior.
+
+- Publish reviewed task guides, explanations, FAQs and troubleshooting in a
+  maintainable structured library with categories, related guides, publication
+  states and review dates.
+- Provide natural-question, synonym, partial-word and typo-tolerant discovery
+  without requiring a paid search service for the current library.
+- Include genuine, privacy-safe application screenshots from an isolated demo,
+  accessible expansion and a repeatable update workflow. Explicitly record
+  uncovered screens instead of inventing images.
+- Link guides to actual authenticated screens through the existing membership,
+  permission, branch and subscription checks; provide contextual Help in the
+  workspace and public discovery before sign-in.
+- Reuse the shared design system, customer-first notices and recovery rules;
+  preserve query input, prevent repeated requests during cooldowns and provide
+  useful alternatives when search or feedback cannot complete.
+- Keep public pages crawlable with canonical metadata and factual structured
+  data. Exclude search queries and authenticated handoffs from indexing. Never
+  index customer records or expose private account information in public help.
+- Validate content, media, relationships, navigation, search relevance and access
+  restrictions automatically, and verify rendered desktop/mobile journeys.
+
+This addition authorizes product guidance and its feedback collection. It does
+not waive any existing provider, regional, financial, privacy, accessibility or
+production-release gate, and does not introduce automated account support,
+generative answers, paid subscriptions, ticketing or outbound messaging.
+
 ## 7 Critical Real-World Scenarios and Acceptance Tests
 
 These scenarios are launch acceptance tests, not optional edge cases. Each must be automated where practical and exercised end-to-end in a production-like environment.

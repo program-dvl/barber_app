@@ -1,0 +1,49 @@
+{
+  "slug": "clients-notes",
+  "title": "Add useful client notes and control visibility",
+  "summary": "Save service context with a clear type, importance and appropriate visibility.",
+  "category": "clients",
+  "keywords": [
+    "client notes",
+    "allergy",
+    "formula",
+    "important note",
+    "sensitive note",
+    "hair preference",
+    "service context"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Add a note",
+      "body": "You need permission to manage client notes. Open the client profile and choose **Notes**.\n\n1. Select **Add note**.\n2. Choose **Note type**, such as General, Formula, Preference or Warning.\n3. Choose **Visibility**. **Sensitive** is available only with the separate sensitive-record permission.\n4. Enter required **Note content**.\n5. Select **Mark as important** if authorized staff should see it prominently before a service.\n6. Select **Add note** and verify its type, author and time in the list."
+    },
+    {
+      "id": "scope",
+      "title": "Use the right kind of record",
+      "body": "A profile note follows the client across permitted visits. A Calendar **Internal appointment note** belongs to that appointment. Choose the record that matches the purpose.\n\nKeep notes accurate and necessary for service. An important note is a display priority, not an appointment alert, a notification to the customer or a clinical safety guarantee. Sensitive visibility limits readers; it does not make the product a medical records system."
+    },
+    {
+      "id": "missing",
+      "title": "If you cannot see a note",
+      "body": "**No visible notes added** means none are visible to your account. A sensitive note can exist without being shown to a person who lacks permission. Ask the owner to check access rather than copying private material into a less restricted record.\n\nNotes show recorded authors and timestamps. Do not create a second note simply because a save response was interrupted; refresh and check the list first."
+    }
+  ],
+  "related": [
+    "clients-edit-preferences",
+    "clients-private-files",
+    "clients-visits-rebook"
+  ],
+  "action": {
+    "key": "clients",
+    "label": "Go to Clients"
+  }
+}

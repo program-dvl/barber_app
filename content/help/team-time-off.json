@@ -1,0 +1,49 @@
+{
+  "slug": "team-time-off",
+  "title": "Add time off, breaks or temporary hours",
+  "summary": "Set dated absences or working exceptions and review their appointment impact.",
+  "category": "team",
+  "keywords": [
+    "leave",
+    "holiday",
+    "sick leave",
+    "break",
+    "temporary hours",
+    "unavailable",
+    "vacation",
+    "lunch"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Add a schedule exception",
+      "body": "1. Open the person in **Team & availability** and select **Schedule**.\n2. Under **Breaks & dated exceptions**, choose **Add break**, **Time off** or **Temporary hours**.\n3. Choose **Type** and **Branch**. Time off can apply to all assigned branches; temporary working hours require a branch.\n4. For a dated change, enter **From date** and **Through date**. For a recurring break or unavailable block, choose **Repeat → Every week** and a day.\n5. Use **Full day** for a whole-day absence, or enter **Starts** and **Ends**. Add an optional **Private reason**.\n6. Select **Add to schedule review**, then **Review changes**.\n7. Resolve or explicitly retain affected appointments with a reason, then select **Save reviewed schedule**."
+    },
+    {
+      "id": "effects",
+      "title": "How exceptions work",
+      "body": "Temporary working hours replace that day’s regular hours; they do not add a second independent schedule. Breaks and time off remove bookable time. Private reasons are visible only to authorized team managers. This screen does not provide an HR approval or payroll process."
+    },
+    {
+      "id": "verify",
+      "title": "Check and correct the result",
+      "body": "Use the **Time off** view or reopen Schedule to verify the dates and branches. To remove an upcoming exception, select its **Remove** action, then review and save the revised schedule. Past exceptions remain part of history. If holds or new bookings block saving, review again after resolving them."
+    }
+  ],
+  "related": [
+    "team-weekly-hours",
+    "team-coverage",
+    "team-edit-profile"
+  ],
+  "action": {
+    "key": "team",
+    "label": "Go to Team & availability"
+  },
+  "order": 19
+}

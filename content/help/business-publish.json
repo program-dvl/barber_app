@@ -1,0 +1,61 @@
+{
+  "slug": "business-publish",
+  "title": "Preview, publish or resume your booking page",
+  "summary": "Review the real saved page and explicitly choose when clients can book online.",
+  "category": "business",
+  "keywords": [
+    "go live",
+    "publish",
+    "online booking",
+    "preview",
+    "mobile preview",
+    "resume",
+    "private page"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Before publishing",
+      "body": "Complete online readiness, including public contacts and policies, a valid booking link and at least one eligible online service with qualified online staff and usable hours. Only authorized business settings users can publish."
+    },
+    {
+      "id": "steps",
+      "title": "Review and go live",
+      "body": "1. Open **Business setup → Online booking**.\n2. Switch between **Desktop** and **Mobile** and review your business details and services.\n3. Check opening-week information and the client-facing policy and legal links below the preview.\n4. Select **I reviewed this preview** once it has loaded and you have checked it.\n5. Read each remaining blocker and use its **Review** action to correct it.\n6. When ready, select **Go live with online booking**. For a previously published page, the action is **Resume online booking**.\n7. Once the state is **Live**, use **Copy booking link** and open the link separately to check the public experience."
+    },
+    {
+      "id": "limits",
+      "title": "What the preview can do",
+      "body": "The preview uses your saved booking page and catalogue. It lets you inspect presentation and services; it does not reserve times, confirm appointments or publish by itself. Available times are calculated when a client books."
+    },
+    {
+      "id": "pause",
+      "title": "Pause and recover",
+      "body": "To pause new online booking, turn off **Accept online bookings** in Booking preferences and save. Existing appointments remain. Review the page again before resuming. Online deposit payment is not yet available for completing deposit-required bookings; do not rely on a deposit rule to collect public payments."
+    }
+  ],
+  "related": [
+    "business-booking-preferences",
+    "business-booking-link",
+    "services-online-availability"
+  ],
+  "action": {
+    "key": "setup",
+    "label": "Go to Business setup"
+  },
+  "screenshots": [
+    {
+      "key": "business-preview",
+      "alt": "Desktop and mobile booking preview and explicit publication actions",
+      "caption": "The preview is private until you explicitly go live.",
+      "section": "steps"
+    }
+  ],
+  "order": 10
+}

@@ -1,0 +1,707 @@
+{
+  "reviewed_at": "2026-10-24",
+  "scope": "Repository implementation and isolated local browser verification. Not deployed certification.",
+  "article_count": 80,
+  "category_count": 14,
+  "genuine_screenshots": 30,
+  "articles": [
+    {
+      "slug": "account-sign-in",
+      "title": "Sign in to the correct workspace",
+      "category": "account",
+      "action": "profile",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "account-profile",
+      "title": "Update your name, email, photo or password",
+      "category": "account",
+      "action": "profile",
+      "section_count": 3,
+      "screenshots": [
+        "account-security"
+      ]
+    },
+    {
+      "slug": "account-security",
+      "title": "Set up two-factor authentication and review devices",
+      "category": "account",
+      "action": "profile",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "account-recovery",
+      "title": "Recover a forgotten password or lost authenticator",
+      "category": "account",
+      "action": null,
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "account-delete",
+      "title": "Understand account deletion and business closure",
+      "category": "account",
+      "action": "profile",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "appointments-add",
+      "title": "Add an appointment at reception",
+      "category": "appointments",
+      "action": "calendar",
+      "section_count": 3,
+      "screenshots": [
+        "appointment-create"
+      ]
+    },
+    {
+      "slug": "appointments-self-service",
+      "title": "Help customers manage an appointment securely",
+      "category": "appointments",
+      "action": "calendar",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "appointments-status-cancel",
+      "title": "Record visit progress, cancellation and no-shows",
+      "category": "appointments",
+      "action": "calendar",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "appointments-change",
+      "title": "Reschedule, reassign or change an appointment",
+      "category": "appointments",
+      "action": "calendar",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "appointments-no-slots",
+      "title": "Troubleshoot missing services or online time slots",
+      "category": "appointments",
+      "action": "calendar",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "appointments-public-booking",
+      "title": "Understand the customer’s online booking journey",
+      "category": "appointments",
+      "action": "calendar",
+      "section_count": 3,
+      "screenshots": [
+        "booking-services"
+      ]
+    },
+    {
+      "slug": "appointments-waitlist",
+      "title": "Understand waitlists and opening offers",
+      "category": "appointments",
+      "action": "calendar",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "billing-start-subscription",
+      "title": "Review and start a paid subscription",
+      "category": "billing",
+      "action": "billing",
+      "section_count": 4,
+      "screenshots": [
+        "billing-overview"
+      ]
+    },
+    {
+      "slug": "billing-capacity",
+      "title": "Understand locations, bookable staff and pricing",
+      "category": "billing",
+      "action": "billing",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "billing-change-capacity",
+      "title": "Change capacity or switch monthly and yearly billing",
+      "category": "billing",
+      "action": "billing",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "billing-recovery",
+      "title": "Recover an unfinished checkout or delayed billing update",
+      "category": "billing",
+      "action": "billing",
+      "section_count": 5,
+      "screenshots": []
+    },
+    {
+      "slug": "billing-invoices",
+      "title": "View subscription invoices and manage your payment method",
+      "category": "billing",
+      "action": "billing",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "billing-cancel",
+      "title": "Cancel renewal or keep your subscription",
+      "category": "billing",
+      "action": "billing",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "billing-text-credits",
+      "title": "Understand monthly text credits and optional credit packs",
+      "category": "billing",
+      "action": "billing",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "billing-access",
+      "title": "Why is a feature missing or the workspace read-only?",
+      "category": "billing",
+      "action": "billing",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "business-profile",
+      "title": "Edit your business profile and regional settings",
+      "category": "business",
+      "action": "setup",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "business-location",
+      "title": "Add or edit a location",
+      "category": "business",
+      "action": "locations",
+      "section_count": 4,
+      "screenshots": [
+        "business-locations"
+      ]
+    },
+    {
+      "slug": "business-hours",
+      "title": "Set opening hours and split opening periods",
+      "category": "business",
+      "action": "setup",
+      "section_count": 4,
+      "screenshots": [
+        "business-hours"
+      ]
+    },
+    {
+      "slug": "business-booking-preferences",
+      "title": "Configure online booking preferences",
+      "category": "business",
+      "action": "setup",
+      "section_count": 4,
+      "screenshots": [
+        "business-booking-preferences"
+      ]
+    },
+    {
+      "slug": "business-branding",
+      "title": "Add your logo, cover image and accent colour",
+      "category": "business",
+      "action": "setup",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "business-publish",
+      "title": "Preview, publish or resume your booking page",
+      "category": "business",
+      "action": "setup",
+      "section_count": 4,
+      "screenshots": [
+        "business-preview"
+      ]
+    },
+    {
+      "slug": "business-booking-link",
+      "title": "Change and share your booking link",
+      "category": "business",
+      "action": "setup",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "calendar-blocks-closures",
+      "title": "Block staff time and record operational disruption",
+      "category": "calendar",
+      "action": "calendar",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "calendar-views",
+      "title": "Find appointments and choose a Calendar view",
+      "category": "calendar",
+      "action": "calendar",
+      "section_count": 3,
+      "screenshots": [
+        "calendar"
+      ]
+    },
+    {
+      "slug": "calendar-availability",
+      "title": "Understand staff availability and booking conflicts",
+      "category": "calendar",
+      "action": "calendar",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "checkout-receipts-history",
+      "title": "Find sales, outstanding balances and receipts",
+      "category": "checkout",
+      "action": "checkout",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "checkout-refund",
+      "title": "Record money returned through the original payment method",
+      "category": "checkout",
+      "action": "checkout",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "checkout-record-payments",
+      "title": "Record received, split or partial payments",
+      "category": "checkout",
+      "action": "checkout",
+      "section_count": 3,
+      "screenshots": [
+        "checkout-payment"
+      ]
+    },
+    {
+      "slug": "checkout-payment-recovery",
+      "title": "Recover an interrupted payment record safely",
+      "category": "checkout",
+      "action": "checkout",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "checkout-review",
+      "title": "Review and save a sale after a visit",
+      "category": "checkout",
+      "action": "checkout",
+      "section_count": 3,
+      "screenshots": [
+        "checkout"
+      ]
+    },
+    {
+      "slug": "checkout-deposits-taxes-tips",
+      "title": "Review deposits, tax and staff tips at checkout",
+      "category": "checkout",
+      "action": "checkout",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "clients-notes",
+      "title": "Add useful client notes and control visibility",
+      "category": "clients",
+      "action": "clients",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "clients-forms",
+      "title": "Create form templates and request a client form",
+      "category": "clients",
+      "action": "clients",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "clients-add-find",
+      "title": "Find or add a client",
+      "category": "clients",
+      "action": "clients",
+      "section_count": 3,
+      "screenshots": [
+        "clients-directory"
+      ]
+    },
+    {
+      "slug": "clients-privacy",
+      "title": "Record and process a client privacy request",
+      "category": "clients",
+      "action": "clients",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "clients-visits-rebook",
+      "title": "Review a client’s visits and book their next appointment",
+      "category": "clients",
+      "action": "clients",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "clients-duplicates",
+      "title": "Review and merge duplicate client profiles",
+      "category": "clients",
+      "action": "clients",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "clients-private-files",
+      "title": "Store and access private client files",
+      "category": "clients",
+      "action": "clients",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "clients-payments",
+      "title": "Understand a client’s payments and outstanding balance",
+      "category": "clients",
+      "action": "clients",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "clients-edit-preferences",
+      "title": "Update a client’s details and preferences",
+      "category": "clients",
+      "action": "clients",
+      "section_count": 3,
+      "screenshots": [
+        "client-profile"
+      ]
+    },
+    {
+      "slug": "setup-create-account",
+      "title": "Create your owner account",
+      "category": "getting-started",
+      "action": null,
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "setup-first-workspace",
+      "title": "Prepare your first workspace",
+      "category": "getting-started",
+      "action": "setup",
+      "section_count": 4,
+      "screenshots": [
+        "setup-introduction"
+      ]
+    },
+    {
+      "slug": "setup-readiness",
+      "title": "Finish setup and understand readiness",
+      "category": "getting-started",
+      "action": "setup",
+      "section_count": 4,
+      "screenshots": [
+        "setup-readiness"
+      ]
+    },
+    {
+      "slug": "setup-import-records",
+      "title": "Import clients, staff, services or products",
+      "category": "getting-started",
+      "action": "setup",
+      "section_count": 5,
+      "screenshots": []
+    },
+    {
+      "slug": "ops-dashboard",
+      "title": "Use your daily workspace",
+      "category": "getting-started",
+      "action": "dashboard",
+      "section_count": 3,
+      "screenshots": [
+        "dashboard"
+      ]
+    },
+    {
+      "slug": "inventory-availability",
+      "title": "Understand retail inventory availability",
+      "category": "inventory",
+      "action": null,
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "notifications-delivery",
+      "title": "Check whether a client notification was delivered",
+      "category": "notifications",
+      "action": "notifications",
+      "section_count": 3,
+      "screenshots": [
+        "notification-history"
+      ]
+    },
+    {
+      "slug": "notifications-preferences",
+      "title": "Choose client notification channels and quiet hours",
+      "category": "notifications",
+      "action": "notifications",
+      "section_count": 3,
+      "screenshots": [
+        "notifications"
+      ]
+    },
+    {
+      "slug": "notifications-consent",
+      "title": "Understand SMS consent, opt-outs and text allowances",
+      "category": "notifications",
+      "action": "notifications",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "reports-export",
+      "title": "Export or print a report",
+      "category": "reports",
+      "action": "reports",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "reports-capacity-commission",
+      "title": "Read team capacity, tips and commission reports",
+      "category": "reports",
+      "action": "reports",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "reports-run",
+      "title": "Run and compare a report",
+      "category": "reports",
+      "action": "reports",
+      "section_count": 3,
+      "screenshots": [
+        "reports"
+      ]
+    },
+    {
+      "slug": "reports-bookings-clients",
+      "title": "Understand appointment, walk-in and client reports",
+      "category": "reports",
+      "action": "reports",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "reports-money",
+      "title": "Understand sales, receipts, taxes and refunds in Reports",
+      "category": "reports",
+      "action": "reports",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "services-create",
+      "title": "Create a service",
+      "category": "services",
+      "action": "services",
+      "section_count": 4,
+      "screenshots": [
+        "services-catalogue",
+        "services-editor"
+      ]
+    },
+    {
+      "slug": "services-prices-duration",
+      "title": "Understand service prices and appointment timing",
+      "category": "services",
+      "action": "services",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "services-assignments",
+      "title": "Choose service locations and qualified staff",
+      "category": "services",
+      "action": "services",
+      "section_count": 4,
+      "screenshots": [
+        "service-assignments"
+      ]
+    },
+    {
+      "slug": "services-online-availability",
+      "title": "Why is a service missing online or showing no times?",
+      "category": "services",
+      "action": "services",
+      "section_count": 4,
+      "screenshots": [
+        "service-booking-rules"
+      ]
+    },
+    {
+      "slug": "services-addons",
+      "title": "Create and attach an optional add-on",
+      "category": "services",
+      "action": "services",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "services-categories",
+      "title": "Organize, reorder or archive service categories",
+      "category": "services",
+      "action": "services",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "services-update-retire",
+      "title": "Update, duplicate, activate or deactivate a service",
+      "category": "services",
+      "action": "services",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "team-add-member",
+      "title": "Add a team member",
+      "category": "team",
+      "action": "team",
+      "section_count": 4,
+      "screenshots": [
+        "team-directory",
+        "team-add-member"
+      ]
+    },
+    {
+      "slug": "team-invite-login",
+      "title": "Invite an existing team member to sign in",
+      "category": "team",
+      "action": "team",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "team-accept-invitation",
+      "title": "Accept a team invitation",
+      "category": "team",
+      "action": null,
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "team-roles-permissions",
+      "title": "Understand roles, capabilities and location access",
+      "category": "team",
+      "action": "team",
+      "section_count": 4,
+      "screenshots": [
+        "team-access"
+      ]
+    },
+    {
+      "slug": "team-disable-restore-login",
+      "title": "Disable or restore a team login",
+      "category": "team",
+      "action": "team",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "team-edit-profile",
+      "title": "Edit a working profile or make a person inactive",
+      "category": "team",
+      "action": "team",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "team-weekly-hours",
+      "title": "Set a person’s weekly hours and split shifts",
+      "category": "team",
+      "action": "team",
+      "section_count": 4,
+      "screenshots": [
+        "team-schedule"
+      ]
+    },
+    {
+      "slug": "team-time-off",
+      "title": "Add time off, breaks or temporary hours",
+      "category": "team",
+      "action": "team",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "team-service-assignments",
+      "title": "Assign services and staff-specific prices or durations",
+      "category": "team",
+      "action": "team",
+      "section_count": 4,
+      "screenshots": []
+    },
+    {
+      "slug": "team-coverage",
+      "title": "Read live availability and weekly coverage",
+      "category": "team",
+      "action": "team",
+      "section_count": 4,
+      "screenshots": [
+        "team-weekly-coverage"
+      ]
+    },
+    {
+      "slug": "team-activity",
+      "title": "Review the business activity log",
+      "category": "team",
+      "action": "activity",
+      "section_count": 3,
+      "screenshots": []
+    },
+    {
+      "slug": "walk-ins-add",
+      "title": "Add a walk-in to the queue",
+      "category": "walk-ins",
+      "action": "walk-ins",
+      "section_count": 3,
+      "screenshots": [
+        "walk-in-add"
+      ]
+    },
+    {
+      "slug": "walk-ins-serve",
+      "title": "Assign staff and start a walk-in service",
+      "category": "walk-ins",
+      "action": "walk-ins",
+      "section_count": 3,
+      "screenshots": [
+        "walk-in-queue"
+      ]
+    },
+    {
+      "slug": "walk-ins-order-alerts",
+      "title": "Notify waiting clients, reorder the queue or mark a client as left",
+      "category": "walk-ins",
+      "action": "walk-ins",
+      "section_count": 3,
+      "screenshots": []
+    }
+  ]
+}

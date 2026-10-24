@@ -21,6 +21,7 @@ const groups = computed(() => [
             ['Solutions', 'marketing.solutions'],
             ['Use cases', 'marketing.use-cases'],
             ['Resources', 'marketing.resources'],
+            ['Help Center', 'help.index'],
         ],
     },
     {

@@ -1,0 +1,48 @@
+{
+  "slug": "checkout-payment-recovery",
+  "title": "Recover an interrupted payment record safely",
+  "summary": "Check the same saved request and history before recording or collecting anything again.",
+  "category": "checkout",
+  "keywords": [
+    "payment pending",
+    "payment failed",
+    "duplicate payment",
+    "retry same request",
+    "connection lost",
+    "uncertain payment"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "pending",
+      "title": "When confirmation is pending",
+      "body": "If the connection fails after you record a payment, ClipperDesk may have saved it even though the browser did not receive the response. Keep the sale open. Do not take payment again or create a different record for the same money.\n\nThe **Payment confirmation pending** notice keeps the exact request for recovery in the current browser session and locks incompatible edits."
+    },
+    {
+      "id": "steps",
+      "title": "Check or repeat the same request",
+      "body": "1. Check that you are still on the same client and sale.\n2. Select **Check history** to refresh the sale’s recorded payments.\n3. If the original payment is present, verify its method, amount and balance before doing anything else.\n4. If confirmation is still uncertain, use **Retry same request**. This repeats the saved request rather than creating a new payment instruction.\n5. Wait for a definitive result and verify the recorded history and remaining balance.\n\nDo not clear browser session data or switch to another browser just to bypass a pending request."
+    },
+    {
+      "id": "help",
+      "title": "When you need help",
+      "body": "If safe recovery is unavailable, stop recording and ask an authorized owner or platform support to review the sale. Provide the sale or appointment reference, approximate time and payment method through the support path shown in the application. Never include card details, passwords or private client links.\n\nA stock-change error may require review of the saved sale or a stock correction by an authorized operator. The current workspace does not offer editing or cancelling a saved basket to fix this. Repeatedly creating another sale would risk duplicate financial history."
+    }
+  ],
+  "related": [
+    "checkout-record-payments",
+    "checkout-receipts-history",
+    "checkout-refund"
+  ],
+  "action": {
+    "key": "checkout",
+    "label": "Go to Checkout / Sales"
+  }
+}

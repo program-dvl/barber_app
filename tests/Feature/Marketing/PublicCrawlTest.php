@@ -1,15 +1,20 @@
 <?php
 
+use App\Domain\HelpCenter\HelpCatalog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+// The curated marketing baseline is extended only by published Help content.
 
 it('crawls every curated sitemap URL as a canonical indexable 200 page', function () {
     $xml = simplexml_load_string($this->get(route('sitemap.xml'))->assertOk()->getContent());
     $xml->registerXPathNamespace('sm', 'http://www.sitemaps.org/schemas/sitemap/0.9');
     $urls = collect($xml->xpath('//sm:url/sm:loc'))->map(fn ($node) => (string) $node);
 
-    expect($urls)->toHaveCount(32);
+    $help = app(HelpCatalog::class);
+    $helpUrls = 1 + count($help->articles()) + collect($help->categories())->where('article_count', '>', 0)->count();
+    expect($urls)->toHaveCount(32 + $helpUrls);
     foreach ($urls as $url) {
         $path = parse_url($url, PHP_URL_PATH) ?: '/';
         $response = $this->get($path);

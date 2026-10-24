@@ -1,0 +1,52 @@
+{
+  "slug": "services-categories",
+  "title": "Organize, reorder or archive service categories",
+  "summary": "Keep the catalogue and online selection easy to browse.",
+  "category": "services",
+  "keywords": [
+    "category",
+    "categories",
+    "reorder",
+    "archive category",
+    "organize services",
+    "starter categories"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Manage your categories",
+      "body": "1. Open **Services** and select **Categories**.\n2. Select **Add category** to create one, or select an existing category to edit it.\n3. Enter **Category name** and review **Active category**, then select **Save category**.\n4. Use the up/down controls in **Service categories** to change order.\n5. Open each service to change its **Category** and select **Save changes**."
+    },
+    {
+      "id": "archive",
+      "title": "Archive a category safely",
+      "body": "Move or deactivate all active services in the category before clearing **Active category** and saving. Archiving preserves existing service and financial history. Renaming a category reorganizes today’s catalogue; it does not merge service records."
+    },
+    {
+      "id": "defaults",
+      "title": "Starter categories and business types",
+      "body": "New onboarding prepares editable categories for the chosen business type, including empty ones. Only selected starter services are created. Changing business type after setup does not regenerate categories or replace your customized menu."
+    },
+    {
+      "id": "trouble",
+      "title": "Common category issues",
+      "body": "Names must be unique within the business, including names with different capitalization. If the order changed in another session, reload before reordering again. An empty category does not create an online offer."
+    }
+  ],
+  "related": [
+    "services-create",
+    "services-update-retire",
+    "setup-first-workspace"
+  ],
+  "action": {
+    "key": "services",
+    "label": "Go to Services"
+  },
+  "order": 28
+}

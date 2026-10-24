@@ -1,0 +1,14 @@
+[
+  {
+    "check": "persistent suggestion failure stops requests; input retained and full Search progresses",
+    "passed": true
+  },
+  {
+    "check": "unhelpful feedback offers support and another search",
+    "passed": true
+  },
+  {
+    "check": "no-JavaScript steps remain numbered with Help navigation",
+    "passed": true
+  }
+]

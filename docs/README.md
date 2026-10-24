@@ -5,7 +5,7 @@ It converts the approved Word PRD into searchable Markdown and provides the
 smaller, implementation-facing documents that future Codex threads and human
 developers should use.
 
-Last structured review: 2026-10-12.
+Last structured review: 2026-10-24.
 
 ## Start here
 
@@ -63,6 +63,7 @@ exists.
 | `modules/communications.md` | Platform-managed client email/SMS, simple preferences, scoped history and reliable SES/Twilio delivery | Client messaging or provider/workspace change |
 | `modules/reports.md` | Historical analytics, exact metric bases, scope, comparisons, capacity and export contracts | Reports or analytical projection changes |
 | `modules/dashboard.md` | Permission-aware daily workspace projection, operations, time and performance contract | Dashboard behavior or data change |
+| `modules/help-center.md` | Public product guidance, local search, contextual help, guarded application links and content/media maintenance | Every documented workflow or Help change |
 | `modules/product-experience.md` | Shared presentation, terminology and interaction contract with dated route/screen evidence | Product-wide UI refinement |
 | `modules/*.md` | Implementation-facing module boundaries and rules | Module behavior or interface change |
 | `prompts/*.md` | Copy-ready prompts for separate implementation threads | Delivery strategy change |

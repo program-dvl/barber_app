@@ -1,0 +1,49 @@
+{
+  "slug": "clients-private-files",
+  "title": "Store and access private client files",
+  "summary": "Upload supported visit images and documents with appropriate visibility and expiring links.",
+  "category": "clients",
+  "keywords": [
+    "upload file",
+    "before photo",
+    "after photo",
+    "client attachment",
+    "private files",
+    "download",
+    "pdf"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "upload",
+      "title": "Upload a file",
+      "body": "You need attachment access; sensitive files require the separate sensitive-record permission.\n\n1. Open the client profile and choose **Client records → Private files**.\n2. Under **Choose attachment**, select a JPEG, PNG or PDF file of up to 10 MB.\n3. Choose **Attachment type**: File, Before photo, After photo or Profile photo.\n4. Choose **Attachment visibility**. Use **Sensitive** only when you have the required permission and the file belongs in that restricted category.\n5. Select **Upload file** and wait for the saved result.\n6. Confirm the filename and type in the list."
+    },
+    {
+      "id": "download",
+      "title": "Open a stored file",
+      "body": "Select **Get link** beside the required file. Use the private download link supplied by the application; it is available for 15 minutes. If it expires, return to the client record and request another link.\n\nShare a private link only with an intended authorized recipient. Do not place it in a public booking page, a Help Center comment or a shared screenshot."
+    },
+    {
+      "id": "issues",
+      "title": "Correct upload or access problems",
+      "body": "Check the supported file type and size if upload is rejected. A file extension change does not turn an unsupported file into a supported image or PDF. If your account cannot access sensitive material, ask the owner to review permissions rather than uploading another unrestricted copy.\n\nStore only necessary service records, and obtain any required photography consent separately. File storage does not itself establish permission to use an image for promotion."
+    }
+  ],
+  "related": [
+    "clients-forms",
+    "clients-notes",
+    "clients-privacy"
+  ],
+  "action": {
+    "key": "clients",
+    "label": "Go to Clients"
+  }
+}

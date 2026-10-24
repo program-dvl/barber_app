@@ -1,0 +1,56 @@
+{
+  "slug": "walk-ins-serve",
+  "title": "Assign staff and start a walk-in service",
+  "summary": "Check staff readiness, start the visit and complete checkout without losing queue history.",
+  "category": "walk-ins",
+  "keywords": [
+    "serve walk-in",
+    "assign staff",
+    "start service",
+    "complete queue",
+    "queue appointment",
+    "waiting estimate"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Choose staff and start",
+      "body": "1. Open **Walk-in queue** and find the waiting client.\n2. Select the client’s **Serve** action to open their details.\n3. Under **Choose staff**, select the intended person. ClipperDesk checks qualifications, hours, bookings and required resources.\n4. If you only want to remember the choice, select **Save assignment**. Add **Reassignment note (optional)** when useful.\n5. When the readiness check succeeds and the client is ready, select **Start service**.\n6. Confirm the client moves to **In service**.\n\nSaving an assignment reserves no time. Starting creates and links the real appointment and checks availability again."
+    },
+    {
+      "id": "finish",
+      "title": "Complete the visit",
+      "body": "Use **Complete** for a visit that has finished. The linked appointment and queue status stay in step. A completed walk-in may show **Checkout** for an authorized user; open it to review the sale and record money received.\n\nOnce an appointment has been created, use **Calendar** for rescheduling, reassignment or cancellation so the reserved time is handled correctly."
+    },
+    {
+      "id": "blocked",
+      "title": "If Start service is unavailable",
+      "body": "Select an eligible person and read the readiness result. A stale check needs **Check again**. If a current service has passed its expected finish, resolve its actual status before starting another client on that person.\n\nWait estimates do not reserve resources or guarantee that a service fits. If the queue has not refreshed recently, refresh it before relying on estimates. After an interrupted change, check the current queue and Calendar before repeating the action."
+    }
+  ],
+  "related": [
+    "walk-ins-add",
+    "walk-ins-order-alerts",
+    "checkout-review"
+  ],
+  "action": {
+    "key": "walk-ins",
+    "label": "Go to Walk-in queue"
+  },
+  "screenshots": [
+    {
+      "key": "walk-in-queue",
+      "alt": "Walk-in queue showing waiting clients and service progress",
+      "caption": "Choose staff and check readiness before starting a visit.",
+      "section": "steps"
+    }
+  ]
+}

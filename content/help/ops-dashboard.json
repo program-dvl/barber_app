@@ -1,0 +1,57 @@
+{
+  "slug": "ops-dashboard",
+  "title": "Use your daily workspace",
+  "summary": "Follow today’s appointments, arrivals, waiting clients and payment follow-up from one place.",
+  "category": "getting-started",
+  "keywords": [
+    "dashboard",
+    "today",
+    "daily overview",
+    "now next",
+    "arrivals",
+    "home",
+    "start day"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "scope",
+      "title": "Choose your working day",
+      "body": "Open **Dashboard**, select the location you are working in and check the displayed date and time zone. Choose **Now & next**, **Appointment list** or **By staff** to arrange the same schedule in the way that suits you. Your choice is remembered on this device for your account.\n\nYou see the locations and appointments your access permits. Someone with personal-calendar access sees their own assigned appointments. Financial access is separate, so a person may see money summaries without seeing the team’s schedule."
+    },
+    {
+      "id": "work",
+      "title": "Run the day",
+      "body": "1. Start with the current and upcoming visits in **Now & next**.\n2. Open an appointment to check its service, staff, time and any details your role allows.\n3. Use the available next action to record the visit’s progress. Confirm an arrival or service start only when it has happened.\n4. Open the appointment in Calendar for schedule changes or cancellation.\n5. Follow a completed unpaid visit into Checkout when you are ready to record money received.\n\nAn attention cue asks you to review something. It does not automatically mark a client late or absent."
+    },
+    {
+      "id": "freshness",
+      "title": "Understand the figures and freshness",
+      "body": "Check the updated time before acting. The dashboard refreshes while it is visible and idle, and pauses while you use a form or drawer. Use the refresh control when you need a fresh view. If loading fails, the last loaded information remains visible; refresh before repeating an uncertain change.\n\n**Sale value** uses saved sales, rather than every appointment’s quoted price. Collected amounts include recorded payments and applied deposits, less refunds. A scheduled staff member has configured working time; this does not confirm physical attendance or guarantee a free booking slot."
+    }
+  ],
+  "related": [
+    "calendar-views",
+    "appointments-status-cancel",
+    "checkout-review"
+  ],
+  "action": {
+    "key": "dashboard",
+    "label": "Go to Dashboard"
+  },
+  "screenshots": [
+    {
+      "key": "dashboard",
+      "alt": "Daily workspace with sample appointments",
+      "caption": "Use the selected location and day to keep the team’s work in context.",
+      "section": "work"
+    }
+  ]
+}

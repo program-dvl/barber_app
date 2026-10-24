@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\HelpCenter\HelpCatalog;
 use App\Models\Article;
 use App\Support\Legal\PrivacyNotice;
 use App\Support\Seo\PublicUrl;
@@ -17,6 +18,9 @@ class SitemapController extends Controller
             ->merge(collect(array_keys(config('frontsite.solutions')))->map(fn ($slug) => route('marketing.solutions.show', $slug)))
             ->merge(collect(array_keys(config('frontsite.use_cases')))->map(fn ($slug) => route('marketing.use-cases.show', $slug)))
             ->merge(collect(array_keys(config('frontsite.guides')))->map(fn ($slug) => route('marketing.guides.show', $slug)))
+            ->merge([route('help.index')])
+            ->merge(collect(app(HelpCatalog::class)->categories())->filter(fn ($category) => $category['article_count'] > 0)->pluck('href'))
+            ->merge(collect(app(HelpCatalog::class)->summaries())->pluck('href'))
             ->merge(Article::query()->publishable()->pluck('slug')->map(fn ($slug) => route('blog.article', $slug)))
             ->map(fn (string $url) => PublicUrl::canonical($url))->unique()->sort()->values();
 

@@ -1,0 +1,61 @@
+{
+  "slug": "setup-readiness",
+  "title": "Finish setup and understand readiness",
+  "summary": "Separate the essentials for daily work from the steps for accepting online bookings.",
+  "category": "getting-started",
+  "keywords": [
+    "setup checklist",
+    "ready",
+    "not ready",
+    "progress",
+    "getting started",
+    "first appointment"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "access",
+      "title": "Who can make setup changes",
+      "body": "Owners and members allowed to manage business settings across all locations can edit Business setup. A branch manager may have access to their team or services without access to business-wide settings."
+    },
+    {
+      "id": "steps",
+      "title": "Complete the essentials",
+      "body": "1. Open **Business setup** and select **Readiness**.\n2. Follow the recommended incomplete item, then return to Readiness.\n3. Review the business profile and regional settings.\n4. Check at least one active location with opening hours, an active service and an active team member who is qualified for that service at the location.\n5. Make sure the person’s working hours overlap the location’s opening hours, and review the **Calendar interval** in **Booking preferences**.\n6. Open Calendar and check that the intended service, staff and time can be selected."
+    },
+    {
+      "id": "optional",
+      "title": "What can wait",
+      "body": "Logo and cover uploads, imports, extra employees, client notification channels and online payments are optional for internal appointments and recording cash or payments collected at your business. Publishing online is a separate decision."
+    },
+    {
+      "id": "trouble",
+      "title": "Why readiness can change",
+      "body": "Readiness checks your current settings, so deactivating staff, removing a service assignment or changing hours can reopen an item. A ready configuration does not guarantee a particular time is free; Calendar still checks appointments, breaks, resources and booking rules."
+    }
+  ],
+  "related": [
+    "setup-first-workspace",
+    "business-publish",
+    "services-online-availability",
+    "team-weekly-hours"
+  ],
+  "action": {
+    "key": "setup",
+    "label": "Go to Business setup"
+  },
+  "screenshots": [
+    {
+      "key": "setup-readiness",
+      "alt": "Business setup readiness and next setup actions",
+      "caption": "Readiness separates daily operating essentials from online publication.",
+      "section": "steps"
+    }
+  ],
+  "order": 3
+}

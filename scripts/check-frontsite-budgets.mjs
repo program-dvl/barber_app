@@ -10,13 +10,16 @@ const core = manifest['resources/js/app.js'];
 if (await size(core.file) > limits.coreJs) failures.push(`Core JS exceeds ${limits.coreJs} bytes`);
 for (const css of core.css ?? []) if (await size(css) > limits.css) failures.push(`${css} exceeds the public CSS budget`);
 
-const publicEntries = Object.entries(manifest).filter(([key]) => /resources\/js\/Pages\/(Home|Blog|Article|Error|TermsOfService|PrivacyPolicy|Marketing\/)/.test(key));
+const publicEntries = Object.entries(manifest).filter(([key]) => /resources\/js\/Pages\/(Home|Blog|Article|Error|TermsOfService|PrivacyPolicy|Marketing\/|Help\/)/.test(key));
 for (const [key, entry] of publicEntries) if (entry.file && await size(entry.file) > limits.routeJs) failures.push(`${key} exceeds the route JS budget`);
 
 for (const file of await readdir(join(root, 'public/fonts/clipperdesk'))) {
     if (/\.(ttf|woff2)$/.test(file) && (await stat(join(root, 'public/fonts/clipperdesk', file))).size > limits.font) failures.push(`${file} exceeds the font-file budget`);
 }
 for (const entry of publicEntries.map(([, value]) => value)) for (const asset of entry.assets ?? []) if (await size(asset) > limits.image) failures.push(`${asset} exceeds the public image budget`);
+
+const helpMedia = JSON.parse(await readFile(join(root, 'content/help-media.json'), 'utf8'));
+for (const media of Object.values(helpMedia)) if ((await stat(join(root, 'public', media.path))).size > limits.image) failures.push(`${media.path} exceeds the help image budget`);
 
 if (failures.length) {
     failures.forEach((failure) => console.error(failure));

@@ -1,0 +1,52 @@
+{
+  "slug": "billing-cancel",
+  "title": "Cancel renewal or keep your subscription",
+  "summary": "Schedule cancellation for the end of the paid term, or reverse it before that date.",
+  "category": "billing",
+  "keywords": [
+    "cancel subscription",
+    "stop renewal",
+    "reactivate",
+    "keep subscription",
+    "close business",
+    "refund"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Billing administrator"
+  ],
+  "sections": [
+    {
+      "id": "cancel",
+      "title": "Stop the next renewal",
+      "body": "1. Open **Subscription & billing → Overview**.\n2. Select **Cancel subscription** when available for your active subscription.\n3. Read the displayed paid-term end date. Choose an optional **Reason**.\n4. Select **Cancel at renewal** to confirm, or **Keep subscription** to leave the dialog without cancelling.\n5. Check the saved cancellation date and subscription state."
+    },
+    {
+      "id": "keep",
+      "title": "Keep a scheduled-to-cancel subscription",
+      "body": "Before the paid term ends, use **Keep subscription** on Overview. Verify the state updates. After the subscription has ended, starting a new subscription is required instead of reversing the old cancellation."
+    },
+    {
+      "id": "effects",
+      "title": "What cancellation means",
+      "body": "Renewal stops at the end of the paid term. Existing unpaid invoices still need payment. Your business records remain stored under the applicable retention policy; cancellation does not delete your account or erase financial history. Cancellation is not a confirmation that a refund was issued."
+    },
+    {
+      "id": "trouble",
+      "title": "If the action is unavailable",
+      "body": "The action requires subscription-management permission and an eligible subscription state. If payment status is uncertain, resolve it through the billing recovery notice. For a specific refund or closure request, contact support with the relevant invoice and safe reference rather than deleting your sign-in account."
+    }
+  ],
+  "related": [
+    "billing-invoices",
+    "billing-access",
+    "account-delete"
+  ],
+  "action": {
+    "key": "billing",
+    "label": "Go to Subscription & billing"
+  },
+  "order": 35
+}

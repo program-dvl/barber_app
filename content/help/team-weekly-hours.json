@@ -1,0 +1,60 @@
+{
+  "slug": "team-weekly-hours",
+  "title": "Set a person’s weekly hours and split shifts",
+  "summary": "Review schedule changes and handle affected appointments before saving.",
+  "category": "team",
+  "keywords": [
+    "staff schedule",
+    "employee hours",
+    "working hours",
+    "split shifts",
+    "regular hours",
+    "copy weekdays"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Before editing a schedule",
+      "body": "You need team-management access for the person’s working branches. Choose the correct location and date; displayed times follow the branch’s time zone. Opening hours and individual schedules both constrain bookability."
+    },
+    {
+      "id": "steps",
+      "title": "Review and save working hours",
+      "body": "1. Open **Team & availability**, select the person and choose **Schedule** or **Edit schedule**.\n2. Under **Regular working hours**, select each working day and enter start/end times.\n3. Use the add-shift control for a split day. Choose the correct branch for each shift when more than one is assigned.\n4. Use **Use branch hours** or **Copy to weekdays** only after checking which days should receive those hours.\n5. Select **Review changes**. Read all affected visits and open them in Calendar if needed.\n6. Resolve those appointments, or select **Keep these appointments as explicit exceptions. I will manage them in Calendar.** and enter the required reason.\n7. If shifts extend beyond branch hours, review and acknowledge the warning; actual bookability still follows the branch’s opening hours.\n8. Select **Save reviewed schedule**."
+    },
+    {
+      "id": "verify",
+      "title": "Check the saved week",
+      "body": "Return to **Weekly coverage** and inspect representative days. Schedule changes do not silently move or cancel existing visits. Staff time reserved is a scheduling measure, not payroll or attendance."
+    },
+    {
+      "id": "trouble",
+      "title": "When review needs to be repeated",
+      "body": "Reviews expire after 15 minutes. Changing the proposal or receiving new bookings can require a fresh review. Active holds must complete or expire before their windows can be reduced. New shifts must end after they start; overnight shift editing is not supported."
+    }
+  ],
+  "related": [
+    "business-hours",
+    "team-time-off",
+    "team-coverage"
+  ],
+  "action": {
+    "key": "team",
+    "label": "Go to Team & availability"
+  },
+  "order": 18,
+  "screenshots": [
+    {
+      "key": "team-schedule",
+      "alt": "Team member Schedule drawer with regular working hours and dated exceptions",
+      "caption": "Review affected visits before saving a schedule change.",
+      "section": "steps"
+    }
+  ]
+}

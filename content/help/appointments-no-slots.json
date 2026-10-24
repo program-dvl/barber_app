@@ -1,0 +1,48 @@
+{
+  "slug": "appointments-no-slots",
+  "title": "Troubleshoot missing services or online time slots",
+  "summary": "Check publication, location, service, staff and scheduling settings in a useful order.",
+  "category": "appointments",
+  "keywords": [
+    "no slots",
+    "service missing",
+    "booking unavailable",
+    "customers cannot book",
+    "not showing online",
+    "fully booked"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "business",
+      "title": "Start with publication and location",
+      "body": "1. Ask the owner to open **Business setup** and review online-booking readiness.\n2. Confirm that online booking was explicitly published. Prepared starter information or a preview is not publication.\n3. Open the actual business booking link and select the intended location.\n4. Check the location’s active state, operating hours and any special hours or closures.\n\nIf there are multiple branches, a service visible at one may not be available at another."
+    },
+    {
+      "id": "service",
+      "title": "Check the service and people",
+      "body": "1. In **Services**, confirm that the service is active, available at the branch and eligible for online booking.\n2. For an add-on, include its required parent service.\n3. Confirm that at least one active, bookable staff member is assigned and qualified for the service at that branch.\n4. In **Team**, check regular hours, breaks, time off and dated changes.\n5. Try another future date that satisfies minimum notice and booking-horizon settings.\n\nThe service’s entire required span and resources must fit. A short visual gap is not enough if processing, cleanup, other-location work or a current hold occupies the required capacity.\n\nSome services or booking settings restrict new versus returning customers or require a consultation. If the selected visit is not eligible, choose a suitable consultation or contact the business; changing the spelling of contact details is not a way to become eligible."
+    },
+    {
+      "id": "recovery",
+      "title": "If the settings look right",
+      "body": "Refresh availability once and choose a newly offered time. Do not repeat a failed confirmation or create a second visit before checking Calendar for a saved result.\n\nA provider outage or account restriction needs platform or owner attention. Preserve the customer’s chosen details and use the support path shown by the application with its reference. Customers should never be asked to repair server credentials or technical settings."
+    }
+  ],
+  "related": [
+    "calendar-availability",
+    "appointments-public-booking",
+    "appointments-add"
+  ],
+  "action": {
+    "key": "calendar",
+    "label": "Go to Calendar"
+  }
+}

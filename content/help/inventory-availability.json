@@ -1,0 +1,47 @@
+{
+  "slug": "inventory-availability",
+  "title": "Understand retail inventory availability",
+  "summary": "Know which retail tools are currently visible and how saved retail sales affect stock.",
+  "category": "inventory",
+  "keywords": [
+    "inventory",
+    "stock",
+    "retail",
+    "product",
+    "low stock",
+    "stock receipt",
+    "stock adjustment",
+    "import product"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "availability",
+      "title": "What is available in the business workspace?",
+      "body": "Retail inventory setup is not currently offered as a complete self-service workspace in the business navigation. A restricted inventory listing may be available to authorized accounts, but there is no current business screen for manually receiving or adjusting stock.\n\nProduct records can be imported from **Business setup → Optional setup → Import records**. Select **Products**, download the template and review the preview before committing. This imports product records; it does not provide a stock receipt or stock adjustment editor. See [Import records](/help/articles/setup-import-records) for the full workflow."
+    },
+    {
+      "id": "checkout",
+      "title": "If Retail products appears at checkout",
+      "body": "A permitted checkout may show **Retail products** for an existing eligible catalogue. Products must belong to the visit’s location and currency and have enough stock. Search by name, SKU or barcode, and review quantity and price before saving.\n\nStock is committed when the sale reaches completion, not simply when an item is added to an unsaved basket. If stock changed, stop and have an authorized owner review it instead of repeatedly recording the same sale."
+    },
+    {
+      "id": "returns",
+      "title": "Returns and reporting",
+      "body": "A supported manual refund record asks whether a returned product is kept, restocked or written off. Review the actual disposition carefully; a refund amount alone is not a stock correction.\n\nThe current Reports selector excludes retail-sales and stock reports. Do not expect a product export, stock editor or transfer workflow from the public Help Center link. Existing financial and stock histories are preserved while these self-service controls remain unavailable."
+    }
+  ],
+  "related": [
+    "checkout-review",
+    "checkout-refund",
+    "reports-run",
+    "setup-import-records"
+  ]
+}

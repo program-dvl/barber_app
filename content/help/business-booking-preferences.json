@@ -1,0 +1,62 @@
+{
+  "slug": "business-booking-preferences",
+  "title": "Configure online booking preferences",
+  "summary": "Choose booking intervals, staff choice, new-client rules, cancellation cutoffs and link expiry.",
+  "category": "business",
+  "keywords": [
+    "booking settings",
+    "staff choice",
+    "gender",
+    "new clients",
+    "existing clients",
+    "cancellation cutoff",
+    "waitlist",
+    "link expiry"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Review booking preferences",
+      "body": "1. Open **Business setup → Booking preferences**.\n2. Choose **Calendar interval** from the offered intervals. This controls time choices; it does not change a service’s duration.\n3. Review **Accept online bookings** and **Allow staff gender requests**.\n4. Choose **Staff choice**: **Any or preferred**, **First available only** or **Client must choose**.\n5. Choose **Price display** and **New clients**. **Consultation only** limits new clients to services marked as consultations; **Existing clients only** restricts eligibility.\n6. Set **Cancellation cutoff**. Open **More online preferences** to review **Clients notified per opening** and **Appointment link expires after**.\n7. Select **Save changes**."
+    },
+    {
+      "id": "effects",
+      "title": "What these settings change",
+      "body": "A published page also needs online booking enabled and an eligible service/staff/location combination. Changing preferences does not move existing appointments. The cancellation cutoff governs secure self-service, while staff actions still follow their permissions and the appointment’s policy. Waitlist offers do not guarantee a reservation until a client successfully claims one."
+    },
+    {
+      "id": "verify",
+      "title": "Verify as a client",
+      "body": "Review the private booking preview, then the live page if already published. Check staff choices, visible services and public price wording. New-client eligibility is checked again using the client’s submitted contact details."
+    },
+    {
+      "id": "trouble",
+      "title": "If a choice is unavailable",
+      "body": "A selected preference cannot create a missing staff qualification or free time. Check service visibility, staff visibility and actual schedules before repeatedly changing the interval. Clients with expired links should contact the business for help instead of forwarding or reusing another client’s link."
+    }
+  ],
+  "related": [
+    "business-publish",
+    "services-online-availability",
+    "team-service-assignments"
+  ],
+  "action": {
+    "key": "setup",
+    "label": "Go to Business setup"
+  },
+  "order": 8,
+  "screenshots": [
+    {
+      "key": "business-booking-preferences",
+      "alt": "Business setup booking preferences",
+      "caption": "Review client booking and cancellation choices before changing them.",
+      "section": "steps"
+    }
+  ]
+}

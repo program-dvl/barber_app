@@ -1,0 +1,54 @@
+{
+  "slug": "account-delete",
+  "title": "Understand account deletion and business closure",
+  "summary": "Review the consequences before permanently removing your personal sign-in account.",
+  "category": "account",
+  "keywords": [
+    "delete account",
+    "close account",
+    "data deletion",
+    "business closure",
+    "retention",
+    "cancel",
+    "privacy"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "difference",
+      "title": "Account deletion and subscription cancellation are separate",
+      "body": "**Delete account** permanently removes your personal sign-in account, profile photo and access tokens. It is not the billing cancellation workflow and does not confirm that business records or financial history have been erased. If you want to stop subscription renewal, use Subscription & billing first."
+    },
+    {
+      "id": "before",
+      "title": "Before deleting",
+      "body": "Download information you are authorized to keep. If you own a business, arrange appropriate ongoing business access and review subscription obligations with support before removing the login you use to manage it. Ask the business about a client-data privacy request rather than deleting your personal sign-in as a substitute."
+    },
+    {
+      "id": "steps",
+      "title": "Delete your personal sign-in account",
+      "body": "1. Open **Profile & security** and find **Delete account**.\n2. Read the permanent-deletion explanation.\n3. Select **Delete account**.\n4. Enter **Current password** only if you intend to lose this account permanently.\n5. Confirm **Delete account**, or choose **Cancel** to keep the account."
+    },
+    {
+      "id": "verify",
+      "title": "What to expect",
+      "body": "The action cannot be undone and you lose sign-in access. Historical business, appointment and financial records follow their applicable retention rules. For business closure, exports, privacy requests or unresolved subscription matters, contact support before taking this irreversible step."
+    }
+  ],
+  "related": [
+    "billing-cancel",
+    "account-profile",
+    "account-recovery"
+  ],
+  "action": {
+    "key": "profile",
+    "label": "Go to Profile & security"
+  },
+  "order": 42
+}

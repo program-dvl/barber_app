@@ -1,0 +1,49 @@
+{
+  "slug": "clients-privacy",
+  "title": "Record and process a client privacy request",
+  "summary": "Track exports, corrections, withdrawals and deletion reviews without silently erasing history.",
+  "category": "clients",
+  "keywords": [
+    "privacy request",
+    "client export",
+    "delete customer",
+    "anonymise",
+    "data correction",
+    "withdraw consent",
+    "gdpr"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "log",
+      "title": "Log the request",
+      "body": "You need privacy-management permission. Verify the requester’s identity through your business’s approved process before disclosing or changing information.\n\n1. Open the client profile and choose **Client records → Privacy requests**.\n2. Select **Request type**: **Data export**, **Correction**, **Consent withdrawal** or **Deletion / anonymisation review**.\n3. For a correction, supply the changed name, email or mobile fields. For withdrawal, choose **Consent to withdraw**. For deletion review, enter required **Request context**.\n4. Select **Log request**.\n5. Confirm the request appears with its status. Logging records the request; it does not complete it."
+    },
+    {
+      "id": "process",
+      "title": "Process and check the outcome",
+      "body": "Select **Process** beside a submitted request when you have verified the details and are ready for its specific action. Review the resulting status.\n\nData export produces a private export link when completed. Handle it as confidential and share it only with the verified intended person. Correction updates the supplied fields while retaining evidence. Consent withdrawal records the selected withdrawal."
+    },
+    {
+      "id": "deletion",
+      "title": "Why deletion may stay under review",
+      "body": "Deletion and anonymisation are currently held until the approved retention policy permits processing. The request can be reviewed and safely held; it is not a completed deletion and no destructive client-delete button is provided.\n\nDo not promise that logging or processing a request removes financial or appointment history. If a request needs policy or legal review, the business owner should follow up through the business’s privacy process and keep the client informed."
+    }
+  ],
+  "related": [
+    "clients-edit-preferences",
+    "clients-private-files",
+    "notifications-consent"
+  ],
+  "action": {
+    "key": "clients",
+    "label": "Go to Clients"
+  }
+}

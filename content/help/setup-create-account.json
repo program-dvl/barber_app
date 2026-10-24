@@ -1,0 +1,48 @@
+{
+  "slug": "setup-create-account",
+  "title": "Create your owner account",
+  "summary": "Start a trial with email or Google, then enter your private business setup.",
+  "category": "getting-started",
+  "keywords": [
+    "register",
+    "signup",
+    "sign up",
+    "new business",
+    "create account",
+    "trial",
+    "Google"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Before you begin",
+      "body": "Use an email address you control. You do not need payment details to start a trial. If you are joining someone else’s business, use their secure team invitation instead of creating another owner workspace."
+    },
+    {
+      "id": "steps",
+      "title": "Create the account",
+      "body": "1. Select **Start your trial** on the ClipperDesk website.\n2. Enter **Business name**, **Your full name**, **Work email**, **Password** and **Confirm password**. Use a unique password with at least eight characters.\n3. Read the linked terms and privacy information and select the agreement checkbox.\n4. Select **Create owner account**.\n5. Open the verification email and follow its link. You can then begin **Let’s prepare your business**.\n\nIf Google sign-up is offered, choose it and approve the sign-in. On **Finish creating your account**, review your verified email, add the business details and select **Create workspace and continue**. Google sign-up takes you directly into the introduction."
+    },
+    {
+      "id": "verify",
+      "title": "Check that it worked",
+      "body": "Your business setup opens with your own business name. A pricing selection made before sign-up is a preference for later review; it does not purchase a subscription or charge your card."
+    },
+    {
+      "id": "trouble",
+      "title": "If you cannot continue",
+      "body": "If the email is already registered, sign in or reset its password. Check your spam folder for verification mail and use the verification screen’s resend action if needed. Do not create repeated owner accounts to recover a delayed email."
+    }
+  ],
+  "related": [
+    "setup-first-workspace",
+    "team-accept-invitation",
+    "account-recovery"
+  ],
+  "order": 1
+}

@@ -1,0 +1,52 @@
+{
+  "slug": "team-invite-login",
+  "title": "Invite an existing team member to sign in",
+  "summary": "Choose the person’s workspace role and accessible locations, then send a secure invitation.",
+  "category": "team",
+  "keywords": [
+    "invite staff",
+    "login",
+    "send invitation",
+    "resend",
+    "email invitation",
+    "employee account"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Working profile and login are separate",
+      "body": "Inviting a person gives them workspace access according to the permissions you choose. It does not create their working hours or qualify them for services. You can grant only capabilities and locations you are authorized to manage."
+    },
+    {
+      "id": "steps",
+      "title": "Send or resend the invitation",
+      "body": "1. Open **Team & availability** and select the person.\n2. Open the profile’s **Access** section. Confirm the person has the correct email.\n3. Choose **Workspace role** and review its description. If needed, select **Customize capabilities** and choose only the responsibilities they need.\n4. Select **Locations they can access**. These can differ from their working branches.\n5. Add an optional reason and select **Send secure invitation**. If an invitation already exists, select **Resend secure invitation**.\n6. Ask the person to open their own invitation email and follow the acceptance steps."
+    },
+    {
+      "id": "verify",
+      "title": "Check the invitation state",
+      "body": "The manager-only **Access** view lists invitations and their expiry. Invitations expire after seven days and are single-use. An accepted login appears as active workspace access."
+    },
+    {
+      "id": "trouble",
+      "title": "If the person cannot join",
+      "body": "Check the invitation email address, expiry and cancellation state. Ask them to check spam and sign in with the invited email. Use **Reinvite** or the profile’s resend action for an expired invitation. Cancel an unwanted pending invitation from Access. Do not share another person’s invitation link."
+    }
+  ],
+  "related": [
+    "team-accept-invitation",
+    "team-roles-permissions",
+    "team-add-member"
+  ],
+  "action": {
+    "key": "team",
+    "label": "Go to Team & availability"
+  },
+  "order": 13
+}

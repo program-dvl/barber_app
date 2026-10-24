@@ -1,0 +1,49 @@
+{
+  "slug": "calendar-blocks-closures",
+  "title": "Block staff time and record operational disruption",
+  "summary": "Keep non-bookable time visible and review appointments affected by disruption.",
+  "category": "calendar",
+  "keywords": [
+    "block time",
+    "break",
+    "unexpected closure",
+    "staff unavailable",
+    "late arrival",
+    "service overrun",
+    "operational impact"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "block",
+      "title": "Create a staff block",
+      "body": "You need appointment-management access. Open **Calendar → More calendar actions → Block staff time**.\n\n1. Choose **Staff** and **Type**: **Personal block** or **Staff break**.\n2. Enter a clear **Calendar label**.\n3. Set **Starts** and **Ends** in the location’s local time.\n4. Enter the required **Private reason** and select **Create block**.\n5. Check the block on the staff member’s schedule.\n\nChoose time without an existing appointment or reserved slot. A block cannot be used to force another reservation out of the way."
+    },
+    {
+      "id": "impact",
+      "title": "Record a disruption",
+      "body": "For a visit running late, an overrun or unavailable staff, use the appointment’s operational-impact action. In **Record operational impact**, choose **Exception**, set **Projected end** where appropriate, enter **Reason** and select **Record impact**. Review the affected appointments for follow-up.\n\nAuthorized managers can use **More calendar actions → Record unexpected closure**. Set **Starts**, **Ends** and **Reason**, then select **Record closure** after checking the interval."
+    },
+    {
+      "id": "follow-up",
+      "title": "Follow up with affected clients",
+      "body": "Recording operational impact or an unexpected closure lists the affected appointments. Their times are not automatically moved or cancelled. Open each affected visit, agree a useful next step with the client and use the normal reschedule or cancellation workflow.\n\nFor recurring breaks, regular working hours or planned time off, use Team scheduling rather than creating many one-off blocks. Keep private reasons factual; calendar viewers see safe schedule labels rather than private leave explanations."
+    }
+  ],
+  "related": [
+    "appointments-change",
+    "calendar-availability",
+    "appointments-status-cancel"
+  ],
+  "action": {
+    "key": "calendar",
+    "label": "Go to Calendar"
+  }
+}

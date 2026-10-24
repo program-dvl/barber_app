@@ -1,0 +1,49 @@
+{
+  "slug": "account-sign-in",
+  "title": "Sign in to the correct workspace",
+  "summary": "Use your own account and enter the business your role can access.",
+  "category": "account",
+  "keywords": [
+    "login",
+    "sign in",
+    "Google",
+    "wrong workspace",
+    "switch account",
+    "email",
+    "member login"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Sign in",
+      "body": "1. Select **Sign in** on the ClipperDesk website.\n2. Enter your email and password, then select **Sign in**. If Google sign-in is offered for your account, you can choose that option.\n3. Complete the authenticator or recovery-code challenge if your account requires it.\n4. Open your business workspace. If you have access to several, choose the intended business.\n5. Check the business identity before making changes."
+    },
+    {
+      "id": "invited",
+      "title": "Joining an existing business",
+      "body": "Open the invitation sent by your business instead of registering a new owner workspace. You must accept it with the exact invited email. Your owner controls the role and locations you can access."
+    },
+    {
+      "id": "trouble",
+      "title": "If access fails",
+      "body": "Use **Forgot password?** for a password you cannot remember. If your email needs verification, follow the email-verification screen. If your login was disabled, ask the business owner to review access. If Google returns a different email, sign out and choose the correct account. Never share passwords, authenticator codes or invitation links with another team member."
+    }
+  ],
+  "related": [
+    "account-recovery",
+    "team-accept-invitation",
+    "team-roles-permissions"
+  ],
+  "action": {
+    "key": "profile",
+    "label": "Go to Profile & security"
+  },
+  "order": 38
+}

@@ -1,0 +1,58 @@
+{
+  "slug": "checkout-review",
+  "title": "Review and save a sale after a visit",
+  "summary": "Check performed services, adjustments and totals before recording payment.",
+  "category": "checkout",
+  "keywords": [
+    "checkout",
+    "sale",
+    "cashier",
+    "pos",
+    "review sale",
+    "add service to sale",
+    "discount",
+    "price override"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Start from a completed visit",
+      "body": "You need checkout access at the appointment’s location. Open **Checkout / Sales** and choose the completed visit under **Ready to checkout**, or follow **Checkout** from Calendar, Walk-in queue or the client’s visit history.\n\nThis workspace records money already received elsewhere. It does not charge a card. Your ClipperDesk subscription has its own separate **Subscription & billing** workspace."
+    },
+    {
+      "id": "review",
+      "title": "Review the basket",
+      "body": "1. Check the client, appointment reference, location and performed staff.\n2. Review **Sale items**. Booked services retain their recorded price; added services use current eligible staff and prices.\n3. Use the add-item action to search services. If retail is available to your account, **Retail products** also appears. Choose **Performed by** for a service.\n4. Open an item to review price, staff or discount where your permission allows. Enter **Reason for adjustment** when removing an item or changing its booked price or staff. Select **Save item**.\n5. Check tips, any available appointment deposit, tax and **Amount due**.\n6. Select **Review & save sale** and wait for the saved outcome."
+    },
+    {
+      "id": "after",
+      "title": "Check before continuing",
+      "body": "The saved sale fixes the reviewed items and totals. They cannot be amended or cancelled in this workspace. Review carefully before saving; closing and reopening does not rebuild the basket with new catalogue prices.\n\nPrice overrides require an owner or manager. Discounts require separate access and may need elevated approval beyond the configured threshold. If an item, price or stock check fails, correct the cause with an authorized manager before saving. Never create a second sale to work around an uncertain result."
+    }
+  ],
+  "related": [
+    "checkout-record-payments",
+    "checkout-deposits-taxes-tips",
+    "checkout-payment-recovery"
+  ],
+  "action": {
+    "key": "checkout",
+    "label": "Go to Checkout / Sales"
+  },
+  "screenshots": [
+    {
+      "key": "checkout",
+      "alt": "Checkout workspace showing a completed visit and sale summary",
+      "caption": "Review the basket before saving its fixed totals.",
+      "section": "review"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "slug": "billing-capacity",
+  "title": "Understand locations, bookable staff and pricing",
+  "summary": "Know what counts toward capacity and how the subscription estimate is calculated.",
+  "category": "billing",
+  "keywords": [
+    "capacity",
+    "staff seats",
+    "location limit",
+    "employee cost",
+    "pricing",
+    "subscription plan",
+    "counting rules"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Billing administrator"
+  ],
+  "sections": [
+    {
+      "id": "count",
+      "title": "What is counted",
+      "body": "One active location and one active bookable staff profile form the base subscription. Additional active locations add location capacity. A person who takes appointments counts once across the business, even when they work at several branches. Login-only administrators, receptionists who do not take appointments, inactive staff and physical chairs do not consume bookable staff capacity."
+    },
+    {
+      "id": "price",
+      "title": "How the estimate works",
+      "body": "ClipperDesk offers one capacity-based subscription for new purchases. The calculator shows the base, additional locations and progressive staff bands. Staff in earlier bands keep that band’s price. Choose Monthly or Yearly to see the full recurring total and currency. Yearly is paid upfront; use the displayed yearly total and savings rather than multiplying a rounded monthly equivalent."
+    },
+    {
+      "id": "steps",
+      "title": "Review usage and capacity",
+      "body": "1. Open **Subscription & billing → Overview**.\n2. Read **Your usage**, including locations, bookable staff and text credits.\n3. Select **Adjust capacity** to open **Plan**.\n4. Enter the capacity you expect to use and select **Review subscription** before confirming any change.\n5. Check whether the review says payment is due now or the change takes effect at renewal."
+    },
+    {
+      "id": "limits",
+      "title": "What a limit does",
+      "body": "Reaching a location or active staff limit can prevent adding another active record. Existing records and historical sales are retained. Your subscription features and each member’s permissions are independent: buying capacity does not grant a staff member access to billing or private records."
+    }
+  ],
+  "related": [
+    "billing-change-capacity",
+    "team-add-member",
+    "business-location",
+    "billing-access"
+  ],
+  "action": {
+    "key": "billing",
+    "label": "Go to Subscription & billing"
+  },
+  "order": 31
+}

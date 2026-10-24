@@ -1,0 +1,58 @@
+{
+  "slug": "calendar-views",
+  "title": "Find appointments and choose a Calendar view",
+  "summary": "Use Team, Day, Week and Agenda views, date controls, filters and printed schedules.",
+  "category": "calendar",
+  "keywords": [
+    "calendar",
+    "diary",
+    "agenda",
+    "week",
+    "day",
+    "search appointment",
+    "print schedule",
+    "find booking"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "scope",
+      "title": "Before you begin",
+      "body": "Open **Calendar** and choose an accessible location. Times belong to that location’s time zone, shown beside the schedule. Your access may show the whole location’s calendar or only your appointments. Contact details and internal notes have separate access controls."
+    },
+    {
+      "id": "steps",
+      "title": "Navigate the schedule",
+      "body": "1. Select **Team** for staff columns, **Day** for a day overview, **Week** for several days or **Agenda** for a list. Agenda is useful on a phone.\n2. Select **Today**, use the previous/next arrows or open the date control to choose a date.\n3. Use **Search appointments** to search the loaded day or week by the details you are allowed to view.\n4. Open filters to narrow by **Staff**, **Service** or **Status**. Clear filters when a visit seems missing.\n5. Select an appointment to see its details and available actions.\n6. For a paper copy, open **More calendar actions** and select **Print day**."
+    },
+    {
+      "id": "check",
+      "title": "When something looks missing",
+      "body": "Search covers the displayed day or week, rather than all appointment history. Check the date, location, filters and your assigned access. Cancelled or other historical statuses may require changing the status filter.\n\nA gap in the displayed schedule is not a promise of availability. Other locations’ reservations, working hours, resources, breaks and current booking holds may still prevent a new booking. Refresh the schedule if it has not updated; do not recreate a visit just because a refresh failed."
+    }
+  ],
+  "related": [
+    "calendar-availability",
+    "appointments-add",
+    "appointments-change"
+  ],
+  "action": {
+    "key": "calendar",
+    "label": "Go to Calendar"
+  },
+  "screenshots": [
+    {
+      "key": "calendar",
+      "alt": "Calendar showing staff columns and appointment cards",
+      "caption": "Use views and filters without changing the underlying appointments.",
+      "section": "steps"
+    }
+  ]
+}

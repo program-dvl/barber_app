@@ -27,3 +27,11 @@ lang/php_*.json
 /tmp/public-booking-audit/
 
 /tmp/billing-redesign/
+
+# Local-only marketing projects, brochures, videos and review artifacts
+/marketing/
+/output/pdf/clipperdesk-*.pdf
+/tmp/pdfs/clipperdesk-lead-kit/
+
+# Isolated Help Center fixtures, private demo sign-in and browser scratch files
+/tmp/help-center/

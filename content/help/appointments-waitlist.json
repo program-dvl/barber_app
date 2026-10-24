@@ -1,0 +1,48 @@
+{
+  "slug": "appointments-waitlist",
+  "title": "Understand waitlists and opening offers",
+  "summary": "Help customers request a suitable opening and respond to a private offer.",
+  "category": "appointments",
+  "keywords": [
+    "waitlist",
+    "waiting list",
+    "earlier appointment",
+    "opening offer",
+    "claim slot",
+    "no availability"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "join",
+      "title": "Request a suitable opening",
+      "body": "A waitlist request is different from a walk-in queue entry. It asks to hear about a future opening rather than recording a customer waiting at reception.\n\nCustomers use the waitlist option offered by the booking page or their private appointment page. They choose an acceptable date and time range, notification method and any requested notes. A selected SMS method is an explicit request for that waitlist alert."
+    },
+    {
+      "id": "offer",
+      "title": "Respond to an offer",
+      "body": "1. Open the private offer link when an opening is received.\n2. Check the business, service, staff, location and time.\n3. Follow the page’s claim action while the offer remains valid.\n4. Wait for the final result and keep the confirmed appointment details.\n\nAn offer is time limited and may compete with other valid responses. Receiving or opening it does not guarantee a booking. If it expired or someone else accepted the time, follow the result shown rather than repeatedly submitting the same offer."
+    },
+    {
+      "id": "manage",
+      "title": "Existing appointments and limits",
+      "body": "Joining a waitlist does not silently move or cancel an existing visit. Review the final outcome before changing any other arrangement. Customers can use the available leave action on their private appointment page for requests linked to that visit.\n\nStaff can check the resulting appointment in Calendar. There is no general owner-facing waitlist management screen in the current business workspace; do not look for a bulk waitlist campaign or guaranteed opening notification."
+    }
+  ],
+  "related": [
+    "appointments-public-booking",
+    "appointments-self-service",
+    "walk-ins-add"
+  ],
+  "action": {
+    "key": "calendar",
+    "label": "Go to Calendar"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "slug": "team-edit-profile",
+  "title": "Edit a working profile or make a person inactive",
+  "summary": "Update contact details, working branches, biography and future bookability.",
+  "category": "team",
+  "keywords": [
+    "staff profile",
+    "deactivate employee",
+    "inactive staff",
+    "remove branch",
+    "biography",
+    "professional title"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Update the working profile",
+      "body": "1. Open **Team & availability** and choose the person.\n2. In **Overview**, select **Edit profile**.\n3. Update **Name**, **Professional title**, **Mobile**, optional **Biography** and **Branches they work at**.\n4. Review **Employment status**: **Active / bookable** or **Inactive / not bookable**. Review **Clients can choose them online** separately.\n5. If a status or branch change affects existing appointments, enter **Reason for status or branch change**.\n6. Select **Save profile**."
+    },
+    {
+      "id": "history",
+      "title": "What remains saved",
+      "body": "Making a profile inactive removes future bookability while retaining appointment history. Login access is unchanged. The email field is disabled for a person with a linked login; personal account email changes belong in Profile & security."
+    },
+    {
+      "id": "trouble",
+      "title": "When a change is blocked",
+      "body": "Review future visits and active booking holds. Do not assume deactivation cancels appointments or frees every existing reservation. Wait for affected holds to complete or expire, then review again. Managers can edit only within their authorized branch scope."
+    },
+    {
+      "id": "verify",
+      "title": "Verify the result",
+      "body": "Use the **Inactive team** or **Everyone** filter if the person no longer appears in the active directory. Check the saved branches and review future Calendar appointments before completing offboarding."
+    }
+  ],
+  "related": [
+    "team-disable-restore-login",
+    "team-service-assignments",
+    "team-weekly-hours"
+  ],
+  "action": {
+    "key": "team",
+    "label": "Go to Team & availability"
+  },
+  "order": 17
+}

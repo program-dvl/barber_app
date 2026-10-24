@@ -16,7 +16,7 @@ class PublicPage
             'image' => url(config('brand.social_image')),
             'site_name' => config('brand.product_name'),
             'locale' => 'en_IN',
-            'type' => request()->routeIs('blog.article', 'marketing.guides.show') ? 'article' : 'website',
+            'type' => request()->routeIs('blog.article', 'marketing.guides.show', 'help.article') ? 'article' : 'website',
             ...($props['seo'] ?? []),
             'robots' => app(PublicIndexation::class)->directive(request()),
         ];

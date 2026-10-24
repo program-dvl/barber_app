@@ -1,0 +1,57 @@
+{
+  "slug": "notifications-delivery",
+  "title": "Check whether a client notification was delivered",
+  "summary": "Read delivery history, understand status and investigate a missing update.",
+  "category": "notifications",
+  "keywords": [
+    "delivery history",
+    "sms failed",
+    "email not received",
+    "sent delivered",
+    "suppressed",
+    "retry notification",
+    "local simulation"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "find",
+      "title": "Find the message",
+      "body": "1. Open **Client notifications → Delivery history**.\n2. Use **Search history** for a booking reference, or client/contact details if your access allows them.\n3. Choose **Channel** and **Status**, then select **Apply**. Open **More filters** for notification type and dates.\n4. Select **Details** beside the message.\n5. Review the client, appointment reference, location, time zone, attempts, issue and timeline.\n\nYou can also reach scoped notification history from permitted appointment and client records."
+    },
+    {
+      "id": "meaning",
+      "title": "Understand the outcome",
+      "body": "**Sent** means the sending service accepted the message. **Delivered** requires its delivery confirmation. Neither label should be guessed from the appointment’s saved status.\n\nQueued or retried means the message is waiting. Failed means sending needs review. Suppressed means a preference or policy prevented sending. A **Local simulation** or simulated outcome is not a real client delivery.\n\nHistorical message bodies and private secure links are not exposed in the history drawer."
+    },
+    {
+      "id": "recover",
+      "title": "Investigate without repeated sending",
+      "body": "Check the selected channel, the client’s current contact information and communication preference, SMS consent, opt-outs and available text units. Ask the owner to review a persistent sending issue. Platform sending or provider setup problems must be handled by the platform, not by the client.\n\nIf an authorized retry action is offered, use it only after the sending issue has actually been resolved. It reuses the same message and rechecks consent; it cannot override an opt-out. Do not repeatedly resend to test an unresolved outage or assume a retry request proves delivery."
+    }
+  ],
+  "related": [
+    "notifications-preferences",
+    "notifications-consent",
+    "clients-edit-preferences"
+  ],
+  "action": {
+    "key": "notifications",
+    "label": "Go to Client notifications"
+  },
+  "screenshots": [
+    {
+      "key": "notification-history",
+      "alt": "Notification history with delivery outcomes",
+      "caption": "Open Details to distinguish service acceptance from confirmed delivery.",
+      "section": "find"
+    }
+  ]
+}

@@ -12,6 +12,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ClientAttachmentDownloadController;
 use App\Http\Controllers\ClientFormPublicController;
 use App\Http\Controllers\CommunicationActionController;
+use App\Http\Controllers\HelpCenterController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Invoices\DownloadInvoiceController;
 use App\Http\Controllers\Marketing\FeatureController;
@@ -150,6 +151,15 @@ Route::middleware(['guest', 'throttle:10,1'])->group(function (): void {
     Route::get('/auth/google/redirect', [SocialiteController::class, 'redirect'])->name('auth.google.redirect');
     Route::get('/auth/callback/google', [SocialiteController::class, 'callback'])->name('auth.google.callback');
     Route::post('/auth/google/register', [SocialiteController::class, 'completeRegistration'])->name('auth.google.register');
+});
+Route::prefix('help')->name('help.')->group(function (): void {
+    Route::get('/', [HelpCenterController::class, 'index'])->name('index');
+    Route::get('/search', [HelpCenterController::class, 'search'])->middleware('throttle:help-search')->name('search');
+    Route::get('/category/{category}', [HelpCenterController::class, 'category'])->where('category', '[a-z0-9-]+')->name('category');
+    Route::get('/articles/{slug}', [HelpCenterController::class, 'article'])->where('slug', '[a-z0-9-]+')->name('article');
+    Route::post('/articles/{slug}/feedback', [HelpCenterController::class, 'feedback'])->where('slug', '[a-z0-9-]+')->middleware('throttle:help-feedback')->name('feedback');
+    Route::get('/open/{action}', [HelpCenterController::class, 'open'])->where('action', '[a-z0-9-]+')
+        ->middleware(['auth:web', config('jetstream.auth_session'), 'verified'])->name('open');
 });
 Route::get('/resources', [ResourceController::class, 'index'])->name('marketing.resources');
 Route::get('/guides/{guide}', [ResourceController::class, 'guide'])->where('guide', '[a-z0-9-]+')->name('marketing.guides.show');

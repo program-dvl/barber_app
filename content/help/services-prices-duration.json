@@ -1,0 +1,55 @@
+{
+  "slug": "services-prices-duration",
+  "title": "Understand service prices and appointment timing",
+  "summary": "Learn base and override prices, active time, processing and cleanup.",
+  "category": "services",
+  "keywords": [
+    "price",
+    "from price",
+    "duration",
+    "processing time",
+    "cleanup",
+    "buffer",
+    "service length",
+    "staff price",
+    "location price"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "price",
+      "title": "How the price is chosen",
+      "body": "A staff-specific price takes priority over a location price, then the base price. **Starting from** changes the public wording; the chosen person and location still determine the applicable price. Blank overrides inherit the default. Zero is a real free price. Each service keeps its recorded currency."
+    },
+    {
+      "id": "timing",
+      "title": "How timing is calculated",
+      "body": "**Client visit** includes active service time plus processing. **Calendar span** also includes cleanup or buffer. Active time and cleanup reserve staff. Processing may release staff only where the service’s actual configuration allows it; inspect the note in the editor. Required rooms or equipment can remain reserved according to their rules."
+    },
+    {
+      "id": "steps",
+      "title": "Review or edit price and time",
+      "body": "1. Open **Services** and select the service.\n2. In **Overview → Price & duration**, review **Base price**, **Price display**, **Active service time**, **Cleanup / buffer** and **Processing time**.\n3. Open **Team & locations** for branch or person exceptions. Leave an override blank when it should inherit the default.\n4. Read **Client visit** and **Calendar span** at the top.\n5. If upcoming appointments exist, review impact under **Booking & rules** and enter a reason for relevant changes.\n6. Select **Save changes**."
+    },
+    {
+      "id": "history",
+      "title": "What happens to existing bookings",
+      "body": "Saved changes apply to new bookings and newly added checkout services. Existing appointments keep their recorded price, duration and performer. Editing a service does not resize the calendar or reprice completed sales. Tax-category references do not select a separate checkout tax rate."
+    }
+  ],
+  "related": [
+    "services-create",
+    "services-assignments",
+    "services-update-retire"
+  ],
+  "action": {
+    "key": "services",
+    "label": "Go to Services"
+  },
+  "order": 24
+}

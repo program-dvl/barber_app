@@ -1,0 +1,56 @@
+{
+  "slug": "account-profile",
+  "title": "Update your name, email, photo or password",
+  "summary": "Manage personal sign-in information separately from the business profile.",
+  "category": "account",
+  "keywords": [
+    "profile",
+    "email change",
+    "name change",
+    "photo",
+    "password change",
+    "personal settings"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "profile",
+      "title": "Update your personal profile",
+      "body": "1. Open the account menu and select **Profile & security**.\n2. Under **Profile details**, edit **Full name** and **Email address**.\n3. Use the photo controls to choose a supported profile image or **Remove photo** if needed.\n4. Select **Save changes**.\n5. If you changed your email, open the verification message sent to the new address. The previous address also receives a security notice."
+    },
+    {
+      "id": "password",
+      "title": "Change your password",
+      "body": "1. In **Change password**, enter **Current password**, **New password** and **Confirm password**.\n2. Use a unique password with at least eight characters.\n3. Select **Change password** and keep the new password in a password manager.\n4. Review **Signed-in devices** if you suspect another device has access."
+    },
+    {
+      "id": "trouble",
+      "title": "Common profile questions",
+      "body": "Changing your personal email is different from changing the business’s public email. A new account email needs verification before verified areas can be used. The email must not already belong to another account. If you normally use Google and do not know a current password, use the account recovery process rather than guessing repeatedly."
+    }
+  ],
+  "related": [
+    "account-security",
+    "account-recovery",
+    "business-profile"
+  ],
+  "action": {
+    "key": "profile",
+    "label": "Go to Profile & security"
+  },
+  "order": 39,
+  "screenshots": [
+    {
+      "key": "account-security",
+      "alt": "Profile and security screen with personal details and password controls",
+      "caption": "Manage your personal account separately from the business profile.",
+      "section": "profile"
+    }
+  ]
+}

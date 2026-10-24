@@ -1,0 +1,56 @@
+{
+  "slug": "reports-money",
+  "title": "Understand sales, receipts, taxes and refunds in Reports",
+  "summary": "Choose the correct date basis so payment activity and sale-period totals make sense.",
+  "category": "reports",
+  "keywords": [
+    "net receipts",
+    "revenue",
+    "payment activity",
+    "sales detail",
+    "tax",
+    "refund report",
+    "discount report",
+    "payment mix",
+    "cash reconciliation"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "sales",
+      "title": "Use sale-period reports for selected sales",
+      "body": "**Business overview**, **Sales detail**, **Sale line items**, **Service sales**, **Team sales**, **Location comparison** and **Payment mix** answer questions about sales in the selected sale period.\n\n**Net receipts** for those sales include recorded payments plus applied deposits, less all recorded returns for the selected sales. A later refund can affect the current view of an older sale. This is not necessarily cash received during the clock dates selected."
+    },
+    {
+      "id": "payments",
+      "title": "Use transaction-date reports for recorded money movements",
+      "body": "Choose **Payment activity** for recorded successful payments and returns occurring in the selected period, including partial payments on open sales. Choose **Refunds & voids** to inspect returns and recorded reasons by their occurrence date.\n\nThese transaction-date views exclude deposit collections. **Payment mix** is a sale-period view, so it can differ from **Payment activity** even with the same dates. Check the report’s explanation before reconciling totals."
+    },
+    {
+      "id": "tax",
+      "title": "Read tax and discounts carefully",
+      "body": "**Discounts** uses recorded line discounts, rather than current service prices. **Tax & sale values** retains original tax and inclusive/exclusive price bases; later returns are shown separately because tax-return allocations are not recorded.\n\n**After discount** is before returns and tips and can include tax in the original price. **Sales less returns** is not a promise of tax-exclusive revenue. **Average sale value** is the original subtotal less discounts divided by matching sales, before returns and tips."
+    },
+    {
+      "id": "cash",
+      "title": "Cash reconciliation and current limits",
+      "body": "**Cash reconciliation** shows existing recorded cash closes with opening cash, expected cash, actual cash and variance. The current business checkout screen does not provide a self-service cash-close creation form.\n\nReports read existing records and do not execute refunds, collect payments, calculate tax filings or certify bank settlement. For an incorrect payment, use authorized sale review and correction rather than editing a report total."
+    }
+  ],
+  "related": [
+    "reports-run",
+    "checkout-refund",
+    "checkout-receipts-history"
+  ],
+  "action": {
+    "key": "reports",
+    "label": "Go to Reports"
+  }
+}

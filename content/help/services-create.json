@@ -1,0 +1,66 @@
+{
+  "slug": "services-create",
+  "title": "Create a service",
+  "summary": "Add a clear service name, price and timing, then choose where and by whom it can be delivered.",
+  "category": "services",
+  "keywords": [
+    "add service",
+    "new treatment",
+    "haircut",
+    "catalogue",
+    "create service",
+    "service menu"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Before you begin",
+      "body": "You need Services configuration access for the affected branches and staff. Receptionists can use eligible services in Calendar and Checkout without being able to change the catalogue."
+    },
+    {
+      "id": "steps",
+      "title": "Add the service",
+      "body": "1. Open **Services** and select **Add service**.\n2. In **Overview**, enter the required **Service name**, **Base price** and positive **Active service time**. Choose **Catalogue type → Standalone service**.\n3. Optionally add **Category**, **Client-facing description**, **Processing time** and **Cleanup / buffer**. Choose **Fixed price** or **Starting from** under **Price display**.\n4. Review **Active service**.\n5. In **Team & locations**, select eligible locations and qualified people. Add exceptions only where needed.\n6. In **Booking & rules**, review online visibility, client eligibility, notice, advance booking and deposits.\n7. Select **Add service** at the bottom of the drawer."
+    },
+    {
+      "id": "verify",
+      "title": "Check the saved service",
+      "body": "Find the service in the catalogue. A service can be saved before staff or locations are assigned, but **Needs setup** means it is not ready for the intended booking journey. Check a representative booking in Calendar and the public preview if applicable."
+    },
+    {
+      "id": "trouble",
+      "title": "Common creation mistakes",
+      "body": "A zero price is a free service and still reserves time. A blank price is not the same as zero. A service’s active state and online visibility are separate. Keep the editor open if save confirmation is pending and use its exact **Retry save** action rather than creating a duplicate."
+    }
+  ],
+  "related": [
+    "services-prices-duration",
+    "services-assignments",
+    "services-online-availability"
+  ],
+  "action": {
+    "key": "services",
+    "label": "Go to Services"
+  },
+  "screenshots": [
+    {
+      "key": "services-catalogue",
+      "alt": "Services catalogue organized by category with prices and setup status",
+      "caption": "Use the catalogue to inspect price, timing and configuration readiness.",
+      "section": "steps"
+    },
+    {
+      "key": "services-editor",
+      "alt": "Add service drawer showing name, category, price and time controls",
+      "caption": "Review the Overview, Team & locations and Booking & rules sections before saving.",
+      "section": "steps"
+    }
+  ],
+  "order": 23
+}

@@ -1,0 +1,57 @@
+{
+  "slug": "clients-edit-preferences",
+  "title": "Update a client’s details and preferences",
+  "summary": "Correct contacts, record preferences and tags, and save a reason for the change.",
+  "category": "clients",
+  "keywords": [
+    "edit client",
+    "change phone",
+    "customer email",
+    "birthday",
+    "preferred staff",
+    "tags",
+    "communication preferences"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Edit the profile",
+      "body": "1. Open **Clients**, choose the person and select **Edit profile**.\n2. Check required **Name**. Update **Mobile** and **Email** only when your role permits contacts.\n3. Optional details include **Birthday**, **Preferred staff member**, **Preferred services**, **Tags**, **Service preferences** and **How they found you**.\n4. Review **Communication preferences** for Email and **Text message (SMS)**.\n5. Under **Why are you updating this profile?**, choose the required reason.\n6. Select **Save profile** and check the updated record.\n\nUse the country-aware mobile input. Do not remove a country code just to make a saved number look shorter."
+    },
+    {
+      "id": "effects",
+      "title": "What the changes mean",
+      "body": "Preferred staff and services help the team understand the client; they do not reserve time or guarantee a person’s availability. Tags describe the relationship without changing access or prices.\n\nClearing a communication channel stops waiting messages for that channel. Checking SMS alone does not create the required consent evidence or override a STOP request. Correcting contact information can invalidate older private links, protecting the client from messages sent to the wrong contact."
+    },
+    {
+      "id": "recovery",
+      "title": "If the profile cannot be saved",
+      "body": "Read the field error and keep your changes while correcting it. If another person updated the profile, reload the latest record and review the correction before saving again. Do not overwrite details you are not allowed to view.\n\nYou are asked before discarding unsaved profile changes. If you need a permanent contact correction after making an appointment-only correction in Calendar, return here and save it with a reason."
+    }
+  ],
+  "related": [
+    "clients-add-find",
+    "clients-notes",
+    "notifications-consent"
+  ],
+  "action": {
+    "key": "clients",
+    "label": "Go to Clients"
+  },
+  "screenshots": [
+    {
+      "key": "client-profile",
+      "alt": "Client profile with visit and preference information",
+      "caption": "Use Edit profile for permanent contact and preference changes.",
+      "section": "steps"
+    }
+  ]
+}

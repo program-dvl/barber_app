@@ -1,0 +1,51 @@
+{
+  "slug": "notifications-consent",
+  "title": "Understand SMS consent, opt-outs and text allowances",
+  "summary": "Know why a notification may be stopped even when SMS is enabled.",
+  "category": "notifications",
+  "keywords": [
+    "sms consent",
+    "stop",
+    "unsubscribe",
+    "opt out",
+    "text credits",
+    "sms allowance",
+    "segments",
+    "reminder missing",
+    "marketing"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "consent",
+      "title": "Channel choice and consent work together",
+      "body": "SMS requires the client’s explicit selection and valid recorded consent. Public booking does not preselect SMS. A client’s channel preference alone does not establish every required consent or permit marketing.\n\nRecognized STOP requests suppress SMS. The client can use a supported START or UNSTOP request to release that suppression; staff must not bypass it by repeatedly changing a profile checkbox. Clearing a communication channel also stops queued messages for that channel."
+    },
+    {
+      "id": "events",
+      "title": "What messages are supported?",
+      "body": "Essential updates cover booking confirmation or approval outcomes, material changes or cancellation, payment receipts, one normal reminder, requested waitlist openings and deliberately requested queue-turn alerts.\n\nA routine booking does not create marketing permission. Automated promotional feedback or rebooking campaigns, WhatsApp and a two-way marketing inbox are not offered in this release. Deposit-request and deposit-received notifications are not connected as an active self-service notification workflow."
+    },
+    {
+      "id": "allowance",
+      "title": "Why text units differ from message count",
+      "body": "The included SMS allowance belongs to the subscription and is pooled for the business. Annual subscriptions still have monthly allowance windows. A text may use multiple units because message length and characters can produce multiple segments.\n\nReview the allowance shown in **Client notifications** and **Subscription & billing**. No unlimited texting or hidden automatic overage is promised. A stopped, failed or simulated message should be interpreted using its history rather than counted as a confirmed customer receipt. If units are exhausted, ask the owner to review the available subscription options; do not promise an unapproved text pack or an automatic purchase."
+    }
+  ],
+  "related": [
+    "notifications-preferences",
+    "notifications-delivery",
+    "clients-edit-preferences"
+  ],
+  "action": {
+    "key": "notifications",
+    "label": "Go to Client notifications"
+  }
+}

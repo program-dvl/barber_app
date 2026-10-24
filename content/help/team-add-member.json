@@ -1,0 +1,68 @@
+{
+  "slug": "team-add-member",
+  "title": "Add a team member",
+  "summary": "Create a working profile, assign initial services and hours, and optionally invite the person to sign in.",
+  "category": "team",
+  "keywords": [
+    "add staff",
+    "employee",
+    "worker",
+    "new stylist",
+    "new barber",
+    "team member",
+    "hire"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Before you begin",
+      "body": "You need permission to manage Team & availability at the person’s working locations and an available active team seat. Create a location first. A working profile can take appointments without a login account."
+    },
+    {
+      "id": "steps",
+      "title": "Create the working profile",
+      "body": "1. Open **Team & availability** and select the **Location**.\n2. Select **Add team member**.\n3. Enter the required **Name**, **Email** and **Working location**. **Professional title** and **Mobile (optional)** are optional. A title describes their work; it does not grant access.\n4. Review **Clients can choose this person online**.\n5. Expand **Assign initial services** and select services they are qualified to perform.\n6. Expand **Set initial working hours** to choose days and start/end times, or leave this for the person’s Schedule section.\n7. To provide a login, select **Send a secure login invitation** and choose the **Workspace role**.\n8. Select **Create team member**, or **Save & invite** if you requested an invitation."
+    },
+    {
+      "id": "verify",
+      "title": "Check the person is ready",
+      "body": "Find the person in the selected location’s Team list. Open their profile and review **Overview**, **Schedule** and **Services**. If invited, check **Access** for the invitation state. Bookability requires active status, appropriate services and overlapping branch/person hours."
+    },
+    {
+      "id": "trouble",
+      "title": "If the member is missing",
+      "body": "Check the selected location, date, **Show** filter and search. Choose **Everyone** or **Inactive team** if needed. A saved profile with no hours or service assignments may appear in Team but not among eligible appointment choices. When the plan limit is reached, an authorized billing user must review capacity."
+    }
+  ],
+  "related": [
+    "team-weekly-hours",
+    "team-service-assignments",
+    "team-invite-login",
+    "billing-capacity"
+  ],
+  "action": {
+    "key": "team",
+    "label": "Go to Team & availability"
+  },
+  "screenshots": [
+    {
+      "key": "team-directory",
+      "alt": "Team and availability directory with location, working day and staff filters",
+      "caption": "Start by choosing the location where the team member will work.",
+      "section": "steps"
+    },
+    {
+      "key": "team-add-member",
+      "alt": "Add team member form with working location and invitation options",
+      "caption": "Create a working profile, with an optional secure login invitation.",
+      "section": "steps"
+    }
+  ],
+  "order": 12
+}

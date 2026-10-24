@@ -1,0 +1,49 @@
+{
+  "slug": "reports-bookings-clients",
+  "title": "Understand appointment, walk-in and client reports",
+  "summary": "Use recorded outcomes and paying-client definitions without reading them as forecasts.",
+  "category": "reports",
+  "keywords": [
+    "appointment analysis",
+    "no show rate",
+    "cancellation rate",
+    "walk-in analysis",
+    "new returning clients",
+    "client frequency",
+    "service mix"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "appointments",
+      "title": "Read appointment outcomes",
+      "body": "Choose **Appointment analysis** for recorded visits, statuses, sources and stored scheduled duration. **Cancellations & no-shows** reports actual recorded outcomes and reasons; it does not infer why a customer missed a visit.\n\nThe no-show rate excludes cancellations and rescheduled originals from the visits counted when calculating the rate. The cancellation rate excludes rescheduled originals. If there are no eligible visits, a rate is unavailable rather than a meaningful zero. Check active filters before comparing rates."
+    },
+    {
+      "id": "walkins",
+      "title": "Read the walk-in report",
+      "body": "**Walk-in analysis** follows arrivals, recorded service starts and measured waiting times. **Average wait** and **Longest wait** use entries with an actual measured wait; unmeasured entries are excluded.\n\nA recorded service-start count describes what happened. It is not a forecast, a guaranteed waiting time or a conversion funnel. Use the live queue for current front-desk decisions."
+    },
+    {
+      "id": "clients",
+      "title": "Read client and service reports",
+      "body": "**New & returning clients** counts distinct paying clients using completed sales. New clients first completed a sale during the period; returning clients had a completed sale before the period within the accessible branches.\n\n**Client frequency** counts completed sales for identified clients and excludes anonymous sales. It is not appointment retention, so it can differ from the number of completed appointments. A finished visit without checkout does not create a completed sale.\n\n**Service mix** compares recorded service names and units sold. Renaming a service later does not rewrite the historical sale lines."
+    }
+  ],
+  "related": [
+    "reports-run",
+    "clients-visits-rebook",
+    "walk-ins-serve"
+  ],
+  "action": {
+    "key": "reports",
+    "label": "Go to Reports"
+  }
+}

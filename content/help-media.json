@@ -1,0 +1,212 @@
+{
+  "dashboard": {
+    "path": "/images/help/dashboard.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "c93e3bafd61d6cae6dd1f0a91dfaa34114e2f16c6503e65432dc21f06bd6109c"
+  },
+  "calendar": {
+    "path": "/images/help/calendar.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "cd880edafce7d39663ba9f0fc267804b7ddded6e2041900d73ee1b40c9ce27ef"
+  },
+  "appointment-create": {
+    "path": "/images/help/appointment-create.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "67a2cf475ab510aaf7e01aadfd1bcf0d57151d84b97de2eddfcd0cef967bb489"
+  },
+  "walk-in-queue": {
+    "path": "/images/help/walk-in-queue.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "b36c8c11d50ecf197c7a988b3ce666149e42b05447c1f09e2cc7e8976eace3f4"
+  },
+  "walk-in-add": {
+    "path": "/images/help/walk-in-add.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "6d1750bea2a2b5f90967d4b325705a6e97d5093d6752dcbe0c9d388135891c36"
+  },
+  "team-directory": {
+    "path": "/images/help/team-directory.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "aa904c46051c6ef645557b7f34b5203258702a76ae42e119cdca170acac74131"
+  },
+  "team-add-member": {
+    "path": "/images/help/team-add-member.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "c779cf6b573dcfd6984e14b1ce7f3e3affe2991ed1f0df914fca97a026b35a45"
+  },
+  "team-weekly-coverage": {
+    "path": "/images/help/team-weekly-coverage.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "724a64d04f961611c8a653c89855dbc39878e0409017a8d7adf37fa6216466be"
+  },
+  "team-schedule": {
+    "path": "/images/help/team-schedule.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "fb791176946e914ab8931bccac5a5546c19726e54e8a0d14235d326338e4d23d"
+  },
+  "team-access": {
+    "path": "/images/help/team-access.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "e1323581474da1405fb8e297ab55b7f0351e3b18766a36473130afc36eb61557"
+  },
+  "services-catalogue": {
+    "path": "/images/help/services-catalogue.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "aa3a62d9bf74f05eef3edc0656626b7a34f134e6dcffe992978606c4506ce059"
+  },
+  "services-editor": {
+    "path": "/images/help/services-editor.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "c5d542f98927f2d5c95932654a60a300a09c4f75158a8be3f68ecce02704e64c"
+  },
+  "service-assignments": {
+    "path": "/images/help/service-assignments.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "b60e96a8359b773c9e77c05513356674c1e38a290fc0ba1da652afe571e27d0e"
+  },
+  "service-booking-rules": {
+    "path": "/images/help/service-booking-rules.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "f68bfb5b7d5e71def4737c80c13d09cb873a6cc1e3cb094ca195994a7c88f3c9"
+  },
+  "clients-directory": {
+    "path": "/images/help/clients-directory.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "8fbb93e6352c5119d42be586c3cc855ac6e8a61efde84207275650495a649eb1"
+  },
+  "client-profile": {
+    "path": "/images/help/client-profile.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "12f02ffcfa7f39d20848d43d690abf3e98fe98a37e4f8221d9f8d67878b8da37"
+  },
+  "checkout": {
+    "path": "/images/help/checkout.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "0f6f52cf3e400d1c32a2694f69362cbc0370312908a0a0a3614d765b0176a69b"
+  },
+  "checkout-payment": {
+    "path": "/images/help/checkout-payment.webp",
+    "width": 1440,
+    "height": 1280,
+    "captured_at": "2026-10-24",
+    "sha256": "a3d03dae88d8eef51faf4c79450ec8fc9b6d646e710de33128793834953766e1"
+  },
+  "notifications": {
+    "path": "/images/help/notifications.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "8fdf0e6df1058e4ca08784ce2053d0154504533ce8880f159bfed28d3cc99346"
+  },
+  "notification-history": {
+    "path": "/images/help/notification-history.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "97b53f9305512d8b8aef132991808af1d4c0f7d4389092b284294d07e9f5714c"
+  },
+  "billing-overview": {
+    "path": "/images/help/billing-overview.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "490eaa405e43f3b93063d0937b7ae02ef82beedf14a156a851126dbac750fd1e"
+  },
+  "booking-services": {
+    "path": "/images/help/booking-services.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "4c518a1f6b7ca272a17886033c7fc1f73ce74e60285e4221a4aa27d0cb3a446f"
+  },
+  "account-security": {
+    "path": "/images/help/account-security.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "dc0809ae18947160eae104d31bb70bf0265b2be91e8acfb16eda7ead726b707f"
+  },
+  "setup-readiness": {
+    "path": "/images/help/setup-readiness.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "430c742990432be43336b32dfc3ca8546beb2ce3dbae591e06ac9a53cff37a80"
+  },
+  "business-hours": {
+    "path": "/images/help/business-hours.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "169850fc87b1f0e57a418bd7d16eec6d79d71c145be1fd6fc43d8cff2ed9cad9"
+  },
+  "business-booking-preferences": {
+    "path": "/images/help/business-booking-preferences.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "682c699bcf06cad7b5392895418103c52c847f650d17f85fca96ce1bad5a991c"
+  },
+  "business-preview": {
+    "path": "/images/help/business-preview.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "bdf973aae2498cc7a72bb7850230f6dc5c7a7e94f864801461e669a61ef6c7fb"
+  },
+  "business-locations": {
+    "path": "/images/help/business-locations.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "29ca2df8d95c4a6011faa4c68946ffb22f7d35428333e97999da706e02319f94"
+  },
+  "setup-introduction": {
+    "path": "/images/help/setup-introduction.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "65120cf839069b9121e775b9e48a771a2084352e66c2c2564e4064a6cc7f07d9"
+  },
+  "reports": {
+    "path": "/images/help/reports.webp",
+    "width": 1440,
+    "height": 1000,
+    "captured_at": "2026-10-24",
+    "sha256": "812bebe6a1e80eed6cbce98ca8f104a3b1d956ba1ac85aaa3e80c9f49f47514c"
+  }
+}

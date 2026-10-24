@@ -1,0 +1,48 @@
+{
+  "slug": "services-addons",
+  "title": "Create and attach an optional add-on",
+  "summary": "Offer extras only with eligible parent services and account for their extra time and price.",
+  "category": "services",
+  "keywords": [
+    "add-on",
+    "addon",
+    "extra",
+    "hair wash",
+    "beard trim",
+    "upsell",
+    "parent service"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Create and attach an add-on",
+      "body": "1. In **Services**, select **Add service**.\n2. In **Overview**, choose **Catalogue type → Add-on**, then enter its name, base price and active time. Add category and description if useful.\n3. Assign its eligible staff and locations and review booking rules. Select **Add service**.\n4. Open a standalone parent service and choose **Booking & rules**.\n5. Under **Optional add-ons**, select the add-on and select **Save changes**.\n6. Repeat for any other parent services that should offer the extra."
+    },
+    {
+      "id": "verify",
+      "title": "Check the complete combination",
+      "body": "Select the parent service in booking and confirm the add-on is offered. Each add-on needs eligible staff and a shared location. It adds explicit appointment and checkout lines and can change the total duration and price."
+    },
+    {
+      "id": "trouble",
+      "title": "Why an add-on is missing",
+      "body": "An unattached add-on is not a standalone public choice. Check its active state, qualifications, shared branch and parent link. Removing a parent selection also removes its orphaned add-ons. The catalogue type cannot be changed after creation; make the correct type when adding the item."
+    }
+  ],
+  "related": [
+    "services-create",
+    "services-assignments",
+    "services-prices-duration"
+  ],
+  "action": {
+    "key": "services",
+    "label": "Go to Services"
+  },
+  "order": 27
+}

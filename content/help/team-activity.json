@@ -1,0 +1,46 @@
+{
+  "slug": "team-activity",
+  "title": "Review the business activity log",
+  "summary": "Find who changed access, appointments, clients, payments or configuration.",
+  "category": "team",
+  "keywords": [
+    "audit",
+    "activity log",
+    "history",
+    "who changed",
+    "reason",
+    "access changes"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager"
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "Find a recorded change",
+      "body": "1. From **Team & availability**, select **Activity log**. You need activity-log access.\n2. Enter a person, action or reason in **Search activity**.\n3. Choose **Category**: All activity, Team & access, Appointments, Clients, Payments or Configuration.\n4. Read the event, person, recorded time and any displayed summary or reason.\n5. Use the page controls for additional matching events."
+    },
+    {
+      "id": "meaning",
+      "title": "What the log means",
+      "body": "Times use the business’s displayed time zone. Important applied changes are recorded; simply opening a screen or reviewing an unsaved proposal does not necessarily create an event. Activity is read-only and does not provide an undo button."
+    },
+    {
+      "id": "trouble",
+      "title": "If you cannot find an event",
+      "body": "Broaden the search, choose **All activity** and check that you are in the correct business. Financial and client details remain subject to their own access rules. Correct mistakes through the appropriate workflow so the original change and its correction remain traceable."
+    }
+  ],
+  "related": [
+    "team-roles-permissions",
+    "team-disable-restore-login"
+  ],
+  "action": {
+    "key": "activity",
+    "label": "Go to Activity log"
+  },
+  "order": 22
+}

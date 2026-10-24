@@ -1,0 +1,50 @@
+{
+  "slug": "account-recovery",
+  "title": "Recover a forgotten password or lost authenticator",
+  "summary": "Use the correct recovery route while keeping business access and private credentials safe.",
+  "category": "account",
+  "keywords": [
+    "forgot password",
+    "reset password",
+    "locked out",
+    "lost phone",
+    "lost authenticator",
+    "verification email",
+    "recovery"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Owner",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "password",
+      "title": "Reset a forgotten password",
+      "body": "1. On **Sign in**, select **Forgot password?**.\n2. Enter the account’s **Email address** and select **Send reset link**.\n3. Open the most recent reset email and follow its link. Enter and confirm your new password.\n4. Return to sign-in and complete any required two-factor challenge.\n5. If email is delayed, check spam and the spelling of the address before requesting another message."
+    },
+    {
+      "id": "twofactor",
+      "title": "Use a saved recovery code",
+      "body": "At the two-factor sign-in screen, select **Use a recovery code**, enter one of your saved codes and select **Sign in**. After regaining access, review your authenticator and recovery codes in Profile & security."
+    },
+    {
+      "id": "business",
+      "title": "When only one business is inaccessible",
+      "body": "If you can sign in but cannot enter a particular business, ask its owner to check your membership, invitation state and locations. A password reset does not restore disabled workspace access. Use the original secure invitation if you have not joined yet."
+    },
+    {
+      "id": "support",
+      "title": "When self-recovery is unavailable",
+      "body": "Use ClipperDesk’s Contact support link if you cannot recover the account with email or saved codes. Explain the account email, business name and visible message. Do not send passwords, authenticator setup keys, recovery codes or full payment details. If you still have a working session on another device, keep it open while reviewing recovery options."
+    }
+  ],
+  "related": [
+    "account-security",
+    "account-sign-in",
+    "team-accept-invitation"
+  ],
+  "order": 41
+}

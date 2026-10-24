@@ -1,0 +1,56 @@
+{
+  "slug": "appointments-add",
+  "title": "Add an appointment at reception",
+  "summary": "Create a visit with the correct client, services, staff and local start time.",
+  "category": "appointments",
+  "keywords": [
+    "add appointment",
+    "create booking",
+    "book customer",
+    "reception",
+    "phone booking",
+    "new visit"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "What you need",
+      "body": "You need appointment-management access at the selected location. At least one active eligible service and bookable staff member must be prepared. If **Add appointment** is unavailable, ask the business owner to check access, service assignments and setup.\n\nAn appointment records a visit. It does not record a payment."
+    },
+    {
+      "id": "steps",
+      "title": "Create the visit",
+      "body": "1. Open **Calendar**, select the location and date, then select **Add appointment**. On a narrow screen the button may read **Add**. On a desktop you can also select an available time in a staff column.\n2. Use **Find an existing client** when the person already has a record. Choose the matching client instead of making another profile.\n3. For a new client, enter **Client name**. **Mobile (optional)** and **Email (optional)** can be supplied when available.\n4. Choose the start time, **Service** and **Staff**. **First available** lets ClipperDesk find an eligible person at that time. Use **Add service** for another service and review the combined duration and estimated price.\n5. Set **Booked via** to the correct source. **Internal note** is optional and visible only to authorized staff.\n6. Select **Add appointment** and wait for the saved result."
+    },
+    {
+      "id": "check",
+      "title": "Verify and correct problems",
+      "body": "Find the new appointment on the chosen day and open it to confirm the client, service, staff and time. If the form reports a conflict, choose another time or eligible person; empty-looking time can still be unavailable.\n\nChoose times at the configured booking intervals. Only an authorized manager can use **Override booking notice**, with a reason. Working hours and capacity conflicts cannot be overridden.\n\nFor an existing client, saved contact information is used. A mobile correction entered for this appointment does not permanently update the client’s profile; use the profile’s **Edit profile** action for that."
+    }
+  ],
+  "related": [
+    "calendar-availability",
+    "clients-add-find",
+    "appointments-change"
+  ],
+  "action": {
+    "key": "calendar",
+    "label": "Go to Calendar"
+  },
+  "screenshots": [
+    {
+      "key": "appointment-create",
+      "alt": "Add appointment drawer with client and service fields",
+      "caption": "Review the location, service and local start time before saving.",
+      "section": "steps"
+    }
+  ]
+}

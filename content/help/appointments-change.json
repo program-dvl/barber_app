@@ -1,0 +1,50 @@
+{
+  "slug": "appointments-change",
+  "title": "Reschedule, reassign or change an appointment",
+  "summary": "Review changes to a visit while preserving its previous details and history.",
+  "category": "appointments",
+  "keywords": [
+    "reschedule",
+    "move appointment",
+    "change staff",
+    "reassign",
+    "duration",
+    "edit booking",
+    "duplicate",
+    "rebook"
+  ],
+  "updated_at": "2026-10-24",
+  "status": "published",
+  "roles": [
+    "Business owner",
+    "Administrator",
+    "Manager",
+    "Team member"
+  ],
+  "sections": [
+    {
+      "id": "before",
+      "title": "Check the visit first",
+      "body": "Open **Calendar**, select the appointment and check its current status. Available actions depend on your access and the visit’s state. Finished or cancelled visits offer appropriate follow-up, such as rebooking, rather than changing a completed service into a different visit."
+    },
+    {
+      "id": "steps",
+      "title": "Make a reviewed change",
+      "body": "1. In the appointment details, select the relevant change action: reschedule, change staff, change services or adjust duration.\n2. For a move, choose **New start** in the location’s local time. For reassignment, choose eligible **Staff** for each service.\n3. When changing services, review every retained and added service. An add-on needs its eligible parent service.\n4. Review the resulting time, staff, duration and any price change. Provide a reason where requested.\n5. Select **Save changes**, or **Update this visit** when changing services.\n6. Reopen the appointment and confirm the new details.\n\nDesktop dragging can open a change review. A drag is not final until the reviewed change succeeds. Use the drawer on touch screens or for precise times."
+    },
+    {
+      "id": "history",
+      "title": "Rebooking and conflicts",
+      "body": "**Book again** creates a separate visit at the new time. **Duplicate appointment** also creates a separate visit; it does not move the original. Check the chosen date before confirming either action.\n\nCurrent working hours, staff qualifications, booking holds and resources are checked again when you save. If someone else changed the appointment, refresh and review its current details before trying again. A schedule change preserves appointment history; it does not erase the previous booking or automatically change recorded payments."
+    }
+  ],
+  "related": [
+    "appointments-add",
+    "calendar-availability",
+    "clients-visits-rebook"
+  ],
+  "action": {
+    "key": "calendar",
+    "label": "Go to Calendar"
+  }
+}
