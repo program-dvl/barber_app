@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import { CheckCircleIcon } from '@heroicons/vue/24/outline';
 import AppButton from '@/Components/Product/AppButton.vue';
+import AppNotice from '@/Components/Product/AppNotice.vue';
 import AppSelect from '@/Components/Product/AppSelect.vue';
 import { billingMoney } from '@/Support/billingWorkspace';
 import { capacityEstimate, capacityAnnualSaving, capacityMonthlyEquivalent } from '@/Support/capacityPricing';
@@ -44,7 +45,7 @@ watch(() => [props.current?.market, props.current?.billing_interval, props.curre
             <p class="capacity-included"><CheckCircleIcon aria-hidden="true"/><span>{{ estimate.sms_monthly_allowance.toLocaleString() }} text credits each month<br/>Email notifications included</span></p>
             <AppButton :disabled="disabled || reviewDisabled || !estimate.ready" @click="emit('review', estimate)">{{ actionLabel }}</AppButton>
         </div>
-        <p v-else class="billing-alert neutral" role="status">{{ market ? 'Enter whole numbers: at least one location and one bookable staff member.' : 'Please contact support to set up your subscription.' }}</p>
+        <AppNotice v-else :title="market ? 'Check your selection' : 'Subscriptions are temporarily unavailable'" :description="market ? 'Enter whole numbers: at least one location and one bookable staff member.' : 'Please contact support for help with your subscription.'" />
         <p class="capacity-footnote">Receptionists and administrators who do not take appointments are included. Text usage varies by message length and destination.</p>
     </div>
 </template>

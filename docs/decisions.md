@@ -2561,6 +2561,51 @@ See [Help Center specification](modules/help-center.md),
 [coverage and local evidence](audits/2026-10-24-help-center/README.md) and
 [maintenance runbook](audits/2026-10-24-help-center/maintenance.md).
 
+## ADR-071 — Recover checkout preparation and project paid capacity atomically
+
+- Status: Accepted
+- Date: 2026-10-25
+- Basis: Repeated owner-reported payment dead ends; supplied production diagnostics show a submitted test preparation with no locally saved session, matching configured mode and cached secret.
+- Requirements: FR-01, FR-19, FR-20; extends ADR-068/069 without repricing existing subscriptions.
+
+An explicit Start again may retire unfinished test preparation on an otherwise
+unconverted trial, including same-mode/test-account changes. Apply the existing
+strict exclusion of subscription, capacity, invoice, card, balance, schedule and
+other active/confirmed checkout history. Retain the old quote, attempt and test
+customer evidence; require a fresh review and confirmation. Never infer that a
+live uncertain operation failed from a missing local session or another account's
+404. Genuine live/unknown outcomes still require authoritative provider evidence.
+
+A first-invoice decline remains retryable in the original owned checkout. Repair
+legacy prematurely failed attempts only after reading their original owned session
+and finding the exact still-submitted request. Delayed-method failure keeps the
+original purchase unresolved until provider verification; a completed Checkout can
+offer only its verified existing invoice, using the shared HTTPS host allowlist.
+Only terminal unpaid `incomplete_expired` evidence releases an unconverted initial
+subscription binding, retaining all invoice/attempt history and an audit event.
+
+Apply subscription activation and capacity under one locked transaction. Normalize
+API observation time to database whole-second precision. A current authenticated
+snapshot may replace same-second state; an equal/older signed event must not
+reapply stale capacity. Tests must include fractional clock observations rather
+than exclusively frozen whole seconds.
+
+For a submitted paid change, status recovery reconciles first. If still unresolved,
+resume the original authorized request under its original idempotency keys only
+within 23 hours, with unchanged current items and billing period. A partially
+created renewal schedule must match the object recovered by that original create
+key before phase updates. Never replace a key to escape a cached Stripe failure;
+older/ambiguous outcomes need operator reconciliation. Pending payment directs the
+customer to Invoices; existing capacity remains until payment/renewal verification.
+
+`billing:inspect-checkout` accepts either a Business public ID or exact checkout
+Support reference. Default diagnostics remain local/read-only. Optional `--provider`
+reads the current customer and both cadence price mappings, outputs redacted
+classifications, and never provisions catalog objects, subscriptions or charges.
+
+See [billing specification](modules/subscription-billing.md#checkout-and-payment-lifecycle-recovery-adr-071)
+and [verification evidence](audits/2026-10-25-billing-flow/README.md).
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |

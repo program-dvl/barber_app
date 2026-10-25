@@ -45,6 +45,12 @@ Before planning or changing product behavior:
 
 ## Customer experience comes first — every task
 
+- Every visible word must help a non-technical customer understand an outcome,
+  make a decision or take the next action. Remove redundant reassurance and
+  internal terms such as capacity, provider verification, reconciliation or
+  request state. Say what changed: Your subscription is active, Your payment
+  is pending, or Your updated subscription starts on [date]. Review real labels,
+  notices, empty/loading/error states and help copy together on every UI task.
 - Evaluate every change from the customer's goal, confidence and effort, not
   only whether the feature or API exists. This applies to every prompt.
 - A recovery action must actually advance the customer toward completion.
@@ -57,6 +63,8 @@ Before planning or changing product behavior:
   requests, stop polling on persistent errors, respect Retry-After and show an
   understandable wait before enabling retry. Do not turn normal recovery into
   repeated clicks followed by a Too many attempts dead end.
+- Include realistic clock precision and out-of-order provider events when testing
+  billing; a frozen whole-second clock must not be the only success evidence.
 - Verify the reported failing journey, including abandonment, retry, provider
   mismatch/outage and mobile behavior. Happy-path mocks, passing tests and a
   successful build alone do not establish that the customer's problem is fixed.

@@ -1,0 +1,646 @@
+TAP version 13
+# Subtest: uses Retry-After seconds so the customer can wait before retrying
+ok 1 - uses Retry-After seconds so the customer can wait before retrying
+  ---
+  duration_ms: 1.081042
+  type: 'test'
+  ...
+# Subtest: handles HTTP date Retry-After and reasonable defaults without NaN
+ok 2 - handles HTTP date Retry-After and reasonable defaults without NaN
+  ---
+  duration_ms: 0.200042
+  type: 'test'
+  ...
+# Subtest: hides raw provider diagnostics and exposes only valid support references
+ok 3 - hides raw provider diagnostics and exposes only valid support references
+  ---
+  duration_ms: 2.184083
+  type: 'test'
+  ...
+# Subtest: field validation remains immediately correctable without a retry countdown
+ok 4 - field validation remains immediately correctable without a retry countdown
+  ---
+  duration_ms: 0.089292
+  type: 'test'
+  ...
+# Subtest: consumes a Stripe return marker once for the correct business
+ok 5 - consumes a Stripe return marker once for the correct business
+  ---
+  duration_ms: 0.155792
+  type: 'test'
+  ...
+# Subtest: blocked session storage never prevents checkout navigation
+ok 6 - blocked session storage never prevents checkout navigation
+  ---
+  duration_ms: 0.135583
+  type: 'test'
+  ...
+# Subtest: a verified safe restart is available immediately without sending the customer to support
+ok 7 - a verified safe restart is available immediately without sending the customer to support
+  ---
+  duration_ms: 0.055084
+  type: 'test'
+  ...
+# Subtest: an outstanding payment directs the customer to invoices while status checks cool down
+ok 8 - an outstanding payment directs the customer to invoices while status checks cool down
+  ---
+  duration_ms: 0.123167
+  type: 'test'
+  ...
+# Subtest: preserves cents and large values
+ok 9 - preserves cents and large values
+  ---
+  duration_ms: 23.521
+  type: 'test'
+  ...
+# Subtest: uses Stripe charge units including zero decimal and special ISK
+ok 10 - uses Stripe charge units including zero decimal and special ISK
+  ---
+  duration_ms: 0.36325
+  type: 'test'
+  ...
+# Subtest: uses the business timezone for billing boundaries
+ok 11 - uses the business timezone for billing boundaries
+  ---
+  duration_ms: 3.968125
+  type: 'test'
+  ...
+# Subtest: only compares annual savings in the same currency
+ok 12 - only compares annual savings in the same currency
+  ---
+  duration_ms: 0.12075
+  type: 'test'
+  ...
+# Subtest: never marks a paid invoice failed because an older attempt failed
+ok 13 - never marks a paid invoice failed because an older attempt failed
+  ---
+  duration_ms: 0.074583
+  type: 'test'
+  ...
+# Subtest: a cancelled subscription needs new checkout while lower plans need support
+ok 14 - a cancelled subscription needs new checkout while lower plans need support
+  ---
+  duration_ms: 0.081875
+  type: 'test'
+  ...
+# Subtest: does not create early urgency or progress for undefined limits
+ok 15 - does not create early urgency or progress for undefined limits
+  ---
+  duration_ms: 0.049959
+  type: 'test'
+  ...
+# Subtest: comparison only includes differing actual entitlements
+ok 16 - comparison only includes differing actual entitlements
+  ---
+  duration_ms: 0.391833
+  type: 'test'
+  ...
+# Subtest: round trips closed days and split hours without losing sequence
+ok 17 - round trips closed days and split hours without losing sequence
+  ---
+  duration_ms: 0.663459
+  type: 'test'
+  ...
+# Subtest: copy weekdays keeps weekend and independently editable periods
+ok 18 - copy weekdays keeps weekend and independently editable periods
+  ---
+  duration_ms: 0.104125
+  type: 'test'
+  ...
+# Subtest: hidden bookings, breaks and holds protect gaps; replacement excludes only its original visit
+ok 19 - hidden bookings, breaks and holds protect gaps; replacement excludes only its original visit
+  ---
+  duration_ms: 2.721583
+  type: 'test'
+  ...
+# Subtest: UTC capacity subtraction remains exact across the repeated DST hour
+ok 20 - UTC capacity subtraction remains exact across the repeated DST hour
+  ---
+  duration_ms: 0.133959
+  type: 'test'
+  ...
+# Subtest: overnight appointments clip to their day and a midnight end leaves no phantom visit
+ok 21 - overnight appointments clip to their day and a midnight end leaves no phantom visit
+  ---
+  duration_ms: 32.464667
+  type: 'test'
+  ...
+# Subtest: connected overlaps receive independent lanes while adjacent visits use the full column
+ok 22 - connected overlaps receive independent lanes while adjacent visits use the full column
+  ---
+  duration_ms: 2.338125
+  type: 'test'
+  ...
+# Subtest: processing segments release staff without hiding the client appointment
+ok 23 - processing segments release staff without hiding the client appointment
+  ---
+  duration_ms: 0.235209
+  type: 'test'
+  ...
+# Subtest: search handles long names, staff, service, reference and formatted phone safely
+ok 24 - search handles long names, staff, service, reference and formatted phone safely
+  ---
+  duration_ms: 0.174125
+  type: 'test'
+  ...
+# Subtest: dragging requires an allowed mutable appointment and never moves running or finished visits
+ok 25 - dragging requires an allowed mutable appointment and never moves running or finished visits
+  ---
+  duration_ms: 0.116458
+  type: 'test'
+  ...
+# Subtest: public and owner estimate 1 locations / 1 staff
+ok 26 - public and owner estimate 1 locations / 1 staff
+  ---
+  duration_ms: 1.0355
+  type: 'test'
+  ...
+# Subtest: public and owner estimate 1 locations / 2 staff
+ok 27 - public and owner estimate 1 locations / 2 staff
+  ---
+  duration_ms: 0.065583
+  type: 'test'
+  ...
+# Subtest: public and owner estimate 1 locations / 5 staff
+ok 28 - public and owner estimate 1 locations / 5 staff
+  ---
+  duration_ms: 0.084
+  type: 'test'
+  ...
+# Subtest: public and owner estimate 1 locations / 6 staff
+ok 29 - public and owner estimate 1 locations / 6 staff
+  ---
+  duration_ms: 0.035833
+  type: 'test'
+  ...
+# Subtest: public and owner estimate 1 locations / 10 staff
+ok 30 - public and owner estimate 1 locations / 10 staff
+  ---
+  duration_ms: 0.036
+  type: 'test'
+  ...
+# Subtest: public and owner estimate 1 locations / 11 staff
+ok 31 - public and owner estimate 1 locations / 11 staff
+  ---
+  duration_ms: 0.033375
+  type: 'test'
+  ...
+# Subtest: public and owner estimate 1 locations / 20 staff
+ok 32 - public and owner estimate 1 locations / 20 staff
+  ---
+  duration_ms: 0.032834
+  type: 'test'
+  ...
+# Subtest: public and owner estimate 4 locations / 20 staff
+ok 33 - public and owner estimate 4 locations / 20 staff
+  ---
+  duration_ms: 0.031084
+  type: 'test'
+  ...
+# Subtest: public and owner estimate 5 locations / 50 staff
+ok 34 - public and owner estimate 5 locations / 50 staff
+  ---
+  duration_ms: 0.243917
+  type: 'test'
+  ...
+# Subtest: progressive staff breakdown is charged by band
+ok 35 - progressive staff breakdown is charged by band
+  ---
+  duration_ms: 0.516167
+  type: 'test'
+  ...
+# Subtest: preserves retained flat rates and 2000 credits
+ok 36 - preserves retained flat rates and 2000 credits
+  ---
+  duration_ms: 0.090416
+  type: 'test'
+  ...
+# Subtest: rejects fractional empty negative and unsupported capacity
+ok 37 - rejects fractional empty negative and unsupported capacity
+  ---
+  duration_ms: 0.0445
+  type: 'test'
+  ...
+# Subtest: rounds the display equivalent without changing the annual charge
+ok 38 - rounds the display equivalent without changing the annual charge
+  ---
+  duration_ms: 0.0335
+  type: 'test'
+  ...
+# Subtest: does not compare currencies
+ok 39 - does not compare currencies
+  ---
+  duration_ms: 0.029292
+  type: 'test'
+  ...
+# Subtest: money entry is precise and respects currency digits
+ok 40 - money entry is precise and respects currency digits
+  ---
+  duration_ms: 28.519166
+  type: 'test'
+  ...
+# Subtest: partial and split entries do not claim settlement before the balance matches
+ok 41 - partial and split entries do not claim settlement before the balance matches
+  ---
+  duration_ms: 0.796292
+  type: 'test'
+  ...
+# Subtest: basket sends identifiers and intentional overrides without trusting descriptions or taxes
+ok 42 - basket sends identifiers and intentional overrides without trusting descriptions or taxes
+  ---
+  duration_ms: 2.048875
+  type: 'test'
+  ...
+# Subtest: an uncertain command keeps its original key, scope and exact payment payload on reload
+ok 43 - an uncertain command keeps its original key, scope and exact payment payload on reload
+  ---
+  duration_ms: 0.144041
+  type: 'test'
+  ...
+# Subtest: UTC SQL aggregates and ISO timestamps represent the same instant
+ok 44 - UTC SQL aggregates and ISO timestamps represent the same instant
+  ---
+  duration_ms: 2.584208
+  type: 'test'
+  ...
+# Subtest: client dates use salon midnight and DST instead of the device zone
+ok 45 - client dates use salon midnight and DST instead of the device zone
+  ---
+  duration_ms: 21.042542
+  type: 'test'
+  ...
+# Subtest: money honors zero, two and three decimal currencies without combining them
+ok 46 - money honors zero, two and three decimal currencies without combining them
+  ---
+  duration_ms: 2.077459
+  type: 'test'
+  ...
+# Subtest: long Unicode names and missing dates have stable compact labels
+ok 47 - long Unicode names and missing dates have stable compact labels
+  ---
+  duration_ms: 0.148292
+  type: 'test'
+  ...
+# Subtest: legacy preference formats keep email defaults and explicit withdrawals without enabling SMS
+ok 48 - legacy preference formats keep email defaults and explicit withdrawals without enabling SMS
+  ---
+  duration_ms: 0.860167
+  type: 'test'
+  ...
+# Subtest: finished visits never reappear as now, next or attention
+ok 49 - finished visits never reappear as now, next or attention
+  ---
+  duration_ms: 0.435041
+  type: 'test'
+  ...
+# Subtest: actual service status stays visible after its scheduled end
+ok 50 - actual service status stays visible after its scheduled end
+  ---
+  duration_ms: 0.202416
+  type: 'test'
+  ...
+# Subtest: urgency takes precedence over routine forms and confirmation
+ok 51 - urgency takes precedence over routine forms and confirmation
+  ---
+  duration_ms: 0.389459
+  type: 'test'
+  ...
+# Subtest: another date never claims to be happening now or overdue
+ok 52 - another date never claims to be happening now or overdue
+  ---
+  duration_ms: 1.93275
+  type: 'test'
+  ...
+# Subtest: dates follow the location at midnight and during DST
+ok 53 - dates follow the location at midnight and during DST
+  ---
+  duration_ms: 23.562416
+  type: 'test'
+  ...
+# Subtest: selected addresses use structured components including postal towns and incomplete regional addresses
+ok 54 - selected addresses use structured components including postal towns and incomplete regional addresses
+  ---
+  duration_ms: 0.481625
+  type: 'test'
+  ...
+# Subtest: navigation prioritizes owner entrance including zeros and encodes address/place fallbacks
+ok 55 - navigation prioritizes owner entrance including zeros and encodes address/place fallbacks
+  ---
+  duration_ms: 0.200542
+  type: 'test'
+  ...
+# Subtest: branch discovery filters city postcode name and orders known entrances before missing coordinates without mutating data
+ok 56 - branch discovery filters city postcode name and orders known entrances before missing coordinates without mutating data
+  ---
+  duration_ms: 0.385834
+  type: 'test'
+  ...
+# Subtest: actual editor makes one minimal selected details request, does not persist Google geometry, and saves an intentionally placed pin
+ok 57 - actual editor makes one minimal selected details request, does not persist Google geometry, and saves an intentionally placed pin
+  ---
+  duration_ms: 9.717417
+  type: 'test'
+  ...
+# Subtest: actual editor retains manual fallback after API quota exhaustion or network failure
+ok 58 - actual editor retains manual fallback after API quota exhaustion or network failure
+  ---
+  duration_ms: 2.507792
+  type: 'test'
+  ...
+# Subtest: stale place responses cannot overwrite a newer manual address
+ok 59 - stale place responses cannot overwrite a newer manual address
+  ---
+  duration_ms: 1.123125
+  type: 'test'
+  ...
+# Subtest: owner editor presents no coordinate inputs and keeps optional data entry closed
+ok 60 - owner editor presents no coordinate inputs and keeps optional data entry closed
+  ---
+  duration_ms: 1.068625
+  type: 'test'
+  ...
+# Subtest: actual branch picker switches inline, searches postal codes and never asks for geolocation on load
+ok 61 - actual branch picker switches inline, searches postal codes and never asks for geolocation on load
+  ---
+  duration_ms: 1.497291
+  type: 'test'
+  ...
+# Subtest: branch switching preserves common services and only removes unavailable services or orphan add-ons
+ok 62 - branch switching preserves common services and only removes unavailable services or orphan add-ons
+  ---
+  duration_ms: 0.239375
+  type: 'test'
+  ...
+# Subtest: customer map loads only on request and reuses its map when reopened
+ok 63 - customer map loads only on request and reuses its map when reopened
+  ---
+  duration_ms: 1.646458
+  type: 'test'
+  ...
+# Subtest: manual address corrections preserve owner entrance coordinates and clear stale derived address components
+ok 64 - manual address corrections preserve owner entrance coordinates and clear stale derived address components
+  ---
+  duration_ms: 0.891542
+  type: 'test'
+  ...
+# Subtest: delivery distinguishes provider acceptance, confirmation, simulation and suppression
+ok 65 - delivery distinguishes provider acceptance, confirmation, simulation and suppression
+  ---
+  duration_ms: 0.372333
+  type: 'test'
+  ...
+# Subtest: preview replaces only supported values and never executes markup
+ok 66 - preview replaces only supported values and never executes markup
+  ---
+  duration_ms: 0.1035
+  type: 'test'
+  ...
+# Subtest: malformed or unsupported variable tokens are blocked
+ok 67 - malformed or unsupported variable tokens are blocked
+  ---
+  duration_ms: 0.3445
+  type: 'test'
+  ...
+# Subtest: SMS estimate handles GSM extensions and Unicode boundaries
+ok 68 - SMS estimate handles GSM extensions and Unicode boundaries
+  ---
+  duration_ms: 1.808083
+  type: 'test'
+  ...
+# Subtest: location date arithmetic crosses DST, year and leap boundaries without shifting dates
+ok 69 - location date arithmetic crosses DST, year and leap boundaries without shifting dates
+  ---
+  duration_ms: 1.214459
+  type: 'test'
+  ...
+# Subtest: slots group by appointment location, including repeated clock-change times
+ok 70 - slots group by appointment location, including repeated clock-change times
+  ---
+  duration_ms: 14.816458
+  type: 'test'
+  ...
+# Subtest: business and service client restrictions intersect
+ok 71 - business and service client restrictions intersect
+  ---
+  duration_ms: 0.083834
+  type: 'test'
+  ...
+# Subtest: blocked or corrupted browser storage cannot break guest booking
+ok 72 - blocked or corrupted browser storage cannot break guest booking
+  ---
+  duration_ms: 0.174292
+  type: 'test'
+  ...
+# Subtest: renders page metadata and safe JSON-LD through the actual Inertia composition
+ok 73 - renders page metadata and safe JSON-LD through the actual Inertia composition
+  ---
+  duration_ms: 4.923958
+  type: 'test'
+  ...
+# Subtest: database timestamps display in the report zone, matching the calendar
+ok 74 - database timestamps display in the report zone, matching the calendar
+  ---
+  duration_ms: 17.178917
+  type: 'test'
+  ...
+# Subtest: explicit offsets are preserved and daylight saving is respected
+ok 75 - explicit offsets are preserved and daylight saving is respected
+  ---
+  duration_ms: 0.233791
+  type: 'test'
+  ...
+# Subtest: invalid timestamps remain legible and currency columns hide storage units
+ok 76 - invalid timestamps remain legible and currency columns hide storage units
+  ---
+  duration_ms: 0.126792
+  type: 'test'
+  ...
+# Subtest: local days and presets cross year and leap boundaries without device-zone arithmetic
+ok 77 - local days and presets cross year and leap boundaries without device-zone arithmetic
+  ---
+  duration_ms: 11.04825
+  type: 'test'
+  ...
+# Subtest: comparison handles zero negative missing and falling values without invented growth
+ok 78 - comparison handles zero negative missing and falling values without invented growth
+  ---
+  duration_ms: 2.0515
+  type: 'test'
+  ...
+# Subtest: amounts respect currency minor-unit precision and durations are readable
+ok 79 - amounts respect currency minor-unit precision and durations are readable
+  ---
+  duration_ms: 0.562791
+  type: 'test'
+  ...
+# Subtest: navigation preserves analytical context while removing unsupported target filters
+ok 80 - navigation preserves analytical context while removing unsupported target filters
+  ---
+  duration_ms: 0.82625
+  type: 'test'
+  ...
+# Subtest: keyboard navigation skips disabled placeholders and wraps in both directions
+ok 81 - keyboard navigation skips disabled placeholders and wraps in both directions
+  ---
+  duration_ms: 0.365042
+  type: 'test'
+  ...
+# Subtest: an empty or fully disabled menu never loops indefinitely
+ok 82 - an empty or fully disabled menu never loops indefinitely
+  ---
+  duration_ms: 0.097583
+  type: 'test'
+  ...
+# Subtest: desktop menu aligns to its field and caps long-list height
+ok 83 - desktop menu aligns to its field and caps long-list height
+  ---
+  duration_ms: 0.318958
+  type: 'test'
+  ...
+# Subtest: menus near the bottom open upwards without extending below the screen
+ok 84 - menus near the bottom open upwards without extending below the screen
+  ---
+  duration_ms: 0.747708
+  type: 'test'
+  ...
+# Subtest: wide fields and right-edge fields remain inside a 360px viewport
+ok 85 - wide fields and right-edge fields remain inside a 360px viewport
+  ---
+  duration_ms: 0.391334
+  type: 'test'
+  ...
+# Subtest: short viewport constrains the list instead of imposing an overflowing minimum
+ok 86 - short viewport constrains the list instead of imposing an overflowing minimum
+  ---
+  duration_ms: 0.102792
+  type: 'test'
+  ...
+# Subtest: compact country triggers open a readable wider menu bounded by the mobile viewport
+ok 87 - compact country triggers open a readable wider menu bounded by the mobile viewport
+  ---
+  duration_ms: 0.226416
+  type: 'test'
+  ...
+# Subtest: formats visit spans naturally, including zero buffer
+ok 88 - formats visit spans naturally, including zero buffer
+  ---
+  duration_ms: 0.339042
+  type: 'test'
+  ...
+# Subtest: converts price exactly and refuses negative, invalid, overprecise and exponential values
+ok 89 - converts price exactly and refuses negative, invalid, overprecise and exponential values
+  ---
+  duration_ms: 0.1625
+  type: 'test'
+  ...
+# Subtest: combines category search, channel, staff and branch without hiding active free prices
+ok 90 - combines category search, channel, staff and branch without hiding active free prices
+  ---
+  duration_ms: 0.350584
+  type: 'test'
+  ...
+# Subtest: sorts by persisted category order, full calendar span and price
+ok 91 - sorts by persisted category order, full calendar span and price
+  ---
+  duration_ms: 0.232917
+  type: 'test'
+  ...
+# Subtest: channel labels do not imply bookability for incomplete or inactive records
+ok 92 - channel labels do not imply bookability for incomplete or inactive records
+  ---
+  duration_ms: 0.067959
+  type: 'test'
+  ...
+# Subtest: Calendar respects dated staff variants, exclusive end bounds and attached add-on parents
+ok 93 - Calendar respects dated staff variants, exclusive end bounds and attached add-on parents
+  ---
+  duration_ms: 0.130458
+  type: 'test'
+  ...
+# Subtest: booking estimates preserve staff then location then base price and include zero overrides
+ok 94 - booking estimates preserve staff then location then base price and include zero overrides
+  ---
+  duration_ms: 0.151916
+  type: 'test'
+  ...
+# Subtest: staff search covers identity, titles, branch and capabilities
+ok 95 - staff search covers identity, titles, branch and capabilities
+  ---
+  duration_ms: 0.359
+  type: 'test'
+  ...
+# Subtest: availability derives break, busy, appointment soon and free gap from unfiltered shared capacity
+ok 96 - availability derives break, busy, appointment soon and free gap from unfiltered shared capacity
+  ---
+  duration_ms: 1.579959
+  type: 'test'
+  ...
+# Subtest: overdue service cannot become available and inactive staff remain not bookable
+ok 97 - overdue service cannot become available and inactive staff remain not bookable
+  ---
+  duration_ms: 0.545333
+  type: 'test'
+  ...
+# Subtest: reserved time counts unions, subtracts breaks and keeps external work anonymous
+ok 98 - reserved time counts unions, subtracts breaks and keeps external work anonymous
+  ---
+  duration_ms: 0.129333
+  type: 'test'
+  ...
+# Subtest: weekly coverage highlights only measured unstaffed opening windows
+ok 99 - weekly coverage highlights only measured unstaffed opening windows
+  ---
+  duration_ms: 0.602542
+  type: 'test'
+  ...
+# Subtest: dated exceptions replace that branch regular hours without changing recurring records
+ok 100 - dated exceptions replace that branch regular hours without changing recurring records
+  ---
+  duration_ms: 0.11125
+  type: 'test'
+  ...
+# Subtest: outside-availability visits are flagged and overnight timeline clips within the date
+ok 101 - outside-availability visits are flagged and overnight timeline clips within the date
+  ---
+  duration_ms: 9.247458
+  type: 'test'
+  ...
+# Subtest: wait clocks clamp future arrivals and stay readable over multiple days
+ok 102 - wait clocks clamp future arrivals and stay readable over multiple days
+  ---
+  duration_ms: 0.372916
+  type: 'test'
+  ...
+# Subtest: advisory estimates use ranges and stop promising availability after stale refreshes
+ok 103 - advisory estimates use ranges and stop promising availability after stale refreshes
+  ---
+  duration_ms: 0.880667
+  type: 'test'
+  ...
+# Subtest: attention uses the recorded quote and stops at service start
+ok 104 - attention uses the recorded quote and stops at service start
+  ---
+  duration_ms: 0.128417
+  type: 'test'
+  ...
+# Subtest: queue search covers service staff and formatted phone without reordering entries
+ok 105 - queue search covers service staff and formatted phone without reordering entries
+  ---
+  duration_ms: 0.864542
+  type: 'test'
+  ...
+# Subtest: arrival input follows the branch even when the device is in another zone
+ok 106 - arrival input follows the branch even when the device is in another zone
+  ---
+  duration_ms: 9.121917
+  type: 'test'
+  ...
+1..106
+# tests 106
+# suites 0
+# pass 106
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 241.753458

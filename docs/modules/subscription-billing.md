@@ -1,9 +1,9 @@
 # Subscription & Billing
 
-Updated: 2026-10-15. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
+Updated: 2026-10-25. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
 [FR-13](../product-requirements.md#fr-13-notifications-and-communication),
 FR-19, FR-20 and [PRD §9](../product-requirements.md#9-subscription-packaging-and-commercial-rules).
-See ADR-029/038/041/054/056/057/061/063/068/069 and `../stripe-billing.md`.
+See ADR-029/038/041/054/056/057/061/063/068/069/071 and `../stripe-billing.md`.
 
 ## Approved pricing contract
 
@@ -213,3 +213,46 @@ The neutral notice includes a semantic icon, concise heading/body and separately
 spaced action row, with alert/status semantics and 44px mobile controls.
 `billing:inspect-checkout` provides redacted read-only operator diagnostics; see
 [the recovery runbook](../deployment/subscription-billing-stripe.md#customer-recovery-refinement-2026-10-15).
+
+## Checkout and payment lifecycle recovery (ADR-071)
+
+FR-01/19/20: explicit restart also retires a `pending_capacity_` preparation whose
+saved mode is test, including current test credentials. All ADR-069 unconverted
+trial exclusions still apply; a real/unknown pending operation is never reset on
+local absence alone. Retain the saved test customer privately and the original
+request/attempt; preserve edited quantities and billing cadence through restart.
+A persistent test preparation verification error exposes immediate Start again,
+without a support-only state or pointless cooldown on this locally safe action.
+
+Initial invoice decline keeps the original attempt retryable. A legacy failed
+attempt with `initial_payment_failed` may recover only from an owned authenticated
+session tied to its exact submitted request. Asynchronous failure retains the
+pending purchase. A completed session no longer exposes its unusable Checkout URL;
+where payment remains due, expose only the same verified open invoice, with matching
+customer/subscription, currency, quoted subtotal and approved HTTPS payment host.
+A first subscription reaching `incomplete_expired` may release its active provider
+binding only before paid conversion; retain paid/invoice/checkout history and audit.
+
+Activation and purchased capacity commit together under Business/subscription
+locks. API observation times match stored whole-second precision; fresh snapshots
+can reconcile same-second results, while equal/older signed events cannot revert
+purchased capacity. Regression coverage includes fractional timestamps.
+
+Status checks first reconcile paid changes. An unresolved original expansion or
+renewal update may resume its original idempotency keys within 23 hours. The current
+items must still match, proration/billing dates remain fixed and renewal schedules
+must match the original create result. Never generate a replacement payment key.
+Old, ambiguous or persistent provider failures remain saved for operator review.
+An outstanding payment gets an Open invoices action instead of a duplicate checkout.
+
+Operator inspection accepts a Business public ID or exact Support reference;
+`--provider` adds read-only customer ownership and six monthly/annual price checks.
+It prints no credentials, fingerprints, provider identifiers or raw diagnostics.
+See [current runbook](../deployment/subscription-billing-stripe.md#payment-recovery-follow-up-2026-10-25)
+and [local verification and deployment limitations](../audits/2026-10-25-billing-flow/README.md).
+
+Customer copy follows the [plain-language contract](../design-system.md#every-word-must-serve-the-customer-2026-10-25).
+Payment success describes the subscription outcome, not internal capacity
+verification. The first purchase, later change, scheduled change and pending
+payment have distinct headings. A useful heading needs no repetitive body copy.
+The public pricing and recovery help use the same non-technical vocabulary.

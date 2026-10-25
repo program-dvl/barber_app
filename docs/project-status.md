@@ -1,5 +1,39 @@
 # Project status
 
+## 2026-10-25 Checkout preparation, payment recovery and customer wording (ADR-071)
+
+- [x] Exact checkout Support references and Business IDs work in the read-only
+  inspector. Optional provider checks read customer ownership and all six price
+  mappings without printing credentials or mutating Stripe objects.
+- [x] Unconverted test preparation can restart in the same test mode, including
+  account/credential changes, while retaining history and strict paid-record
+  exclusions. A fresh review is required before another checkout starts.
+- [x] Card declines remain retryable; owned session evidence repairs legacy failed
+  attempts. Verified existing invoices recover completed checkout payments;
+  delayed failure does not permit a duplicate new subscription. Terminal unpaid
+  first subscriptions release only the active binding before paid conversion.
+- [x] Paid-change status recovery resumes original keys/parameters within 23 hours
+  after reconciliation; partial schedule creation, pending invoice and changed
+  period safeguards preserve original paid access and financial history.
+- [x] Browser testing exposed fractional API timestamp versus whole-second storage
+  leaving paid capacity pending. Activation and purchased quantities now commit
+  together, with realistic clock regression tests and stale-event protection.
+- [x] Reviewed public pricing, billing screens/dialogs and help wording for busy,
+  non-technical customers. Outcome-specific subscription/payment language replaces
+  capacity/provider-verification jargon. AGENTS.md/design-system persist this rule.
+- [x] Full backend: **866 passed / 9,219 assertions**, 30 existing skips. Focused
+  billing: **220 / 1,220**. After copy review: billing/Marketing/Help **373 / 4,909**;
+  frontend **106 passed**; client/SSR builds, scoped Pint, whitespace and all 80
+  published help article validations passed. Desktop/mobile isolated browser
+  journeys verified restart, retained edits, annual review, unpaid return,
+  Continue/Back and monthly paid activation.
+- [ ] Not deployed or live-payment certified. Supplied production diagnostics
+  establish matching test configuration and unsaved session, not the original
+  provider rejection/account ownership. Forge access was declined; later browser
+  access was disabled, preventing final wording/Open invoices visual verification.
+  No real payment, secret change, production data reset or new migration.
+  [Evidence and remaining checks](audits/2026-10-25-billing-flow/README.md).
+
 ## 2026-10-24 Public Help Center and contextual guidance (FR-21; ADR-070)
 
 - [x] Audited current routes/screens/domain rules and published 80 focused guides

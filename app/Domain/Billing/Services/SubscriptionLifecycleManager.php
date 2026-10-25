@@ -19,7 +19,7 @@ class SubscriptionLifecycleManager
 {
     public function __construct(private readonly EntitlementEvaluator $entitlements, private readonly AuditWriter $audit) {}
 
-    public function activate(BusinessSubscription $subscription, BillingPlanPrice $price, CarbonInterface $periodStart, CarbonInterface $periodEnd, CarbonInterface $providerStateAt, ?string $providerCustomerId = null, ?string $providerSubscriptionId = null, ?string $paymentMethodType = null, ?string $lastFour = null, ?CarbonInterface $cancelAt = null): BusinessSubscription
+    public function activate(BusinessSubscription $subscription, BillingPlanPrice $price, CarbonInterface $periodStart, CarbonInterface $periodEnd, CarbonInterface $providerStateAt, ?string $providerCustomerId = null, ?string $providerSubscriptionId = null, ?string $paymentMethodType = null, ?string $lastFour = null, ?CarbonInterface $cancelAt = null, bool $allowSameTimestamp = false): BusinessSubscription
     {
         $updated = $this->transition($subscription, $providerStateAt, function (BusinessSubscription $locked) use ($price, $periodStart, $periodEnd, $providerCustomerId, $providerSubscriptionId, $paymentMethodType, $lastFour, $cancelAt): array {
             return [
@@ -40,7 +40,7 @@ class SubscriptionLifecycleManager
                 'payment_method_type' => $paymentMethodType ?? $locked->payment_method_type,
                 'payment_method_last_four' => $lastFour ?? $locked->payment_method_last_four,
             ];
-        }, 'subscription.activated');
+        }, 'subscription.activated', $allowSameTimestamp);
 
         if (! $updated->provider_state_at?->equalTo($providerStateAt) || $updated->billing_plan_price_id !== $price->id) {
             return $updated;
@@ -368,11 +368,12 @@ class SubscriptionLifecycleManager
         });
     }
 
-    private function transition(BusinessSubscription $subscription, CarbonInterface $providerStateAt, callable $attributes, string $action): BusinessSubscription
+    private function transition(BusinessSubscription $subscription, CarbonInterface $providerStateAt, callable $attributes, string $action, bool $allowSameTimestamp = false): BusinessSubscription
     {
-        return DB::transaction(function () use ($subscription, $providerStateAt, $attributes, $action): BusinessSubscription {
+        return DB::transaction(function () use ($subscription, $providerStateAt, $attributes, $action, $allowSameTimestamp): BusinessSubscription {
             $locked = BusinessSubscription::query()->lockForUpdate()->findOrFail($subscription->getKey());
-            if ($locked->provider_state_at && $providerStateAt->lessThanOrEqualTo($locked->provider_state_at)) {
+            if ($locked->provider_state_at && ($providerStateAt->lessThan($locked->provider_state_at)
+                || (! $allowSameTimestamp && $providerStateAt->equalTo($locked->provider_state_at)))) {
                 return $locked;
             }
             $before = ['status' => $locked->status->value, 'restriction_level' => $locked->restriction_level->value, 'plan_id' => $locked->billing_plan_id, 'price_id' => $locked->billing_plan_price_id, 'billing_interval' => $locked->billing_interval?->value];

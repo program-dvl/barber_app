@@ -351,3 +351,63 @@ before enabling retry. These changes retain abuse protection. Repeated page
 reloads are not an operator recovery procedure.
 
 [Evidence and limitations](../audits/2026-10-15-customer-billing/README.md).
+
+## Payment recovery follow-up (2026-10-25)
+
+The inspector now accepts either identifier. A Support reference identifies the
+exact checkout request, including historical requests; it is not a Business ID.
+
+```sh
+php artisan billing:inspect-checkout BUSINESS_PUBLIC_ID
+php artisan billing:inspect-checkout CHECKOUT_SUPPORT_REFERENCE --provider
+```
+
+Default output is local-only. `--provider` performs GET requests for the saved
+customer and all six current monthly/annual prices, reporting readable/matches
+classifications without IDs, credentials, hashes, addresses or raw API messages.
+The command never creates a customer, Checkout, subscription, payment or catalog
+object. No session saved locally does **not** prove Stripe never received a request.
+
+For this reported incident, supplied production output established test mode on
+both sides, matching cached/environment secret and an unsaved session. It did not
+identify the exact provider rejection or prove which test account owns the old
+customer/catalog. Read-only `--provider` distinguishes unavailable customer,
+missing ownership metadata and unavailable/mismatched catalog mappings.
+
+After deploying code and built assets, rebuild the configured application/route
+caches and restart the deployment's persistent workers. No new migration is needed
+for this fix. On the affected unconverted trial, Start again can retire unfinished
+**test** preparation while retaining evidence, unlock review and create a fresh
+checkout only after owner confirmation. Do not directly reset production paid rows
+or reuse this rule for live/unknown preparation. Paid subscriptions keep existing
+immutable terms and capacity unless their owner confirms a change.
+
+If current prices are absent/wrong for the intended account or mode, verify the
+approved US catalog through the existing setup command before retrying a purchase:
+
+```sh
+php artisan billing:verify-capacity-rates US --apply
+```
+
+This reads configured/resolved prices and installs only verified local mappings.
+For approved prices missing in the current **test** account, the existing
+`billing:verify-capacity-rates US --provision` creates catalog objects only and
+verifies both cadences. Review explicit CAPACITY_US component IDs first: configured
+IDs belonging to another account must be corrected/cleared by the operator.
+Live provisioning retains its existing explicit `--force` gate and launch review.
+Never modify an old immutable rate card or migrate existing customers implicitly.
+
+A declined first invoice stays retryable. A terminal unpaid initial subscription
+releases only its active binding; paid invoices/confirmed attempts prevent release.
+Status recovery for a paid change first reconciles then resumes the original
+operation within 23 hours, with original keys, quantities, proration and period.
+An existing pending payment links to Invoices. A repeated Stripe server error may
+be cached for that key: do not evade it with a new key; inspect provider evidence.
+After 23 hours or a changed period/account, reconcile through support before any
+replacement operation. These bounds follow [Stripe idempotency](https://docs.stripe.com/api/idempotent_requests)
+and [subscription lifecycle](https://docs.stripe.com/billing/subscriptions/overview).
+
+Release verification must include actual sandbox monthly and annual Checkout,
+card decline/retry, authentication, cancel/Back, successful return before webhook,
+webhook replay/out-of-order, renewals and invoice/payment portal recovery in the
+intended Stripe account. Local SDK fixtures do not certify the deployed provider.

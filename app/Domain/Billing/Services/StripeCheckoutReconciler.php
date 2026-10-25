@@ -2,6 +2,7 @@
 
 namespace App\Domain\Billing\Services;
 
+use App\Domain\Billing\Models\BillingCapacityChange;
 use App\Domain\Billing\Models\BillingCheckoutAttempt;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -33,6 +34,16 @@ class StripeCheckoutReconciler
             'expand' => ['subscription'],
         ]);
         $this->assertOwned($attempt, $session->toArray());
+        if ($attempt->status === 'failed' && $attempt->last_error === 'initial_payment_failed'
+            && in_array($session->status, ['open', 'complete'], true)) {
+            // Older releases closed the local attempt on a recoverable card
+            // decline. Only an authenticated owned session can reopen it.
+            abort_unless(BillingCapacityChange::where('business_subscription_id', $attempt->business_subscription_id)
+                ->where('public_id', $attempt->capacity_quote['capacity_change_id'] ?? null)->where('status', 'submitted')->exists(),
+                409, 'This checkout needs a billing review before it can continue.');
+            $attempt->update(['status' => $session->status === 'open' ? 'pending' : 'processing',
+                'last_checked_at' => now(), 'last_error' => null]);
+        }
         if ($expireOpen && $session->status === 'open') {
             try {
                 $session = $stripe->checkout->sessions->expire($session->id, [], ['idempotency_key' => 'clipperdesk-expire-'.$attempt->public_id]);
@@ -98,6 +109,20 @@ class StripeCheckoutReconciler
                     'exception' => $exception::class,
                 ]);
             }
+        }
+        $attempt->refresh();
+        if (in_array($attempt->status, ['pending', 'processing'], true)) {
+            $invoice = is_object($latestInvoice) ? $latestInvoice->toArray() : [];
+            $invoiceSubscription = $invoice['subscription'] ?? data_get($invoice, 'parent.subscription_details.subscription');
+            $invoiceUrl = ($invoice['status'] ?? null) === 'open'
+                && ($invoice['customer'] ?? null) === $attempt->subscription->provider_customer_id
+                && $invoiceSubscription === $providerSubscriptionId
+                && strtoupper($invoice['currency'] ?? '') === ($attempt->capacity_quote['currency'] ?? null)
+                && ($invoice['subtotal'] ?? null) === ($attempt->capacity_quote['total_minor'] ?? null)
+                    ? app(BillingWorkspaceQuery::class)->secureLink($invoice['hosted_invoice_url'] ?? null) : null;
+            // Completed Checkout URLs cannot collect another payment. Offer the
+            // verified existing invoice when payment requires further action.
+            $attempt->update(['provider_checkout_url' => $invoiceUrl, 'last_checked_at' => now()]);
         }
 
         return $attempt->fresh();

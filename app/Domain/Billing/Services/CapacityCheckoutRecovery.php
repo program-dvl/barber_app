@@ -59,7 +59,9 @@ class CapacityCheckoutRecovery
             if ($this->retireTestCheckout($attempt, $locked, $business, $subscription, $restart, $actor)) {
                 return $attempt->fresh();
             }
-            if (in_array($attempt->status, ['failed', 'expired', 'superseded'], true)) {
+            $legacyDecline = $attempt->status === 'failed' && $attempt->last_error === 'initial_payment_failed'
+                && str_starts_with($attempt->provider_transaction_id, 'cs_');
+            if (in_array($attempt->status, ['failed', 'expired', 'superseded'], true) && ! $legacyDecline) {
                 $this->close($locked, $business, $restart, $actor);
 
                 return $attempt;
@@ -111,18 +113,15 @@ class CapacityCheckoutRecovery
     /** A test-only checkout cannot charge money; it must not block a first live purchase. */
     private function retireTestCheckout(BillingCheckoutAttempt $attempt, BillingCapacityChange $change, Business $business, BusinessSubscription $subscription, bool $restart, ?User $actor): bool
     {
-        if ($this->mode() !== 'live' || ! str_starts_with($attempt->provider_transaction_id, 'cs_test_')
+        $preparedInTest = str_starts_with($attempt->provider_transaction_id, 'pending_capacity_')
+            && ($attempt->capacity_quote['stripe_mode'] ?? null) === 'test';
+        $savedTestSession = str_starts_with($attempt->provider_transaction_id, 'cs_test_');
+        if ((! $savedTestSession && ! $preparedInTest)
+            || ($this->mode() !== 'live' && ! ($restart && $preparedInTest))
             || ! in_array($attempt->status, ['pending', 'processing'], true)) {
             return false;
         }
-        // Only an unconverted trial with no commercial history can detach this
-        // test customer. Unknown/live attempts and existing paid records stay put.
-        if ($subscription->status->value !== 'trialing' || $subscription->provider_subscription_id
-            || $subscription->capacity_snapshot || $subscription->billing_rate_card_id
-            || $subscription->scheduled_billing_plan_price_id || $subscription->payment_method_last_four
-            || $subscription->customer_balance_minor || $subscription->invoices()->exists()
-            || $attempt->provider_subscription_id || $attempt->confirmed_at
-            || $subscription->checkoutAttempts()->whereKeyNot($attempt->id)->whereIn('status', ['pending', 'processing', 'confirmed'])->exists()) {
+        if (! $this->isUnconvertedTrial($subscription, $attempt)) {
             return false;
         }
         $customer = $subscription->provider_customer_id;
@@ -133,10 +132,32 @@ class CapacityCheckoutRecovery
             'version' => $subscription->version + 1]);
         $change->update(['status' => $restart ? 'cancelled' : 'expired', 'last_checked_at' => now()]);
         $this->audit->write('subscription.checkout.test_retired', $business, $actor, $change,
-            'Retired a test-only checkout before the first live purchase; no live payment or paid record was changed.',
+            'Retired unfinished test checkout setup; no live payment or paid record was changed.',
             after: ['status' => $change->status, 'test_attempt_id' => $attempt->public_id], source: 'application');
 
         return true;
+    }
+
+    public function canRestartTestPreparation(BillingCapacityChange $change): bool
+    {
+        $attempt = $this->attempt($change);
+        $subscription = BusinessSubscription::find($change->business_subscription_id);
+
+        return $change->kind === 'checkout' && $change->status === 'submitted' && $attempt && $subscription
+            && str_starts_with($attempt->provider_transaction_id, 'pending_capacity_')
+            && ($attempt->capacity_quote['stripe_mode'] ?? null) === 'test'
+            && in_array($attempt->status, ['pending', 'processing'], true)
+            && $this->isUnconvertedTrial($subscription, $attempt);
+    }
+
+    private function isUnconvertedTrial(BusinessSubscription $subscription, BillingCheckoutAttempt $attempt): bool
+    {
+        return ! ($subscription->status->value !== 'trialing' || $subscription->provider_subscription_id
+            || $subscription->capacity_snapshot || $subscription->billing_rate_card_id
+            || $subscription->scheduled_billing_plan_price_id || $subscription->payment_method_last_four
+            || $subscription->customer_balance_minor || $subscription->invoices()->exists()
+            || $attempt->provider_subscription_id || $attempt->confirmed_at
+            || $subscription->checkoutAttempts()->whereKeyNot($attempt->id)->whereIn('status', ['pending', 'processing', 'confirmed'])->exists());
     }
 
     public function attempt(BillingCapacityChange $change): ?BillingCheckoutAttempt

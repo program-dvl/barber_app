@@ -71,7 +71,7 @@ class BillingWorkspaceQuery
             ];
     }
 
-    private function secureLink(?string $url): ?string
+    public function secureLink(?string $url): ?string
     {
         return $url && parse_url($url, PHP_URL_SCHEME) === 'https'
             && in_array(parse_url($url, PHP_URL_HOST), ['invoice.stripe.com', 'pay.stripe.com', 'billing.stripe.com', 'files.stripe.com'], true) ? $url : null;

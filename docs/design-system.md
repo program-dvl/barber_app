@@ -1024,3 +1024,28 @@ the dialog instead of overflowing the page. Minimum 44px actions, 10px wrapping
 gaps and 14px text/action separation apply. No-JavaScript articles retain numbered
 steps, real images and the public navigation. Verify actual notices and long text
 at phone and desktop widths after changes. [Evidence and gaps](audits/2026-10-24-help-center/README.md).
+
+### Recovery actions must advance the flow (2026-10-25)
+
+For checkout verification failures, distinguish a safely restartable preparation,
+a pending payment and a genuinely ambiguous result. Offer immediate Start again
+only where the server permits it; an outstanding invoice gets Open invoices and
+a visible wait for later status checks. Retain original purchase context separately
+from edited estimates. Verify that restart unlocks review with those edits intact,
+and that successful payment clears the unfinished state. Financial time handling
+must be tested with fractional real-clock observations as well as signed events.
+Use the same shared notice/action hierarchy above; do not expose test-mode or
+server configuration instructions in customer copy. SDK tests and static screenshots
+are insufficient evidence that a deployed customer can complete payment.
+
+### Every word must serve the customer (2026-10-25)
+
+Write for a busy, non-technical business owner. Each sentence must explain an
+outcome, support a decision or identify a useful next action; remove repetition
+and implementation narration. Use “Your subscription is active” after a first
+payment, “Your subscription has been updated” after a paid change, and “Your
+updated subscription starts on [date]” for a scheduled change. Avoid customer-facing
+“capacity is verified”, “provider”, “reconciliation” and “request state”. A success
+heading can stand alone; do not add a body that repeats it. Pending payments must
+remain described as pending, never successful. Apply this review to labels,
+notifications, loading/empty/error states, dialogs, public pricing and help copy.

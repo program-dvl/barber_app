@@ -6,6 +6,7 @@ use App\Domain\Billing\Services\CapacityBillingManager;
 use App\Domain\Billing\Services\CapacityPricingCatalog;
 use App\Domain\Billing\Services\StripeBillingWebhook;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Inertia\Testing\AssertableInertia as Assert;
 use Stripe\ApiRequestor;
 use Stripe\HttpClient\ClientInterface;
@@ -225,5 +226,26 @@ it('provisions graduated staff prices and fresh immutable base prices for revise
         foreach ($cards as $card) {
             expect($card->fresh()->terms)->toBe($card->terms);
         }
+    });
+});
+
+it('reads both Stripe price cadences without provisioning or exposing provider details in checkout diagnostics', function () {
+    withSetupStripe(function ($client) {
+        $this->artisan('billing:verify-capacity-rates US --provision')->assertSuccessful();
+        [, $business] = createTenantMembership();
+        $writes = $client->writes;
+        $counts = [BillingRateCard::count(), BillingPlanPrice::count()];
+        foreach ([false, true] as $wrongPrice) {
+            $client->wrongPrice = $wrongPrice;
+            expect(Artisan::call('billing:inspect-checkout', ['business' => $business->public_id, '--provider' => true]))->toBe(0);
+            $output = Artisan::output();
+            $data = json_decode($output, true, flags: JSON_THROW_ON_ERROR);
+            foreach (['monthly', 'annual'] as $interval) {
+                expect($data['provider_checks']['current_prices'][$interval]['base']['matches'])->toBe(! $wrongPrice)
+                    ->and($data['provider_checks']['current_prices'][$interval]['staff']['matches'])->toBe(! $wrongPrice);
+            }
+            expect($output)->not->toContain('sk_test_', 'price_setup_', 'prod_setup_', 'whsec_');
+        }
+        expect($client->writes)->toBe($writes)->and([BillingRateCard::count(), BillingPlanPrice::count()])->toBe($counts);
     });
 });

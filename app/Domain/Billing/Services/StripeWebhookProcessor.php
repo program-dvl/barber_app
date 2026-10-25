@@ -10,6 +10,7 @@ use App\Domain\Billing\Models\BillingPlanPrice;
 use App\Domain\Billing\Models\BillingProviderEvent;
 use App\Domain\Billing\Models\BusinessSubscription;
 use App\Domain\PlatformAccess\Models\Business;
+use App\Support\Audit\AuditWriter;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -39,7 +40,7 @@ class StripeWebhookProcessor
     /** @param array<string, mixed> $object */
     public function synchronizeSubscriptionSnapshot(array $object, Carbon $observedAt): bool
     {
-        return DB::transaction(fn () => $this->subscriptionUpdated($object, $observedAt), 3);
+        return DB::transaction(fn () => $this->subscriptionUpdated($object, $observedAt->copy()->startOfSecond(), snapshot: true), 3);
     }
 
     /** @param array<string, mixed> $object */
@@ -124,19 +125,23 @@ class StripeWebhookProcessor
     /** A provider schedule never grants access before its phase begins. */
     public function synchronizeScheduleSnapshot(array $object, Carbon $occurredAt): bool
     {
-        return $this->scheduleUpdated($object, $occurredAt);
+        return $this->scheduleUpdated($object, $occurredAt->copy()->startOfSecond(), snapshot: true);
     }
 
-    private function scheduleUpdated(array $object, Carbon $occurredAt): bool
+    private function scheduleUpdated(array $object, Carbon $occurredAt, bool $snapshot = false): bool
     {
         $subscription = $this->findSubscription($object);
         if (! $subscription) {
             return false;
         }
 
-        return DB::transaction(function () use ($subscription, $object, $occurredAt): bool {
+        return DB::transaction(function () use ($subscription, $object, $occurredAt, $snapshot): bool {
             $locked = BusinessSubscription::query()->lockForUpdate()->findOrFail($subscription->id);
-            if ($locked->scheduled_provider_state_at && $occurredAt->lte($locked->scheduled_provider_state_at)) {
+            // Current authenticated reads may observe an update within the same
+            // timestamp second. Event replays retain the stricter tie guard.
+            if ($locked->scheduled_provider_state_at && ($snapshot
+                ? $occurredAt->lt($locked->scheduled_provider_state_at)
+                : $occurredAt->lte($locked->scheduled_provider_state_at))) {
                 return true;
             }
             $future = collect($object['phases'] ?? [])->filter(fn ($phase) => ($phase['start_date'] ?? 0) > now()->timestamp)->sortBy('start_date')->first();
@@ -218,6 +223,20 @@ class StripeWebhookProcessor
         if (! in_array($attempt->status, ['pending', 'processing'], true)) {
             return true;
         }
+        if ($eventType === 'checkout.session.async_payment_failed') {
+            // A delayed-method failure can leave an existing invoice payable.
+            // Verify that invoice/subscription before offering a fresh purchase.
+            $subscription = $this->findSubscription($object, allowUnboundCheckout: true);
+            if (! $subscription || $subscription->business_id !== $attempt->business_id
+                || ($object['client_reference_id'] ?? null) !== $subscription->business->public_id
+                || (string) $this->metadata($object, 'plan_price_id') !== (string) $attempt->billing_plan_price_id) {
+                return false;
+            }
+            $attempt->update(['status' => 'processing', 'last_error' => 'async_payment_failed', 'provider_checkout_url' => null,
+                'provider_subscription_id' => $object['subscription'] ?? $attempt->provider_subscription_id, 'last_checked_at' => now()]);
+
+            return true;
+        }
         if ($attempt->capacity_quote) {
             $changes = BillingCapacityChange::where('business_subscription_id', $attempt->business_subscription_id)
                 ->where('kind', 'checkout')->where('status', 'submitted');
@@ -242,10 +261,18 @@ class StripeWebhookProcessor
     }
 
     /** @param array<string, mixed> $object */
-    private function subscriptionUpdated(array $object, Carbon $occurredAt): bool
+    private function subscriptionUpdated(array $object, Carbon $occurredAt, bool $snapshot = false): bool
     {
         $subscription = $this->findSubscription($object);
         if (! $subscription) {
+            return false;
+        }
+        // Activation and purchased capacity must commit under the same lock.
+        // Laravel's stored provider timestamps have whole-second precision.
+        Business::whereKey($subscription->business_id)->lockForUpdate()->firstOrFail();
+        $subscription = BusinessSubscription::whereKey($subscription->id)->lockForUpdate()->firstOrFail();
+        if (($subscription->provider_subscription_id && $subscription->provider_subscription_id !== ($object['id'] ?? null))
+            || ($subscription->provider_customer_id && $subscription->provider_customer_id !== ($object['customer'] ?? null))) {
             return false;
         }
         $status = (string) ($object['status'] ?? '');
@@ -258,6 +285,9 @@ class StripeWebhookProcessor
         if (in_array($status, ['unpaid', 'paused'], true)) {
             $this->lifecycle->providerRestricted($subscription, $occurredAt, $status);
 
+            return true;
+        }
+        if ($status === 'incomplete_expired' && $this->releaseExpiredInitialCheckout($subscription, $object, $occurredAt)) {
             return true;
         }
         if (in_array($status, ['incomplete', 'incomplete_expired'], true)) {
@@ -306,11 +336,15 @@ class StripeWebhookProcessor
             ? ($object['cancel_at'] ?? $periodEnd->timestamp)
             : ($object['cancel_at'] ?? null);
         $cancelAt = $cancelAtTimestamp ? Carbon::createFromTimestampUTC((int) $cancelAtTimestamp) : null;
+        $previousVersion = $subscription->version;
         $updated = $this->lifecycle->activate(
             $subscription, $price, $periodStart, $periodEnd, $occurredAt,
             $object['customer'] ?? null, $object['id'] ?? null,
-            null, null, $cancelAt,
+            null, null, $cancelAt, allowSameTimestamp: $snapshot,
         );
+        if ($updated->version === $previousVersion) {
+            return true;
+        }
         if ($capacity) {
             app(CapacitySubscriptionProjector::class)->apply($updated, $capacity['quote'], $occurredAt);
         }
@@ -338,6 +372,54 @@ class StripeWebhookProcessor
         }
 
         return true;
+    }
+
+    /** Only Stripe's terminal unpaid state permits a fresh first subscription. */
+    private function releaseExpiredInitialCheckout(BusinessSubscription $subscription, array $object, Carbon $occurredAt): bool
+    {
+        return DB::transaction(function () use ($subscription, $object, $occurredAt): bool {
+            Business::whereKey($subscription->business_id)->lockForUpdate()->firstOrFail();
+            $locked = BusinessSubscription::whereKey($subscription->id)->lockForUpdate()->firstOrFail();
+            $providerId = $object['id'] ?? null;
+            if (! $providerId || ($locked->provider_subscription_id && $locked->provider_subscription_id !== $providerId)
+                || ! in_array($locked->status->value, ['trialing', 'restricted'], true)
+                || $locked->billing_plan_price_id || $locked->capacity_snapshot
+                || ($locked->provider_state_at && $occurredAt->lt($locked->provider_state_at))
+                || $locked->invoices()->where('status', 'paid')->exists()
+                || $locked->checkoutAttempts()->where('status', 'confirmed')->exists()) {
+                return false;
+            }
+            $metadataAttempt = $this->checkoutAttempt($object);
+            $attempts = $locked->checkoutAttempts()->where('provider', 'stripe')->whereIn('status', ['pending', 'processing'])
+                ->where(function ($query) use ($providerId, $metadataAttempt, $locked) {
+                    $query->where('provider_subscription_id', $providerId);
+                    if ($metadataAttempt && $metadataAttempt->business_subscription_id === $locked->id) {
+                        $query->orWhere(fn ($row) => $row->whereKey($metadataAttempt->id)->whereNull('provider_subscription_id'));
+                    }
+                })->lockForUpdate()->get();
+            if ($attempts->isEmpty()) {
+                return false;
+            }
+            foreach ($attempts as $attempt) {
+                $attempt->update(['provider_subscription_id' => $providerId, 'status' => 'failed', 'provider_checkout_url' => null,
+                    'last_error' => 'incomplete_expired', 'last_checked_at' => now(), 'expires_at' => now()]);
+                $changes = BillingCapacityChange::where('business_subscription_id', $locked->id)->where('kind', 'checkout')->where('status', 'submitted');
+                if ($reference = $attempt->capacity_quote['capacity_change_id'] ?? null) {
+                    $changes->where('public_id', $reference);
+                } else {
+                    $changes->where('quote->fingerprint', $attempt->capacity_quote['fingerprint'] ?? '__unmatched__')
+                        ->where('quote->locations', $attempt->capacity_quote['locations'] ?? 0)->where('quote->staff', $attempt->capacity_quote['staff'] ?? 0)
+                        ->where('submitted_at', '<=', $attempt->created_at);
+                }
+                $changes->update(['status' => 'expired', 'last_checked_at' => now()]);
+            }
+            $locked->update(['provider_subscription_id' => null, 'provider_state_at' => $occurredAt, 'version' => $locked->version + 1]);
+            app(AuditWriter::class)->write('subscription.checkout.unpaid_expired', $locked->business, target: $locked,
+                reason: 'Stripe confirmed the unpaid first subscription expired; retained checkout and invoice history and released only its provider subscription binding.',
+                after: ['checkout_attempts' => $attempts->pluck('public_id')->all()], source: 'provider');
+
+            return true;
+        }, 3);
     }
 
     /** @param array<string, mixed> $object */
@@ -456,11 +538,16 @@ class StripeWebhookProcessor
             $initialPayment = ($object['billing_reason'] ?? null) === 'subscription_create'
                 && $subscription->status->value === 'trialing';
             if ($initialPayment) {
-                BillingCheckoutAttempt::query()
-                    ->where('business_subscription_id', $subscription->getKey())
-                    ->where('provider', 'stripe')
-                    ->whereIn('status', ['pending', 'processing'])
-                    ->update(['status' => 'failed', 'last_error' => 'initial_payment_failed', 'last_checked_at' => now()]);
+                $attempt = $this->checkoutAttempt($object);
+                $attempts = BillingCheckoutAttempt::query()->where('business_subscription_id', $subscription->id)
+                    ->where('provider', 'stripe')->whereIn('status', ['pending', 'processing']);
+                if ($attempt && $attempt->business_subscription_id === $subscription->id) {
+                    $attempts->whereKey($attempt->id);
+                } else {
+                    $providerId = $object['subscription'] ?? data_get($object, 'parent.subscription_details.subscription');
+                    $attempts->where('provider_subscription_id', $providerId ?: '__unmatched__');
+                }
+                $attempts->update(['last_error' => 'initial_payment_failed', 'last_checked_at' => now()]);
             } else {
                 $this->lifecycle->renewalFailed($subscription, (int) ($object['attempt_count'] ?? 1), $occurredAt);
             }

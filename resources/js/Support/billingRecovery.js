@@ -9,12 +9,13 @@ export function billingRecoveryFailure(exception, now = Date.now()) {
     const validation = Object.values(data.errors || {}).flat()[0];
     const safeMessage = data.code?.startsWith('billing_') && data.message;
     return {
-        title: status === 429 ? 'Let’s give checkout a moment' : data.support_required ? 'We need to help with this checkout' : 'Checkout is temporarily unavailable',
+        title: data.can_restart === true ? 'Start a fresh checkout' : data.payment_required ? 'Review your payment' : status === 429 ? 'Let’s give checkout a moment' : data.support_required ? 'We need to help with this checkout' : 'Checkout is temporarily unavailable',
         message: validation || safeMessage || 'We couldn’t complete this step. Your selection is saved. Please try again in a moment.',
         supportRequired: Boolean(data.support_required),
+        paymentRequired: Boolean(data.payment_required),
         supportUrl: typeof data.support_url === 'string' && /^mailto:[^?\s@]+@[^?\s@]+\?/.test(data.support_url) ? data.support_url : null,
         reference: typeof data.reference === 'string' && /^[0-9A-HJKMNP-TV-Z]{26}$/i.test(data.reference) ? data.reference : null,
-        retryAt: validation ? now : now + Math.min(86400, Math.max(1, Math.ceil(seconds))) * 1000,
+        retryAt: validation || data.can_restart === true ? now : now + Math.min(86400, Math.max(1, Math.ceil(seconds))) * 1000,
     };
 }
 

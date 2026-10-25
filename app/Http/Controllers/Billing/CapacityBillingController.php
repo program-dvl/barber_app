@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Billing;
 
 use App\Domain\Billing\Models\BillingCapacityChange;
+use App\Domain\Billing\Models\BillingInvoice;
 use App\Domain\Billing\Models\BillingRateCard;
 use App\Domain\Billing\Models\SmsCreditPurchase;
 use App\Domain\Billing\Services\CapacityBillingManager;
@@ -51,7 +52,11 @@ class CapacityBillingController extends Controller
         if ($change->kind !== 'checkout') {
             // A timeout leaves the submitted request pending for authenticated
             // reconciliation. Never roll back or start a second payment blindly.
-            $stripe->submit($subscription, $change);
+            try {
+                $stripe->submit($subscription, $change);
+            } catch (Throwable $error) {
+                return $this->providerError($change, $error);
+            }
 
             return response()->json($this->present($change->fresh()), 202);
         }
@@ -71,7 +76,7 @@ class CapacityBillingController extends Controller
         }
     }
 
-    public function status(Request $request, Business $business, StripeSubscriptionReconciler $reconciler)
+    public function status(Request $request, Business $business, StripeSubscriptionReconciler $reconciler, CapacityStripeGateway $stripe)
     {
         $this->authorizeBilling($request, $business);
         $data = $request->validate(['change_id' => ['required', 'string', 'size:26']]);
@@ -86,6 +91,10 @@ class CapacityBillingController extends Controller
                 && (! $change->last_checked_at || $change->last_checked_at->lte(now()->subSeconds(10)))) {
                 $change->update(['last_checked_at' => now()]);
                 $reconciler->reconcile($subscription);
+                if ($change->fresh()->status === 'submitted') {
+                    $stripe->submit($subscription->fresh(), $change->fresh(), resume: true);
+                    $reconciler->reconcile($subscription->fresh());
+                }
             }
             $checkoutUrl = $attempt && in_array($attempt->status, ['pending', 'processing'], true) ? $attempt->provider_checkout_url : null;
 
@@ -123,19 +132,30 @@ class CapacityBillingController extends Controller
             return response()->json([...$this->present($fresh), 'checkout_url' => null]);
         }
         $needsReview = $status === 409 || ($error instanceof ApiErrorException && $error->getStripeCode() === 'resource_missing');
+        $paymentRequired = $status === 409 && $fresh->kind !== 'checkout'
+            && BillingInvoice::where('business_id', $fresh->business_id)->where('business_subscription_id', $fresh->business_subscription_id)
+                ->whereIn('status', ['open', 'uncollectible'])
+                ->whereRaw('COALESCE(amount_remaining_minor, amount_due_minor - amount_paid_minor) > 0')->exists();
+        $canRestart = $needsReview && app(CapacityCheckoutRecovery::class)->canRestartTestPreparation($fresh);
         $email = config('brand.support_email');
         $supportUrl = filter_var($email, FILTER_VALIDATE_EMAIL)
             ? 'mailto:'.$email.'?subject='.rawurlencode('Checkout help — '.$change->public_id)
                 .'&body='.rawurlencode('Please help me continue my subscription checkout. Reference: '.$change->public_id.'.')
             : null;
-        $message = $needsReview
-            ? 'We couldn’t reopen your previous checkout. Your selection is saved. '.($supportUrl ? 'Contact support so we can help you continue safely.' : 'Please try again later.')
-            : 'We couldn’t reach secure checkout. Your selection is saved. Please try again in a moment.';
+        $message = match (true) {
+            $paymentRequired => 'A payment needs attention. Your request is saved. Open Invoices to see its status and available payment options.',
+            $canRestart => 'Your previous checkout setup can’t be continued. Your selection is saved. Choose Start again to review it and open a fresh checkout.',
+            $needsReview => ($fresh->kind === 'checkout' ? 'We couldn’t reopen your previous checkout.' : 'We couldn’t confirm your subscription change.')
+                .' Your selection is saved. '.($supportUrl ? 'Contact support so we can help you continue safely.' : 'Please try again later.'),
+            default => 'We couldn’t confirm this step. Your request is saved. Check its status in a moment.',
+        };
+        $retryAfter = $canRestart ? 0 : ($needsReview && ! $paymentRequired ? 60 : 15);
 
-        return response()->json(['message' => $message, 'code' => $needsReview ? 'billing_review_required' : 'billing_temporarily_unavailable',
-            'support_required' => $needsReview, 'support_url' => $supportUrl, 'reference' => $change->public_id,
-            'retry_after' => $needsReview ? 60 : 15, 'status' => $fresh->status, 'checkout_url' => null], $status,
-            ['Retry-After' => $needsReview ? '60' : '15']);
+        return response()->json(['message' => $message, 'code' => $canRestart ? 'billing_restart_available' : ($paymentRequired ? 'billing_payment_required' : ($needsReview ? 'billing_review_required' : 'billing_temporarily_unavailable')),
+            'support_required' => $needsReview && ! $canRestart && ! $paymentRequired, 'payment_required' => $paymentRequired,
+            'can_restart' => $canRestart, 'support_url' => $supportUrl, 'reference' => $change->public_id,
+            'retry_after' => $retryAfter, 'status' => $fresh->status, 'checkout_url' => null], $status,
+            ['Retry-After' => (string) $retryAfter]);
     }
 
     public function topup(Request $request, Business $business, CapacityStripeGateway $stripe)

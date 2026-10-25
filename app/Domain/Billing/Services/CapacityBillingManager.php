@@ -28,16 +28,16 @@ class CapacityBillingManager
                 $retained = null;
             }
             $quote = $this->catalog->quote($market, $interval, $locations, $staff, $retained);
-            abort_unless($quote['ready'], 503, 'This country’s rates are awaiting approval and provider verification.');
+            abort_unless($quote['ready'], 503, 'Subscription checkout is temporarily unavailable. Please contact support.');
             $this->assertFits($business, $quote);
             $hasProvider = filled($subscription->provider_subscription_id);
             $kind = $hasProvider ? 'immediate' : 'checkout';
             if ($hasProvider) {
-                abort_unless($subscription->status->value === 'active' && $subscription->current_period_ends_at?->isFuture(), 409, 'Resolve billing or cancellation before changing capacity.');
+                abort_unless($subscription->status->value === 'active' && $subscription->current_period_ends_at?->isFuture(), 409, 'Resolve the payment or cancellation shown in billing before changing your subscription.');
                 abort_unless($subscription->price && $subscription->price->currency === $quote['currency'], 422, 'Currency changes require a separate migration.');
                 $current = $subscription->capacity_snapshot;
                 if ($current && $current['locations'] === $locations && $current['staff'] === $staff && $subscription->billing_interval->value === $interval && $current['fingerprint'] === $quote['fingerprint']) {
-                    throw ValidationException::withMessages(['staff' => 'You already have this capacity.']);
+                    throw ValidationException::withMessages(['staff' => 'Your subscription already includes these locations and staff.']);
                 }
                 if (($current && $current['fingerprint'] !== $quote['fingerprint']) || $subscription->billing_interval->value !== $interval || ($current && ($locations < $current['locations'] || $staff < $current['staff']))
                     || ($quote['total_minor'] < ($current['total_minor'] ?? $subscription->price->amount_minor))) {
@@ -81,7 +81,7 @@ class CapacityBillingManager
             abort_unless(config('capacity-billing.enabled') && config('capacity-billing.markets.'.$card->market.'.approved'), 503, 'New billing changes are temporarily unavailable.');
             abort_unless($this->catalog->marketFor($business->fresh()) === $locked->quote['market'], 409, 'Subscription pricing changed. Review billing again.');
             if (filled($subscription->provider_subscription_id)) {
-                abort_unless($subscription->status->value === 'active' && $subscription->current_period_ends_at?->isFuture(), 409, 'Resolve billing before reviewing capacity again.');
+                abort_unless($subscription->status->value === 'active' && $subscription->current_period_ends_at?->isFuture(), 409, 'Resolve the payment shown in billing before changing your subscription.');
                 abort_if($subscription->invoices()->whereIn('status', ['open', 'uncollectible'])
                     ->whereRaw('COALESCE(amount_remaining_minor, amount_due_minor - amount_paid_minor) > 0')->exists(), 409, 'Pay outstanding invoices before changing the subscription.');
             }

@@ -46,3 +46,24 @@ test('blocked session storage never prevents checkout navigation', async () => {
     assert.doesNotThrow(()=>markBillingDeparture('a', blocked));
     assert.equal(consumeBillingDeparture('a', blocked), false);
 });
+
+test('a verified safe restart is available immediately without sending the customer to support', () => {
+    const value = billingRecoveryFailure({ response: { status: 409, headers: { 'retry-after': '0' }, data: {
+        code: 'billing_restart_available', can_restart: true, support_required: false,
+        message: 'Your selection is saved. Choose Start again to review it.',
+    } } }, at);
+    assert.equal(value.title, 'Start a fresh checkout');
+    assert.equal(value.retryAt, at);
+    assert.equal(value.supportRequired, false);
+});
+
+test('an outstanding payment directs the customer to invoices while status checks cool down', () => {
+    const value = billingRecoveryFailure({ response: { status: 409, data: {
+        code: 'billing_payment_required', payment_required: true, support_required: false, retry_after: 15,
+        message: 'Open Invoices to see payment options.',
+    } } }, at);
+    assert.equal(value.title, 'Review your payment');
+    assert.equal(value.paymentRequired, true);
+    assert.equal(value.supportRequired, false);
+    assert.equal(value.retryAt, at + 15000);
+});

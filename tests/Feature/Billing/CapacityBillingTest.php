@@ -546,13 +546,13 @@ it('uses server priced graduated items for annual Stripe checkout and preserves 
     expect($subscription->fresh()->status->value)->toBe('active')->and($subscription->fresh()->capacity_snapshot['total_minor'])->toBe(331000);
 });
 
-function abandonedCapacityCheckout(string $sessionId = 'cs_test_abandoned'): array
+function abandonedCapacityCheckout(string $sessionId = 'cs_test_abandoned', string $interval = 'monthly'): array
 {
     [$owner, $business] = createTenantMembership();
-    $card = capacityRate();
+    $card = capacityRate($interval);
     $subscription = activateTestSubscription($business);
     $subscription->update(['status' => 'trialing', 'provider_subscription_id' => null]);
-    $change = app(CapacityBillingManager::class)->review($business, $owner, 'US', 'monthly', 3, 10);
+    $change = app(CapacityBillingManager::class)->review($business, $owner, 'US', $interval, 3, 10);
     $change->update(['status' => 'submitted', 'submitted_at' => now()]);
     $attempt = BillingCheckoutAttempt::create(['business_id' => $business->id, 'business_subscription_id' => $subscription->id,
         'created_by_user_id' => $owner->id, 'billing_plan_price_id' => $card->billing_plan_price_id,
@@ -603,7 +603,7 @@ function withCheckoutRecoveryStripe(array $session, callable $operation): void
             } elseif ($path === '/v1/customers' && strtolower($method) === 'post') {
                 $object = ['object' => 'customer', 'id' => 'cus_live_recovered', 'metadata' => $params['metadata']];
             } elseif ($path === '/v1/checkout/sessions' && strtolower($method) === 'post') {
-                $this->session = [...$this->session, 'id' => 'cs_live_recovered', 'status' => 'open', 'livemode' => true,
+                $this->session = [...$this->session, 'id' => str_contains(config('billing.stripe.secret'), '_live_') ? 'cs_live_recovered' : 'cs_test_recovered', 'status' => 'open', 'livemode' => str_contains(config('billing.stripe.secret'), '_live_'),
                     'customer' => $params['customer'], 'metadata' => $params['metadata'], 'client_reference_id' => $params['client_reference_id'],
                     'url' => 'https://checkout.stripe.com/recovered'];
                 $object = $this->session;
@@ -683,8 +683,9 @@ it('does not expire or reconcile another business or mismatched checkout respons
 })->with(['customer', 'client_reference_id', 'metadata.business_public_id', 'metadata.billing_checkout_attempt_id', 'metadata.plan_price_id']);
 
 it('recovers a lost Checkout create response before safely closing it', function (bool $exists) {
-    [$owner, $business, , , $change, $attempt, $session] = abandonedCapacityCheckout();
-    $attempt->update(['provider_transaction_id' => 'pending_capacity_'.$change->public_id, 'provider_checkout_url' => null]);
+    [$owner, $business, , , $change, $attempt, $session] = abandonedCapacityCheckout('cs_live_preparing');
+    config(['billing.stripe.secret' => 'sk_live_original']);
+    $attempt->update(['provider_transaction_id' => 'pending_capacity_'.$change->public_id, 'provider_checkout_url' => null, 'capacity_quote' => [...$attempt->capacity_quote, 'stripe_mode' => 'live']]);
     withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $attempt, $session, $exists) {
         $client->listed = $exists ? [$session] : [];
         $this->actingAs($owner)->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertOk()->assertJsonPath('status', 'cancelled');
@@ -694,12 +695,13 @@ it('recovers a lost Checkout create response before safely closing it', function
 })->with([true, false]);
 
 it('does not abandon an incomplete provider listing or an unknown create in another mode', function (string $case) {
-    [$owner, $business, , , $change, $attempt, $session] = abandonedCapacityCheckout();
-    $attempt->update(['provider_transaction_id' => 'pending_capacity_'.$change->public_id, 'provider_checkout_url' => null]);
+    [$owner, $business, , , $change, $attempt, $session] = abandonedCapacityCheckout('cs_live_preparing');
+    config(['billing.stripe.secret' => 'sk_live_original']);
+    $attempt->update(['provider_transaction_id' => 'pending_capacity_'.$change->public_id, 'provider_checkout_url' => null, 'capacity_quote' => [...$attempt->capacity_quote, 'stripe_mode' => 'live']]);
     withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $attempt, $case) {
         $client->hasMore = $case === 'listing';
         if ($case === 'mode') {
-            config(['billing.stripe.secret' => 'sk_live_other']);
+            config(['billing.stripe.secret' => 'sk_test_other']);
         }
         $this->actingAs($owner)->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertConflict();
         expect($attempt->fresh()->status)->toBe('pending')->and($change->fresh()->status)->toBe('submitted');
@@ -827,8 +829,11 @@ it('starts a fresh live checkout with a live customer after retiring test setup'
     expect($subscription->fresh()->provider_customer_id)->toBe('cus_live_recovered')->and($subscription->fresh()->provider_subscription_id)->toBeNull();
 });
 
-it('never discards commercial history or another pending checkout to retire test setup', function (string $history) {
+it('never discards commercial history or another pending checkout to retire test setup', function (string $history, bool $preparing) {
     [$owner, $business, $subscription, , $change, $attempt, $session] = abandonedCapacityCheckout();
+    if ($preparing) {
+        $attempt->update(['provider_transaction_id' => 'pending_capacity_'.$change->public_id]);
+    }
     $customer = $subscription->provider_customer_id;
     if ($history === 'invoice') {
         $subscription->invoices()->create(['business_id' => $business->id, 'provider' => 'stripe', 'provider_invoice_id' => 'in_retained', 'status' => 'paid', 'currency' => 'USD', 'subtotal_minor' => 2900, 'discount_minor' => 0, 'tax_minor' => 0, 'total_minor' => 2900, 'amount_due_minor' => 2900, 'amount_paid_minor' => 2900]);
@@ -852,7 +857,7 @@ it('never discards commercial history or another pending checkout to retire test
         expect($client->requests)->toBe([]);
     });
     expect($subscription->fresh()->provider_customer_id)->toBe($customer)->and($attempt->fresh()->status)->toBe('pending')->and($change->fresh()->status)->toBe('submitted');
-})->with(['paid', 'invoice', 'capacity', 'card', 'other_attempt']);
+})->with(['paid', 'invoice', 'capacity', 'card', 'other_attempt'])->with([false, true]);
 
 it('keeps status polling from consuming restart or review limits and returns a usable retry delay', function () {
     [$owner, $business, , , $change, , $session] = abandonedCapacityCheckout('cs_live_abandoned');
@@ -890,4 +895,364 @@ it('gives operators safe checkout and cached configuration diagnostics without e
         app()->useEnvironmentPath($environmentPath)->loadEnvironmentFrom($environmentFile);
         unlink($file);
     }
+});
+
+it('inspects the exact support reference copied from billing without requiring a business ID', function (bool $lowercase) {
+    [, $business, $subscription, , $change, $attempt] = abandonedCapacityCheckout('cs_live_original');
+    $reference = '01M5SXKT2CT8QQVVFCTSY1QBQH';
+    $change->update(['public_id' => $reference]);
+    $attempt->update(['capacity_quote' => [...$attempt->capacity_quote, 'capacity_change_id' => $reference]]);
+    $before = [$change->fresh()->getAttributes(), $attempt->fresh()->getAttributes(), $subscription->fresh()->getAttributes()];
+    withCheckoutRecoveryStripe([], function ($client) use ($reference, $lowercase, $business, $attempt) {
+        $exit = Artisan::call('billing:inspect-checkout', ['business' => $lowercase ? '  '.strtolower($reference).'  ' : $reference]);
+        $report = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
+        expect($exit)->toBe(0)->and($report['business'])->toBe($business->public_id)
+            ->and($report['reference'])->toBe($reference)->and($report['matched_by'])->toBe('support_reference')
+            ->and($report['request_status'])->toBe('submitted')->and($report['checkout_mode'])->toBe('live')
+            ->and(Artisan::output())->not->toContain($attempt->provider_transaction_id, 'stripe_credential_fingerprint')
+            ->and($client->requests)->toBe([]);
+    });
+    expect([$change->fresh()->getAttributes(), $attempt->fresh()->getAttributes(), $subscription->fresh()->getAttributes()])->toBe($before);
+})->with([false, true]);
+
+it('keeps a historical support reference separate from a newer checkout for the same business', function () {
+    [, $business, , , $old, $oldAttempt] = abandonedCapacityCheckout('cs_live_original');
+    $old->update(['status' => 'cancelled']);
+    $oldAttempt->update(['status' => 'expired']);
+    $new = $old->replicate(['public_id']);
+    $new->status = 'submitted';
+    $new->submitted_at = now()->addSecond();
+    $new->save();
+    $newAttempt = $oldAttempt->replicate(['public_id']);
+    $newAttempt->status = 'pending';
+    $newAttempt->provider_transaction_id = 'cs_test_newer';
+    $newAttempt->capacity_quote = [...$oldAttempt->capacity_quote, 'capacity_change_id' => $new->public_id];
+    $newAttempt->save();
+    expect(Artisan::call('billing:inspect-checkout', ['business' => $old->public_id]))->toBe(0);
+    $historical = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
+    expect($historical['reference'])->toBe($old->public_id)->and($historical['request_status'])->toBe('cancelled')
+        ->and($historical['attempt_status'])->toBe('expired')->and($historical['checkout_mode'])->toBe('live')
+        ->and($historical['next_step'])->toContain('no longer pending');
+    expect(Artisan::call('billing:inspect-checkout', ['business' => $business->public_id]))->toBe(0);
+    $current = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
+    expect($current['reference'])->toBe($new->public_id)->and($current['matched_by'])->toBe('business')
+        ->and($current['attempt_status'])->toBe('pending')->and($current['checkout_mode'])->toBe('test');
+});
+
+it('explains how to find the correct checkout identifier or deployment when no match exists', function () {
+    $this->artisan('billing:inspect-checkout', ['business' => (string) str()->ulid()])
+        ->expectsOutputToContain('No business or checkout Support reference matched')
+        ->expectsOutputToContain('/businesses/<ID>/billing')
+        ->expectsOutputToContain('current release and database')->assertFailed();
+});
+
+it('reports no pending checkout without giving instructions for a nonexistent session', function () {
+    [, $business] = createTenantMembership();
+    expect(Artisan::call('billing:inspect-checkout', ['business' => $business->public_id]))->toBe(0);
+    $report = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
+    expect($report['matched_by'])->toBe('business')->and($report['reference'])->toBeNull()
+        ->and($report['attempt_status'])->toBeNull()->and($report['next_step'])->toContain('No submitted checkout');
+});
+
+it('keeps a declined first invoice retryable in its original monthly or annual checkout', function (string $interval) {
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout('cs_test_declined', $interval);
+    $invoice = ['object' => 'invoice', 'id' => 'in_initial_declined', 'customer' => $subscription->provider_customer_id,
+        'subscription' => 'sub_initial_declined', 'status' => 'open', 'billing_reason' => 'subscription_create',
+        'currency' => 'usd', 'subtotal' => $change->quote['total_minor'], 'total' => $change->quote['total_minor'],
+        'amount_due' => $change->quote['total_minor'], 'amount_paid' => 0, 'metadata' => $session['metadata']];
+    app(StripeWebhookProcessor::class)->receiveVerified(['id' => 'evt_initial_decline', 'type' => 'invoice.payment_failed', 'created' => now()->timestamp, 'data' => ['object' => $invoice]]);
+    expect($attempt->fresh()->status)->toBe('pending')->and($attempt->fresh()->last_error)->toBe('initial_payment_failed');
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])
+            ->assertOk()->assertJsonPath('status', 'submitted')->assertJsonPath('checkout_url', 'https://checkout.stripe.com/abandoned');
+        $this->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => 'monthly', 'locations' => 1, 'staff' => 1])->assertConflict();
+        expect(collect($client->requests)->where('method', 'post'))->toHaveCount(0);
+    });
+    expect($subscription->fresh()->status->value)->toBe('trialing')->and($subscription->fresh()->capacity_snapshot)->toBeNull();
+})->with(['monthly', 'annual']);
+
+it('releases only a provider-expired unpaid first subscription so monthly and annual checkout can restart', function (string $interval) {
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout('cs_test_incomplete', $interval);
+    $providerId = 'sub_initial_expired';
+    $subscription->update(['provider_subscription_id' => $providerId]);
+    $attempt->update(['provider_subscription_id' => $providerId, 'status' => 'processing']);
+    $object = ['object' => 'subscription', 'id' => $providerId, 'customer' => $subscription->provider_customer_id,
+        'status' => 'incomplete_expired', 'metadata' => $session['metadata']];
+    $event = ['id' => 'evt_initial_expired', 'type' => 'customer.subscription.updated', 'created' => now()->timestamp, 'data' => ['object' => $object]];
+    app(StripeWebhookProcessor::class)->receiveVerified($event);
+    app(StripeWebhookProcessor::class)->receiveVerified($event);
+    expect($subscription->fresh()->provider_subscription_id)->toBeNull()->and($subscription->fresh()->status->value)->toBe('trialing')
+        ->and($change->fresh()->status)->toBe('expired')->and($attempt->fresh()->status)->toBe('failed')
+        ->and($attempt->fresh()->provider_subscription_id)->toBe($providerId);
+    $this->actingAs($owner)->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => $interval, 'locations' => 1, 'staff' => 5])
+        ->assertOk()->assertJsonPath('kind', 'checkout')->assertJsonPath('quote.total_minor', $interval === 'annual' ? 65000 : 6500);
+})->with(['monthly', 'annual']);
+
+it('converges monthly and annual payment success after a decline without duplicating subscription or invoice', function (string $interval) {
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout('cs_test_retry_paid', $interval);
+    $total = $change->quote['total_minor'];
+    $invoice = ['object' => 'invoice', 'id' => 'in_retry_paid', 'customer' => $subscription->provider_customer_id,
+        'subscription' => 'sub_retry_paid', 'status' => 'open', 'billing_reason' => 'subscription_create', 'currency' => 'usd',
+        'subtotal' => $total, 'total' => $total, 'amount_due' => $total, 'amount_paid' => 0,
+        'metadata' => $session['metadata'], 'created' => now()->timestamp];
+    $failedEvent = ['id' => 'evt_retry_decline', 'type' => 'invoice.payment_failed', 'created' => now()->timestamp - 1, 'data' => ['object' => $invoice]];
+    app(StripeWebhookProcessor::class)->receiveVerified($failedEvent);
+    $paid = [...$invoice, 'status' => 'paid', 'amount_paid' => $total, 'amount_remaining' => 0];
+    $provider = ['object' => 'subscription', 'id' => 'sub_retry_paid', 'customer' => $subscription->provider_customer_id,
+        'status' => 'active', 'metadata' => $session['metadata'], 'items' => ['data' => capacityProvider($card, 3, 10)], 'latest_invoice' => $paid];
+    $session = [...$session, 'status' => 'complete', 'payment_status' => 'paid', 'subscription' => $provider];
+    withCheckoutRecoveryStripe($session, function () use ($owner, $business, $change) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])
+            ->assertOk()->assertJsonPath('status', 'applied');
+        $this->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])->assertOk()->assertJsonPath('status', 'applied');
+    });
+    app(StripeWebhookProcessor::class)->receiveVerified(['id' => 'evt_retry_success', 'type' => 'invoice.paid', 'created' => now()->timestamp, 'data' => ['object' => $paid]]);
+    app(StripeWebhookProcessor::class)->receiveVerified($failedEvent);
+    expect($subscription->fresh()->status->value)->toBe('active')->and($subscription->fresh()->billing_interval->value)->toBe($interval)
+        ->and($subscription->fresh()->capacity_snapshot['total_minor'])->toBe($interval === 'annual' ? 133000 : 13300)
+        ->and($subscription->invoices()->count())->toBe(1)->and($subscription->invoices()->first()->status)->toBe('paid')
+        ->and($attempt->fresh()->status)->toBe('confirmed')->and(BillingCheckoutAttempt::count())->toBe(1);
+})->with(['monthly', 'annual']);
+
+it('restarts unfinished same-mode test preparation and opens the newly reviewed monthly or annual checkout', function (string $interval, bool $changedCredentials) {
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout('cs_test_preparing', $interval);
+    $customer = $subscription->provider_customer_id;
+    $attempt->update(['provider_transaction_id' => 'pending_capacity_'.$change->public_id, 'provider_checkout_url' => null,
+        'expires_at' => now()->subHour(), 'created_at' => now()->subDays(2),
+        'capacity_quote' => [...$attempt->capacity_quote, 'stripe_mode' => 'test', 'stripe_credential_fingerprint' => hash('sha256', 'sk_test_original')]]);
+    config(['billing.stripe.secret' => $changedCredentials ? 'sk_test_another_sandbox' : 'sk_test_original']);
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $interval) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])
+            ->assertOk()->assertJsonPath('status', 'cancelled')->assertJsonPath('checkout_url', null);
+        expect($client->requests)->toBe([]);
+        $review = $this->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => $interval, 'locations' => 1, 'staff' => 5])
+            ->assertOk()->assertJsonPath('quote.total_minor', $interval === 'annual' ? 65000 : 6500);
+        $this->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $review->json('change_id')])
+            ->assertCreated()->assertJsonPath('url', 'https://checkout.stripe.com/recovered');
+        $this->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $review->json('change_id')])->assertOk();
+        expect(collect($client->requests)->where('path', '/v1/checkout/sessions')->where('method', 'post'))->toHaveCount(1);
+    });
+    expect($attempt->fresh()->status)->toBe('superseded')->and($attempt->fresh()->capacity_quote['retired_test_customer_id'])->toBe($customer)
+        ->and($subscription->fresh()->provider_customer_id)->toBe('cus_live_recovered')
+        ->and($subscription->fresh()->status->value)->toBe('trialing')->and(BillingCheckoutAttempt::count())->toBe(2);
+})->with([['monthly', false], ['monthly', true], ['annual', false], ['annual', true]]);
+
+it('offers a usable restart instead of a support dead end when a test preparation check cannot be verified', function () {
+    [$owner, $business, , , $change, $attempt, $session] = abandonedCapacityCheckout();
+    $attempt->update(['provider_transaction_id' => 'pending_capacity_'.$change->public_id, 'provider_checkout_url' => null,
+        'expires_at' => now()->subHour(), 'capacity_quote' => [...$attempt->capacity_quote, 'stripe_mode' => 'test']]);
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change) {
+        $client->session['metadata']['business_public_id'] = 'foreign_business';
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])
+            ->assertConflict()->assertJsonPath('code', 'billing_restart_available')->assertJsonPath('can_restart', true)
+            ->assertJsonPath('support_required', false)->assertJsonPath('retry_after', 0);
+        $this->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])
+            ->assertOk()->assertJsonPath('status', 'cancelled');
+    });
+});
+
+it('resumes the original paid change after a lost update response without a second payment key', function (string $interval, string $kind) {
+    [$owner, $business, $subscription, $card] = capacityFixture(3, 20, $interval);
+    $locations = $kind === 'renewal' ? 1 : 4;
+    $staff = $kind === 'renewal' ? 5 : 25;
+    $provider = ['object' => 'subscription', 'id' => $subscription->provider_subscription_id, 'customer' => $subscription->provider_customer_id,
+        'status' => 'active', 'cancel_at_period_end' => false, 'pending_update' => null, 'schedule' => null, 'latest_invoice' => null,
+        'items' => ['object' => 'list', 'data' => capacityProvider($card, 3, 20)], 'discounts' => []];
+    $client = new class($provider, capacityProvider($card, $locations, $staff)) implements ClientInterface
+    {
+        public array $requests = [];
+
+        public bool $failUpdate = true;
+
+        private array $schedule = [];
+
+        public function __construct(public array $provider, private array $target) {}
+
+        public function request($method, $url, $headers, $params, $hasFile, $apiMode = 'v1', $maxNetworkRetries = null)
+        {
+            $path = parse_url($url, PHP_URL_PATH);
+            $this->requests[] = compact('method', 'path', 'headers', 'params');
+            if ($path === '/v1/invoices/create_preview') {
+                $object = ['object' => 'invoice', 'currency' => 'usd', 'amount_due' => 500,
+                    'lines' => ['data' => [['amount' => 500, 'proration' => true]]]];
+            } elseif ($path === '/v1/subscription_schedules') {
+                $this->provider['schedule'] = $this->schedule = ['object' => 'subscription_schedule', 'id' => 'sub_sched_resume',
+                    'subscription' => $this->provider['id'], 'customer' => $this->provider['customer'], 'status' => 'active', 'phases' => []];
+                $object = $this->schedule;
+            } elseif ($method === 'post') {
+                if ($this->failUpdate) {
+                    return [json_encode(['error' => ['type' => 'api_error', 'message' => 'Lost update response']]), 503, []];
+                }
+                if (str_starts_with($path, '/v1/subscription_schedules/')) {
+                    $this->schedule['phases'] = $params['phases'];
+                    $this->provider['schedule'] = $this->schedule;
+                    $object = $this->schedule;
+                } else {
+                    $this->provider['items']['data'] = $this->target;
+                    $object = $this->provider;
+                }
+            } else {
+                $object = $this->provider;
+            }
+
+            return [json_encode($object), 200, []];
+        }
+    };
+    ApiRequestor::setHttpClient($client);
+    try {
+        $review = $this->actingAs($owner)->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => $interval, 'locations' => $locations, 'staff' => $staff])->assertOk();
+        $change = BillingCapacityChange::where('public_id', $review->json('change_id'))->firstOrFail();
+        $this->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $change->public_id])->assertStatus(503);
+        expect($change->fresh()->status)->toBe('submitted')->and($subscription->fresh()->capacity_snapshot['staff'])->toBe(20);
+        $client->failUpdate = false;
+        $this->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])->assertOk()
+            ->assertJsonPath('status', $kind === 'renewal' ? 'scheduled' : 'applied');
+        $writes = collect($client->requests)->where('method', 'post')->filter(fn ($r) => ! str_contains($r['path'], 'preview'));
+        foreach ($writes->groupBy('path') as $requests) {
+            $keys = $requests->map(fn ($r) => collect($r['headers'])->first(fn ($h) => str_starts_with($h, 'Idempotency-Key:')))->unique();
+            expect($keys)->toHaveCount(1)->and($keys->first())->toContain($change->public_id);
+            expect($requests->pluck('params')->unique())->toHaveCount(1);
+        }
+        $count = count($client->requests);
+        $this->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])->assertOk();
+        expect(count($client->requests))->toBe($count)->and(BillingCapacityChange::count())->toBe(1);
+        expect($subscription->fresh()->capacity_snapshot['staff'])->toBe($kind === 'renewal' ? 20 : $staff);
+    } finally {
+        ApiRequestor::setHttpClient(CurlClient::instance());
+    }
+})->with(['monthly', 'annual'])->with(['immediate', 'renewal']);
+
+it('does not replay an old change or a payment already awaiting completion', function (string $case) {
+    [$owner, $business, $subscription, $card] = capacityFixture(3, 20);
+    $quote = app(CapacityPricingCatalog::class)->quote('US', 'monthly', 4, 25, $card);
+    $quote['proration_date'] = now()->timestamp;
+    $change = BillingCapacityChange::create(['business_id' => $business->id, 'business_subscription_id' => $subscription->id,
+        'actor_user_id' => $owner->id, 'subscription_version' => $subscription->version, 'kind' => $case === 'renewal_date' ? 'renewal' : 'immediate',
+        'status' => 'submitted', 'submitted_at' => $case === 'old' ? now()->subHours(24) : now(), 'effective_at' => now()->addDay(),
+        'quote' => $quote, 'expires_at' => now()->addMinutes(10)]);
+    $object = ['object' => 'subscription', 'id' => $subscription->provider_subscription_id, 'customer' => $subscription->provider_customer_id,
+        'status' => 'active', 'cancel_at_period_end' => false, 'pending_update' => $case === 'pending_payment' ? ['expires_at' => now()->addDay()->timestamp] : null,
+        'schedule' => null, 'items' => ['object' => 'list', 'data' => capacityProvider($card, 3, 20)], 'discounts' => []];
+    if ($case === 'pending_payment') {
+        $subscription->invoices()->create(['business_id' => $business->id, 'provider' => 'stripe', 'provider_invoice_id' => 'in_pending_expansion',
+            'status' => 'open', 'currency' => 'USD', 'subtotal_minor' => 500, 'discount_minor' => 0, 'tax_minor' => 0, 'total_minor' => 500,
+            'amount_due_minor' => 500, 'amount_paid_minor' => 0, 'amount_remaining_minor' => 500]);
+    }
+    withCapacityStripeTransport($object, function ($client) use ($owner, $business, $change, $subscription, $case) {
+        if ($case === 'pending_payment') {
+            $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])
+                ->assertConflict()->assertJsonPath('code', 'billing_payment_required')->assertJsonPath('support_required', false)
+                ->assertJsonPath('payment_required', true)->assertHeader('Retry-After', '15');
+        } else {
+            try {
+                app(CapacityStripeGateway::class)->submit($subscription, $change, resume: true);
+                $this->fail('Unsafe replay must be rejected.');
+            } catch (HttpException $exception) {
+                expect($exception->getStatusCode())->toBe(409);
+            }
+        }
+        expect(collect($client->requests)->where('method', 'post'))->toHaveCount(0);
+    });
+    expect($change->fresh()->status)->toBe('submitted')->and($subscription->fresh()->capacity_snapshot['staff'])->toBe(20);
+})->with(['old', 'renewal_date', 'pending_payment']);
+
+it('never detaches paid or unrelated subscriptions on an initial-checkout expiration', function (string $case) {
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout();
+    $subscription->update(['provider_subscription_id' => $case === 'different_binding' ? 'sub_current_paid' : 'sub_initial_expired']);
+    $attempt->update(['provider_subscription_id' => 'sub_initial_expired', 'status' => 'processing']);
+    if ($case === 'paid_status') {
+        $subscription->update(['status' => 'active', 'capacity_snapshot' => $change->quote]);
+        $attempt->update(['status' => 'confirmed', 'confirmed_at' => now()]);
+    } elseif ($case === 'paid_invoice') {
+        $subscription->invoices()->create(['business_id' => $business->id, 'provider' => 'stripe', 'provider_invoice_id' => 'in_expiration_paid_guard',
+            'status' => 'paid', 'currency' => 'USD', 'subtotal_minor' => 13300, 'discount_minor' => 0, 'tax_minor' => 0, 'total_minor' => 13300,
+            'amount_due_minor' => 13300, 'amount_paid_minor' => 13300]);
+    } elseif ($case === 'newer_snapshot') {
+        $subscription->update(['provider_state_at' => now()->addMinute()]);
+    }
+    $binding = $subscription->fresh()->provider_subscription_id;
+    app(StripeWebhookProcessor::class)->synchronizeSubscriptionSnapshot(['object' => 'subscription', 'id' => 'sub_initial_expired',
+        'customer' => $subscription->provider_customer_id, 'status' => 'incomplete_expired', 'metadata' => $session['metadata']], now());
+    expect($subscription->fresh()->provider_subscription_id)->toBe($binding)->and($change->fresh()->status)->toBe('submitted')
+        ->and(DB::table('audit_events')->where('action', 'subscription.checkout.unpaid_expired')->exists())->toBeFalse();
+    if ($case === 'paid_status') {
+        expect($attempt->fresh()->status)->toBe('confirmed')->and($subscription->fresh()->status->value)->toBe('active');
+    }
+})->with(['paid_status', 'paid_invoice', 'different_binding', 'newer_snapshot']);
+
+it('finishes payment with fractional API observation time and ignores an equal-second stale event', function (string $interval) {
+    Carbon::setTestNow(now()->setMicrosecond(456789));
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout('cs_test_real_clock', $interval);
+    $provider = ['object' => 'subscription', 'id' => 'sub_real_clock', 'customer' => $subscription->provider_customer_id,
+        'status' => 'active', 'metadata' => $session['metadata'], 'items' => ['data' => capacityProvider($card, 3, 10)], 'latest_invoice' => null];
+    $session = [...$session, 'status' => 'complete', 'payment_status' => 'paid', 'subscription' => $provider];
+    withCheckoutRecoveryStripe($session, function () use ($owner, $business, $change) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])
+            ->assertOk()->assertJsonPath('status', 'applied');
+    });
+    expect($subscription->fresh()->capacity_snapshot['staff'])->toBe(10)->and($attempt->fresh()->status)->toBe('confirmed');
+    $version = $subscription->fresh()->version;
+    app(StripeWebhookProcessor::class)->receiveVerified(['id' => 'evt_stale_same_second', 'type' => 'customer.subscription.updated',
+        'created' => now()->timestamp, 'data' => ['object' => [...$provider, 'items' => ['data' => capacityProvider($card, 1, 1)]]]]);
+    expect($subscription->fresh()->capacity_snapshot['staff'])->toBe(10)->and($subscription->fresh()->version)->toBe($version);
+})->with(['monthly', 'annual']);
+
+it('repairs a legacy prematurely failed card attempt from its verified original session', function (string $state) {
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout();
+    $attempt->update(['status' => 'failed', 'last_error' => 'initial_payment_failed']);
+    $session['status'] = $state;
+    if ($state === 'complete') {
+        $session['subscription'] = ['object' => 'subscription', 'id' => 'sub_legacy_retry', 'customer' => $subscription->provider_customer_id,
+            'status' => 'active', 'metadata' => $session['metadata'], 'items' => ['data' => capacityProvider($card, 3, 10)]];
+    }
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $state) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])
+            ->assertOk()->assertJsonPath('status', match ($state) {
+                'complete' => 'applied', 'expired' => 'expired', default => 'submitted'
+            });
+        expect(collect($client->requests)->where('method', 'post'))->toHaveCount(0);
+    });
+    expect($attempt->fresh()->status)->toBe(match ($state) {
+        'complete' => 'confirmed', 'expired' => 'expired', default => 'pending'
+    })
+        ->and(BillingCheckoutAttempt::count())->toBe(1);
+})->with(['open', 'complete', 'expired']);
+
+it('offers only a verified existing invoice after completed checkout still needs payment', function (string $case) {
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout();
+    $invoice = ['object' => 'invoice', 'id' => 'in_action_required', 'customer' => $subscription->provider_customer_id,
+        'subscription' => 'sub_action_required', 'status' => 'open', 'currency' => 'usd', 'subtotal' => $change->quote['total_minor'],
+        'total' => $change->quote['total_minor'], 'amount_due' => $change->quote['total_minor'], 'amount_paid' => 0,
+        'hosted_invoice_url' => 'https://invoice.stripe.com/i/retry', 'metadata' => $session['metadata']];
+    if ($case === 'wrong_customer') {
+        $invoice['customer'] = 'cus_foreign';
+    }
+    if ($case === 'wrong_subscription') {
+        $invoice['subscription'] = 'sub_foreign';
+    }
+    if ($case === 'wrong_amount') {
+        $invoice['subtotal']++;
+    }
+    if ($case === 'unsafe_url') {
+        $invoice['hosted_invoice_url'] = 'https://untrusted.example.test/pay';
+    }
+    $session = [...$session, 'status' => 'complete', 'subscription' => ['object' => 'subscription', 'id' => 'sub_action_required',
+        'customer' => $subscription->provider_customer_id, 'status' => 'incomplete', 'metadata' => $session['metadata'], 'latest_invoice' => $invoice]];
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $case) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id])
+            ->assertOk()->assertJsonPath('status', 'submitted')->assertJsonPath('checkout_url', $case === 'owned' ? 'https://invoice.stripe.com/i/retry' : null);
+        expect(collect($client->requests)->where('method', 'post'))->toHaveCount(0);
+    });
+    expect($attempt->fresh()->status)->toBe('processing')->and(BillingCheckoutAttempt::count())->toBe(1);
+})->with(['owned', 'wrong_customer', 'wrong_subscription', 'wrong_amount', 'unsafe_url']);
+
+it('does not release a delayed payment failure for a duplicate new subscription', function () {
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout();
+    $session = [...$session, 'status' => 'complete', 'subscription' => 'sub_delayed_failed'];
+    $processor = app(StripeWebhookProcessor::class);
+    $processor->receiveVerified(['id' => 'evt_delayed_completed', 'type' => 'checkout.session.completed', 'created' => now()->timestamp, 'data' => ['object' => $session]]);
+    $processor->receiveVerified(['id' => 'evt_delayed_failed', 'type' => 'checkout.session.async_payment_failed', 'created' => now()->timestamp, 'data' => ['object' => $session]]);
+    expect($attempt->fresh()->status)->toBe('processing')->and($attempt->fresh()->provider_checkout_url)->toBeNull()
+        ->and($change->fresh()->status)->toBe('submitted')->and($subscription->fresh()->provider_subscription_id)->toBe('sub_delayed_failed');
+    $this->actingAs($owner)->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => 'monthly', 'locations' => 1, 'staff' => 1])->assertConflict();
 });

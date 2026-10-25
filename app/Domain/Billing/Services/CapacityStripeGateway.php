@@ -39,11 +39,23 @@ class CapacityStripeGateway
         });
     }
 
-    public function submit(BusinessSubscription $subscription, BillingCapacityChange $change): void
+    public function submit(BusinessSubscription $subscription, BillingCapacityChange $change, bool $resume = false): void
     {
-        $this->safe(function () use ($subscription, $change): void {
+        $this->safe(function () use ($subscription, $change, $resume): void {
+            if ($resume) {
+                // Resume only the originally authorized operation, before Stripe's
+                // minimum idempotency retention. Never manufacture a second key.
+                abort_unless($change->status === 'submitted' && $change->submitted_at?->gt(now()->subHours(23)),
+                    409, 'This pending change needs a billing review before it can continue safely.');
+                abort_if($change->kind === 'renewal' && (! $change->effective_at?->isFuture()
+                    || ! $change->effective_at?->equalTo($subscription->current_period_ends_at)),
+                    409, 'The renewal date changed. Billing needs verification before continuing.');
+                abort_if($change->kind === 'immediate' && $subscription->current_period_started_at
+                    && ($change->quote['proration_date'] ?? 0) < $subscription->current_period_started_at->timestamp,
+                    409, 'The billing period changed. Billing needs verification before continuing.');
+            }
             $provider = $this->subscription($subscription);
-            abort_if(filled($provider->schedule), 409, 'A billing change is already scheduled. Refresh billing.');
+            abort_if(filled($provider->schedule) && ! ($resume && $change->kind === 'renewal'), 409, 'A billing change is already scheduled. Refresh billing.');
             $key = 'clipperdesk-capacity-'.$change->public_id;
             if ($change->kind === 'renewal') {
                 $items = collect($provider->items->data)->map(fn ($item) => ['price' => $item->price->id, 'quantity' => $item->quantity])->all();
@@ -52,6 +64,10 @@ class CapacityStripeGateway
                 $start = $first->current_period_start ?? $provider->current_period_start;
                 abort_unless($end === $subscription->current_period_ends_at?->timestamp, 409, 'The renewal date changed. Refresh billing.');
                 $schedule = $this->stripe()->subscriptionSchedules->create(['from_subscription' => $provider->id], ['idempotency_key' => $key.'-schedule']);
+                // A lost phase-update response may leave the original schedule
+                // attached. Replaying its create key must return that same object.
+                $attached = is_string($provider->schedule) ? $provider->schedule : ($provider->schedule?->id ?? null);
+                abort_if($attached && $attached !== $schedule->id, 409, 'A different scheduled change needs verification.');
                 $tax = ['automatic_tax' => ['enabled' => (bool) ($provider->automatic_tax->enabled ?? false)],
                     'default_tax_rates' => collect($provider->default_tax_rates ?? [])->map(fn ($rate) => is_string($rate) ? $rate : $rate->id)->all()];
                 $this->stripe()->subscriptionSchedules->update($schedule->id, [

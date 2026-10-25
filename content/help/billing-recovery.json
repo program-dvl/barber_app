@@ -13,7 +13,7 @@
     "billing error",
     "support reference"
   ],
-  "updated_at": "2026-10-24",
+  "updated_at": "2026-10-25",
   "status": "published",
   "roles": [
     "Owner",
@@ -28,12 +28,12 @@
     {
       "id": "steps",
       "title": "Use the available recovery action",
-      "body": "1. Return to **Subscription & billing → Plan** and read the unfinished-checkout notice and saved selection.\n2. Select **Check billing status** to get the current result. If the platform is verifying a payment, allow it to finish.\n3. Use **Continue secure checkout** when offered to return to the same checkout.\n4. If you need a different selection and **Start again** is available, select it and wait for the original checkout to close. Then review the new selection before confirming.\n5. If payment already completed, review the verified result instead of paying again."
+      "body": "1. Return to **Subscription & billing → Plan** and read the unfinished-checkout notice and saved selection.\n2. Select **Check billing status** to get the current result. If the platform is verifying a payment, allow it to finish.\n3. Use **Continue secure checkout** when offered to return to the same checkout.\n4. If you need a different selection and **Start again** is available, select it and wait for the original checkout to close. Then review the new selection before confirming.\n5. If payment already completed, check your subscription and invoice instead of paying again."
     },
     {
       "id": "outage",
       "title": "When checks cannot complete",
-      "body": "The notice explains what remains saved. Wait for **You can check again in…** or **You can try again in…** before another attempt. There is no need to repeatedly click or refresh. When the issue needs the ClipperDesk team, use **Contact support** and include the safe **Support reference** displayed."
+      "body": "The notice explains what remains saved. Wait for **You can check again in…** or **You can try again in…** before another attempt. There is no need to repeatedly click or refresh. When the issue needs the ClipperDesk team, use **Contact support** and include the safe **Support reference** displayed. If the notice offers **Start again**, it lets you review a fresh checkout without losing your edited selection. If **Open invoices** is shown, use it to complete the existing payment before starting another purchase."
     },
     {
       "id": "support",
@@ -43,7 +43,7 @@
     {
       "id": "verify",
       "title": "After recovery",
-      "body": "Confirm the current subscription, capacity, effective date and invoice status. If the verified payment is still uncertain, keep the original request for review rather than treating an expired page or browser message as proof of a refund or cancellation."
+      "body": "Check your subscription, included locations and staff, next billing date and invoice. If a payment is still pending, check its status before trying to pay again. An expired checkout page does not mean a payment was refunded."
     }
   ],
   "related": [
