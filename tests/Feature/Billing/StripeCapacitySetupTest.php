@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Billing\Models\BillingCheckoutAttempt;
 use App\Domain\Billing\Models\BillingPlanPrice;
 use App\Domain\Billing\Models\BillingRateCard;
 use App\Domain\Billing\Services\CapacityBillingManager;
@@ -18,6 +19,12 @@ function withSetupStripe(callable $operation): void
 {
     $client = new class implements ClientInterface
     {
+        public string $accountPrefix = '';
+
+        public array $customers = [];
+
+        public array $sessions = [];
+
         public array $products = [];
 
         public array $prices = [];
@@ -27,6 +34,8 @@ function withSetupStripe(callable $operation): void
         public array $writes = [];
 
         public bool $wrongPrice = false;
+
+        public ?int $priceReadStatus = null;
 
         public ?string $wrongTiers = null;
 
@@ -38,14 +47,14 @@ function withSetupStripe(callable $operation): void
             }
             if ($path === '/v1/products') {
                 if ($method === 'post') {
-                    $object = $params + ['id' => 'prod_setup_'.count($this->products), 'object' => 'product', 'active' => true];
+                    $object = $params + ['id' => 'prod_setup_'.$this->accountPrefix.count($this->products), 'object' => 'product', 'active' => true];
                     $this->products[] = $object;
                 } else {
                     $object = ['object' => 'list', 'data' => $this->products, 'has_more' => false, 'url' => $path];
                 }
             } elseif ($path === '/v1/prices') {
                 if ($method === 'post') {
-                    $object = $params + ['id' => 'price_setup_'.count($this->prices), 'object' => 'price', 'active' => true, 'type' => 'recurring'];
+                    $object = $params + ['id' => 'price_setup_'.$this->accountPrefix.count($this->prices), 'object' => 'price', 'active' => true, 'type' => 'recurring'];
                     if ($object['billing_scheme'] === 'tiered') {
                         $object['unit_amount'] = null;
                         $object['tiers'] = array_map(fn ($tier) => ['up_to' => $tier['up_to'] === 'inf' ? null : (int) $tier['up_to'], 'unit_amount' => (int) $tier['unit_amount'], 'flat_amount' => null], $object['tiers']);
@@ -58,6 +67,12 @@ function withSetupStripe(callable $operation): void
                     $object = ['object' => 'list', 'data' => array_values(array_filter($this->prices, fn ($p) => in_array($p['lookup_key'], $params['lookup_keys']))), 'has_more' => false, 'url' => $path];
                 }
             } elseif (str_starts_with($path, '/v1/prices/')) {
+                if ($this->priceReadStatus) {
+                    return [json_encode(['error' => ['type' => 'api_error', 'message' => 'Unavailable']]), $this->priceReadStatus, []];
+                }
+                if (! isset($this->prices[basename($path)])) {
+                    return [json_encode(['error' => ['type' => 'invalid_request_error', 'code' => 'resource_missing', 'param' => 'price', 'message' => 'No price in this test account']]), 404, []];
+                }
                 $object = $this->prices[basename($path)];
                 if ($object['billing_scheme'] === 'tiered' && $this->wrongTiers) {
                     if ($this->wrongTiers === 'volume') {
@@ -76,6 +91,22 @@ function withSetupStripe(callable $operation): void
                 if ($this->wrongPrice) {
                     $object['unit_amount']++;
                 }
+            } elseif ($path === '/v1/customers' && $method === 'post') {
+                $object = $params + ['object' => 'customer', 'id' => 'cus_setup_'.count($this->customers)];
+                $this->customers[$object['id']] = $object;
+            } elseif (str_starts_with($path, '/v1/customers/')) {
+                $object = $this->customers[basename($path)];
+            } elseif ($path === '/v1/checkout/sessions' && $method === 'post') {
+                foreach ($params['line_items'] as $item) {
+                    if (! isset($this->prices[$item['price']])) {
+                        return [json_encode(['error' => ['type' => 'invalid_request_error', 'code' => 'resource_missing', 'param' => 'line_items[0][price]', 'message' => 'No price in this test account']]), 404, []];
+                    }
+                }
+                $object = $params + ['object' => 'checkout.session', 'id' => 'cs_test_setup_'.count($this->sessions), 'status' => 'open',
+                    'livemode' => false, 'subscription' => null, 'expires_at' => now()->addDay()->timestamp, 'url' => 'https://checkout.stripe.com/setup'];
+                $this->sessions[$object['id']] = $object;
+            } elseif (str_starts_with($path, '/v1/checkout/sessions/')) {
+                $object = $this->sessions[basename($path)];
             } elseif ($path === '/v1/webhook_endpoints') {
                 if ($method === 'post') {
                     $object = $params + ['id' => 'we_setup', 'object' => 'webhook_endpoint', 'livemode' => false, 'secret' => 'whsec_private_test'];
@@ -247,5 +278,89 @@ it('reads both Stripe price cadences without provisioning or exposing provider d
             expect($output)->not->toContain('sk_test_', 'price_setup_', 'prod_setup_', 'whsec_');
         }
         expect($client->writes)->toBe($writes)->and([BillingRateCard::count(), BillingPlanPrice::count()])->toBe($counts);
+    });
+});
+
+it('identifies stale explicit overrides before provisioning mutates a Stripe catalog', function () {
+    withSetupStripe(function ($client) {
+        $this->artisan('billing:verify-capacity-rates US --provision')->assertSuccessful();
+        $cards = BillingRateCard::get()->toJson();
+        $writes = $client->writes;
+        config(['capacity-billing.markets.US.monthly.base_price_id' => 'price_foreign_monthly',
+            'capacity-billing.markets.US.annual.staff_price_id' => 'price_foreign_annual']);
+        expect(Artisan::call('billing:verify-capacity-rates', ['market' => 'US', '--provision' => true]))->toBe(1);
+        expect(Artisan::output())->toContain('CAPACITY_US_MONTHLY_BASE_PRICE_ID', 'CAPACITY_US_ANNUAL_STAFF_PRICE_ID', 'No catalog objects were changed.');
+        expect($client->writes)->toBe($writes)->and(BillingRateCard::get()->toJson())->toBe($cards);
+    });
+});
+
+it('repairs missing test account prices then restarts and opens the fresh reviewed checkout while preserving paid terms', function (string $interval) {
+    withSetupStripe(function ($client) use ($interval) {
+        config(['billing.stripe.webhook_secret' => 'whsec_setup']);
+        $this->artisan('billing:verify-capacity-rates US --provision')->assertSuccessful();
+        $catalog = app(CapacityPricingCatalog::class);
+        [, $paidBusiness] = createTenantMembership();
+        $paid = activateTestSubscription($paidBusiness);
+        $oldQuote = $catalog->quote('US', $interval, 5, 10);
+        $paid->update(['billing_plan_price_id' => BillingRateCard::find($oldQuote['rate_card_id'])->billing_plan_price_id,
+            'billing_rate_card_id' => $oldQuote['rate_card_id'], 'capacity_snapshot' => $oldQuote]);
+        $paidBefore = $paid->fresh()->getAttributes();
+        $oldCards = BillingRateCard::get()->keyBy('id')->map->getAttributes();
+        [$owner, $business] = createTenantMembership();
+        $trial = activateTestSubscription($business);
+        $trial->update(['status' => 'trialing', 'provider_subscription_id' => null]);
+        $manager = app(CapacityBillingManager::class);
+        $change = $manager->review($business, $owner, 'US', $interval, 5, 10);
+        $manager->claim($business, $owner, $change);
+        $attempt = BillingCheckoutAttempt::create(['business_id' => $business->id, 'business_subscription_id' => $trial->id,
+            'created_by_user_id' => $owner->id, 'billing_plan_price_id' => BillingRateCard::find($oldQuote['rate_card_id'])->billing_plan_price_id,
+            'provider' => 'stripe', 'provider_transaction_id' => 'pending_capacity_'.$change->public_id, 'status' => 'pending',
+            'expires_at' => now()->addHour(), 'capacity_quote' => [...$change->quote, 'capacity_change_id' => $change->public_id,
+                'stripe_mode' => 'test', 'stripe_credential_fingerprint' => hash('sha256', 'sk_test_setup')]]);
+        // A later switch leaves the key/customer usable, but old Price IDs fail.
+        $this->travel(2)->seconds();
+        $client->customers[$trial->provider_customer_id] = ['object' => 'customer', 'id' => $trial->provider_customer_id, 'metadata' => ['business_public_id' => $business->public_id]];
+        $client->accountPrefix = 'next_';
+        $client->prices = $client->products = [];
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $change->public_id])->assertStatus(503);
+        Artisan::call('billing:inspect-checkout', ['business' => $business->public_id, '--provider' => true]);
+        $report = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
+        expect($report['requires_catalog_setup'])->toBeTrue()->and($report['next_step'])->toContain('--provision');
+        foreach ($report['provider_checks']['current_prices'] as $prices) {
+            foreach ($prices as $price) {
+                expect($price['code'])->toBe('resource_missing')->and($price['source'])->toBe('verified_mapping');
+            }
+        }
+        $this->assertSame(0, Artisan::call('billing:verify-capacity-rates', ['market' => 'US', '--provision' => true]), Artisan::output());
+        $count = count($client->writes);
+        $this->artisan('billing:verify-capacity-rates US --provision')->assertSuccessful();
+        expect(count($client->writes))->toBe($count)->and(BillingRateCard::count())->toBe(4);
+        expect($paid->fresh()->getAttributes())->toBe($paidBefore);
+        foreach ($oldCards as $id => $attributes) {
+            expect(BillingRateCard::find($id)->getAttributes())->toBe($attributes);
+        }
+        $this->postJson(route('business.billing.capacity.restart', $business), ['change_id' => $change->public_id])->assertOk()->assertJsonPath('status', 'cancelled');
+        expect($attempt->fresh()->status)->toBe('superseded');
+        $review = $this->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => $interval, 'locations' => 5, 'staff' => 10])
+            ->assertOk()->assertJsonPath('quote.total_minor', $interval === 'annual' ? 171000 : 17100);
+        expect($review->json('quote.rate_card_id'))->not->toBe($oldQuote['rate_card_id']);
+        $this->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $review->json('change_id')])
+            ->assertCreated()->assertJsonPath('url', 'https://checkout.stripe.com/setup');
+        $this->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $review->json('change_id')])->assertOk();
+        expect($client->sessions)->toHaveCount(1)->and($trial->fresh()->status->value)->toBe('trialing')
+            ->and($paid->fresh()->getAttributes())->toBe($paidBefore);
+    });
+})->with(['monthly', 'annual']);
+
+it('does not recommend provisioning a catalog when provider price reads could not complete', function () {
+    withSetupStripe(function ($client) {
+        $this->artisan('billing:verify-capacity-rates US --provision')->assertSuccessful();
+        [, $business] = createTenantMembership();
+        $client->priceReadStatus = 503;
+        $writes = $client->writes;
+        Artisan::call('billing:inspect-checkout', ['business' => $business->public_id, '--provider' => true]);
+        $report = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
+        expect($report['requires_catalog_setup'])->toBeFalse()->and($report['next_step'])->toContain('checks could not complete')
+            ->and($report['next_step'])->not->toContain('--provision')->and($client->writes)->toBe($writes);
     });
 });

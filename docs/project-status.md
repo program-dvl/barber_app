@@ -1,5 +1,34 @@
 # Project status
 
+## 2026-10-25 Fresh checkout failure — missing test prices confirmed
+
+- [x] Owner reports deployed Start again now succeeds, but confirming the newly
+  reviewed monthly selection returns checkout unavailable. This remains an
+  unresolved production payment issue; prior local recovery tests did not certify
+  Stripe creation in the currently configured account.
+- [x] Identified a diagnostic gap: the safe Stripe wrapper discarded the original
+  exception, causing validation/configuration errors to resemble a temporary
+  outage. New code retains the exception cause and a redacted pending-attempt
+  classification (HTTP status, validated code, allowlisted parameter). Private
+  logs retain the provider request reference; customer responses contain none
+  of these diagnostic fields. Successful original-attempt retry clears the error.
+- [x] Four HTTP/parameter/privacy/retry regressions pass, including billing-page
+  response privacy. No additional attempt or subscription is created on failure.
+- [x] Supplied deployed inspector output confirms a correctly owned current test
+  customer, matching saved/configured credentials, and **all six monthly/annual
+  prices returning resource_missing / 404**. The remaining failure is unavailable
+  catalog mappings in the current account, not a stuck restart or invalid secret.
+- [x] Provisioning preflights explicit price overrides before catalog writes and
+  names unavailable variables. The inspector distinguishes mapping sources and
+  missing prices from provider read failures, supplying actionable setup advice.
+  Monthly/annual SDK regressions reproduce six missing prices, repair mappings,
+  preserve paid terms/history, restart and open one fresh reviewed checkout.
+- [ ] Operator was given the existing test-only --provision command, followed by
+  price reinspection and owner Start again/review/confirmation. Its deployed result
+  and Stripe redirect remain pending. Local hardening is not deployed. No live
+  payment, secret/tax change, paid data reset or new migration was performed.
+  See the [catalog recovery runbook](deployment/subscription-billing-stripe.md#confirmed-six-missing-prices-in-the-test-account-2026-10-25).
+
 ## 2026-10-25 Checkout preparation, payment recovery and customer wording (ADR-071)
 
 - [x] Exact checkout Support references and Business IDs work in the read-only

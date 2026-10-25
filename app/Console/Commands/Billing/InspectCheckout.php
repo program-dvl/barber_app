@@ -56,22 +56,39 @@ class InspectCheckout extends Command
         } catch (Throwable) {
             // Managed environment variables may be the sole configuration source.
         }
+        $providerChecks = $this->option('provider') ? $this->providerChecks($business, $attempt, $secret) : null;
+        $priceChecks = collect($providerChecks['current_prices'] ?? [])->flatMap(fn ($prices) => array_values($prices));
+        $priceProblem = $priceChecks->contains(fn ($price) => (($price['code'] ?? null) === 'resource_missing' && ($price['http_status'] ?? null) === 404)
+            || ($price['matches'] ?? true) === false || ($price['configured'] ?? true) === false);
+        $priceReadFailed = $priceChecks->contains(fn ($price) => ($price['readable'] ?? null) === false
+            && ! (($price['code'] ?? null) === 'resource_missing' && ($price['http_status'] ?? null) === 404));
+        $nextStep = ! $change ? 'No submitted checkout was found for this business. Review the current billing workspace.'
+            : (! in_array($change->status, ['submitted', 'scheduled'], true) ? 'This referenced checkout is no longer pending. Review the current billing workspace before taking further action.'
+                : ($matchesFile === false ? 'Verify the intended deployment secret source, rebuild configuration and restart persistent workers.'
+                    : ($storedMode === 'live' && $mode !== 'live' ? 'Restore the original live payment account before checking or closing this checkout.'
+                        : 'Check billing status in the workspace; unpaid stale test setup can recover without resetting paid records.')));
+        if ($priceReadFailed) {
+            $nextStep = 'Stripe price checks could not complete. Verify the current credentials, permissions and connectivity before provisioning prices. This diagnostic did not start a checkout.';
+        } elseif ($priceProblem) {
+            $nextStep = 'Subscription prices are unavailable or do not match the current Stripe account. '
+                .($mode === 'test' ? 'Run php artisan billing:verify-capacity-rates '.app(CapacityPricingCatalog::class)->marketFor($business).' --provision in the intended test account. '
+                    : 'Verify the approved subscription prices in the intended live account before accepting payment. ')
+                .'Explicit price overrides must be correct or cleared first. After setup succeeds, follow the recovery steps in billing; do not reset paid subscriptions.';
+        }
         $this->line(json_encode([
             'business' => $business->public_id, 'reference' => $change?->public_id, 'matched_by' => $matchedBy,
             'request_status' => $change?->status, 'attempt_status' => $attempt?->status,
             'session_saved' => $attempt ? str_starts_with($attempt->provider_transaction_id, 'cs_') : false,
+            'checkout_failure' => str_starts_with((string) $attempt?->last_error, 'stripe_checkout:')
+                ? json_decode(substr($attempt->last_error, strlen('stripe_checkout:')), true) : null,
             'can_restart_test_preparation' => $change ? $recovery->canRestartTestPreparation($change) : false,
             'original_secret_matches_current' => isset($attempt?->capacity_quote['stripe_credential_fingerprint'])
                 ? hash_equals($attempt->capacity_quote['stripe_credential_fingerprint'], hash('sha256', $secret)) : null,
             'configured_mode' => $mode, 'checkout_mode' => $storedMode,
             'configuration_cached' => $this->laravel->configurationIsCached(),
             'environment_file_mode' => $fileMode, 'configured_secret_matches_environment_file' => $matchesFile,
-            ...($this->option('provider') ? ['provider_checks' => $this->providerChecks($business, $attempt, $secret)] : []),
-            'next_step' => ! $change ? 'No submitted checkout was found for this business. Review the current billing workspace.'
-                : (! in_array($change->status, ['submitted', 'scheduled'], true) ? 'This referenced checkout is no longer pending. Review the current billing workspace before taking further action.'
-                    : ($matchesFile === false ? 'Verify the intended deployment secret source, rebuild configuration and restart persistent workers.'
-                        : ($storedMode === 'live' && $mode !== 'live' ? 'Restore the original live payment account before checking or closing this checkout.'
-                            : 'Check billing status in the workspace; unpaid stale test setup can recover without resetting paid records.'))),
+            ...($providerChecks !== null ? ['provider_checks' => $providerChecks, 'requires_catalog_setup' => $priceProblem] : []),
+            'next_step' => $nextStep,
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         return self::SUCCESS;
@@ -107,7 +124,7 @@ class InspectCheckout extends Command
             $terms = $catalog->terms($catalog->marketFor($business), $interval);
             foreach (['base', 'location', 'staff'] as $role) {
                 $id = $terms[$role.'_price_id'];
-                $result['current_prices'][$interval][$role] = filled($id) ? $read(static function () use ($stripe, $catalog, $terms, $role, $id, $interval): array {
+                $result['current_prices'][$interval][$role] = ['source' => filled(config('capacity-billing.markets.'.$terms['market'].'.'.$interval.'.'.$role.'_price_id')) ? 'configuration' : 'verified_mapping'] + (filled($id) ? $read(static function () use ($stripe, $catalog, $terms, $role, $id, $interval): array {
                     $price = $stripe->prices->retrieve($id, ['expand' => ['tiers']]);
 
                     return ['readable' => true, 'matches' => $price->active && strtoupper($price->currency) === $terms['currency']
@@ -115,7 +132,7 @@ class InspectCheckout extends Command
                         && $price->recurring?->interval_count === 1 && $price->recurring?->usage_type === 'licensed'
                         && $price->tax_behavior === 'exclusive'
                         && $catalog->matchesStripePrice($price->toArray(), $terms, $role, requireTiers: true)];
-                }) : ['configured' => false];
+                }) : ['configured' => false]);
             }
         }
 

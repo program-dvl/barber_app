@@ -9,6 +9,7 @@ use App\Domain\Billing\Services\CapacityCatalogProvisioner;
 use App\Domain\Billing\Services\CapacityPricingCatalog;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
 
 class VerifyCapacityRates extends Command
@@ -115,6 +116,11 @@ class VerifyCapacityRates extends Command
             });
         } catch (\Throwable $error) {
             $this->error('Verification failed. No rate cards were installed. Check the configured price mappings and provider access.');
+            if ($error instanceof \LogicException) {
+                $this->line($error->getMessage());
+            } elseif ($error instanceof ApiErrorException) {
+                $this->line('Stripe response: HTTP '.($error->getHttpStatus() ?? 'unavailable').'; code '.($error->getStripeCode() ?: 'not supplied').'.');
+            }
 
             return self::FAILURE;
         }

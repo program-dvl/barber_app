@@ -411,3 +411,67 @@ Release verification must include actual sandbox monthly and annual Checkout,
 card decline/retry, authentication, cancel/Back, successful return before webhook,
 webhook replay/out-of-order, renewals and invoice/payment portal recovery in the
 intended Stripe account. Local SDK fixtures do not certify the deployed provider.
+
+### Fresh checkout still returns unavailable
+
+If Start again completes but confirming the new selection returns unavailable,
+treat this as a separate creation failure. Do not keep resetting attempts or
+assume matching key prefixes validate customer/Price IDs. Run the enhanced
+read-only inspector against the affected Business ID with `--provider`. Compare
+both cadence mappings and customer readability in the intended Stripe account.
+This command does not start a checkout or charge the customer.
+
+After this diagnostic follow-up is deployed, the inspector's `checkout_failure`
+also reports the last creation rejection's HTTP status, safe code and allowlisted
+parameter, if available. It omits raw provider messages and secrets; old failures
+have null because their exception was previously discarded. The server log for
+“Stripe subscription operation failed” includes a private provider request
+reference for inspection in Stripe's request logs. Successful original-attempt
+retries clear the classification. Do not interpret 503 as proof of a temporary
+outage: the application's safe wrapper also maps provider validation/configuration
+errors to that customer response. Inspect the actual failure before changing
+keys, tax settings, prices, existing subscriptions or customer bindings.
+
+### Confirmed six missing prices in the test account (2026-10-25)
+
+The affected owner's inspection returned a readable, undeleted, correctly owned
+customer and six `resource_missing` / HTTP 404 price results. The current secret
+matches the saved preparation and deployment configuration. The test catalog is
+unavailable in that account; changing only API keys does not recreate its prices.
+Stripe documents the [sandbox/live object separation](https://docs.stripe.com/keys#sandbox-versus-live-mode).
+
+For this confirmed **test** setup, use the existing operator command (no --force):
+
+```sh
+php artisan billing:verify-capacity-rates US --provision
+```
+
+It creates/reuses the six approved recurring prices and installs verified local
+mappings. It does not create a subscription, charge, customer, or change any paid
+subscription. Once successful, run the read-only inspector again and confirm all
+six price results are readable/matching. Then the owner must choose Start again,
+review the saved selection and confirm. The old submitted quote still contains
+old Price IDs and must not be silently rewritten.
+
+If explicit environment overrides point to unavailable prices, correct them or
+clear these six subscription-only variables to use command-managed mappings:
+
+```dotenv
+CAPACITY_US_MONTHLY_BASE_PRICE_ID=
+CAPACITY_US_MONTHLY_LOCATION_PRICE_ID=
+CAPACITY_US_MONTHLY_STAFF_PRICE_ID=
+CAPACITY_US_ANNUAL_BASE_PRICE_ID=
+CAPACITY_US_ANNUAL_LOCATION_PRICE_ID=
+CAPACITY_US_ANNUAL_STAFF_PRICE_ID=
+```
+
+Rebuild cached configuration and restart persistent workers after an environment
+edit, then rerun provisioning. Do not change the secret/webhook keys, tax policy,
+SMS settings or paid records to work around missing prices. Live provisioning
+keeps the separate explicit --force gate and release review.
+
+The improved provisioner checks all explicit overrides before writing catalog
+objects and names unavailable variables. The improved inspector reports whether
+prices came from configuration or verified mappings, and recommends setup only
+for confirmed missing/mismatched prices; a permission/outage/read failure calls
+for provider access verification instead. New prices/cards preserve old history.

@@ -3,6 +3,7 @@
 namespace App\Domain\Billing\Services;
 
 use LogicException;
+use Stripe\Exception\InvalidRequestException;
 use Stripe\StripeClient;
 
 class CapacityCatalogProvisioner
@@ -11,6 +12,30 @@ class CapacityCatalogProvisioner
     public function provision(CapacityPricingCatalog $catalog, string $market): array
     {
         $stripe = new StripeClient(config('billing.stripe.secret'));
+        // Explicit environment overrides take precedence over stored mappings.
+        // Validate all of them before any catalog creation, so provisioning
+        // cannot appear to repair an account while stale overrides still win.
+        $missing = [];
+        foreach (['monthly', 'annual'] as $interval) {
+            foreach (['base', 'location', 'staff'] as $role) {
+                $id = config('capacity-billing.markets.'.$market.'.'.$interval.'.'.$role.'_price_id');
+                if (blank($id)) {
+                    continue;
+                }
+                try {
+                    $stripe->prices->retrieve($id, []);
+                } catch (InvalidRequestException $error) {
+                    if ($error->getStripeCode() !== 'resource_missing' || $error->getHttpStatus() !== 404) {
+                        throw $error;
+                    }
+                    $missing[] = 'CAPACITY_'.$market.'_'.strtoupper($interval).'_'.strtoupper($role).'_PRICE_ID';
+                }
+            }
+        }
+        if ($missing) {
+            throw new LogicException('These price overrides are unavailable in the current Stripe account/mode: '.implode(', ', $missing)
+                .'. Correct them, or clear these subscription price overrides to use command-managed mappings. Rebuild cached configuration and rerun --provision. No catalog objects were changed.');
+        }
         $products = [];
         foreach ($stripe->products->all(['limit' => 100])->autoPagingIterator() as $product) {
             if (($product->metadata->application ?? null) === 'clipperdesk'

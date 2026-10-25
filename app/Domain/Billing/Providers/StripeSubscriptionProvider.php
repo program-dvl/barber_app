@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use LogicException;
 use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class StripeSubscriptionProvider implements SubscriptionProvider
 {
@@ -70,7 +71,7 @@ class StripeSubscriptionProvider implements SubscriptionProvider
             );
 
             return ['url' => (string) $session->url, 'provider_session_id' => $session->id];
-        });
+        }, $attempt);
     }
 
     public function expireCheckout(BillingCheckoutAttempt $attempt): void
@@ -328,19 +329,31 @@ class StripeSubscriptionProvider implements SubscriptionProvider
         return $this->client ??= new StripeClient((string) config('billing.stripe.secret'));
     }
 
-    private function guardProviderOperation(int $businessId, string $operation, callable $callback): mixed
+    private function guardProviderOperation(int $businessId, string $operation, callable $callback, ?BillingCheckoutAttempt $attempt = null): mixed
     {
         try {
             return $callback();
         } catch (ApiErrorException $exception) {
+            $parameter = explode('[', (string) ($exception->getError()?->param ?? ''))[0];
+            $details = [
+                'http_status' => $exception->getHttpStatus(),
+                'code' => preg_match('/^[a-z_]{1,80}$/', (string) $exception->getStripeCode()) ? $exception->getStripeCode() : null,
+                'parameter' => in_array($parameter, ['customer', 'line_items', 'automatic_tax', 'customer_update', 'subscription_data', 'metadata', 'success_url', 'cancel_url', 'allow_promotion_codes', 'discounts'], true) ? $parameter : null,
+            ];
+            // Keep only classifications, never Stripe's message/body, addresses,
+            // keys or object IDs. Recovery commits this alongside any customer
+            // binding obtained before Checkout failed.
+            $attempt?->update(['last_error' => 'stripe_checkout:'.json_encode($details, JSON_THROW_ON_ERROR)]);
             Log::warning('Stripe subscription operation failed.', [
                 'business_id' => $businessId,
                 'operation' => $operation,
                 'provider_code' => $exception->getStripeCode(),
                 'provider_http_status' => $exception->getHttpStatus(),
+                'provider_parameter' => $details['parameter'],
+                'provider_request_id' => $exception->getRequestId(),
             ]);
 
-            abort(503, 'We could not confirm the billing request. Refresh billing to check its status before trying again.');
+            throw new HttpException(503, 'We could not confirm the billing request. Refresh billing to check its status before trying again.', $exception);
         }
     }
 

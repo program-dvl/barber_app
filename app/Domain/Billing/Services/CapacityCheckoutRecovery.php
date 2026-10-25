@@ -85,7 +85,7 @@ class CapacityCheckoutRecovery
                         $checkout = $this->provider->createCheckout($business, $attempt->price, $attempt,
                             route('business.billing.show', $business).'?checkout=success&attempt='.$attempt->public_id.'&session_id={CHECKOUT_SESSION_ID}',
                             route('business.billing.show', [$business, 'section' => 'plan', 'checkout' => 'canceled']));
-                        $attempt->update(['provider_transaction_id' => $checkout['provider_session_id'], 'provider_checkout_url' => $checkout['url']]);
+                        $attempt->update(['provider_transaction_id' => $checkout['provider_session_id'], 'provider_checkout_url' => $checkout['url'], 'last_error' => null]);
                     } catch (Throwable $error) {
                         // Commit a customer binding obtained before a failed Checkout
                         // response, so recovery can find the original operation.

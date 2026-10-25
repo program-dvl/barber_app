@@ -576,6 +576,10 @@ function withCheckoutRecoveryStripe(array $session, callable $operation): void
 
         public ?string $failure = null;
 
+        public ?int $failureHttpStatus = null;
+
+        public ?string $failureParameter = null;
+
         public bool $raceCompletion = false;
 
         public array $listed = [];
@@ -589,7 +593,7 @@ function withCheckoutRecoveryStripe(array $session, callable $operation): void
             $path = parse_url($url, PHP_URL_PATH);
             $this->requests[] = ['method' => $method, 'path' => $path, 'params' => $params, 'headers' => $headers];
             if ($this->failure) {
-                return [json_encode(['error' => ['type' => 'invalid_request_error', 'code' => $this->failure, 'message' => 'Private provider diagnostic']]), $this->failure === 'resource_missing' ? 404 : 503, []];
+                return [json_encode(['error' => ['type' => 'invalid_request_error', 'code' => $this->failure, 'param' => $this->failureParameter, 'message' => 'Private provider diagnostic sk_live_private customer@example.test']]), $this->failureHttpStatus ?? ($this->failure === 'resource_missing' ? 404 : 503), []];
             }
             if (str_ends_with($path, '/expire')) {
                 if ($this->raceCompletion) {
@@ -1256,3 +1260,29 @@ it('does not release a delayed payment failure for a duplicate new subscription'
         ->and($change->fresh()->status)->toBe('submitted')->and($subscription->fresh()->provider_subscription_id)->toBe('sub_delayed_failed');
     $this->actingAs($owner)->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => 'monthly', 'locations' => 1, 'staff' => 1])->assertConflict();
 });
+
+it('retains redacted Stripe checkout rejection details through the recovery transaction and clears them on successful retry', function (int $httpStatus, string $parameter, ?string $savedParameter) {
+    [$owner, $business, $subscription, , $change, $attempt, $session] = abandonedCapacityCheckout();
+    $attempt->update(['provider_transaction_id' => 'pending_capacity_'.$change->public_id, 'provider_checkout_url' => null]);
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $attempt, $httpStatus, $parameter, $savedParameter) {
+        $client->failure = 'resource_missing';
+        $client->failureHttpStatus = $httpStatus;
+        $client->failureParameter = $parameter;
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $change->public_id])
+            ->assertStatus(503)->assertJsonPath('status', 'submitted')->assertJsonMissingPath('checkout_failure')->assertDontSee('sk_live_private')
+            ->assertDontSee('customer@example.test')->assertDontSee('resource_missing');
+        expect($attempt->fresh()->status)->toBe('pending')->and($attempt->fresh()->last_error)->toBe('stripe_checkout:'.json_encode([
+            'http_status' => $httpStatus, 'code' => 'resource_missing', 'parameter' => $savedParameter,
+        ]));
+        expect(Artisan::call('billing:inspect-checkout', ['business' => $change->public_id]))->toBe(0);
+        $json = Artisan::output();
+        $report = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
+        expect($report['checkout_failure'])->toBe(['http_status' => $httpStatus, 'code' => 'resource_missing', 'parameter' => $savedParameter])
+            ->and($json)->not->toContain('sk_live_private', 'customer@example.test', 'Private provider diagnostic');
+        $this->get(route('business.billing.show', $business))->assertOk()->assertDontSee('stripe_checkout:')->assertDontSee('checkout_failure')->assertDontSee('sk_live_private');
+        $client->failure = null;
+        $this->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $change->public_id])
+            ->assertOk()->assertJsonPath('url', 'https://checkout.stripe.com/recovered');
+        expect($attempt->fresh()->last_error)->toBeNull()->and(BillingCheckoutAttempt::count())->toBe(1);
+    });
+})->with([[404, 'line_items[0][price]', 'line_items'], [400, 'automatic_tax[enabled]', 'automatic_tax'], [403, 'customer', 'customer'], [503, 'sk_live_secret', null]]);

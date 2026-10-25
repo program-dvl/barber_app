@@ -256,3 +256,42 @@ Payment success describes the subscription outcome, not internal capacity
 verification. The first purchase, later change, scheduled change and pending
 payment have distinct headings. A useful heading needs no repetitive body copy.
 The public pricing and recovery help use the same non-technical vocabulary.
+
+### Checkout creation diagnostics (2026-10-25 follow-up)
+
+An owner-reported restart succeeded but fresh Checkout creation still returned
+503. Subsequent deployed inspection confirmed the current test customer is readable
+and owned, while all six monthly/annual subscription Price IDs return 404
+resource_missing. This establishes unavailable catalog mappings in that account;
+matching key modes alone do not validate price ownership. Provision and verify
+current test prices, then restart the old test preparation and review fresh terms.
+Production repair still requires the operator command and a checkout redirect.
+
+New Stripe API checkout failures retain only HTTP status, a validated error code
+and an allowlisted top-level parameter in the pending attempt's private
+`last_error`. The inspector reports this classification as `checkout_failure`;
+older attempts show null. Raw provider messages/bodies, secrets and contact data
+are not stored there or returned to the customer. Preserve the original exception
+chain and log its provider request reference privately for operator investigation.
+A successful retry clears the stale classification without making a second
+attempt or resetting the saved purchase. Existing recovery/financial guards stay
+in force; diagnostics alone do not establish that checkout works in production.
+
+### Price catalog recovery after switching Stripe accounts
+
+The existing `billing:verify-capacity-rates US --provision` creates/reuses catalog
+objects in the current account and installs new verified immutable mappings.
+It never creates a subscription or payment. Missing database-fallback mappings
+can be replaced this way without editing old cards or paid snapshots. A pending
+checkout still retains its old quote; restart/review is necessary to use the new
+mappings. Simply checking the old request keeps its original unavailable prices.
+
+Explicit CAPACITY subscription Price ID overrides remain authoritative. Provisioning
+now reads all configured overrides before any catalog writes; if any are missing,
+it identifies their variable names and asks the operator to correct/clear them and
+rebuild configuration. It never silently overrides environment configuration.
+The inspector labels mapping sources and gives catalog-specific next steps for
+confirmed missing/mismatched prices, distinguishing provider read failures from
+proof that setup is required. No customer-facing credential/configuration burden.
+Monthly/annual account-switch tests repair all six missing prices, preserve old
+paid subscription/cards, restart the pending trial and open one fresh checkout.

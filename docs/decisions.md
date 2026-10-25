@@ -2606,6 +2606,34 @@ classifications, and never provisions catalog objects, subscriptions or charges.
 See [billing specification](modules/subscription-billing.md#checkout-and-payment-lifecycle-recovery-adr-071)
 and [verification evidence](audits/2026-10-25-billing-flow/README.md).
 
+### ADR-071 diagnostic follow-up — 2026-10-25
+
+Preserve a redacted checkout creation error classification on the pending attempt
+and the original provider exception as the cause of the safe service exception.
+The read-only inspector may report HTTP status, validated code and an allowlisted
+parameter. Raw messages/bodies, keys and contact details stay out of the attempt
+and customer responses. A private provider request reference in server logs lets
+an operator investigate the original rejection. Clear stale details when the
+original retry succeeds. This adds diagnostic evidence, not production payment
+certification or a new billing system.
+
+### ADR-071 catalog recovery follow-up — 2026-10-25
+
+Production diagnostic evidence confirmed that the current test account can read
+the customer but cannot read any of the six mapped subscription prices. Recover
+with the existing explicit catalog provisioning/verification command; never
+create prices automatically during customer checkout or reset paid records.
+Retain old immutable cards and pending quotes. Restart an eligible test
+preparation and obtain fresh owner review/confirmation to use current mappings.
+
+Explicit environment price overrides remain authoritative. Preflight all of them
+before provisioning writes and identify missing variable names without printing
+IDs. The inspector distinguishes unavailable catalog objects from incomplete
+provider reads and supplies the matching operator next step. Local monthly/annual
+account-switch regressions must preserve old paid terms and verify the repaired
+trial opens one checkout. Actual production repair is not claimed until the
+operator setup succeeds and the owner reaches checkout in the intended account.
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |
