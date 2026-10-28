@@ -38,10 +38,23 @@ class CapacityCheckoutRecovery
                 || ! in_array($subscription->status->value, ['active', 'cancel_scheduled'], true)) {
                 return false;
             }
-            foreach (['fingerprint', 'rate_card_id', 'currency', 'billing_interval', 'locations', 'staff', 'total_minor'] as $field) {
+            foreach (['rate_card_id', 'currency', 'billing_interval', 'locations', 'staff', 'total_minor'] as $field) {
                 $expected = $locked->quote[$field] ?? null;
                 if ($expected === null || ($attempt->capacity_quote[$field] ?? null) !== $expected
                     || ($subscription->capacity_snapshot[$field] ?? null) !== $expected) {
+                    return false;
+                }
+            }
+            $card = BillingRateCard::find($locked->quote['rate_card_id']);
+            if (! $card || $card->billing_plan_price_id !== $subscription->billing_plan_price_id) {
+                return false;
+            }
+            // Older projections hashed the database-decoded JSON key order.
+            // Accept that exact legacy representation of this same immutable
+            // card, while retaining all quantity, payment and ownership checks.
+            $fingerprints = [$card->fingerprint, app(CapacityPricingCatalog::class)->fingerprint($card->terms)];
+            foreach ([$locked->quote, $attempt->capacity_quote, $subscription->capacity_snapshot] as $quote) {
+                if (! in_array($quote['fingerprint'] ?? null, $fingerprints, true)) {
                     return false;
                 }
             }

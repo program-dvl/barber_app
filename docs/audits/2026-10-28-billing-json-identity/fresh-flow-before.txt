@@ -1,0 +1,48 @@
+
+  ⨯⨯
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Billing\CapacityBillingTest > it finishes a fresh r…   
+  Failed asserting that two strings are identical.
+  -'applied'
+  +'submitted'
+  
+
+  at tests/Feature/Billing/CapacityBillingTest.php:1527
+    1523▕         $client->session = [...$client->session, 'status' => 'complete', 'payment_status' => 'paid', 'subscription' => [
+    1524▕             'object' => 'subscription', 'id' => 'sub_database_order', 'customer' => $subscription->provider_customer_id, 'status' => 'active',
+    1525▕             'metadata' => $client->session['metadata'], 'items' => ['data' => capacityProvider($card->fresh(), 2, 6)], 'latest_invoice' => null]];
+    1526▕         $this->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id, 'verify_only' => true])
+  ➜ 1527▕             ->assertOk()->assertJsonPath('status', 'applied')->assertJsonPath('checkout_status', 'confirmed');
+    1528▕         $this->get(route('business.billing.show', [$business, 'checkout' => 'success', 'attempt' => $attempt->public_id, 'session_id' => $client->session['id']]))
+    1529▕             ->assertOk()->assertInertia(fn (Assert $page) => $page->where('capacityRequest', null)->where('checkoutReturn.status', 'confirmed')
+    1530▕             ->where('subscription.status', 'active')->where('subscription.capacity.locations', 2)->where('subscription.capacity.staff', 6));
+    1531▕         expect($change->fresh()->status)->toBe('applied')->and($attempt->fresh()->status)->toBe('confirmed')
+
+  1   tests/Feature/Billing/CapacityBillingTest.php:629
+  2   tests/Feature/Billing/CapacityBillingTest.php:1520
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Billing\CapacityBillingTest > it finishes a fresh r…   
+  Failed asserting that two strings are identical.
+  -'applied'
+  +'submitted'
+  
+
+  at tests/Feature/Billing/CapacityBillingTest.php:1527
+    1523▕         $client->session = [...$client->session, 'status' => 'complete', 'payment_status' => 'paid', 'subscription' => [
+    1524▕             'object' => 'subscription', 'id' => 'sub_database_order', 'customer' => $subscription->provider_customer_id, 'status' => 'active',
+    1525▕             'metadata' => $client->session['metadata'], 'items' => ['data' => capacityProvider($card->fresh(), 2, 6)], 'latest_invoice' => null]];
+    1526▕         $this->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id, 'verify_only' => true])
+  ➜ 1527▕             ->assertOk()->assertJsonPath('status', 'applied')->assertJsonPath('checkout_status', 'confirmed');
+    1528▕         $this->get(route('business.billing.show', [$business, 'checkout' => 'success', 'attempt' => $attempt->public_id, 'session_id' => $client->session['id']]))
+    1529▕             ->assertOk()->assertInertia(fn (Assert $page) => $page->where('capacityRequest', null)->where('checkoutReturn.status', 'confirmed')
+    1530▕             ->where('subscription.status', 'active')->where('subscription.capacity.locations', 2)->where('subscription.capacity.staff', 6));
+    1531▕         expect($change->fresh()->status)->toBe('applied')->and($attempt->fresh()->status)->toBe('confirmed')
+
+  1   tests/Feature/Billing/CapacityBillingTest.php:629
+  2   tests/Feature/Billing/CapacityBillingTest.php:1520
+
+
+  Tests:    2 failed (14 assertions)
+  Duration: 0.85s
+

@@ -87,7 +87,7 @@ class CapacitySubscriptionProjector
         }
         $subscription->update(['billing_rate_card_id' => $quote['rate_card_id'], 'capacity_snapshot' => $quote]);
         foreach (BillingCapacityChange::where('business_subscription_id', $subscription->id)->whereIn('status', ['submitted', 'scheduled'])->get() as $change) {
-            if ($change->quote['fingerprint'] === $quote['fingerprint'] && $change->quote['locations'] === $quote['locations'] && $change->quote['staff'] === $quote['staff']) {
+            if ($change->quote['rate_card_id'] === $quote['rate_card_id'] && $change->quote['locations'] === $quote['locations'] && $change->quote['staff'] === $quote['staff']) {
                 $change->update(['status' => 'applied', 'applied_at' => $change->applied_at ?? now()]);
             }
         }
@@ -99,7 +99,7 @@ class CapacitySubscriptionProjector
         $future = collect($object['phases'] ?? [])->filter(fn ($phase) => ($phase['start_date'] ?? 0) > now()->timestamp)->sortBy('start_date')->first();
         $resolved = $active && $future ? $this->resolve($future['items'] ?? []) : null;
         foreach (BillingCapacityChange::where('business_subscription_id', $subscription->id)->whereIn('status', ['submitted', 'scheduled'])->where('kind', 'renewal')->get() as $change) {
-            if ($resolved && $change->quote['fingerprint'] === $resolved['quote']['fingerprint']
+            if ($resolved && $change->quote['rate_card_id'] === $resolved['quote']['rate_card_id']
                 && $change->quote['locations'] === $resolved['quote']['locations'] && $change->quote['staff'] === $resolved['quote']['staff']) {
                 $change->update(['status' => 'scheduled', 'effective_at' => Carbon::createFromTimestampUTC($future['start_date']), 'last_checked_at' => now()]);
             } elseif (! $active && $change->status === 'scheduled') {

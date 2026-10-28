@@ -1489,3 +1489,101 @@ it('does not dismiss an unpaid unrelated or mismatched checkout just because the
         ->and($change->fresh()->status)->toBe('submitted')
         ->and(DB::table('audit_events')->where('action', 'subscription.checkout.completed_from_verified_state')->count())->toBe(0);
 })->with(['unpaid', 'no_confirmation_date', 'different_subscription', 'different_price', 'different_locations', 'different_fingerprint', 'different_cadence', 'different_currency', 'different_quote', 'different_request', 'past_due', 'renewal']);
+
+function databaseOrderedBillingTerms(array $value): array
+{
+    foreach ($value as &$child) {
+        if (is_array($child)) {
+            $child = databaseOrderedBillingTerms($child);
+        }
+    }
+    unset($child);
+    if (! array_is_list($value)) {
+        uksort($value, fn ($left, $right) => strlen((string) $left) <=> strlen((string) $right) ?: strcmp((string) $left, (string) $right));
+    }
+
+    return $value;
+}
+
+it('finishes a fresh reviewed monthly or annual checkout when database JSON reorders rate card object keys', function (string $interval) {
+    Carbon::setTestNow(now()->setMicrosecond(345678));
+    [$owner, $business] = createTenantMembership();
+    $card = capacityRate($interval);
+    $ordered = databaseOrderedBillingTerms($card->terms);
+    expect(array_keys($ordered))->not->toBe(array_keys($card->terms));
+    DB::table('billing_rate_cards')->where('id', $card->id)->update(['terms' => json_encode($ordered, JSON_THROW_ON_ERROR)]);
+    $subscription = activateTestSubscription($business);
+    $subscription->update(['status' => 'trialing', 'provider_subscription_id' => null]);
+    $this->actingAs($owner)->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => $interval, 'locations' => 2, 'staff' => 6])
+        ->assertOk()->assertJsonPath('quote.total_minor', $interval === 'annual' ? 90000 : 9000);
+    $change = BillingCapacityChange::firstOrFail();
+    $session = ['object' => 'checkout.session', 'id' => 'cs_test_database_order', 'status' => 'open', 'mode' => 'subscription',
+        'url' => 'https://checkout.stripe.com/database-order', 'livemode' => false, 'subscription' => null];
+    withCheckoutRecoveryStripe($session, function ($client) use ($business, $subscription, $card, $change) {
+        $this->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $change->public_id])->assertCreated()->assertJsonPath('url', 'https://checkout.stripe.com/recovered');
+        $attempt = BillingCheckoutAttempt::firstOrFail();
+        $client->session = [...$client->session, 'status' => 'complete', 'payment_status' => 'paid', 'subscription' => [
+            'object' => 'subscription', 'id' => 'sub_database_order', 'customer' => $subscription->provider_customer_id, 'status' => 'active',
+            'metadata' => $client->session['metadata'], 'items' => ['data' => capacityProvider($card->fresh(), 2, 6)], 'latest_invoice' => null]];
+        $this->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id, 'verify_only' => true])
+            ->assertOk()->assertJsonPath('status', 'applied')->assertJsonPath('checkout_status', 'confirmed');
+        $this->get(route('business.billing.show', [$business, 'checkout' => 'success', 'attempt' => $attempt->public_id, 'session_id' => $client->session['id']]))
+            ->assertOk()->assertInertia(fn (Assert $page) => $page->where('capacityRequest', null)->where('checkoutReturn.status', 'confirmed')
+            ->where('subscription.status', 'active')->where('subscription.capacity.locations', 2)->where('subscription.capacity.staff', 6));
+        expect($change->fresh()->status)->toBe('applied')->and($attempt->fresh()->status)->toBe('confirmed')
+            ->and($subscription->fresh()->capacity_snapshot['fingerprint'])->toBe($card->fingerprint)->and(BillingCheckoutAttempt::count())->toBe(1);
+    });
+})->with(['monthly', 'annual']);
+
+it('automatically completes previously paid checkouts affected by JSON key order without changing paid terms', function (string $interval) {
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = staleConfirmedCapacityCheckout($interval);
+    $ordered = databaseOrderedBillingTerms($card->terms);
+    $legacyFingerprint = app(CapacityPricingCatalog::class)->fingerprint($ordered);
+    expect($legacyFingerprint)->not->toBe($card->fingerprint);
+    DB::table('billing_rate_cards')->where('id', $card->id)->update(['terms' => json_encode($ordered, JSON_THROW_ON_ERROR)]);
+    $subscription->update(['capacity_snapshot' => [...$change->quote, 'fingerprint' => $legacyFingerprint]]);
+    $paidTerms = $subscription->fresh()->getAttributes();
+    $paidInvoice = $subscription->invoices()->first()->getAttributes();
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $attempt) {
+        $this->actingAs($owner)->get(route('business.billing.show', [$business, 'section' => 'plan']))->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->where('capacityRequest', null)->where('checkoutReturn.status', 'confirmed')
+                ->where('checkoutReturn.request.status', 'applied')->where('subscription.status', 'active')->where('invoices.data.0.status', 'paid'));
+        expect($client->requests)->toBe([])->and($change->fresh()->status)->toBe('applied')
+            ->and($attempt->fresh()->status)->toBe('confirmed')->and(BillingCheckoutAttempt::count())->toBe(1);
+    });
+    expect($subscription->fresh()->getAttributes())->toBe($paidTerms)->and($subscription->invoices()->first()->getAttributes())->toBe($paidInvoice);
+})->with(['monthly', 'annual']);
+
+it('keeps verified retained quotes usable for later subscription changes after database JSON normalization', function (string $interval) {
+    [$owner, $business, $subscription, $card] = capacityFixture(2, 6, $interval);
+    $ordered = databaseOrderedBillingTerms($card->terms);
+    DB::table('billing_rate_cards')->where('id', $card->id)->update(['terms' => json_encode($ordered, JSON_THROW_ON_ERROR)]);
+    $subscription->update(['capacity_snapshot' => [...$subscription->capacity_snapshot, 'fingerprint' => app(CapacityPricingCatalog::class)->fingerprint($ordered)]]);
+    $this->actingAs($owner)->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => $interval, 'locations' => 2, 'staff' => 6])->assertUnprocessable();
+    $this->mock(CapacityStripeGateway::class)->shouldReceive('preview')->once()->andReturn(['due_today_minor' => 600, 'currency' => 'USD', 'tax_minor' => 0]);
+    $response = $this->actingAs($owner)->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => $interval, 'locations' => 2, 'staff' => 7])
+        ->assertOk()->assertJsonPath('quote.fingerprint', $card->fingerprint)->assertJsonPath('kind', 'immediate');
+    expect(app(CapacityPricingCatalog::class)->lineItems($response->json('quote')))->toHaveCount(3);
+    expect(BillingRateCard::count())->toBe(1);
+})->with(['monthly', 'annual']);
+
+it('matches legacy scheduled renewals by the same immutable rate card after database JSON ordering', function (string $interval) {
+    [$owner, $business, $subscription, $card] = capacityFixture(3, 10, $interval);
+    $ordered = databaseOrderedBillingTerms($card->terms);
+    DB::table('billing_rate_cards')->where('id', $card->id)->update(['terms' => json_encode($ordered, JSON_THROW_ON_ERROR)]);
+    $this->mock(CapacityStripeGateway::class)->shouldReceive('preview')->once()->andReturn(['due_today_minor' => 0, 'currency' => 'USD', 'tax_minor' => 0]);
+    $change = app(CapacityBillingManager::class)->review($business, $owner, 'US', $interval, 1, 6);
+    $change->update(['status' => 'submitted', 'quote' => [...$change->quote, 'fingerprint' => app(CapacityPricingCatalog::class)->fingerprint($ordered)]]);
+    $projector = app(CapacitySubscriptionProjector::class);
+    $projector->schedule($subscription, ['status' => 'active', 'phases' => [
+        ['start_date' => now()->timestamp, 'items' => app(CapacityPricingCatalog::class)->items($ordered, 3, 10)],
+        ['start_date' => $subscription->current_period_ends_at->timestamp, 'items' => app(CapacityPricingCatalog::class)->items($ordered, 1, 6)],
+    ]], now());
+    expect($change->fresh()->status)->toBe('scheduled')->and($subscription->fresh()->capacity_snapshot['locations'])->toBe(3);
+    $this->travelTo($subscription->current_period_ends_at->addSecond());
+    app(StripeWebhookProcessor::class)->synchronizeSubscriptionSnapshot(['object' => 'subscription', 'id' => $subscription->provider_subscription_id,
+        'customer' => $subscription->provider_customer_id, 'status' => 'active', 'metadata' => ['business_public_id' => $business->public_id],
+        'items' => ['data' => capacityProvider($card->fresh(), 1, 6)]], now());
+    expect($change->fresh()->status)->toBe('applied')->and($subscription->fresh()->capacity_snapshot['locations'])->toBe(1)
+        ->and($subscription->fresh()->capacity_snapshot['fingerprint'])->toBe($card->fingerprint)->and(BillingRateCard::count())->toBe(1);
+})->with(['monthly', 'annual']);

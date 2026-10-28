@@ -15,6 +15,13 @@ observability, recovery, and documentation are proven.
 
 ## Customer journey acceptance — required for every prompt
 
+Billing regression fixtures must include production database JSON normalization.
+JSON object-key order has no commercial meaning; verified pricing identity must
+survive storage/retrieval. An SQLite-only green run with insertion-preserving JSON
+is insufficient evidence for this boundary. Cover fresh checkout confirmation and
+already-paid recovery without changing existing rate cards or financial history.
+
+
 Read [AGENTS.md](../AGENTS.md#customer-experience-comes-first--every-task) and the
 [notification standard](design-system.md#customer-first-recovery-and-notification-composition-2026-10-15).
 Completion requires evidence that the reported customer can progress from the

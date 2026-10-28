@@ -510,3 +510,18 @@ read-only inspector/provider recovery rather than forced success. Confirm the
 Plan, Overview and Invoices agree after rollout and validate monthly/annual
 returns, repeated visits and a genuinely unpaid checkout. See the
 [confirmed-state regression record](../audits/2026-10-28-confirmed-checkout/README.md).
+
+
+## Fresh payment succeeds but Plan stays unconfirmed — JSON identity fix (2026-10-28)
+
+This follow-up is backend-only. Deploy the application update through the normal
+release process. No new frontend change, migration, environment variable, price
+provisioning or Stripe Dashboard action is needed. Keep existing verified rate
+cards and prices. Do not repurchase, delete attempts or reset paid subscriptions.
+
+The fix preserves the saved verified rate identity across MySQL JSON key ordering.
+Fresh successful payments complete the original request, and eligible previously
+paid requests close automatically on the next authorized billing visit. Verify a
+fresh monthly and annual sandbox account and confirm Overview, Invoices and Plan
+agree without status clicks. Record actual deployed results separately from local
+regressions; see the [root-cause evidence](../audits/2026-10-28-billing-json-identity/README.md).

@@ -1,5 +1,30 @@
 # Project status
 
+## 2026-10-28 Fresh checkout JSON identity root cause (ADR-072)
+
+- [x] Owner reports a fresh successful 2-location/6-staff purchase still showing
+  unconfirmed on Plan. Found an actual storage boundary missed by earlier SQLite
+  fixtures: MySQL reorders pricing JSON keys; provider projection regenerated a
+  different fingerprint for the same verified card, leaving the request submitted.
+- [x] Fresh monthly/annual review → Stripe SDK creation → paid return tests fail
+  before the fix and pass after it. A read-only local MySQL JSON expression also
+  confirms key reordering; it read no customer rows and changed no database data.
+- [x] Quotes reuse the verified card's saved identity. Provider application,
+  renewal scheduling and change classification match the same immutable rate-card
+  ID. Known legacy decoded hashes can recover confirmed affected checkouts while
+  retaining all tenant, payment, price, quantity/cadence/currency/amount guards.
+  Existing cards, Stripe prices, paid snapshots and invoices are preserved.
+- [x] Focused Billing: **272 passed / 1,893 assertions**. Full backend: **918 passed
+  / 9,892 assertions**, 30 existing skips. Scoped Pint and whitespace pass. An
+  unrelated random-name HTML-escaping test assertion was corrected; no notification
+  product behavior changed. No frontend code changed or frontend build was needed.
+- [ ] Backend correction not deployed. Actual reported-account verification and
+  fresh monthly/yearly deployed sandbox confirmations remain outstanding. Browser
+  access remains disabled and prior Forge restriction is respected. No migration,
+  Stripe setup change, real payment or production data modification was performed.
+  [Reproduction, red/green evidence and rollout](audits/2026-10-28-billing-json-identity/README.md).
+
+
 ## 2026-10-28 Confirmed subscription and stale checkout consistency (ADR-072)
 
 - [x] Owner reports successful payment and supplies screenshots showing Active,

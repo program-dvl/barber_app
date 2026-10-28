@@ -137,6 +137,27 @@ customers. Only a freshly verified open Checkout offers **Complete your
 subscription** and payment continuation. Unknown confirmation does not masquerade
 as abandoned payment and a confirmed attempt never offers Start again.
 
+### Database-independent rate identity (2026-10-28 root-cause follow-up)
+
+A verified `BillingRateCard.fingerprint` is the immutable pricing identity. Quotes
+must reuse that saved value whenever a rate card exists. Never regenerate it from
+`terms` decoded from database JSON: MySQL normalizes object-key order, while the
+original verification hashed configuration order. Those objects have the same
+commercial meaning but different encoded bytes. Draft/unverified quotes still
+hash their configuration; existing verified cards and Stripe IDs are unchanged.
+
+Provider projections, renewal schedules and owner change classification match the
+verified rate-card ID. This keeps initial activation, no-op selection, immediate
+expansion and scheduled renewal independent of JSON encoding order. It does not
+permit switching to a different rate card or changing retained customer terms.
+
+For an already-confirmed checkout, the local completion repair accepts either the
+card's saved fingerprint or the exact legacy hash of that same card's decoded
+terms in the request/attempt/snapshot. All existing confirmed-attempt, tenant,
+provider subscription, price, card, currency, cadence, quantity and amount checks
+remain mandatory. Arbitrary/mismatched fingerprints remain blocked. The repair
+changes only workflow state; existing subscription and invoice history stays intact.
+
 ## SMS and routine email
 
 Included SMS credits are pooled across the business and reset on the subscription

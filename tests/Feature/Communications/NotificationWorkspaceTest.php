@@ -96,7 +96,7 @@ it('returns sample-only branded examples for connected rules without creating de
             continue;
         }
         $response = $this->getJson(route('business.communications.example', $this->business).'?type='.$type)->assertOk();
-        expect($response->json('html'))->toContain('ClipperDesk', '<table', $this->business->name)
+        expect($response->json('html'))->toContain('ClipperDesk', '<table', e($this->business->name))
             ->not->toContain($this->client->name, $this->client->email, 'NotificationsReview');
     }
     $this->getJson(route('business.communications.example', $this->business).'?type=deposit_request')->assertUnprocessable();

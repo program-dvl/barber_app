@@ -36,10 +36,11 @@ class CapacityBillingManager
                 abort_unless($subscription->status->value === 'active' && $subscription->current_period_ends_at?->isFuture(), 409, 'Resolve the payment or cancellation shown in billing before changing your subscription.');
                 abort_unless($subscription->price && $subscription->price->currency === $quote['currency'], 422, 'Currency changes require a separate migration.');
                 $current = $subscription->capacity_snapshot;
-                if ($current && $current['locations'] === $locations && $current['staff'] === $staff && $subscription->billing_interval->value === $interval && $current['fingerprint'] === $quote['fingerprint']) {
+                $sameRates = $current && $subscription->billing_rate_card_id === $quote['rate_card_id'];
+                if ($current && $current['locations'] === $locations && $current['staff'] === $staff && $subscription->billing_interval->value === $interval && $sameRates) {
                     throw ValidationException::withMessages(['staff' => 'Your subscription already includes these locations and staff.']);
                 }
-                if (($current && $current['fingerprint'] !== $quote['fingerprint']) || $subscription->billing_interval->value !== $interval || ($current && ($locations < $current['locations'] || $staff < $current['staff']))
+                if (($current && ! $sameRates) || $subscription->billing_interval->value !== $interval || ($current && ($locations < $current['locations'] || $staff < $current['staff']))
                     || ($quote['total_minor'] < ($current['total_minor'] ?? $subscription->price->amount_minor))) {
                     $kind = 'renewal';
                 }

@@ -97,7 +97,9 @@ class CapacityPricingCatalog
         $total = $terms['base_minor'] + max(0, $locations - ($terms['included_locations'] ?? 1)) * $terms['location_minor'] + array_sum(array_column($staffLines, 'total_minor'));
 
         return [
-            'rate_card_id' => $card?->id, 'fingerprint' => $this->fingerprint($terms),
+            // JSON databases may reorder object keys. A verified card already
+            // owns its immutable identity; never hash its decoded terms again.
+            'rate_card_id' => $card?->id, 'fingerprint' => $card?->fingerprint ?? $this->fingerprint($terms),
             'market' => $terms['market'], 'currency' => $terms['currency'], 'revision' => $terms['revision'],
             'billing_interval' => $interval, 'locations' => $locations, 'staff' => $staff,
             'total_minor' => $total, 'base_minor' => $terms['base_minor'],

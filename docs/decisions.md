@@ -2681,6 +2681,24 @@ customer notification contract; do not replace the bug with a misleading success
 Local reproduction/verification is separate from deployment and browser evidence:
 [audit](audits/2026-10-28-confirmed-checkout/README.md).
 
+### ADR-072 database JSON identity root cause — 2026-10-28
+
+The new-account report persists after the stale-record follow-up. A fresh review
+and Stripe SDK confirmation regression reproduces the failure for 2 locations and
+6 staff in both cadences when rate-card JSON keys are normalized as MySQL stores
+them: payment becomes active but the original checkout remains submitted. A
+read-only local MySQL JSON expression independently confirms key reordering.
+Earlier SQLite fixtures preserved insertion order and missed this boundary.
+
+Reuse the existing verified rate card's stored fingerprint in quotes instead of
+rehashing decoded JSON. Match provider projection/schedule/change identity by the
+same immutable rate-card ID. Preserve original fingerprints, price IDs and terms;
+there is no canonical-hash migration, new pricing layer or billing flow. Repair
+already-confirmed affected requests using the exact saved or known legacy decoded
+fingerprint of that same card, retaining all financial and ownership guards.
+Document red/green fresh-flow, existing-account, no-op/expansion and renewal tests
+in the [root-cause record](audits/2026-10-28-billing-json-identity/README.md).
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |
