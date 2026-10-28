@@ -3,12 +3,14 @@
 use App\Domain\Billing\Contracts\SubscriptionProvider;
 use App\Domain\Billing\Models\BillingCapacityChange;
 use App\Domain\Billing\Models\BillingCheckoutAttempt;
+use App\Domain\Billing\Models\BillingInvoice;
 use App\Domain\Billing\Models\BillingPlan;
 use App\Domain\Billing\Models\BillingPlanPrice;
 use App\Domain\Billing\Models\BillingRateCard;
 use App\Domain\Billing\Models\SmsCreditPurchase;
 use App\Domain\Billing\Providers\StripeSubscriptionProvider;
 use App\Domain\Billing\Services\CapacityBillingManager;
+use App\Domain\Billing\Services\CapacityCheckoutRecovery;
 use App\Domain\Billing\Services\CapacityPricingCatalog;
 use App\Domain\Billing\Services\CapacityStripeGateway;
 use App\Domain\Billing\Services\CapacitySubscriptionProjector;
@@ -1413,3 +1415,77 @@ it('preserves safe unconverted test-to-live recovery during automatic verificati
             ->and(BillingCheckoutAttempt::count())->toBe(1);
     });
 });
+
+function staleConfirmedCapacityCheckout(string $interval = 'monthly'): array
+{
+    $fixture = abandonedCapacityCheckout('cs_test_already_paid', $interval);
+    [, , $subscription, $card, $change, $attempt] = $fixture;
+    $subscription->update(['status' => 'active', 'provider_subscription_id' => 'sub_already_paid',
+        'billing_plan_price_id' => $card->billing_plan_price_id, 'billing_rate_card_id' => $card->id,
+        'billing_interval' => $interval, 'capacity_snapshot' => $change->quote,
+        'provider_state_at' => now()->addSeconds(5), 'current_period_ends_at' => now()->addMonth()]);
+    $attempt->update(['status' => 'confirmed', 'provider_subscription_id' => 'sub_already_paid', 'confirmed_at' => now()]);
+    BillingInvoice::create(['business_id' => $subscription->business_id, 'business_subscription_id' => $subscription->id,
+        'provider' => 'stripe', 'provider_invoice_id' => 'in_already_paid', 'status' => 'paid', 'currency' => 'USD',
+        'subtotal_minor' => $change->quote['total_minor'], 'tax_minor' => 0, 'total_minor' => $change->quote['total_minor'],
+        'amount_due_minor' => $change->quote['total_minor'], 'amount_paid_minor' => $change->quote['total_minor'], 'amount_remaining_minor' => 0]);
+
+    return $fixture;
+}
+
+it('repairs the active subscription paid invoice and stale checkout combination before presenting the plan tab', function (string $interval) {
+    Carbon::setTestNow(now()->setMicrosecond(567123));
+    [$owner, $business, $subscription, , $change, $attempt, $session] = staleConfirmedCapacityCheckout($interval);
+    $beforeSubscription = $subscription->fresh()->getAttributes();
+    $beforeInvoice = $subscription->invoices()->first()->getAttributes();
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $attempt) {
+        $url = route('business.billing.show', [$business, 'section' => 'plan']);
+        $this->actingAs($owner)->get($url)->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('capacityRequest', null)->where('checkoutReturn.status', 'confirmed')->where('checkoutReturn.request.status', 'applied')
+            ->where('subscription.status', 'active')->where('subscription.capacity.staff', 10)->where('invoices.data.0.status', 'paid'));
+        $this->get($url)->assertOk()->assertInertia(fn (Assert $page) => $page->where('capacityRequest', null));
+        expect($client->requests)->toBe([])->and($change->fresh()->status)->toBe('applied')
+            ->and($attempt->fresh()->provider_checkout_url)->toBeNull()
+            ->and(DB::table('audit_events')->where('action', 'subscription.checkout.completed_from_verified_state')->count())->toBe(1);
+    });
+    expect($subscription->fresh()->getAttributes())->toBe($beforeSubscription)
+        ->and($subscription->invoices()->first()->getAttributes())->toBe($beforeInvoice)->and(BillingCheckoutAttempt::count())->toBe(1);
+})->with(['monthly', 'annual']);
+
+it('completes stale confirmed checkout recovery actions without contacting Stripe or starting payment', function (string $action, string $interval) {
+    [$owner, $business, , , $change, , $session] = staleConfirmedCapacityCheckout($interval);
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $action) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.'.$action, $business), ['change_id' => $change->public_id, 'verify_only' => true])
+            ->assertOk()->assertJsonPath('status', 'applied');
+        expect($client->requests)->toBe([])->and(BillingCheckoutAttempt::count())->toBe(1);
+    });
+})->with(['status', 'restart', 'confirm'])->with(['monthly', 'annual']);
+
+it('permits a fresh reviewed subscription change after closing only the already paid checkout', function (string $interval) {
+    [$owner, $business, , , $change] = staleConfirmedCapacityCheckout($interval);
+    $this->mock(CapacityStripeGateway::class)->shouldReceive('preview')->once()->andReturn(['due_today_minor' => 600, 'currency' => 'USD', 'tax_minor' => 0]);
+    $this->actingAs($owner)->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => $interval, 'locations' => 3, 'staff' => 11])
+        ->assertOk()->assertJsonPath('kind', 'immediate');
+    expect($change->fresh()->status)->toBe('applied')->and(BillingCheckoutAttempt::count())->toBe(1);
+})->with(['monthly', 'annual']);
+
+it('does not dismiss an unpaid unrelated or mismatched checkout just because the subscription and an invoice look paid', function (string $case) {
+    [, , $subscription, , $change, $attempt] = staleConfirmedCapacityCheckout();
+    match ($case) {
+        'unpaid' => $attempt->update(['status' => 'pending', 'confirmed_at' => null]),
+        'no_confirmation_date' => $attempt->update(['confirmed_at' => null]),
+        'different_subscription' => $attempt->update(['provider_subscription_id' => 'sub_other']),
+        'different_price' => $subscription->update(['billing_plan_price_id' => null]),
+        'different_locations' => $subscription->update(['capacity_snapshot' => [...$change->quote, 'locations' => 4]]),
+        'different_fingerprint' => $subscription->update(['capacity_snapshot' => [...$change->quote, 'fingerprint' => 'other']]),
+        'different_cadence' => $subscription->update(['capacity_snapshot' => [...$change->quote, 'billing_interval' => 'annual']]),
+        'different_currency' => $subscription->update(['capacity_snapshot' => [...$change->quote, 'currency' => 'CAD']]),
+        'different_quote' => $attempt->update(['capacity_quote' => [...$attempt->capacity_quote, 'staff' => 20]]),
+        'different_request' => $attempt->update(['capacity_quote' => [...$attempt->capacity_quote, 'capacity_change_id' => (string) str()->ulid()]]),
+        'past_due' => $subscription->update(['status' => 'past_due']),
+        'renewal' => $change->update(['kind' => 'renewal']),
+    };
+    expect(app(CapacityCheckoutRecovery::class)->settleConfirmed($change->fresh()))->toBeFalse()
+        ->and($change->fresh()->status)->toBe('submitted')
+        ->and(DB::table('audit_events')->where('action', 'subscription.checkout.completed_from_verified_state')->count())->toBe(0);
+})->with(['unpaid', 'no_confirmation_date', 'different_subscription', 'different_price', 'different_locations', 'different_fingerprint', 'different_cadence', 'different_currency', 'different_quote', 'different_request', 'past_due', 'renewal']);

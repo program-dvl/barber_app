@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { parse, compileScript } from '@vue/compiler-sfc';
-import { createRenderer, nextTick } from 'vue';
+import { createRenderer, nextTick, reactive, h } from 'vue';
 
 const vue = pathToFileURL(resolve('node_modules/vue/dist/vue.runtime.esm-bundler.js')).href;
 async function component(path, panel = false) {
@@ -42,9 +42,10 @@ function mount(post, props = {}) {
         parentNode: node => node.parent, nextSibling: node => node.parent?.children[node.parent.children.indexOf(node) + 1],
         patchProp: (node, key, previous, next) => node.props[key] = next,
     });
-    const app = renderer.createApp(Panel, { request, ready: true, businessId: 'business', timeZone: 'UTC', ...props }); app.mount(root);
+    const state = reactive({ request, ready: true, businessId: 'business', timeZone: 'UTC', ...props });
+    const app = renderer.createApp({ render: () => h(Panel, state) }); app.mount(root);
     const nodes = () => { const all = []; function walk(node) { all.push(node); node.children?.forEach(walk); } walk(root); return all; };
-    return { app, calls, reloads, nodes, text: () => nodes().map(node => node.text || '').join(' '), buttons: () => nodes().filter(node => node.type === 'button') };
+    return { app, calls, reloads, nodes, update: values => Object.assign(state, values), text: () => nodes().map(node => node.text || '').join(' '), buttons: () => nodes().filter(node => node.type === 'button') };
 }
 for (const interval of ['monthly', 'annual']) {
     test(`actual billing panel confirms ${interval} payment automatically without a click`, async t => {
@@ -59,7 +60,7 @@ for (const interval of ['monthly', 'annual']) {
             t.mock.timers.tick(2000); await flush();
             assert.match(fixture.text(), /Your subscription is active/); assert.doesNotMatch(fixture.text(), /unfinished checkout|Checking your payment/);
             assert.equal(fixture.calls.length, 2); assert.equal(fixture.reloads.length, 1);
-            for (const field of ['tenant', 'subscription', 'entitlements', 'usage', 'invoices', 'attention']) assert.ok(fixture.reloads[0].only.includes(field));
+            for (const field of ['tenant', 'subscription', 'entitlements', 'usage', 'invoices', 'attention', 'checkoutReturn']) assert.ok(fixture.reloads[0].only.includes(field));
             assert.ok(fixture.nodes().some(node => node.props?.role === 'status'));
         } finally { fixture.app.unmount(); t.mock.timers.reset(); }
     });
@@ -72,7 +73,7 @@ test('actual panel immediately shows success when the webhook already applied pa
 test('actual panel offers continuation after an unpaid return without pretending payment succeeded', async () => {
     const fixture = mount(async () => ({ data: { ...request, checkout_status: 'pending', checkout_url: 'https://checkout.stripe.com/open' } }));
     try {
-        await flush(); assert.match(fixture.text(), /unfinished checkout/); assert.doesNotMatch(fixture.text(), /subscription is active/);
+        await flush(); assert.match(fixture.text(), /Complete your subscription/); assert.doesNotMatch(fixture.text(), /unfinished checkout|subscription is active/);
         assert.equal(fixture.calls.length, 1); assert.match(fixture.text(), /Continue secure checkout/); assert.match(fixture.text(), /Start again/);
         assert.ok(fixture.buttons().every(button => !button.props.disabled));
     } finally { fixture.app.unmount(); }
@@ -92,4 +93,52 @@ test('actual panel ignores a payment response after leaving the page', async () 
     let resolve;
     const fixture = mount(() => new Promise(done => { resolve = done; })); fixture.app.unmount();
     resolve({ data: { ...processing, status: 'applied' } }); await flush(); assert.equal(fixture.reloads.length, 0);
+});
+
+for (const interval of ['monthly', 'annual']) {
+    test(`confirmed ${interval} return wins over the same stale pending prop without showing payment actions`, async () => {
+        const fixture = mount(() => { throw Error('Already confirmed'); }, { hasProvider: true, current: quote,
+            checkoutReturn: { status: 'confirmed', request: { ...request, status: 'applied', quote: { ...quote, billing_interval: interval } } } });
+        try {
+            await flush(); assert.match(fixture.text(), /Your subscription is active/); assert.match(fixture.text(), /Change your subscription/);
+            assert.doesNotMatch(fixture.text(), /unfinished checkout|Start again|Continue secure checkout|Check billing status/);
+            assert.equal(fixture.calls.length, 0);
+        } finally { fixture.app.unmount(); }
+    });
+}
+test('a confirmed server refresh clears a stale pending/error notice in the already mounted panel', async () => {
+    const fixture = mount(async () => { throw { response: { status: 503 } }; }, { hasProvider: true, current: quote });
+    try {
+        await flush(); assert.match(fixture.text(), /temporarily unavailable/);
+        fixture.update({ request: null, checkoutReturn: { status: 'confirmed', request: { ...request, status: 'applied' } } });
+        await flush(); assert.match(fixture.text(), /Your subscription is active/);
+        assert.doesNotMatch(fixture.text(), /unavailable|Start again|Check again/);
+    } finally { fixture.app.unmount(); }
+});
+test('an active subscription alone does not dismiss a different unpaid checkout', async () => {
+    const fixture = mount(async () => ({ data: { ...request, checkout_status: 'pending', checkout_url: 'https://checkout.stripe.com/open' } }),
+        { hasProvider: true, current: quote, checkoutReturn: { status: 'confirmed', request: { ...request, change_id: 'older', status: 'applied' } } });
+    try { await flush(); assert.match(fixture.text(), /Complete your subscription/); assert.doesNotMatch(fixture.text(), /Your subscription is active/); }
+    finally { fixture.app.unmount(); }
+});
+test('a confirmed attempt whose request still needs checking never offers restart or describes an abandoned checkout', async () => {
+    const fixture = mount(async () => ({ data: { ...request, checkout_status: 'confirmed', checkout_url: null } }), { hasProvider: true, current: quote });
+    try {
+        await flush(); assert.match(fixture.text(), /isn’t confirmed yet/);
+        assert.doesNotMatch(fixture.text(), /unfinished checkout|Start again|Continue secure checkout/);
+    } finally { fixture.app.unmount(); }
+});
+
+test('an older partial response cannot resurrect the same completed checkout while a new request remains visible', async () => {
+    const fixture = mount(async () => ({ data: { ...request, status: 'applied', checkout_status: 'confirmed' } }),
+        { checkoutReturn: { status: 'processing', request } });
+    try {
+        await flush(); assert.match(fixture.text(), /Your subscription is active/);
+        fixture.update({ request: null }); await flush();
+        assert.match(fixture.text(), /Your subscription is active/); assert.doesNotMatch(fixture.text(), /isn’t confirmed|Start again/);
+        fixture.update({ request: { ...request } }); await flush();
+        assert.match(fixture.text(), /Your subscription is active/);
+        fixture.update({ request: { ...request, change_id: 'new-unpaid-checkout' } }); await flush();
+        assert.doesNotMatch(fixture.text(), /Your subscription is active/);
+    } finally { fixture.app.unmount(); }
 });

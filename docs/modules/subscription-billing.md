@@ -1,6 +1,6 @@
 # Subscription & Billing
 
-Updated: 2026-10-26. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
+Updated: 2026-10-28. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
 [FR-13](../product-requirements.md#fr-13-notifications-and-communication),
 FR-19, FR-20 and [PRD §9](../product-requirements.md#9-subscription-packaging-and-commercial-rules).
 See ADR-029/038/041/054/056/057/061/063/068/069/071/072 and `../stripe-billing.md`.
@@ -111,6 +111,31 @@ again. Applied payment automatically refreshes subscription, purchased quantitie
 allowances and account access without a manual status action. If a payment remains
 pending beyond the bounded checks, signed webhooks continue to update the account;
 the retained status action can refresh the page's result later.
+
+### Confirmed subscription with a stale checkout request (2026-10-28)
+
+A stored submitted request must not contradict an already-confirmed purchase.
+`CapacityCheckoutRecovery::settleConfirmed` repairs only the local workflow record
+under Business → subscription → request locks. Require its exact Stripe attempt to
+be confirmed with a confirmation date, the same business/provider subscription and
+plan-price binding, an active/cancel-scheduled subscription and exact agreement
+between request, attempt and purchased snapshot for rate fingerprint/card,
+currency, cadence, locations, staff and total. A paid invoice or active status
+alone cannot satisfy this proof. Unknown or mismatched requests remain protected.
+
+Billing presentation, status/restart/confirm and subsequent review reuse this
+repair. Mark the request applied at the stored confirmation time, clear its stale
+checkout URL and append one audit record; do not change subscription versions,
+terms, entitlements, invoices, payment amounts or provider timestamps. Billing GETs
+still make no provider calls. A repaired visit supplies the confirmed outcome even
+without return query parameters, and subsequent visits no longer show a blocker.
+
+The Plan panel prefers an explicit confirmed/applied result over the same stale
+request prop, including partial refreshes, without dismissing a different request.
+Show **Your subscription is active** and **Change your subscription** for confirmed
+customers. Only a freshly verified open Checkout offers **Complete your
+subscription** and payment continuation. Unknown confirmation does not masquerade
+as abandoned payment and a confirmed attempt never offers Start again.
 
 ## SMS and routine email
 

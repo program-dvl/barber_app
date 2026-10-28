@@ -11,6 +11,7 @@ use App\Domain\Billing\Models\BillingRateCard;
 use App\Domain\Billing\Models\OwnerRegistrationIntent;
 use App\Domain\Billing\Models\SmsCreditPurchase;
 use App\Domain\Billing\Services\BillingWorkspaceQuery;
+use App\Domain\Billing\Services\CapacityCheckoutRecovery;
 use App\Domain\Billing\Services\CapacityPricingCatalog;
 use App\Domain\Billing\Services\EntitlementEvaluator;
 use App\Domain\Billing\Services\PlanCatalog;
@@ -39,6 +40,12 @@ class BusinessBillingController extends Controller
     {
         $this->authorizeBilling($request, $business);
         $subscription = $business->subscription()->with(['plan', 'price'])->firstOrFail();
+        $completedCheckout = null;
+        foreach (BillingCapacityChange::where('business_subscription_id', $subscription->id)->where('kind', 'checkout')->where('status', 'submitted')->get() as $change) {
+            if (app(CapacityCheckoutRecovery::class)->settleConfirmed($change)) {
+                $completedCheckout = $change->fresh();
+            }
+        }
         $pendingChange = $subscription->changes()
             ->whereNull('applied_at')
             ->whereNull('superseded_at')
@@ -73,7 +80,8 @@ class BusinessBillingController extends Controller
             ] : null),
             'checkoutStatus' => $request->query('checkout') === 'canceled' ? 'canceled' : null,
             'checkoutAttempt' => $this->checkoutAttemptFromRequest($request, $business),
-            'checkoutReturn' => $this->capacityCheckoutReturn($request, $business),
+            'checkoutReturn' => $this->capacityCheckoutReturn($request, $business)
+                ?? ($completedCheckout ? ['status' => 'confirmed', 'request' => app(CapacityBillingController::class)->present($completedCheckout)] : null),
             'planChangeStatus' => in_array($request->query('plan_change'), ['success', 'canceled'], true)
                 ? $request->query('plan_change')
                 : null,

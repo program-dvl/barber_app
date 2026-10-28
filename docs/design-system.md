@@ -401,7 +401,9 @@ touched; this rule is not evidence that every old surface has been migrated.
   outcome automatically. Do not flash an unfinished-checkout warning while the
   first check is running. A verified open checkout offers continuation; a payment
   still processing says so. Follow-up checks are bounded, stop on errors and never
-  create a new payment. A redirect flag alone is not proof of success.
+  create a new payment. A redirect flag alone is not proof of success. A saved
+  checkout request alone is not proof that payment is unfinished: use the matching
+  confirmed payment and subscription together, and clear obsolete payment actions.
 - Place actions below the text in a wrapping flex row: at least 14px above it,
   at least 10px between controls, never touching. One primary action at most;
   use secondary for alternatives and quiet for status checks. Preserve 44px

@@ -2661,6 +2661,26 @@ Persist this customer-journey rule in AGENTS.md and the shared notification
 contract. Local automated verification is separate from deployed payment evidence;
 see [return verification](audits/2026-10-26-payment-return/README.md).
 
+### ADR-072 confirmed-state consistency follow-up — 2026-10-28
+
+Owner supplied screenshots showing an active purchased subscription and a paid
+invoice alongside an unfinished-checkout notice. Repair stale submitted checkout
+requests from strictly matching, already-confirmed local Stripe attempt and
+subscription evidence. Scope matching includes business, provider subscription,
+plan price, immutable rate card/fingerprint, cadence/currency, quantities and total.
+Require a confirmation date and active/cancel-scheduled subscription. An invoice
+or active status alone never authorizes dismissal of another unpaid checkout.
+
+Complete only the local workflow record, clear obsolete continuation and append
+an audit event. Reuse the repair on billing presentation and recovery/new-review
+paths; make no provider calls for a proven local completion and preserve all
+financial history/versioning. In the UI, a same-request confirmed/applied refresh
+replaces stale waiting/error state, while a different request remains protected.
+Offer payment continuation only for a verified open checkout. Maintain the shared
+customer notification contract; do not replace the bug with a misleading success.
+Local reproduction/verification is separate from deployment and browser evidence:
+[audit](audits/2026-10-28-confirmed-checkout/README.md).
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |

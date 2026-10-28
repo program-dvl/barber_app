@@ -71,6 +71,9 @@ class CapacityBillingManager
             $subscription = $business->subscription()->lockForUpdate()->firstOrFail();
             $locked = BillingCapacityChange::where('business_id', $business->id)->lockForUpdate()->findOrFail($change->id);
             abort_unless($locked->actor_user_id === $actor->id, 403);
+            if (app(CapacityCheckoutRecovery::class)->settleConfirmed($locked)) {
+                $locked->refresh();
+            }
             if (in_array($locked->status, ['submitted', 'scheduled', 'applied'], true)) {
                 return ['change' => $locked, 'dispatch' => false];
             }
@@ -107,6 +110,9 @@ class CapacityBillingManager
 
     private function assertIdle(BusinessSubscription $subscription): void
     {
+        foreach (BillingCapacityChange::where('business_subscription_id', $subscription->id)->where('kind', 'checkout')->where('status', 'submitted')->get() as $change) {
+            app(CapacityCheckoutRecovery::class)->settleConfirmed($change);
+        }
         abort_if(BillingCapacityChange::where('business_subscription_id', $subscription->id)->whereIn('status', ['submitted', 'scheduled'])->exists()
             || $subscription->checkoutAttempts()->whereIn('status', ['pending', 'processing'])->where('expires_at', '>', now())->exists()
             || $subscription->scheduled_billing_plan_price_id, 409, 'A billing request is already pending. Refresh its status before making another change.');

@@ -1,5 +1,27 @@
 # Project status
 
+## 2026-10-28 Confirmed subscription and stale checkout consistency (ADR-072)
+
+- [x] Owner reports successful payment and supplies screenshots showing Active,
+  a matching Paid invoice and a conflicting unfinished-checkout notice. This is
+  customer-supplied evidence; deployed storage/assets were not inspected directly.
+- [x] Reproduced the contradictory local state. Matching confirmed attempt and
+  purchased subscription evidence now completes only the stale workflow, clears
+  its obsolete payment URL and appends one audit event without provider calls or
+  subscription/invoice changes. Reuse covers billing visits, recovery and review.
+- [x] The Plan tab shows Your subscription is active for confirmed results and
+  Change your subscription for existing customers. Same-request confirmed props
+  beat stale pending props; older partial reloads cannot reopen that purchase.
+  Different unpaid requests remain protected and retain useful payment actions.
+- [x] Full backend **910 passed / 9,750 assertions**, 30 existing skips; frontend
+  **128 passed**. Production client/SSR builds, scoped Pint and whitespace pass.
+  Module, decision, shared notification and deployment guidance are synchronized.
+- [ ] The follow-up is not deployed. Browser access remains disabled; new rendered
+  desktop/mobile checks and reported-account verification after deployment remain
+  outstanding. No migration, Stripe setup change, real payment or paid-data reset.
+  [Evidence and rollout](audits/2026-10-28-confirmed-checkout/README.md).
+
+
 ## 2026-10-26 Automatic payment return (ADR-072)
 
 - [x] A submitted checkout initially shows Checking your payment and follows

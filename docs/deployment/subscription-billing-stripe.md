@@ -497,3 +497,16 @@ repeated visits, failed payment/retry and a temporary provider error. Do not use
 success URL flags or subscription resets as payment evidence. Current local
 results and remaining visual/deployed checks are in the
 [return verification record](../audits/2026-10-26-payment-return/README.md).
+
+
+## Paid subscription with stale checkout notice — 2026-10-28
+
+Deploy matching application and client/SSR assets. There is no new migration,
+environment variable or Stripe Dashboard action. An eligible already-confirmed
+checkout is closed locally on the next billing visit, so the owner does not need
+to pay, restart or click status again. Do not delete/reset attempts or paid data.
+Strictly mismatched/unverified records remain protected and require the existing
+read-only inspector/provider recovery rather than forced success. Confirm the
+Plan, Overview and Invoices agree after rollout and validate monthly/annual
+returns, repeated visits and a genuinely unpaid checkout. See the
+[confirmed-state regression record](../audits/2026-10-28-confirmed-checkout/README.md).

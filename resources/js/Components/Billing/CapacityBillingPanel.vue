@@ -11,7 +11,11 @@ import { billingRecoveryFailure, markBillingDeparture } from '@/Support/billingR
 import { watchBillingPayment } from '@/Support/billingPaymentWatch';
 
 const props = defineProps({ initialSelection: Object, catalog: Object, country: String, current: Object, usage: Object, businessId: String, request: Object, checkoutReturn: Object, credits: Number, packs: Array, purchase: Object, ready: Boolean, timeZone: String, hasProvider: Boolean });
-const reviewDialog = ref(null), packDialog = ref(null), reviewed = ref(null), selectedPack = ref(null), busy = ref(''), error = ref(''), pending = ref(props.request || props.checkoutReturn?.request), message = ref(''), recoveredCheckout = ref(null);
+function currentRequest(request, returned) {
+    const confirmed = returned?.status === 'confirmed' && returned.request?.status === 'applied';
+    return confirmed && (!request || request.change_id === returned.request.change_id) ? returned.request : request || returned?.request;
+}
+const reviewDialog = ref(null), packDialog = ref(null), reviewed = ref(null), selectedPack = ref(null), busy = ref(''), error = ref(''), pending = ref(currentRequest(props.request, props.checkoutReturn)), message = ref(''), recoveredCheckout = ref(null);
 const messageTitle = ref(props.checkoutReturn?.status === 'confirmed' && props.checkoutReturn?.request?.status === 'applied' ? 'Your subscription is active' : ''), messageTone = ref('success');
 const recoveryIssue = ref(null), clock = ref(Date.now());
 const waitSeconds = computed(() => Math.max(0, Math.ceil(((recoveryIssue.value?.retryAt || 0) - clock.value) / 1000)));
@@ -19,17 +23,24 @@ const waiting = computed(() => waitSeconds.value > 0);
 const blocking = computed(() => ['submitted', 'scheduled'].includes(pending.value?.status));
 const checkingPayment = ref(pending.value?.kind === 'checkout' && pending.value?.status === 'submitted');
 const paymentProcessing = ref(props.checkoutReturn?.status === 'processing');
+const checkoutStatus = ref(null), checkoutOpen = ref(false);
 let checkVersion = 0;
-watch(() => props.request, value => {
+watch(() => [props.request, props.checkoutReturn], ([request, returned]) => {
+    const value = currentRequest(request, returned);
+    // A delayed partial response cannot reopen this exact completed purchase.
+    if (pending.value?.status === 'applied' && value?.status === 'submitted' && pending.value.change_id === value.change_id) return;
     if (value?.change_id !== pending.value?.change_id || value?.status !== 'submitted') paymentWatch.stop();
     checkVersion++; pending.value = value; recoveredCheckout.value = null;
+    if (value?.status === 'applied' && value.kind === 'checkout') {
+        clearIssue(); messageTitle.value = 'Your subscription is active'; messageTone.value = 'success'; message.value = '';
+    }
 });
 const abort = new AbortController();
 let clockTimer;
 const url = name => route(`business.billing.${name}`, { business: props.businessId });
 const money = (value, currency) => billingMoney(value, currency);
 const date = value => billingDate(value, props.timeZone);
-const reload = () => router.reload({ only: ['tenant', 'subscription', 'trial', 'attention', 'invoices', 'pendingChange', 'usage', 'entitlements', 'capacityRequest', 'smsCredits', 'smsPurchase', 'smsPacks', 'billingReadiness', 'capacityPricing'], preserveScroll: true });
+const reload = () => router.reload({ only: ['tenant', 'subscription', 'trial', 'attention', 'invoices', 'pendingChange', 'usage', 'entitlements', 'capacityRequest', 'checkoutReturn', 'smsCredits', 'smsPurchase', 'smsPacks', 'billingReadiness', 'capacityPricing'], preserveScroll: true });
 const fail = exception => {
     messageTitle.value = ''; message.value = '';
     recoveryIssue.value = billingRecoveryFailure(exception);
@@ -75,6 +86,8 @@ async function check(verifyOnly = false) {
     catch (exception) { if (version !== checkVersion) return; throw exception; }
     if (version !== checkVersion) return;
     pending.value = response.data; recoveredCheckout.value = response.data.checkout_url || null;
+    checkoutStatus.value = response.data.checkout_status || null;
+    checkoutOpen.value = response.data.checkout_status === 'pending' && Boolean(response.data.checkout_url);
     paymentProcessing.value = response.data.checkout_status === 'processing';
     clearIssue();
     if (['expired', 'failed', 'cancelled'].includes(response.data.status)) {
@@ -162,17 +175,17 @@ onUnmounted(() => { paymentWatch.stop(); checkVersion++; abort.abort(); window.c
 
 <template>
     <section id="capacity" class="billing-panel capacity-panel" aria-labelledby="capacity-title">
-        <header class="billing-section-heading"><div><h2 id="capacity-title">Choose your subscription</h2><p>All your locations. One simple subscription.</p></div></header>
+        <header class="billing-section-heading"><div><h2 id="capacity-title">{{ hasProvider ? 'Change your subscription' : 'Choose your subscription' }}</h2><p>All your locations. One simple subscription.</p></div></header>
 
         <AppNotice v-if="messageTitle && !blocking && !error" :tone="messageTone" :title="messageTitle" :description="message" />
         <AppNotice v-if="error && !blocking" tone="warning" :title="recoveryIssue?.title" urgent><p>{{ error }}</p><p v-if="waiting" class="capacity-retry-time" aria-live="off">You can try again in {{ waitSeconds }} {{ waitSeconds === 1 ? 'second' : 'seconds' }}.</p></AppNotice>
-        <AppNotice v-if="blocking" :aria-busy="checkingPayment" :tone="error ? 'warning' : 'info'" :urgent="Boolean(error)" :title="error ? recoveryIssue?.title : checkingPayment ? 'Checking your payment' : paymentProcessing ? 'Your payment is pending' : pending.status === 'scheduled' ? 'Your change is scheduled' : pending.kind === 'checkout' ? 'You have an unfinished checkout' : 'Your subscription change is pending'">
+        <AppNotice v-if="blocking" :aria-busy="checkingPayment" :tone="error ? 'warning' : 'info'" :urgent="Boolean(error)" :title="error ? recoveryIssue?.title : checkingPayment ? 'Checking your payment' : paymentProcessing ? 'Your payment is pending' : pending.status === 'scheduled' ? 'Your change is scheduled' : pending.kind === 'checkout' ? checkoutOpen ? 'Complete your subscription' : 'Your subscription isn’t confirmed yet' : 'Your subscription change is pending'">
             <p v-if="error">{{ error }}</p>
             <template v-else>
                 <p v-if="checkingPayment">Your subscription will appear here once payment is confirmed.</p>
                 <p v-else-if="paymentProcessing">{{ recoveredCheckout ? 'Complete your payment to activate your subscription.' : 'Your subscription will activate when payment is confirmed.' }}</p>
                 <p v-else-if="pending.status === 'scheduled'">Your updated subscription starts {{ date(pending.effective_at) }}.</p>
-                <p v-else-if="pending.kind === 'checkout'">Continue with your previous selection, or start again to make changes.</p>
+                <p v-else-if="pending.kind === 'checkout'">{{ checkoutOpen ? 'Continue to payment, or start again to change your selection.' : 'Your selection is saved. Check its status before starting another payment.' }}</p>
                 <p v-else>{{ pending.kind === 'renewal' ? 'Your current subscription stays the same while we confirm this change.' : 'We’re checking your payment. Your current subscription stays the same.' }}</p>
             </template>
             <p v-if="pending.kind === 'checkout'" class="capacity-checkout-selection">{{ pending.quote.locations }} {{ pending.quote.locations === 1 ? 'location' : 'locations' }} · {{ pending.quote.staff }} bookable staff · {{ money(pending.quote.total_minor, pending.quote.currency) }}/{{ pending.quote.billing_interval === 'annual' ? 'year' : 'month' }} before tax</p>
@@ -182,7 +195,7 @@ onUnmounted(() => { paymentWatch.stop(); checkVersion++; abort.abort(); window.c
                 <AppButton v-if="recoveryIssue?.paymentRequired" :href="route('business.billing.show', { business: businessId, section: 'invoices' })">Open invoices</AppButton>
                 <a v-if="recoveryIssue?.supportUrl && recoveryIssue.supportRequired" :href="recoveryIssue.supportUrl" class="capacity-support-link cd-app-button">Contact support</a>
                 <AppButton v-if="recoveredCheckout && !recoveryIssue?.supportRequired" :disabled="Boolean(busy) || waiting || checkingPayment" :loading="busy === 'continue'" @click="continueCheckout">Continue secure checkout</AppButton>
-                <AppButton v-if="pending.kind === 'checkout' && pending.status === 'submitted' && !paymentProcessing && !checkingPayment && !recoveryIssue?.supportRequired" variant="secondary" :disabled="Boolean(busy) || waiting || checkingPayment" :loading="busy === 'restart'" @click="restart">{{ busy === 'restart' ? 'Closing checkout…' : 'Start again' }}</AppButton>
+                <AppButton v-if="pending.kind === 'checkout' && pending.status === 'submitted' && checkoutStatus !== 'confirmed' && !paymentProcessing && !checkingPayment && !recoveryIssue?.supportRequired" variant="secondary" :disabled="Boolean(busy) || waiting || checkingPayment" :loading="busy === 'restart'" @click="restart">{{ busy === 'restart' ? 'Closing checkout…' : 'Start again' }}</AppButton>
                 <AppButton v-if="!checkingPayment" variant="quiet" :disabled="Boolean(busy) || waiting" :loading="busy === 'status'" @click="refresh">{{ error ? 'Check again' : 'Check billing status' }}</AppButton>
             </template>
         </AppNotice>

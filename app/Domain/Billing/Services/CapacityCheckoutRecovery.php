@@ -17,6 +17,44 @@ class CapacityCheckoutRecovery
 {
     public function __construct(private readonly SubscriptionProvider $provider, private readonly StripeCheckoutReconciler $reconciler, private readonly AuditWriter $audit) {}
 
+    /** Repair a stale workflow record from already verified local payment evidence. */
+    public function settleConfirmed(BillingCapacityChange $change): bool
+    {
+        if ($change->kind !== 'checkout' || $change->status !== 'submitted') {
+            return false;
+        }
+
+        return DB::transaction(function () use ($change) {
+            $business = Business::whereKey($change->business_id)->lockForUpdate()->firstOrFail();
+            $subscription = BusinessSubscription::whereKey($change->business_subscription_id)->lockForUpdate()->firstOrFail();
+            $locked = BillingCapacityChange::lockForUpdate()->findOrFail($change->id);
+            $attempt = $this->attempt($locked);
+            if ($locked->status !== 'submitted' || $subscription->business_id !== $business->id || $subscription->provider !== 'stripe'
+                || ! $attempt || $attempt->business_id !== $business->id
+                || $attempt->status !== 'confirmed' || ! $attempt->confirmed_at
+                || ! $subscription->provider_subscription_id
+                || $attempt->provider_subscription_id !== $subscription->provider_subscription_id
+                || $attempt->billing_plan_price_id !== $subscription->billing_plan_price_id
+                || ! in_array($subscription->status->value, ['active', 'cancel_scheduled'], true)) {
+                return false;
+            }
+            foreach (['fingerprint', 'rate_card_id', 'currency', 'billing_interval', 'locations', 'staff', 'total_minor'] as $field) {
+                $expected = $locked->quote[$field] ?? null;
+                if ($expected === null || ($attempt->capacity_quote[$field] ?? null) !== $expected
+                    || ($subscription->capacity_snapshot[$field] ?? null) !== $expected) {
+                    return false;
+                }
+            }
+            $locked->update(['status' => 'applied', 'applied_at' => $attempt->confirmed_at, 'last_checked_at' => now()]);
+            $attempt->update(['provider_checkout_url' => null]);
+            $this->audit->write('subscription.checkout.completed_from_verified_state', $business, target: $locked,
+                reason: 'Completed stale checkout request using its confirmed attempt and matching active subscription.',
+                after: ['status' => 'applied', 'checkout_attempt_id' => $attempt->public_id], source: 'application');
+
+            return true;
+        }, 3);
+    }
+
     /** Persist the operation before any provider call, including recovery of a claim/attempt gap. */
     private function prepare(BillingCapacityChange $change): BillingCheckoutAttempt
     {
@@ -44,6 +82,9 @@ class CapacityCheckoutRecovery
 
     public function synchronize(BillingCapacityChange $change, bool $restart = false, ?User $actor = null): BillingCheckoutAttempt
     {
+        if ($this->settleConfirmed($change)) {
+            return $this->attempt($change);
+        }
         $attempt = $this->prepare($change);
 
         // Serialize confirmation, recovery and restart for this business. A timeout
@@ -97,6 +138,7 @@ class CapacityCheckoutRecovery
                 }
             }
             $attempt = $this->reconciler->reconcile($attempt, expireOpen: $restart);
+            $this->settleConfirmed($locked->fresh());
             if (in_array($attempt->status, ['failed', 'expired', 'superseded'], true)) {
                 $this->close($locked->fresh(), $business, $restart, $actor);
             }
@@ -113,6 +155,10 @@ class CapacityCheckoutRecovery
     /** Automatic payment checks only read an existing Checkout; they never create one. */
     public function verify(BillingCapacityChange $change): ?BillingCheckoutAttempt
     {
+        if ($this->settleConfirmed($change)) {
+            return $this->attempt($change);
+        }
+
         return DB::transaction(function () use ($change) {
             $business = Business::whereKey($change->business_id)->lockForUpdate()->firstOrFail();
             $subscription = BusinessSubscription::whereKey($change->business_subscription_id)->lockForUpdate()->firstOrFail();
@@ -134,6 +180,7 @@ class CapacityCheckoutRecovery
                 return $attempt;
             }
             $attempt = $this->reconciler->reconcile($attempt);
+            $this->settleConfirmed($locked->fresh());
             if (in_array($attempt->status, ['failed', 'expired', 'superseded'], true)) {
                 $this->close($locked->fresh(), $business, false, null);
             }
