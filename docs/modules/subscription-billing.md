@@ -1,9 +1,9 @@
 # Subscription & Billing
 
-Updated: 2026-10-25. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
+Updated: 2026-10-26. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
 [FR-13](../product-requirements.md#fr-13-notifications-and-communication),
 FR-19, FR-20 and [PRD §9](../product-requirements.md#9-subscription-packaging-and-commercial-rules).
-See ADR-029/038/041/054/056/057/061/063/068/069/071 and `../stripe-billing.md`.
+See ADR-029/038/041/054/056/057/061/063/068/069/071/072 and `../stripe-billing.md`.
 
 ## Approved pricing contract
 
@@ -79,10 +79,38 @@ checkout preparation is recoverable using the same attempt and Stripe key.
 Failed/expired pending updates release the request only after authoritative state.
 An open Checkout can be resumed from its recorded URL; authenticated expiry
 releases the associated capacity request so the owner can review again. Returning
-from Checkout shows one focused pending notice. Payment-method/invoice recovery remains available. Cancellation is at term end;
+from Checkout automatically verifies the saved payment and shows its confirmed outcome (ADR-072). Payment-method/invoice recovery remains available. Cancellation is at term end;
 reactivation and cancellation are version checked and repeated requests are safe.
 Unknown remote outcomes requiring support must be reconciled, never discarded to
 start a replacement charge. Production MySQL concurrency remains a release gate.
+
+## Automatic payment return (ADR-072)
+
+The Plan tab initially shows **Checking your payment** for a submitted checkout,
+without flashing an unfinished-checkout notice or offering restart while checking.
+The server supplies a local return result only for the current business's exact
+saved attempt/session and associated checkout request. A previously confirmed,
+applied checkout immediately shows **Your subscription is active**, including when
+signed webhooks arrived before the browser. A success URL alone grants nothing.
+Ordinary billing GETs still make no Stripe calls.
+
+Automatic status requests use `verify_only`: read the original owned Checkout and
+project its subscription/invoice through the existing lifecycle. Never create a
+customer, Checkout or subscription, replay preparation, expire a payable session,
+or submit a paid change from this mode. Existing guarded retirement of unconverted
+test setup when moving to live remains available; paid/unknown live history stays
+protected. A missing preparation remains available for explicit safe recovery.
+
+One entry check follows a processing payment at 2/3/5/8/12-second intervals (six
+reads over 30 seconds, excluding request latency). Stop immediately on error,
+navigation, a terminal result, an open Checkout or a verified invoice requiring
+payment. Preserve Retry-After and the current selection. A real processing delay
+shows **Your payment is pending**; it is not described as abandoned and cannot
+start another subscription. A verified open checkout offers Continue and Start
+again. Applied payment automatically refreshes subscription, purchased quantities,
+allowances and account access without a manual status action. If a payment remains
+pending beyond the bounded checks, signed webhooks continue to update the account;
+the retained status action can refresh the page's result later.
 
 ## SMS and routine email
 
@@ -265,7 +293,9 @@ and owned, while all six monthly/annual subscription Price IDs return 404
 resource_missing. This establishes unavailable catalog mappings in that account;
 matching key modes alone do not validate price ownership. Provision and verify
 current test prices, then restart the old test preparation and review fresh terms.
-Production repair still requires the operator command and a checkout redirect.
+The owner subsequently supplied successful deployed provisioning output and
+confirmed that Start again → fresh review → Continue opens Stripe. This closes
+the reported redirect failure; it does not verify a completed payment.
 
 New Stripe API checkout failures retain only HTTP status, a validated error code
 and an allowlisted top-level parameter in the pending attempt's private

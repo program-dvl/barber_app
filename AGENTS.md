@@ -56,6 +56,10 @@ Before planning or changing product behavior:
 - A recovery action must actually advance the customer toward completion.
   Do not label a button Start again, Retry or Continue when a known condition
   makes it repeat the same failure with no possible progress.
+- Complete the customer journey automatically after an external payment return.
+  Verify the saved payment, show its confirmed outcome and refresh account details
+  without requiring a status click. Distinguish checking, processing and unpaid
+  checkout; never announce success from a redirect flag or retry creating charges.
 - Own infrastructure/configuration problems within the platform. Customer copy
   must explain what happened, what remains saved and a useful next action;
   never ask customers to repair credentials, environments or server settings.

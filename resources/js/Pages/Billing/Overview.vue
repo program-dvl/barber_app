@@ -14,11 +14,11 @@ import PageHeader from '@/Components/Product/PageHeader.vue';
 import { billingMoney, billingDate, billingLabels, subscriptionStatus, invoiceStatus, limitState, cardExpiryState } from '@/Support/billingWorkspace';
 import '../../../css/billing.css';
 
-const props = defineProps({ signupSelection: Object, capacityPricing: Object, billingCountry: String, capacityRequest: Object, smsCredits: Number, smsPacks: Array, smsPurchase: Object, businessLabel: String, subscription: Object, trial: Object, entitlements: Object, invoices: Object, usage: Object, attention: Array, billingTimeZone: String, billingLocale: String, exportAvailable: Boolean, checkoutStatus: String, checkoutAttempt: Object, pendingChange: Object, billingReadiness: Object, planChangeStatus: String, planChangeTargetPriceId: Number, portalReturned: Boolean });
+const props = defineProps({ signupSelection: Object, capacityPricing: Object, billingCountry: String, capacityRequest: Object, smsCredits: Number, smsPacks: Array, smsPurchase: Object, businessLabel: String, subscription: Object, trial: Object, entitlements: Object, invoices: Object, usage: Object, attention: Array, billingTimeZone: String, billingLocale: String, exportAvailable: Boolean, checkoutStatus: String, checkoutAttempt: Object, checkoutReturn: Object, pendingChange: Object, billingReadiness: Object, planChangeStatus: String, planChangeTargetPriceId: Number, portalReturned: Boolean });
 const page = usePage();
 const tabs = ['Overview', 'Plan', 'Invoices'];
 const initialSection = new URLSearchParams(page.url.split('?')[1] || '').get('section');
-const section = ref(tabs.map(item => item.toLowerCase()).includes(initialSection) ? initialSection : props.capacityRequest?.status === 'submitted' ? 'plan' : 'overview');
+const section = ref(tabs.map(item => item.toLowerCase()).includes(initialSection) ? initialSection : props.checkoutReturn || props.capacityRequest?.status === 'submitted' ? 'plan' : 'overview');
 function selectSection(value) { section.value = value; const link = new URL(window.location.href); link.searchParams.set('section', value); window.history.replaceState(window.history.state, '', link); }
 function tabKey(event, index) { const key = event.key; if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key)) return; event.preventDefault(); const next = key === 'Home' ? 0 : key === 'End' ? tabs.length - 1 : (index + (key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length; selectSection(tabs[next].toLowerCase()); document.getElementById(`billing-tab-${section.value}`)?.focus(); }
 const invoicePage = link => { if (!link) return undefined; const value = new URL(link, window.location.origin); value.searchParams.set('section', 'invoices'); return value.toString(); };
@@ -33,7 +33,7 @@ const selectedInvoice = ref(null);
 const invoiceLoading = ref(false);
 const invoiceError = ref('');
 const cancellationReason = ref('');
-const recovery = ref(!props.capacityRequest && (['pending', 'processing'].includes(props.checkoutAttempt?.status) || (props.planChangeStatus === 'success' && props.planChangeTargetPriceId)) ? 'checking' : '');
+const recovery = ref(!props.capacityRequest && !props.checkoutReturn && (['pending', 'processing'].includes(props.checkoutAttempt?.status) || (props.planChangeStatus === 'success' && props.planChangeTargetPriceId)) ? 'checking' : '');
 const controller = new AbortController();
 let mounted = true;
 let invoiceRequest = 0;
@@ -115,7 +115,7 @@ async function refreshAccount() {
     finally { busy.value = ''; }
 }
 function restoreReturnedPage(event = {}) {
-    if (consumeBillingDeparture(page.props.tenant.public_id)) { busy.value = ''; window.location.reload(); return true; }
+    if (consumeBillingDeparture(page.props.tenant.public_id) && !props.checkoutReturn) { busy.value = ''; window.location.reload(); return true; }
     if (event.persisted) { busy.value = ''; refresh(); return true; }
     return false;
 }
@@ -153,7 +153,7 @@ onUnmounted(() => { window.removeEventListener('pageshow', restoreReturnedPage);
                 <div v-if="invoices.total" class="billing-recent"><span>{{ invoices.total }} {{ invoices.total === 1 ? 'invoice' : 'invoices' }}</span><button class="billing-link" @click="selectSection('invoices')">View invoices →</button></div>
             </div>
             <div id="billing-panel-plan" v-show="section === 'plan'" role="tabpanel" aria-labelledby="billing-tab-plan" tabindex="0">
-                <CapacityBillingPanel v-if="hasCapacityPricing || subscription.capacity || capacityRequest" :catalog="capacityPricing" :country="billingCountry" :initial-selection="!subscription.has_provider_subscription && signupSelection?.selected_plan_code === 'capacity' ? signupSelection : null" :current="subscription.capacity" :usage="usage" :business-id="page.props.tenant.public_id" :request="capacityRequest" :credits="smsCredits" :packs="smsPacks" :purchase="smsPurchase" :ready="billingReadiness.checkout_ready" :has-provider="subscription.has_provider_subscription" :time-zone="billingTimeZone"/>
+                <CapacityBillingPanel v-if="hasCapacityPricing || subscription.capacity || capacityRequest" :catalog="capacityPricing" :country="billingCountry" :initial-selection="!subscription.has_provider_subscription && signupSelection?.selected_plan_code === 'capacity' ? signupSelection : null" :current="subscription.capacity" :usage="usage" :business-id="page.props.tenant.public_id" :request="capacityRequest" :checkout-return="checkoutReturn" :credits="smsCredits" :packs="smsPacks" :purchase="smsPurchase" :ready="billingReadiness.checkout_ready" :has-provider="subscription.has_provider_subscription" :time-zone="billingTimeZone"/>
                 <div v-else class="billing-panel billing-empty"><DocumentTextIcon aria-hidden="true"/><div><h3>Need help with your subscription?</h3><p>Contact our team to arrange your plan.</p><a v-if="page.props.brand?.support_email" class="billing-link" :href="`mailto:${page.props.brand.support_email}`">Contact support</a></div></div>
                 <p v-if="hasCapacityPricing && !billingReadiness.checkout_ready" class="billing-alert warning" role="status">Checkout is temporarily unavailable. Please try again shortly or contact support.</p>
             </div>

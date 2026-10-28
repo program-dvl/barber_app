@@ -77,7 +77,7 @@ class StripeCheckoutReconciler
         }
 
         if ($session->status !== 'complete' || ! $providerSubscriptionId) {
-            $attempt->update(['last_checked_at' => now(),
+            $attempt->update(['last_checked_at' => now(), 'status' => $session->status === 'complete' ? 'processing' : $attempt->status,
                 'expires_at' => isset($session->expires_at) ? Carbon::createFromTimestampUTC($session->expires_at) : $attempt->expires_at,
                 'provider_checkout_url' => $session->status === 'open' ? ($session->url ?? $attempt->provider_checkout_url) : null]);
 

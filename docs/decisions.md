@@ -2634,6 +2634,33 @@ account-switch regressions must preserve old paid terms and verify the repaired
 trial opens one checkout. Actual production repair is not claimed until the
 operator setup succeeds and the owner reaches checkout in the intended account.
 
+
+## ADR-072 — Automatically confirm the payment return
+
+- Status: Accepted
+- Date: 2026-10-26
+- Basis: Owner reports that returning from Stripe shows an unfinished checkout and requires a manual billing-status check.
+- Requirements: FR-01, FR-19/20; refines ADR-068/069/071. Supersedes ADR-069's single-entry-check rule only for bounded follow-up of a payment already processing.
+
+Show Checking your payment on entry and automatically display the authoritative
+result. A correctly owned stored confirmed/applied return shows success immediately,
+even when webhooks beat browser navigation. Pending payments follow six bounded,
+non-overlapping checks over 30 seconds. Stop on an error, navigation, an open
+Checkout, a payment requiring action or a terminal result; keep Retry-After and
+all customer work. Do not describe a processing payment as an unfinished checkout.
+
+Automatic verification reads existing owned Stripe objects through the existing
+projector; it cannot create/replay a Checkout or customer, submit subscription
+changes, or expire a payable session. Preserve the approved guarded test-only
+retirement and all live-payment, tenant, idempotency and append-only history rules.
+URL flags alone are not proof. Refresh paid quantities/access automatically after
+confirmation. Keep ordinary workspace GETs free of provider calls and avoid a
+second legacy status loop for the same capacity checkout return.
+
+Persist this customer-journey rule in AGENTS.md and the shared notification
+contract. Local automated verification is separate from deployed payment evidence;
+see [return verification](audits/2026-10-26-payment-return/README.md).
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |

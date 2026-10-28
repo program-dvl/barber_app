@@ -110,6 +110,38 @@ class CapacityCheckoutRecovery
         return $result;
     }
 
+    /** Automatic payment checks only read an existing Checkout; they never create one. */
+    public function verify(BillingCapacityChange $change): ?BillingCheckoutAttempt
+    {
+        return DB::transaction(function () use ($change) {
+            $business = Business::whereKey($change->business_id)->lockForUpdate()->firstOrFail();
+            $subscription = BusinessSubscription::whereKey($change->business_subscription_id)->lockForUpdate()->firstOrFail();
+            $locked = BillingCapacityChange::lockForUpdate()->findOrFail($change->id);
+            $attempt = $this->attempt($locked);
+            if (! $attempt || $locked->status !== 'submitted') {
+                return $attempt;
+            }
+            if ($this->retireTestCheckout($attempt, $locked, $business, $subscription, false, null)) {
+                return $attempt->fresh();
+            }
+            $legacyDecline = $attempt->status === 'failed' && $attempt->last_error === 'initial_payment_failed';
+            if (in_array($attempt->status, ['failed', 'expired', 'superseded'], true) && ! $legacyDecline) {
+                $this->close($locked, $business, false, null);
+
+                return $attempt;
+            }
+            if (! str_starts_with($attempt->provider_transaction_id, 'cs_')) {
+                return $attempt;
+            }
+            $attempt = $this->reconciler->reconcile($attempt);
+            if (in_array($attempt->status, ['failed', 'expired', 'superseded'], true)) {
+                $this->close($locked->fresh(), $business, false, null);
+            }
+
+            return $attempt;
+        }, 3);
+    }
+
     /** A test-only checkout cannot charge money; it must not block a first live purchase. */
     private function retireTestCheckout(BillingCheckoutAttempt $attempt, BillingCapacityChange $change, Business $business, BusinessSubscription $subscription, bool $restart, ?User $actor): bool
     {

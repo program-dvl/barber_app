@@ -1286,3 +1286,130 @@ it('retains redacted Stripe checkout rejection details through the recovery tran
         expect($attempt->fresh()->last_error)->toBeNull()->and(BillingCheckoutAttempt::count())->toBe(1);
     });
 })->with([[404, 'line_items[0][price]', 'line_items'], [400, 'automatic_tax[enabled]', 'automatic_tax'], [403, 'customer', 'customer'], [503, 'sk_live_secret', null]]);
+
+it('automatically verifies a monthly or annual paid return before its webhook arrives', function (string $interval) {
+    Carbon::setTestNow(now()->setMicrosecond(654321));
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout('cs_test_automatic_return', $interval);
+    $return = route('business.billing.show', [$business, 'checkout' => 'success', 'attempt' => $attempt->public_id, 'session_id' => $session['id']]);
+    $session = [...$session, 'status' => 'complete', 'payment_status' => 'paid', 'subscription' => [
+        'object' => 'subscription', 'id' => 'sub_automatic_return', 'customer' => $subscription->provider_customer_id,
+        'status' => 'active', 'metadata' => $session['metadata'], 'items' => ['data' => capacityProvider($card, 3, 10)], 'latest_invoice' => null]];
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $subscription, $change, $attempt, $return) {
+        $this->actingAs($owner)->get($return)->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('checkoutReturn.status', 'pending')->where('checkoutReturn.request.change_id', $change->public_id));
+        expect($client->requests)->toBe([]);
+        $this->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id, 'verify_only' => true])
+            ->assertOk()->assertJsonPath('status', 'applied')->assertJsonPath('checkout_status', 'confirmed');
+        $reads = count($client->requests);
+        $this->get($return)->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('checkoutReturn.status', 'confirmed')->where('checkoutReturn.request.status', 'applied')
+            ->where('capacityRequest', null)->where('subscription.status', 'active')->where('subscription.capacity.staff', 10)
+            ->where('tenant.subscription.status', 'active')->where('tenant.access.status', 'active'));
+        expect(count($client->requests))->toBe($reads)->and($subscription->fresh()->capacity_snapshot['total_minor'])->toBe($change->quote['total_minor'])
+            ->and($attempt->fresh()->status)->toBe('confirmed')->and(BillingCheckoutAttempt::count())->toBe(1);
+        expect(collect($client->requests)->every(fn ($request) => strtolower($request['method']) === 'get'))->toBeTrue();
+    });
+})->with(['monthly', 'annual']);
+
+it('follows a processing payment to activation using only existing-session reads', function (string $interval) {
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout('cs_test_processing_return', $interval);
+    $session = [...$session, 'status' => 'complete', 'subscription' => null];
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $subscription, $card, $change, $attempt, $session) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id, 'verify_only' => true])
+            ->assertOk()->assertJsonPath('status', 'submitted')->assertJsonPath('checkout_status', 'processing')->assertJsonPath('checkout_url', null);
+        expect($subscription->fresh()->status->value)->toBe('trialing');
+        $client->session['subscription'] = ['object' => 'subscription', 'id' => 'sub_later_confirmed', 'customer' => $subscription->provider_customer_id,
+            'status' => 'active', 'metadata' => $session['metadata'], 'items' => ['data' => capacityProvider($card, 3, 10)], 'latest_invoice' => null];
+        $this->travel(3)->seconds();
+        $this->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id, 'verify_only' => true])
+            ->assertOk()->assertJsonPath('status', 'applied');
+        expect($attempt->fresh()->status)->toBe('confirmed')->and(BillingCheckoutAttempt::count())->toBe(1)
+            ->and(collect($client->requests)->every(fn ($request) => strtolower($request['method']) === 'get'))->toBeTrue();
+    });
+})->with(['monthly', 'annual']);
+
+it('keeps unpaid return markers and foreign or mismatched sessions from announcing success', function (string $case) {
+    [$owner, $business, $subscription, , $change, $attempt, $session] = abandonedCapacityCheckout();
+    $params = ['checkout' => 'success', 'attempt' => $attempt->public_id, 'session_id' => $session['id']];
+    if ($case === 'session') {
+        $params['session_id'] = 'cs_test_unrelated';
+    }
+    if ($case === 'foreign') {
+        [$owner, $business] = createTenantMembership();
+        activateTestSubscription($business);
+    }
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $subscription, $change, $params, $case) {
+        $this->actingAs($owner)->get(route('business.billing.show', [$business, ...$params]))->assertOk()
+            ->assertInertia(fn (Assert $page) => $case === 'open' ? $page->where('checkoutReturn.status', 'pending') : $page->where('checkoutReturn', null));
+        expect($client->requests)->toBe([])->and($subscription->fresh()->status->value)->toBe('trialing');
+        if ($case === 'open') {
+            $this->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id, 'verify_only' => true])
+                ->assertOk()->assertJsonPath('status', 'submitted')->assertJsonPath('checkout_status', 'pending')
+                ->assertJsonPath('checkout_url', 'https://checkout.stripe.com/abandoned');
+        }
+    });
+})->with(['open', 'session', 'foreign']);
+
+it('never creates or resumes uncertain checkout preparation during an automatic payment check', function (bool $hasAttempt) {
+    [$owner, $business, , , $change, $attempt, $session] = abandonedCapacityCheckout();
+    if ($hasAttempt) {
+        $attempt->update(['provider_transaction_id' => 'pending_capacity_'.$change->public_id, 'provider_checkout_url' => null]);
+    } else {
+        $attempt->delete();
+    }
+    $this->mock(SubscriptionProvider::class)->shouldNotReceive('createCheckout');
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $change, $hasAttempt) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id, 'verify_only' => true])
+            ->assertOk()->assertJsonPath('status', 'submitted')->assertJsonPath('checkout_url', null);
+        expect($client->requests)->toBe([])->and(BillingCheckoutAttempt::count())->toBe($hasAttempt ? 1 : 0);
+    });
+})->with([true, false]);
+
+it('does not release an unknown payment on automatic verification failure', function () {
+    [$owner, $business, $subscription, , $change, $attempt, $session] = abandonedCapacityCheckout();
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $subscription, $change, $attempt) {
+        $client->failure = 'api_error';
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id, 'verify_only' => true])
+            ->assertStatus(503)->assertHeader('Retry-After', '15')->assertJsonPath('status', 'submitted')->assertDontSee('Private provider diagnostic');
+        expect($change->fresh()->status)->toBe('submitted')->and($attempt->fresh()->status)->toBe('pending')
+            ->and($subscription->fresh()->status->value)->toBe('trialing')->and(BillingCheckoutAttempt::count())->toBe(1);
+    });
+});
+
+it('shows the confirmed result when signed webhooks beat the monthly or annual browser return', function (string $interval) {
+    [$owner, $business, $subscription, $card, $change, $attempt, $session] = abandonedCapacityCheckout('cs_test_webhook_first_return', $interval);
+    $processor = app(StripeWebhookProcessor::class);
+    $processor->receiveVerified(['id' => 'evt_return_complete', 'type' => 'checkout.session.completed', 'created' => now()->timestamp,
+        'data' => ['object' => [...$session, 'status' => 'complete', 'subscription' => 'sub_return_first']]]);
+    $processor->synchronizeSubscriptionSnapshot(['object' => 'subscription', 'id' => 'sub_return_first', 'customer' => $subscription->provider_customer_id,
+        'status' => 'active', 'metadata' => $session['metadata'], 'items' => ['data' => capacityProvider($card, 3, 10)]], now());
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $attempt, $session) {
+        $this->actingAs($owner)->get(route('business.billing.show', [$business, 'checkout' => 'success', 'attempt' => $attempt->public_id, 'session_id' => $session['id']]))
+            ->assertOk()->assertInertia(fn (Assert $page) => $page->where('checkoutReturn.status', 'confirmed')
+            ->where('checkoutReturn.request.status', 'applied')->where('capacityRequest', null)->where('subscription.status', 'active'));
+        expect($client->requests)->toBe([]);
+    });
+})->with(['monthly', 'annual']);
+
+it('automatically releases only a verified expired checkout while retaining its history', function () {
+    [$owner, $business, $subscription, , $change, $attempt, $session] = abandonedCapacityCheckout();
+    withCheckoutRecoveryStripe([...$session, 'status' => 'expired'], function ($client) use ($owner, $business, $subscription, $change, $attempt) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id, 'verify_only' => true])
+            ->assertOk()->assertJsonPath('status', 'expired')->assertJsonPath('checkout_status', 'expired');
+        expect($subscription->fresh()->status->value)->toBe('trialing')->and($attempt->fresh()->status)->toBe('expired')
+            ->and(BillingCheckoutAttempt::count())->toBe(1)
+            ->and(collect($client->requests)->every(fn ($request) => strtolower($request['method']) === 'get'))->toBeTrue();
+    });
+});
+
+it('preserves safe unconverted test-to-live recovery during automatic verification without provider writes', function () {
+    [$owner, $business, $subscription, , $change, $attempt, $session] = abandonedCapacityCheckout();
+    config(['billing.stripe.secret' => 'sk_live_current']);
+    withCheckoutRecoveryStripe($session, function ($client) use ($owner, $business, $subscription, $change, $attempt) {
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.status', $business), ['change_id' => $change->public_id, 'verify_only' => true])
+            ->assertOk()->assertJsonPath('status', 'expired')->assertJsonPath('checkout_status', 'superseded');
+        expect($client->requests)->toBe([])->and($attempt->fresh()->status)->toBe('superseded')
+            ->and($subscription->fresh()->provider_customer_id)->toBeNull()->and($subscription->fresh()->status->value)->toBe('trialing')
+            ->and(BillingCheckoutAttempt::count())->toBe(1);
+    });
+});

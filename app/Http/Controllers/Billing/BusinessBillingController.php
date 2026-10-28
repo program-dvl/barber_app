@@ -73,6 +73,7 @@ class BusinessBillingController extends Controller
             ] : null),
             'checkoutStatus' => $request->query('checkout') === 'canceled' ? 'canceled' : null,
             'checkoutAttempt' => $this->checkoutAttemptFromRequest($request, $business),
+            'checkoutReturn' => $this->capacityCheckoutReturn($request, $business),
             'planChangeStatus' => in_array($request->query('plan_change'), ['success', 'canceled'], true)
                 ? $request->query('plan_change')
                 : null,
@@ -312,5 +313,25 @@ class BusinessBillingController extends Controller
             'status' => $attempt->status,
             'confirmed_at' => $attempt->confirmed_at,
         ] : null;
+    }
+
+    private function capacityCheckoutReturn(Request $request, Business $business): ?array
+    {
+        if ($request->query('checkout') !== 'success' || ! is_string($request->query('attempt'))) {
+            return null;
+        }
+        $attempt = $business->billingCheckoutAttempts()->where('provider', 'stripe')
+            ->where('public_id', $request->query('attempt'))->first();
+        if (! $attempt || ! str_starts_with($attempt->provider_transaction_id, 'cs_')
+            || $request->query('session_id') !== $attempt->provider_transaction_id) {
+            return null;
+        }
+        $change = BillingCapacityChange::where('business_id', $business->id)
+            ->where('business_subscription_id', $attempt->business_subscription_id)->where('kind', 'checkout')
+            ->where('public_id', $attempt->capacity_quote['capacity_change_id'] ?? null)->first();
+
+        // The redirect is a navigation hint. Only stored, verified payment state
+        // can announce success; pending returns are checked by the workspace.
+        return $change ? ['status' => $attempt->status, 'request' => app(CapacityBillingController::class)->present($change)] : null;
     }
 }

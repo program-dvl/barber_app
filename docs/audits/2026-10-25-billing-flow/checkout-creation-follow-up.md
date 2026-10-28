@@ -20,12 +20,8 @@ Four regression cases cover HTTP 400/403/404/503, allowed/rejected parameter roo
 operator JSON, customer response/page privacy and original-attempt retry. Focused
 billing suite passes 224 tests / 1,296 assertions; scoped Pint and whitespace pass.
 
-A read-only deployed `billing:inspect-checkout BUSINESS_ID --provider` result was
-requested to check the current customer and six monthly/annual Price mappings.
-If these pass, inspect the original Stripe request and account settings before
-choosing a fix. No new Stripe customer, checkout or charge, deployment, secret
-change, tax disablement or production record reset was performed here. These
-changes improve diagnosis and do not claim production checkout is fixed.
+The deployed read-only inspector identified the six missing prices. No secret,
+tax policy or paid record was changed to diagnose the issue.
 
 ## Catalog repair and additional hardening
 
@@ -33,8 +29,11 @@ The owner was given the existing `billing:verify-capacity-rates US --provision`
 command for the current test account, without --force. It creates/reuses catalog
 objects and installs verified local mappings, preserving paid subscriptions and
 old cards. The pending trial must restart and review fresh terms after setup;
-its old quote must not be silently rewritten. Deployed command outcome and
-checkout redirect are still pending; no production repair is claimed.
+its old quote must not be silently rewritten. The owner subsequently supplied
+successful output from that deployed command: monthly/annual mappings verified
+and installed, existing subscriptions preserved. The owner then explicitly
+confirmed “Stripe payment page opens” after Start again → review → Continue.
+This verifies the deployed checkout redirect recovery, not payment completion.
 
 The provisioner now validates all explicit environment Price ID overrides before
 catalog writes. Missing overrides produce variable-specific correction/clearing
@@ -48,3 +47,19 @@ subscription attributes and all historical cards, restart the pending test attem
 review current terms and open exactly one fresh checkout. A separate test asserts
 stale explicit overrides cause no catalog writes or local card changes; another
 asserts incomplete price reads do not recommend catalog provisioning.
+
+## Final local verification and deployed boundary
+
+Full backend: **874 passed / 9,377 assertions**, 30 existing skips. Catalog/setup:
+**30 passed / 238 assertions**; rejection/privacy: **4 passed / 76 assertions**.
+Scoped Pint and whitespace pass. No frontend changes or new database migrations
+in this follow-up. [Full test output](catalog-repair-backend.txt),
+[catalog/setup output](catalog-repair-tests.txt).
+
+The operator's successful provisioning output verifies catalog installation.
+The owner's explicit “Stripe payment page opens” response verifies the deployed
+redirect after a fresh review. No payment was requested for that check; payment
+completion, webhook delivery and deployed subscription activation remain
+unverified. Deployment of diagnostic/preflight improvements was not performed or
+verified by this review. The confirmed recovery used the existing setup command
+and the owner's normal restart/review/continue controls.

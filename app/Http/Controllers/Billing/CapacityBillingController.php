@@ -79,26 +79,28 @@ class CapacityBillingController extends Controller
     public function status(Request $request, Business $business, StripeSubscriptionReconciler $reconciler, CapacityStripeGateway $stripe)
     {
         $this->authorizeBilling($request, $business);
-        $data = $request->validate(['change_id' => ['required', 'string', 'size:26']]);
+        $data = $request->validate(['change_id' => ['required', 'string', 'size:26'], 'verify_only' => ['sometimes', 'boolean']]);
         $change = BillingCapacityChange::where('business_id', $business->id)->where('public_id', $data['change_id'])->firstOrFail();
         try {
             $attempt = null;
             if ($change->kind === 'checkout' && $change->status === 'submitted') {
-                $attempt = app(CapacityCheckoutRecovery::class)->synchronize($change);
+                $recovery = app(CapacityCheckoutRecovery::class);
+                $attempt = ($data['verify_only'] ?? false) ? $recovery->verify($change) : $recovery->synchronize($change);
             }
             $subscription = $business->subscription()->firstOrFail();
             if ($change->kind !== 'checkout' && in_array($change->status, ['submitted', 'scheduled'], true) && $subscription->provider_subscription_id
                 && (! $change->last_checked_at || $change->last_checked_at->lte(now()->subSeconds(10)))) {
                 $change->update(['last_checked_at' => now()]);
                 $reconciler->reconcile($subscription);
-                if ($change->fresh()->status === 'submitted') {
+                if ($change->fresh()->status === 'submitted' && ! ($data['verify_only'] ?? false)) {
                     $stripe->submit($subscription->fresh(), $change->fresh(), resume: true);
                     $reconciler->reconcile($subscription->fresh());
                 }
             }
             $checkoutUrl = $attempt && in_array($attempt->status, ['pending', 'processing'], true) ? $attempt->provider_checkout_url : null;
 
-            return response()->json([...$this->present($change->fresh()), 'checkout_url' => $checkoutUrl]);
+            return response()->json([...$this->present($change->fresh()), 'checkout_url' => $checkoutUrl,
+                'checkout_status' => $attempt?->status]);
         } catch (Throwable $error) {
             return $this->providerError($change, $error);
         }

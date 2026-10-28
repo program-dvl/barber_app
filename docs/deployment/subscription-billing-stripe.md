@@ -475,3 +475,25 @@ objects and names unavailable variables. The improved inspector reports whether
 prices came from configuration or verified mappings, and recommends setup only
 for confirmed missing/mismatched prices; a permission/outage/read failure calls
 for provider access verification instead. New prices/cards preserve old history.
+
+Incident verification: the owner supplied successful provisioning output and then
+confirmed that Start again → fresh review → Continue opens the Stripe payment
+page on the deployed site. This verifies the catalog/redirect recovery. Payment
+completion, webhook receipt and activation require separate payment evidence.
+
+
+## Automatic payment return — 2026-10-26 (ADR-072)
+
+Deploy the matching application and client/SSR build together. This follow-up has
+no migration, environment variable or Stripe Dashboard action. Keep the verified
+monthly and annual catalog mappings; do not reprovision or reset subscriptions to
+fix a return-screen issue. The workspace verifies the original session and updates
+its result automatically, with bounded processing checks that stop on errors.
+
+In the deployed sandbox, complete monthly and annual Checkout and confirm success,
+updated quantities/header status and invoice history without clicking status.
+Exercise both webhook-before-return and delayed confirmation, unpaid Back/cancel,
+repeated visits, failed payment/retry and a temporary provider error. Do not use
+success URL flags or subscription resets as payment evidence. Current local
+results and remaining visual/deployed checks are in the
+[return verification record](../audits/2026-10-26-payment-return/README.md).

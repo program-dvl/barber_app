@@ -1,11 +1,35 @@
 # Project status
 
-## 2026-10-25 Fresh checkout failure — missing test prices confirmed
+## 2026-10-26 Automatic payment return (ADR-072)
 
-- [x] Owner reports deployed Start again now succeeds, but confirming the newly
-  reviewed monthly selection returns checkout unavailable. This remains an
-  unresolved production payment issue; prior local recovery tests did not certify
-  Stripe creation in the currently configured account.
+- [x] A submitted checkout initially shows Checking your payment and follows
+  confirmed processing automatically with bounded checks. Applied payment shows
+  Your subscription is active without a manual status action. An already-applied
+  webhook return shows success immediately; open/unpaid Checkout stays resumable.
+- [x] Automatic checks read only existing owned provider objects through the
+  established lifecycle, with no checkout/customer creation, subscription replay
+  or payable-session expiration. Stop on error/navigation/action-required state;
+  respect Retry-After. Preserve safe test retirement and all financial history.
+- [x] Success refreshes shared tenant/header/access, invoices, payment attention,
+  quantities and allowances. Return query flags cannot grant access or expose
+  another business's result. Ordinary workspace GETs make no provider calls.
+- [x] Local full backend: **888 passed / 9,594 assertions**, 30 existing skips;
+  frontend: **122 passed**, including actual Vue panel/notice mounting and bounded
+  timer tests. Production client/SSR builds and scoped Pint pass. Shared customer
+  guidance, module and decisions are updated in the same change.
+- [ ] Not deployed or payment-certified. Browser access remains disabled; new
+  desktop/mobile visual verification and completed deployed sandbox payments are
+  outstanding. No real payment, paid-history reset, secret/catalog change or
+  migration. [Evidence and deployment steps](audits/2026-10-26-payment-return/README.md).
+
+
+## 2026-10-25 Stripe checkout restored after test price repair
+
+- [x] Owner initially reported Start again succeeding but fresh confirmation
+  returning checkout unavailable. After the catalog repair and fresh review below,
+  the owner explicitly confirmed **Stripe payment page opens** on the deployed
+  site. Checkout redirect recovery is confirmed by the owner; no completed payment
+  or subscription activation is claimed from that confirmation.
 - [x] Identified a diagnostic gap: the safe Stripe wrapper discarded the original
   exception, causing validation/configuration errors to resemble a temporary
   outage. New code retains the exception cause and a redacted pending-attempt
@@ -23,9 +47,17 @@
   missing prices from provider read failures, supplying actionable setup advice.
   Monthly/annual SDK regressions reproduce six missing prices, repair mappings,
   preserve paid terms/history, restart and open one fresh reviewed checkout.
-- [ ] Operator was given the existing test-only --provision command, followed by
-  price reinspection and owner Start again/review/confirmation. Its deployed result
-  and Stripe redirect remain pending. Local hardening is not deployed. No live
+- [x] Owner ran the existing --provision command on the deployed server and supplied
+  its successful output: both cadence mappings verified/installed; existing
+  subscriptions preserved. Current test catalog repair is confirmed by that output.
+- [x] Local full backend after the follow-up: **874 passed / 9,377 assertions**,
+  30 existing skips. Catalog/setup **30 / 238**, rejection/privacy **4 / 76**;
+  scoped Pint and whitespace pass. No frontend code changed in this follow-up.
+- [x] Owner confirmed Start again → fresh review → Continue opens the Stripe
+  payment page after provisioning. The pending old quote was replaced through
+  explicit review; paid subscriptions were preserved.
+- [ ] Test payment completion and subscription activation remain unverified on the
+  deployed system. Deployment of the diagnostic hardening is not verified. No live
   payment, secret/tax change, paid data reset or new migration was performed.
   See the [catalog recovery runbook](deployment/subscription-billing-stripe.md#confirmed-six-missing-prices-in-the-test-account-2026-10-25).
 

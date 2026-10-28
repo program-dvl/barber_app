@@ -397,6 +397,11 @@ touched; this rule is not evidence that every old surface has been migrated.
 - Combine the error and its recovery actions into one notice. Replace stale
   success/previous error states instead of stacking contradictory banners.
   Keep a concise original purchase summary when continuing has financial meaning.
+- A payment return starts with “Checking your payment”, then shows the confirmed
+  outcome automatically. Do not flash an unfinished-checkout warning while the
+  first check is running. A verified open checkout offers continuation; a payment
+  still processing says so. Follow-up checks are bounded, stop on errors and never
+  create a new payment. A redirect flag alone is not proof of success.
 - Place actions below the text in a wrapping flex row: at least 14px above it,
   at least 10px between controls, never touching. One primary action at most;
   use secondary for alternatives and quiet for status checks. Preserve 44px

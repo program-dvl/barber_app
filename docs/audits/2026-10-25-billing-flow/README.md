@@ -103,3 +103,14 @@ Stripe keys/webhooks. A live payment and deployment were not verified here.
 An unknown live payment, a cached provider failure or an original key older than
 23 hours still needs operator evidence; do not bypass it by resetting paid rows
 or generating a second payment key. No claim of 100% production certification.
+
+## Subsequent checkout creation follow-up
+
+The owner's deployed inspection subsequently confirmed all six subscription
+prices were missing from the current test account despite a valid owned customer.
+The owner ran the existing provisioning command successfully; it verified and
+installed current monthly/annual mappings while preserving subscriptions. The
+owner then confirmed that a fresh restart/review opens the Stripe payment page.
+Payment completion remains unverified. Local diagnostic and setup
+hardening plus monthly/annual catalog-repair tests are documented in the
+[follow-up](checkout-creation-follow-up.md), with **874 full backend tests passing**.
