@@ -13,6 +13,11 @@ and [ADR-067](../decisions.md#adr-067--platform-managed-client-notifications-wit
 
 ## Product outcome
 
+ADR-074's [completed-visit reviews](client-reviews.md) use the existing secure
+appointment page and an operator copy-link action. They create no message,
+provider call or SMS debit. Feedback/rebooking outreach remains marketing and
+disabled; the review feature does not change notification consent or suppression.
+
 ClipperDesk sends calm, useful appointment notifications by email and SMS. The
 owner-facing **Client notifications** workspace offers simple email/SMS channel
 choices, quiet hours, sample messages and delivery history. ClipperDesk manages

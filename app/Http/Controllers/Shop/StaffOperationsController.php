@@ -48,7 +48,7 @@ class StaffOperationsController extends Controller
             'email' => ['nullable', 'email', 'max:255'], 'mobile' => ['nullable', new E164Phone], 'biography' => ['nullable', 'string', 'max:2000'],
             'status' => ['required', Rule::in(['active', 'inactive'])], 'online_visible' => ['required', 'boolean'],
             'location_ids' => ['required', 'array', 'min:1'], 'location_ids.*' => ['required', 'string', 'distinct'],
-            'profile_revision' => ['required', 'string', 'size:64'], 'reason' => ['nullable', 'string', 'max:1000'],
+            'profile_revision' => ['required', 'string', 'size:64'],
         ]);
         $locations = $business->locations()->where('is_active', true)->whereIn('public_id', $data['location_ids'])->get();
         abort_unless($locations->count() === count($data['location_ids']), 404);
@@ -75,18 +75,18 @@ class StaffOperationsController extends Controller
             if ($this->activeHolds($staff)->when($data['status'] === 'active', fn ($q) => $q->whereIn('h.location_id', $removed))->exists()) {
                 throw ValidationException::withMessages(['status' => 'A live booking holds this staff member. Wait for completion or expiry before removing bookability or a branch.']);
             }
-            $future = $this->futureWork($staff)->when($data['status'] === 'active', fn ($q) => $q->whereIn('a.location_id', $removed))->distinct()->count('a.id');
-            if ($future && trim($data['reason'] ?? '') === '') {
-                throw ValidationException::withMessages(['reason' => $future.' active appointment'.($future === 1 ? '' : 's').' affected. Review Calendar or give a reason to retain them as exceptions.']);
-            }
+            $retained = $this->futureWork($staff)->when($data['status'] === 'active', fn ($q) => $q->whereIn('a.location_id', $removed))
+                ->distinct()->orderBy('a.public_id')->pluck('a.public_id')->all();
             if ($staff->status !== 'active' && $data['status'] === 'active') {
                 $entitlements->authorize($business, 'staff.max', 'create', 1);
             }
             $before = [...$staff->only(['display_name', 'title', 'email', 'mobile', 'biography', 'status', 'online_visible']), 'locations' => $staff->locations->pluck('public_id')->all()];
-            $staff->fill(array_diff_key($data, array_flip(['location_ids', 'profile_revision', 'reason'])))->save();
+            $staff->fill(array_diff_key($data, array_flip(['location_ids', 'profile_revision'])))->save();
             $staff->locations()->syncWithPivotValues($locations->pluck('id')->all(), ['business_id' => $business->id]);
-            $this->audit->write('staff.profile.updated', $business, $request->user(), $staff, $data['reason'] ?? 'Staff profile updated.', $before,
-                [...$staff->only(['display_name', 'title', 'email', 'mobile', 'biography', 'status', 'online_visible']), 'locations' => $data['location_ids']]);
+            $this->audit->write('staff.profile.updated', $business, $request->user(), $staff,
+                $retained ? 'Staff profile updated. Existing appointments retained.' : 'Staff profile updated.', $before,
+                [...$staff->only(['display_name', 'title', 'email', 'mobile', 'biography', 'status', 'online_visible']), 'locations' => $data['location_ids']],
+                ['retained_appointments' => $retained]);
         }, 3);
 
         return back()->with('status', 'Team member updated. Login access is managed separately.');

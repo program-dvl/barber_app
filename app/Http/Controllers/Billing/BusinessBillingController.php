@@ -56,7 +56,7 @@ class BusinessBillingController extends Controller
         $scheduledPrice = $subscription->scheduled_billing_plan_price_id ? BillingPlanPrice::with('plan:id,name')->find($subscription->scheduled_billing_plan_price_id) : null;
 
         return Inertia::render('Billing/Overview', [
-            'capacityPricing' => app(CapacityPricingCatalog::class)->present(),
+            'capacityPricing' => app(CapacityPricingCatalog::class)->forWorkspace(),
             'billingCountry' => app(CapacityPricingCatalog::class)->marketFor($business),
             'capacityRequest' => ($capacityRequest = BillingCapacityChange::where('business_id', $business->id)->whereIn('status', ['submitted', 'scheduled'])->latest('id')->first()) ? app(CapacityBillingController::class)->present($capacityRequest) : null,
             'smsCredits' => app(SmsCreditWallet::class)->balance($business->id),

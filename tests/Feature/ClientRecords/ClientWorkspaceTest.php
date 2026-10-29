@@ -53,7 +53,8 @@ function crmWorkspaceVisit(array $tenant, Client $client, string $status = 'comp
 it('searches names without a blank phone wildcard and normalizes phone and email independently', function () {
     $t = crmWorkspaceTenant();
     $c = Client::factory()->create(['business_id' => $t['business']->id, 'name' => 'Maya Singh', 'normalized_name' => 'mayasingh', 'mobile' => '+91 90000 01003', 'normalized_mobile' => '919000001003', 'email' => 'Maya@example.test', 'normalized_email' => 'maya@example.test']);
-    Client::factory()->create(['business_id' => $t['business']->id]);
+    Client::factory()->create(['business_id' => $t['business']->id, 'name' => 'Unrelated Client', 'normalized_name' => 'unrelatedclient',
+        'mobile' => '+14155552671', 'normalized_mobile' => '14155552671', 'email' => 'unrelated@example.test', 'normalized_email' => 'unrelated@example.test']);
     $foreign = crmWorkspaceTenant();
     Client::factory()->create(['business_id' => $foreign['business']->id, 'name' => 'Maya Singh', 'normalized_name' => 'mayasingh']);
     foreach (['Maya', '+91 90000 01003', 'MAYA@example.test', $c->public_id] as $search) {

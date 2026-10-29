@@ -13,11 +13,14 @@ async function component(path, panel = false) {
         .replace(/from (['"])vue\1/g, `from '${vue}'`);
     code = code.replace(/import \{ ([^}]+) \} from '@heroicons\/vue\/24\/outline';/, (_, names) => names.split(',').map(name => `const ${name.trim()}={render(){return testH('span')}};`).join('\n'));
     if (panel) {
-        code = code.replace(/import \{ router \} from '@inertiajs\/vue3';/, 'const router = {reload: (...args)=>globalThis.billingPanelTest.reload(...args)};')
+        code = code.replace(/import \{ router(?:, usePage)? \} from '@inertiajs\/vue3';/, 'const router = {reload: (...args)=>globalThis.billingPanelTest.reload(...args)}; const usePage=()=>globalThis.billingPanelTest.page;')
             .replace("import axios from 'axios';", 'const axios={post:(...args)=>globalThis.billingPanelTest.post(...args),isCancel:()=>false};')
             .replace(/import AppNotice from '[^']+';/, 'const AppNotice = globalThis.billingPanelTest.Notice;')
             .replace(/import AppButton from '[^']+';/, "const AppButton={inheritAttrs:false,setup(props,{attrs,slots}){return ()=>testH('button',attrs,slots.default?.())}};")
             .replace(/import (CapacityCalculator|AppDialog) from '[^']+';/g, 'const $1={render(){return null}};')
+            .replace(/import CapacityBillingPanel from '[^']+';/, 'const CapacityBillingPanel=globalThis.billingPanelTest.Panel;')
+            .replace(/import (AppLayout|PageHeader|AppSelect) from '[^']+';/g, 'const $1={render(){return testH("div",null,this.$slots.default?.())}};')
+            .replace(/import '[^']+\.css';/g, '')
             .replace(/from '@\/Support\/([^']+)';/g, (_, name) => `from '${pathToFileURL(resolve(`resources/js/Support/${name}.js`)).href}';`);
     }
     return (await import(`data:text/javascript;base64,${Buffer.from(`import { h as testH } from '${vue}';\n${code}`).toString('base64')}`)).default;
@@ -25,25 +28,28 @@ async function component(path, panel = false) {
 const Notice = await component('resources/js/Components/Product/AppNotice.vue');
 globalThis.billingPanelTest = { Notice };
 const Panel = await component('resources/js/Components/Billing/CapacityBillingPanel.vue', true);
+globalThis.billingPanelTest.Panel = Panel;
+const Overview = await component('resources/js/Pages/Billing/Overview.vue', true);
 const quote = { locations: 5, staff: 10, total_minor: 17100, currency: 'USD', billing_interval: 'monthly' };
 const request = { change_id: 'change', status: 'submitted', kind: 'checkout', quote };
 const processing = { ...request, checkout_status: 'processing', checkout_url: null };
 const flush = async () => { for (let i = 0; i < 16; i++) await nextTick(); };
-function mount(post, props = {}) {
+function mount(post, props = {}, Component = Panel) {
     const root = { children: [] }, calls = [], reloads = [];
-    globalThis.billingPanelTest = { Notice, post: (...args) => { calls.push(args); return post(...args); }, reload: options => reloads.push(options) };
-    globalThis.window = { setInterval: () => 1, clearInterval() {}, location: { assign() { throw Error('Automatic checks must not navigate to checkout'); } } };
+    globalThis.billingPanelTest = { Notice, Panel, page: { url: '/billing?section=plan', props: { tenant: { public_id: 'business' }, brand: { support_email: 'support@example.test' }, errors: {} } }, post: (...args) => { calls.push(args); return post(...args); }, reload: options => reloads.push(options) };
+    globalThis.window = { setInterval: () => 1, clearInterval() {}, clearTimeout() {}, addEventListener() {}, removeEventListener() {}, location: { assign() { throw Error('Automatic checks must not navigate to checkout'); } } };
     globalThis.route = name => name;
     const renderer = createRenderer({
-        createElement: type => ({ type, props: {}, children: [] }), createText: text => ({ text }), createComment: () => ({ text: '' }),
+        createElement: type => ({ type, props: {}, children: [], style: {} }), createText: text => ({ text }), createComment: () => ({ text: '' }),
         insert: (child, parent, anchor) => { if (child.parent) child.parent.children = child.parent.children.filter(node => node !== child); child.parent = parent; const i = parent.children.indexOf(anchor); if (i < 0) parent.children.push(child); else parent.children.splice(i, 0, child); },
         remove: node => { node.parent.children = node.parent.children.filter(child => child !== node); },
         setText: (node, text) => node.text = text, setElementText: (node, text) => { node.text = text; node.children = []; },
         parentNode: node => node.parent, nextSibling: node => node.parent?.children[node.parent.children.indexOf(node) + 1],
         patchProp: (node, key, previous, next) => node.props[key] = next,
     });
-    const state = reactive({ request, ready: true, businessId: 'business', timeZone: 'UTC', ...props });
-    const app = renderer.createApp({ render: () => h(Panel, state) }); app.mount(root);
+    const pageProps = Component === Overview ? { capacityRequest: request, capacityPricing: { available: false, markets: [] }, billingReadiness: { secret_configured: true, checkout_ready: true }, subscription: { status: 'trialing', has_provider_subscription: false }, trial: {}, entitlements: {}, usage: {}, invoices: { total: 0, data: [] }, attention: [], billingTimeZone: 'UTC', billingLocale: 'en-US' } : {};
+    const state = reactive({ request, ready: true, businessId: 'business', timeZone: 'UTC', ...pageProps, ...props });
+    const app = renderer.createApp({ render: () => h(Component, state) }); app.mount(root);
     const nodes = () => { const all = []; function walk(node) { all.push(node); node.children?.forEach(walk); } walk(root); return all; };
     return { app, calls, reloads, nodes, update: values => Object.assign(state, values), text: () => nodes().map(node => node.text || '').join(' '), buttons: () => nodes().filter(node => node.type === 'button') };
 }
@@ -69,6 +75,32 @@ test('actual panel immediately shows success when the webhook already applied pa
     const fixture = mount(() => { throw Error('No provider request needed'); }, { request: null, checkoutReturn: { status: 'confirmed', request: { ...request, status: 'applied' } } });
     try { await flush(); assert.match(fixture.text(), /Your subscription is active/); assert.equal(fixture.calls.length, 0); }
     finally { fixture.app.unmount(); }
+});
+
+for (const kind of ['checkout', 'immediate']) {
+    test(`actual billing page automatically confirms saved ${kind} without current pricing mappings`, async () => {
+        const saved = { ...request, kind };
+        const fixture = mount(async () => ({ data: { ...saved, status: 'applied', checkout_status: 'confirmed' } }), { capacityRequest: saved }, Overview);
+        try {
+            await flush();
+            assert.equal(fixture.calls.length, 1); assert.equal(fixture.calls[0][0], 'business.billing.capacity.status');
+            assert.equal(fixture.reloads.length, 1); assert.match(fixture.text(), /Your subscription (?:is active|has been updated)/);
+            assert.doesNotMatch(fixture.text(), /Your subscription change is pending|isn’t confirmed yet/);
+        } finally { fixture.app.unmount(); }
+    });
+}
+test('missing provider credentials still disable purchase actions even when current pricing exists', async () => {
+    const fixture = mount(() => { throw Error('Unavailable provider actions must not run'); }, {
+        capacityRequest: null, capacityPricing: { available: true, markets: [{ code: 'US', intervals: { monthly: { ready: true } } }] },
+        billingReadiness: { secret_configured: false, checkout_ready: false },
+        subscription: { status: 'active', has_provider_subscription: true, capacity: quote },
+        smsPacks: [{ key: '500', credits: 500, amount_minor: 1500, currency: 'USD' }],
+    }, Overview);
+    try {
+        await flush();
+        const purchase = fixture.buttons().find(button => button.children.some(node => node.text?.includes('Add 500 credits')));
+        assert.ok(purchase); assert.equal(purchase.props.disabled, true); assert.equal(fixture.calls.length, 0);
+    } finally { fixture.app.unmount(); }
 });
 test('actual panel offers continuation after an unpaid return without pretending payment succeeded', async () => {
     const fixture = mount(async () => ({ data: { ...request, checkout_status: 'pending', checkout_url: 'https://checkout.stripe.com/open' } }));

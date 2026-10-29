@@ -2727,6 +2727,92 @@ service but remains IN_REVIEW. No approval bypass, WhatsApp enablement, country
 registration certification or deployment is implied. Existing legal, country,
 consent, credit and release gates remain. See the [audit/handoff](audits/2026-10-29-twilio/README.md).
 
+## ADR-074 — Optional salon presentation and completed-visit reviews
+
+- Date: 2026-10-29. Status: Accepted from the product owner's request to study
+  Fresha's supplied salon/booking pages and adapt photos, professional profiles
+  and reviews to ClipperDesk, excluding payment gateway collection.
+- Requirements: FR-02, FR-05, FR-09, FR-13, FR-19. Product owner: the requesting
+  ClipperDesk owner; implementation and verification owner: Engineering.
+- Promote only appointment-bound reviews from Phase 2. Success means a business
+  can publish/book with zero uploaded photos, optionally present its own gallery
+  and team portraits/bios, and collect one authenticated-by-secure-link review
+  after each completed visit with no password or payment dependency. Existing
+  local booking/self-service evidence is the prerequisite; deployment, payment,
+  production concurrency, communications and legal gates remain unwaived.
+- Keep one booking implementation and scheduling authority. Public presentation
+  adds an ordered business-wide gallery, team cards and opted-in reviews. Images
+  remain optional and tenant-private at rest, validated as raster images, with
+  authorized edits/preview and publication/visibility checks at delivery. A clean
+  text/initials fallback replaces implied salon stock photography. Existing titles
+  and biographies are reused; no invented years of experience or ratings.
+- A review requires a completed appointment and its secure view/review capability.
+  Lock and recheck tenant/appointment eligibility when saving; a unique visit
+  constraint and replay handling prevent duplicates. Operators can copy a scoped,
+  expiring review link and read feedback only within their existing appointment
+  permissions. Public consent defaults off. Public projection uses initials,
+  review date, rating and escaped plain text, with no client contacts, appointment
+  reference or service/treatment disclosure. All opted-in ratings contribute;
+  owner rating-gating, fabricated reviews and selective suppression are excluded.
+- No automatic email/SMS review outreach, marketplace, AI review summary,
+  memberships, group booking, campaigns, external review import or payment UI is
+  promoted. Existing feedback communications remain marketing and disabled.
+  Clients may withdraw public-display consent through their review-purpose link;
+  the submission and original consent evidence remain available privately.
+  Any later moderation/removal, external review provider, review content editing
+  or automated outreach expansion needs an explicit privacy/retention contract.
+
+## ADR-075 — Discoverable optional setup and recoverable platform failures
+
+- Date: 2026-10-29. Status: Accepted from the owner's setup screenshots and
+  requests for a succinct, professional interface with visible photo previews.
+- Requirements: FR-01/02/03/05/09/19. Clarifies ADR-048/056/063/064/069/074;
+  existing publication, financial, permission and release gates remain in force.
+- Put **Photos & branding** directly in Business setup navigation. Discovery does
+  not make images required: logo, cover, gallery and portraits remain optional.
+  Show saved/selected previews and explicit saves with compact editing controls.
+  Distinguish loading, genuinely empty and unavailable photos. A platform failure
+  must not masquerade as an empty gallery or offer repeated ineffective reloads;
+  preserve work and offer reachable support with a safe diagnostic reference.
+- Remove the manually entered reason for ordinary staff profile status and work
+  branch changes. Keep revision/tenant/branch checks, active-hold protections and
+  existing appointments. Audit the actor, before/after profile and work branches,
+  and retained appointment IDs automatically. Schedule exceptions and removal of
+  service qualifications used by future visits retain their existing reasons.
+- Signed-in owners may see non-binding estimates from approved current software
+  terms before the matching current Stripe rate cards are verified. Public
+  catalogue eligibility and purchase/review authority still require verified
+  immutable mappings. A retained verified older revision does not establish that
+  current terms are purchasable. Preserve all retained cards and paid history.
+- Keep Google address search on the product's supported explicit light surface.
+  Authentication denial is terminal for that page: stop search/map recovery loops,
+  preserve typed/saved address text and offer manual entry. An actual denied
+  referrer is configuration evidence, not proof that quota is exhausted. Verify
+  the exact browser origin before changing Cloud settings. Separate restricted
+  development keys remain the policy; creating a key or changing restrictions
+  requires action-time confirmation. The initial diagnostic inspection was
+  read-only; the owner subsequently approved the scoped local-key recovery below.
+- Primary local MySQL recovery applied exactly `2026_10_29_000002_create_client_reviews`
+  and `2026_10_29_100000_create_business_photos_table`; the unrelated pending
+  Help-feedback migration was left untouched.
+  Local Stripe test setup produced two current monthly/annual cards, retained two
+  older cards and verified six current test Prices. No paid terms, charges or
+  production deployment were changed. The original reviewed browser key allowed
+  local port 8027 while port 8000 was denied.
+- With explicit owner approval, created exactly one **ClipperDesk – Local Browser**
+  key in the existing project, with saved/read-back website restrictions limited
+  to `http://127.0.0.1:8000/*` and `http://127.0.0.1:8027/*`, and API restrictions
+  limited to Maps JavaScript API and Places API (New). The original production key
+  was unchanged. Only the ignored local environment key value changed; every other
+  parsed setting was retained and the temporary key file was deleted. Client/SSR
+  builds passed; safe diagnostics confirmed the current built key and uncached
+  configuration. A temporary same-origin Chrome probe at port 8000 displayed
+  real CN Tower predictions and selected/fetched the address without provider
+  errors or saved business/client data. This is local key/origin verification,
+  not complete reported-account certification or deployment. Prior regression
+  results were not rerun for this key-only update.
+  [Reproduction, recovery and remaining limits](audits/2026-10-29-setup-recovery/README.md).
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |
@@ -2756,3 +2842,5 @@ consent, credit and release gates remain. See the [audit/handoff](audits/2026-10
 | OPEN-23 | Define intentional branch relocation and amendment of already-booked arrival details | Saved appointment location snapshots deliberately retain the booked address; a branch move must not silently redirect past or upcoming appointments | Before exposing an appointment location-amendment/relocation workflow | **Open; bounded by ADR-064.** Product/Operations must define permission, versioned evidence, client notice, reschedule/cancellation treatment and provider retry behavior. Current location edits preserve snapshots; owners must coordinate affected bookings through existing reviewed operations. |
 
 | OPEN-24 | Define application-level global STOP/START routing for clients shared by multiple tenants on a platform SMS number | Twilio sender-level opt-out applies across that sender, while a reply does not identify a business. Selecting one matching tenant or restoring multiple businesses' permissions would be unsafe. | Before offering tenant-specific two-way preferences on a shared platform number | **Open; bounded by ADR-067/073.** Current inbound handling only changes an unambiguous client/tenant and otherwise does not expose a conversation or restore consent. Twilio sender-level opt-out still blocks sends. Product/Privacy must define global suppression, evidence and independent per-business re-consent before extending this behavior. |
+
+| OPEN-25 | Define review reporting, content moderation, appeals and recovery after secure-link expiry | The narrow completed-visit flow supports opt-in publication and client consent withdrawal, but business owners cannot selectively remove ratings and no public dispute/report process is yet specified. | Before production reviews are enabled | **Open; bounded by ADR-074.** Product/Privacy/Support must define reachable reporting, content-based review rules independent of star rating, audited restriction/appeal and identity-safe client withdrawal recovery. No campaign, third-party review integration or release waiver is implied. |

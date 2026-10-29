@@ -40,6 +40,25 @@ an unverified product-wide replacement. FR-01–20 scope and financial rules rem
 
 ## Review and evidence
 
+The 2026-10-29 owner refinement keeps optional gallery controls compact, opens
+only one photo editor at a time and previews chosen images before saving.
+Logo/cover/portrait changes retain clear saved/local state and draft recovery.
+Public gallery/team/verified-visit review presentation and the completed-visit
+feedback path follow ADR-074. See [presentation](booking-presentation.md),
+[reviews](client-reviews.md) and the [dated evidence](../audits/2026-10-29-booking-presentation/README.md).
+
+ADR-075 refines the same low-effort setup contract. **Photos & branding** is a
+direct navigation destination and remains optional. Distinct photo loading,
+empty and unavailable states avoid treating platform failure as owner error;
+preserve previews/drafts and offer support instead of futile retries. Staff
+profile status/branch edits require no typed reason while automatic change and
+retained-appointment evidence remains. Approved signed-in billing estimates stay
+readable during provider-mapping preparation; purchase authority remains verified.
+Google search follows the explicit light surface, stops on authentication denial
+and keeps typed addresses available for manual entry. See the
+[setup recovery audit](../audits/2026-10-29-setup-recovery/README.md) for local
+operational evidence and unresolved external configuration.
+
 The platform inventory, visual coverage, role checks, tests and explicit gaps
 are recorded in [the dated audit](../audits/2026-10-02-platform-refinement/README.md).
 Source review and build success do not count as rendered-screen verification.

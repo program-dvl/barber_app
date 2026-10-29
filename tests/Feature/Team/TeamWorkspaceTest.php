@@ -217,7 +217,12 @@ it('protects live holds from schedule reductions, deactivation and qualification
     $this->put(route('business.team.schedule.update', [$p['business'], $p['staff']]), [...$edit, 'impact_preview_id' => $preview['public_id']])->assertSessionHasErrors('preview');
     $this->patch(route('business.team.profile.update', [$p['business'], $p['staff']]), workforceProfile($p, ['status' => 'inactive', 'reason' => 'Leave']))->assertSessionHasErrors('status');
     $this->put(route('business.team.services.update', [$p['business'], $p['staff']]), ['assignments' => [], 'services_revision' => app(StaffWorkforceManager::class)->servicesRevision($p['staff']->fresh(['serviceAssignments']))])->assertSessionHasErrors('assignments');
-    expect($hold->fresh()->status)->toBe('active')->and($p['staff']->fresh()->status)->toBe('active');
+    $branch = Location::factory()->create(['business_id' => $p['business']->id]);
+    $p['staff']->availabilityRules()->delete();
+    $this->patch(route('business.team.profile.update', [$p['business'], $p['staff']]), workforceProfile($p, ['location_ids' => [$branch->public_id]]))->assertSessionHasErrors('status');
+    expect($hold->fresh()->status)->toBe('active')->and($p['staff']->fresh()->status)->toBe('active')
+        ->and($p['staff']->locations()->pluck('locations.id')->all())->toBe([$p['location']->id])
+        ->and(AuditEvent::query()->where('action', 'staff.profile.updated')->count())->toBe(0);
 });
 
 it('preserves dated service changes and rejects inactive new qualifications', function () {
@@ -231,14 +236,65 @@ it('preserves dated service changes and rejects inactive new qualifications', fu
     $this->put(route('business.team.services.update', [$p['business'], $p['staff']]), ['assignments' => [['service' => $p['service']->public_id, 'is_qualified' => true, 'online_visible' => true]], 'services_revision' => app(StaffWorkforceManager::class)->servicesRevision($p['staff']->fresh(['serviceAssignments']))])->assertSessionHasErrors('assignments');
 });
 
-it('requires a reason for deactivation and preserves visits and login access', function () {
+it('deactivates without a typed reason and audits retained visits without changing appointments or login access', function () {
     $p = operationalPath();
     $a = operationalBooking($p, '2035-10-10 10:00', 'deactivate-with-visits');
+    $appointment = $a->getAttributes();
+    $segments = $a->segments()->get()->map->getAttributes()->all();
     $data = workforceProfile($p, ['status' => 'inactive']);
-    $this->actingAs($p['user'])->patch(route('business.team.profile.update', [$p['business'], $p['staff']]), $data)->assertSessionHasErrors('reason');
-    $this->patch(route('business.team.profile.update', [$p['business'], $p['staff']]), [...$data, 'reason' => 'Manager will review the scheduled visit.'])->assertSessionHasNoErrors();
-    expect($a->fresh()->status)->toBe('confirmed')->and($p['membership']->fresh()->isActive())->toBeTrue()->and($p['staff']->fresh()->status)->toBe('inactive');
+    $this->actingAs($p['user'])->patch(route('business.team.profile.update', [$p['business'], $p['staff']]), $data)->assertSessionHasNoErrors();
+    $audit = AuditEvent::query()->where('business_id', $p['business']->id)->where('action', 'staff.profile.updated')->sole();
+    expect($a->fresh()->getAttributes())->toBe($appointment)
+        ->and($a->segments()->get()->map->getAttributes()->all())->toBe($segments)
+        ->and($p['membership']->fresh()->isActive())->toBeTrue()->and($p['staff']->fresh()->status)->toBe('inactive')
+        ->and($audit->actor_user_id)->toBe($p['user']->id)->and($audit->actor_membership_id)->toBe($p['membership']->id)
+        ->and($audit->before['status'])->toBe('active')->and($audit->after['status'])->toBe('inactive')
+        ->and($audit->metadata['retained_appointments'])->toBe([$a->public_id]);
     $this->patch(route('business.team.profile.update', [$p['business'], $p['staff']]), $data)->assertSessionHasErrors('profile_revision');
+    expect(AuditEvent::query()->where('action', 'staff.profile.updated')->count())->toBe(1);
+});
+
+it('changes work branches without a typed reason and retains the booked branch and login branches', function () {
+    $p = operationalPath();
+    $a = operationalBooking($p, '2035-10-10 10:00', 'branch-change-with-visits');
+    $appointment = $a->getAttributes();
+    $branch = Location::factory()->create(['business_id' => $p['business']->id]);
+    $data = workforceProfile($p, ['location_ids' => [$branch->public_id]]);
+    $url = route('business.team.profile.update', [$p['business'], $p['staff']]);
+    $this->actingAs($p['user'])->patch($url, $data)->assertSessionHasErrors('location_ids');
+    expect(AuditEvent::query()->where('action', 'staff.profile.updated')->count())->toBe(0);
+    // Removing regular hours is still required before removing a work branch.
+    $p['staff']->availabilityRules()->delete();
+    $this->patch($url, workforceProfile($p, ['location_ids' => [$branch->public_id]]))->assertSessionHasNoErrors();
+    $audit = AuditEvent::query()->where('business_id', $p['business']->id)->where('action', 'staff.profile.updated')->sole();
+    expect($a->fresh()->getAttributes())->toBe($appointment)
+        ->and($p['staff']->locations()->pluck('locations.id')->all())->toBe([$branch->id])
+        ->and($p['membership']->locations()->pluck('locations.id')->all())->toBe([$p['location']->id])
+        ->and($audit->actor_user_id)->toBe($p['user']->id)
+        ->and($audit->before['locations'])->toBe([$p['location']->public_id])
+        ->and($audit->after['locations'])->toBe([$branch->public_id])
+        ->and($audit->metadata['retained_appointments'])->toBe([$a->public_id]);
+});
+
+it('keeps profile edits within the tenant and every managed work branch without a typed reason', function () {
+    $p = operationalPath(StarterRole::Manager);
+    $branch = Location::factory()->create(['business_id' => $p['business']->id]);
+    $this->actingAs($p['user'])->patch(route('business.team.profile.update', [$p['business'], $p['staff']]), workforceProfile($p, ['location_ids' => [$branch->public_id]]))->assertForbidden();
+    $foreign = StaffProfile::factory()->create();
+    $this->patch(route('business.team.profile.update', [$p['business'], $foreign]), workforceProfile($p, ['status' => 'inactive']))->assertNotFound();
+    $reader = operationalPath(StarterRole::Receptionist);
+    $this->actingAs($reader['user'])->patch(route('business.team.profile.update', [$reader['business'], $reader['staff']]), workforceProfile($reader, ['status' => 'inactive']))->assertForbidden();
+    expect($p['staff']->fresh()->status)->toBe('active')->and($reader['staff']->fresh()->status)->toBe('active')
+        ->and(AuditEvent::query()->where('action', 'staff.profile.updated')->count())->toBe(0);
+});
+
+it('saves ordinary profile details without treating existing visits as retained exceptions', function () {
+    $p = operationalPath();
+    operationalBooking($p, '2035-10-10 10:00', 'ordinary-profile-edit-with-visits');
+    $this->actingAs($p['user'])->patch(route('business.team.profile.update', [$p['business'], $p['staff']]), workforceProfile($p, ['title' => 'Senior stylist']))->assertSessionHasNoErrors();
+    $audit = AuditEvent::query()->where('business_id', $p['business']->id)->where('action', 'staff.profile.updated')->sole();
+    expect($p['staff']->fresh()->title)->toBe('Senior stylist')->and($audit->metadata['retained_appointments'])->toBe([])
+        ->and($audit->after['title'])->toBe('Senior stylist')->and($audit->reason)->toBe('Staff profile updated.');
 });
 
 it('changes permitted login branches without altering staff work locations', function () {

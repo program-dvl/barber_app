@@ -59,6 +59,15 @@ contact path is accurate, but it is not a completed paid online-booking flow.
 
 ## Secure self-service
 
+ADR-074 adds optional salon gallery/team portraits and completed-visit reviews.
+The [presentation specification](modules/booking-presentation.md) retains the
+same booking engine and staff preference/qualification rules; no-photo booking
+has no extra setup requirement. The [reviews specification](modules/client-reviews.md)
+defines secure completed-visit feedback, explicit public-display consent and
+withdrawal, plus operator copy-link/read access. No automated outreach or payment
+collection is introduced. Terminal visits no longer advertise reschedule/cancel
+actions on the management page; completed visits offer feedback and rebooking.
+
 The view link displays Appointment time in its governing Location time zone,
 Location, lines, price/deposit state, policy snapshot, and status. It issues
 short-lived independent links for:

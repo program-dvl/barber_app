@@ -105,7 +105,8 @@ it('turns four short owner decisions into an editable private starter workspace'
         ->assertInertia(fn (Assert $page) => $page
             ->component('Booking/Welcome')
             ->where('business.name', 'Juniper House')
-            ->where('business.cover_url', '/images/marketing/industries/home-salon-hero.webp')
+            ->where('business.cover_url', null)
+            ->where('business.has_cover_image', false)
             ->has('catalog.services', 3));
 
     $progress = app(BusinessSetupProgress::class)->for($business);

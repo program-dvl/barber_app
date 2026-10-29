@@ -33,6 +33,34 @@ Implementation contract: [Locations](../modules/location-intelligence.md).
    alert does not itself stop spend. Review SKU usage and rejected requests after
    rollout, especially Places selection failures and Dynamic Maps loads.
 
+### Exact local-origin check (2026-10-29; ADR-075)
+
+Read the actual browser URL and check its scheme, hostname and port against the
+active browser key's website restrictions. The initial read-only Cloud inspection in the
+[setup recovery audit](../audits/2026-10-29-setup-recovery/README.md) found local
+`http://127.0.0.1:8027/*` allowed while the reported journey was running at
+`http://127.0.0.1:8000/`; that origin was denied. This is an origin mismatch,
+not evidence of quota exhaustion. That inspection changed no permissions or
+restrictions. Do not assume a different local port or `localhost` is covered.
+
+Use a separate restricted development key for the exact local origins needed.
+Creating that key or changing allowed origins/API restrictions requires
+action-time confirmation. After the owner approved the exact action on 2026-10-29,
+one **ClipperDesk – Local Browser** key was created in the existing project and
+its saved restrictions were read back: only `http://127.0.0.1:8000/*`,
+`http://127.0.0.1:8027/*`, Maps JavaScript API and Places API (New). The old
+production key was unchanged. The new value is in ignored local `.env` only;
+every other parsed setting was unchanged and the temporary key file was deleted.
+Client/SSR rebuilds passed, and safe diagnostics confirmed the current key is in
+the built assets with configuration uncached. A temporary same-origin Chrome
+probe at port 8000 showed real CN Tower predictions and successfully selected
+and fetched the address without provider errors. No business/client data was
+saved. This local key/origin evidence does not certify the complete reported
+account or deployment, or change the production/staging separation policy above.
+See the audit for screenshots and the exact verification boundary. The application
+uses the supported light colour scheme and treats authentication denial as
+terminal for the current page while preserving typed address text/manual entry.
+
 ## Environment variables and build
 
 ```dotenv

@@ -192,6 +192,23 @@ class CapacityPricingCatalog
         return $items;
     }
 
+    /** Approved estimates for signed-in owners; checkout still needs verified mappings. */
+    public function forWorkspace(): array
+    {
+        $catalog = $this->present(true);
+        $catalog['markets'] = array_values(array_filter($catalog['markets'], fn (array $market) => (bool) config('capacity-billing.markets.'.$market['code'].'.approved')));
+        foreach ($catalog['markets'] as &$market) {
+            foreach ($market['intervals'] as &$rate) {
+                $rate['preview_only'] = ! $rate['ready'];
+            }
+            unset($rate);
+        }
+        unset($market);
+        $catalog['available'] = collect($catalog['markets'])->contains(fn (array $market) => collect($market['intervals'])->contains(fn (array $rate) => $rate['ready']));
+
+        return $catalog;
+    }
+
     public function present(bool $includeDrafts = false): array
     {
         $markets = [];

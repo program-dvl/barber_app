@@ -5,6 +5,7 @@ namespace App\Domain\ClientRecords\Services;
 use App\Domain\ClientRecords\Models\Client;
 use App\Domain\ClientRecords\Models\ClientConsent;
 use App\Domain\ClientRecords\Models\ClientPrivacyRequest;
+use App\Domain\ClientReviews\Models\ClientReview;
 use App\Domain\PlatformAccess\Models\Membership;
 use App\Support\Audit\AuditWriter;
 use Illuminate\Support\Facades\DB;
@@ -145,6 +146,8 @@ class ClientPrivacyWorkflowService
                     'services' => $appointment->serviceLines->map(fn ($line) => ['name' => $line->name, 'performer_public_ids' => $line->segments->pluck('staff_profile_id')->filter()->unique()->values()->all()])->all(),
                 ])->all(),
                 'consents' => $client->consents->map->only(['type', 'status', 'source', 'policy_version', 'wording', 'evidence', 'occurred_at'])->all(),
+                'visit_reviews' => ClientReview::query()->where('business_id', $client->business_id)->where('client_id', $client->id)
+                    ->orderBy('id')->get()->map->only(['public_id', 'rating', 'body', 'author_initials', 'submitted_at', 'public_consent', 'public_consent_evidence', 'public_consent_withdrawn_at'])->all(),
                 'submitted_forms' => $client->formSubmissions->map(fn ($submission) => [
                     'public_id' => $submission->public_id, 'wording_snapshot' => $submission->wording_snapshot,
                     'answers' => $submission->answers, 'signature_recorded' => $submission->signature_hash !== null,

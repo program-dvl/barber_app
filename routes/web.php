@@ -30,10 +30,14 @@ use App\Http\Controllers\PublicBooking\PublicAppointmentController;
 use App\Http\Controllers\PublicBooking\PublicBookingFlowController;
 use App\Http\Controllers\PublicBooking\PublicBookingPaymentController;
 use App\Http\Controllers\PublicBooking\PublicBusinessMediaController;
+use App\Http\Controllers\PublicBooking\PublicBusinessPhotoController;
+use App\Http\Controllers\PublicBooking\PublicClientReviewsController;
 use App\Http\Controllers\PublicBooking\PublicWaitlistController;
 use App\Http\Controllers\Shop\AppointmentOperationsController;
+use App\Http\Controllers\Shop\AppointmentReviewLinkController;
 use App\Http\Controllers\Shop\BookingPreviewController;
 use App\Http\Controllers\Shop\BusinessConfigurationController;
+use App\Http\Controllers\Shop\BusinessPhotoController;
 use App\Http\Controllers\Shop\CalendarController;
 use App\Http\Controllers\Shop\CheckoutController;
 use App\Http\Controllers\Shop\ClientRecords\ClientAttachmentController;
@@ -55,6 +59,7 @@ use App\Http\Controllers\Shop\ScheduleBlockController;
 use App\Http\Controllers\Shop\ServiceManagementController;
 use App\Http\Controllers\Shop\SetupHoursController;
 use App\Http\Controllers\Shop\StaffOperationsController;
+use App\Http\Controllers\Shop\StaffPhotoController;
 use App\Http\Controllers\Shop\TeamManagementController;
 use App\Http\Controllers\Shop\WalkInQueueController;
 use App\Http\Controllers\SitemapController;
@@ -178,6 +183,12 @@ Route::get('/book/{slug}', BookingBusinessController::class)->where('slug', '[a-
 Route::get('/book/{slug}/media/{kind}', PublicBusinessMediaController::class)
     ->where(['slug' => '[a-z0-9-]+', 'kind' => 'logo|cover'])
     ->name('public.booking.media');
+Route::get('/book/{slug}/photos/{photo}', PublicBusinessPhotoController::class)
+    ->where('slug', '[a-z0-9-]+')->name('public.booking.photos.media');
+Route::get('/book/{slug}/reviews', PublicClientReviewsController::class)
+    ->where('slug', '[a-z0-9-]+')->middleware('throttle:30,1')->name('public.booking.reviews');
+Route::get('/book/{slug}/staff/{staff}/photo/{version}', [StaffPhotoController::class, 'publicShow'])
+    ->where(['slug' => '[a-z0-9-]+', 'version' => '[a-f0-9]{24}'])->name('public.booking.staff-photo');
 Route::middleware('throttle:30,1')->prefix('/book/{slug}')->where(['slug' => '[a-z0-9-]+'])->group(function (): void {
     Route::post('/flows', [PublicBookingFlowController::class, 'start'])->name('public.booking.start');
     Route::post('/availability', [PublicBookingFlowController::class, 'search'])->name('public.booking.search');
@@ -192,7 +203,7 @@ Route::middleware('throttle:10,1')->prefix('/book/{slug}')->where(['slug' => '[a
     Route::post('/deposit-payment', [PublicBookingPaymentController::class, 'store'])->name('public.booking.deposit-payment');
     Route::post('/waitlist', [PublicWaitlistController::class, 'store'])->name('public.waitlist.store');
 });
-Route::middleware('throttle:20,1')->where(['token' => '[a-f0-9]{64}', 'purpose' => 'reschedule|cancel|rebook|contact|waitlist|payment_status'])->group(function (): void {
+Route::middleware('throttle:20,1')->where(['token' => '[a-f0-9]{64}', 'purpose' => 'reschedule|cancel|rebook|contact|waitlist|payment_status|review'])->group(function (): void {
     Route::get('/appointments/secure/{token}', [PublicAppointmentController::class, 'view'])->name('public.appointment.view');
     Route::get('/appointments/secure/{token}/calendar', [PublicAppointmentController::class, 'calendar'])->name('public.appointment.calendar');
     Route::post('/appointments/secure/{token}/reschedule-times', [PublicAppointmentController::class, 'availability'])->name('public.appointment.availability');
@@ -344,6 +355,10 @@ Route::middleware([
             Route::post('/team/staff/{staffProfile}/schedule/preview', [StaffOperationsController::class, 'preview'])->name('business.team.schedule.preview');
             Route::put('/team/staff/{staffProfile}/schedule', [StaffOperationsController::class, 'schedule'])->name('business.team.schedule.update');
             Route::patch('/team/staff/{staffProfile}/profile', [StaffOperationsController::class, 'profile'])->name('business.team.profile.update');
+            Route::post('/team/staff/{staffProfile}/photo', [StaffPhotoController::class, 'store'])->name('business.team.photo.store');
+            Route::delete('/team/staff/{staffProfile}/photo', [StaffPhotoController::class, 'destroy'])->name('business.team.photo.destroy');
+            Route::get('/team/staff/{staffProfile}/photo/{version}', [StaffPhotoController::class, 'show'])->where('version', '[a-f0-9]{24}')->name('business.team.photo.show');
+            Route::post('/appointments/{appointment}/review-link', AppointmentReviewLinkController::class)->middleware('throttle:10,1')->name('business.appointments.review-link');
             Route::put('/team/staff/{staffProfile}/services', [StaffOperationsController::class, 'services'])->name('business.team.services.update');
             Route::post('/activation/providers', [TeamManagementController::class, 'store'])->name('business.team.providers.store');
             Route::post('/team/staff/{staffProfile}/invite', [TeamManagementController::class, 'inviteAccess'])->name('business.team.staff.invite');
@@ -390,6 +405,12 @@ Route::middleware([
                 Route::post('/setup/locations/{location}/hours/review', [SetupHoursController::class, 'review'])->name('setup-hours.review');
                 Route::put('/setup/locations/{location}/hours', [SetupHoursController::class, 'save'])->name('setup-hours.save');
                 Route::post('/branding', [BusinessConfigurationController::class, 'uploadBrandAsset'])->name('branding.store');
+                Route::delete('/branding/{kind}', [BusinessConfigurationController::class, 'removeBrandAsset'])->where('kind', 'logo|cover')->name('branding.destroy');
+                Route::get('/photos', [BusinessPhotoController::class, 'index'])->name('photos.index');
+                Route::post('/photos', [BusinessPhotoController::class, 'store'])->middleware('throttle:10,1')->name('photos.store');
+                Route::put('/photos/{photo}', [BusinessPhotoController::class, 'update'])->name('photos.update');
+                Route::delete('/photos/{photo}', [BusinessPhotoController::class, 'destroy'])->name('photos.destroy');
+                Route::get('/photos/{photo}/image', [BusinessPhotoController::class, 'media'])->name('photos.media');
                 Route::patch('/public-booking-policy', [BusinessConfigurationController::class, 'updatePublicBookingPolicy'])->name('public-booking-policy.update');
                 Route::put('/locations/{location}/hours', [BusinessConfigurationController::class, 'saveHours'])->name('locations.hours.update');
                 Route::post('/locations/{location}/exceptions', [BusinessConfigurationController::class, 'storeLocationException'])->name('locations.exceptions.store');
@@ -403,6 +424,7 @@ Route::middleware([
                 Route::post('/change-previews/{subjectType}/{subjectId}', [BusinessConfigurationController::class, 'previewChange'])->where('subjectType', 'location|staff|resource')->name('change-previews.store');
                 Route::get('/booking-preview', [BookingPreviewController::class, 'show'])->name('booking-preview');
                 Route::get('/booking-preview/media/{kind}', [BookingPreviewController::class, 'media'])->where('kind', 'logo|cover')->name('booking-preview.media');
+                Route::get('/booking-preview/staff/{staffProfile}/photo/{version}', [StaffPhotoController::class, 'preview'])->where('version', '[a-f0-9]{24}')->name('booking-preview.staff-photo');
                 Route::post('/preview', [BusinessConfigurationController::class, 'preview'])->name('preview');
                 Route::post('/publish', [BusinessConfigurationController::class, 'publish'])->name('publish');
             });

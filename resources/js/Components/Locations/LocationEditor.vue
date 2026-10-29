@@ -4,23 +4,38 @@ import { coordinates, placeAddress } from '@/Support/locationIntelligence';
 import { loadGoogleMaps, mapId, onGoogleMapsFailure } from '@/Support/googleMaps';
 import AppSelect from '@/Components/Product/AppSelect.vue';
 import AppButton from '@/Components/Product/AppButton.vue';
+import AppNotice from '@/Components/Product/AppNotice.vue';
 import FieldError from '@/Components/Product/FieldError.vue';
 
 const props = defineProps({ modelValue: { type: Object, required: true }, errors: { type: Object, default: () => ({}) }, optional: Boolean, countries: { type: Object, default: () => ({}) }, id: { type: String, default: 'location' } });
 const emit = defineEmits(['update:modelValue']);
-const host = ref(null), canvas = ref(null), loading = ref(false), error = ref(''), mapOpen = ref(false), pinNotice = ref('');
+const host = ref(null), canvas = ref(null), loading = ref(false), error = ref(''), mapError = ref(''), searchUnavailable = ref(false), retrySearch = ref(false), mapsBlocked = ref(false), mapOpen = ref(false), pinNotice = ref('');
 const entryMode = ref(props.modelValue.address && !props.modelValue.google_place_id ? 'manual' : 'search');
 function chooseEntryMode(mode) {
     ++selectionVersion;
     loading.value = false;
     entryMode.value = mode;
+    if (mode === 'manual' && !props.modelValue.address) {
+        const draft = typeof widget?.value === 'string' ? widget.value.trim() : '';
+        if (draft) manualAddress(draft);
+    }
     nextTick(() => document.getElementById(mode === 'manual' ? `${props.id}-address` : `${props.id}-search`)?.focus());
 }
 let stopFailure;
-let widget, map, marker, alive = true, selectedPoint, selectionVersion = 0;
+let widget, map, marker, alive = true, selectedPoint, selectionVersion = 0, searchGeneration = 0;
 const currentPoint = computed(() => coordinates(props.modelValue));
 const update = values => emit('update:modelValue', { ...props.modelValue, ...values });
 const fields = [ ['address_line_1', 'Street address'], ['city', 'City / locality'], ['state', 'State / province / region'], ['postal_code', 'Postal code'] ];
+
+function searchFailed(canRetry = false) {
+    ++selectionVersion;
+    ++searchGeneration;
+    searchUnavailable.value = true;
+    retrySearch.value = canRetry;
+    loading.value = false;
+    widget?.setAttribute('disabled', '');
+    error.value = 'You can enter your address manually and continue setup. Your other details are kept.';
+}
 
 function manualAddress(value) {
     ++selectionVersion; selectedPoint = null; pinNotice.value = currentPoint.value ? 'Address updated. Check your saved entrance pin before saving.' : ''; loading.value = false;
@@ -40,12 +55,14 @@ function savePin(position) {
     pinNotice.value = 'Entrance pin set. Save your location to keep it.';
 }
 async function showMap() {
-    mapOpen.value = true; loading.value = true; error.value = '';
+    if (mapsBlocked.value || loading.value) return;
+    mapOpen.value = true; loading.value = true; mapError.value = '';
     try {
         const maps = await loadGoogleMaps();
+        if (!alive || mapsBlocked.value) return;
         const [{ Map }, { AdvancedMarkerElement }] = await Promise.all([maps.importLibrary('maps'), maps.importLibrary('marker')]);
         await nextTick();
-        if (!alive || !canvas.value) return;
+        if (!alive || mapsBlocked.value || !mapOpen.value || !canvas.value) return;
         const point = currentPoint.value || selectedPoint || { lat: 20, lng: 0 };
         if (!map) {
             map = new Map(canvas.value, { center: point, zoom: currentPoint.value || selectedPoint ? 18 : 2, mapId: mapId(), mapTypeControl: false, streetViewControl: false, gestureHandling: 'cooperative' });
@@ -53,22 +70,37 @@ async function showMap() {
             marker.addListener('dragend', () => savePin(marker.position));
             map.addListener('click', event => { if (event.latLng) { marker.map = map; marker.position = event.latLng; savePin(event.latLng); } });
         } else { marker.map = map; marker.position = point; map.setCenter(point); map.setZoom(currentPoint.value || selectedPoint ? 18 : 2); }
-    } catch { if (alive) error.value = 'Map unavailable. You can still save your address and arrival notes. Try the map again later.'; }
+    } catch (failure) { if (alive) { mapsBlocked.value ||= ['MAPS_AUTHENTICATION_FAILED', 'MAPS_CONFIGURATION_MISSING'].includes(failure?.code); mapError.value = 'Your address and arrival notes are kept. You can save this location without an entrance pin.'; mapOpen.value = false; } }
     finally { if (alive) loading.value = false; }
 }
 async function startSearch() {
+    if (mapsBlocked.value || loading.value || (searchUnavailable.value && !retrySearch.value)) return;
+    const generation = ++searchGeneration;
     loading.value = true; error.value = '';
     try {
         const maps = await loadGoogleMaps();
+        if (!alive || mapsBlocked.value || generation !== searchGeneration) return;
         const { PlaceAutocompleteElement } = await maps.importLibrary('places');
-        if (!alive || !host.value || widget) return;
+        if (!alive || mapsBlocked.value || generation !== searchGeneration || !host.value || widget) return;
+        searchUnavailable.value = false; retrySearch.value = false;
         widget = new PlaceAutocompleteElement();
         widget.setAttribute('aria-label', 'Search your business name or address');
         widget.setAttribute('placeholder', 'Business name or street address');
         widget.style.width = '100%';
+        // Google defaults to the device theme. This product uses a fixed light surface.
+        // Use its supported host CSS properties; do not alter the widget's shadow tree.
+        widget.style.colorScheme = 'light';
+        widget.style.backgroundColor = 'var(--surface-raised)';
+        widget.style.color = 'var(--text-default)';
+        widget.style.fontFamily = 'inherit';
+        widget.style.fontSize = '16px';
+        widget.style.border = '0';
+        widget.style.borderRadius = 'inherit';
         // The supported widget owns attribution, keyboard/touch interaction and session tokens.
-        widget.addEventListener('gmp-error', () => { if (alive) error.value = 'Google search is unavailable or has reached its limit. Enter the address below.'; });
+        // A denied request does not tell us whether the cause is quota, billing or restrictions.
+        widget.addEventListener('gmp-error', () => { if (alive) searchFailed(); });
         widget.addEventListener('gmp-select', async ({ placePrediction }) => {
+            if (searchUnavailable.value || entryMode.value !== 'search') return;
             const version = ++selectionVersion; loading.value = true; error.value = '';
             try {
                 const place = placePrediction.toPlace();
@@ -81,17 +113,17 @@ async function startSearch() {
                 entryMode.value = 'search';
                 mapOpen.value = false;
                 if (marker) marker.map = null;
-            } catch { if (alive && version === selectionVersion) error.value = 'That address could not load. Try another result or enter it manually.'; }
+            } catch { if (alive && version === selectionVersion) { error.value = 'That address could not be opened. Choose another result or enter the address manually. Your other details are kept.'; retrySearch.value = false; } }
             finally { if (alive && version === selectionVersion) loading.value = false; }
         });
         host.value.replaceChildren(widget);
-    } catch (failure) { if (alive) error.value = failure.message; }
-    finally { if (alive) loading.value = false; }
+    } catch (failure) { if (alive && generation === searchGeneration) { mapsBlocked.value = ['MAPS_AUTHENTICATION_FAILED', 'MAPS_CONFIGURATION_MISSING'].includes(failure?.code); searchFailed(!mapsBlocked.value); } }
+    finally { if (alive && generation === searchGeneration) loading.value = false; }
 }
 watch(currentPoint, point => { if (map && marker && point) { marker.map = map; marker.position = point; } });
 watch(() => props.id, () => { ++selectionVersion; selectedPoint = null; pinNotice.value = ''; loading.value = false; mapOpen.value = false; entryMode.value = props.modelValue.address && !props.modelValue.google_place_id ? 'manual' : 'search'; if (marker) marker.map = null; });
-onMounted(() => { stopFailure = onGoogleMapsFailure(() => { loading.value = false; error.value = 'Google Maps is unavailable. Enter your address here and try the map again later.'; mapOpen.value = false; }); startSearch(); });
-onBeforeUnmount(() => { alive = false; ++selectionVersion; stopFailure?.(); widget?.remove(); if (marker) marker.map = null; });
+onMounted(() => { stopFailure = onGoogleMapsFailure(() => { mapsBlocked.value = true; searchFailed(); if (mapOpen.value) mapError.value = 'Your address and arrival notes are kept. You can save this location without an entrance pin.'; mapOpen.value = false; }); startSearch(); });
+onBeforeUnmount(() => { alive = false; ++selectionVersion; ++searchGeneration; stopFailure?.(); widget?.remove(); if (marker) marker.map = null; });
 </script>
 
 <template>
@@ -107,10 +139,9 @@ onBeforeUnmount(() => { alive = false; ++selectionVersion; stopFailure?.(); widg
         </fieldset>
         <div v-show="entryMode === 'search'">
             <p :id="`${id}-search-label`" class="mb-2 text-sm font-semibold">Find your location</p>
-            <div :id="`${id}-search`" ref="host" tabindex="-1" :aria-labelledby="`${id}-search-label`" class="cd-location-search min-h-11 rounded-lg border border-[var(--border-strong)] bg-white focus-within:ring-2 focus-within:ring-[var(--action-primary)]" />
+            <div :id="`${id}-search`" ref="host" tabindex="-1" :aria-labelledby="`${id}-search-label`" :aria-disabled="searchUnavailable || undefined" class="cd-location-search min-h-11 rounded-lg border border-[var(--border-strong)] bg-[var(--surface-raised)] focus-within:ring-2 focus-within:ring-[var(--action-primary)]" />
             <p v-if="loading" class="mt-2 text-sm text-[var(--text-muted)]" role="status">Loading Google Maps…</p>
-            <p v-if="error" class="mt-2 text-sm text-[var(--text-muted)]" role="status">{{ error }}</p>
-            <div v-if="error" class="mt-2 flex flex-wrap gap-2"><AppButton variant="secondary" @click="chooseEntryMode('manual')">Enter address manually</AppButton><AppButton v-if="!widget" variant="quiet" @click="startSearch">Try search again</AppButton></div>
+            <AppNotice v-if="error" class="mt-4" :title="searchUnavailable ? 'Address search is unavailable' : 'Choose another address'" :description="error"><template #actions><AppButton variant="secondary" @click="chooseEntryMode('manual')">Enter address manually</AppButton><AppButton v-if="retrySearch && !widget" variant="quiet" :disabled="loading" @click="startSearch">Try search again</AppButton></template></AppNotice>
         </div>
         <div v-show="entryMode === 'manual' || !!errors.address">
             <label :for="`${id}-address`" class="block text-sm font-semibold">Full business address
@@ -124,7 +155,8 @@ onBeforeUnmount(() => { alive = false; ++selectionVersion; stopFailure?.(); widg
         </div>
         <FieldError :id="`${id}-address-error`" :message="errors.address" />
 
-        <AppButton v-if="modelValue.address && !mapOpen" variant="secondary" @click="showMap">{{ currentPoint ? 'Adjust customer entrance' : 'Add an entrance pin · optional' }}</AppButton>
+        <AppButton v-if="modelValue.address && !mapOpen && !mapsBlocked" variant="secondary" @click="showMap">{{ currentPoint ? 'Adjust customer entrance' : 'Add an entrance pin · optional' }}</AppButton>
+        <AppNotice v-if="mapError && (entryMode !== 'search' || !searchUnavailable)" title="The entrance map is unavailable" :description="mapError" />
         <div v-show="mapOpen"><div ref="canvas" class="h-72 w-full rounded-xl" aria-label="Position your customer entrance" /><p class="mt-2 text-xs leading-5 text-[var(--text-muted)]">Click your entrance or move the pin. Add arrival notes if the entrance is hard to find.</p></div>
         <p v-if="mapOpen" class="text-xs text-[var(--text-muted)]">Keyboard: focus the pin, press Alt/Option + Enter, move with arrow keys, then press Enter.</p>
         <AppButton v-if="mapOpen && currentPoint" variant="quiet" @click="update({ entrance_latitude: '', entrance_longitude: '' }); selectedPoint = null; marker && (marker.map = null); pinNotice = 'Entrance pin removed. Save your location to keep this change.'">Remove entrance pin</AppButton>
@@ -137,3 +169,8 @@ onBeforeUnmount(() => { alive = false; ++selectionVersion; stopFailure?.(); widg
         <p class="text-xs text-[var(--text-muted)]">Google Maps features are subject to <a href="https://maps.google.com/help/terms_maps/" target="_blank" rel="noopener noreferrer" class="underline">Google Maps terms</a> and <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="underline">Google Privacy Policy</a>.</p>
     </div>
 </template>
+
+<style scoped>
+.cd-location-search { color-scheme:light; color:var(--text-default); }
+.cd-location-search :deep(gmp-place-autocomplete) { display:block; min-height:44px; color-scheme:light; background-color:var(--surface-raised); color:var(--text-default); }
+</style>

@@ -20,6 +20,7 @@ import {
     Cog6ToothIcon,
     CreditCardIcon,
     HomeIcon,
+    MapPinIcon,
     QueueListIcon,
     Squares2X2Icon,
     SparklesIcon,
@@ -99,13 +100,14 @@ const navigation = computed(() => {
     { key: 'staff', label: 'Team & availability', href: route('business.team.index', businessRouteParameter.value), icon: UserGroupIcon },
     { key: 'activity', label: 'Activity log', href: route('business.activity.index', businessRouteParameter.value), icon: ClockIcon },
     { key: 'services', label: 'Services', href: route('business.services.index', businessRouteParameter.value), icon: ScissorsIcon },
+    { key: 'locations', featureKey: 'settings', label: 'Locations', href: route('business.locations.index', businessRouteParameter.value), icon: MapPinIcon },
     // Inventory remains implemented internally but is deferred from the menu.
     { key: 'reports', label: 'Reports', href: route('business.reports.index', businessRouteParameter.value), icon: ChartBarIcon },
     { key: 'communications', label: 'Client notifications', href: route('business.communications.page', businessRouteParameter.value), icon: ChatBubbleLeftRightIcon },
     { key: 'settings', label: 'Business setup', href: route('business.configuration.show', businessRouteParameter.value), icon: Cog6ToothIcon },
     { key: 'subscription-billing', label: 'Subscription & billing', href: route('business.billing.show', businessRouteParameter.value), icon: CreditCardIcon },
-    ].filter(item => props.navigationVisibility[item.key] !== false && tenantFeatures.value[item.key]?.visible !== false).map(item => {
-        const feature = tenantFeatures.value[item.key];
+    ].filter(item => props.navigationVisibility[item.featureKey || item.key] !== false && tenantFeatures.value[item.featureKey || item.key]?.visible !== false).map(item => {
+        const feature = tenantFeatures.value[item.featureKey || item.key];
         if (feature?.status === 'upgrade_required' || (item.entitlement && !tenantEntitlements.value[item.entitlement])) {
             return {
                 ...item,
@@ -126,7 +128,7 @@ const navigation = computed(() => {
 
 const primaryMobileNavigation = computed(() => navigation.value.filter(item => ['dashboard', 'calendar', 'walk-in-queue', 'clients'].includes(item.key)));
 const normalizedPath = computed(() => page.url.split('?')[0]);
-const isActive = item => item.badge !== 'Upgrade' && (new URL(item.href, 'http://app.local').pathname === normalizedPath.value || (item.key === 'clients' && normalizedPath.value.startsWith(new URL(item.href, 'http://app.local').pathname + '/')) || (item.key === 'settings' && normalizedPath.value.endsWith('/app/locations')));
+const isActive = item => item.badge !== 'Upgrade' && (new URL(item.href, 'http://app.local').pathname === normalizedPath.value || (item.key === 'clients' && normalizedPath.value.startsWith(new URL(item.href, 'http://app.local').pathname + '/')));
 const currentLabel = computed(() => navigation.value.find(isActive)?.label || props.title || 'Shop application');
 provide('workspaceBreadcrumbs', computed(() => {
     if (!businessRouteParameter.value) return [{ label: 'Account' }];

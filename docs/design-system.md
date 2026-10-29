@@ -417,6 +417,11 @@ touched; this rule is not evidence that every old surface has been migrated.
   failure, honor Retry-After with a visible countdown, and provide a working
   support link plus a safe reference where self-recovery needs an operator.
   Never promise a payment failed unless provider evidence proves that outcome.
+- Distinguish loading, a confirmed empty result and an unavailable result. An
+  unavailable optional photo section must not imply missing customer work or
+  offer a reload known to repeat a platform failure. Keep saved/selected previews,
+  offer reachable support with a safe reference and leave other setup usable
+  (ADR-075). Do not infer a quota failure from a provider authentication denial.
 
 ## Data-heavy and operational surfaces
 
@@ -705,6 +710,18 @@ handling, reply handling, and provider verification are complete.
   a raw reference while token verification is unimplemented.
 - Public copy must state the governing local time zone when time becomes part
   of a workflow.
+
+Under ADR-074, optional salon media uses a real-photo mosaic and accessible
+gallery; no-photo pages use business information and initials. Public team
+cards show only publishable profile fields. Selecting a professional preserves
+the existing booking policy and qualified service/branch rules. The owner image
+editors show saved/local previews and explicit saves, with per-photo editing
+disclosed on demand. Avoid displaying every caption/order/removal control for
+every gallery tile at once. Completed-visit feedback starts with concise visit
+context, rating and optional text; public-display consent is a separate unchecked
+choice. Private feedback, public review, loading, expiry and retry cooldown use
+the shared notice/action contract. See [booking presentation](modules/booking-presentation.md)
+and [client reviews](modules/client-reviews.md).
 
 ### Platform administration
 
@@ -1056,3 +1073,7 @@ updated subscription starts on [date]” for a scheduled change. Avoid customer-
 heading can stand alone; do not add a body that repeats it. Pending payments must
 remain described as pending, never successful. Apply this review to labels,
 notifications, loading/empty/error states, dialogs, public pricing and help copy.
+
+Locations is a direct workspace navigation item alongside Services, sharing
+settings permissions and the existing responsive menu. At the purchased limit,
+the location action reads “Upgrade to add locations” and opens billing.

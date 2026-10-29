@@ -11,12 +11,21 @@ support. It refines PRD Section 11 without fixing premature table names.
 | Identity and access | User, Staff Profile, Membership, Role, Permission, Session, Support Access | Authentication and authorization |
 | Business configuration | Location, Hours, Closure, Resource, Service, Add-on, Staff-Service Assignment, Schedule, Time Off | What can be sold, where, by whom, and when |
 | Client records | Client, Duplicate Candidate, Note, Attachment, Form Template/Version/Request/Submission, Consent, Privacy Request | Durable client identity, protected service context, and consent evidence |
+| Booking presentation and feedback | Business Photo, Staff portrait reference, Client Review | Optional tenant media and one completed-visit review with explicit public-display consent (ADR-074) |
 | Scheduling | Appointment, Service Line, Segment, Status History, Capacity Hold, Queue Entry, Waitlist Entry | Demand, capacity, and operational lifecycle |
 | Sales and payments | Sale, Sale Item, Payment, Deposit Allocation, Refund, Tip, Cash Close | Commercial truth and reconciliation |
 | Inventory and compensation | Product, Inventory Movement, Commission Rule, Commission Entry, Adjustment | Stock and payroll inputs |
 | Operations | Notification, Provider Event, Import Job, Export Job, Audit Event, Feature Flag | Reliable automation and safe support |
 
 ## Core relationship chain
+
+A business may own an ordered, optional gallery. Staff portraits attach to the
+existing Staff Profile; public delivery still checks current visibility. A
+Client Review belongs to one same-business Appointment and optional Client, with
+one review per visit, original consent evidence and a withdrawal timestamp.
+Private feedback is excluded from public counts and summaries. Governed client
+merges preserve the review relationship and privacy exports include the feedback
+and consent evidence. Reviews do not alter appointment or financial history.
 
 A `Business/Tenant` owns one or more `Locations`. A user gains tenant access
 through an explicit membership and may be linked to a `Staff Profile`.

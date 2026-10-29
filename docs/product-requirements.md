@@ -216,6 +216,16 @@ Purpose: Minimise time-to-value and switching friction so a shop can run appoint
 - Configure tax-inclusive or tax-exclusive pricing, default cancellation policy, terms/privacy links and a unique, editable booking-page slug.
 - Preview desktop and mobile booking views before publishing; preserve existing links when a slug changes through redirect or alias.
 
+#### Optional public presentation (user-approved refinement, 2026-10-29)
+
+- Allow an optional, ordered salon photo gallery with captions, and optional team
+  portraits alongside professional titles and biographies. No image is required
+  for setup, publication or booking. A page without photos uses a composed text
+  layout and initials; stock photography must not imply it depicts the business.
+- Reuse the actual public page in private previews. Public images and profiles
+  respect publication, online visibility, active status and tenant boundaries.
+  Only publishable profile fields are returned; private contact details stay private.
+
 #### Setup usability (user-approved refinement, 2026-10-14)
 
 - New Google signup enters “Let’s prepare your business” directly; email signup
@@ -436,6 +446,22 @@ Purpose: Convert demand 24/7 with a low-friction, mobile-first flow that does no
 
 - Use short-lived or revocable secure links to view upcoming appointments, reschedule/cancel within policy, rebook, join/leave waitlist, update contact details and view payment/deposit status.
 - Changes must revalidate availability and policy at commit time and trigger communication plus audit history.
+
+#### Completed-visit reviews (user-approved addition, 2026-10-29; ADR-074)
+
+- After a recorded completed appointment, its secure appointment page offers a
+  1–5 rating and optional detailed feedback without requiring an account. An
+  authorized operator can copy an expiring review link for that visit to share
+  manually. Unfinished, cancelled and no-show appointments cannot be reviewed.
+- Save at most one review per appointment, including safe repeated submissions.
+  Public display is an explicit, optional client choice, off by default. Public
+  reviews show initials, rating, text and review date; omit client contacts,
+  appointment reference and treatment details. Private feedback is available only
+  to appropriately authorized business operators.
+- Public rating totals include every consented review, regardless of rating.
+  Owners cannot fabricate reviews or selectively suppress low ratings. Review
+  outreach is not automatically sent; existing marketing consent and disabled
+  feedback-message rules remain in force. Payment collection is unchanged.
 
 ACCEPTANCE OUTCOME A new client can book from a phone without creating a password, pay a required deposit, receive confirmation and later reschedule or cancel only within the shop's rules.
 
@@ -775,7 +801,7 @@ The following capabilities are valuable and established in mature salon platform
 
 | Theme | Deferred capabilities |
 | --- | --- |
-| Growth and retention | Memberships, packages/prepaid sessions, gift cards, loyalty, referrals, reviews, segmentation, campaigns and advanced automation |
+| Growth and retention | Memberships, packages/prepaid sessions, gift cards, loyalty, referrals, review campaigns/advanced reputation tools (the narrow completed-visit review flow in FR-09 is promoted by ADR-074), segmentation, campaigns and advanced automation |
 | Channels and marketplace | Native customer/staff apps, public discovery marketplace, e-commerce product store and branded white-label apps |
 | Workforce and finance | Advanced payroll, tiered commission, salaries/deductions, statutory payroll, booth-rental settlements and automated payouts |
 | Inventory and procurement | Suppliers, purchase orders, transfers, batch/expiry, backbar consumption and automated reorder |

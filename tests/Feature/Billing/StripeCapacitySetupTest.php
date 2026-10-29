@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Billing\Models\BillingCapacityChange;
 use App\Domain\Billing\Models\BillingCheckoutAttempt;
 use App\Domain\Billing\Models\BillingPlanPrice;
 use App\Domain\Billing\Models\BillingRateCard;
@@ -230,6 +231,70 @@ it('offers ready USD subscriptions to Canadian businesses without changing opera
         $this->actingAs($owner)->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => 'monthly', 'locations' => 1, 'staff' => 1])->assertUnprocessable();
     });
 });
+
+it('keeps approved estimates usable when current local mappings are missing without offering checkout', function (bool $legacyOnly) {
+    withSetupStripe(function ($client) use ($legacyOnly) {
+        $currentMarket = config('capacity-billing.markets.US');
+        if ($legacyOnly) {
+            $legacyMarket = $currentMarket;
+            $legacyMarket['revision'] = '2026-10-11-usd-1';
+            unset($legacyMarket['monthly']['staff_tiers'], $legacyMarket['annual']['staff_tiers']);
+            config(['capacity-billing.markets.US' => $legacyMarket]);
+            $this->artisan('billing:verify-capacity-rates US --provision')->assertSuccessful();
+            config(['capacity-billing.markets.US' => $currentMarket]);
+        }
+        $savedCards = BillingRateCard::orderBy('id')->get()->map->getAttributes()->all();
+        $writes = count($client->writes);
+        [$owner, $business] = createTenantMembership();
+        $business->update(['country_code' => 'CA', 'currency_code' => 'CAD']);
+        activateTestSubscription($business)->update(['status' => 'trialing', 'provider_subscription_id' => null]);
+
+        $this->actingAs($owner)->get(route('business.billing.show', $business))->assertInertia(fn (Assert $page) => $page
+            ->where('billingCountry', 'US')->where('capacityPricing.available', false)
+            ->where('capacityPricing.markets.0.currency', 'USD')->has('capacityPricing.markets', 1)
+            ->where('capacityPricing.markets.0.intervals.monthly.revision', '2026-10-12-progressive-1')
+            ->where('capacityPricing.markets.0.intervals.monthly.base_minor', 2900)
+            ->where('capacityPricing.markets.0.intervals.monthly.staff_tiers.2.unit_minor', 400)
+            ->where('capacityPricing.markets.0.intervals.monthly.preview_only', true)
+            ->where('capacityPricing.markets.0.intervals.monthly.ready', false)
+            ->where('capacityPricing.markets.0.intervals.annual.preview_only', true)
+            ->where('capacityPricing.markets.0.intervals.annual.ready', false));
+        expect(app(CapacityPricingCatalog::class)->present()['markets'])->toBe([]);
+        $this->actingAs($owner)->postJson(route('business.billing.capacity.review', $business), ['market' => 'US', 'billing_interval' => 'monthly', 'locations' => 1, 'staff' => 1])->assertStatus(503);
+        expect(count($client->writes))->toBe($writes)
+            ->and(BillingRateCard::orderBy('id')->get()->map->getAttributes()->all())->toBe($savedCards)
+            ->and(BillingCheckoutAttempt::count())->toBe(0)
+            ->and($business->fresh()->currency_code)->toBe('CAD');
+    });
+})->with(['no verified cards' => false, 'legacy revision only' => true]);
+
+it('does not expose unapproved prices through the owner estimate fallback', function () {
+    config(['capacity-billing.markets.US.approved' => false]);
+    expect(app(CapacityPricingCatalog::class)->forWorkspace())->toMatchArray(['available' => false, 'markets' => []]);
+});
+
+it('keeps saved checkout recovery readiness separate from current pricing availability', function (bool $providerReady) {
+    withSetupStripe(function ($client) use ($providerReady) {
+        $this->artisan('billing:verify-capacity-rates US --provision')->assertSuccessful();
+        [$owner, $business] = createTenantMembership();
+        $subscription = activateTestSubscription($business);
+        $subscription->update(['status' => 'trialing', 'provider_subscription_id' => null]);
+        $quote = app(CapacityPricingCatalog::class)->quote('US', 'monthly', 1, 2);
+        $change = BillingCapacityChange::create(['business_id' => $business->id, 'business_subscription_id' => $subscription->id,
+            'actor_user_id' => $owner->id, 'subscription_version' => $subscription->fresh()->version, 'kind' => 'checkout', 'status' => 'submitted',
+            'quote' => $quote, 'expires_at' => now()->addMinutes(10), 'submitted_at' => now(), 'effective_at' => now()]);
+        config(['capacity-billing.markets.US.revision' => 'unmapped-current-revision',
+            'billing.stripe.secret' => $providerReady ? 'sk_test_setup' : '', 'billing.stripe.webhook_secret' => 'whsec_setup']);
+        $writes = count($client->writes);
+
+        $this->actingAs($owner)->get(route('business.billing.show', [$business, 'section' => 'plan']))->assertInertia(fn (Assert $page) => $page
+            ->where('capacityPricing.available', false)->where('capacityPricing.markets.0.intervals.monthly.preview_only', true)
+            ->where('billingReadiness.secret_configured', $providerReady)->where('billingReadiness.checkout_ready', $providerReady)
+            ->where('capacityRequest.change_id', $change->public_id)->where('capacityRequest.status', 'submitted')
+            ->where('capacityRequest.quote.rate_card_id', $quote['rate_card_id'])->where('capacityRequest.quote.total_minor', 3800));
+        expect($change->fresh()->status)->toBe('submitted')->and(count($client->writes))->toBe($writes);
+    });
+})->with(['ready provider' => true, 'missing credentials' => false]);
 
 it('verifies exact graduated staff bands before installing either rate card', function (string $kind) {
     withSetupStripe(function ($client) use ($kind) {

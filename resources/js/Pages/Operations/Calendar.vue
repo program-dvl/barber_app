@@ -11,6 +11,7 @@ import { computed, nextTick, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import { Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ArrowsPointingOutIcon, BanknotesIcon, ClockIcon, DocumentDuplicateIcon, PencilSquareIcon, PrinterIcon, ScissorsIcon, TrashIcon, UserIcon, ArrowPathIcon, AdjustmentsHorizontalIcon, CalendarDaysIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, CheckCircleIcon, ExclamationTriangleIcon, MagnifyingGlassIcon, PlusIcon, QueueListIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import AppButton from '@/Components/Product/AppButton.vue';
+import AppNotice from '@/Components/Product/AppNotice.vue';
 import AppDialog from '@/Components/Product/AppDialog.vue';
 import FormField from '@/Components/Product/FormField.vue';
 import PhoneInput from '@/Components/Product/PhoneInput.vue';
@@ -40,6 +41,34 @@ const activeEvent = ref(null);
 const detailDialog = ref(null);
 const noShowDialog = ref(null);
 const attentionOpen = ref(false);
+const reviewLink = ref(''), reviewLinkBusy = ref(false), reviewLinkError = ref(''), reviewLinkCopied = ref(false);
+const reviewRetrySeconds = ref(0);
+let reviewRetryTimer;
+let reviewLinkRequestVersion = 0;
+onBeforeUnmount(() => clearInterval(reviewRetryTimer));
+async function copyReviewLink() {
+    if (!activeEvent.value || reviewLinkBusy.value || reviewRetrySeconds.value) return;
+    const appointmentId = activeEvent.value.id, version = ++reviewLinkRequestVersion;
+    reviewLinkBusy.value = true; reviewLinkError.value = ''; reviewLinkCopied.value = false;
+    try {
+        if (!reviewLink.value) {
+            const { data } = await axios.post(route('business.appointments.review-link', [route().params.business, appointmentId]));
+            if (version !== reviewLinkRequestVersion || activeEvent.value?.id !== appointmentId) return;
+            reviewLink.value = data.url;
+        }
+        try { await navigator.clipboard.writeText(reviewLink.value); if (version === reviewLinkRequestVersion) reviewLinkCopied.value = true; }
+        catch { /* The readonly link remains available for manual copy. */ }
+    } catch (error) {
+        if (version !== reviewLinkRequestVersion || activeEvent.value?.id !== appointmentId) return;
+        if (error.response?.status === 429) {
+            reviewLinkError.value = 'Please wait before creating another review link. Your appointment is saved.';
+            const retryAfter = Number(error.response?.headers?.['retry-after']);
+            reviewRetrySeconds.value = Number.isFinite(retryAfter) && retryAfter > 0 ? Math.ceil(retryAfter) : 60;
+            clearInterval(reviewRetryTimer);
+            reviewRetryTimer = setInterval(() => { reviewRetrySeconds.value = Math.max(0, reviewRetrySeconds.value - 1); if (!reviewRetrySeconds.value) clearInterval(reviewRetryTimer); }, 1000);
+        } else reviewLinkError.value = 'The review link could not be created. Your appointment is saved. You can try again or contact ClipperDesk support.';
+    } finally { if (version === reviewLinkRequestVersion) reviewLinkBusy.value = false; }
+}
 const filterMenu = ref(null);
 function closeFilters(event) {
     if(filterMenu.value?.open && !filterMenu.value.contains(event.target) && !event.target.closest('.cd-select-panel')) filterMenu.value.open=false;
@@ -64,6 +93,8 @@ const issues = computed(() => attentionItems(appointments.value,now.value,props.
 ).sort((a,b)=>a.priority-b.priority));
 const attentionCount = computed(() => issues.value.length + props.calendar.counts.walkInsWaiting);
 async function selectAppointment(event) {
+    ++reviewLinkRequestVersion; reviewLinkBusy.value = false;
+    reviewLink.value = ''; reviewLinkError.value = ''; reviewLinkCopied.value = false;
     activeEvent.value = appointments.value.find(e=>e.id===event.id) || event;
     statusForm.clearErrors();
     await detailDialog.value?.open();
@@ -598,6 +629,15 @@ onBeforeUnmount(()=>{clearInterval(ticker);clearInterval(refresher);clearTimeout
             <div v-if="activeEvent.internalNotes" class="cal-detail-note"><strong>Internal note</strong><p>{{ activeEvent.internalNotes }}</p></div>
             <AppButton v-if="activeEvent.clientId && permissions.client" variant="secondary" class="w-full" :href="route('business.clients.show',[route().params.business,activeEvent.clientId])"><UserIcon class="size-4" aria-hidden="true" />View client</AppButton>
             <section v-if="activeEvent.notifications?.length || activeEvent.communicationHistoryUrl" class="cal-notification-context"><div><h3>Client communication</h3><Link v-if="activeEvent.communicationHistoryUrl" :href="activeEvent.communicationHistoryUrl">Delivery history</Link></div><p v-if="!activeEvent.notifications?.length">No recorded appointment notifications.</p><ul v-else><li v-for="(message,index) in activeEvent.notifications" :key="index"><span>{{ message.name }} · {{ message.channel==='sms'?'SMS':'Email' }}</span><strong>{{ deliveryLabel(message) }}</strong></li></ul></section>
+            <section v-if="activeEvent.canManage && activeEvent.status === 'completed'" class="mt-5 space-y-4">
+                <h3 class="text-sm font-semibold">Client feedback</h3>
+                <template v-if="activeEvent.review"><p class="text-sm font-semibold">{{ activeEvent.review.rating }} out of 5 · {{ activeEvent.review.public_consent ? 'Public review' : 'Private feedback' }}</p><p v-if="activeEvent.review.body" class="whitespace-pre-wrap break-words text-sm leading-6">{{ activeEvent.review.body }}</p></template>
+                <p v-else class="text-sm text-[var(--text-muted)]">Invite the client to share their experience. This private link expires in 7 days; no message is sent automatically.</p>
+                <AppNotice v-if="reviewLinkError" tone="error" title="Review link unavailable" :description="reviewLinkError" />
+                <AppNotice v-else-if="reviewLink" tone="success" :title="reviewLinkCopied ? 'Review link copied' : 'Your review link is ready'"><p>Share this link only with this client. It also opens their private appointment details.</p><label class="mt-3 block text-xs font-semibold" for="appointment-review-link">Private review link</label><input id="appointment-review-link" :value="reviewLink" readonly class="cd-input mt-1" @focus="$event.target.select()" /></AppNotice>
+                <p v-if="reviewRetrySeconds" class="text-sm text-[var(--text-muted)]" aria-live="off">You can create another link in {{ reviewRetrySeconds }} seconds.</p>
+                <div class="mt-[14px] flex flex-wrap gap-2.5"><AppButton variant="secondary" :loading="reviewLinkBusy" :disabled="reviewRetrySeconds > 0" @click="copyReviewLink">{{ reviewLink ? 'Copy review link' : 'Create review link' }}</AppButton><a v-if="reviewLinkError" class="min-h-11 inline-flex items-center text-sm underline" href="mailto:support@clipperdesk.com">Contact support</a></div>
+            </section>
             <div v-if="activeEvent.canManage" class="cal-quick-actions">
                 <template v-if="!terminalStatuses.has(activeEvent.status)"><button type="button" @click="reviewAction(()=>openChange(activeEvent))"><ClockIcon aria-hidden="true" />Reschedule</button><button type="button" @click="reviewAction(()=>openChange(activeEvent,'resize'))"><ArrowsPointingOutIcon aria-hidden="true" />Duration</button><button v-if="permissions.reassign" type="button" @click="reviewAction(()=>openChange(activeEvent,'reassign'))"><UserIcon aria-hidden="true" />Change staff</button><button type="button" @click="reviewAction(()=>openChange(activeEvent,'services_changed'))"><ScissorsIcon aria-hidden="true" />Edit services</button></template>
                 <button v-if="permissions.notes" type="button" @click="reviewAction(()=>openNotes(activeEvent))"><PencilSquareIcon aria-hidden="true" />Add note</button><button type="button" @click="reviewAction(()=>openCopy(activeEvent,terminalStatuses.has(activeEvent.status)?'rebook':'duplicate'))"><DocumentDuplicateIcon aria-hidden="true" />{{ terminalStatuses.has(activeEvent.status)?'Rebook':'Duplicate' }}</button>

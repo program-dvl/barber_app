@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Domain\BusinessConfiguration\Services\BusinessPhotoGallery;
+use App\Domain\ClientReviews\Services\ClientReviewService;
 use App\Domain\PlatformAccess\Models\Business;
 
 class BookingPageData
@@ -20,10 +22,12 @@ class BookingPageData
             'logo_url' => filled($business->logo_path) ? $mediaUrl('logo') : null,
             'cover_url' => filled($business->cover_image_path)
                 ? $mediaUrl('cover')
-                : config('business-onboarding.business_types.'.$business->business_type.'.image', '/images/marketing/editorial/product-workday.webp'),
+                : null,
             'cover_alt' => filled($business->cover_image_path)
                 ? $business->name.' booking page cover'
-                : config('business-onboarding.business_types.'.$business->business_type.'.label', 'Appointment business').' workspace atmosphere',
+                : null,
+            'gallery' => app(BusinessPhotoGallery::class)->presentation($business, $privatePreview)['photos'],
+            'reviews' => app(ClientReviewService::class)->publicSummary($business),
         ];
     }
 }

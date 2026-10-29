@@ -31,6 +31,22 @@ updates the legacy business address summary for setup/publication compatibility.
 Business profile links to the canonical location editor instead of asking for a
 second address or a manually assembled map URL. Existing API fields are retained.
 
+ADR-075 fixes the search field/widget to the product's explicit light colour
+scheme, including when the device prefers dark mode. Authentication denial stops
+the current search/map lifecycle and preserves typed or selected address text
+when switching to manual entry. The interface offers that working alternative
+without asking owners to repair provider settings. A denied origin must be
+diagnosed against the exact scheme/host/port; it does not establish a quota
+failure. The [Google deployment guide](../deployment/google-maps.md) records the
+initial local 8027/8000 mismatch and the separate development-key policy. The
+owner-approved local key has now been created with only those two local origins
+and the required Maps JavaScript/Places APIs; the original production key is
+unchanged. The new value is saved in ignored local configuration, with matching
+client/SSR builds verified. A temporary same-origin Chrome probe at port 8000
+successfully showed suggestions and selected/fetched a real address without
+provider errors or saving business/client data. This local key/origin result
+does not certify deployment or the complete reported-account journey.
+
 Settings authority uses `BusinessSetupAccess`: Owner or a settings-capable member
 assigned every branch. Tenant binding, active entitlement checks, duplicate-name
 prevention, business transaction locks, optional revision checks, and audit events
@@ -103,3 +119,10 @@ WhatsApp remains disabled under ADR-041; no messaging scope was promoted.
 
 Verification and remaining certification limits:
 [2026-10-12 audit](../audits/2026-10-12-location-intelligence/README.md).
+
+## Direct workspace access (2026-10-29)
+
+Locations has a dedicated desktop/mobile workspace menu entry beside Services,
+using the existing settings visibility and access rules. Its selected navigation
+state belongs to Locations. Existing paid-limit checks still control Add location;
+at the limit, Upgrade to add locations opens the established billing journey.

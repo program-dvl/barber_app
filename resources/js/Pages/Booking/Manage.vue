@@ -8,6 +8,8 @@ import axios from 'axios';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { LockClosedIcon } from '@heroicons/vue/24/outline';
 import AppButton from '@/Components/Product/AppButton.vue';
+import AppNotice from '@/Components/Product/AppNotice.vue';
+import ClientReviewForm from '@/Components/Booking/ClientReviewForm.vue';
 import FormField from '@/Components/Product/FormField.vue';
 import PhoneInput from '@/Components/Product/PhoneInput.vue';
 import BookingSkeleton from '@/Components/Booking/BookingSkeleton.vue';
@@ -16,7 +18,7 @@ import StatePanel from '@/Components/Product/StatePanel.vue';
 import SurfaceCard from '@/Components/Product/SurfaceCard.vue';
 import PublicBookingLayout from '@/Layouts/PublicBookingLayout.vue';
 
-const props = defineProps({ appointment: Object, actions: Object, purpose: String, actionToken: String, viewUrl: String, activeWaitlists: { type: Array, default: () => [] }, cancellationReasons: { type: Array, default: () => [] } });
+const props = defineProps({ appointment: Object, actions: Object, purpose: String, actionToken: String, viewUrl: String, review: Object, activeWaitlists: { type: Array, default: () => [] }, cancellationReasons: { type: Array, default: () => [] } });
 const page = usePage();
 const localTime = computed(() => props.appointment ? new Intl.DateTimeFormat(undefined, { dateStyle: 'full', timeStyle: 'short', timeZone: props.appointment.time_zone }).format(new Date(props.appointment.starts_at)) : '');
 const money = computed(() => props.appointment ? new Intl.NumberFormat(undefined, { style: 'currency', currency: props.appointment.currency_code }).format(props.appointment.price_minor / 100) : '');
@@ -75,21 +77,14 @@ const leaveWaitlist = entry => useForm({ operation: 'leave', waitlist_request: e
                 <p class="mt-2 text-sm text-[var(--text-muted)]">Reference {{ appointment.reference }}</p>
                 <p class="mt-1 text-xs text-[var(--text-muted)]">Keep this page private on a shared device.</p>
             </header>
-            <p
-                v-if="page.props.flash?.status"
-                class="mt-5 rounded-xl bg-[var(--status-success-soft)] p-4 text-sm font-semibold text-[var(--status-success)]"
-                role="status"
-            >
-                {{ page.props.flash.status }}
-            </p>
-            <p
-                v-if="page.props.errors?.appointment"
-                class="mt-5 rounded-xl bg-[var(--status-danger-soft)] p-4 text-sm text-[var(--status-danger)]"
-                role="alert"
-            >
-                {{ page.props.errors.appointment }}
-            </p>
-            <SurfaceCard class="mt-6" title="Appointment details" :description="sentenceLabel(appointment.status)">
+            <AppNotice v-if="page.props.errors?.appointment" class="mt-5" tone="error" title="Your appointment needs attention" :description="page.props.errors.appointment" />
+            <AppNotice v-else-if="page.props.flash?.status && purpose !== 'review'" class="mt-5" tone="success" title="Your appointment is updated" :description="page.props.flash.status" />
+            <div v-if="purpose === 'review'" class="mt-6 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
+                <p class="text-sm font-semibold text-[var(--text-strong)]">Your completed visit</p>
+                <p class="mt-1 text-sm text-[var(--text-muted)]">{{ localTime }} · {{ appointment.location }}</p>
+                <p v-if="appointment.services.length" class="mt-2 text-sm">{{ appointment.services.join(', ') }}</p>
+            </div>
+            <SurfaceCard v-else class="mt-6" title="Appointment details" :description="sentenceLabel(appointment.status)">
                 <dl class="grid gap-4 text-sm sm:grid-cols-2">
                     <div>
                         <dt class="font-semibold text-[var(--text-muted)]">When</dt>
@@ -115,6 +110,7 @@ const leaveWaitlist = entry => useForm({ operation: 'leave', waitlist_request: e
                 </p>
             </SurfaceCard>
             <AppButton v-if="purpose && viewUrl" class="mt-4" :href="viewUrl" variant="quiet">Back to appointment</AppButton>
+            <ClientReviewForm v-if="purpose === 'review' || (!purpose && (review?.eligible || review?.saved))" :review="review" :action-token="purpose === 'review' ? actionToken : undefined" :review-url="actions?.review" />
             <SurfaceCard v-if="!purpose" class="mt-5" title="What would you like to do?" >
                 <div class="grid gap-3 sm:grid-cols-2">
                     <AppButton v-if="actions.reschedule" :href="actions.reschedule" variant="secondary">Reschedule</AppButton>
@@ -353,7 +349,7 @@ const leaveWaitlist = entry => useForm({ operation: 'leave', waitlist_request: e
                     :description="appointment.deposit_status === 'not_required' ? 'Contact the business for details of any payments or balance due.' : 'This page shows the policy recorded when you booked. Contact the business to confirm payments received or any balance due.'"
                 />
             </SurfaceCard>
-            <SurfaceCard v-else class="mt-5" title="Book this again" description="Choose from the current services, prices and available times.">
+            <SurfaceCard v-else-if="purpose === 'rebook'" class="mt-5" title="Book this again" description="Choose from the current services, prices and available times.">
                 <AppButton class="w-full" :loading="rebookForm.processing" @click="submit(rebookForm)">Start a new booking</AppButton>
             </SurfaceCard>
         </template>

@@ -3,6 +3,7 @@
 namespace App\Domain\PublicBooking\Services;
 
 use App\Domain\BusinessConfiguration\Models\Service;
+use App\Domain\BusinessConfiguration\Services\StaffPhotoService;
 use App\Domain\ClientRecords\Services\ClientIdentityService;
 use App\Domain\MoneyCommerce\Services\DepositPolicyService;
 use App\Domain\PlatformAccess\Models\Business;
@@ -313,7 +314,7 @@ class PublicBookingService
 
     private function catalogData(Business $business, bool $privatePreview = false): array
     {
-        $locations = Location::query()->where('business_id', $business->id)->where('is_active', true)->where('status', 'active')->orderByDesc('is_primary')->orderBy('name')->get();
+        $locations = Location::query()->where('business_id', $business->id)->where('is_active', true)->where('status', 'active')->with('hours')->orderByDesc('is_primary')->orderBy('name')->get();
         $services = Service::query()->where('business_id', $business->id)->where('is_active', true)->where('online_visible', true)->where(fn ($q) => $q->whereNull('effective_from')->orWhere('effective_from', '<=', now()))->where(fn ($q) => $q->whereNull('effective_until')->orWhere('effective_until', '>', now()))->with(['category', 'locations', 'addons'])->get()->sortBy(fn ($s) => sprintf('%05d', $s->category?->display_order ?? 65535).'|'.($s->category?->name ?? '').'|'.$s->kind.'|'.$s->name)->values();
         $staff = StaffProfile::query()->where('business_id', $business->id)->where('status', 'active')->where('online_visible', true)->with(['locations', 'serviceAssignments'])->orderBy('display_name')->get();
 
@@ -323,7 +324,16 @@ class PublicBookingService
                 && $profile->serviceAssignments->contains(fn ($assignment) => $assignment->service_id === $service->id && $assignment->is_active && $assignment->is_qualified && $assignment->online_visible && (! $assignment->effective_from || $assignment->effective_from->lte(now())) && (! $assignment->effective_until || $assignment->effective_until->gt(now()))))))->values();
 
         return [
-            'locations' => $locations->map(fn (Location $location) => [...LocationData::present(LocationData::snapshot($location)), 'today' => CarbonImmutable::now($location->time_zone)->toDateString()]),
+            'locations' => $locations->map(function (Location $location) {
+                $today = CarbonImmutable::now($location->time_zone)->toDateString();
+
+                return [...LocationData::present(LocationData::snapshot($location)), 'today' => $today,
+                    'opening_hours' => $location->hours->filter(fn ($hour) => (! $hour->effective_from || $hour->effective_from->toDateString() <= $today)
+                        && (! $hour->effective_until || $hour->effective_until->toDateString() >= $today))
+                        ->sortBy(fn ($hour) => $hour->day_of_week.'|'.$hour->opens_at)
+                        ->map(fn ($hour) => ['day' => (int) $hour->day_of_week % 7, 'opens_at' => substr($hour->opens_at, 0, 5), 'closes_at' => substr($hour->closes_at, 0, 5)])->values(),
+                ];
+            }),
             'services' => $services->map(fn (Service $service) => [
                 'public_id' => $service->public_id, 'kind' => $service->kind, 'name' => $service->name,
                 'category' => $service->category?->name ?: 'Services',
@@ -345,6 +355,7 @@ class PublicBookingService
             'staff' => $staff->map(fn (StaffProfile $profile) => [
                 'public_id' => $profile->public_id, 'display_name' => $profile->display_name,
                 'title' => $profile->title, 'biography' => $profile->biography,
+                'photo_url' => app(StaffPhotoService::class)->url($business, $profile, $privatePreview),
                 'location_ids' => $profile->locations->pluck('public_id')->all(),
                 'service_ids' => $services->whereIn('id', $profile->serviceAssignments->filter(fn ($a) => $a->is_active && $a->is_qualified && $a->online_visible && (! $a->effective_from || $a->effective_from->lte(now())) && (! $a->effective_until || $a->effective_until->gt(now())))->sortByDesc('effective_from')->unique('service_id')->pluck('service_id'))->pluck('public_id')->all(),
                 'service_variants' => $profile->serviceAssignments->filter(fn ($a) => $a->is_active && $a->is_qualified && $a->online_visible && (! $a->effective_from || $a->effective_from->lte(now())) && (! $a->effective_until || $a->effective_until->gt(now())))->sortByDesc('effective_from')->unique('service_id')->filter(fn ($a) => $services->contains('id', $a->service_id))->map(fn ($a) => ['service' => $services->firstWhere('id', $a->service_id)->public_id, ...$a->only(['price_minor', 'duration_minutes', 'processing_minutes', 'cleanup_minutes'])])->values(),

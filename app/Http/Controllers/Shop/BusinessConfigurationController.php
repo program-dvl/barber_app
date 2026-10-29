@@ -15,6 +15,7 @@ use App\Domain\BusinessConfiguration\Models\ServiceResourceRequirement;
 use App\Domain\BusinessConfiguration\Models\ServiceSegment;
 use App\Domain\BusinessConfiguration\Models\StaffAvailabilityRule;
 use App\Domain\BusinessConfiguration\Models\StaffServiceAssignment;
+use App\Domain\BusinessConfiguration\Services\BrandImageNormalizer;
 use App\Domain\BusinessConfiguration\Services\BusinessSetupAccess;
 use App\Domain\BusinessConfiguration\Services\BusinessSetupProgress;
 use App\Domain\BusinessConfiguration\Services\ConfigurationChangePreviewer;
@@ -38,6 +39,7 @@ use App\Domain\SchedulingOperations\Models\Appointment;
 use App\Http\Controllers\Controller;
 use App\Rules\E164Phone;
 use App\Support\Audit\AuditWriter;
+use App\Support\Files\TenantFilePath;
 use App\Support\Locations\LocationData;
 use App\Support\Regional\CountryCatalog;
 use App\Support\Tenancy\TenantContext;
@@ -47,6 +49,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -312,11 +315,63 @@ class BusinessConfigurationController extends Controller
     {
         $this->authorizePermission(PermissionName::SettingsManage);
         $this->entitlements->authorize($business, 'branding.custom', 'use');
-        $request->validate(['kind' => ['required', Rule::in(['logo', 'cover'])], 'asset' => ['required', 'image', 'mimes:png,jpg,jpeg,webp', 'max:5120']]);
-        $file = $request->file('asset');
-        $this->onboarding->storeBrandAsset($business, $request->string('kind')->toString(), $file->get(), $file->extension());
+        $data = $request->validate(['kind' => ['required', Rule::in(['logo', 'cover'])], 'asset' => ['required', 'image', 'mimes:png,jpg,jpeg,webp', 'max:5120'], 'existing_image' => ['sometimes', 'nullable', 'string', 'max:255']]);
+        $image = app(BrandImageNormalizer::class)->normalize($request->file('asset'), $data['kind']);
+        $path = 'configuration/branding/'.$data['kind'].'-'.hash('sha256', $image['contents']).'.'.$image['extension'];
+        $key = TenantFilePath::private($business, $path);
+        $newFile = false;
+        try {
+            DB::transaction(function () use ($business, $data, $image, $key, &$newFile): void {
+                $locked = Business::query()->lockForUpdate()->findOrFail($business->id);
+                $field = $data['kind'] === 'logo' ? 'logo_path' : 'cover_image_path';
+                if (array_key_exists('existing_image', $data) && ($locked->{$field} ?: null) !== ($data['existing_image'] ?: null)) {
+                    throw ValidationException::withMessages(['existing_image' => 'This image changed in another window. Your chosen image is kept. Refresh the saved images before replacing it.']);
+                }
+                $newFile = $newFile || ! Storage::disk('private')->exists($key);
+                $this->onboarding->storeBrandAsset($locked, $data['kind'], $image['contents'], $image['extension']);
+                if (! Storage::disk('private')->exists($key)) {
+                    throw ValidationException::withMessages(['asset' => 'The image could not be saved. Your existing image is unchanged. Please try again.']);
+                }
+            }, 3);
+        } catch (\Throwable $error) {
+            if ($newFile) {
+                try {
+                    DB::transaction(function () use ($business, $path, $key): void {
+                        $locked = Business::query()->lockForUpdate()->findOrFail($business->id);
+                        if ($locked->logo_path !== $path && $locked->cover_image_path !== $path) {
+                            Storage::disk('private')->delete($key);
+                        }
+                    });
+                } catch (\Throwable $cleanupError) {
+                    report($cleanupError);
+                }
+            }
+            throw $error;
+        }
 
-        return back()->with('status', 'Brand asset saved privately.');
+        return back()->with('status', $data['kind'] === 'logo' ? 'Your logo is saved.' : 'Your booking cover is saved.');
+    }
+
+    public function removeBrandAsset(Request $request, Business $business, string $kind): RedirectResponse
+    {
+        $this->authorizePermission(PermissionName::SettingsManage);
+        abort_unless(in_array($kind, ['logo', 'cover'], true), 404);
+        $data = $request->validate(['existing_image' => ['present', 'nullable', 'string', 'max:255']]);
+        DB::transaction(function () use ($business, $kind, $data): void {
+            $locked = Business::query()->lockForUpdate()->findOrFail($business->id);
+            $field = $kind === 'logo' ? 'logo_path' : 'cover_image_path';
+            if (! filled($locked->{$field})) {
+                return;
+            }
+            if (($locked->{$field} ?: null) !== ($data['existing_image'] ?: null)) {
+                throw ValidationException::withMessages(['existing_image' => 'This image changed in another window. Refresh the saved images before removing it.']);
+            }
+            $before = [$field => $locked->{$field}];
+            $locked->forceFill([$field => null])->save();
+            $this->audit->write('configuration.brand_asset.removed', $locked, target: $locked, before: $before, after: [$field => null]);
+        }, 3);
+
+        return back()->with('status', $kind === 'logo' ? 'Your logo is removed.' : 'Your booking cover is removed.');
     }
 
     public function updatePublicBookingPolicy(Request $request, Business $business): RedirectResponse

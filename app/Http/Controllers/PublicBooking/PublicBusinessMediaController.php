@@ -29,7 +29,7 @@ class PublicBusinessMediaController extends Controller
 
         return response(Storage::disk('private')->get($storedKey), 200, [
             'Content-Type' => $mime,
-            'Cache-Control' => 'public, max-age=31536000, immutable',
+            'Cache-Control' => 'private, no-store',
             'X-Content-Type-Options' => 'nosniff',
         ]);
     }

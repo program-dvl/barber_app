@@ -2,13 +2,14 @@
 
 namespace App\Domain\PublicBooking\Services;
 
+use App\Domain\ClientReviews\Services\ClientReviewService;
 use App\Domain\PublicBooking\Models\PublicAppointmentLink;
 use App\Domain\SchedulingOperations\Models\Appointment;
 use Carbon\CarbonImmutable;
 
 class SecureAppointmentLinkService
 {
-    public const PURPOSES = ['view', 'reschedule', 'cancel', 'rebook', 'contact', 'waitlist', 'payment_status'];
+    public const PURPOSES = ['view', 'reschedule', 'cancel', 'rebook', 'contact', 'waitlist', 'payment_status', 'review'];
 
     /** @return array{token:string,expires_at:string,purpose:string} */
     public function issue(Appointment $appointment, string $purpose, ?CarbonImmutable $expiresAt = null): array
@@ -37,6 +38,7 @@ class SecureAppointmentLinkService
         $link = PublicAppointmentLink::query()->with(['appointment.location', 'appointment.serviceLines.segments'])
             ->where('token_hash', hash('sha256', $token))->first();
         abort_unless($link && hash_equals($link->purpose, $purpose), 404);
+        abort_unless($link->appointment && $link->appointment->business_id === $link->business_id, 404);
         abort_if($link->revoked_at || $link->expires_at->isPast() || ($consume && $link->used_at), 410, 'This secure link has expired. Request a new link from the business.');
         if ($consume) {
             $link->forceFill(['used_at' => now()])->save();
@@ -55,7 +57,13 @@ class SecureAppointmentLinkService
     /** @return array<string, string> */
     public function actionUrls(Appointment $appointment): array
     {
-        return collect(['reschedule', 'cancel', 'rebook', 'contact', 'waitlist', 'payment_status'])
+        $upcoming = ! in_array($appointment->status, ['completed', 'cancelled_by_client', 'cancelled_by_shop', 'no_show', 'rescheduled'], true);
+        $purposes = $upcoming ? ['reschedule', 'cancel', 'rebook', 'contact', 'waitlist', 'payment_status'] : ['rebook', 'payment_status'];
+        if (app(ClientReviewService::class)->eligible($appointment)) {
+            $purposes[] = 'review';
+        }
+
+        return collect($purposes)
             ->mapWithKeys(function (string $purpose) use ($appointment): array {
                 $issued = $this->issue($appointment, $purpose, CarbonImmutable::now()->addMinutes(30));
 

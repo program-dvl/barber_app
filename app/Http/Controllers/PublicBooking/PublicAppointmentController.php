@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\PublicBooking;
 
+use App\Domain\ClientReviews\Services\ClientReviewService;
 use App\Domain\PublicBooking\Models\WaitlistRequest;
 use App\Domain\PublicBooking\Services\AppointmentSelfService;
 use App\Domain\PublicBooking\Services\SecureAppointmentLinkService;
@@ -33,17 +34,40 @@ class PublicAppointmentController extends Controller
 
     public function action(string $token, string $purpose, SecureAppointmentLinkService $links): Response
     {
-        abort_unless(in_array($purpose, ['reschedule', 'cancel', 'rebook', 'contact', 'waitlist', 'payment_status'], true), 404);
+        abort_unless(in_array($purpose, ['reschedule', 'cancel', 'rebook', 'contact', 'waitlist', 'payment_status', 'review'], true), 404);
         $link = $links->resolve($token, $purpose);
 
         return Inertia::render('Booking/Manage', [...$this->payload($link->appointment, []), 'purpose' => $purpose, 'actionToken' => $token, 'viewUrl' => route('public.appointment.view', $links->issue($link->appointment, 'view')['token'])]);
     }
 
-    public function mutate(Request $request, string $token, string $purpose, SecureAppointmentLinkService $links, AppointmentSelfService $selfService, WaitlistService $waitlist): RedirectResponse
+    public function mutate(Request $request, string $token, string $purpose, SecureAppointmentLinkService $links, AppointmentSelfService $selfService, WaitlistService $waitlist): RedirectResponse|JsonResponse
     {
-        abort_unless(in_array($purpose, ['reschedule', 'cancel', 'rebook', 'contact', 'waitlist'], true), 404);
+        abort_unless(in_array($purpose, ['reschedule', 'cancel', 'rebook', 'contact', 'waitlist', 'review'], true), 404);
         $link = $links->resolve($token, $purpose);
         try {
+            if ($purpose === 'review') {
+                $reviews = app(ClientReviewService::class);
+                if ($request->input('operation') === 'withdraw_public_consent') {
+                    $reviews->withdrawPublicConsent($link);
+
+                    if ($request->expectsJson()) {
+                        return response()->json(['review' => $reviews->privatePayload($link->appointment)]);
+                    }
+
+                    return back()->with('status', 'Your feedback is now private. Thank you for sharing your experience.');
+                }
+                $data = $request->validate([
+                    'rating' => ['required', 'integer', 'between:1,5'], 'body' => ['nullable', 'string', 'max:5000'],
+                    'public_consent' => ['required', 'boolean'],
+                ]);
+                $reviews->submit($link, $data);
+
+                if ($request->expectsJson()) {
+                    return response()->json(['review' => $reviews->privatePayload($link->appointment)]);
+                }
+
+                return back()->with('status', 'Thank you. Your feedback is saved.');
+            }
             if ($purpose === 'cancel') {
                 $reasons = collect(config('reference-data.appointment_cancellation_reasons.client', []))->keyBy('value');
                 $data = $request->validate([
@@ -185,6 +209,7 @@ class PublicAppointmentController extends Controller
             'actions' => $actions,
             'activeWaitlists' => $activeWaitlists,
             'cancellationReasons' => config('reference-data.appointment_cancellation_reasons.client', []),
+            'review' => app(ClientReviewService::class)->privatePayload($appointment),
         ];
     }
 

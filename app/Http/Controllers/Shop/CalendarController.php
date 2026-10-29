@@ -5,12 +5,16 @@ namespace App\Http\Controllers\Shop;
 use App\Domain\BusinessConfiguration\Models\Service;
 use App\Domain\ClientRecords\Models\Client;
 use App\Domain\ClientRecords\Services\ClientWorkspaceQuery;
+use App\Domain\ClientReviews\Models\ClientReview;
+use App\Domain\Communications\Services\NotificationWorkspaceQuery;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\PlatformAccess\Models\StaffProfile;
+use App\Domain\PlatformAccess\Services\WorkspaceAccessService;
 use App\Domain\SchedulingOperations\Contracts\CalendarQuery;
 use App\Domain\SchedulingOperations\Data\CalendarFilter;
+use App\Domain\SchedulingOperations\Models\Appointment;
 use App\Domain\SchedulingOperations\Services\CalendarWorkspaceQuery;
 use App\Http\Controllers\Controller;
 use App\Support\Tenancy\TenantContext;
@@ -78,8 +82,12 @@ class CalendarController extends Controller
         $manageOwn = $membership->hasPermissionTo(PermissionName::AppointmentsManageOwn->value, 'web');
         $canNotes = $membership->hasPermissionTo(PermissionName::ClientNotesManage->value, 'web');
         $calendarData = $calendar->calendar(new CalendarFilter($business->id, $location->id, $view, $date, $staffIds, $serviceIds, $statuses));
-        $notifications = app(\App\Domain\Communications\Services\NotificationWorkspaceQuery::class)->appointmentSummary($business, $membership, collect($calendarData['events'])->where('type', 'appointment')->pluck('id')->all());
-        $canCommunications = app(\App\Domain\PlatformAccess\Services\WorkspaceAccessService::class)->decide($business, $membership, 'communications')['allowed'];
+        $visitReviews = ClientReview::query()->where('business_id', $business->id)
+            ->whereIn('appointment_id', Appointment::query()->select('id')->where('business_id', $business->id)
+                ->whereIn('public_id', collect($calendarData['events'])->where('type', 'appointment')->pluck('id')))
+            ->with('appointment:id,public_id')->get()->keyBy('appointment.public_id');
+        $notifications = app(NotificationWorkspaceQuery::class)->appointmentSummary($business, $membership, collect($calendarData['events'])->where('type', 'appointment')->pluck('id')->all());
+        $canCommunications = app(WorkspaceAccessService::class)->decide($business, $membership, 'communications')['allowed'];
         $appointmentStaff = collect($calendarData['events'])->where('type', 'appointment')->flatMap(fn ($event) => collect($event['staff'])->pluck('id'))->unique();
         $displayStaff = $staff->filter(fn ($member) => $member->status === 'active' || $appointmentStaff->contains($member->public_id))->values();
         $missing = $appointmentStaff->diff($staff->pluck('public_id'));
@@ -97,6 +105,8 @@ class CalendarController extends Controller
                 continue;
             }
             $event['canManage'] = $manageAll || ($manageOwn && collect($event['staff'])->contains('id', $membership->staffProfile?->public_id));
+            $visitReview = $event['canManage'] ? $visitReviews->get($event['id']) : null;
+            $event['review'] = $visitReview ? ['rating' => $visitReview->rating, 'body' => $visitReview->body, 'public_consent' => $visitReview->public_consent] : null;
             $event['notifications'] = $notifications[$event['id']] ?? [];
             $event['communicationHistoryUrl'] = $canCommunications ? route('business.communications.page', ['business' => $business->public_id, 'appointment' => $event['id']]) : null;
             if (! $event['canManage']) {

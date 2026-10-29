@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 class ClientMergeService
 {
     private const RELATION_TABLES = [
-        'appointments', 'client_consents', 'client_notes', 'client_form_requests',
+        'appointments', 'client_reviews', 'client_consents', 'client_notes', 'client_form_requests',
         'client_form_submissions', 'client_attachments', 'client_privacy_requests',
         'communication_intents', 'communication_messages', 'communication_action_links', 'communication_suppressions',
         'sales', 'deposits', 'payment_intents',

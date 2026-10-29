@@ -57,6 +57,11 @@ Manual creation reuses exact normalized name/contact matches; different names
 sharing contact information require explicit review before creation. No automatic
 merge occurs. Merge retains selected-survivor versions, a preview, reason and all
 registered appointment, sale, deposit, note, form, file, consent and privacy links.
+Completed-visit reviews follow the surviving client during a reviewed merge;
+their submitted text, initials and public-display choice remain unchanged.
+Privacy exports include the client’s reviews plus original public-display consent
+wording/choice and any withdrawal time. Private/public display never changes the
+right to export the client’s submitted feedback. See [Client reviews](client-reviews.md).
 
 Profile updates require client-manage plus view authorization, expected version
 and a reason. Contact-hidden operators cannot overwrite saved contacts. Contact

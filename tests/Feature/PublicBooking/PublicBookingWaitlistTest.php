@@ -94,6 +94,28 @@ function heldPublicFlow(array $path, string $time = '2026-08-18T10:00:00+05:30')
     return ['flow' => $flow, 'secret' => $started['secret'], 'slot' => $slot];
 }
 
+it('presents a complete no-photo salon with public biographies and local usual hours', function () {
+    $this->withoutVite();
+    config(['inertia.ssr.enabled' => false]);
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-10-29T00:30:21.784321+05:30')->utc());
+    $path = publicBookingPath();
+    $path['staff']->update(['title' => 'Senior stylist', 'biography' => 'Precision cuts and thoughtful consultations.']);
+    LocationHour::query()->create(['business_id' => $path['business']->id, 'location_id' => $path['location']->id,
+        'day_of_week' => 4, 'opens_at' => '19:00', 'closes_at' => '20:00', 'sequence' => 2,
+        'effective_from' => '2026-10-29', 'effective_until' => '2026-10-29']);
+    LocationHour::query()->create(['business_id' => $path['business']->id, 'location_id' => $path['location']->id,
+        'day_of_week' => 4, 'opens_at' => '21:00', 'closes_at' => '22:00', 'sequence' => 3, 'effective_from' => '2026-10-30']);
+    $catalog = app(PublicBookingService::class)->catalog($path['business']);
+    expect($catalog['locations'][0]['today'])->toBe('2026-10-29')
+        ->and(collect($catalog['locations'][0]['opening_hours'])->where('day', 0)->count())->toBe(1)
+        ->and(collect($catalog['locations'][0]['opening_hours'])->pluck('opens_at'))->toContain('19:00')->not->toContain('21:00')
+        ->and($catalog['staff'][0])->toMatchArray(['title' => 'Senior stylist', 'biography' => 'Precision cuts and thoughtful consultations.', 'photo_url' => null])
+        ->and($catalog['staff'][0])->not->toHaveKeys(['email', 'mobile', 'photo_path']);
+    $this->get(route('booking.business.fallback', $path['business']->booking_slug))->assertOk()
+        ->assertInertia(fn (Assert $page) => $page->where('business.cover_url', null)->where('business.has_cover_image', false)
+            ->where('business.gallery', [])->where('business.reviews.count', 0)->where('business.reviews.average', null));
+});
+
 it('books passwordlessly through one shared hold and commit engine with policy and conversion evidence', function () {
     CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-12 09:00', 'Asia/Kolkata')->utc());
     $path = publicBookingPath();

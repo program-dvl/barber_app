@@ -1,9 +1,12 @@
 # Subscription & Billing
 
-Updated: 2026-10-28. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
+Updated: 2026-10-29. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
 [FR-13](../product-requirements.md#fr-13-notifications-and-communication),
 FR-19, FR-20 and [PRD §9](../product-requirements.md#9-subscription-packaging-and-commercial-rules).
 See ADR-029/038/041/054/056/057/061/063/068/069/071/072 and `../stripe-billing.md`.
+
+ADR-075 clarifies authenticated estimate visibility without changing purchase
+authority; see below.
 
 ## Approved pricing contract
 
@@ -56,6 +59,17 @@ subscription version, immutable rate, fixed proration date, expiry and target
 quantities. Owners confirm the exact review. Payment responses and URL flags do
 not grant access. Provider state must be verified by signed webhooks or an
 owner-authorized provider read; stale events cannot overwrite newer state.
+
+Signed-in owners may view approved current software estimates while current
+Stripe mappings are unavailable. The estimate remains non-binding and purchase
+actions explain their unavailable state. This does not publish unverified rates
+through the public catalogue, enable review/checkout without verified current
+cards, or substitute retained older terms for current terms. Standard billing
+visits still make no provider calls. The local recovery created and verified two
+current monthly/annual cards against six test Prices while preserving two older
+cards; it did not migrate paid customers, charge anyone or certify live billing.
+[Setup recovery evidence](../audits/2026-10-29-setup-recovery/README.md) records the
+environment and remaining deployment limits.
 
 New purchases use three licensed recurring Stripe items, omitting zero addons.
 The staff Price is graduated with additional-staff bounds 4/9/infinity and unit

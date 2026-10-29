@@ -2,6 +2,7 @@
 
 namespace App\Domain\SchedulingOperations\Services;
 
+use App\Domain\BusinessConfiguration\Services\StaffPhotoService;
 use App\Domain\BusinessConfiguration\Services\StaffWorkforceManager;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class TeamWorkspaceQuery
 {
-    public function __construct(private readonly CalendarWorkspaceQuery $calendar, private readonly StaffWorkforceManager $schedules) {}
+    public function __construct(private readonly CalendarWorkspaceQuery $calendar, private readonly StaffWorkforceManager $schedules, private readonly StaffPhotoService $photos) {}
 
     public function build(Request $request, Business $business, Membership $actor): array
     {
@@ -62,7 +63,7 @@ class TeamWorkspaceQuery
             }
             unset($d);
         }
-        $staffData = $staff->map(function ($person) use ($actor, $manage, $locations, $appointments, $overdue, $calendarAllowed, $date) {
+        $staffData = $staff->map(function ($person) use ($actor, $business, $manage, $locations, $appointments, $overdue, $calendarAllowed, $date) {
             $editable = $manage && ($actor->hasRole('owner', 'web') || $person->locations->pluck('id')->diff($locations->pluck('id'))->isEmpty());
             $currentAssignments = $person->serviceAssignments->filter(fn ($a) => $a->is_active && (! $a->effective_from || $a->effective_from->lte(now())) && (! $a->effective_until || $a->effective_until->gt(now())))->sortByDesc('effective_from')->unique('service_id');
             $own = $person->membership_id === $actor->id;
@@ -72,6 +73,7 @@ class TeamWorkspaceQuery
                 ...$person->only(['public_id', 'display_name', 'title', 'status', 'online_visible']),
                 'contact_visible' => $manage || $own, 'email' => $manage || $own ? $person->email : null, 'mobile' => $manage || $own ? $person->mobile : null,
                 'biography' => $person->biography, 'can_edit' => $editable,
+                'photo_url' => $this->photos->teamUrl($business, $person),
                 'revision' => $editable ? $this->schedules->revision($person) : null,
                 'profile_revision' => $editable ? $this->schedules->profileRevision($person) : null,
                 'services_revision' => $editable ? $this->schedules->servicesRevision($person) : null,

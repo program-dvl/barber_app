@@ -51,6 +51,22 @@ changes produce existing Activity events; navigation and review clicks do not.
 
 ## UX and evidence
 
+ADR-074 adds optional salon photos and explicit logo/cover previews/saves. Owners
+edit one photo at a time and can return without losing drafts. Image selection
+does not upload automatically, and no photo is a readiness requirement. Saved
+media and private previews reuse existing settings authority. See
+[booking presentation](booking-presentation.md) and its dated local evidence.
+
+ADR-075 places **Photos & branding** directly in setup navigation, alongside the
+existing operational sections. It remains optional and never reduces readiness
+or blocks appointments/publication. Saved images and selected previews make
+explicit save/remove actions understandable without technical setup knowledge.
+Gallery loading, empty and unavailable states are distinct. Infrastructure
+failures retain setup work, stop ineffective retries and offer support with a
+safe reference; a missing gallery table is not an empty gallery. Source updates
+require the matching additive photo/review migrations before using the new
+public/preview projection. See the [setup recovery audit](../audits/2026-10-29-setup-recovery/README.md).
+
 Setup remains accessible after completion. Required and optional work are separated;
 online states distinguish not published, ready to publish, paused and live. Profile
 groups use progressive disclosure, explicit save and dirty-navigation protection.

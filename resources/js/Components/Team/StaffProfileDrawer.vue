@@ -8,11 +8,14 @@ import AppButton from '@/Components/Product/AppButton.vue';
 import PhoneInput from '@/Components/Product/PhoneInput.vue';
 import SearchField from '@/Components/Product/SearchField.vue';
 import AccessPanel from './AccessPanel.vue';
-import { dayNames, isTimeOff, ruleLabel, staffDay, shiftRules, durationLabel, initialName, localDate, tabKey } from '@/Support/teamWorkspace';
+import StaffAvatar from './StaffAvatar.vue';
+import StaffPhotoEditor from './StaffPhotoEditor.vue';
+import { dayNames, isTimeOff, ruleLabel, staffDay, shiftRules, durationLabel, localDate, tabKey } from '@/Support/teamWorkspace';
 import { parseMoney, moneyInput } from '@/Support/checkoutWorkspace';
 const props=defineProps({business:Object,staff:Array,locations:Array,services:Array,schedule:Object,upcomingSchedule:Object,date:String,location:Object,now:Number,can:Object,roles:Array,modules:Array,grantable:Array,canManageOwners:Boolean,updatedAt:String,invitations:Array});
 const emit=defineEmits(['close','saved','refresh']);
 const dialog=ref(null), selectedId=ref(null), tab=ref('overview'), profileEditing=ref(false), accessDirty=ref(false), accessBusy=ref(false), discardWanted=ref(null);
+const photoDirty=ref(false), photoBusy=ref(false), photoEditor=ref(null);
 const invitation=computed(()=>props.invitations?.find(i=>i.staff_id===selectedId.value));
 const person=computed(()=>props.staff.find(p=>p.public_id===selectedId.value));
 const today=computed(()=>localDate(props.now,props.location?.time_zone || props.business.time_zone));
@@ -27,7 +30,7 @@ const dayLabel=date=>new Intl.DateTimeFormat(undefined,{weekday:'short',month:'s
 const fraction=currency=>10**new Intl.NumberFormat(undefined,{style:'currency',currency:currency || props.business.currency_code}).resolvedOptions().maximumFractionDigits;
 const money=(value,currency)=>new Intl.NumberFormat(undefined,{style:'currency',currency:currency || props.business.currency_code}).format(value/fraction(currency));
 const calendarUrl=(date=props.date,appointment=null)=>route('business.calendar',{business:props.business.public_id,location:props.location?.public_id,date,staff:[selectedId.value],...(appointment?{appointment}:{}),view:'staff'});
-const profile=useForm({display_name:'',title:'',email:'',mobile:'',biography:'',status:'active',online_visible:true,location_ids:[],profile_revision:'',reason:''});
+const profile=useForm({display_name:'',title:'',email:'',mobile:'',biography:'',status:'active',online_visible:true,location_ids:[],profile_revision:''});
 const scheduleForm=useForm({rules:[],revision:'',impact_preview_id:'',impact_reason:''});
 const serviceForm=useForm({assignments:[],services_revision:'',reason:''});
 const reviewing=ref(false), review=ref(null), reviewError=ref(''), retained=ref(false), hoursAcknowledged=ref(false), saving=ref(false);
@@ -37,15 +40,16 @@ const exception=ref({kind:'leave',recurrence:'dated',location_id:null,day_of_wee
 let reviewAbort, reviewGeneration=0;
 const scheduleDirty=computed(()=>scheduleForm.isDirty && JSON.stringify(scheduleForm.rules)!==scheduleOriginal.value);
 const scheduleOriginal=ref('[]');
-const dirty=computed(()=>Object.keys(priceErrors.value).length>0 || showException.value || profile.isDirty || scheduleDirty.value || serviceForm.isDirty || accessDirty.value);
-const busy=computed(()=>accessBusy.value || profile.processing || scheduleForm.processing || serviceForm.processing || reviewing.value || saving.value);
+const dirty=computed(()=>photoDirty.value || Object.keys(priceErrors.value).length>0 || showException.value || profile.isDirty || scheduleDirty.value || serviceForm.isDirty || accessDirty.value);
+const busy=computed(()=>photoBusy.value || accessBusy.value || profile.processing || scheduleForm.processing || serviceForm.processing || reviewing.value || saving.value);
 const reset=()=>{
  if(!person.value)return;
+ photoEditor.value?.discard();
  const p=person.value;
- profile.defaults({display_name:p.display_name,title:p.title || '',email:p.email || '',mobile:p.mobile || '',biography:p.biography || '',status:p.status,online_visible:p.online_visible,location_ids:p.locations.map(l=>l.public_id),profile_revision:p.profile_revision,reason:''});profile.reset();profile.clearErrors();
+ profile.defaults({display_name:p.display_name,title:p.title || '',email:p.email || '',mobile:p.mobile || '',biography:p.biography || '',status:p.status,online_visible:p.online_visible,location_ids:p.locations.map(l=>l.public_id),profile_revision:p.profile_revision});profile.reset();profile.clearErrors();
  scheduleForm.defaults({rules:JSON.parse(JSON.stringify(p.availability.filter(r=>!r.ends_on || r.ends_on>=localDate(props.now,props.locations.find(l=>l.id===r.location_id)?.time_zone || props.business.time_zone)))),revision:p.revision,impact_preview_id:'',impact_reason:''});scheduleForm.reset();scheduleForm.clearErrors();scheduleOriginal.value=JSON.stringify(scheduleForm.rules);
  serviceForm.defaults({assignments:p.services.map(s=>({service:s.public_id,is_qualified:s.is_qualified,online_visible:s.online_visible,duration_minutes:s.duration_override,price_minor:s.price_override})),services_revision:p.services_revision,reason:''});serviceForm.reset();serviceForm.clearErrors();
- priceDrafts.value={};priceErrors.value={};review.value=null;reviewError.value='';retained.value=false;hoursAcknowledged.value=false;showException.value=false;accessDirty.value=false;accessBusy.value=false;discardWanted.value=null;profileEditing.value=false;serviceSearch.value='';
+ priceDrafts.value={};priceErrors.value={};review.value=null;reviewError.value='';retained.value=false;hoursAcknowledged.value=false;showException.value=false;accessDirty.value=false;accessBusy.value=false;photoDirty.value=false;photoBusy.value=false;discardWanted.value=null;profileEditing.value=false;serviceSearch.value='';
 };
 const close=()=>{if(busy.value)return false;if(dirty.value){discardWanted.value={kind:'close'};nextTick(()=>document.querySelector('.tm-confirm-unsaved')?.scrollIntoView({block:'center'}));return false;}emit('close');return true;};
 const requestTab=target=>{if(busy.value)return;if(dirty.value){discardWanted.value={kind:'tab',tab:target};nextTick(()=>document.querySelector('.tm-confirm-unsaved')?.scrollIntoView({block:'center'}));return;}tab.value=target;nextTick(()=>document.querySelector('dialog[open] .cd-dialog-body')?.scrollTo({top:0}));};
@@ -109,20 +113,21 @@ watch(selectedId,()=>{statement.value=null;statementError.value='';});
 <template>
  <AppDialog ref="dialog" class="tm-drawer" drawer title="Staff profile" description="Working profile, schedule and capabilities." :can-close="close">
   <template v-if="person">
-   <div class="tm-profile-heading"><span class="tm-avatar" aria-hidden="true">{{ initialName(person.display_name) }}</span><div class="min-w-0"><strong>{{ person.display_name }}</strong><p>{{ person.title || 'Team member' }} · {{ person.locations.map(l=>l.name).join(' · ') || 'No branch assigned' }}</p></div></div>
+   <div class="tm-profile-heading"><StaffAvatar :name="person.display_name" :photo-url="person.photo_url" /><div class="min-w-0"><strong>{{ person.display_name }}</strong><p>{{ person.title || 'Team member' }} · {{ person.locations.map(l=>l.name).join(' · ') || 'No branch assigned' }}</p></div></div>
    <div class="tm-profile-actions"><AppButton v-if="stale" variant="secondary" size="small" :disabled="dirty || busy" @click="emit('refresh')">Refresh availability</AppButton><AppButton v-if="can.calendar" @click="navigate(calendarUrl())" variant="secondary" size="small"><CalendarDaysIcon class="size-4" />View calendar</AppButton><AppButton v-if="person.can_edit" variant="quiet" size="small" @click="requestTab('schedule')">Edit schedule</AppButton><AppButton v-if="person.can_edit" variant="quiet" size="small" @click="requestTab('schedule'); if(tab==='schedule')openException('leave')">Add time off</AppButton></div>
    <div class="tm-tabs tm-profile-tabs" role="tablist" aria-label="Staff profile sections"><button v-for="section in profileTabs" :id="`profile-tab-${section}`" :key="section" type="button" role="tab" :aria-selected="tab===section" :tabindex="tab===section?0:-1" @keydown="tabKey($event,profileTabs,tab,requestTab,'profile-tab-')" :aria-controls="`profile-panel-${section}`" @click="requestTab(section)">{{ {overview:'Overview',schedule:'Schedule',services:'Services',access:'Access'}[section] }}</button></div>
    <div class="tm-profile-content" :id="`profile-panel-${tab}`" role="tabpanel" :aria-labelledby="`profile-tab-${tab}`">
     <div v-if="discardWanted" class="tm-confirm-unsaved" role="alert"><span>You have unsaved changes.</span><button type="button" @click="discardWanted=null">Keep editing</button><button type="button" @click="discard">Discard changes</button></div>
     <template v-if="tab==='overview'">
      <div class="tm-summary-grid"><div><strong class="tm-small-value"><span :class="['tm-status',`tm-state-${state.state}`]"><i class="tm-dot" />{{ stale && date===today?'Needs refresh':state.label }}</span></strong><span>{{ state.until?'Until '+time(state.until):props.date===today?'Right now':dayLabel(date) }}</span></div><div><strong>{{ durationLabel(state.bookedMinutes) }}</strong><span>Reserved / {{ durationLabel(state.scheduledMinutes) }} bookable</span></div><div><strong>{{ state.scheduledMinutes ? state.utilization+'%' : '—' }}</strong><span>Staff time reserved</span></div></div>
-     <h3>Working profile <button v-if="person.can_edit && !profileEditing" type="button" @click="profileEditing=true">Edit profile</button></h3>
+     <details v-if="person.can_edit" class="mb-4"><summary class="min-h-11 cursor-pointer py-3 text-sm font-semibold">{{ person.photo_url ? 'Change profile photo' : 'Add profile photo (optional)' }}</summary><StaffPhotoEditor ref="photoEditor" :business="business" :person="person" :support-email="$page.props.brand?.support_email" :disabled="profileEditing || (busy && !photoBusy)" @dirty="photoDirty=$event" @busy="photoBusy=$event" @saved="saved" @refresh="emit('refresh')" /></details>
+     <h3>Working profile <button v-if="person.can_edit && !profileEditing" type="button" :disabled="photoDirty || photoBusy" @click="profileEditing=true">Edit profile</button></h3>
      <form v-if="profileEditing" @submit.prevent="saveProfile" class="tm-field-grid">
       <label>Name<input v-model="profile.display_name" :aria-invalid="!!profile.errors.display_name" required maxlength="255" class="cd-input" /></label><label>Professional title<input v-model="profile.title" :aria-invalid="!!profile.errors.title" maxlength="120" class="cd-input" /></label>
       <label>Email<input v-model="profile.email" :aria-invalid="!!profile.errors.email" type="email" :disabled="!!person.membership" class="cd-input" /></label><label for="staff-profile-mobile">Mobile<PhoneInput id="staff-profile-mobile" v-model="profile.mobile" :country="business.country_code" class="mt-1.5" /></label>
       <label>Employment status<AppSelect v-model="profile.status" :aria-invalid="!!profile.errors.status" class="cd-input"><option value="active">Active / bookable</option><option value="inactive">Inactive / not bookable</option></AppSelect></label><label class="tm-check"><input v-model="profile.online_visible" type="checkbox" />Clients can choose them online</label>
       <fieldset class="full"><legend class="tm-block-label">Branches they work at</legend><label v-for="l in locations" :key="l.public_id" class="tm-check"><input v-model="profile.location_ids" type="checkbox" :value="l.public_id" />{{ l.name }}</label></fieldset>
-      <label class="full">Biography <span class="tm-meta">optional</span><textarea v-model="profile.biography" :aria-invalid="!!profile.errors.biography" class="cd-input" rows="2" maxlength="2000" /></label><label class="full">Reason for status or branch change<textarea v-model="profile.reason" :aria-invalid="!!profile.errors.reason" rows="2" class="cd-input" placeholder="Required when existing appointments are affected" /></label>
+      <label class="full">About this professional <span class="tm-meta">optional · shown on your booking page</span><textarea v-model="profile.biography" :aria-invalid="!!profile.errors.biography" class="cd-input" rows="3" maxlength="2000" placeholder="Share their experience, specialties and approach to client care." /></label>
       <p v-if="profile.status==='inactive'" class="tm-meta full">This removes future bookability. Existing visits stay visible and login access is managed separately.</p><div v-if="Object.keys(profile.errors).length" class="tm-error full" role="alert"><p v-for="(e,k) in profile.errors" :key="k">{{ e }}</p></div><AppButton type="submit" :disabled="profile.processing" class="full">Save profile</AppButton>
      </form>
      <div v-else class="tm-field-grid"><div v-if="person.contact_visible"><p class="tm-meta">Contact</p><p class="text-xs mt-1 break-all">{{ person.email || 'No email recorded' }}</p><p v-if="person.mobile" class="text-xs mt-1">{{ person.mobile }}</p></div><div><p class="tm-meta">{{ dayLabel(date) }} · shift</p><p class="tm-shift mt-1">{{ currentShift.map(r=>`${clock(r.starts_at)}–${clock(r.ends_at)}`).join(' · ') || 'No working hours set' }}</p><p class="tm-meta">{{ person.status==='active'?'Active team member':'Inactive team member' }} · {{ person.online_visible?'Visible online':'Hidden online' }}</p></div><p v-if="person.biography" class="tm-meta full">{{ person.biography }}</p></div>

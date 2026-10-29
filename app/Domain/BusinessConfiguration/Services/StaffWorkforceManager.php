@@ -23,7 +23,7 @@ class StaffWorkforceManager
 
     public function profileRevision(StaffProfile $staff): string
     {
-        return hash('sha256', json_encode([$staff->only(['display_name', 'title', 'email', 'mobile', 'biography', 'status', 'online_visible']), $staff->locations->pluck('id')->sort()->values()->all()], JSON_THROW_ON_ERROR));
+        return hash('sha256', json_encode([$staff->only(['display_name', 'title', 'email', 'mobile', 'biography', 'photo_path', 'status', 'online_visible']), $staff->locations->pluck('id')->sort()->values()->all()], JSON_THROW_ON_ERROR));
     }
 
     public function servicesRevision(StaffProfile $staff): string

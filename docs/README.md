@@ -49,6 +49,8 @@ exists.
 | `quality-and-testing.md` | Quality attributes, testing strategy, and release evidence | Quality gate or test strategy change |
 | `deployment/public-booking.md` | Primary booking host, fallback, migration and infrastructure verification | Booking routing or deployment changes |
 | `public-booking-journey.md` | Implemented public flow, secure-link, waitlist, failure, and placeholder contract | Public booking, communications, or payment coordination change |
+| `modules/booking-presentation.md` | Optional salon gallery, portraits, owner image previews and public page presentation | Public salon or owner media workflow change |
+| `modules/client-reviews.md` | Completed-visit private feedback, public consent and secure review links | Reviews, consent, public projection or owner feedback change |
 | `roadmap.md` | Dependency-aware delivery sequence and prompt map | Stage ordering or scope change |
 | `decisions.md` | Accepted decisions and unresolved choices | Any durable decision |
 | `01-FRESHA-COMPETITIVE-GAP-ANALYSIS.md` through `05-IMPLEMENTATION-MASTER-PLAN.md` | Evidence-based 24–36 month competitive strategy, ecosystem, UX, and engineering blueprint; proposals do not override the approved PRD or accepted decisions | Material benchmark, strategy, sequencing, or future-scope change |

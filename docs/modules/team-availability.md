@@ -17,6 +17,16 @@ may manage all. Reception with calendar-all permission reads assigned-branch
 coverage; calendar-own staff read only their linked profile. Read-only consumers
 receive neither private leave reasons nor login/permission configuration.
 
+## Optional public profile presentation (2026-10-29; ADR-074)
+
+The directory and profile drawer show the saved portrait, or initials if absent.
+Add/change photo opens on demand in Overview so photo setup does not interrupt
+daily scheduling. Optional portrait editing uses the same manager/branch scope
+and profile revision. Existing professional title and biography are the public
+experience line and full profile; no new employee/experience claims are invented.
+Public and private-preview photo delivery are separate authorized routes. See
+[booking presentation](booking-presentation.md) for formats, versioning and limits.
+
 ## Shared scheduling truth
 
 Weekly coverage and daily gaps use CalendarWorkspaceQuery and the existing
@@ -61,6 +71,13 @@ Active holds protect deactivation, branch removal and qualification removal.
 Future-effective service variants are preserved and block current-only editing
 until their dated configurations are resolved. Work branches and login-access
 branches are independently managed; changing one never synchronizes the other.
+
+ADR-075 removes the manual reason field for ordinary profile status/work-branch
+edits. Existing visits are retained, and applied edits automatically audit the
+actor, before/after profile and branches, plus retained appointment IDs. Tenant,
+branch scope, revision and active-hold guards remain authoritative. This does not
+remove the reason for retained schedule conflicts or for removing qualifications
+used by future appointments; those commands retain their existing review rules.
 
 Services are searchable by category and support the existing staff duration,
 price and online visibility variants. Current assignments are versioned for

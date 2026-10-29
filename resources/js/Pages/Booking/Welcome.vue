@@ -13,6 +13,10 @@ import AppButton from '@/Components/Product/AppButton.vue';
 import FormField from '@/Components/Product/FormField.vue';
 import PhoneInput from '@/Components/Product/PhoneInput.vue';
 import BookingSkeleton from '@/Components/Booking/BookingSkeleton.vue';
+import SalonShowcase from '@/Components/Booking/SalonShowcase.vue';
+import ProfessionalCards from '@/Components/Booking/ProfessionalCards.vue';
+import ClientReviewsSection from '@/Components/Booking/ClientReviewsSection.vue';
+import AppNotice from '@/Components/Product/AppNotice.vue';
 import PublicBookingLayout from '@/Layouts/PublicBookingLayout.vue';
 
 const props = defineProps({ business: Object, catalog: Object, preview: Boolean });
@@ -22,6 +26,7 @@ const flow = ref(null), secret = ref(null), expiresAt = ref(null), held = ref(nu
 const selection = ref({ location: props.catalog?.locations?.[0]?.public_id || '', services: [], staff: '', date: props.catalog?.locations?.[0]?.today || '', client_eligibility: 'auto' });
 const searchText = ref(''), category = ref('All'), slots = ref([]), waitlistOpen = ref(false), waitlistSaved = ref(false);
 const detailsChecked = ref(false);
+const retryAt = ref(0);
 const details = ref({ client_name: '', client_mobile: '', client_email: '', client_date_of_birth: '', referral_source: '', special_request: '', communication_preferences: ['email'], marketing_opt_in: false, policy_accepted: false });
 const waitlist = ref({ client_name: '', client_mobile: '', client_email: '', acceptable_from: '', acceptable_until: '', time_from: '09:00', time_until: '18:00', notification_method: 'email', notes: '' });
 const location = computed(() => props.catalog?.locations.find(item => item.public_id === selection.value.location));
@@ -35,6 +40,11 @@ const timeLabel = value => new Intl.DateTimeFormat(undefined, { hour: 'numeric',
 const fullTime = value => new Intl.DateTimeFormat(undefined, { dateStyle: 'full', timeStyle: 'short', timeZone: zone.value }).format(new Date(value));
 const money = (minor, code = currency.value) => new Intl.NumberFormat(undefined, { style: 'currency', currency: code }).format((minor || 0) / 100);
 const eligibleStaff = computed(() => (props.catalog?.staff || []).filter(member => member.location_ids.includes(selection.value.location) && selection.value.services.every(id => member.service_ids.includes(id))));
+const branchTeam = computed(() => (props.catalog?.staff || []).filter(member => member.location_ids.includes(selection.value.location) && member.service_ids.length));
+const totalEstimate = computed(() => selectedServices.value.reduce((sum, item) => sum + estimate(item).price_minor, 0));
+const usualDays = [1, 2, 3, 4, 5, 6, 0];
+const weekDay = day => new Intl.DateTimeFormat(undefined, { weekday: 'long', timeZone: 'UTC' }).format(new Date(Date.UTC(2026, 9, 25 + day)));
+const openingTime = time => new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' }).format(new Date(`2026-10-25T${time.slice(0, 5)}:00Z`));
 const availableServices = computed(() => (props.catalog?.services || []).filter(item => ['new', 'existing'].some(kind => eligibleService(item, kind, props.catalog.policy)) && item.location_ids.includes(selection.value.location) && props.catalog.staff.some(member => member.location_ids.includes(selection.value.location) && member.service_ids.includes(item.public_id))));
 const allowedAddon = item => item.kind !== 'addon' || selectedServices.value.some(parent => parent.addon_ids?.includes(item.public_id));
 const categories = computed(() => ['All', ...new Set(availableServices.value.filter(allowedAddon).map(item => item.category))]);
@@ -47,7 +57,7 @@ const priceLabel = item => {
     return `${item.price_type === 'from' || amounts.some(amount => amount !== low) ? 'From ' : ''}${money(low, item.currency_code)}`;
 };
 const duration = computed(() => selectedServices.value.reduce((sum, item) => sum + estimate(item).visit_minutes, 0));
-const canContinue = computed(() => !props.preview && selection.value.services.length > 0 && !busy.value && !restoring.value);
+const canContinue = computed(() => !props.preview && selection.value.services.length > 0 && !busy.value && !restoring.value && !retrySeconds.value);
 const needsStaff = computed(() => props.catalog?.policy.online_staff_preference === 'preferred_required');
 const canSearch = computed(() => canContinue.value && selection.value.date >= today.value && selection.value.date <= lastDate.value && (!needsStaff.value || selection.value.staff));
 const groups = computed(() => slotGroups(slots.value, zone.value));
@@ -70,7 +80,13 @@ const remember = () => safeWrite(storageKey.value, { ...credentials(), expires_a
 const go = async value => { step.value = value; error.value = ''; fieldErrors.value = {}; await nextTick(); document.querySelector('#booking-heading')?.focus(); window.scrollTo({ top: 0 }); };
 const reportError = async (requestError, fallback) => {
     fieldErrors.value = requestError.response?.data?.errors || {};
-    error.value = fieldErrors.value.booking?.[0] || fieldErrors.value.services?.[0] || (Object.keys(fieldErrors.value).length ? 'Check the highlighted fields.' : requestError.response?.status === 429 ? 'Please wait a moment, then try again.' : requestError.response?.data?.message || fallback);
+    if (requestError.response?.status === 429) {
+        const header = requestError.response.headers?.['retry-after'];
+        const seconds = Number(header);
+        retryAt.value = Date.now() + (Number.isFinite(seconds) && seconds > 0 ? Math.min(seconds, 3600) * 1000 : Math.max(1000, Date.parse(header) - Date.now()) || 60000);
+        clock.value = Date.now();
+    }
+    error.value = fieldErrors.value.booking?.[0] || fieldErrors.value.services?.[0] || (Object.keys(fieldErrors.value).length ? 'Check the highlighted fields. Your other details are kept.' : requestError.response?.status === 429 ? 'Your choices are kept. Give booking a moment before trying again.' : fallback);
     await nextTick(); document.querySelector('[aria-invalid="true"]')?.focus();
 };
 let startingFlow;
@@ -110,7 +126,7 @@ const restore = async () => {
 };
 const pruneServices = () => {
     selection.value.services = retainBranchServices(selection.value.services, availableServices.value);
-    if (!eligibleStaff.value.some(member => member.public_id === selection.value.staff)) selection.value.staff = '';
+    if (props.catalog.policy.online_staff_preference === 'any_only' || !eligibleStaff.value.some(member => member.public_id === selection.value.staff)) selection.value.staff = '';
     if (!categories.value.includes(category.value)) category.value = 'All';
     if (selection.value.date < today.value || selection.value.date > lastDate.value) selection.value.date = today.value;
 };
@@ -129,6 +145,7 @@ const chooseService = id => {
 };
 let searchController, searchVersion = 0, searchTimer;
 const search = async () => {
+    if (retrySeconds.value) { loadingSlots.value = false; return; }
     searchController?.abort(); const version = ++searchVersion;
     slots.value = []; error.value = ''; waitlistOpen.value = false; waitlistSaved.value = false;
     if (!canSearch.value) { loadingSlots.value = false; return; }
@@ -155,7 +172,7 @@ watch(() => selection.value.location, () => {
 watch(() => selection.value.client_eligibility, pruneServices);
 watch(() => [selection.value.date, selection.value.staff], () => { if (step.value === 2 && !busy.value) { clearTimeout(searchTimer); slots.value = []; loadingSlots.value = true; searchTimer = setTimeout(search, 200); } });
 const hold = async slot => {
-    if (busy.value) return;
+    if (busy.value || retrySeconds.value) return;
     busy.value = true; error.value = ''; notice.value = '';
     try {
         const { data } = await axios.post(api('public.booking.hold'), { ...credentials(), ...selection.value, staff: selection.value.staff || null, starts_at: slot.starts_at_utc, idempotency_key: `hold-${flow.value}-${crypto.randomUUID()}` });
@@ -164,7 +181,7 @@ const hold = async slot => {
     finally { busy.value = false; }
 };
 const changeTime = async () => {
-    if (busy.value || uncertainConfirm.value) return;
+    if (busy.value || uncertainConfirm.value || retrySeconds.value) return;
     busy.value = true;
     try { const { data } = await axios.post(api('public.booking.release'), credentials()); expiresAt.value = data.expires_at; held.value = null; remember(); await go(2); }
     catch (requestError) { if (requestError.response?.data?.code === 'BOOKING_FLOW_EXPIRED') { flow.value = null; held.value = null; await go(2); } else { await reportError(requestError, 'Could not change your time. Try again.'); return; } }
@@ -172,18 +189,19 @@ const changeTime = async () => {
     await search();
 };
 const clock = ref(Date.now()); let clockTimer;
+const retrySeconds = computed(() => Math.max(0, Math.ceil((retryAt.value - clock.value) / 1000)));
 const remaining = computed(() => Math.max(0, Math.ceil((Date.parse(held.value?.hold_expires_at) - clock.value) / 1000)));
 const remainingLabel = computed(() => `${Math.floor(remaining.value / 60)}:${String(remaining.value % 60).padStart(2, '0')}`);
 const uncertainConfirm = ref(false); let confirmPayload;
 const checkDetails = async () => {
-    if (busy.value) return; busy.value = true; error.value = ''; notice.value = ''; fieldErrors.value = {};
+    if (busy.value || retrySeconds.value) return; busy.value = true; error.value = ''; notice.value = ''; fieldErrors.value = {};
     try { const { data } = await axios.post(api('public.booking.details'), { ...credentials(), client_name: details.value.client_name, client_mobile: details.value.client_mobile, client_email: details.value.client_email }); held.value.policy = data.policy; details.value.policy_accepted = false; detailsChecked.value = true; await nextTick(); document.querySelector('#booking-policy')?.focus(); }
     catch (requestError) { await reportError(requestError, 'Your details could not be checked. Try again.'); }
     finally { busy.value = false; }
 };
 const editDetails = () => { if (!busy.value && !uncertainConfirm.value) { detailsChecked.value = false; details.value.policy_accepted = false; confirmPayload = null; } };
 const confirm = async () => {
-    if (busy.value) return;
+    if (busy.value || retrySeconds.value) return;
     busy.value = true; error.value = ''; fieldErrors.value = {}; notice.value = '';
     confirmPayload ||= { ...credentials(), ...details.value, communication_preferences: [...details.value.communication_preferences], idempotency_key: `confirm-${flow.value}` };
     try {
@@ -202,7 +220,7 @@ const confirm = async () => {
     } finally { busy.value = false; }
 };
 const joinWaitlist = async () => {
-    if (busy.value || waitlistSaved.value) return; busy.value = true; error.value = ''; fieldErrors.value = {};
+    if (busy.value || waitlistSaved.value || retrySeconds.value) return; busy.value = true; error.value = ''; fieldErrors.value = {};
     try { const { data } = await axios.post(api('public.waitlist.store'), { location: selection.value.location, service: selection.value.services[0], staff: selection.value.staff || null, ...waitlist.value }); notice.value = data.message; waitlistSaved.value = true; }
     catch (requestError) { await reportError(requestError, 'Your request could not be saved. Try again.'); }
     finally { busy.value = false; }
@@ -224,9 +242,9 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
             <p class="mt-3 text-[var(--text-muted)]">Open the booking link shared by your business.</p>
         </section>
         <template v-else>
-            <p v-if="preview" class="booking-message" role="status">Private preview · Browse your saved services. Booking is disabled here.</p>
-            <header class="booking-business" :class="{ compact: step !== 1, 'booking-business-complete': step === 4 }">
-                <img v-if="step === 1 && business.cover_url" :src="business.cover_url" :alt="business.cover_alt" class="booking-cover" />
+            <AppNotice v-if="preview" title="Private preview" description="Browse your saved services, photos and profiles. Booking is disabled here." class="mb-5" />
+            <SalonShowcase v-if="step === 1" :business="business" :location="location" :reviews="business.reviews" :has-team="!!branchTeam.length" />
+            <header v-else class="booking-business compact" :class="{ 'booking-business-complete': step === 4 }">
                 <div class="min-w-0">
                     <p class="text-xs font-semibold text-[var(--text-muted)]">Book an appointment</p>
                     <h1 class="mt-1 text-xl font-bold tracking-tight text-[var(--text-strong)] sm:text-2xl">{{ business.name }}</h1>
@@ -238,13 +256,22 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                     </p>
                 </div>
             </header>
-            <p v-if="error" role="alert" class="booking-message danger">{{ error }}</p>
-            <p v-if="notice" role="status" class="booking-message">{{ notice }}</p>
+            <AppNotice v-if="error" tone="error" title="Booking needs your attention" class="mb-5">
+                <p>{{ error }}</p>
+                <p v-if="retrySeconds">Try again in {{ retrySeconds }} {{ retrySeconds === 1 ? 'second' : 'seconds' }}.</p>
+                <template #actions>
+                    <AppButton v-if="step === 2" variant="secondary" :disabled="loadingSlots || busy || !!retrySeconds" @click="search">Check available times</AppButton>
+                    <AppButton v-if="step === 3 && fieldErrors.booking && !uncertainConfirm" variant="secondary" :disabled="busy || !!retrySeconds" @click="changeTime">Change services or time</AppButton>
+                    <a v-if="business.phone" :href="`tel:${business.phone}`" class="booking-back underline">Call {{ business.name }}</a>
+                    <a v-else-if="business.email" :href="`mailto:${business.email}`" class="booking-back underline">Email {{ business.name }}</a>
+                </template>
+            </AppNotice>
+            <AppNotice v-else-if="notice" :description="notice" class="mb-5" />
             <div class="booking-grid" :class="{ 'booking-complete-grid': step === 4 }">
                 <section v-if="restoring" class="booking-panel"><BookingSkeleton label="Restoring your booking" /></section>
-                <section v-else-if="step === 1" class="booking-panel">
+                <section v-else-if="step === 1" id="salon-services" class="booking-panel">
                     <h2 id="booking-heading" tabindex="-1" class="cd-section-title">Choose your services</h2>
-                    <p v-if="!catalog.locations.length" class="mt-3 text-sm text-[var(--text-muted)]">No services are ready for online booking yet. Review services, team assignments and opening hours in Business setup.</p>
+                    <p v-if="!catalog.locations.length" class="mt-3 text-sm text-[var(--text-muted)]">{{ preview ? 'No services are ready for online booking yet. Review services, team assignments and opening hours in Business setup.' : 'Online appointments are unavailable at the moment. Contact the salon to arrange your visit.' }}</p>
                     <BranchPicker v-if="catalog.locations.length > 1" class="mt-5" :branches="catalog.locations" v-model="selection.location" />
                     <LocationCard v-if="location && catalog.locations.length === 1" class="mt-4 lg:hidden" :location="location" />
                     <details v-else-if="location" class="mt-3 rounded-lg border border-[var(--border-subtle)] p-3 lg:hidden"><summary class="cursor-pointer text-sm font-semibold">Arrival &amp; directions · {{ location.name }}</summary><LocationCard class="mt-3" :location="location" /></details>
@@ -291,7 +318,7 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                             <span class="block text-xs text-[var(--text-muted)]">{{ durationLabel(duration) }} estimated</span>
                         </span>
                         <AppButton :disabled="!canContinue" @click="continueToTimes">
-                            Continue
+                            Choose a time
                             <ArrowRightIcon class="size-4" aria-hidden="true" />
                         </AppButton>
                     </div>
@@ -302,18 +329,10 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                         Services
                     </button>
                     <h2 id="booking-heading" tabindex="-1" class="cd-section-title mt-2">Choose a time</h2>
-                    <FormField
-                        v-if="catalog.policy.online_staff_preference !== 'any_only'"
-                        id="booking-staff"
-                        label="Professional"
-                        :required="needsStaff"
-                        class="mt-5"
-                    >
-                        <select id="booking-staff" v-model="selection.staff" :disabled="busy" class="cd-input">
-                            <option value="">{{ needsStaff ? 'Choose a professional' : 'Anyone available · More appointment options' }}</option>
-                            <option v-for="member in eligibleStaff" :key="member.public_id" :value="member.public_id">{{ member.display_name }}{{ member.title ? ` · ${member.title}` : '' }}</option>
-                        </select>
-                    </FormField>
+                    <fieldset v-if="catalog.policy.online_staff_preference !== 'any_only'" class="mt-5">
+                        <legend class="mb-3 text-sm font-semibold">{{ needsStaff ? 'Choose your professional' : 'Who would you like to see?' }}</legend>
+                        <ProfessionalCards v-model="selection.staff" :members="eligibleStaff" selectable :required="needsStaff" :disabled="busy || !!retrySeconds" />
+                    </fieldset>
                     <FormField id="booking-date" label="Date" class="mt-4">
                         <input id="booking-date" v-model="selection.date" type="date" :min="today" :max="lastDate" :disabled="busy" class="cd-input" />
                     </FormField>
@@ -354,25 +373,24 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                             v-for="slot in visibleGroup?.slots || []"
                             :key="slot.starts_at_utc"
                             class="booking-slot"
-                            :disabled="busy || loadingSlots"
+                            :disabled="busy || loadingSlots || !!retrySeconds"
                             @click="hold(slot)"
                         >
                             {{ slotLabel(slot) }}
                         </button>
                     </div>
                     <p v-if="busy" role="status" class="mt-4 text-sm">Reserving your time…</p>
-                    <div v-if="!loadingSlots && canSearch && !slots.length && !error" class="mt-5">
+                    <div v-if="!loadingSlots && canSearch && !slots.length && !error" class="mt-5 flex flex-wrap items-center gap-3">
                         <AppButton variant="secondary" :disabled="selection.date >= lastDate" @click="selection.date = shiftDate(selection.date, 1)">Try next day</AppButton>
                         <button
                             v-if="selectedServices.length === 1 && selectedServices[0].kind !== 'addon' && !waitlistOpen"
-                            class="booking-back ml-2"
+                            class="booking-back"
                             @click="openWaitlist"
                         >
                             Join waitlist
                         </button>
                         <p v-if="selectedServices.length > 1" class="mt-3 text-sm text-[var(--text-muted)]">You can also go back and try fewer services.</p>
                     </div>
-                    <AppButton v-if="error" class="mt-4" variant="secondary" :disabled="loadingSlots" @click="search">Retry times</AppButton>
                     <form v-if="waitlistOpen && !waitlistSaved" class="mt-6 border-t border-[var(--border-subtle)] pt-5" @submit.prevent="joinWaitlist">
                         <h3 class="font-semibold">Notify me about an opening</h3>
                         <div class="mt-4 grid gap-4 sm:grid-cols-2">
@@ -404,11 +422,11 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                                 <input id="waitlist-time-until" v-model="waitlist.time_until" type="time" class="cd-input" />
                             </FormField>
                         </div>
-                        <AppButton type="submit" :loading="busy" class="mt-5">Join waitlist</AppButton>
+                        <AppButton type="submit" :loading="busy" :disabled="!!retrySeconds" class="mt-5">Join waitlist</AppButton>
                     </form>
                 </section>
                 <section v-else-if="step === 3" class="booking-panel">
-                    <button class="booking-back" :disabled="busy || uncertainConfirm" @click="changeTime">
+                    <button class="booking-back" :disabled="busy || uncertainConfirm || !!retrySeconds" @click="changeTime">
                         <ArrowLeftIcon class="size-4" aria-hidden="true" />
                         Change time
                     </button>
@@ -435,7 +453,7 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                         </div>
                     </div>
                     <p v-if="remaining > 0" class="mt-3 text-xs text-[var(--text-muted)]">Time reserved for {{ remainingLabel }}</p>
-                    <p v-else class="booking-message" role="status">Your time reservation ended. Choose a time again.</p>
+                    <AppNotice v-else title="Your time reservation ended" description="Your entered details are kept. Choose another available time." class="mt-4"><template #actions><AppButton variant="secondary" :disabled="busy || !!retrySeconds" @click="changeTime">Choose another time</AppButton></template></AppNotice>
                     <form @submit.prevent="detailsChecked ? confirm() : checkDetails()">
                         <fieldset v-if="!detailsChecked" :disabled="busy || uncertainConfirm || !remaining" class="mt-5">
                             <legend class="text-sm font-semibold">Your details</legend>
@@ -487,9 +505,7 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                                 </p>
                             </div>
                             <template v-if="held.policy.deposit_status === 'payment_required'">
-                                <p class="booking-message" role="status">A {{ money(held.policy.deposit.amount_minor) }} deposit is required. Contact the business to arrange this appointment. Online payment is not available yet.</p>
-                                <AppButton v-if="business.phone" :href="`tel:${business.phone}`">Call {{ business.name }}</AppButton>
-                                <p class="mt-3 text-sm text-[var(--text-muted)]">This appointment has not been confirmed.</p>
+                                <AppNotice title="Arrange your deposit with the salon" :description="`A ${money(held.policy.deposit.amount_minor)} deposit is required. Your appointment is not confirmed. Contact the salon to finish booking.`" class="mt-4"><template #actions><AppButton v-if="business.phone" :href="`tel:${business.phone}`">Call {{ business.name }}</AppButton><AppButton v-else-if="business.email" :href="`mailto:${business.email}`">Email {{ business.name }}</AppButton></template></AppNotice>
                             </template>
                             <fieldset v-else :disabled="busy || uncertainConfirm || !remaining">
                                 <label class="booking-check-label">
@@ -507,15 +523,10 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                                 </label>
                             </fieldset>
                         </div>
-                        <p v-if="fieldErrors.booking" role="alert" class="booking-message danger">
-                            {{ fieldErrors.booking[0] }}
-                            <button type="button" class="booking-back underline" :disabled="busy" @click="changeTime">Change services or time</button>
-                        </p>
-                        <p v-if="uncertainConfirm" role="status" class="booking-message">Your confirmation could not be checked. Retry to safely check the same appointment.</p>
                         <AppButton
                             type="submit"
                             :loading="busy"
-                            :disabled="(detailsChecked && !details.policy_accepted) || (!remaining && !uncertainConfirm)"
+                            :disabled="!!retrySeconds || (detailsChecked && !details.policy_accepted) || (!remaining && !uncertainConfirm)"
                             v-if="!detailsChecked || held.policy.deposit_status !== 'payment_required'"
                             class="mt-4 w-full"
                         >
@@ -553,6 +564,7 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                         </li>
                     </ul>
                     <p v-if="!selectedServices.length" class="mt-4 text-sm text-[var(--text-muted)]">Select a service to get started.</p>
+                    <div v-else class="mt-5 flex justify-between gap-3 border-t border-[var(--border-subtle)] pt-4 text-sm"><strong>Estimated total</strong><strong>{{ selectedServices.some(service => priceLabel(service).startsWith('From')) ? 'From ' : '' }}{{ money(totalEstimate) }}</strong></div>
                     <p
                         v-if="selectedServices.length"
                         class="mt-5 flex items-center gap-2 border-t border-[var(--border-subtle)] pt-4 text-sm text-[var(--text-muted)]"
@@ -562,8 +574,19 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                         estimated
                     </p>
                     <p v-if="step === 2 && selection.staff" class="mt-3 text-sm">With {{ eligibleStaff.find(member => member.public_id === selection.staff)?.display_name }}</p>
-                    <p v-if="step === 2 && !selection.staff" class="mt-3 text-sm text-[var(--text-muted)]">Anyone available</p>
+                    <p v-if="step === 2 && !selection.staff" class="mt-3 text-sm text-[var(--text-muted)]">{{ needsStaff ? 'Choose your professional' : 'Anyone available' }}</p>
                 </aside>
+            </div>
+            <div v-if="step === 1" class="booking-explore">
+                <section v-if="branchTeam.length" id="salon-team" aria-labelledby="salon-team-title" class="py-7">
+                    <h2 id="salon-team-title" class="mb-5 text-2xl font-semibold text-[var(--text-strong)]">Meet the team</h2>
+                    <ProfessionalCards :members="branchTeam" />
+                </section>
+                <ClientReviewsSection id="salon-reviews" :summary="business.reviews" />
+                <section id="salon-about" aria-labelledby="salon-about-title" class="booking-about">
+                    <div><h2 id="salon-about-title" class="text-2xl font-semibold text-[var(--text-strong)]">About &amp; location</h2><p v-if="business.description" class="mt-4 whitespace-pre-line text-sm leading-7 text-[var(--text-muted)]">{{ business.description }}</p><LocationCard v-if="location" :location="location" class="mt-5" /><div class="mt-4 flex flex-wrap items-center gap-3"><a v-if="business.phone" :href="`tel:${business.phone}`" class="booking-back underline">Call {{ business.phone }}</a><a v-if="business.email" :href="`mailto:${business.email}`" class="booking-back underline">Email the salon</a></div></div>
+                    <div v-if="location?.opening_hours?.length"><h3 class="font-semibold">Usual opening hours</h3><p class="mt-2 text-xs text-[var(--text-muted)]">{{ zone.replaceAll('_', ' ') }} · Holiday hours may vary. Available appointment times are shown when booking.</p><dl class="mt-4 space-y-3 text-sm"><div v-for="day in usualDays" :key="day" class="flex justify-between gap-4"><dt>{{ weekDay(day) }}</dt><dd class="text-right text-[var(--text-muted)]"><template v-if="location.opening_hours.some(hours => hours.day === day)"><span v-for="(hours, index) in location.opening_hours.filter(hours => hours.day === day)" :key="index" class="block">{{ openingTime(hours.opens_at) }}–{{ openingTime(hours.closes_at) }}</span></template><span v-else>Closed</span></dd></div></dl></div>
+                </section>
             </div>
         </template>
     </PublicBookingLayout>
@@ -576,6 +599,10 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
     overflow-x: auto;
     padding: 4px 3px 8px;
 }
+.booking-explore { margin-top:12px; }
+.booking-about { display:grid; gap:30px; padding:30px 0; border-top:1px solid var(--border-subtle); }
+#salon-services,#salon-team,#salon-reviews,#salon-about { scroll-margin-top:20px; }
+@media(min-width:768px) { .booking-about { grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:50px; } }
 .booking-date-rail button {
     flex-shrink: 0;
 }

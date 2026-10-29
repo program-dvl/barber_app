@@ -1,5 +1,85 @@
 # Project status
 
+## 2026-10-29 Direct Locations navigation
+
+- Added Locations beside Services in the shared desktop/mobile menu, retaining
+  settings visibility rules and the existing authorized management route.
+- Paid-limit actions now say Upgrade to add locations and open existing billing.
+- Local location frontend tests: 16 passed on Node 24. Desktop/mobile browser
+  checks and deployed upgrade/payment verification remain outstanding.
+
+
+## 2026-10-29 Setup clarity and local integration recovery (ADR-075)
+
+- [x] Photos & branding is a direct setup tab with matching Readiness wording,
+  optional status, booking preview and an outlined skip button in a spaced footer.
+  Empty photos, loading and actual failure are distinct; a persistent platform
+  failure supplies its explanation and safe support reference without futile retries.
+- [x] Removed manual staff status/work-branch reasons from Team and setup. Actor,
+  before/after and retained visit IDs are audited automatically. Holds, tenant,
+  revision, paid-limit and scheduling/qualification exception safeguards remain.
+- [x] Applied exactly the additive photo/review migrations to local MySQL; read
+  back both tables successfully. Unrelated pending Help feedback was untouched.
+  Repaired the local test pricing catalog: two current cards added, two old cards
+  retained and six matching test prices verified. No purchase or charge created.
+- [x] Plan shows approved estimates during missing current mappings, disables new
+  reviews/purchases and preserves independent saved-payment confirmation. Public
+  catalog and purchase authority remain verified-only. Google uses supported light
+  styling, terminal denial handling and manual recovery that preserves entered work.
+- [x] Initial Google reproduction worked at port 8027 while port 8000 was
+  referrer-denied; no quota exhaustion was established. Following explicit owner
+  approval, created one separate **ClipperDesk – Local Browser** key in the
+  existing project. Saved restrictions allow only the two exact local origins and
+  Maps JavaScript/Places API (New). The old production key was not changed. Saved
+  the new value only in ignored local environment configuration; all other parsed
+  settings were unchanged and the temporary key file was deleted.
+- [x] Rebuilt client/SSR assets with the local key; safe diagnostics confirm the
+  built assets contain the current key and configuration is not cached. A
+  temporary same-origin Chrome probe at port 8000 displayed CN Tower suggestions
+  and selected/fetched the real address without provider errors. No business or
+  client data was saved. This is local provider/origin evidence, not full
+  reported-account certification; see the linked audit/screenshots.
+- [x] Backend **993 passed / 10,560 assertions**, 30 existing skips; frontend
+  **172 passed** from the preceding source-change regression run. Tests were not
+  rerun for the subsequent key-only configuration update. Client/SSR builds,
+  scoped formatting and whitespace pass.
+  Desktop/390px evidence covers branding, photo failure/support, Plan estimates,
+  simplified profile controls and Google/manual recovery. A sample status change
+  saved without a reason. [Evidence and screenshots](audits/2026-10-29-setup-recovery/README.md).
+- [ ] Not deployed. Full reported-account, production and broader
+  browser/accessibility certification and existing launch
+  gates remain outstanding.
+
+## 2026-10-29 Optional salon presentation and completed-visit reviews (ADR-074)
+
+- [x] Studied the supplied Fresha salon and live service/time workflow. Added an
+  optional eight-photo salon gallery and public photo viewer; zero-photo pages
+  use business information and initials. Team portraits, existing titles and
+  biographies now appear in booking and Team. Staff policy, qualification,
+  availability, timezone and deposit rules retain their canonical engines.
+- [x] Owner image editing uses compact saved/selected previews, explicit saves,
+  replacement/removal and one expanded gallery editor. Portrait editing opens on
+  demand. Tenant/branch permissions, private storage, decoded image limits,
+  orientation/metadata handling, stale revisions and draft recovery are enforced.
+- [x] Completed visits offer one secure-link rating/detailed feedback submission.
+  Public display requires explicit consent; clients can withdraw display. Only
+  consented reviews affect public totals/paginated lists. Calendar managers read
+  scoped private feedback and copy seven-day links; no messages/payment calls or
+  SMS credits are triggered. Client merges/exports preserve review/consent data.
+- [x] Local full backend **984 passed / 10,389 assertions**, 30 existing skips;
+  frontend **151 passed**. Production client/SSR builds, scoped formatting and
+  whitespace pass. Browser checks include no-photo/public gallery/profiles,
+  next-day times, compact owner editors, review-link copy and private feedback
+  save at desktop/390px, plus the owner review-link notice at 360px.
+  [Detailed evidence and screenshots](audits/2026-10-29-booking-presentation/README.md).
+- [ ] Not deployed. The initial implementation left the application database
+  untouched; ADR-075 above records subsequent local schema recovery. Deployment
+  requires the two new additive migrations and assets. Browser file-chooser uploads were blocked by
+  extension file access; upload preview/retry has mounted/HTTP evidence. Target
+  MySQL journeys, full browser/accessibility certification and production review-reporting
+  policy (OPEN-25) remain outstanding. Payment collection and automated outreach
+  remain excluded; existing launch gates are not waived.
+
 ## 2026-10-29 Twilio SMS launch preparation (ADR-073)
 
 - [x] Reviewed live account, owned sender, service pool, callbacks, geographic

@@ -32,6 +32,9 @@ import SetupHome from '@/Components/Setup/SetupHome.vue';
 import SetupServices from '@/Components/Setup/SetupServices.vue';
 import SetupHours from '@/Components/Setup/SetupHours.vue';
 import SetupTeam from '@/Components/Setup/SetupTeam.vue';
+import SalonGalleryEditor from '@/Components/Setup/SalonGalleryEditor.vue';
+import BrandImageEditor from '@/Components/Setup/BrandImageEditor.vue';
+import AppNotice from '@/Components/Product/AppNotice.vue';
 import { weekFromHours } from '@/Support/businessSetup';
 import '../../../css/business-setup.css';
 
@@ -147,19 +150,6 @@ const form = useForm({
     address: props.business.address || '', map_url: props.business.map_url || '', default_cancellation_policy: props.business.default_cancellation_policy || '',
     terms_url: props.business.terms_url || '', privacy_url: props.business.privacy_url || '',
 });
-const brandUpload = useForm({ kind: 'logo', asset: null });
-const uploadBrandAsset = (kind, event) => {
-    const asset = event.target.files?.[0];
-    if (!asset) return;
-    brandUpload.kind = kind;
-    brandUpload.asset = asset;
-    brandUpload.post(route('business.configuration.branding.store', props.business.public_id), {
-        forceFormData: true,
-        preserveScroll: true,
-        onSuccess: () => brandUpload.reset('asset'),
-        onFinish: () => { event.target.value = ''; },
-    });
-};
 const publicPolicyForm = useForm({
     appointment_interval_minutes: props.business.appointment_interval_minutes ?? 15,
     setup_revision: props.business.setup_revision,
@@ -189,10 +179,10 @@ const importFields = {
 };
 const sections = [
     {id:'overview',label:'Readiness'}, {id:'business_details',label:'Business profile'},
-    {id:'hours',label:'Opening hours'}, {id:'services',label:'Services'}, {id:'team',label:'Team & availability'},
-    {id:'booking_rules',label:'Booking preferences'}, {id:'preview',label:'Online booking'},
+    {id:'hours',label:'Opening hours'}, {id:'services',label:'Services'}, {id:'team',label:'Team'},
+    {id:'booking_rules',label:'Booking preferences'}, {id:'branding',label:'Photos & branding'}, {id:'preview',label:'Online booking'},
 ];
-const optionalSections=[{id:'connections',label:'Payments & notifications'},{id:'branding',label:'Branding'},{id:'import',label:'Import records'}];
+const optionalSections=[{id:'connections',label:'Payments & notifications'},{id:'import',label:'Import records'}];
 const allSections=[...sections,...optionalSections];
 const profileGroup=ref('identity'), childDirty=ref({}), discardDialog=ref(null), version=ref(0);
 let pendingNavigation=null;
@@ -232,7 +222,14 @@ const taxRatePercent = computed({
     get: () => Number(form.default_tax_rate_bps || 0) / 100,
     set: value => { form.default_tax_rate_bps = Math.round((Number(value) || 0) * 100); },
 });
-const applySection=section=>{activeSection.value=section;window.history.replaceState({},'',`${window.location.pathname}?section=${section}`);};
+const applySection=section=>{
+    activeSection.value=section;
+    window.history.replaceState({},'',`${window.location.pathname}?section=${section}`);
+    nextTick(()=>{
+        document.getElementById('main-content')?.focus({preventScroll:true});
+        window.scrollTo({top:0,behavior:'auto'});
+    });
+};
 const selectSection=(section,group=null)=>{if(lockedService.value)return;const navigate=()=>{if(group)profileGroup.value=group;applySection(section);};if(dirty.value){pendingNavigation=navigate;discardDialog.value?.open();return;}navigate();};
 const discardChanges=()=>{form.reset();publicPolicyForm.reset();childDirty.value={};version.value++;const navigate=pendingNavigation;pendingNavigation=null;navigate?.();};
 const beforeUnload=event=>{if(dirty.value){event.preventDefault();event.returnValue='';}};
@@ -380,7 +377,7 @@ const commitImport = async () => {
         <SetupServices v-if="activeSection==='services'" :key="`services-${version}`" :business="business" :services="serviceReview" :staff="staff" @dirty="childDirty.services=$event" @locked="lockedService=$event" />
         <SetupHours v-if="activeSection==='hours'" :key="`hours-${version}`" :business="business" :locations="locations" :revisions="hoursRevisions" @dirty="childDirty.hours=$event" />
         <SetupTeam :key="version" @dirty="childDirty.team=$event" v-if="activeSection==='team'" :business="business" :team="setupTeam" :locations="locations" :can-manage="canManageTeam" />
-        <section v-if="activeSection==='connections'" class="bs-panel"><header class="bs-panel-heading"><div><h2>Payments & client notifications</h2><p>Start with the essentials. Add connected channels when you need them.</p></div><AppButton variant="quiet" @click="selectSection('overview')">Do this later</AppButton></header><div class="bs-connection-grid"><section><h3>Checkout payments<span class="bs-status ready">Available</span></h3><p>Record cash or payments collected on your own card terminal. You can start without connecting an online payment provider.</p><AppButton :href="route('business.checkout.index',business.public_id)" variant="secondary">Open checkout</AppButton></section><section><h3>Online payments<span class="bs-status neutral">Optional</span></h3><p>Online deposit checkout is not available yet. Start without required deposits, or collect payment at your business. Online payments are separate from your ClipperDesk subscription.</p><AppButton :href="route('business.services.index',business.public_id)" variant="secondary">Review service deposits</AppButton></section><section><h3>Client notifications<span class="bs-status neutral">Prepared messages</span></h3><p>Booking confirmations, a 24-hour reminder, cancellation notices and receipts use prepared templates.</p><dl class="bs-channel-status"><div><dt>Email</dt><dd>{{channels.email}}</dd></div><div><dt>SMS</dt><dd>{{channels.sms}}</dd></div></dl><AppButton :href="route('business.communications.page',business.public_id)" variant="secondary">Review client notifications</AppButton></section><section><h3>Subscription & billing<span class="bs-status neutral">Your plan</span></h3><p v-if="$page.props.tenant?.subscription?.status === 'trialing'">Your free trial ends {{ billingDate($page.props.tenant.subscription.trial_ends_at, business.time_zone, business.locale) }}. Payment setup is optional during the trial; no automatic charge is scheduled.</p><p v-else-if="$page.props.tenant?.subscription">{{ $page.props.tenant.subscription.plan_name }} controls your locations, active team and included features. Review price, access and payments in billing.</p><p v-else>Your ClipperDesk plan controls locations, staff and features.</p><AppButton v-if="$page.props.tenant?.can_manage_billing" :href="route('business.billing.show',business.public_id)" variant="secondary">Review your plan</AppButton></section></div></section>
+        <section v-if="activeSection==='connections'" class="bs-panel"><header class="bs-panel-heading"><div><h2>Payments & client notifications</h2><p>Start with the essentials. Add connected channels when you need them.</p></div><AppButton variant="secondary" @click="selectSection('overview')">Do this later</AppButton></header><div class="bs-connection-grid"><section><h3>Checkout payments<span class="bs-status ready">Available</span></h3><p>Record cash or payments collected on your own card terminal. You can start without connecting an online payment provider.</p><AppButton :href="route('business.checkout.index',business.public_id)" variant="secondary">Open checkout</AppButton></section><section><h3>Online payments<span class="bs-status neutral">Optional</span></h3><p>Online deposit checkout is not available yet. Start without required deposits, or collect payment at your business. Online payments are separate from your ClipperDesk subscription.</p><AppButton :href="route('business.services.index',business.public_id)" variant="secondary">Review service deposits</AppButton></section><section><h3>Client notifications<span class="bs-status neutral">Prepared messages</span></h3><p>Booking confirmations, a 24-hour reminder, cancellation notices and receipts use prepared templates.</p><dl class="bs-channel-status"><div><dt>Email</dt><dd>{{channels.email}}</dd></div><div><dt>SMS</dt><dd>{{channels.sms}}</dd></div></dl><AppButton :href="route('business.communications.page',business.public_id)" variant="secondary">Review client notifications</AppButton></section><section><h3>Subscription & billing<span class="bs-status neutral">Your plan</span></h3><p v-if="$page.props.tenant?.subscription?.status === 'trialing'">Your free trial ends {{ billingDate($page.props.tenant.subscription.trial_ends_at, business.time_zone, business.locale) }}. Payment setup is optional during the trial; no automatic charge is scheduled.</p><p v-else-if="$page.props.tenant?.subscription">{{ $page.props.tenant.subscription.plan_name }} controls your locations, active team and included features. Review price, access and payments in billing.</p><p v-else>Your ClipperDesk plan controls locations, staff and features.</p><AppButton v-if="$page.props.tenant?.can_manage_billing" :href="route('business.billing.show',business.public_id)" variant="secondary">Review your plan</AppButton></section></div></section>
         <div v-show="activeSection === 'business_details'" class="mt-6">
             <SurfaceCard id="business_details" title="Business profile" description="Public identity, regional formats, contact details, and the policies clients review before booking.">
                 <section class="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-subtle)] p-4" aria-labelledby="setup-address-title">
@@ -421,18 +418,28 @@ const commitImport = async () => {
 
         </div>
 
-        <SurfaceCard v-show="activeSection === 'branding'" title="Make it yours" description="Optional. A logo or photo never blocks appointments."><div class="bs-branding">                    <div class="sm:col-span-2">
-                        <div class="grid gap-3 sm:grid-cols-2">
-                            <label v-for="asset in [{ kind: 'logo', title: 'Business logo', note: 'Square PNG, JPEG or WebP works best.', saved: business.logo_path }, { kind: 'cover', title: 'Booking cover', note: 'Use a bright, natural wide image of your space or work.', saved: business.cover_image_path }]" :key="asset.kind" :class="['group flex min-h-11 items-start gap-3 rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--surface-subtle)] p-4 transition', $page.props.tenant.entitlements?.['branding.custom'] === false ? 'cursor-not-allowed opacity-70' : 'cursor-pointer hover:border-[var(--brand-primary)] hover:bg-[var(--status-info-soft)]']">
-                                <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-white text-[var(--brand-primary)] shadow-sm"><PaintBrushIcon class="size-5" aria-hidden="true" /></span>
-                                <span class="min-w-0 flex-1"><strong class="block text-sm text-[var(--text-strong)]">{{ asset.title }}</strong><span class="mt-1 block text-xs leading-5 text-[var(--text-muted)]">{{ asset.saved ? 'Image added — choose another to replace it.' : asset.note }}</span><span class="mt-3 inline-flex rounded-full bg-white px-3 py-1 text-xs font-bold text-[var(--brand-primary)]">{{ $page.props.tenant.entitlements?.['branding.custom'] === false ? 'Available on Pro' : (asset.saved ? 'Replace image' : 'Choose image') }}</span></span>
-                                <input type="file" accept="image/png,image/jpeg,image/webp" class="ds-sr-only" :disabled="brandUpload.processing || $page.props.tenant.entitlements?.['branding.custom'] === false" @change="uploadBrandAsset(asset.kind, $event)" />
-                            </label>
+        <SurfaceCard v-show="activeSection === 'branding'" title="Photos & branding" description="Add a logo and photos to your booking page, whenever you’re ready.">
+            <template #actions>
+                <div class="flex flex-wrap items-center gap-3">
+                    <span class="bs-status neutral">Optional</span>
+                    <AppButton variant="secondary" :disabled="lockedService" @click="selectSection('preview')">Preview booking page</AppButton>
+                </div>
+            </template>
+            <div class="bs-branding">
+                    <div>
+                        <div class="grid gap-6 sm:grid-cols-2">
+                            <BrandImageEditor v-for="asset in [{ kind: 'logo', title: 'Business logo', help: 'A square PNG, JPEG or WebP works best. Up to 5 MB.', saved: business.logo_path }, { kind: 'cover', title: 'Booking cover', help: 'A wide photo of your space or work. PNG, JPEG or WebP, up to 5 MB.', saved: business.cover_image_path }]" :key="`${asset.kind}-${version}`" :business-id="business.public_id" :kind="asset.kind" :title="asset.title" :help="asset.help" :saved-path="asset.saved" :disabled="$page.props.tenant.entitlements?.['branding.custom'] === false" @dirty="childDirty[asset.kind]=$event" @busy="lockedService=$event" />
                         </div>
-                        <div v-if="$page.props.tenant.entitlements?.['branding.custom'] === false" class="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-subtle)] p-3"><p class="text-xs leading-5 text-[var(--text-muted)]">Custom logo and cover uploads are included on Pro.</p><AppButton v-if="$page.props.tenant.can_manage_billing" :href="route('business.billing.show', business.public_id)" variant="secondary">See plan options</AppButton></div>
-                        <p v-if="brandUpload.errors.asset || brandUpload.errors.kind" class="mt-2 text-sm text-[var(--status-danger)]" role="alert">{{ brandUpload.errors.asset || brandUpload.errors.kind }}</p>
+                        <AppNotice v-if="$page.props.tenant.entitlements?.['branding.custom'] === false" class="mt-5" title="Image uploads are unavailable for this account" description="Your saved images and booking details are kept. You can review your subscription or contact support for help.">
+                            <template #actions><AppButton v-if="$page.props.tenant.can_manage_billing" :href="route('business.billing.show', business.public_id)" variant="secondary">View subscription</AppButton><AppButton :href="`mailto:${$page.props.brand.support_email}`" variant="quiet">Contact support</AppButton></template>
+                        </AppNotice>
                     </div>
-<p v-if="brandUpload.errors.asset" class="bs-callout attention" role="alert">{{brandUpload.errors.asset}}</p><AppButton variant="quiet" @click="selectSection('overview')">Do this later</AppButton></div></SurfaceCard>
+                <SalonGalleryEditor :key="`gallery-${version}`" :business-id="business.public_id" :active="activeSection === 'branding'" :disabled="$page.props.tenant.entitlements?.['branding.custom'] === false" @dirty="childDirty.gallery=$event" @busy="lockedService=$event" />
+                <footer class="bs-branding-footer">
+                    <AppButton variant="secondary" :disabled="lockedService" @click="selectSection('overview')"><ArrowLeftIcon class="size-4" aria-hidden="true" />Do this later</AppButton>
+                </footer>
+            </div>
+        </SurfaceCard>
         <SurfaceCard v-show="activeSection === 'booking_rules'" id="booking_rules" class="mt-6" title="Booking preferences" description="Your calendar interval comes first. Review online choices when you’re ready to publish.">
             <form class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" @submit.prevent="savePublicPolicy">
                 <label class="text-sm font-semibold">Calendar interval<AppSelect v-model="publicPolicyForm.appointment_interval_minutes" class="cd-input mt-2" id="bs-booking-interval" :aria-invalid="publicPolicyForm.errors.appointment_interval_minutes ? true : undefined" aria-describedby="bs-booking-interval-error"><option v-for="minutes in [5,10,15,20,30,60]" :key="minutes" :value="minutes">{{minutes}} minutes</option></AppSelect><FieldError id="bs-booking-interval-error" :message="publicPolicyForm.errors.appointment_interval_minutes" /></label>
