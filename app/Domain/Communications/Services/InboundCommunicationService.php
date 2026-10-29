@@ -19,7 +19,7 @@ class InboundCommunicationService
     {
         $channel = str_starts_with($from, 'whatsapp:') ? 'whatsapp' : 'sms';
         $participant = preg_replace('/^(?:whatsapp:|sms:)/', '', trim($from));
-        $sender = $this->resolveSender($channel, $to);
+        $sender = $this->resolveSender($channel, $to, $participant);
         if (! $sender || ! ($sender->capabilities['inbound'] ?? false)) {
             return null;
         }
@@ -57,7 +57,7 @@ class InboundCommunicationService
         }, 3);
     }
 
-    private function resolveSender(string $channel, string $to): ?CommunicationSenderProfile
+    private function resolveSender(string $channel, string $to, string $participant): ?CommunicationSenderProfile
     {
         if (config('communications.transport_mode') === 'whatsapp_sandbox' && $publicId = config('communications.twilio.sandbox_business_public_id')) {
             $business = Business::query()->where('public_id', $publicId)->first();
@@ -69,6 +69,15 @@ class InboundCommunicationService
         $profiles = CommunicationSenderProfile::query()->where('sender_identifier_hash', $hash)
             ->where('channel', $channel)->where('mode', 'branded')->where('status', 'active')->limit(2)->get();
 
-        return $profiles->count() === 1 ? $profiles->first() : null;
+        if ($profiles->isNotEmpty()) {
+            return $profiles->count() === 1 ? $profiles->first() : null;
+        }
+        $businesses = Client::query()->where('normalized_mobile', preg_replace('/\D/', '', $participant))->select('business_id');
+        $shared = CommunicationSenderProfile::query()->where('sender_identifier_hash', $hash)
+            ->where('channel', $channel)->where('mode', 'platform')->where('status', 'active')
+            ->whereIn('business_id', $businesses)->limit(2)->get();
+
+        // Never guess a tenant when a shared-number reply matches two businesses.
+        return $shared->count() === 1 ? $shared->first() : null;
     }
 }

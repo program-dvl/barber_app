@@ -1,5 +1,38 @@
 # Project status
 
+## 2026-10-29 Twilio SMS launch preparation (ADR-073)
+
+- [x] Reviewed live account, owned sender, service pool, callbacks, geographic
+  permissions and deferred WhatsApp resources. Active Full account; owned toll-free
+  +1 855 362 0201 remains **IN_REVIEW**. US/Canada geo permissions are enabled.
+- [x] Added the existing number to the service alongside CLIPPERDESK and set
+  service/number incoming webhooks and service delivery callback to the existing
+  deployed routes. Read back saved values; verified phone association in Chrome.
+  The previously configured API-style status URL returned 404 on deployment.
+- [x] Local SMS now uses MessagingServiceSid. Grouped the same seven launch
+  settings at the end of ignored `.env`: two credentials, sender, service, public
+  callback base and two explicit live controls. No credential values committed.
+  Legacy advanced options remain compatible; WhatsApp remains disabled.
+- [x] User authorized one production SMS to their controlled Indian number,
+  confirmed the exact received message, and Twilio reported **delivered**, one
+  segment, no error. No appointment/customer record or WhatsApp send was created.
+- [x] Added signed callback aliases, HTTPS handling, safe carrier error numbers,
+  duplicate/late/early callback recovery, unambiguous shared-number opt-out
+  handling and sender/transport queue guards before debit or send.
+- [x] Read-only `communications:check-twilio --provider-read` validates live
+  ownership, pool and callbacks and correctly blocks on pending toll-free approval.
+  Schedule lists the minute communication sweep; local queue is sync and no
+  local scheduler/queue worker was running at inspection. Did not dispatch backlog.
+- [x] Communications: **60 passed / 437 assertions**. Full backend: **930 passed /
+  9,939 assertions**, 30 existing skips. Scoped Pint and whitespace checks pass.
+  No frontend files changed. [Audit, shared deployment block and WhatsApp requirements](audits/2026-10-29-twilio/README.md).
+- [ ] Backend change and shared environment block not deployed. US/Canada
+  delivery, deployed booking/reminder/callback/action-link journeys and STOP/START
+  rehearsal remain unverified. Local requests using deployed callbacks do not
+  update a separate local database. Carrier approval, OPEN-11/15 and existing
+  client/owner/allowance controls remain launch gates; shared-number ambiguity is
+  OPEN-24. Approval is not proof of deployment or an instruction to resend old work.
+
 ## 2026-10-28 Fresh checkout JSON identity root cause (ADR-072)
 
 - [x] Owner reports a fresh successful 2-location/6-staff purchase still showing

@@ -2699,6 +2699,34 @@ fingerprint of that same card, retaining all financial and ownership guards.
 Document red/green fresh-flow, existing-account, no-op/expansion and renewal tests
 in the [root-cause record](audits/2026-10-28-billing-json-identity/README.md).
 
+## ADR-073 — Production SMS service routing and compact shared configuration
+
+- Status: Accepted
+- Date: 2026-10-29
+- Owners: Product / Engineering / Operations
+- Requirements: FR-13; retains ADR-041/054/067 and OPEN-11/15.
+
+The product owner selected SMS for launch and WhatsApp requirements only, requested
+real production transport locally, and asked for one small environment block to
+copy to the live server. Keep two credentials (account SID/Auth Token), one SMS
+number, one Messaging Service SID, one public webhook base, and the existing two
+explicit live controls. Use the same token for signature verification. Retain
+legacy advanced/test settings in code for compatibility, not in the launch block.
+
+Send platform SMS through the service's pool without forcing `From`; the approved
+number supplies markets without alphanumeric support. Keep the existing public
+callback paths and add signed API-style aliases. Do not disable signature checks
+for TLS termination. Captured sender changes retire old profiles and preflight
+suppresses stale queued work rather than promoting simulated messages to real
+delivery. Persist safe carrier error codes, reconcile early callback races and
+keep final delivery monotonic across duplicated/out-of-order notifications.
+
+User authorized one test to their controlled Indian phone and confirmed receipt;
+Twilio reported delivered. Their existing toll-free number was added to the
+service but remains IN_REVIEW. No approval bypass, WhatsApp enablement, country
+registration certification or deployment is implied. Existing legal, country,
+consent, credit and release gates remain. See the [audit/handoff](audits/2026-10-29-twilio/README.md).
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |
@@ -2726,3 +2754,5 @@ in the [root-cause record](audits/2026-10-28-billing-json-identity/README.md).
 | OPEN-22 | Approve each country rate card and SMS unit economics | The pricing model is approved, but country list, local amounts, annual discounts, destination costs, allowances, pack prices and refund/dispute handling are not | Before enabling each paid market | **Partially resolved; bounded by ADR-054/056.** Include actual Twilio route/carrier/sender/number/registration costs, SES costs and support margin. Certify taxed/async credit payment and refund/dispute recovery; USD software amounts are approved by ADR-056; other markets, SMS economics and paid-pack reversals remain open. |
 
 | OPEN-23 | Define intentional branch relocation and amendment of already-booked arrival details | Saved appointment location snapshots deliberately retain the booked address; a branch move must not silently redirect past or upcoming appointments | Before exposing an appointment location-amendment/relocation workflow | **Open; bounded by ADR-064.** Product/Operations must define permission, versioned evidence, client notice, reschedule/cancellation treatment and provider retry behavior. Current location edits preserve snapshots; owners must coordinate affected bookings through existing reviewed operations. |
+
+| OPEN-24 | Define application-level global STOP/START routing for clients shared by multiple tenants on a platform SMS number | Twilio sender-level opt-out applies across that sender, while a reply does not identify a business. Selecting one matching tenant or restoring multiple businesses' permissions would be unsafe. | Before offering tenant-specific two-way preferences on a shared platform number | **Open; bounded by ADR-067/073.** Current inbound handling only changes an unambiguous client/tenant and otherwise does not expose a conversation or restore consent. Twilio sender-level opt-out still blocks sends. Product/Privacy must define global suppression, evidence and independent per-business re-consent before extending this behavior. |

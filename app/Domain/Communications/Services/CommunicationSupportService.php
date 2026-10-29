@@ -59,7 +59,7 @@ class CommunicationSupportService
     private function replayableError(CommunicationMessage $message): bool
     {
         $code = $message->last_error_code;
-        if (in_array($code, ['provider_not_configured', 'ses_throttled', 'ses_authentication_failed', 'ses_sender_rejected', 'ses_configuration_set_missing', 'ses_sending_paused', 'resend_missing_message_id', 'twilio_http_401', 'twilio_http_403'], true)) {
+        if (in_array($code, ['provider_not_configured', 'twilio_callback_not_configured', 'twilio_error_20003', 'twilio_error_20429', 'ses_throttled', 'ses_authentication_failed', 'ses_sender_rejected', 'ses_configuration_set_missing', 'ses_sending_paused', 'resend_missing_message_id', 'twilio_http_401', 'twilio_http_403'], true)) {
             return true;
         }
         if ($code === 'unexpected_provider_error') {

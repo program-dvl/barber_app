@@ -7,6 +7,7 @@ use App\Domain\Communications\Data\OutboundCommunication;
 use App\Domain\Communications\Data\ProviderSendResult;
 use App\Domain\Communications\Exceptions\CommunicationProviderException;
 use App\Domain\Communications\Models\CommunicationSenderProfile;
+use App\Domain\Communications\Services\TwilioConfiguration;
 use Illuminate\Support\Facades\Http;
 
 class TwilioWhatsAppProvider implements MobileChannelProvider
@@ -48,7 +49,7 @@ class TwilioWhatsAppProvider implements MobileChannelProvider
         $payload = [
             'To' => 'whatsapp:'.$message->destination,
             'From' => str_starts_with($from, 'whatsapp:') ? $from : 'whatsapp:'.$from,
-            'StatusCallback' => route('communications.webhooks.twilio'),
+            'StatusCallback' => TwilioConfiguration::statusCallback(),
         ];
         if (filled($message->providerTemplateId)) {
             $payload['ContentSid'] = $message->providerTemplateId;

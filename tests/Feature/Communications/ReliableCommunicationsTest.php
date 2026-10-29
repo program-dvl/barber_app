@@ -108,6 +108,7 @@ beforeEach(function () {
         'communications.live_send_enabled' => false,
         'communications.whatsapp_sandbox_send_enabled' => false,
         'communications.client_mobile_channels' => ['sms'],
+        'communications.twilio.status_callback_url' => 'https://callbacks.example.test/communications/webhooks/twilio',
     ]);
     $this->emailProvider = new RecordingEmailProvider;
     $this->mobileProvider = new RecordingMobileProvider;

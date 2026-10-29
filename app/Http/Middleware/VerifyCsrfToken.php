@@ -17,5 +17,7 @@ class VerifyCsrfToken extends Middleware
         'communications/webhooks/resend',
         'communications/webhooks/twilio',
         'communications/webhooks/twilio/inbound',
+        'api/webhooks/twilio/status',
+        'api/webhooks/twilio/inbound',
     ];
 }

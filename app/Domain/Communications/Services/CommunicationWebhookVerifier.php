@@ -36,7 +36,24 @@ class CommunicationWebhookVerifier
         if ($provided === '') {
             return false;
         }
-        $data = $request->fullUrl();
+        $url = $request->fullUrl();
+        // A TLS-terminating proxy may expose HTTP internally. Only an exact
+        // configured endpoint/path may supply the signed public URL.
+        $endpoints = [];
+        try {
+            $endpoints = [TwilioConfiguration::statusCallback(), TwilioConfiguration::inboundCallback()];
+        } catch (\Throwable) {
+            // A misconfigured override must not bypass signature verification.
+        }
+        foreach ($endpoints as $public) {
+            if (is_string($public) && parse_url($public, PHP_URL_SCHEME) === 'https'
+                && parse_url($public, PHP_URL_HOST) === $request->getHost()
+                && parse_url($public, PHP_URL_PATH) === '/'.$request->path()
+                && (parse_url($public, PHP_URL_QUERY) ?: '') === ($request->getQueryString() ?? '')) {
+                $url = $public;
+            }
+        }
+        $data = $url;
         $parameters = $request->post();
         ksort($parameters, SORT_STRING);
         foreach ($parameters as $key => $value) {

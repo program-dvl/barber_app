@@ -123,16 +123,37 @@ TWILIO_TEST_AUTH_TOKEN=
 TWILIO_TEST_SMS_FROM=+15005550006
 
 TWILIO_ACCOUNT_SID=
-TWILIO_API_KEY_SID=
-TWILIO_API_KEY_SECRET=
-TWILIO_WEBHOOK_AUTH_TOKEN=
+TWILIO_AUTH_TOKEN=
+TWILIO_MESSAGING_SERVICE_SID=
 TWILIO_SMS_FROM=
+TWILIO_WEBHOOK_BASE_URL=https://clipperdesk.com
 ```
 
 Public HTTPS callbacks remain:
 
 - delivery status: `POST /communications/webhooks/twilio`
 - inbound compliance messages: `POST /communications/webhooks/twilio/inbound`
+
+ADR-073 simplifies production SMS to the same seven-setting block locally and on
+the server: the two explicit live controls, account SID, Auth Token, Messaging
+Service SID, number and public callback base. Test credentials shown above are
+only for the optional test mode and are absent from the launch environment.
+API-key and endpoint overrides remain backward-compatible advanced options.
+After deployment, `/api/webhooks/twilio/status` and `/api/webhooks/twilio/inbound`
+are also signed aliases. Current live Twilio settings use the existing paths.
+The public URL must reach the sending application's database for callback and
+client-action round trips; a live request from localhost alone does not establish
+that boundary. See the [SMS deployment checklist and WhatsApp requirements](../audits/2026-10-29-twilio/README.md).
+
+Platform SMS uses the Messaging Service pool rather than forcing the same `From`
+in every market. Sender/transport changes create a new audited profile and retain
+the captured old identity; stale queued messages are suppressed before sending
+or allowance debit. Signed early callbacks reconcile after the SID is saved and
+on the scheduled sweep. Duplicate/late callbacks cannot downgrade delivery.
+Unreachable recipients do not become opted out solely from `undelivered`; Twilio
+21610 supplies explicit provider opt-out evidence. Incoming shared-number replies
+resolve only an unambiguous client/tenant; OPEN-24 retains broader preference
+routing. WhatsApp remains disabled; no production fallback is claimed.
 
 ## Retained sender history
 

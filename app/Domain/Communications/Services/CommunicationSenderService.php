@@ -5,22 +5,17 @@ namespace App\Domain\Communications\Services;
 use App\Domain\Communications\Models\CommunicationSenderProfile;
 use App\Domain\Communications\Models\CommunicationSetting;
 use App\Domain\PlatformAccess\Models\Business;
+use App\Support\Audit\AuditWriter;
+use Illuminate\Support\Facades\DB;
 
 class CommunicationSenderService
 {
     public function resolve(Business|int $business, string $channel, CommunicationSetting $settings): ?CommunicationSenderProfile
     {
         $business = $business instanceof Business ? $business : Business::query()->findOrFail($business);
+
         // New client notifications always use the platform identity. Retain
         // historical branded profiles for callback routing and audit evidence.
-        $mode = 'platform';
-        $profile = CommunicationSenderProfile::query()->where('business_id', $business->id)
-            ->where('channel', $channel)->where('mode', $mode)->where('status', 'active')->first();
-
-        if ($profile) {
-            return $profile;
-        }
-
         return $this->ensurePlatformProfile($business, $channel);
     }
 
@@ -37,26 +32,53 @@ class CommunicationSenderService
             || ($channel === 'whatsapp' && $mode === 'whatsapp_sandbox' && $this->whatsAppSandboxReady())
             || ($mode === 'live' && $this->liveReady($identifier));
 
-        return CommunicationSenderProfile::query()->updateOrCreate([
-            'business_id' => $business->id, 'channel' => $channel, 'mode' => 'platform',
-        ], [
-            'provider' => $mode === 'fake' ? 'fake' : 'twilio',
-            'status' => $available ? 'active' : 'pending',
-            'country_code' => $business->country_code,
-            'display_name' => 'ClipperDesk for '.$business->name,
-            'sender_identifier' => $identifier ?: 'ClipperDesk',
-            'sender_identifier_hash' => self::identifierHash($channel, $identifier ?: 'ClipperDesk'),
-            'provider_account_sid_hash' => filled(config('communications.twilio.account_sid'))
-                ? hash('sha256', (string) config('communications.twilio.account_sid'))
-                : null,
-            'capabilities' => [
-                'outbound' => true,
-                'inbound' => $channel === 'sms',
-                'templates' => false,
-                'simulation' => $mode !== 'live',
-            ],
-            'verified_at' => $available ? now() : null,
-        ]);
+        return DB::transaction(function () use ($business, $channel, $mode, $identifier, $available): CommunicationSenderProfile {
+            Business::query()->whereKey($business->id)->lockForUpdate()->firstOrFail();
+            $existing = CommunicationSenderProfile::query()->where('business_id', $business->id)
+                ->where('channel', $channel)->where('mode', 'platform')->lockForUpdate()->first();
+            $accountHash = filled(config('communications.twilio.account_sid')) ? hash('sha256', (string) config('communications.twilio.account_sid')) : null;
+            $service = $channel === 'sms' ? config('communications.twilio.messaging_service_sid') : null;
+            if ($existing && $existing->sender_identifier === ($identifier ?: 'ClipperDesk')
+                && $existing->provider === ($mode === 'fake' ? 'fake' : 'twilio')
+                && $existing->status === ($available ? 'active' : 'pending')
+                && (bool) data_get($existing->capabilities, 'simulation') === ($mode !== 'live')
+                && data_get($existing->capabilities, 'messaging_service_sid') === $service
+                && $existing->provider_account_sid_hash === $accountHash) {
+                return $existing;
+            }
+            if ($existing) {
+                // Retain the captured identity. Old queued simulation work must
+                // not silently acquire a live sender during configuration repair.
+                $existing->update(['mode' => 'retired_'.$existing->id, 'status' => 'retired']);
+            }
+            $profile = CommunicationSenderProfile::query()->create([
+                'business_id' => $business->id, 'channel' => $channel, 'mode' => 'platform',
+                'provider' => $mode === 'fake' ? 'fake' : 'twilio',
+                'status' => $available ? 'active' : 'pending',
+                'country_code' => $business->country_code,
+                'display_name' => 'ClipperDesk for '.$business->name,
+                'sender_identifier' => $identifier ?: 'ClipperDesk',
+                'sender_identifier_hash' => self::identifierHash($channel, $identifier ?: 'ClipperDesk'),
+                'provider_account_sid_hash' => filled(config('communications.twilio.account_sid'))
+                    ? hash('sha256', (string) config('communications.twilio.account_sid'))
+                    : null,
+                'capabilities' => [
+                    'outbound' => true,
+                    'inbound' => $channel === 'sms',
+                    'templates' => false,
+                    'simulation' => $mode !== 'live',
+                    'messaging_service_sid' => $channel === 'sms' ? config('communications.twilio.messaging_service_sid') : null,
+                ],
+                'verified_at' => $available ? now() : null,
+            ]);
+
+            if ($existing) {
+                app(AuditWriter::class)->write('communication.platform_sender_refreshed', $business, target: $profile,
+                    after: ['previous_profile_id' => $existing->id, 'profile_id' => $profile->id, 'channel' => $channel, 'transport' => $mode]);
+            }
+
+            return $profile;
+        });
     }
 
     public static function identifierHash(string $channel, string $identifier): string

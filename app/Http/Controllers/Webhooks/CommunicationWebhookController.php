@@ -84,9 +84,22 @@ class CommunicationWebhookController extends Controller
         abort_unless($verifier->verifyTwilio($request), 400, 'Invalid Twilio webhook signature.');
         $sid = $request->string('MessageSid')->toString();
         $status = $request->string('MessageStatus')->toString();
-        $occurred = CarbonImmutable::parse($request->input('Timestamp', now()))->utc();
-        $eventId = (string) ($request->header('I-Twilio-Idempotency-Token') ?: hash('sha256', $sid.'|'.$status.'|'.$request->input('ErrorCode')));
-        $callbacks->receive('twilio', $eventId, $sid, $status, $occurred, hash('sha256', $request->getContent()));
+        if (! in_array($status, ['accepted', 'queued', 'sending', 'sent', 'delivered', 'read', 'failed', 'undelivered', 'canceled'], true)) {
+            return response()->noContent();
+        }
+        try {
+            $occurred = CarbonImmutable::parse($request->input('Timestamp', now()))->utc();
+        } catch (\Throwable) {
+            abort(400, 'Invalid delivery time.');
+        }
+        $errorCode = preg_match('/^\d{4,6}$/', (string) $request->input('ErrorCode')) ? (string) $request->input('ErrorCode') : null;
+        $parameters = $request->post();
+        ksort($parameters);
+        $payloadHash = hash('sha256', json_encode($parameters, JSON_THROW_ON_ERROR));
+        // Delivery-attempt tokens can differ across webhook retries. The signed
+        // canonical payload is stable for a duplicate status notification.
+        $eventId = $payloadHash;
+        $callbacks->receive('twilio', $eventId, $sid, $status, $occurred, $payloadHash, $errorCode);
 
         return response()->noContent();
     }

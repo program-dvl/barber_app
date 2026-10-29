@@ -27,6 +27,10 @@
         <env name="QUEUE_CONNECTION" value="sync" force="true"/>
         <env name="MAIL_MAILER" value="array" force="true"/>
         <env name="COMMUNICATIONS_TRANSPORT_MODE" value="fake" force="true"/>
+        <env name="TWILIO_MESSAGING_SERVICE_SID" value="" force="true"/>
+        <env name="TWILIO_STATUS_CALLBACK_URL" value="" force="true"/>
+        <env name="TWILIO_INBOUND_CALLBACK_URL" value="" force="true"/>
+        <env name="TWILIO_WEBHOOK_BASE_URL" value="" force="true"/>
         <env name="COMMUNICATIONS_IMMEDIATE_EVENT_DISPATCH" value="false" force="true"/>
     </php>
 </phpunit>

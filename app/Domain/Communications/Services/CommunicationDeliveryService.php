@@ -16,6 +16,7 @@ use App\Domain\Communications\Models\CommunicationMessage;
 use App\Domain\Communications\Models\CommunicationSenderProfile;
 use App\Domain\SchedulingOperations\Models\Appointment;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -99,9 +100,19 @@ class CommunicationDeliveryService
 
                 return null;
             }
-            if ($current->channel === 'sms' && ! CommunicationSenderProfile::query()
+            $smsProfile = $current->channel === 'sms' ? CommunicationSenderProfile::query()
                 ->where('business_id', $current->business_id)->where('channel', 'sms')->where('status', 'active')
-                ->whereKey($current->communication_sender_profile_id)->exists()) {
+                ->find($current->communication_sender_profile_id) : null;
+            $platformChanged = $smsProfile?->mode === 'platform' && (
+                $smsProfile->provider !== (config('communications.transport_mode') === 'fake' ? 'fake' : 'twilio')
+                || (bool) data_get($smsProfile->capabilities, 'simulation') !== (config('communications.transport_mode') !== 'live')
+                || data_get($smsProfile->capabilities, 'messaging_service_sid') !== config('communications.twilio.messaging_service_sid')
+                || (config('communications.transport_mode') === 'live' && (
+                    $smsProfile->sender_identifier !== config('communications.twilio.sms_from')
+                    || $smsProfile->provider_account_sid_hash !== hash('sha256', (string) config('communications.twilio.account_sid'))
+                ))
+            );
+            if ($current->channel === 'sms' && (! $smsProfile || $platformChanged)) {
                 $updates = ['status' => 'suppressed', 'suppression_reason' => 'sender_not_ready', 'next_attempt_at' => null];
                 $this->releaseMobileAllowance($current, $updates);
                 $current->update($updates);
@@ -195,6 +206,15 @@ class CommunicationDeliveryService
                 $attempt->update(['status' => 'sent', 'provider_request_id' => $result->providerRequestId, 'provider_message_id' => $result->providerMessageId, 'finished_at' => now()]);
                 $this->refreshIntent($current);
             });
+            if ($message->channel === 'sms' && $this->mobile->name() === 'twilio') {
+                try {
+                    app(CommunicationProviderCallbackService::class)->reconcilePendingTwilio($message->id);
+                } catch (Throwable) {
+                    // The send is already accepted. The scheduled reconciliation
+                    // retries callback processing without repeating the SMS.
+                    Log::warning('Twilio delivery evidence awaits scheduled processing.', ['message_id' => $message->id]);
+                }
+            }
         } catch (CommunicationProviderException $error) {
             $this->recordFailure($message, $attempt, $error->safeCode, $error->retryable, true);
             $this->activateFallbackIfFailed($message);

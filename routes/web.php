@@ -237,6 +237,8 @@ Route::post('communications/webhooks/ses', [CommunicationWebhookController::clas
 Route::post('communications/webhooks/resend', [CommunicationWebhookController::class, 'resend'])->name('communications.webhooks.resend');
 Route::post('communications/webhooks/twilio', [CommunicationWebhookController::class, 'twilio'])->name('communications.webhooks.twilio');
 Route::post('communications/webhooks/twilio/inbound', [CommunicationWebhookController::class, 'twilioInbound'])->name('communications.webhooks.twilio.inbound');
+Route::post('api/webhooks/twilio/status', [CommunicationWebhookController::class, 'twilio'])->name('communications.webhooks.twilio.status');
+Route::post('api/webhooks/twilio/inbound', [CommunicationWebhookController::class, 'twilioInbound'])->name('communications.webhooks.twilio.inbound.public');
 Route::match(['get', 'post'], 'communications/actions/{link}', CommunicationActionController::class)->name('communications.action');
 
 Route::middleware([
