@@ -309,7 +309,7 @@ const commitImport = async () => {
                 <div class="mt-2 h-1 overflow-hidden rounded-full bg-[var(--border-subtle)]" aria-hidden="true"><div class="h-full bg-[var(--action-primary)]" :style="{ width: `${((guidedIndex + 1) / guidedSteps.length) * 100}%` }" /></div>
             </div>
 
-            <section class="mt-6 overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-[var(--shadow-raised)]" aria-live="polite">
+            <section class="mt-6 overflow-visible rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-[var(--shadow-raised)]" aria-live="polite">
                 <div v-if="guidedStep === 'business_type'" class="p-4 sm:p-5">
                     <h2 class="text-lg font-semibold text-[var(--text-strong)]">Business type</h2>
                     <div class="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-3">

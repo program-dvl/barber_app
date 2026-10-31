@@ -171,6 +171,10 @@ onBeforeUnmount(() => { alive = false; ++selectionVersion; ++searchGeneration; s
 </template>
 
 <style scoped>
-.cd-location-search { color-scheme:light; color:var(--text-default); }
-.cd-location-search :deep(gmp-place-autocomplete) { display:block; min-height:44px; color-scheme:light; background-color:var(--surface-raised); color:var(--text-default); }
+/* Google's predictions extend below this field; clipping belongs to neither
+   the field wrapper nor the card that contains it. Keep these shared field
+   styles here so signup, guided setup and Locations render the same widget. */
+.cd-location-search { position:relative; overflow:visible; color-scheme:light; color:var(--text-default); }
+.cd-location-search:focus-within { z-index:20; }
+.cd-location-search :deep(gmp-place-autocomplete) { display:block; width:100%; min-height:44px; border:0; border-radius:inherit; box-shadow:none; color-scheme:light; background-color:var(--surface-raised); color:var(--text-default); }
 </style>

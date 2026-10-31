@@ -1077,3 +1077,14 @@ notifications, loading/empty/error states, dialogs, public pricing and help copy
 Locations is a direct workspace navigation item alongside Services, sharing
 settings permissions and the existing responsive menu. At the purchased limit,
 the location action reads “Upgrade to add locations” and opens billing.
+
+### Address fields with suggestion menus (2026-10-31)
+
+Google address search retains its supported autocomplete widget. Its wrapper and
+containing location form card must allow the dropdown to extend below the input;
+rounded field styling must not be achieved by clipping the suggestions.
+`SurfaceCard` offers the explicit `overflowVisible` opt-in for this use. Default
+card clipping remains unchanged. Keep widget styling in the shared LocationEditor
+so signup, guided setup and Locations have the same presentation. Verification
+must include actual predictions at desktop and mobile widths; API responses or
+mounted selection tests alone do not prove the list is visible.

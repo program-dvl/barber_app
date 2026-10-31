@@ -17,7 +17,6 @@ html:has(.bs-workspace){scroll-padding-bottom:180px}
 .bs-booking-preview{width:100%;max-width:100%;margin-inline:auto;border:1px solid var(--border-strong);border-radius:12px;overflow:hidden;background:var(--surface-canvas)}
 .bs-booking-preview.mobile{width:390px}
 .bs-booking-preview-frame{display:block;width:100%;height:740px;border:0}
-.cd-location-search{overflow:hidden}.cd-location-search gmp-place-autocomplete{display:block;width:100%;border:0;border-radius:8px;box-shadow:none}
 @media(max-width:639px){.bs-booking-preview-frame{height:620px}}
 
 .bs-branding{display:grid;gap:24px;max-width:none}

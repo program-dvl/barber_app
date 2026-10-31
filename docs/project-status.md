@@ -1,5 +1,20 @@
 # Project status
 
+## 2026-10-31 Google address suggestion clipping correction
+
+- [x] Inspected the reported successful Places response/hidden-results screenshot.
+  Found clipping on the search wrapper, guided setup card and default Locations
+  SurfaceCard. Removed clipping for those search/form surfaces and consolidated
+  widget styling in LocationEditor; only Locations opts into the new card flag.
+  Existing manual recovery, selection, attribution and keyboard handling remain.
+- [x] Focused location/loader/setup frontend **25 passed**; full frontend **172
+  passed**, Node 24.19.0. Client and SSR production builds and whitespace pass.
+  No backend, credentials, provider restrictions or saved location data changed.
+- [ ] Browser use is disabled in Work settings. Requested enabling it; actual
+  desktop/mobile predictions, selection and responsive visual verification remain
+  outstanding. Not deployed or described as a verified production fix.
+  [Diagnosis, scope and verification](audits/2026-10-31-google-suggestions/README.md).
+
 ## 2026-10-31 Worldwide SMS allowance (ADR-076)
 
 - [x] Owner explicitly removed plan-level client phone-country restrictions.

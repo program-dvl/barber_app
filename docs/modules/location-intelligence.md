@@ -6,6 +6,12 @@ Related contracts: [Business setup](business-setup.md),
 
 ## Owner journey
 
+The shared Google search wrapper and location-editing cards must allow the
+prediction dropdown to extend below their bounds. LocationEditor owns its field
+styling and focused stacking; signup/guided setup must not add clipping around
+it. Locations explicitly opts its SurfaceCard into visible overflow without
+changing unrelated cards. See [2026-10-31 correction and verification limits](../audits/2026-10-31-google-suggestions/README.md).
+
 The existing guided `location` step and Locations page share `LocationEditor`.
 Choose Google search or manual full-address entry. Search uses a bordered field;
 choosing a suggestion shows one selected-address summary with an edit action.
