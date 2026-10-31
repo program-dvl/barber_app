@@ -288,8 +288,8 @@ it('counts GSM extensions unicode and emojis as actual SMS segments', function (
     expect($counter->segments(str_repeat('a', 160)))->toBe(1)->and($counter->segments(str_repeat('a', 161)))->toBe(2)
         ->and($counter->segments(str_repeat('^', 81)))->toBe(2)->and($counter->segments(str_repeat('你', 71)))->toBe(2)
         ->and($counter->segments(str_repeat('😀', 36)))->toBe(2)
-        ->and($counter->credits('Hi', '+441234567890', ['+1' => 1]))->toBeNull()
-        ->and($counter->credits('Hi', '+441234567890', ['+4' => 8, '+44' => 2]))->toBe(2);
+        ->and($counter->credits('Hi'))->toBe(1)
+        ->and($counter->credits(str_repeat('你', 71)))->toBe(2);
 });
 
 it('shows the total capacity charge rather than just the base item on billing', function () {

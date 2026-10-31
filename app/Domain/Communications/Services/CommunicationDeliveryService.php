@@ -138,7 +138,6 @@ class CommunicationDeliveryService
             }
             if ($current->channel !== 'email' && ! $current->entitlement_charged_at) {
                 if ($current->channel === 'sms' && $current->business->subscription?->capacity_snapshot) {
-                    $snapshot = $current->business->subscription->capacity_snapshot;
                     try {
                         $rendered = $this->renderer->render($current->template, $this->deliveryVariables($current));
                     } catch (Throwable) {
@@ -147,13 +146,7 @@ class CommunicationDeliveryService
 
                         return null;
                     }
-                    $quantity = app(SmsSegmentCounter::class)->credits($rendered['body'], $current->recipient, $snapshot['sms_routes']);
-                    if ($quantity === null) {
-                        $current->update(['status' => 'suppressed', 'suppression_reason' => 'destination_not_included', 'next_attempt_at' => null]);
-                        $this->refreshIntent($current);
-
-                        return null;
-                    }
+                    $quantity = app(SmsSegmentCounter::class)->credits($rendered['body']);
                     $reserved = app(SmsCreditWallet::class)->reserve($current, $quantity);
                 } else {
                     $reserved = $this->usage->reserve($current->business, 'messaging.monthly_allowance');

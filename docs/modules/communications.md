@@ -77,6 +77,12 @@ cannot be resurrected by moving them into a later quiet-hours window.
 
 ## Sender experience
 
+ADR-076 makes the available SMS quota independent of client phone country. A
+client visiting a US business with an Indian or other international number may
+receive the same eligible notification. One rendered segment uses one credit;
+no plan destination allow-list or country multiplier applies, including for
+existing subscriptions. Provider delivery requirements remain platform operations.
+
 **ClipperDesk text notifications** use the shared platform sender and identify
 the business in each message. New notifications never select an owner-branded
 profile. Retained branded sender records remain tenant scoped for historical
@@ -307,10 +313,12 @@ enabled, and no production history/schema or credentials were changed.
 ## 2026-10-05 capacity subscription metering (ADR-054)
 
 For explicitly migrated capacity subscriptions, included texts reset monthly even
-on annual subscriptions. Count rendered GSM/Unicode segments and destination
-multipliers. Reserve the entire included/prepaid amount before sending; release
-only the original reservation window on failed pre-send attempts. Unsupported
-destinations suppress sending. Preserve SMS-only client channels, consent and
+on annual subscriptions. Count rendered GSM/Unicode segments at one credit per
+segment worldwide. ADR-076 supersedes the earlier destination-prefix gate and
+multipliers: phone-country differences never suppress an otherwise eligible text.
+Reserve the entire included/prepaid amount before sending; release only the
+original reservation window on failed pre-send attempts. Preserve SMS-only
+client channels, consent and
 existing provider gates. Routine SES account emails remain included. Optional
 prepaid purchases require verified payment, with automatic purchases off. See
 `subscription-billing.md` for financial, release and refund/dispute boundaries.

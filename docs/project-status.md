@@ -1,5 +1,55 @@
 # Project status
 
+## 2026-10-31 Worldwide SMS allowance (ADR-076)
+
+- [x] Owner explicitly removed plan-level client phone-country restrictions.
+  Capacity SMS delivery now charges one credit per rendered GSM/Unicode segment
+  worldwide, using the existing included/prepaid allowance without destination
+  gates or multipliers. Consent, valid numbers, owner/client preferences, provider
+  settings, subscription restrictions and atomic quota checks remain intact.
+- [x] Applies to existing paid `+1` snapshots and new subscriptions without
+  rewriting snapshots, verified rate cards, fingerprints, Stripe Prices, prior
+  debits or reservations. No migration or new environment setting is required.
+  Previously suppressed messages are not automatically replayed.
+- [x] Reproduced before correction: 7 failures / 5 passes. Global quota tests now
+  **17 passed / 101 assertions**, including a US saved booking event sending to an
+  Indian client through simulated live Twilio, duplicate processing, international
+  quota exhaustion, included/prepaid splitting, carrier rejection and unknown
+  outcome retention. Scoped formatting and whitespace checks pass.
+- [x] Final full backend: **1,010 passed / 10,661 assertions**, 30 existing skips.
+  No frontend, schema, runtime environment or external provider changes were made
+  for this quota correction; all test provider requests were simulated.
+- [ ] Correction not deployed; a fresh deployed booking SMS and callback round
+  trip remain unverified. Provider country requirements and pending US/Canada
+  toll-free approval remain operational limits, not plan coverage restrictions.
+  [Implementation and deployment evidence](audits/2026-10-31-global-sms-quota/README.md).
+
+## 2026-10-31 Deployed booking email/SMS diagnosis
+
+- [x] Read-only Forge checks confirm deployed revision `cf5f7ec`, an installed
+  minute scheduler, sync queue, and passing live Twilio configuration/pool/callback
+  checks. Toll-free approval remains IN_REVIEW.
+- [x] Reported booking SMS has consent and selection but is suppressed before any
+  provider attempt: `destination_not_included`. Matching subscription snapshots
+  include only `+1`; the controlled test recipient is `+91`. Twilio's records
+  contain only the earlier delivered direct adapter test, not a booking send.
+- [x] The booking email failed with `provider_not_configured`. Live SES sender and
+  region are present, but AWS access key/secret are missing from both effective
+  configuration and the live environment file. Local SES credentials are present.
+- [x] Owner authorized transferring the existing three AWS settings to Forge.
+  Saved only those settings and reloaded configuration; production now reports
+  client email configured. Identity-inspection permissions are denied for this
+  key; no IAM access was expanded. Temporary transfer file deleted.
+- [x] One separately authorized branded test was sent from the deployed SES
+  adapter and the owner confirmed receipt. Production email sending/receipt is
+  verified after the configuration repair; the read-only IAM denial did not
+  prevent sending. A fresh booking/reminder round trip was not created or tested.
+- [ ] The diagnosed deployed revision still excludes Indian booking SMS through
+  its captured `+1` coverage. ADR-076 above removes this gate in the prepared
+  correction. No historical messages resent or financial snapshots rewritten.
+  The email recovery itself changed configuration only and reran no product tests.
+  [Evidence and recovery boundaries](audits/2026-10-31-production-notifications/README.md).
+
 ## 2026-10-29 Direct Locations navigation
 
 - Added Locations beside Services in the shared desktop/mobile menu, retaining

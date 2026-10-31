@@ -184,13 +184,20 @@ purchases are off. Credit purchases are available only to active subscribers aft
 refund/dispute handling is certified.
 
 Credits reflect actual rendered GSM/Unicode segments (including extension
-characters and surrogate pairs) multiplied by the approved destination-prefix
-rate. Unsupported destinations do not send. Included credits are consumed first;
+characters and surrogate pairs), at **one credit per segment worldwide**. The
+client's phone country, the business's country/currency and historical route maps
+do not restrict sending or multiply quota use (ADR-076). Included credits are consumed first;
 any remainder uses an append-only prepaid ledger under the subscription lock.
 The entire cost is reserved before delivery or nothing is consumed. Repeat
 reservation/release is idempotent; failed pre-send attempts release the same
 recorded allowance window. The existing SMS-only transactional consent and
 provider gates remain. A provider failure never purchases extra credits.
+
+The rule applies at delivery to existing and new subscriptions without changing
+their paid snapshots, verified pricing identity or prior usage. `sms_routes`
+remains deprecated pricing metadata solely for retained rate-card compatibility;
+it is not a destination allow-list. No Stripe price or subscription migration is
+needed. Previously suppressed messages remain historical and are not replayed.
 
 Top-ups use one-time Stripe Checkout, known customer and immutable pack terms.
 Only an owned, paid, complete exact session grants credits, once, including
@@ -227,7 +234,8 @@ operational gate is met. No refunds or real provider sends were executed locally
    rollout checks. Enable billing only after mappings and environment gates pass.
 6. Certify paid conversion, 3DS/decline, immediate proration, scheduled renewal,
    cancellation, duplicate/out-of-order delivery and production MySQL concurrency.
-   Separately certify destination costs and paid credit reversals before SMS sales.
+   Separately review platform carrier costs and certify paid credit reversals before SMS sales;
+   these controls do not create client-country restrictions within the plan.
 
 Focused evidence: `CapacityBillingTest`, `BillingWorkspaceTest`, provider/lifecycle
 regressions, all frontend helper tests and client/SSR production build. Local

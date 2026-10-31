@@ -29,15 +29,10 @@ class SmsSegmentCounter
         return max(1, (int) ceil($length / ($length <= 160 ? 160 : 153)));
     }
 
-    public function credits(string $text, string $destination, array $routes): ?int
+    public function credits(string $text): int
     {
-        uksort($routes, fn ($a, $b) => strlen($b) <=> strlen($a));
-        foreach ($routes as $prefix => $multiplier) {
-            if (str_starts_with($destination, $prefix) && is_int($multiplier) && $multiplier > 0) {
-                return $this->segments($text) * $multiplier;
-            }
-        }
-
-        return null;
+        // A travelling client's phone country never changes plan eligibility
+        // or credit cost. The platform owns destination-specific carrier costs.
+        return $this->segments($text);
     }
 }

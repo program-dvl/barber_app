@@ -2813,6 +2813,43 @@ consent, credit and release gates remain. See the [audit/handoff](audits/2026-10
   results were not rerun for this key-only update.
   [Reproduction, recovery and remaining limits](audits/2026-10-29-setup-recovery/README.md).
 
+## ADR-076 — SMS allowance follows available quota, not the client's phone country
+
+- Status: Accepted
+- Date: 2026-10-31
+- Owners: Product / Engineering / Operations
+- Requirements: FR-01/13/19, PRD §9. Supersedes destination-prefix eligibility
+  and destination credit multipliers in ADR-054/073 and OPEN-22; other billing,
+  provider and consent controls remain.
+
+The owner rejected country restrictions within the plan: a client travelling to
+a US salon with an Indian number must be able to receive its appointment text.
+Use the business's available included/prepaid allowance for all valid SMS
+destinations. One rendered GSM/Unicode segment costs one credit regardless of
+country; the platform absorbs destination-specific provider cost differences.
+The business's sales currency, pricing market and the phone prefix do not select
+SMS eligibility or a multiplier. This is not unlimited messaging or automatic
+credit purchasing, and does not bypass Twilio's own delivery requirements.
+
+Apply this rule to existing and new subscriptions at delivery time. Do not
+rewrite paid capacity snapshots, verified rate-card terms/fingerprints, Stripe
+Prices, invoices, historical debits or reservations. Retain `sms_routes` as
+deprecated historical pricing metadata so existing verified billing identity
+remains stable; delivery never consults that field. No subscription migration,
+Stripe reprovisioning or additional environment switch is required.
+
+Reserve the whole segment quantity atomically before the provider call, consume
+included credits before prepaid, preserve consent/tenant/restriction checks,
+release definitive pre-send failures idempotently and retain credits for unknown
+outcomes without resending. Previously suppressed historical messages are not
+automatically replayed when this policy is deployed.
+
+The prior production diagnosis remains factual for the deployed revision. Its
+requirement for separately approved Indian subscription coverage is superseded
+by this explicit owner decision. Production SMS delivery under this correction
+still needs deployment and an authorized booking rehearsal; the earlier direct
+Twilio test is not a booking-flow certification.
+
 ## Open decisions
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |
@@ -2837,7 +2874,7 @@ consent, credit and release gates remain. See the [audit/handoff](audits/2026-10
 
 | OPEN-21 | Connect deposit communication events and approve the usable client payment action | Deposit request/received handlers and templates exist, but no deposit domain events invoke them; the current public action is only information and OPEN-16 still blocks self-service payment. | Before labeling deposit notifications active or offering a payment CTA | **Open; bounded by ADR-052, OPEN-13/16.** Product/Engineering/Finance must define committed request/collection events, exact-once keys, failure/refund language and tested public action. Prepared templates are not proof of an operational automation; no synthetic event or paid-confirmation bypass is approved. |
 
-| OPEN-22 | Approve each country rate card and SMS unit economics | The pricing model is approved, but country list, local amounts, annual discounts, destination costs, allowances, pack prices and refund/dispute handling are not | Before enabling each paid market | **Partially resolved; bounded by ADR-054/056.** Include actual Twilio route/carrier/sender/number/registration costs, SES costs and support margin. Certify taxed/async credit payment and refund/dispute recovery; USD software amounts are approved by ADR-056; other markets, SMS economics and paid-pack reversals remain open. |
+| OPEN-22 | Approve commerce rate cards and platform SMS unit economics | Local commerce amounts, provider costs, pack prices and refund/dispute handling need operational approval; client phone countries must not restrict plan SMS | Before enabling each paid commerce market or selling text packs | **Partially resolved; bounded by ADR-054/056/076.** SMS allowance is worldwide at one credit per segment, including existing subscribers; provider cost differences are platform economics, not a destination gate or multiplier. Certify taxed/async credit payment and refund/dispute recovery; USD software amounts are approved by ADR-056; other commerce markets and paid-pack reversals remain open. |
 
 | OPEN-23 | Define intentional branch relocation and amendment of already-booked arrival details | Saved appointment location snapshots deliberately retain the booked address; a branch move must not silently redirect past or upcoming appointments | Before exposing an appointment location-amendment/relocation workflow | **Open; bounded by ADR-064.** Product/Operations must define permission, versioned evidence, client notice, reschedule/cancellation treatment and provider retry behavior. Current location edits preserve snapshots; owners must coordinate affected bookings through existing reviewed operations. |
 

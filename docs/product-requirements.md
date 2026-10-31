@@ -534,6 +534,7 @@ Purpose: Keep clients and staff informed while respecting consent, local time an
 - Expose email and SMS in the initial release. Keep other mobile providers behind a disabled application-owned channel contract until a later accepted decision promotes them; keep in-app and browser push as later compatible channels.
 - Use the shared ClipperDesk sender and platform-managed content for client email and SMS. Include the business identity and relevant visit details automatically. Business-owned sender onboarding, owner message builders, free-form replies and a client inbox are unavailable; retain historical sender records and inbound STOP/START routing for compliance (owner-approved simplification, 2026-10-14; ADR-067).
 - Create one SMS notification for an eligible event. Do not expose cross-channel fallback or send duplicate mobile notifications in the initial release.
+- SMS allowance is independent of the client's telephone country. A valid, consented international number uses the business's available quota, including when a client travels abroad. Charge one credit per rendered SMS segment without destination multipliers; retain provider delivery requirements and the existing quota/credit safeguards (owner-approved correction, 2026-10-31; ADR-076).
 - Separate transactional communications from marketing consent and unsubscribe rules.
 
 #### Templates And Timing
@@ -845,8 +846,10 @@ Keep existing paid terms until explicit reviewed confirmation at renewal.
 - Show the complete recurring amount, component breakdown, cadence, tax treatment,
   monthly pooled SMS allowance and optional prepaid text packs before commitment.
 - Include routine operational email notifications; no marketing or conversational
-  channel is promoted. Twilio destination/segment costs and SES costs must be
-  budgeted into country rate cards. No unlimited SMS or hidden automatic overages.
+  channel is promoted. The platform budgets Twilio destination costs and SES costs;
+  a subscription must not restrict client phone countries or apply country-based
+  credit multipliers. SMS uses the available allowance at one credit per rendered
+  segment worldwide (ADR-076). No unlimited SMS or hidden automatic overages.
 - Prepare optional credit purchases now; keep automatic purchases off and retain
   external delivery/payment/refund certification before paid launch. This expressly
   promotes the implementation prerequisite in the earlier extra-credit rule;

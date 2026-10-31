@@ -26,8 +26,8 @@ return [
             'name' => 'USD', 'currency' => 'USD', 'revision' => '2026-10-12-progressive-1',
             'approved' => (bool) env('CAPACITY_US_APPROVED', true),
             'sms_per_staff' => 100,
-            // Destination routes, not the account's currency, determine credit use.
-            // The +1 route must cover the actual US/Canada carrier cost ceiling.
+            // Legacy pricing metadata retained for verified card fingerprints.
+            // Delivery uses one credit per segment worldwide (ADR-076), never this map.
             'sms_routes' => ['+1' => 1],
             'monthly' => [
                 ...$monthly, 'staff_tiers' => $staffTiers,
