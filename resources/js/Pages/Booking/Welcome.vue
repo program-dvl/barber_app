@@ -235,6 +235,7 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
         :title="business ? `Book with ${business.name}` : 'Book an appointment'"
         :current-step="step"
         :preview="preview"
+        :brand-color="business?.brand_color"
         :steps="['Services', 'Staff & time', 'Confirm', 'Booked']"
     >
         <section v-if="!business" class="booking-panel mx-auto max-w-lg">

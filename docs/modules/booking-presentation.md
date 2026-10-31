@@ -6,6 +6,18 @@ the [canonical journey](../public-booking-journey.md).
 
 ## Optional salon gallery
 
+### Saved accent colour
+
+The Business profile accent is supplied to the actual public booking layout and
+private preview. Scope the theme to that booking root so it cannot change another
+business or the owner workspace. Use the exact saved colour for progress, with
+readable shades of the same hue for buttons, links, selected states and focus.
+Keep ClipperDesk identity and semantic status colours. Missing/invalid colours
+inherit the platform theme. This is presentation only; no booking/permission or
+notification-branding rule changes. [Implementation and verification limits](../audits/2026-10-31-booking-accent/README.md).
+
+### Gallery
+
 Business setup → Photos & branding offers up to eight business-wide photos, separate
 from the existing logo and cover. Photos are optional at every setup/publication
 stage. Owners can add a description, move photos earlier/later and remove them;

@@ -1,5 +1,21 @@
 # Project status
 
+## 2026-10-31 Saved booking accent presentation
+
+- [x] Found that saved `brand_color` was projected by the backend but never used
+  by the public booking layout. Welcome now passes it for public booking and
+  private preview; scoped theme variables colour progress, actions, selected
+  states and focus without changing platform identity or semantic status colours.
+- [x] Derived action shades preserve readable contrast on booking surfaces;
+  malformed/absent values inherit defaults. Existing saved colours need no
+  re-save, database migration or environment change.
+- [x] Frontend **176 passed**, including actual page/layout wiring, public/private
+  SSR scoping, input safety and numeric contrast checks. Client/SSR builds and
+  whitespace pass. No backend, provider configuration or business records changed.
+- [ ] Browser access still reports disabled in Work settings; actual desktop/mobile
+  appearance and the reported live business remain unverified. Not deployed.
+  [Diagnosis and verification](audits/2026-10-31-booking-accent/README.md).
+
 ## 2026-10-31 Google address suggestion clipping correction
 
 - [x] Inspected the reported successful Places response/hidden-results screenshot.

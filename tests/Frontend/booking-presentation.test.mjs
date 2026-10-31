@@ -40,7 +40,7 @@ function fixtureCatalog(staffPreference = 'any_or_preferred') {
         policy: { online_staff_preference: staffPreference, online_new_client_rule: 'allow' },
     };
 }
-function mount({ staffPreference, preview = false, saved = null, post } = {}) {
+function mount({ staffPreference, preview = false, saved = null, post, brandColor } = {}) {
     const root = { children: [] }, calls = [], storage = [];
     globalThis.sessionStorage = { getItem: key => { storage.push(['get', key]); return saved ? JSON.stringify(saved) : null; }, setItem: (key, value) => storage.push(['set', key, JSON.parse(value)]), removeItem: key => storage.push(['remove', key]) };
     globalThis.document = { querySelector: () => null, activeElement: null };
@@ -66,7 +66,7 @@ function mount({ staffPreference, preview = false, saved = null, post } = {}) {
         patchProp(node, key, before, after) { node.props[key] = after; if (key === 'value') node.value = after; if (key === 'type') node.type = after; if (key === 'checked') node.checked = after; },
     });
     const catalog = fixtureCatalog(staffPreference);
-    const app = renderer.createApp({ render: () => h(Welcome, { business: { name: 'Test Studio', booking_slug: 'test-studio', currency_code: 'USD', phone: '+15555550100', reviews: { count: 0, items: [] } }, catalog, preview }) });
+    const app = renderer.createApp({ render: () => h(Welcome, { business: { name: 'Test Studio', booking_slug: 'test-studio', brand_color: brandColor, currency_code: 'USD', phone: '+15555550100', reviews: { count: 0, items: [] } }, catalog, preview }) });
     app.provide('route', name => name); app.mount(root);
     const nodes = () => { const all = []; function walk(node) { all.push(node); node.children?.forEach(walk); } walk(root); return all; };
     const text = node => [node.text || '', ...(node.children || []).map(text)].join(' ').replace(/\s+/g, ' ');
@@ -89,6 +89,17 @@ test('actual booking uses first-available policy without exposing professional s
         await times(fixture); assert.equal(searches(fixture).length, 1); assert.equal(searches(fixture)[0].body.staff, null);
         assert.ok(!fixture.nodes().some(node => node.props?.['aria-label'] === 'Choose your professional'));
     } finally { fixture.app.unmount(); t.mock.timers.reset(); }
+});
+
+test('saved business accent reaches the shared layout in public booking and private preview', async () => {
+    for (const preview of [false, true]) {
+        const fixture = mount({ preview, brandColor: '#F06445' });
+        try {
+            await flush();
+            assert.ok(fixture.nodes().some(node => node.props?.['brand-color'] === '#F06445'));
+            assert.equal(fixture.calls.length, 0);
+        } finally { fixture.app.unmount(); }
+    }
 });
 
 test('required professional waits for a choice and offers only qualified staff at the selected branch', async t => {

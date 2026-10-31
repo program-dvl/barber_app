@@ -4,10 +4,12 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import { LockClosedIcon } from '@heroicons/vue/24/outline';
 import ProductMark from '@/Components/Product/ProductMark.vue';
 import BookingSkeleton from '@/Components/Booking/BookingSkeleton.vue';
+import { bookingTheme } from '@/Support/bookingTheme';
 
 const props = defineProps({
     title: String,
     preview: Boolean,
+    brandColor: String,
     steps: { type: Array, default: () => ['Service', 'Staff & time', 'Your details', 'Review', 'Confirmation'] },
     currentStep: {
         type: Number,
@@ -28,10 +30,11 @@ onMounted(() => {
 onBeforeUnmount(() => { stopStart?.(); stopFinish?.(); });
 
 const progress = computed(() => props.currentStep <= 0 ? 0 : Math.round((props.currentStep / props.steps.length) * 100));
+const theme = computed(() => bookingTheme(props.brandColor));
 </script>
 
 <template>
-    <div class="cd-product-flow min-h-screen bg-[var(--surface-canvas)] text-[var(--text-default)]">
+    <div class="cd-product-flow min-h-screen bg-[var(--surface-canvas)] text-[var(--text-default)]" :style="theme">
         <Head :title="title" />
         <a href="#public-main" class="fixed left-3 top-3 z-50 -translate-y-24 rounded-lg bg-white px-4 py-3 font-semibold shadow-[var(--shadow-overlay)] transition-transform focus:translate-y-0">Skip to main content</a>
 
@@ -54,7 +57,7 @@ const progress = computed(() => props.currentStep <= 0 ? 0 : Math.round((props.c
                     <span>{{ currentStep === 0 ? 'Ready to start' : `Step ${currentStep} of ${steps.length} · ${steps[currentStep - 1]}` }}</span>
                     <span v-if="currentStep > 0 && currentStep < steps.length">Next: {{ steps[currentStep] }}</span>
                 </div>
-                <div class="h-1.5 overflow-hidden rounded-full bg-[var(--surface-subtle)]" aria-hidden="true"><div class="h-full bg-[var(--action-primary)] transition-[width]" :style="{ width: `${progress}%` }" /></div>
+                <div class="h-1.5 overflow-hidden rounded-full bg-[var(--surface-subtle)]" aria-hidden="true"><div class="h-full bg-[var(--booking-accent,var(--action-primary))] transition-[width]" :style="{ width: `${progress}%` }" /></div>
                 <ol class="ds-sr-only" aria-label="Booking steps">
                     <li v-for="(step, index) in steps" :key="step" :aria-current="currentStep === index + 1 ? 'step' : undefined">{{ step }}</li>
                 </ol>

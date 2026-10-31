@@ -1088,3 +1088,12 @@ card clipping remains unchanged. Keep widget styling in the shared LocationEdito
 so signup, guided setup and Locations have the same presentation. Verification
 must include actual predictions at desktop and mobile widths; API responses or
 mounted selection tests alone do not prove the list is visible.
+
+### Business booking accents (2026-10-31)
+
+Saved business accents apply only inside that business's public booking layout
+and actual private preview. Preserve the exact accent for decorative progress;
+derive readable action, hover and focus shades and a light selection tint. Keep
+white button labels and accent text at least 4.5:1 against their light surfaces.
+Do not recolour platform identity or success/warning/error meanings. Missing or
+invalid values inherit the platform defaults; no global document-theme mutation.
