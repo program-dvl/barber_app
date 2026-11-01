@@ -1,5 +1,23 @@
 # Project status
 
+## 2026-11-01 Checkout rejection classification investigation
+
+- Owner-supplied production diagnostic confirms Stripe HTTP 403
+  more_permissions_required, matching live key/customer and all six prices;
+  no saved Checkout session. Exact denied endpoint is not in the old diagnostic.
+  Coupon creation permission is the leading hypothesis, not yet verified.
+- Owner reports production confirmation failure for reference
+  01M6B8F01JVY0G7BK4J67D3D9G after the offer comparison correction. Permission repair remains pending in the original Stripe account.
+- Fixed adapter-wrapped Stripe errors losing their 400/401/402/403/404/422
+  classification in customer recovery. These now require platform help instead
+  of futile Start again/Check again actions. Unknown transport outcomes retain
+  the original attempt and payment safety; no records or charges cleared.
+- Removed vague saved-request default in favour of explaining checkout could
+  not open and a payment-link check is needed. No credentials exposed.
+- Capacity suite 207 passed / 1,452 assertions; frontend 190 passed, client/SSR
+  builds pass. Additional rejection regression exercised wrapped 400/403/404.
+  Not deployed; actual failure and recovery remain unverified pending diagnostic.
+
 ## 2026-11-01 Offer confirmation JSON-order correction
 
 - Identified strict PHP array equality in SubscriptionPromotions::assertUnchanged

@@ -19,6 +19,8 @@ class StripeSubscriptionProvider implements SubscriptionProvider
 {
     private ?StripeClient $client = null;
 
+    private ?string $checkoutStage = null;
+
     public function createCheckout(Business $business, BillingPlanPrice $price, BillingCheckoutAttempt $attempt, string $successUrl, string $cancelUrl, ?string $couponCode = null): array
     {
         abort_unless($price->provider === 'stripe' && str_starts_with((string) $price->provider_price_id, 'price_'), 422, 'The selected Stripe price is not configured.');
@@ -27,6 +29,7 @@ class StripeSubscriptionProvider implements SubscriptionProvider
             $subscription = $business->subscription()->firstOrFail();
             $customerId = $subscription->provider_customer_id;
 
+            $this->checkoutStage = 'customer_create';
             if (! $customerId) {
                 $owner = $this->ownerFor($business);
                 $customer = $this->stripe()->customers->create([
@@ -63,6 +66,7 @@ class StripeSubscriptionProvider implements SubscriptionProvider
             if (($attempt->capacity_quote['discount_minor'] ?? 0) > 0) {
                 // A fixed once-only discount preserves exact reviewed minor-unit
                 // rounding across all recurring items and keeps renewals unchanged.
+                $this->checkoutStage = 'coupon_create';
                 $coupon = $this->stripe()->coupons->create([
                     'amount_off' => $attempt->capacity_quote['discount_minor'],
                     'currency' => strtolower($attempt->capacity_quote['currency']),
@@ -78,6 +82,7 @@ class StripeSubscriptionProvider implements SubscriptionProvider
                 $parameters['discounts'] = [[$discountType => $couponCode]];
             }
 
+            $this->checkoutStage = 'checkout_create';
             $session = $this->stripe()->checkout->sessions->create(
                 $parameters,
                 ['idempotency_key' => 'clipperdesk-checkout-'.$attempt->public_id],
@@ -352,6 +357,9 @@ class StripeSubscriptionProvider implements SubscriptionProvider
                 'code' => preg_match('/^[a-z_]{1,80}$/', (string) $exception->getStripeCode()) ? $exception->getStripeCode() : null,
                 'parameter' => in_array($parameter, ['customer', 'line_items', 'automatic_tax', 'customer_update', 'subscription_data', 'metadata', 'success_url', 'cancel_url', 'allow_promotion_codes', 'discounts'], true) ? $parameter : null,
             ];
+            if ($exception->getStripeCode() === 'more_permissions_required' && $operation === 'checkout') {
+                $details['stage'] = $this->checkoutStage;
+            }
             // Keep only classifications, never Stripe's message/body, addresses,
             // keys or object IDs. Recovery commits this alongside any customer
             // binding obtained before Checkout failed.

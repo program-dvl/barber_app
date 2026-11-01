@@ -206,7 +206,7 @@ onUnmounted(() => { paymentWatch.stop(); checkVersion++; abort.abort(); window.c
                 <a v-if="recoveryIssue?.supportUrl && recoveryIssue.supportRequired" :href="recoveryIssue.supportUrl" class="capacity-support-link cd-app-button">Contact support</a>
                 <AppButton v-if="recoveredCheckout && !recoveryIssue?.supportRequired" :disabled="Boolean(busy) || waiting || checkingPayment" :loading="busy === 'continue'" @click="continueCheckout">Continue secure checkout</AppButton>
                 <AppButton v-if="pending.kind === 'checkout' && pending.status === 'submitted' && checkoutStatus !== 'confirmed' && !paymentProcessing && !checkingPayment && !recoveryIssue?.supportRequired" variant="secondary" :disabled="Boolean(busy) || waiting || checkingPayment" :loading="busy === 'restart'" @click="restart">{{ busy === 'restart' ? 'Closing checkout…' : 'Start again' }}</AppButton>
-                <AppButton v-if="!checkingPayment" variant="quiet" :disabled="Boolean(busy) || waiting" :loading="busy === 'status'" @click="refresh">{{ error ? 'Check again' : 'Check billing status' }}</AppButton>
+                <AppButton v-if="!checkingPayment && !recoveryIssue?.supportRequired" variant="quiet" :disabled="Boolean(busy) || waiting" :loading="busy === 'status'" @click="refresh">{{ error ? 'Check again' : 'Check billing status' }}</AppButton>
             </template>
         </AppNotice>
         <CapacityCalculator :initial-selection="initialSelection" :catalog="catalog" :country="country" :current="blocking ? pending.quote : current" :usage="usage" :offer="!hasProvider && !blocking ? catalog?.seasonal_offer : null" :disabled="Boolean(busy) || checkingPayment" :review-disabled="blocking || !ready || waiting" @review="review">

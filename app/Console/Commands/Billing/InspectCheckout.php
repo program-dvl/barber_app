@@ -75,6 +75,13 @@ class InspectCheckout extends Command
                     : 'Verify the approved subscription prices in the intended live account before accepting payment. ')
                 .'Explicit price overrides must be correct or cleared first. After setup succeeds, follow the recovery steps in billing; do not reset paid subscriptions.';
         }
+        $failure = str_starts_with((string) $attempt?->last_error, 'stripe_checkout:')
+            ? json_decode(substr($attempt->last_error, strlen('stripe_checkout:')), true) : null;
+        if (($failure['code'] ?? null) === 'more_permissions_required') {
+            $nextStep = ($failure['stage'] ?? null) === 'coupon_create'
+                ? 'The restricted Stripe key cannot create Coupons. An authorized Stripe administrator must grant Coupons Write permission to the existing key in the original live account. Then explicitly resume the original saved checkout; do not reset records or provision prices.'
+                : 'Stripe rejected checkout because the restricted key lacks permission. Inspect the failed request in Stripe Workbench to identify the denied endpoint (discounted checkout also requires Coupons Write). Have an authorized administrator update only that permission on the existing key, then resume the original checkout. Do not reset records or provision prices.';
+        }
         $this->line(json_encode([
             'business' => $business->public_id, 'reference' => $change?->public_id, 'matched_by' => $matchedBy,
             'request_status' => $change?->status, 'attempt_status' => $attempt?->status,

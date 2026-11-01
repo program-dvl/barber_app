@@ -1270,9 +1270,13 @@ it('retains redacted Stripe checkout rejection details through the recovery tran
         $client->failure = 'resource_missing';
         $client->failureHttpStatus = $httpStatus;
         $client->failureParameter = $parameter;
-        $this->actingAs($owner)->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $change->public_id])
+        $response = $this->actingAs($owner)->postJson(route('business.billing.capacity.confirm', $business), ['change_id' => $change->public_id])
             ->assertStatus(503)->assertJsonPath('status', 'submitted')->assertJsonMissingPath('checkout_failure')->assertDontSee('sk_live_private')
             ->assertDontSee('customer@example.test')->assertDontSee('resource_missing');
+        if (in_array($httpStatus, [400, 403, 404], true)) {
+            expect($response->json('support_required') || $response->json('can_restart'))->toBeTrue();
+            expect($response->json('code'))->not->toBe('billing_temporarily_unavailable');
+        }
         expect($attempt->fresh()->status)->toBe('pending')->and($attempt->fresh()->last_error)->toBe('stripe_checkout:'.json_encode([
             'http_status' => $httpStatus, 'code' => 'resource_missing', 'parameter' => $savedParameter,
         ]));

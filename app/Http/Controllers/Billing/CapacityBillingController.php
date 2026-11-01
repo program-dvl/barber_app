@@ -133,7 +133,15 @@ class CapacityBillingController extends Controller
         if (! in_array($fresh->status, ['submitted', 'scheduled'], true)) {
             return response()->json([...$this->present($fresh), 'checkout_url' => null]);
         }
-        $needsReview = $status === 409 || ($error instanceof ApiErrorException && $error->getStripeCode() === 'resource_missing');
+        // Provider adapters wrap Stripe exceptions. Preserve the original
+        // rejection classification instead of calling every wrapped 503 transient.
+        $providerError = $error;
+        while (! $providerError instanceof ApiErrorException && $providerError->getPrevious()) {
+            $providerError = $providerError->getPrevious();
+        }
+        $providerStatus = $providerError instanceof ApiErrorException ? $providerError->getHttpStatus() : null;
+        $persistentRejection = in_array($providerStatus, [400, 401, 402, 403, 404, 422], true);
+        $needsReview = $persistentRejection || $status === 409 || ($providerError instanceof ApiErrorException && $providerError->getStripeCode() === 'resource_missing');
         $paymentRequired = $status === 409 && $fresh->kind !== 'checkout'
             && BillingInvoice::where('business_id', $fresh->business_id)->where('business_subscription_id', $fresh->business_subscription_id)
                 ->whereIn('status', ['open', 'uncollectible'])
@@ -147,9 +155,10 @@ class CapacityBillingController extends Controller
         $message = match (true) {
             $paymentRequired => 'A payment needs attention. Your request is saved. Open Invoices to see its status and available payment options.',
             $canRestart => 'Your previous checkout setup can’t be continued. Your selection is saved. Choose Start again to review it and open a fresh checkout.',
+            $persistentRejection => 'We couldn’t open secure checkout because of a problem on our side. Contact support with the reference below so we can restore checkout.',
             $needsReview => ($fresh->kind === 'checkout' ? 'We couldn’t reopen your previous checkout.' : 'We couldn’t confirm your subscription change.')
                 .' Your selection is saved. '.($supportUrl ? 'Contact support so we can help you continue safely.' : 'Please try again later.'),
-            default => 'We couldn’t confirm this step. Your request is saved. Check its status in a moment.',
+            default => 'We couldn’t open checkout. Your selection is unchanged. We need to check whether a payment link was created before you continue.',
         };
         $retryAfter = $canRestart ? 0 : ($needsReview && ! $paymentRequired ? 60 : 15);
 

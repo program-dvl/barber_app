@@ -462,3 +462,27 @@ Continue rejecting changed offers/amounts before submitting payment. A genuine
 mismatch returns billing_offer_changed, closes the obsolete review, preserves
 selection and allows immediate new review; do not label this an outage or impose
 a retry cooldown. No stored quote, invoice, rate or Stripe attempt is rewritten.
+
+### Checkout provider rejection classification (2026-11-01)
+
+Trace nested provider exceptions through adapter wrappers. Confirmed provider
+400/401/402/403/404/422 responses require platform recovery and the reachable
+support reference, rather than describing them as a transient outage. Hide
+Start again and Check again for support-required failures. Unknown transport
+outcomes remain protected and cannot be discarded as failed payments. Production
+reference 01M6B8F01JVY0G7BK4J67D3D9G still needs read-only diagnosis; a screenshot
+of a submitted local request is not evidence of a paid or failed Stripe session.
+
+### Restricted-key permission recovery
+
+Owner-supplied diagnostic for 01M6B8F01JVY0G7BK4J67D3D9G confirms live-mode
+403 more_permissions_required with readable customer and matching six prices.
+Do not reprovision prices, switch keys/accounts or delete the pending attempt.
+Use Stripe Workbench's rejected endpoint to identify the missing permission;
+POST /v1/coupons requires Coupons Write on the existing restricted key. This
+new discount dependency must be included in rollout. Authorized administrators
+must approve security-sensitive permission changes. Resume the original operation
+only after repair, using its existing keys and reviewed snapshot. Inspect-checkout
+now prioritizes permission repair and future permission failures record a safe
+customer_create/coupon_create/checkout_create stage without provider messages.
+The deployed endpoint/permission change and successful recovery are not verified.

@@ -1151,3 +1151,13 @@ Offer-change recovery: the obsolete review closes and a single Review your
 updated offer notice directs the owner back to Review subscription. Preserve the
 selection/code and enable review immediately. An unchanged offer's JSON object
 field order is never a reason to interrupt checkout.
+
+### Checkout provider rejection classification (2026-11-01)
+
+Trace nested provider exceptions through adapter wrappers. Confirmed provider
+400/401/402/403/404/422 responses require platform recovery and the reachable
+support reference, rather than describing them as a transient outage. Hide
+Start again and Check again for support-required failures. Unknown transport
+outcomes remain protected and cannot be discarded as failed payments. Production
+reference 01M6B8F01JVY0G7BK4J67D3D9G still needs read-only diagnosis; a screenshot
+of a submitted local request is not evidence of a paid or failed Stripe session.
