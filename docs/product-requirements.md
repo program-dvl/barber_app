@@ -817,6 +817,14 @@ PHASE GUARDRAIL Do not pull a deferred feature into launch unless it resolves a 
 
 ## 9 Subscription Packaging and Commercial Rules
 
+Approved owner extension, 2026-11-01 (ADR-078): platform administrators may enable,
+schedule and change percentage welcome offers and generate or manually enter
+private coupon codes. These apply only to the first payment of a new software
+subscription, before tax. A coupon may replace the automatic offer or explicitly
+combine sequentially with it; show exact savings and the regular renewal price
+before confirmation. Existing paid subscriptions and renewals keep their terms.
+
+
 Approved owner direction, 2026-10-05 (ADR-054): one core plan priced by the
 business's purchased locations and bookable staff, with monthly/yearly billing
 and explicit local country/currency rates. This supersedes the earlier suggested

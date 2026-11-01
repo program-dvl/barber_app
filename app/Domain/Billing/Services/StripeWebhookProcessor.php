@@ -188,6 +188,17 @@ class StripeWebhookProcessor
 
             return false;
         }
+        if (($attempt->capacity_quote['discount_minor'] ?? 0) > 0) {
+            $quote = $attempt->capacity_quote;
+            $tax = data_get($object, 'total_details.amount_tax');
+            if (strtoupper($object['currency'] ?? '') !== $quote['currency']
+                || ($object['amount_subtotal'] ?? null) !== $quote['total_minor']
+                || data_get($object, 'total_details.amount_discount') !== $quote['discount_minor']
+                || ! is_int($tax) || $tax < 0
+                || ($object['amount_total'] ?? null) !== $quote['first_payment_minor'] + $tax) {
+                return false;
+            }
+        }
         $providerSubscriptionId = $object['subscription'] ?? $subscription->provider_subscription_id;
         $subscription->update([
             'provider_customer_id' => $object['customer'] ?? $subscription->provider_customer_id,

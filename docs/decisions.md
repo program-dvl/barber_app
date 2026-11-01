@@ -2889,6 +2889,41 @@ Twilio test is not a booking-flow certification.
   custom saved durations, validation, revisions, authorization and audit behavior.
   [Local verification and deployment limits](audits/2026-11-01-gallery-booking-preferences/README.md).
 
+## ADR-078 — Platform subscription welcome discounts and private coupons
+
+- Date: 2026-11-01. Status: Accepted from the owner's explicit request and
+  confirmation: first payment only, new subscriptions only.
+- Requirements: FR-01/19/20, PRD §9. Platform administrators manage percentage
+  seasonal offers and manually shared coupon codes under Payments → Discounts
+  & coupons. This does not discount salon appointments, SMS packs, existing paid
+  subscriptions or renewal invoices. No recurring price or invoice is rewritten.
+- Offer controls: name, 1–90% saving, enabled state, optional UTC start/end and
+  coupon combination permission. The highest eligible automatic offer wins;
+  ties use oldest ID. One coupon either replaces that offer (default), or applies
+  sequentially to its reduced amount with explicit permission: 20% then 10%
+  saves 28%. Integer half-up minor-unit rounding happens at each step.
+- Coupon entry accepts manual codes or an explicit Generate code action. Opening
+  or editing an offer never generates a replacement code. Codes normalize to
+  uppercase; database uniqueness and server validation remain authoritative.
+  Editing a code affects new reviews; already submitted checkouts retain snapshots.
+- Review preserves gross recurring total, each offer and saving, first payment
+  and regular renewal amount. Claim revalidates current offers under the business
+  billing lock before submission. Submitted requests use their immutable reviewed
+  snapshot, stable attempt and provider keys even after an admin disables the offer.
+- Stripe receives a once-only fixed discount exactly equal to the reviewed saving,
+  one redemption per checkout-specific coupon. That provider limit is not a global
+  campaign use limit. Campaigns are reusable until disabled/expired; no per-person
+  code binding or redemption quotas are promised in this simple release.
+- Seed Holiday welcome at 20%, 2026-11-01 inclusive to 2027-01-01 exclusive, UTC.
+  A fixed seed identity preserves administrator edits, renaming and disabling on
+  repeated deployment. Seeder does not contact Stripe or alter existing customers.
+- Historical Larafast billing_coupons is not the current capacity promotion
+  authority. Keep its records. New promotions and snapshots are retained; deletion
+  and destructive rollback are disabled. Audit records capture administrator writes.
+- Live discount checkout, real tax/renewal, provider outage and concurrency evidence
+  remain deployment certification work; local fixtures and mocked SDK are not live
+  payment evidence. No existing launch gate is waived.
+
 ## Open decisions
 
 2026-11-01 Stripe audit follow-up to **OPEN-13**: the SaaS billing dispatcher

@@ -196,6 +196,7 @@ class CapacityPricingCatalog
     public function forWorkspace(): array
     {
         $catalog = $this->present(true);
+        $catalog['seasonal_offer'] = app(SubscriptionPromotions::class)->seasonal();
         $catalog['markets'] = array_values(array_filter($catalog['markets'], fn (array $market) => (bool) config('capacity-billing.markets.'.$market['code'].'.approved')));
         foreach ($catalog['markets'] as &$market) {
             foreach ($market['intervals'] as &$rate) {

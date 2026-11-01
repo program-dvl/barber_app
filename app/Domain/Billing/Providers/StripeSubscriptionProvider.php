@@ -60,7 +60,20 @@ class StripeSubscriptionProvider implements SubscriptionProvider
                 'subscription_data' => ['metadata' => $metadata],
             ];
 
-            if ($couponCode) {
+            if (($attempt->capacity_quote['discount_minor'] ?? 0) > 0) {
+                // A fixed once-only discount preserves exact reviewed minor-unit
+                // rounding across all recurring items and keeps renewals unchanged.
+                $coupon = $this->stripe()->coupons->create([
+                    'amount_off' => $attempt->capacity_quote['discount_minor'],
+                    'currency' => strtolower($attempt->capacity_quote['currency']),
+                    'duration' => 'once',
+                    'name' => 'ClipperDesk welcome offer',
+                    'max_redemptions' => 1,
+                    'metadata' => $metadata,
+                ], ['idempotency_key' => 'clipperdesk-offer-'.$attempt->public_id]);
+                unset($parameters['allow_promotion_codes']);
+                $parameters['discounts'] = [['coupon' => $coupon->id]];
+            } elseif ($couponCode) {
                 $discountType = str_starts_with($couponCode, 'promo_') ? 'promotion_code' : 'coupon';
                 $parameters['discounts'] = [[$discountType => $couponCode]];
             }

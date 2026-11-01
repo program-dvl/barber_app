@@ -174,3 +174,17 @@ test('an older partial response cannot resurrect the same completed checkout whi
         assert.doesNotMatch(fixture.text(), /Your subscription is active/);
     } finally { fixture.app.unmount(); }
 });
+
+test('welcome code entry stays available without presenting it as a payment failure', async () => {
+    const fixture = mount(async () => ({}), { request: null, catalog: {seasonal_offer: {name: 'Holiday welcome', percentage: 20}} });
+    try {
+        await flush();
+        assert.match(fixture.text(), /Holiday welcome · 20% off your first payment/);
+        assert.match(fixture.text(), /Some codes replace the seasonal offer/);
+        const input = fixture.nodes().find(node => node.props?.id === 'subscription-coupon');
+        assert.ok(input);
+        input.props.onInput({target: {value: 'INVITE10'}}); await flush();
+        assert.equal(input.props.value, 'INVITE10');
+        assert.doesNotMatch(fixture.text(), /Checkout is temporarily unavailable/);
+    } finally { fixture.app.unmount(); }
+});

@@ -15,6 +15,7 @@ function currentRequest(request, returned) {
     const confirmed = returned?.status === 'confirmed' && returned.request?.status === 'applied';
     return confirmed && (!request || request.change_id === returned.request.change_id) ? returned.request : request || returned?.request;
 }
+const couponCode = ref(props.request?.quote?.promotions?.find(offer => offer.code)?.code || ''), couponError = ref('');
 const reviewDialog = ref(null), packDialog = ref(null), reviewed = ref(null), selectedPack = ref(null), busy = ref(''), error = ref(''), pending = ref(currentRequest(props.request, props.checkoutReturn)), message = ref(''), recoveredCheckout = ref(null);
 const messageTitle = ref(props.checkoutReturn?.status === 'confirmed' && props.checkoutReturn?.request?.status === 'applied' ? 'Your subscription is active' : ''), messageTone = ref('success');
 const recoveryIssue = ref(null), clock = ref(Date.now());
@@ -51,11 +52,14 @@ const fail = exception => {
 const clearIssue = () => { error.value = ''; recoveryIssue.value = null; };
 async function review(estimate) {
     if (busy.value || waiting.value || blocking.value || !props.ready) return;
-    clearIssue(); busy.value = 'review';
+    clearIssue(); couponError.value = ''; busy.value = 'review';
     try {
-        const response = await axios.post(url('capacity.review'), { market: estimate.market, billing_interval: estimate.billing_interval, locations: estimate.locations, staff: estimate.staff, use_current_rates: estimate.use_current_rates || false }, { signal: abort.signal });
+        const response = await axios.post(url('capacity.review'), { market: estimate.market, billing_interval: estimate.billing_interval, locations: estimate.locations, staff: estimate.staff, use_current_rates: estimate.use_current_rates || false, coupon_code: props.hasProvider ? null : couponCode.value.trim() || null }, { signal: abort.signal });
         reviewed.value = response.data; reviewDialog.value?.open();
-    } catch (exception) { if (!axios.isCancel(exception)) fail(exception); }
+    } catch (exception) {
+        if (exception.response?.data?.errors?.coupon_code) couponError.value = exception.response.data.errors.coupon_code[0];
+        else if (!axios.isCancel(exception)) fail(exception);
+    }
     finally { busy.value = ''; }
 }
 async function confirm() {
@@ -199,11 +203,31 @@ onUnmounted(() => { paymentWatch.stop(); checkVersion++; abort.abort(); window.c
                 <AppButton v-if="!checkingPayment" variant="quiet" :disabled="Boolean(busy) || waiting" :loading="busy === 'status'" @click="refresh">{{ error ? 'Check again' : 'Check billing status' }}</AppButton>
             </template>
         </AppNotice>
+        <div v-if="!hasProvider && !blocking" class="capacity-welcome-offer">
+            <AppNotice v-if="catalog?.seasonal_offer" tone="info" :title="`${catalog.seasonal_offer.name} · ${catalog.seasonal_offer.percentage}% off your first payment`" description="Your savings appear in the review before checkout. Future renewals use the regular price." />
+            <AppNotice v-if="couponError" tone="warning" title="Check your coupon code" :description="couponError" urgent />
+            <label for="subscription-coupon" class="capacity-coupon-label">Have a coupon code? <span>Optional</span></label>
+            <input id="subscription-coupon" :value="couponCode" @input="couponCode = $event.target.value; couponError = ''" :aria-invalid="Boolean(couponError)" class="capacity-coupon-input" type="text" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false" :disabled="Boolean(busy)" aria-describedby="subscription-coupon-help" />
+            <p id="subscription-coupon-help" class="capacity-coupon-help">Enter your code, then review your subscription to see the final savings. Some codes replace the seasonal offer.</p>
+        </div>
         <CapacityCalculator :initial-selection="initialSelection" :catalog="catalog" :country="country" :current="blocking ? pending.quote : current" :usage="usage" :disabled="Boolean(busy) || checkingPayment" :review-disabled="blocking || !ready || waiting" @review="review" />
         <div v-if="packs?.length || purchase" class="capacity-texts"><h3>Text allowance & extra credits</h3><p>{{ usage?.['messaging.monthly_allowance'] || 0 }} included credits used this month · {{ credits || 0 }} prepaid credits available.</p><p>Included credits reset monthly, including on yearly subscriptions. Unused extra credits stay available in your account. More credits are only purchased when you choose to buy them.</p><AppButton v-for="pack in packs || []" :key="pack.key" variant="secondary" :disabled="Boolean(busy) || !ready" @click="selectedPack = pack; error = ''; packDialog?.open()">Add {{ pack.credits }} credits · {{ money(pack.amount_minor, pack.currency) }}</AppButton><p v-if="purchase?.status === 'pending'"><AppButton variant="quiet" :disabled="Boolean(busy) || !ready" @click="verifyPurchase">Check text payment</AppButton></p></div>
         <AppDialog id="capacity-review" ref="reviewDialog" title="Review your subscription" :confirm-label="busy ? 'Confirming…' : reviewed?.kind === 'checkout' ? 'Continue to secure checkout' : 'Confirm billing change'" :confirm-disabled="Boolean(busy) || waiting || !ready" :close-on-confirm="false" :can-close="() => !busy" @confirm="confirm">
-            <div v-if="reviewed" class="billing-change"><p>{{ reviewed.quote.locations }} {{ reviewed.quote.locations === 1 ? 'location' : 'locations' }} · {{ reviewed.quote.staff }} bookable staff</p><p><strong>{{ money(reviewed.quote.total_minor, reviewed.quote.currency) }} / {{ reviewed.quote.billing_interval === 'annual' ? 'year' : 'month' }}</strong> before tax.</p><p v-if="reviewed.kind === 'checkout'">Secure checkout shows the final tax and total before you pay. Starting a paid subscription ends your free trial.</p><template v-else><p><strong>Due today: {{ money(reviewed.quote.due_today_minor, reviewed.quote.currency) }}</strong></p><p>{{ reviewed.kind === 'renewal' ? `Your updated subscription starts on ${date(reviewed.effective_at)}. Your current subscription continues until then.` : 'Today’s payment covers the added locations and staff until your next renewal. Your subscription updates when payment is complete; your renewal date stays the same.' }}</p></template><p>Includes {{ reviewed.quote.sms_monthly_allowance }} text credits each month and email notifications.</p><AppNotice v-if="error" tone="warning" :title="recoveryIssue?.title" :description="error" urgent /></div>
+            <div v-if="reviewed" class="billing-change"><p>{{ reviewed.quote.locations }} {{ reviewed.quote.locations === 1 ? 'location' : 'locations' }} · {{ reviewed.quote.staff }} bookable staff</p><p><strong>{{ money(reviewed.quote.total_minor, reviewed.quote.currency) }} / {{ reviewed.quote.billing_interval === 'annual' ? 'year' : 'month' }}</strong> before tax.</p><div v-if="reviewed.quote.discount_minor" class="capacity-offer-summary"><dl><div v-for="offer in reviewed.quote.promotions" :key="offer.id"><dt>{{ offer.name }} <span v-if="offer.code">({{ offer.code }})</span> · {{ offer.percentage }}%</dt><dd>−{{ money(offer.saving_minor, reviewed.quote.currency) }}</dd></div><div><dt>First payment before tax</dt><dd><strong>{{ money(reviewed.quote.first_payment_minor, reviewed.quote.currency) }}</strong></dd></div></dl><p>Then {{ money(reviewed.quote.total_minor, reviewed.quote.currency) }} / {{ reviewed.quote.billing_interval === 'annual' ? 'year' : 'month' }} before tax. This offer applies once.</p></div><p v-if="reviewed.kind === 'checkout'">Secure checkout shows the final tax and total before you pay. Starting a paid subscription ends your free trial.</p><template v-else><p><strong>Due today: {{ money(reviewed.quote.due_today_minor, reviewed.quote.currency) }}</strong></p><p>{{ reviewed.kind === 'renewal' ? `Your updated subscription starts on ${date(reviewed.effective_at)}. Your current subscription continues until then.` : 'Today’s payment covers the added locations and staff until your next renewal. Your subscription updates when payment is complete; your renewal date stays the same.' }}</p></template><p>Includes {{ reviewed.quote.sms_monthly_allowance }} text credits each month and email notifications.</p><AppNotice v-if="error" tone="warning" :title="recoveryIssue?.title" :description="error" urgent /></div>
         </AppDialog>
         <AppDialog id="sms-pack-review" ref="packDialog" title="Add text credits" :confirm-label="busy ? 'Opening…' : 'Continue to secure payment'" :confirm-disabled="Boolean(busy) || waiting || !ready" :close-on-confirm="false" :can-close="() => !busy" @confirm="buy"><p v-if="selectedPack">One payment of {{ money(selectedPack.amount_minor, selectedPack.currency) }} before tax adds {{ selectedPack.credits }} text credits when payment is complete. The final price, including tax, is shown before you pay. Your subscription stays the same.</p><AppNotice v-if="error" tone="warning" :title="recoveryIssue?.title" :description="error" urgent /></AppDialog>
     </section>
 </template>
+
+<style scoped>
+.capacity-welcome-offer { display: grid; gap: 12px; margin: 20px 0; }
+.capacity-coupon-label { font-weight: 600; }
+.capacity-coupon-label span, .capacity-coupon-help { color: var(--cd-text-secondary, #475569); font-size: .875rem; }
+.capacity-coupon-input { min-height: 44px; width: 100%; max-width: 360px; border: 1px solid var(--cd-border, #cbd5e1); border-radius: 8px; padding: 10px 12px; text-transform: uppercase; }
+.capacity-coupon-input:focus-visible { outline: 2px solid #4f46e5; outline-offset: 3px; }
+.capacity-offer-summary { border-block: 1px solid var(--cd-border, #e2e8f0); padding-block: 16px; margin-block: 16px; }
+.capacity-offer-summary dl { display: grid; gap: 12px; }
+.capacity-offer-summary dl > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+.capacity-offer-summary dd { margin: 0; }
+.capacity-offer-summary p { margin-top: 14px; }
+</style>

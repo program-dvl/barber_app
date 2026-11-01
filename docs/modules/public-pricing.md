@@ -80,3 +80,12 @@ primary production canonicals use the configured brand host. Commercial rates
 and billing rules are unchanged by this editorial review. See the
 [public website contract](public-website.md) and
 [dated evidence](../audits/2026-10-13-public-content/README.md).
+
+## First-payment offers (2026-11-01, ADR-078)
+
+Public pricing publishes only the active best automatic seasonal offer, alongside
+verified base rates. Hero and estimator distinguish first payment from regular
+renewals; tax is added separately. Private codes are never published by the
+catalog. Code entry happens in the authenticated Plan review. Signup preferences
+remain preferences, not a reserved discount or payment authorization. Current
+eligibility is checked at review and again at confirmation.

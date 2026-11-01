@@ -400,3 +400,41 @@ confirmed missing/mismatched prices, distinguishing provider read failures from
 proof that setup is required. No customer-facing credential/configuration burden.
 Monthly/annual account-switch tests repair all six missing prices, preserve old
 paid subscription/cards, restart the pending trial and open one fresh checkout.
+
+## Welcome offers and coupons (ADR-078)
+
+FR-01/19/20: platform administrator-only Discounts & coupons manages names,
+1–90% percentages, enable switches, optional UTC windows, generated/manual codes
+and explicit combination. Highest automatic percentage wins; one standalone code
+replaces it or one permitted combinable code applies sequentially. Dates use an
+inclusive start/exclusive end. No use limits or identity-bound invitations exist.
+Coupon codes are reusable while eligible; share privately and disable when done.
+Reject combinations below a USD 0.50 first payment during review, with a useful
+action to remove the coupon; no zero-cost subscription is offered.
+
+Owner Plan entry and public pricing show the automatic offer. An optional owner
+coupon field is validated during review. Invalid code feedback retains selection
+and code, names the coupon problem, and permits correction/removal. Review shows
+each saving, discounted first payment and full recurring renewal. Pending checkout
+retains the code from its saved quote. Annual offers reduce the annual first
+payment; monthly offers reduce the monthly first payment, not twelve invoices.
+
+The gross total/fingerprint/rate card and entitlement projection remain unchanged.
+Before claim, re-evaluate offers and require review again on any mismatch. Once
+submitted, preserve the offer even if disabled during payment or recovery. Stripe
+coupon creation and Checkout use stable attempt-specific idempotency keys;
+checkout-specific once-only amount_off preserves exact rounding across items.
+Signed discounted Checkout completion validates gross, saving, currency, nonnegative
+tax and net total before provider binding; redirect flags grant no access.
+Existing webhook/reconciliation and automatic payment-return contracts still apply.
+
+Deploy additive migrations before serving this revision, then run
+`php artisan db:seed --class=LaunchPromotionSeeder --force` to install the 20%
+Holiday welcome offer. Seed dates are 2026-11-01 through 2027-01-01 exclusive UTC;
+repeated seeding preserves operator changes. Existing provider credentials need
+Stripe Coupon write permission for discounted checkout (restricted live keys may
+need that permission enabled by their owner); no promotion-code write permission
+is required. Do not expose provider diagnostics to customers. Never run the
+boilerplate DatabaseSeeder against production for this feature.
+
+[Verification and release limits](../audits/2026-11-01-subscription-promotions/README.md).

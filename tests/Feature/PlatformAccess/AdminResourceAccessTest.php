@@ -34,7 +34,7 @@ beforeEach(fn () => Filament::setCurrentPanel(Filament::getPanel('admin')));
 
 it('opens every restored resource for a verified platform administrator', function (string $path) {
     $this->actingAs(resourceAdministrator())->get('/admin/'.$path)->assertOk();
-})->with(['users', 'roles', 'permissions', 'products', 'prices', 'stripe-subscriptions', 'stripe-orders', 'invoices', 'lemon-squeezy-subscriptions', 'lemon-squeezy-orders']);
+})->with(['billing-promotions', 'billing-promotions/create', 'users', 'roles', 'permissions', 'products', 'prices', 'stripe-subscriptions', 'stripe-orders', 'invoices', 'lemon-squeezy-subscriptions', 'lemon-squeezy-orders']);
 
 it('denies restored resources for ordinary support auditor revoked expired and unverified identities', function (string $scenario) {
     $user = $scenario === 'ordinary' ? User::factory()->create() : resourceAdministrator();
@@ -124,4 +124,30 @@ it('rejects protected starter-role editing and self revocation', function () {
     expect(fn () => app(PlatformRoleManager::class)->revoke($admin->platformRoleAssignments()->first(), $admin, 'Do not lock out the current administrator.'))
         ->toThrow(HttpException::class);
     expect($admin->hasPlatformRole(PlatformRole::Administrator))->toBeTrue();
+});
+
+
+it('restricts discounts and coupons to verified platform administrators', function () {
+    $this->actingAs(User::factory()->create());
+    $resource = \App\Filament\Resources\BillingPromotions\BillingPromotionResource::class;
+    expect($resource::canCreate())->toBeFalse()->and($resource::canViewAny())->toBeFalse();
+    $this->get('/admin/billing-promotions')->assertForbidden();
+    $this->actingAs(resourceAdministrator());
+    Livewire::test(\App\Filament\Resources\BillingPromotions\Pages\CreateBillingPromotion::class)
+        ->fillForm(['name' => 'Holiday welcome', 'percentage' => 20, 'is_active' => true, '_coupon' => true, 'code' => 'welcome20'])
+        ->call('create')->assertHasNoFormErrors();
+    $offer = \App\Domain\Billing\Models\BillingPromotion::firstOrFail();
+    expect($offer->code)->toBe('WELCOME20')->and($resource::canDelete($offer))->toBeFalse()
+        ->and(AuditEvent::where('action', 'billing.promotion.saved')->where('actor_user_id', auth()->id())->exists())->toBeTrue();
+});
+
+it('allows an end-only seasonal offer and reports case-insensitive duplicate coupon codes', function () {
+    $this->actingAs(resourceAdministrator());
+    Livewire::test(\App\Filament\Resources\BillingPromotions\Pages\CreateBillingPromotion::class)
+        ->fillForm(['name' => 'Seasonal', 'percentage' => 20, 'ends_at' => now()->addWeek()->format('Y-m-d H:i:s')])
+        ->call('create')->assertHasNoFormErrors();
+    \App\Domain\Billing\Models\BillingPromotion::create(['name' => 'Invite', 'code' => 'INVITE10', 'percentage' => 10]);
+    Livewire::test(\App\Filament\Resources\BillingPromotions\Pages\CreateBillingPromotion::class)
+        ->fillForm(['name' => 'Duplicate', 'percentage' => 10, '_coupon' => true, 'code' => 'invite10'])
+        ->call('create')->assertHasFormErrors(['code' => 'unique']);
 });

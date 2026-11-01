@@ -1,5 +1,27 @@
 # Project status
 
+## 2026-11-01 Subscription welcome discounts and coupons (ADR-078)
+
+- [x] Added administrator-only Payments → Discounts & coupons with percentage,
+  on/off and optional UTC dates; explicit Generate code plus manual entry;
+  standalone or sequentially combinable private coupons. New subscriptions’
+  first payment only, explicitly confirmed by the owner. Renewals retain rates.
+- [x] Public pricing and owner Plan show automatic offers. Review snapshots named
+  savings, exact first payment and regular renewal; invalid-code correction
+  retains selection. Claim rejects changed offers; submitted checkouts retain
+  original terms and stable Stripe keys. Discounted callbacks validate amounts.
+- [x] Installed the additive migration and 20% Holiday welcome seed on local
+  MySQL barber_app. Dates: 2026-11-01 to 2027-01-01 exclusive, UTC. Seed repeats
+  preserve operator edits. No existing local subscriptions changed.
+- [x] Isolated browser: generated/manual code save, invalid-code correction,
+  $47 → $33.84 combined review, public on/off and desktop/390px layouts verified.
+  Mobile controls 44px and no horizontal overflow. Frontend 188 passed; client
+  and SSR builds pass. Focused billing/admin/pricing 247 passed / 1,784 assertions. Scoped Pint and whitespace pass.
+- [ ] Full backend has 1,033 passes / 30 skips / 2 communication count failures;
+  full suite is not green. Not deployed. Restricted live Stripe Coupon write
+  access and a real discounted payment/tax/renewal rehearsal remain unverified.
+  [Evidence and deployment](audits/2026-11-01-subscription-promotions/README.md).
+
 ## 2026-11-01 Batch salon photos and clear booking preferences (ADR-077)
 
 - [x] Gallery accepts multiple photos in one picker/drop, previews the selection

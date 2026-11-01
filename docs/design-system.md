@@ -1111,3 +1111,17 @@ derive readable action, hover and focus shades and a light selection tint. Keep
 white button labels and accent text at least 4.5:1 against their light surfaces.
 Do not recolour platform identity or success/warning/error meanings. Missing or
 invalid values inherit the platform defaults; no global document-theme mutation.
+
+## Subscription offer experience (2026-11-01)
+
+Discount configuration uses the existing Filament admin forms under Payments →
+Discounts & coupons. A Require a coupon code switch reveals manual entry, explicit
+Generate code button and combination setting. Generating is an intentional action;
+loading or editing never silently changes a shared code. Describe UTC date windows,
+first-payment scope and the effect of disabling offers before saving.
+
+Public and owner automatic-offer information uses AppNotice. Coupon errors say
+Check your coupon code and retain input; do not label them payment outages. The
+review lists named savings, first payment and full renewal, with explicit annual
+or monthly cadence and before-tax wording. Use the existing shared dialog action
+row; both review actions and generator/save controls remain at least 44px on mobile.

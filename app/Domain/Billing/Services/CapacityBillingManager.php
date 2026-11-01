@@ -15,9 +15,9 @@ class CapacityBillingManager
 {
     public function __construct(private readonly CapacityPricingCatalog $catalog, private readonly CapacityStripeGateway $stripe, private readonly EntitlementEvaluator $entitlements, private readonly AuditWriter $audit) {}
 
-    public function review(Business $business, User $actor, string $market, string $interval, int $locations, int $staff, bool $useCurrentRates = false): BillingCapacityChange
+    public function review(Business $business, User $actor, string $market, string $interval, int $locations, int $staff, bool $useCurrentRates = false, ?string $couponCode = null): BillingCapacityChange
     {
-        return DB::transaction(function () use ($business, $actor, $market, $interval, $locations, $staff, $useCurrentRates): BillingCapacityChange {
+        return DB::transaction(function () use ($business, $actor, $market, $interval, $locations, $staff, $useCurrentRates, $couponCode): BillingCapacityChange {
             Business::whereKey($business->id)->lockForUpdate()->firstOrFail();
             $subscription = $business->subscription()->with('price')->lockForUpdate()->firstOrFail();
             $this->assertIdle($subscription);
@@ -47,9 +47,14 @@ class CapacityBillingManager
                 abort_if($subscription->invoices()->whereIn('status', ['open', 'uncollectible'])
                     ->whereRaw('COALESCE(amount_remaining_minor, amount_due_minor - amount_paid_minor) > 0')->exists(), 409, 'Pay outstanding invoices before changing the subscription.');
             }
+            if (! $hasProvider) {
+                $quote = app(SubscriptionPromotions::class)->apply($quote, $couponCode);
+            } else {
+                abort_if(filled($couponCode), 422, 'Welcome codes apply to a new subscription’s first payment.');
+            }
             $at = now()->timestamp;
             $quote['proration_date'] = $at;
-            $quote['due_today_minor'] = $kind === 'checkout' ? $quote['total_minor'] : 0;
+            $quote['due_today_minor'] = $kind === 'checkout' ? ($quote['first_payment_minor'] ?? $quote['total_minor']) : 0;
             $quote['tax_minor'] = null;
             if ($hasProvider) {
                 $quote = [...$quote, ...$this->stripe->preview($subscription, $quote, $kind, $at)];
@@ -88,6 +93,9 @@ class CapacityBillingManager
                 abort_unless($subscription->status->value === 'active' && $subscription->current_period_ends_at?->isFuture(), 409, 'Resolve the payment shown in billing before changing your subscription.');
                 abort_if($subscription->invoices()->whereIn('status', ['open', 'uncollectible'])
                     ->whereRaw('COALESCE(amount_remaining_minor, amount_due_minor - amount_paid_minor) > 0')->exists(), 409, 'Pay outstanding invoices before changing the subscription.');
+            }
+            if ($locked->kind === 'checkout' && array_key_exists('promotions', $locked->quote)) {
+                app(SubscriptionPromotions::class)->assertUnchanged($locked->quote);
             }
             $this->assertFits($business, $locked->quote);
             $locked->update(['status' => 'submitted', 'submitted_at' => now()]);

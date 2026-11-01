@@ -1587,3 +1587,94 @@ it('matches legacy scheduled renewals by the same immutable rate card after data
     expect($change->fresh()->status)->toBe('applied')->and($subscription->fresh()->capacity_snapshot['locations'])->toBe(1)
         ->and($subscription->fresh()->capacity_snapshot['fingerprint'])->toBe($card->fingerprint)->and(BillingRateCard::count())->toBe(1);
 })->with(['monthly', 'annual']);
+
+it('reviews sequential welcome savings without changing recurring terms and blocks a changed offer', function () {
+    Carbon::setTestNow('2026-11-01 10:12:13.456789');
+    [$owner, $business] = createTenantMembership();
+    $business->update(['country_code' => 'US']);
+    capacityRate();
+    $subscription = activateTestSubscription($business);
+    $subscription->update(['provider_subscription_id' => null, 'status' => 'trialing']);
+    $offer = \App\Domain\Billing\Models\BillingPromotion::create(['name' => 'Holiday welcome', 'percentage' => 20, 'is_active' => true]);
+    \App\Domain\Billing\Models\BillingPromotion::create(['name' => 'Personal invitation', 'code' => 'invite10', 'percentage' => 10, 'is_active' => true, 'can_combine' => true]);
+    $manager = app(CapacityBillingManager::class);
+    $change = $manager->review($business, $owner, 'US', 'monthly', 1, 1, false, ' invite10 ');
+    expect($change->quote['total_minor'])->toBe(2900)->and($change->quote['first_payment_minor'])->toBe(2088)
+        ->and($change->quote['discount_minor'])->toBe(812)->and($change->quote['due_today_minor'])->toBe(2088);
+    $offer->update(['is_active' => false]);
+    expect(fn () => $manager->claim($business, $owner, $change))->toThrow(HttpException::class);
+    expect($change->fresh()->status)->toBe('quoted')->and($subscription->fresh()->status->value)->toBe('trialing');
+});
+
+it('selects one best seasonal offer and replaces it with standalone codes', function () {
+    $model = \App\Domain\Billing\Models\BillingPromotion::class;
+    $model::create(['name' => 'Season', 'percentage' => 20, 'is_active' => true]);
+    $model::create(['name' => 'Smaller', 'percentage' => 10, 'is_active' => true]);
+    $model::create(['name' => 'Invite', 'code' => 'ALONE', 'percentage' => 25, 'is_active' => true]);
+    $model::create(['name' => 'Future', 'percentage' => 90, 'is_active' => true, 'starts_at' => now()->addDay()]);
+    $model::create(['name' => 'Expired', 'percentage' => 90, 'is_active' => true, 'ends_at' => now()]);
+    $service = app(\App\Domain\Billing\Services\SubscriptionPromotions::class);
+    expect($service->apply(['total_minor' => 2901])['first_payment_minor'])->toBe(2321)
+        ->and($service->apply(['total_minor' => 2901], 'alone')['first_payment_minor'])->toBe(2176)
+        ->and($service->apply(['total_minor' => 2901], 'alone')['promotions'])->toHaveCount(1);
+    expect(fn () => $service->apply(['total_minor' => 2900], 'MISSING'))->toThrow(ValidationException::class);
+});
+
+it('keeps seeded offer edits and switch off intact on repeated deployment', function () {
+    $this->seed(\Database\Seeders\LaunchPromotionSeeder::class);
+    $offer = \App\Domain\Billing\Models\BillingPromotion::firstOrFail();
+    $offer->update(['percentage' => 25, 'is_active' => false]);
+    $this->seed(\Database\Seeders\LaunchPromotionSeeder::class);
+    expect($offer->fresh()->percentage)->toBe(25)->and($offer->fresh()->is_active)->toBeFalse()
+        ->and(\App\Domain\Billing\Models\BillingPromotion::count())->toBe(1);
+});
+
+it('sends the exact reviewed welcome amount once through the Stripe SDK with stable replay keys', function () {
+    [$owner, $business] = createTenantMembership();
+    $card = capacityRate();
+    $subscription = activateTestSubscription($business);
+    $subscription->update(['provider_subscription_id' => null]);
+    \App\Domain\Billing\Models\BillingPromotion::create(['name' => 'Holiday', 'percentage' => 20, 'is_active' => true]);
+    $quote = app(\App\Domain\Billing\Services\SubscriptionPromotions::class)->apply(app(CapacityPricingCatalog::class)->quote('US', 'monthly', 1, 1));
+    $attempt = BillingCheckoutAttempt::create(['business_id' => $business->id, 'business_subscription_id' => $subscription->id,
+        'billing_plan_price_id' => $card->billing_plan_price_id, 'provider' => 'stripe', 'provider_transaction_id' => 'pending_offer', 'status' => 'pending', 'expires_at' => now()->addHour(), 'capacity_quote' => $quote]);
+    withCapacityStripeTransport(['id' => 'coupon_welcome', 'object' => 'coupon'], function ($client) use ($business, $card, $attempt) {
+        app(StripeSubscriptionProvider::class)->createCheckout($business, $attempt->price, $attempt, 'https://example.test/success', 'https://example.test/cancel');
+        $coupon = collect($client->requests)->first(fn ($request) => str_contains($request['url'], '/coupons'));
+        $checkout = collect($client->requests)->first(fn ($request) => str_contains($request['url'], '/checkout/sessions'));
+        expect((int) $coupon['params']['amount_off'])->toBe(580)->and($coupon['params']['duration'])->toBe('once')
+            ->and((int) $coupon['params']['max_redemptions'])->toBe(1)
+            ->and($checkout['params']['discounts'][0]['coupon'])->toBe('coupon_welcome')
+            ->and($checkout['params'])->not->toHaveKey('allow_promotion_codes');
+    });
+});
+
+it('checks discounted checkout amounts before binding a provider subscription', function (string $field) {
+    Carbon::setTestNow('2026-11-01 10:12:13.456789');
+    [$owner, $business] = createTenantMembership();
+    $card = capacityRate();
+    $subscription = activateTestSubscription($business);
+    $subscription->update(['provider_subscription_id' => null, 'status' => 'trialing']);
+    \App\Domain\Billing\Models\BillingPromotion::create(['name' => 'Holiday', 'percentage' => 20, 'is_active' => true]);
+    $quote = app(\App\Domain\Billing\Services\SubscriptionPromotions::class)->apply(app(CapacityPricingCatalog::class)->quote('US', 'monthly', 1, 1));
+    $attempt = BillingCheckoutAttempt::create(['business_id' => $business->id, 'business_subscription_id' => $subscription->id,
+        'billing_plan_price_id' => $card->billing_plan_price_id, 'provider' => 'stripe', 'provider_transaction_id' => 'cs_offer', 'status' => 'pending', 'expires_at' => now()->addHour(), 'capacity_quote' => $quote]);
+    $object = ['id' => 'cs_offer', 'object' => 'checkout.session', 'mode' => 'subscription', 'subscription' => 'sub_offer',
+        'customer' => $subscription->provider_customer_id, 'client_reference_id' => $business->public_id,
+        'metadata' => ['business_public_id' => $business->public_id, 'billing_checkout_attempt_id' => $attempt->public_id, 'plan_price_id' => (string) $card->billing_plan_price_id],
+        'currency' => 'usd', 'amount_subtotal' => 2900, 'amount_total' => 2420, 'total_details' => ['amount_discount' => 580, 'amount_tax' => 100]];
+    if ($field !== 'valid') data_set($object, $field, $field === 'currency' ? 'eur' : 1);
+    app(StripeWebhookProcessor::class)->receiveVerified(['id' => 'evt_offer_'.$field, 'type' => 'checkout.session.completed', 'created' => now()->timestamp, 'data' => ['object' => $object]]);
+    expect($subscription->fresh()->provider_subscription_id)->toBe($field === 'valid' ? 'sub_offer' : null)
+        ->and($subscription->fresh()->status->value)->toBe('trialing')
+        ->and($attempt->fresh()->status)->toBe($field === 'valid' ? 'processing' : 'pending');
+})->with(['valid', 'currency', 'amount_subtotal', 'amount_total', 'total_details.amount_discount', 'total_details.amount_tax']);
+
+it('rejects combined offers below the USD minimum payment before checkout', function () {
+    $model = \App\Domain\Billing\Models\BillingPromotion::class;
+    $model::create(['name' => 'Season', 'percentage' => 90, 'is_active' => true]);
+    $model::create(['name' => 'Invite', 'code' => 'INVITE90', 'percentage' => 90, 'is_active' => true, 'can_combine' => true]);
+    $service = app(\App\Domain\Billing\Services\SubscriptionPromotions::class);
+    expect(fn () => $service->apply(['total_minor' => 2900], 'INVITE90'))->toThrow(ValidationException::class)
+        ->and($service->apply(['total_minor' => 2900])['first_payment_minor'])->toBe(290);
+});

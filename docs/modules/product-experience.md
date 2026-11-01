@@ -233,3 +233,12 @@ and private appointment-link expiry share one named disclosure. Show working
 controls only; the currently inert staff-gender-request checkbox is hidden while
 its saved value remains untouched. Existing public booking behavior is preserved.
 [Browser and test evidence](../audits/2026-11-01-gallery-booking-preferences/README.md).
+
+## Subscription welcome offers — 2026-11-01
+
+FR-01/19/20, ADR-078: admin Payments → Discounts & coupons has enabled/date/percent
+controls, explicit generation and manual code entry. Owner Plan preserves a code
+through invalid-code failure and includes exact first-payment savings and regular
+renewal in the review. Public pricing calls out automatic first-payment savings.
+Use the shared notices/dialogs; no success claim before confirmed provider state.
+See [dated verification](../audits/2026-11-01-subscription-promotions/README.md).
