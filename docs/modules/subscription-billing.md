@@ -1,6 +1,6 @@
 # Subscription & Billing
 
-Updated: 2026-10-29. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
+Updated: 2026-10-31. Requirements: [FR-01](../product-requirements.md#fr-01-saas-registration-and-subscription-management),
 [FR-13](../product-requirements.md#fr-13-notifications-and-communication),
 FR-19, FR-20 and [PRD §9](../product-requirements.md#9-subscription-packaging-and-commercial-rules).
 See ADR-029/038/041/054/056/057/061/063/068/069/071/072 and `../stripe-billing.md`.
@@ -9,6 +9,13 @@ ADR-075 clarifies authenticated estimate visibility without changing purchase
 authority; see below.
 
 ## Approved pricing contract
+
+Terminal Stripe cancellation wins a tie with an active event in Stripe's
+whole-second event clock. Later snapshots or collection of an outstanding
+invoice cannot reopen the same terminated provider subscription ID; invoice
+and payment evidence is still retained. Duplicate cancellation is a no-op.
+[Production audit and deployment limits](../audits/2026-10-31-stripe-production/README.md)
+distinguish local regression evidence from live account configuration.
 
 One core software plan. The recurring amount is base (one location and one
 bookable staff profile) plus extra locations times the location rate plus extra

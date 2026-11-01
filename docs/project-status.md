@@ -1,5 +1,37 @@
 # Project status
 
+## 2026-10-31 Stripe subscription production audit
+
+- [x] Reproduced and fixed same-second terminal cancellation ordering, later
+  active snapshots and outstanding-invoice collection reopening canceled access.
+  Financial invoice/payment history remains recorded. Found and fixed a real
+  Stripe portal creation rejection for the unsupported create parameter `active`.
+- [x] Added a read-only production readiness command covering loaded key modes,
+  event journal, schedules, callback configuration and six recurring prices.
+  Final backend **1,019 passed / 10,732 assertions / 30 existing skips**; Pint and
+  whitespace checks pass for changed production files/new command tests.
+- [x] Direct production inspection found test keys/test price mappings. With
+  explicit owner approval, saved a restricted live billing key and matching live
+  signing secret in Forge, fixed canonical APP_URL, and installed both verified
+  live rate cards from the six existing prices. No customer charges created.
+- [x] Live Stripe Payments/Payouts active; card retries configured. Signed live
+  portal-configuration delivery returned **204 Delivered**. Managed live portal
+  created with supported parameters. This confirms transport, not paid renewal.
+- [x] Removed the temporary portal event and read back the saved **18-event**
+  active destination. Re-enabled checkout and pinned the six existing live
+  Prices after identifying that database fallback still chose old test cards.
+  Forge confirmed both environment saves. On 2026-11-01, production pricing GET
+  returned **200** with monthly/yearly `ready=true` and catalogue available.
+- [ ] Final pinned-provider verification command was submitted, but its result
+  remains unread after browser access dropped again. Local code fixes are not deployed;
+  the owner explicitly chose to deploy them personally on 2026-11-01.
+  Two existing active app subscription IDs are unavailable in the live account;
+  records preserved pending review. Actual live payment/renewal and tax posture
+  are not certified. Charge refund/dispute/fraud-warning handlers are absent
+  from the billing dispatcher and need separate recovery/ownership verification
+  before comprehensive financial launch sign-off.
+  [Detailed evidence](audits/2026-10-31-stripe-production/README.md).
+
 ## 2026-10-31 Saved booking accent presentation
 
 - [x] Found that saved `brand_color` was projected by the backend but never used

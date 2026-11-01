@@ -55,6 +55,33 @@ Local catalog setup was completed against the configured test account on 2026-10
 
 ## Deployed server
 
+For a read-only readiness report after deployment, use:
+
+```sh
+php artisan billing:check-production --provider-read
+```
+
+It checks loaded live keys, recent signed-event journal evidence, declared jobs,
+the authenticated account, enabled callback events/API family and all six mapped
+prices using GET requests only. It changes no billing/Stripe records and sends
+no notices. `--webhook-url=https://clipperdesk.com/billing/webhooks/stripe` can
+inspect an explicit canonical callback. A configured secret alone is not proof
+that it matches that destination; verify signed delivery separately. Do not use
+a redirecting www callback. Later monthly API versions in the same named Stripe
+release are additive and compatible; a different release family requires review.
+
+[2026-10-31 production audit](../audits/2026-10-31-stripe-production/README.md)
+records the test/live key and mapping mismatch, authorized configuration changes,
+regression results and remaining live evidence.
+
+When switching a populated deployment between Stripe accounts or modes, verified
+historical cards can remain in the database. Confirm the effective selected Price
+IDs after restarting configuration; successful installation alone does not prove
+the catalogue selected the intended account's cards. The audited live deployment
+pins its six live `CAPACITY_US_*_PRICE_ID` settings to preserve that selection
+while retaining historical test cards. Never copy those live mappings to a test
+environment. Inspect each selected Price against the current API credential.
+
 1. Deploy source and built assets, keep the existing APP_KEY, back up the database, and apply additive migrations. Ensure HTTPS, `APP_URL`, non-debug production settings, queue workers and the scheduler are correctly configured.
 2. Start with `CAPACITY_BILLING_ENABLED=false`. Set the intended Stripe account/mode keys, `CAPACITY_PRICING_MODE=usd`, `CAPACITY_US_APPROVED=true`, and `CAPACITY_SMS_PURCHASES_ENABLED=false`. Clear stale cached configuration.
 3. Preview, then provision the approved catalog. Live catalog mutations require the explicit `--force` flag; preview never mutates Stripe.

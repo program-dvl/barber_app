@@ -218,6 +218,55 @@ it('opens a verified billing portal without leaving the workspace on an AJAX fai
     $this->actingAs($owner)->getJson(route('business.billing.portal', $business))->assertOk()->assertJsonPath('url', 'https://billing.stripe.com/p/session_verified');
 });
 
+it('creates or updates the managed portal through the Stripe SDK and reuses it without duplicating configuration', function (bool $existing) {
+    [$owner, $business] = billingWorkspaceFixture();
+    config(['billing.stripe.secret' => 'sk_test_portal']);
+    $client = new class($existing) implements \Stripe\HttpClient\ClientInterface
+    {
+        public array $configurations;
+        public int $configurationWrites = 0;
+
+        public function __construct(bool $existing)
+        {
+            $this->configurations = $existing ? [['id' => 'bpc_managed', 'object' => 'billing_portal.configuration', 'active' => true,
+                'metadata' => ['application' => 'clipperdesk', 'purpose' => 'account_management', 'catalog_hash' => 'older_configuration']]] : [];
+        }
+
+        public function request($method, $url, $headers, $params, $hasFile, $apiMode = 'v1', $maxNetworkRetries = null)
+        {
+            $path = parse_url($url, PHP_URL_PATH);
+            if ($path === '/v1/billing_portal/configurations' && $method === 'get') {
+                $object = ['object' => 'list', 'data' => $this->configurations, 'has_more' => false, 'url' => $path];
+            } elseif (in_array($path, ['/v1/billing_portal/configurations', '/v1/billing_portal/configurations/bpc_managed'], true) && $method === 'post') {
+                // Stripe accepts active only when updating; creation rejects it.
+                if ($path === '/v1/billing_portal/configurations' && array_key_exists('active', $params)) {
+                    return [json_encode(['error' => ['type' => 'invalid_request_error', 'code' => 'parameter_unknown', 'param' => 'active', 'message' => 'Received unknown parameter: active']]), 400, []];
+                }
+                $this->configurationWrites++;
+                $object = $params + ['id' => 'bpc_managed', 'object' => 'billing_portal.configuration', 'active' => true];
+                $this->configurations = [$object];
+            } elseif ($path === '/v1/billing_portal/sessions' && $method === 'post') {
+                expect($params['configuration'])->toBe('bpc_managed');
+                $object = ['id' => 'bps_managed', 'object' => 'billing_portal.session', 'url' => 'https://billing.stripe.com/p/session_verified'];
+            } else {
+                throw new RuntimeException('Unexpected Stripe operation in portal test');
+            }
+
+            return [json_encode($object), 200, []];
+        }
+    };
+    \Stripe\ApiRequestor::setHttpClient($client);
+    try {
+        $this->actingAs($owner)->getJson(route('business.billing.portal', $business))->assertOk()->assertJsonPath('url', 'https://billing.stripe.com/p/session_verified');
+        $this->getJson(route('business.billing.portal', $business))->assertOk();
+        expect($client->configurationWrites)->toBe(1)
+            ->and(filter_var(data_get($client->configurations, '0.features.subscription_cancel.enabled'), FILTER_VALIDATE_BOOLEAN))->toBeFalse()
+            ->and(filter_var(data_get($client->configurations, '0.features.subscription_update.enabled'), FILTER_VALIDATE_BOOLEAN))->toBeFalse();
+    } finally {
+        \Stripe\ApiRequestor::setHttpClient(new \Stripe\HttpClient\CurlClient);
+    }
+})->with([false, true]);
+
 it('does not call Stripe for another business billing portal', function () {
     [$owner] = createTenantMembership();
     [, $business] = billingWorkspaceFixture();

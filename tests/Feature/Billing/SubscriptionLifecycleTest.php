@@ -207,6 +207,38 @@ it('does not activate a superseded Checkout attempt delivered late by Stripe', f
         ->and($checkoutEvent->status)->toBe('ignored');
 });
 
+it('honors terminal cancellation in the same Stripe timestamp second and never reopens that subscription', function (string $first) {
+    [, $business, $subscription] = stripeTrialBusiness();
+    $price = configuredStripePrice('pro', BillingInterval::Monthly);
+    $at = now()->startOfSecond();
+    app(SubscriptionLifecycleManager::class)->activate($subscription, $price, $at->copy()->subMonth(), $at->copy()->addMonth(),
+        $at->copy()->subSecond(), 'cus_activation', 'sub_activation');
+    $processor = app(StripeWebhookProcessor::class);
+    $active = stripeSubscriptionEvent('evt_same_second_active', $at->timestamp, 'active', $price, $business, false);
+    $deleted = stripeEvent('evt_same_second_deleted', 'customer.subscription.deleted', $at->timestamp,
+        ['id' => 'sub_activation', 'customer' => 'cus_activation', 'status' => 'canceled']);
+    foreach ($first === 'active' ? [$active, $deleted] : [$deleted, $active] as $event) {
+        $processor->receiveVerified($event);
+    }
+    expect($subscription->fresh()->status)->toBe(SubscriptionStatus::Terminated)
+        ->and($subscription->fresh()->restriction_level)->toBe(RestrictionLevel::Closed);
+    $version = $subscription->fresh()->version;
+    // A delayed active snapshot cannot revive Stripe's already canceled ID,
+    // even when observed through a later authenticated reconciliation read.
+    $processor->synchronizeSubscriptionSnapshot($active['data']['object'], $at->copy()->addMinute());
+    $processor->receiveVerified(stripeEvent('evt_duplicate_terminal', 'customer.subscription.deleted', $at->timestamp, $deleted['data']['object']));
+    // Stripe may still collect an older unpaid invoice after cancellation.
+    // Keep that invoice/payment evidence without restoring subscription access.
+    foreach (['invoice.payment_failed', 'invoice.paid'] as $index => $type) {
+        $invoice = stripeInvoiceEvent($index ? 'evt_terminal_paid' : 'evt_terminal_failed', $type, $at->timestamp + 120 + $index, 'sub_activation', 2 + $index);
+        $invoice['data']['object']['customer'] = 'cus_activation';
+        $processor->receiveVerified($invoice);
+    }
+    expect($subscription->fresh()->status)->toBe(SubscriptionStatus::Terminated)
+        ->and($subscription->fresh()->version)->toBe($version)
+        ->and(DB::table('billing_payments')->where('provider_payment_id', 'pi_evt_terminal_paid')->value('status'))->toBe('succeeded');
+})->with(['active', 'deleted']);
+
 it('moves renewal failures through past due and read-only restriction then recovers on payment', function () {
     [, $business, $subscription] = stripeTrialBusiness();
     $price = configuredStripePrice('pro', BillingInterval::Monthly);

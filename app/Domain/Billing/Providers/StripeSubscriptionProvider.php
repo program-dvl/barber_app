@@ -290,7 +290,6 @@ class StripeSubscriptionProvider implements SubscriptionProvider
         }
 
         $attributes = [
-            'active' => true,
             'name' => $purpose === 'plan_change'
                 ? 'ClipperDesk focused plan changes'
                 : 'ClipperDesk billing management',
@@ -304,7 +303,7 @@ class StripeSubscriptionProvider implements SubscriptionProvider
         ];
 
         if ($configuration) {
-            return $this->stripe()->billingPortal->configurations->update($configuration->id, $attributes)->id;
+            return $this->stripe()->billingPortal->configurations->update($configuration->id, ['active' => true, ...$attributes])->id;
         }
 
         return $this->stripe()->billingPortal->configurations->create($attributes, [

@@ -300,18 +300,26 @@ class SubscriptionLifecycleManager
 
     public function terminate(BusinessSubscription $subscription, CarbonInterface $occurredAt): BusinessSubscription
     {
-        $updated = $this->transition($subscription, $occurredAt, fn (): array => [
-            'status' => SubscriptionStatus::Terminated,
-            'restriction_level' => RestrictionLevel::Closed,
-            'ended_at' => $occurredAt,
-            'export_available_until' => $occurredAt->copy()->addDays(config('billing.export_days_after_termination')),
-        ], 'subscription.terminated');
+        return DB::transaction(function () use ($subscription, $occurredAt): BusinessSubscription {
+            $locked = BusinessSubscription::query()->lockForUpdate()->findOrFail($subscription->getKey());
+            if ($locked->status === SubscriptionStatus::Terminated) {
+                return $locked;
+            }
+            // Terminal cancellation wins a tie with an earlier active event in
+            // Stripe's whole-second event clock; genuinely older events remain guarded.
+            $updated = $this->transition($locked, $occurredAt, fn (): array => [
+                'status' => SubscriptionStatus::Terminated,
+                'restriction_level' => RestrictionLevel::Closed,
+                'ended_at' => $occurredAt,
+                'export_available_until' => $occurredAt->copy()->addDays(config('billing.export_days_after_termination')),
+            ], 'subscription.terminated', allowSameTimestamp: true);
 
-        if ($updated->provider_state_at?->equalTo($occurredAt)) {
-            $this->queueNotice($updated, 'subscription_terminated', 'subscription-terminated:'.$updated->getKey().':'.$occurredAt->timestamp);
-        }
+            if ($updated->status === SubscriptionStatus::Terminated && $updated->provider_state_at?->equalTo($occurredAt)) {
+                $this->queueNotice($updated, 'subscription_terminated', 'subscription-terminated:'.$updated->getKey().':'.$occurredAt->timestamp);
+            }
 
-        return $updated;
+            return $updated;
+        }, 3);
     }
 
     public function supersedePlanChange(SubscriptionChange $change, User $actor, string $reason): void

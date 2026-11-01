@@ -2681,6 +2681,16 @@ customer notification contract; do not replace the bug with a misleading success
 Local reproduction/verification is separate from deployment and browser evidence:
 [audit](audits/2026-10-28-confirmed-checkout/README.md).
 
+### ADR-072 terminal provider-state follow-up — 2026-10-31
+
+Preserve confirmed terminal cancellation when Stripe events share a timestamp
+second or later reads contain pre-cancellation active state. Stripe cannot
+reactivate that same canceled subscription ID. Later outstanding-invoice
+collection still records financial evidence without reopening access. This is
+a consistency correction, not an immediate-cancellation policy or a change to
+the ability to undo cancellation before the current period ends.
+See [audit evidence](audits/2026-10-31-stripe-production/README.md).
+
 ### ADR-072 database JSON identity root cause — 2026-10-28
 
 The new-account report persists after the stale-record follow-up. A fresh review
@@ -2851,6 +2861,14 @@ still needs deployment and an authorized booking rehearsal; the earlier direct
 Twilio test is not a booking-flow certification.
 
 ## Open decisions
+
+2026-11-01 Stripe audit follow-up to **OPEN-13**: the SaaS billing dispatcher
+does not yet project charge refunds, disputes or early fraud warnings. Finance/
+Product must approve the access/refund/recovery response before these events can
+automatically change an entitlement. Implementation must resolve subscription
+ownership through Stripe's invoice/charge graph and retain append-only evidence.
+Live key configuration, public catalogue readiness and a signed 204 callback do
+not waive this existing financial-operations launch gate.
 
 | ID | Decision needed | Why it blocks or influences work | Resolve by | 2026-08-16 release disposition |
 | --- | --- | --- | --- | --- |

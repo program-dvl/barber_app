@@ -275,6 +275,11 @@ class StripeWebhookProcessor
             || ($subscription->provider_customer_id && $subscription->provider_customer_id !== ($object['customer'] ?? null))) {
             return false;
         }
+        // Stripe cannot reopen a canceled subscription ID. Later reads or
+        // reordered pre-cancellation snapshots must not restore its access.
+        if ($subscription->status->value === 'terminated') {
+            return true;
+        }
         $status = (string) ($object['status'] ?? '');
         if ($status === 'past_due') {
             $attempt = in_array($subscription->status->value, ['past_due', 'grace'], true) ? 2 : 1;
@@ -469,7 +474,7 @@ class StripeWebhookProcessor
             return false;
         }
         // Serialize competing invoice deliveries on the owning subscription.
-        BusinessSubscription::query()->whereKey($subscription->id)->lockForUpdate()->firstOrFail();
+        $subscription = BusinessSubscription::query()->whereKey($subscription->id)->lockForUpdate()->firstOrFail();
         $existing = BillingInvoice::query()->where('provider_invoice_id', $object['id'])->first();
         if ($existing && ($existing->business_id !== $subscription->business_id || $existing->provider !== 'stripe')) {
             return false;
@@ -532,6 +537,12 @@ class StripeWebhookProcessor
                     'paid_at' => $paymentSucceeded ? $occurredAt : null,
                 ]
             );
+        }
+
+        // Outstanding invoices remain collectible after cancellation. Preserve
+        // their financial history without reopening the canceled subscription.
+        if ($subscription->status->value === 'terminated') {
+            return true;
         }
 
         if ($eventType === 'invoice.payment_failed') {
