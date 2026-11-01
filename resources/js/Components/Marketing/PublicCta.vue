@@ -21,8 +21,9 @@ const props = defineProps({
 
 const page = usePage();
 const authenticated = computed(() => Boolean(page.props.auth?.user));
-const destination = computed(() => authenticated.value ? route('dashboard') : route('register'));
-const label = computed(() => authenticated.value ? 'Open dashboard' : 'Start your trial');
+const pricingWorkspace = computed(() => page.url.split('?')[0] === '/pricing' ? page.props.account?.workspaces?.find(item => item.can_manage_billing) : null);
+const destination = computed(() => pricingWorkspace.value ? route('business.billing.show', {business: pricingWorkspace.value.public_id, section: 'plan'}) : authenticated.value ? route('dashboard') : route('register'));
+const label = computed(() => pricingWorkspace.value ? 'Manage subscription' : authenticated.value ? 'Open dashboard' : 'Start your trial');
 </script>
 
 <template>

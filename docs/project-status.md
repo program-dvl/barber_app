@@ -1,5 +1,17 @@
 # Project status
 
+## 2026-11-01 Separate yearly savings and subscription destinations
+
+- Yearly pricing and owner Plan now distinguish 12 monthly payments, yearly
+  saving and named seasonal saving, plus total first-year savings. Solo example:
+  $348 − $58 yearly − $58 holiday = $232 first payment; $116 total saved.
+- Signed-in pricing hero/calculator and shared pricing header CTA open the first
+  active billing-authorized workspace's Plan tab as Manage subscription.
+  Users without billing authority retain the workspace fallback.
+- Frontend 189 passed and client/SSR build pass locally. No pricing, provider,
+  payment or schema changes. This revision has not been deployed or checked
+  in the production browser; browser verification remains outstanding.
+
 ## 2026-11-01 Discount presentation refinement
 
 - [x] Replaced full-width promotional notices above Plan controls with a compact

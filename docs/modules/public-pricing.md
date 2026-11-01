@@ -92,3 +92,14 @@ Keep 18px between Estimated subscription and the offer strip. Private codes are 
 catalog. Code entry happens in the authenticated Plan review. Signup preferences
 remain preferences, not a reserved discount or payment authorization. Current
 eligibility is checked at review and again at confirmation.
+
+### Separate yearly and promotional savings (2026-11-01)
+
+Yearly summaries show 12 monthly payments, the yearly saving, the regular yearly
+subscription, then any named first-payment promotion separately. Total first-year
+savings compare the actual first payment with 12 monthly payments; never add the
+percentages. Without a promotion, show only the recurring yearly saving. Existing
+retained-rate comparison guards remain. Pricing page signed-in owner actions,
+including header/mobile CTA, open an authorized workspace's subscription Plan tab
+with Manage subscription wording. Accounts without billing authority retain the
+existing workspace fallback; no authorization is bypassed.
