@@ -423,6 +423,20 @@ touched; this rule is not evidence that every old surface has been migrated.
   offer reachable support with a safe reference and leave other setup usable
   (ADR-075). Do not infer a quota failure from a provider authentication denial.
 
+### Selecting and saving several images (2026-11-01)
+
+For a bounded gallery, offer one multiple-file picker and optional drag and drop,
+then show compact thumbnails, filenames, individual removal and remaining spaces.
+Keep descriptions optional and collapsed until requested. One clearly labelled
+save action applies the selection; do not upload merely because files were chosen.
+Show textual batch progress and retain unfinished previews when saving stops.
+Distinguish confirmed saves from an uncertain response, stop later requests on
+failure, and offer recovery that preserves already-saved items without duplicates.
+A known-invalid file must be removed or replaced before continuation; a stale
+gallery must reload while retaining the selection. Preserve the shared notice,
+focus and touch-target rules, with a mobile layout that keeps the save action and
+individual removal easy to reach. See [booking presentation](modules/booking-presentation.md).
+
 ## Data-heavy and operational surfaces
 
 ### Dashboards

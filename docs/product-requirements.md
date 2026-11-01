@@ -222,6 +222,9 @@ Purpose: Minimise time-to-value and switching friction so a shop can run appoint
   portraits alongside professional titles and biographies. No image is required
   for setup, publication or booking. A page without photos uses a composed text
   layout and initials; stock photography must not imply it depicts the business.
+- Owners can select several gallery photos together, review local previews and
+  add the selection with one explicit action. Keep unsaved photos after partial
+  failure and retain the existing photo limit and permissions (2026-11-01).
 - Reuse the actual public page in private previews. Public images and profiles
   respect publication, online visibility, active status and tenant boundaries.
   Only publishable profile fields are returned; private contact details stay private.

@@ -2860,6 +2860,35 @@ by this explicit owner decision. Production SMS delivery under this correction
 still needs deployment and an authorized booking rehearsal; the earlier direct
 Twilio test is not a booking-flow certification.
 
+## ADR-077 — Batch salon photos and understandable booking preferences
+
+- Date: 2026-11-01. Status: Accepted from the owner's photo-upload and booking
+  preference screenshots and explicit usability requests.
+- Requirements: FR-02/03/09/19. Clarifies ADR-074/075; no payment, publication,
+  entitlement or Phase 2 expansion.
+- Offer multi-file selection and drop, local thumbnails, optional descriptions
+  and one explicit Add action. Keep the eight-photo limit. Send selected images
+  sequentially through the existing authorized command, using each confirmed
+  revision and one stable file/description/retry key per image. Stop on a failure;
+  retain remaining work and honor cooldowns. Never resend confirmed files or
+  automatically retry unknown outcomes. Known-invalid images must be removed
+  before continuing; leaving the component stops later uploads.
+- Keep working booking controls and explain their actual effect: booking-page
+  price labels, client eligibility, online change deadline, waitlist offers per
+  released opening and the lifetime of newly issued private appointment links.
+  Price labels do not change amounts; staff price differences may still require
+  a starting price. Consultation-only restricts new clients to services flagged
+  as consultations, not proof of a completed prior consultation. Waitlist offers
+  are not guaranteed notification delivery. Public booking URLs are not expiring
+  private appointment links; short action/review links keep their existing limits.
+- Hide the saved staff-gender-request checkbox: it has no booking or scheduling
+  consumer today. Preserve the saved value and server contract. This is a clear
+  existing FR-09 implementation gap, not an invented working preference; any
+  future interface must connect to reviewed behavior before being shown.
+- Group advanced waitlist/link settings under one named disclosure; preserve
+  custom saved durations, validation, revisions, authorization and audit behavior.
+  [Local verification and deployment limits](audits/2026-11-01-gallery-booking-preferences/README.md).
+
 ## Open decisions
 
 2026-11-01 Stripe audit follow-up to **OPEN-13**: the SaaS billing dispatcher

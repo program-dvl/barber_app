@@ -52,7 +52,8 @@ changes produce existing Activity events; navigation and review clicks do not.
 ## UX and evidence
 
 ADR-074 adds optional salon photos and explicit logo/cover previews/saves. Owners
-edit one photo at a time and can return without losing drafts. Image selection
+edit saved photos one at a time and can select several new photos together
+(ADR-077). They can return without losing drafts. Image selection
 does not upload automatically, and no photo is a readiness requirement. Saved
 media and private previews reuse existing settings authority. See
 [booking presentation](booking-presentation.md) and its dated local evidence.
@@ -79,6 +80,37 @@ channels and Phase 2 memberships/packages are absent.
 Verification and six-perspective review live in the [dated Business Setup audit](../audits/2026-10-04-business-setup/README.md).
 Browser evidence, backend isolation/rollback/replay tests and production builds
 must be recorded before the project-status document claims verification.
+
+## Booking preference clarity (2026-11-01; FR-02/09/10/19)
+
+Booking preferences use a two-column form on desktop and one column on phones.
+The appointment start interval is separate from service length. Team selection,
+booking-page price labels, who can book online and the online change deadline
+have short explanations that follow the saved selection. The latter covers both
+cancellation and rescheduling. Each service’s own client restriction still applies.
+
+The price controls change the public fixed/“from” label, not stored service amounts.
+The public catalogue may still show a starting price until a professional is
+chosen when qualified team members have different prices; fixed-price help
+explains that distinction.
+Consultation-only new-client booking uses the existing **Consultation service**
+flag in Services; it does not prove a completed earlier consultation. Existing
+clients are classified privately from an unambiguous same-business contact/name
+match during details review, not by asking clients to declare previous visits.
+
+**Waitlist & appointment links** progressively discloses the number of eligible
+clients offered an opening and the validity of newly issued private management
+links. The first successful waitlist claim wins. Private link expiry does not
+change the public salon booking-page URL. Short-lived action links and explicit
+review-link expiry retain their existing separate durations. Existing custom
+saved deadline/validity values remain visible and are preserved on unrelated saves.
+
+The unused **Allow staff gender requests** checkbox is hidden: its stored value
+and request contract remain intact, but no public selection or scheduling consumer
+currently implements it. This is an outstanding FR-09 capability, not a completed
+feature or a removal from approved scope. The form retains settings authorization,
+revision checks, policy-version updates, audit and explicit save behavior. Errors
+on disclosed fields open that section and connect the error/help to its control.
 
 ## Public booking link integration (2026-10-10, FR-01/03/09; ADR-055)
 

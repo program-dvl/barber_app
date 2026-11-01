@@ -103,13 +103,15 @@ Read through logged-in Chrome/Forge. No credential values are retained here.
   environment options. No commercial terms/history were rewritten. Forge
   confirmed this environment update. Submitted a final `--apply` verification
   against the effective pinned configuration; the browser disconnected before
-  its retained result could be read. Do not claim that final invocation passed.
+  its retained result could be read. That invocation remains unread; the
+  owner-supplied production readiness result below subsequently verifies both
+  effective rate cards and all six selected live prices.
 - On **2026-11-01 Asia/Kolkata**, an independent unauthenticated GET of
   `https://clipperdesk.com/pricing` returned **200**. Its server-rendered Inertia
   catalogue reports `available=true`, monthly `ready=true` and annual
   `ready=true`, with the approved USD amounts and progressive staff bands.
   This verifies current public readiness and that checkout is no longer paused;
-  it does not substitute for an actual payment or the unread provider result.
+  it does not substitute for an actual payment.
 - Direct SSH fallback was attempted read-only and rejected with public-key
   authentication failure. No server keys or authentication settings changed.
 - Browser diagnostics on 2026-10-31 confirm Chrome is running, the ChatGPT
@@ -124,7 +126,9 @@ Read through logged-in Chrome/Forge. No credential values are retained here.
   continuation the browser gateway again rejected access before tab discovery.
 - Verify an owner-authorized actual live payment and later renewal projection.
   Signed transport success does not certify a charged monthly/annual journey.
-- Complete tax/portal review and record any remaining launch limits.
+- Complete tax review and record any remaining launch limits. The managed live
+  portal configuration was created and inspected as recorded above; its customer
+  journey still needs an actual live subscription rehearsal.
 - A final integration review must cover subscription charge refund, dispute and
   early-fraud-warning operations. The current billing dispatcher has no handlers
   for `charge.refunded`, `charge.dispute.created` or
@@ -134,9 +138,34 @@ Read through logged-in Chrome/Forge. No credential values are retained here.
   subscription/invoice graph and preserve financial/audit evidence when this
   recovery is implemented.
 - On 2026-11-01 the owner explicitly chose **“Leave the fixes for me to deploy.”**
-  Code fixes/readiness command remain local and uncommitted; no push/deployment
-  was performed. Configuration-only changes do not deploy these fixes.
-  No customer charge/renewal was attempted.
+  The owner subsequently reported deployment; local commit `78fcc14` contains
+  the reviewed fixes, command, tests and documentation. A fresh production
+  revision could not be independently inspected because browser access again
+  rejects the connection. Public pricing was rechecked
+  after that report: HTTP 200, available, monthly/annual ready. No agent push or
+  deployment was performed, and no customer charge/renewal was attempted.
+
+## Owner-supplied post-deployment evidence — 2026-11-01
+
+The owner supplied terminal output from the production `current` directory for
+`php artisan billing:check-production --provider-read`. Every required check
+passed: production settings, live keys, signing-secret presence, enabled
+checkout, HTTPS callback, four declared billing schedules, zero pending/failed
+billing events, recent signed-event journal evidence, exactly one matching
+enabled endpoint, required events, both verified rate cards and all six live
+prices. Endpoint API `2026-07-29.dahlia` passed compatibility with the expected
+`2026-06-24.dahlia` release family. Queue connection remains `sync`.
+
+The account-details REVIEW reflects the deliberately restricted key's inability
+to read account details; Payments/Payouts activation was separately checked in
+the intended live dashboard. The command's generic signing-secret reminder is
+also covered by the separately observed signed **204 Delivered** event above.
+No additional credential or endpoint correction is indicated by this output.
+This closes the outstanding current configuration check; it does not establish
+ongoing scheduler liveness or paid checkout, renewal, collection, cancellation,
+refund/dispute/fraud or tax outcomes. No records or charges were changed by this
+read-only command. Its output is owner-supplied evidence, not an independently
+observed command run or deployed revision inspection.
 
 Sources: [subscription webhooks](https://docs.stripe.com/billing/subscriptions/webhooks),
 [event delivery](https://docs.stripe.com/webhooks),

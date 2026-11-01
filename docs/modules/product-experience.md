@@ -218,3 +218,18 @@ related guides and real screenshot dialog reuse the existing semantic design
 system. No customer records enter search. [Help contract](help-center.md) and
 [local verification/coverage gaps](../audits/2026-10-24-help-center/README.md) define
 the maintenance boundary; this is not a claim of deployment or provider readiness.
+
+
+## Batch photos and booking preferences (2026-11-01)
+
+FR-02/03/09/19, ADR-077: optional gallery setup accepts several files in one
+picker or drop, previews the selected images and adds them with one action.
+Keep descriptions secondary, progress textual, failures recoverable and the
+remaining selection intact. The account restriction and eight-photo limit apply.
+
+Booking preferences uses two columns on desktop and one on phones. Plain labels
+and context-sensitive hints explain price labels and who can book. Waitlist offers
+and private appointment-link expiry share one named disclosure. Show working
+controls only; the currently inert staff-gender-request checkbox is hidden while
+its saved value remains untouched. Existing public booking behavior is preserved.
+[Browser and test evidence](../audits/2026-11-01-gallery-booking-preferences/README.md).

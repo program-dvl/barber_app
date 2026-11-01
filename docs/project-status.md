@@ -1,5 +1,31 @@
 # Project status
 
+## 2026-11-01 Batch salon photos and clear booking preferences (ADR-077)
+
+- [x] Gallery accepts multiple photos in one picker/drop, previews the selection
+  and uploads with one explicit action. Eight-photo/account limits remain. Each
+  confirmed upload advances the revision; partial failures retain remaining
+  files/captions, exact retries cannot duplicate a saved file, known-invalid
+  photos have a removal action, and leaving stops later uploads.
+- [x] Traced the reported booking controls to actual price presentation, client
+  eligibility, waitlist offer creation and private-link issuance. Replaced vague
+  labels/options with clear wording and contextual help; grouped waitlist/link
+  controls. Hid the staff-gender checkbox because its saved/projected value has
+  no runtime booking consumer. Its saved value/contract remain; the FR-09 gap is
+  explicit rather than presented as a working preference.
+- [x] Local browser: selected/saved three files together, reloaded saved photos,
+  exercised an invalid middle image and resumed the remaining photo; checked
+  previews/recovery at desktop and 390px. Preference choices/hints, advanced
+  controls and real save verified on the isolated fixture. Cancel retained a
+  three-photo unsaved batch; deliberate discard made no uploads. No horizontal overflow;
+  mobile main actions 324×44px, selection removal 44×44px.
+- [x] Frontend **187 passed**; focused gallery/setup/public-booking backend
+  **122 passed / 946 assertions**. Client/SSR builds pass. All business writes
+  during browser checks used an isolated disposable SQLite fixture and demo
+  images; no real customer records, provider configuration or schema changed.
+- [ ] Not deployed; the screenshot's actual account entitlement was not changed
+  or certified. [Evidence](audits/2026-11-01-gallery-booking-preferences/README.md).
+
 ## 2026-10-31 Stripe subscription production audit
 
 - [x] Reproduced and fixed same-second terminal cancellation ordering, later
@@ -22,12 +48,17 @@
   Prices after identifying that database fallback still chose old test cards.
   Forge confirmed both environment saves. On 2026-11-01, production pricing GET
   returned **200** with monthly/yearly `ready=true` and catalogue available.
-- [ ] Final pinned-provider verification command was submitted, but its result
-  remains unread after browser access dropped again. Local code fixes are not deployed;
-  the owner explicitly chose to deploy them personally on 2026-11-01.
+- [x] On 2026-11-01, after reporting deployment of the reviewed fixes (local
+  commit `78fcc14`), the owner supplied production output from
+  `billing:check-production --provider-read`: all required configuration checks
+  passed, including both verified rate cards, all six live prices, the enabled
+  destination/event selection and zero pending/failed billing events. The
+  restricted key's account-details REVIEW is expected; account activation and
+  signed delivery were separately verified above. This is owner-supplied
+  deployed command evidence, not a fresh independent revision inspection.
+- [ ] Actual live paid checkout/renewal and tax posture remain uncertified.
   Two existing active app subscription IDs are unavailable in the live account;
-  records preserved pending review. Actual live payment/renewal and tax posture
-  are not certified. Charge refund/dispute/fraud-warning handlers are absent
+  records preserved pending review. Charge refund/dispute/fraud-warning handlers are absent
   from the billing dispatcher and need separate recovery/ownership verification
   before comprehensive financial launch sign-off.
   [Detailed evidence](audits/2026-10-31-stripe-production/README.md).

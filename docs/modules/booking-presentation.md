@@ -50,11 +50,40 @@ tombstone, hides both public/private delivery immediately and deletes its file
 after commit. Repeated removal and exact no-op edits create no extra audit event.
 Applied uploads, description/order changes and removals produce Activity records.
 
-The editor saves only after an explicit action, preserves a selected file and
+The editor saves only after an explicit action, preserves selected files and
 unsaved descriptions after failures, preserves other draft descriptions during
 reordering, stops automatic retries and respects a returned retry cooldown.
 Persistent feedback uses `AppNotice`; related actions wrap with 10px gaps and
 44px touch targets. Removal uses the shared keyboard-operable dialog.
+
+### Selecting several photos (2026-11-01)
+
+Owners can choose several files in one picker or drop them into the upload area.
+The selection shows a thumbnail and filename for each photo, an optional
+expandable description, individual removal and the remaining photo spaces.
+The first selected photo is marked Featured when the saved gallery is empty.
+One **Add photos** action saves the selection; selecting files does not upload
+them or publish the business. Invalid, duplicate and excess selections are
+identified while valid selections remain available for review. The existing
+eight-photo total and per-image validation still apply.
+
+The client sends one file at a time through the existing authorized endpoint,
+using the revision returned by each confirmed save. Progress identifies the
+current photo and total. Confirmed photos appear in the saved gallery and leave
+the selection. A failure stops later uploads, states which photo stopped and how
+many were saved, and retains the remaining thumbnails and descriptions. A lost
+response is not described as proof that a photo was not saved. Continuing uses
+the same file, original description and UUID, so an already-applied upload is
+returned without a second photo or audit event. The attempted description stays
+fixed until that photo is confirmed; saved descriptions remain editable.
+
+A stale revision requires a deliberate gallery reload before continuing and
+retains the whole selection. A known-invalid photo must be removed or replaced
+before continuing, rather than repeatedly sending the same rejected image.
+Rate limits retain the queue and disable continuation for the returned wait.
+Account and platform failures retain the existing support path and stop writes;
+multiple selection never bypasses the branding entitlement. Leaving the editor
+releases local previews and prevents later queued requests from starting.
 
 ADR-075 makes this section directly discoverable without changing its optional
 status. A confirmed empty response offers photo selection; loading does not show
@@ -91,8 +120,9 @@ Usual hours are explicitly separate from real bookable appointment times.
 Logo and cover show the saved image, selected local preview and explicit Save,
 Discard, Replace and Remove actions. Removal requires confirmation. Replacement
 and removal bind the currently saved image under the business lock; stale image
-recovery preserves the selected preview. Gallery controls expand only for the
-photo being edited, with a local preview before upload. File choices and drafts
+recovery preserves the selected preview. Saved gallery controls expand only for
+the photo being edited; selected photos each offer a local preview and an optional
+description before upload. File choices and drafts
 participate in existing unsaved-work navigation guards. All image work remains
 optional, and unavailable capability text uses account/subscription language.
 New HTTP logo/cover uploads also validate decoded size (6,000 px/12 megapixels;
@@ -108,6 +138,12 @@ endpoint from delivering them, but older branding objects remain private at rest
 upload retries, invalid type/size/dimensions/description, phone orientation and
 metadata removal, ordering/stale revisions, the eight-photo limit, tenant/role/
 branch authorization, unpublished/paused/removed delivery and rollback cleanup.
+`BusinessPhotoBatchCompatibilityTest` additionally covers replay after later
+uploads fill the gallery, a rejected middle image preserving earlier saves, and
+an entitlement change between uploads retaining readable saved images. Mounted
+`salon-gallery-editor.test.mjs` exercises explicit multi-selection, sequential
+revisions, partial failure and exact replay, limits/validation, cooldowns, stale
+reload, account restrictions, rejected-image recovery and leaving during upload.
 Desktop/mobile browser evidence and deployment verification are recorded by the
 parent booking audit; these tests alone do not establish deployment or complete
 accessibility certification.
