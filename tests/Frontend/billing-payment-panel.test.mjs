@@ -17,7 +17,8 @@ async function component(path, panel = false) {
             .replace("import axios from 'axios';", 'const axios={post:(...args)=>globalThis.billingPanelTest.post(...args),isCancel:()=>false};')
             .replace(/import AppNotice from '[^']+';/, 'const AppNotice = globalThis.billingPanelTest.Notice;')
             .replace(/import AppButton from '[^']+';/, "const AppButton={inheritAttrs:false,setup(props,{attrs,slots}){return ()=>testH('button',attrs,slots.default?.())}};")
-            .replace(/import (CapacityCalculator|AppDialog) from '[^']+';/g, 'const $1={render(){return null}};')
+            .replace(/import CapacityCalculator from '[^']+';/g, 'const CapacityCalculator={render(){return testH("div",null,this.$slots["before-review"]?.())}};')
+            .replace(/import AppDialog from '[^']+';/g, 'const AppDialog={render(){return null}};')
             .replace(/import CapacityBillingPanel from '[^']+';/, 'const CapacityBillingPanel=globalThis.billingPanelTest.Panel;')
             .replace(/import (AppLayout|PageHeader|AppSelect) from '[^']+';/g, 'const $1={render(){return testH("div",null,this.$slots.default?.())}};')
             .replace(/import '[^']+\.css';/g, '')
@@ -179,8 +180,8 @@ test('welcome code entry stays available without presenting it as a payment fail
     const fixture = mount(async () => ({}), { request: null, catalog: {seasonal_offer: {name: 'Holiday welcome', percentage: 20}} });
     try {
         await flush();
-        assert.match(fixture.text(), /Holiday welcome · 20% off your first payment/);
-        assert.match(fixture.text(), /Some codes replace the seasonal offer/);
+        assert.match(fixture.text(), /Have a coupon code/);
+        assert.match(fixture.text(), /Savings confirmed at review/);
         const input = fixture.nodes().find(node => node.props?.id === 'subscription-coupon');
         assert.ok(input);
         input.props.onInput({target: {value: 'INVITE10'}}); await flush();

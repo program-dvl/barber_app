@@ -1,0 +1,32 @@
+/* Promotional price identity: separate from workflow notifications. */
+.subscription-offer { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; padding:12px 14px; margin-bottom:8px; border:1px solid #c7d2fe; border-radius:12px; background:linear-gradient(115deg,#eef2ff,#e0f2fe); color:#312e81; text-align:left; }
+.subscription-offer .subscription-offer-name { min-width:0; flex:1 1 100px; font-size:13px; line-height:1.5; font-weight:650; overflow-wrap:anywhere; }
+.subscription-offer > strong { flex:none; padding:5px 9px; border-radius:7px; background:#4338ca; color:#fff; font-size:13px; font-weight:750; line-height:1.4; letter-spacing:.035em; white-space:nowrap; }
+.subscription-renewal { font-size:14px; line-height:1.6; margin:0; }
+.pricing-start-card .subscription-offer,.pricing-quote .subscription-offer { background:linear-gradient(110deg,#c7f9e9,#e0e7ff); border-color:transparent; margin-bottom:22px; }
+.pricing-start-card .pricing-starting .subscription-offer-name { color:#253363; }
+.pricing-start-card .subscription-renewal,.pricing-quote .subscription-renewal { color:#d6e1f2; margin:10px 0 16px; }
+.pricing-quote .pricing-first-payment-label { color:#cbd5ee; font-size:14px; margin:18px 0 8px; }
+.pricing-starting > p.subscription-renewal { display:block; }
+.capacity-total .subscription-offer { margin-bottom:6px; }
+.capacity-total .capacity-amount { margin:0; }
+@media(max-width:420px) { .subscription-offer { padding:10px 12px; } }
+
+.capacity-total .subscription-saving { color:#047857; font-weight:600; }
+.pricing-quote .subscription-saving { color:#a5f3d3; }
+
+/* A small gift motif makes the offer recognizable without another paragraph. */
+.subscription-offer { position:relative; gap:12px; padding:16px; border-radius:14px; box-shadow:inset 0 1px 0 #ffffff90,0 5px 14px #312e8107; }
+.subscription-offer-icon { position:relative; display:grid; place-items:center; flex:0 0 40px; width:40px; height:40px; border:1px solid #ffffffcc; border-radius:12px; background:linear-gradient(145deg,#fff,#e0e7ff); color:#4338ca; box-shadow:0 3px 8px #312e8110; }
+.subscription-offer-icon svg { width:23px; height:23px; stroke-width:1.8; }
+.subscription-offer-icon::after { content:''; position:absolute; top:-3px; right:-3px; width:8px; height:8px; background:#10b981; border:2px solid #f0fdf4; border-radius:50%; }
+.subscription-offer > strong { padding:8px 10px; border:1px solid #ffffff55; box-shadow:0 3px 8px #4338ca25; }
+.pricing-quote .pricing-quote-eyebrow { margin:0 0 18px; }
+.pricing-start-card .subscription-offer,.pricing-quote .subscription-offer { background:linear-gradient(115deg,#c3fae8 0%,#dce9ff 100%); }
+@media(max-width:420px) {
+ .subscription-offer { gap:9px; padding:12px; }
+ .subscription-offer .subscription-offer-name { flex-basis:70px; }
+ .subscription-offer-icon { flex-basis:34px; width:34px; height:34px; border-radius:10px; }
+ .subscription-offer-icon svg { width:21px; height:21px; }
+ .subscription-offer > strong { padding:7px 8px; font-size:12px; }
+}

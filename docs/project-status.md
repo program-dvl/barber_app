@@ -1,5 +1,23 @@
 # Project status
 
+## 2026-11-01 Discount presentation refinement
+
+- [x] Replaced full-width promotional notices above Plan controls with a compact
+  gift/campaign/percentage strip inside the price summary. First payment leads;
+  regular renewal, USD/tax wording and a welcome-saving breakdown remain clear.
+  Coupon entry is a 44px disclosure immediately above Review subscription.
+- [x] Public hero and estimator share this treatment, removing expiry and checkout
+  paragraphs. Verified 18px separation below Estimated subscription; corrected
+  broad hero price styles that also enlarged the discount badge.
+- [x] Local browser at desktop and 390px: monthly/yearly amounts, aligned coupon
+  error, correction to valid code and cancel-preserved input verified. Phone
+  document width 390px; disclosure/review controls 44px and input 46px.
+  Frontend 189 passed; pricing backend 16 passed / 239 assertions; client/SSR
+  build and whitespace checks pass. No backend/payment/schema change.
+- [ ] Not deployed by this task. Owner reports the earlier module deployed; these
+  presentation corrections were verified on an isolated local SQLite fixture.
+  [Evidence](audits/2026-11-01-offer-presentation/README.md).
+
 ## 2026-11-01 Subscription welcome discounts and coupons (ADR-078)
 
 - [x] Added administrator-only Payments → Discounts & coupons with percentage,

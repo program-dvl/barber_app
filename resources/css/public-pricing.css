@@ -99,7 +99,7 @@
 .pricing-starting { margin:28px auto 24px; }
 .pricing-starting>span { font-size:14px; color:var(--text-muted); }
 .pricing-starting>p { display:flex; justify-content:center; align-items:baseline; gap:8px; margin:3px 0 10px; }
-.pricing-starting strong { font-size:64px; letter-spacing:-.05em; font-weight:650; line-height:1.1; }
+.pricing-starting>p>strong { font-size:64px; letter-spacing:-.05em; font-weight:650; line-height:1.1; }
 .pricing-starting small { font-size:14px; color:var(--text-muted); }
 .pricing-hero-cta { display:inline-flex; gap:12px; min-height:50px; }
 .pricing-hero-cta svg { width:19px; height:19px; }
@@ -138,7 +138,7 @@
 }
 @media(max-width:640px) {
     .pricing-intro { padding:42px 0; }
-    .pricing-starting strong { font-size:56px; }
+    .pricing-starting>p>strong { font-size:56px; }
     .pricing-starting small { display:block; font-size:13px; line-height:1.8; }
     .pricing-growth { padding:40px 0 30px; }
     .pricing-growth-grid { grid-template-columns:1fr; }
@@ -165,7 +165,7 @@
 .cd-pricing-page { background:#f2f5fa; }
 .pricing-start-card { background:linear-gradient(145deg,#253363 0%,#152044 70%); border-color:#8ca0db55; color:#fff; box-shadow:0 24px 64px #02061745,inset 0 1px 0 #ffffff15; }
 .pricing-start-card .pricing-starting>span,.pricing-start-card .pricing-starting small { color:#cbd5ee; }
-.pricing-start-card .pricing-starting strong { color:#fff; }
+.pricing-start-card .pricing-starting>p>strong { color:#fff; }
 .pricing-start-card .pricing-starting>p>span { color:#e2e8f5; }
 .pricing-start-card .pricing-hero-cta { width:100%; justify-content:center; background:#fff; border-color:#fff; color:#253363; box-shadow:0 4px 12px #00000020; }
 .pricing-start-card .pricing-hero-cta:hover { background:#e9edff; border-color:#e9edff; }

@@ -84,8 +84,11 @@ and billing rules are unchanged by this editorial review. See the
 ## First-payment offers (2026-11-01, ADR-078)
 
 Public pricing publishes only the active best automatic seasonal offer, alongside
-verified base rates. Hero and estimator distinguish first payment from regular
-renewals; tax is added separately. Private codes are never published by the
+verified base rates. Hero and estimator place the compact gift/percentage campaign strip inside the
+price card and lead with the discounted first month/year amount. A single line
+states the regular renewal and before-tax qualifier; omit the expiry-time and
+coupon-instruction paragraphs. A welcome-saving row completes the breakdown.
+Keep 18px between Estimated subscription and the offer strip. Private codes are never published by the
 catalog. Code entry happens in the authenticated Plan review. Signup preferences
 remain preferences, not a reserved discount or payment authorization. Current
 eligibility is checked at review and again at confirmation.

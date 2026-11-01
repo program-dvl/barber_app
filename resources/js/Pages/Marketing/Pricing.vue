@@ -3,15 +3,15 @@ import { inject as injectRoute } from 'vue';
 const route = injectRoute('route');
 import { computed, ref, watch } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { ArrowRightIcon, CheckIcon, CalendarDaysIcon, UsersIcon, BuildingStorefrontIcon, ChartBarIcon, BellIcon, CreditCardIcon } from '@heroicons/vue/24/outline';
+import { GiftIcon, ArrowRightIcon, CheckIcon, CalendarDaysIcon, UsersIcon, BuildingStorefrontIcon, ChartBarIcon, BellIcon, CreditCardIcon } from '@heroicons/vue/24/outline';
 import HomeLayout from '@/Layouts/HomeLayout.vue';
 import PublicContainer from '@/Components/Marketing/PublicContainer.vue';
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
-import AppNotice from '@/Components/Product/AppNotice.vue';
 import FaqList from '@/Components/Marketing/FaqList.vue';
 import { capacityEstimate, capacityAnnualSaving, capacityMonthlyEquivalent } from '@/Support/capacityPricing';
 import { emitMarketingEvent } from '@/Support/marketingTelemetry';
 import '../../../css/public-pricing.css';
+import '../../../css/subscription-offers.css';
 
 const props = defineProps({ catalog: Object, seo: Object });
 const page = usePage();
@@ -26,6 +26,7 @@ function reset() { interval.value = market.value?.intervals.monthly ? 'monthly' 
 const locations = ref(1), staff = ref(1);
 const rate = computed(() => market.value?.intervals[interval.value]);
 const estimate = computed(() => capacityEstimate(rate.value, locations.value, staff.value));
+const discounted = amount => props.catalog.seasonal_offer ? amount - Math.floor((amount * props.catalog.seasonal_offer.percentage + 50) / 100) : amount;
 const savings = computed(() => capacityAnnualSaving(market.value, locations.value, staff.value));
 const savingPercent = computed(() => { const monthly = capacityEstimate(market.value?.intervals.monthly, locations.value, staff.value); return monthly?.total_minor ? (savings.value / (monthly.total_minor * 12) * 100).toFixed(1) : null; });
 const authenticated = computed(() => Boolean(page.props.auth?.user));
@@ -64,10 +65,16 @@ watch(interval, value => emitMarketingEvent('marketing_pricing_interval_changed'
                         <p class="cd-eyebrow">Pricing</p>
                         <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">One platform.<br/>A price that grows with you.</h1>
                         <p class="mt-7 max-w-2xl text-lg leading-8">Manage bookings, clients, team schedules and reporting in one place. One subscription for your whole business.</p>
-                        <AppNotice v-if="catalog.available && catalog.seasonal_offer" class="mt-6" tone="info" :title="`${catalog.seasonal_offer.name} · ${catalog.seasonal_offer.percentage}% off your first payment`" description="Start a new subscription with automatic savings. Your regular renewal price is shown before you pay." />
+
                     </div>
                     <div class="pricing-start-card">
-                        <div v-if="monthlyRate" class="pricing-starting"><span>Starting at</span><p><strong>{{ money(monthlyRate.base_minor) }}</strong><span>/month</span></p><small>USD · 1 location + 1 bookable staff member</small></div>
+                        <div v-if="monthlyRate" class="pricing-starting">
+                            <div v-if="catalog.seasonal_offer" class="subscription-offer"><span class="subscription-offer-icon"><GiftIcon aria-hidden="true" /></span><span class="subscription-offer-name">{{ catalog.seasonal_offer.name }}</span><strong>{{ catalog.seasonal_offer.percentage }}% OFF</strong></div>
+                            <span>{{ catalog.seasonal_offer ? 'Your first month, from' : 'Starting at' }}</span>
+                            <p><strong>{{ money(discounted(monthlyRate.base_minor)) }}</strong><span v-if="!catalog.seasonal_offer">/month</span></p>
+                            <p v-if="catalog.seasonal_offer" class="subscription-renewal">Then {{ money(monthlyRate.base_minor) }}/month · before tax</p>
+                            <small>USD · 1 location + 1 bookable staff member</small>
+                        </div>
                         <p v-else class="pricing-start-unavailable">Explore ClipperDesk with a free trial.</p>
                         <Link :href="trialHref" class="cd-button cd-button-primary pricing-hero-cta" data-cta-context="pricing_hero" :data-cta-action="authenticated ? 'dashboard' : 'trial'">{{ trialLabel }}<ArrowRightIcon aria-hidden="true"/></Link>
                         <div class="pricing-trial-note"><CheckIcon aria-hidden="true"/><span>No credit card required</span></div>
@@ -101,7 +108,7 @@ watch(interval, value => emitMarketingEvent('marketing_pricing_interval_changed'
 
                     </div>
                     <div class="pricing-quote">
-                        <div class="pricing-quote-content" aria-live="polite" aria-atomic="true"><p class="pricing-quote-eyebrow">Estimated subscription</p><template v-if="estimate"><p class="pricing-quote-amount"><strong>{{ money(estimate.total_minor) }}</strong><span>/ {{ interval === 'annual' ? 'year' : 'month' }}</span></p><AppNotice v-if="catalog.seasonal_offer" tone="info" :title="`${catalog.seasonal_offer.name} · ${catalog.seasonal_offer.percentage}% off`"><p>First payment: <strong>{{ money(estimate.total_minor - Math.floor((estimate.total_minor * catalog.seasonal_offer.percentage + 50) / 100)) }}</strong> before tax. Then {{ money(estimate.total_minor) }} / {{ interval === 'annual' ? 'year' : 'month' }} before tax.</p><p>Applied automatically when you start a new subscription{{ catalog.seasonal_offer.ends_at ? ` before ${new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' }).format(new Date(catalog.seasonal_offer.ends_at))} (UTC)` : '' }}. Coupon codes can be entered in your subscription review.</p></AppNotice><p class="pricing-quote-cadence">{{ estimate.currency }} · {{ interval === 'annual' ? 'Billed yearly, upfront' : 'Billed monthly' }} · before tax</p><p v-if="interval === 'annual'" class="pricing-monthly-equivalent">Equivalent to {{ money(capacityMonthlyEquivalent(estimate.total_minor)) }} / month</p><dl class="pricing-breakdown"><div><dt>1 location + 1 bookable staff</dt><dd>{{ money(estimate.base_minor) }}</dd></div><div v-if="estimate.locations > 1"><dt>{{ estimate.locations - 1 }} extra {{ estimate.locations === 2 ? 'location' : 'locations' }} × {{ money(estimate.location_minor) }}</dt><dd>{{ money((estimate.locations - 1) * estimate.location_minor) }}</dd></div><div v-for="line in estimate.staff_lines" :key="line.from"><dt>Staff {{ line.from }}{{ line.to > line.from ? `–${line.to}` : '' }} · {{ line.quantity }} × {{ money(line.unit_minor) }}</dt><dd>{{ money(line.total_minor) }}</dd></div></dl><p v-if="interval === 'annual' && savings > 0" class="pricing-savings">You save {{ money(savings) }} a year</p><ul class="pricing-quote-includes"><li><CheckIcon aria-hidden="true"/><span>{{ estimate.sms_monthly_allowance.toLocaleString('en-US') }} text credits each month<small>For supported US & Canadian numbers</small></span></li></ul></template><p v-else class="pricing-input-error" role="status">Enter whole numbers between 1 and {{ catalog.max_locations }} locations, and 1 and {{ catalog.max_staff.toLocaleString('en-US') }} bookable staff.</p></div>
+                        <div class="pricing-quote-content" aria-live="polite" aria-atomic="true"><p class="pricing-quote-eyebrow">Estimated subscription</p><template v-if="estimate"><div v-if="catalog.seasonal_offer" class="subscription-offer"><span class="subscription-offer-icon"><GiftIcon aria-hidden="true" /></span><span class="subscription-offer-name">{{ catalog.seasonal_offer.name }}</span><strong>{{ catalog.seasonal_offer.percentage }}% OFF</strong></div><p v-if="catalog.seasonal_offer" class="pricing-first-payment-label">Your first {{ interval === 'annual' ? 'year' : 'month' }}</p><p class="pricing-quote-amount"><strong>{{ money(discounted(estimate.total_minor)) }}</strong><span v-if="!catalog.seasonal_offer">/ {{ interval === 'annual' ? 'year' : 'month' }}</span></p><p v-if="catalog.seasonal_offer" class="subscription-renewal">Then {{ money(estimate.total_minor) }}/{{ interval === 'annual' ? 'year' : 'month' }} · before tax</p><p v-if="!catalog.seasonal_offer" class="pricing-quote-cadence">{{ estimate.currency }} · {{ interval === 'annual' ? 'Billed yearly, upfront' : 'Billed monthly' }} · before tax</p><p v-if="interval === 'annual' && !catalog.seasonal_offer" class="pricing-monthly-equivalent">Equivalent to {{ money(capacityMonthlyEquivalent(estimate.total_minor)) }} / month</p><dl class="pricing-breakdown"><div><dt>1 location + 1 bookable staff</dt><dd>{{ money(estimate.base_minor) }}</dd></div><div v-if="estimate.locations > 1"><dt>{{ estimate.locations - 1 }} extra {{ estimate.locations === 2 ? 'location' : 'locations' }} × {{ money(estimate.location_minor) }}</dt><dd>{{ money((estimate.locations - 1) * estimate.location_minor) }}</dd></div><div v-for="line in estimate.staff_lines" :key="line.from"><dt>Staff {{ line.from }}{{ line.to > line.from ? `–${line.to}` : '' }} · {{ line.quantity }} × {{ money(line.unit_minor) }}</dt><dd>{{ money(line.total_minor) }}</dd></div><div v-if="catalog.seasonal_offer" class="subscription-saving"><dt>Welcome saving</dt><dd>−{{ money(estimate.total_minor - discounted(estimate.total_minor)) }}</dd></div></dl><p v-if="interval === 'annual' && savings > 0" class="pricing-savings">You save {{ money(savings) }} a year</p><ul class="pricing-quote-includes"><li><CheckIcon aria-hidden="true"/><span>{{ estimate.sms_monthly_allowance.toLocaleString('en-US') }} text credits each month<small>For supported US & Canadian numbers</small></span></li></ul></template><p v-else class="pricing-input-error" role="status">Enter whole numbers between 1 and {{ catalog.max_locations }} locations, and 1 and {{ catalog.max_staff.toLocaleString('en-US') }} bookable staff.</p></div>
                         <div class="pricing-quote-action"><Link v-if="estimate" :href="signupHref" class="cd-button pricing-signup" data-cta-context="pricing_capacity" :data-cta-action="authenticated ? 'dashboard' : 'trial'">{{ authenticated ? 'Open your workspace' : 'Start your free trial' }}<ArrowRightIcon aria-hidden="true"/></Link><button v-else type="button" class="cd-button pricing-signup" disabled>Enter your business size</button><p>{{ authenticated ? 'Review subscription changes inside your workspace.' : 'No payment today. Confirm your subscription separately after signup.' }}</p></div>
                     </div>
                 </div></details>

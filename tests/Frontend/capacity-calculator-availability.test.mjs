@@ -14,6 +14,7 @@ globalThis.capacityCalculatorTest = {
 async function load(path) {
     const { descriptor } = parse(await readFile(resolve(path), 'utf8'));
     let code = compileScript(descriptor, { id: path, inlineTemplate: true }).content
+        .replace(/import '[^']+\.css';/g, '')
         .replace(/from (['"])vue\1/g, `from '${vue}'`)
         .replace(/import \{ ([^}]+) \} from '@heroicons\/vue\/24\/outline';/, (_, names) => names.split(',').map(name => `const ${name.trim()}=globalThis.capacityCalculatorTest.Icon;`).join('\n'))
         .replace(/import AppButton from '[^']+';/, 'const AppButton=globalThis.capacityCalculatorTest.Button;')
@@ -76,4 +77,21 @@ test('provider readiness can disable verified subscription review while estimate
     const view = mount({ reviewDisabled: true, catalog: { available: true, markets: [{ code: 'US', intervals: { monthly: { ...monthly, ready: true, preview_only: false } } }] } });
     try { assert.equal(view.buttons().at(-1).props.disabled, true); assert.ok(view.inputs().every(input => !input.props.disabled)); assert.equal(view.reviews.length, 0); }
     finally { view.app.unmount(); }
+});
+
+test('new subscription offer leads with first payment and preserves the full recurring quote', async () => {
+    const readyCatalog = { available: true, markets: [{code:'US',currency:'USD',intervals:{monthly:{...monthly,ready:true},annual:{...annual,ready:true}}}] };
+    const view = mount({catalog:readyCatalog,offer:{name:'Holiday welcome',percentage:20}});
+    try {
+        assert.match(view.text(), /Holiday welcome.*20% OFF.*Your first payment.*\$23\.20/);
+        assert.match(view.text(), /Then \$29\.00 \/ month.*USD.*before tax/);
+        assert.match(view.text(), /Welcome saving.*−\$5\.80/);
+        view.buttons().at(-1).props.onClick();
+        assert.equal(view.reviews[0].total_minor,2900);
+        view.buttons()[1].props.onClick(); await nextTick();
+        assert.match(view.text(), /\$232\.00/); assert.match(view.text(), /Then \$290\.00 \/ year/);
+        view.state.offer=null; await nextTick();
+        assert.doesNotMatch(view.text(), /20% OFF|Your first payment|Welcome saving/);
+        assert.match(view.text(), /Billed yearly, upfront/);
+    } finally { view.app.unmount(); }
 });

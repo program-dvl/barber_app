@@ -242,3 +242,12 @@ through invalid-code failure and includes exact first-payment savings and regula
 renewal in the review. Public pricing calls out automatic first-payment savings.
 Use the shared notices/dialogs; no success claim before confirmed provider state.
 See [dated verification](../audits/2026-11-01-subscription-promotions/README.md).
+
+### Offer presentation refinement — 2026-11-01
+
+The owner's deployed screenshots showed full-width offer notices and coupon
+entry separating subscription controls from their summary. Those now live inside
+the price card: a gift icon, compact campaign/percentage strip, discounted first
+payment, regular renewal and saving breakdown. Public pricing removes procedural
+paragraphs. Owner coupon entry is a disclosure above Review subscription, with
+real AppNotice validation feedback retained. [Desktop/mobile evidence](../audits/2026-11-01-offer-presentation/README.md).

@@ -412,8 +412,11 @@ Coupon codes are reusable while eligible; share privately and disable when done.
 Reject combinations below a USD 0.50 first payment during review, with a useful
 action to remove the coupon; no zero-cost subscription is offered.
 
-Owner Plan entry and public pricing show the automatic offer. An optional owner
-coupon field is validated during review. Invalid code feedback retains selection
+Owner Plan and public pricing place the automatic offer inside the price card,
+with gift icon, campaign name, percentage badge, discounted first payment,
+regular renewal and a saving line in the breakdown. Coupon entry lives in a compact
+Have a coupon code? disclosure immediately before the review action, not above
+the calculator. Its optional owner coupon field is validated during review. Invalid code feedback retains selection
 and code, names the coupon problem, and permits correction/removal. Review shows
 each saving, discounted first payment and full recurring renewal. Pending checkout
 retains the code from its saved quote. Annual offers reduce the annual first

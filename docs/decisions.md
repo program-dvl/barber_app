@@ -2914,6 +2914,11 @@ Twilio test is not a booking-flow certification.
   one redemption per checkout-specific coupon. That provider limit is not a global
   campaign use limit. Campaigns are reusable until disabled/expired; no per-person
   code binding or redemption quotas are promised in this simple release.
+- Owner-directed presentation refinement on 2026-11-01: promotional information
+  belongs inside price cards, with gift icon and percentage badge. It is not a
+  workflow notice. Lead with the first payment, keep regular renewal/tax wording
+  and exact saving rows; remove procedural marketing paragraphs. Coupon input
+  is an optional disclosure immediately before review. Financial rules unchanged.
 - Seed Holiday welcome at 20%, 2026-11-01 inclusive to 2027-01-01 exclusive, UTC.
   A fixed seed identity preserves administrator edits, renaming and disabling on
   repeated deployment. Seeder does not contact Stripe or alter existing customers.

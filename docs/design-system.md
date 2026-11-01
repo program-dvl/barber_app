@@ -1120,7 +1120,17 @@ Generate code button and combination setting. Generating is an intentional actio
 loading or editing never silently changes a shared code. Describe UTC date windows,
 first-payment scope and the effect of disabling offers before saving.
 
-Public and owner automatic-offer information uses AppNotice. Coupon errors say
+Public and owner automatic offers are part of the price summary, using the
+shared subscription-offers styling: a small decorative gift icon, concise campaign
+name and a high-contrast percentage badge. Do not present an offer as a full-width
+workflow notification. Keep 18px below the public estimate eyebrow, allow long
+names to wrap and keep the badge readable. The discounted first payment leads;
+the regular renewal and tax qualifier follow directly beneath. No expiry or
+checkout-instruction paragraphs appear on public pricing. Coupon entry is a
+44px disclosure inside the subscription summary, immediately before review;
+its contents retain input through errors and review cancellation.
+
+Persistent workflow feedback still uses AppNotice. Coupon errors say
 Check your coupon code and retain input; do not label them payment outages. The
 review lists named savings, first payment and full renewal, with explicit annual
 or monthly cadence and before-tax wording. Use the existing shared dialog action
