@@ -3,6 +3,7 @@
 namespace App\Domain\Billing\Services;
 
 use App\Domain\Billing\Models\BillingPromotion;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -46,9 +47,29 @@ class SubscriptionPromotions
     {
         $code = collect($quote['promotions'] ?? [])->last(fn ($offer) => filled($offer['code']));
         $current = $this->apply($quote, $code['code'] ?? null);
-        abort_unless($current['promotions'] === ($quote['promotions'] ?? [])
-            && $current['first_payment_minor'] === ($quote['first_payment_minor'] ?? $quote['total_minor']),
-            409, 'This offer changed. Review your subscription again to see the current total.');
+        // MySQL JSON normalizes object-key order. Compare typed values after
+        // sorting object keys; preserve the order of sequential discounts.
+        if ($this->canonical($current['promotions']) !== $this->canonical($quote['promotions'] ?? [])
+            || $current['first_payment_minor'] !== ($quote['first_payment_minor'] ?? $quote['total_minor'])) {
+            throw new HttpResponseException(response()->json([
+                'code' => 'billing_offer_changed',
+                'message' => 'The offer has changed. Your selection is saved. Review the updated total before continuing.',
+            ], 409));
+        }
+    }
+
+    private function canonical(array $value): array
+    {
+        if (! array_is_list($value)) {
+            ksort($value);
+        }
+        foreach ($value as &$item) {
+            if (is_array($item)) {
+                $item = $this->canonical($item);
+            }
+        }
+
+        return $value;
     }
 
     private function snapshot(BillingPromotion $offer): array

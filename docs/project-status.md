@@ -1,5 +1,21 @@
 # Project status
 
+## 2026-11-01 Offer confirmation JSON-order correction
+
+- Identified strict PHP array equality in SubscriptionPromotions::assertUnchanged
+  as sensitive to MySQL JSON object-key normalization. Canonical object-key
+  comparison now accepts equivalent saved offers while preserving strict types,
+  discount-list order and first-payment amount checks.
+- Genuine mismatches return billing_offer_changed; obsolete dialog closes and
+  selection/code stay available for immediate review, with specific copy and no
+  outage label or cooldown. Submitted payment idempotency remains unchanged.
+- Local capacity suite 207 passed / 1,452 assertions, frontend 190 passed,
+  client/SSR builds, scoped Pint and whitespace pass. Regression simulates MySQL
+  reordered JSON objects; it rejects type changes and reversed discounts.
+- Not deployed or independently verified on the reported production account.
+  No production database repair or charge was made. Local SQLite plus simulated
+  MySQL ordering is not a live MySQL/payment/browser certification.
+
 ## 2026-11-01 Separate yearly savings and subscription destinations
 
 - Yearly pricing and owner Plan now distinguish 12 monthly payments, yearly

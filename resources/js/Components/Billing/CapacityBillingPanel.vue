@@ -74,6 +74,11 @@ async function confirm() {
         if (result?.kind === 'checkout') await followPayment(result);
     } catch (exception) {
         if (!axios.isCancel(exception)) {
+            if (exception.response?.data?.code === 'billing_offer_changed') {
+                reviewDialog.value?.close(); reviewed.value = null;
+                fail(exception);
+                return;
+            }
             fail(exception);
             if (!exception.response || exception.response.status >= 500 || exception.response.data?.status === 'submitted') {
                 pending.value = { ...reviewed.value, status: 'submitted' };

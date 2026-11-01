@@ -1602,7 +1602,7 @@ it('reviews sequential welcome savings without changing recurring terms and bloc
     expect($change->quote['total_minor'])->toBe(2900)->and($change->quote['first_payment_minor'])->toBe(2088)
         ->and($change->quote['discount_minor'])->toBe(812)->and($change->quote['due_today_minor'])->toBe(2088);
     $offer->update(['is_active' => false]);
-    expect(fn () => $manager->claim($business, $owner, $change))->toThrow(HttpException::class);
+    expect(fn () => $manager->claim($business, $owner, $change))->toThrow(\Illuminate\Http\Exceptions\HttpResponseException::class);
     expect($change->fresh()->status)->toBe('quoted')->and($subscription->fresh()->status->value)->toBe('trialing');
 });
 
@@ -1677,4 +1677,23 @@ it('rejects combined offers below the USD minimum payment before checkout', func
     $service = app(\App\Domain\Billing\Services\SubscriptionPromotions::class);
     expect(fn () => $service->apply(['total_minor' => 2900], 'INVITE90'))->toThrow(ValidationException::class)
         ->and($service->apply(['total_minor' => 2900])['first_payment_minor'])->toBe(290);
+});
+
+
+it('accepts unchanged offers after MySQL style JSON key normalization without relaxing types or discount order', function () {
+    $model = \App\Domain\Billing\Models\BillingPromotion::class;
+    $model::create(['name' => 'Holiday', 'percentage' => 20, 'is_active' => true]);
+    $model::create(['name' => 'Invite', 'code' => 'INVITE10', 'percentage' => 10, 'is_active' => true, 'can_combine' => true]);
+    $service = app(\App\Domain\Billing\Services\SubscriptionPromotions::class);
+    $quote = $service->apply(['total_minor' => 3800], 'INVITE10');
+    foreach ($quote['promotions'] as &$offer) { ksort($offer); }
+    unset($offer);
+    $quote = json_decode(json_encode($quote), true);
+    $service->assertUnchanged($quote);
+    expect($quote['first_payment_minor'])->toBe(2736);
+    $wrong = $quote;
+    $wrong['promotions'][0]['percentage'] = '20';
+    expect(fn () => $service->assertUnchanged($wrong))->toThrow(\Illuminate\Http\Exceptions\HttpResponseException::class);
+    $quote['promotions'] = array_reverse($quote['promotions']);
+    expect(fn () => $service->assertUnchanged($quote))->toThrow(\Illuminate\Http\Exceptions\HttpResponseException::class);
 });

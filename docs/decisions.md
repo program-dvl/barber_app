@@ -2968,3 +2968,13 @@ not waive this existing financial-operations launch gate.
 | OPEN-24 | Define application-level global STOP/START routing for clients shared by multiple tenants on a platform SMS number | Twilio sender-level opt-out applies across that sender, while a reply does not identify a business. Selecting one matching tenant or restoring multiple businesses' permissions would be unsafe. | Before offering tenant-specific two-way preferences on a shared platform number | **Open; bounded by ADR-067/073.** Current inbound handling only changes an unambiguous client/tenant and otherwise does not expose a conversation or restore consent. Twilio sender-level opt-out still blocks sends. Product/Privacy must define global suppression, evidence and independent per-business re-consent before extending this behavior. |
 
 | OPEN-25 | Define review reporting, content moderation, appeals and recovery after secure-link expiry | The narrow completed-visit flow supports opt-in publication and client consent withdrawal, but business owners cannot selectively remove ratings and no public dispute/report process is yet specified. | Before production reviews are enabled | **Open; bounded by ADR-074.** Product/Privacy/Support must define reachable reporting, content-based review rules independent of star rating, audited restriction/appeal and identity-safe client withdrawal recovery. No campaign, third-party review integration or release waiver is implied. |
+
+### 2026-11-01 Offer confirmation JSON comparison correction
+
+FR-01/19/20, ADR-078: compare saved and current promotion snapshots by recursively
+sorted object keys while preserving strict scalar types and sequential discount
+list order. MySQL JSON object key normalization is not a commercial change.
+Continue rejecting changed offers/amounts before submitting payment. A genuine
+mismatch returns billing_offer_changed, closes the obsolete review, preserves
+selection and allows immediate new review; do not label this an outage or impose
+a retry cooldown. No stored quote, invoice, rate or Stripe attempt is rewritten.

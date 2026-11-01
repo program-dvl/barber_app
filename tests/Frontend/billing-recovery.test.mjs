@@ -67,3 +67,11 @@ test('an outstanding payment directs the customer to invoices while status check
     assert.equal(value.supportRequired, false);
     assert.equal(value.retryAt, at + 15000);
 });
+
+test('changed offers explain the review action without an outage or cooldown', () => {
+    const value = billingRecoveryFailure({response:{status:409,data:{code:'billing_offer_changed',message:'The offer has changed. Your selection is saved. Review the updated total before continuing.'}}},at);
+    assert.equal(value.title,'Review your updated offer');
+    assert.equal(value.retryAt,at);
+    assert.match(value.message,/Review the updated total/);
+    assert.equal(value.supportRequired,false);
+});

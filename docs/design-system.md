@@ -1146,3 +1146,8 @@ retained-rate comparison guards remain. Pricing page signed-in owner actions,
 including header/mobile CTA, open an authorized workspace's subscription Plan tab
 with Manage subscription wording. Accounts without billing authority retain the
 existing workspace fallback; no authorization is bypassed.
+
+Offer-change recovery: the obsolete review closes and a single Review your
+updated offer notice directs the owner back to Review subscription. Preserve the
+selection/code and enable review immediately. An unchanged offer's JSON object
+field order is never a reason to interrupt checkout.
