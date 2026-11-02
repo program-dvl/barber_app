@@ -21,7 +21,7 @@ const choose = choice => getMarketingAnalytics()?.choose(choice);
             <p v-if="state.privacySignal">Your browser asks us to keep analytics off. We respect that choice.</p>
             <p v-else-if="state.storageError">Your browser couldn't save this choice. Analytics is off. You can keep browsing.</p>
             <p v-else>With your permission, Google Analytics helps us understand visits and trial buttons on our public website. It stays off until you accept. Your bookings and workspace are excluded.</p>
-            <p><a href="/privacy-policy#cookies-and-website-measurement" class="underline underline-offset-4">Read our privacy policy</a>. Change your choice anytime using Analytics preferences in the footer.</p>
+            <p><a href="/privacy-policy#cookies-and-website-measurement" class="underline underline-offset-4">Read our privacy policy</a>. Change your choice anytime using Cookie settings in the footer.</p>
             <template #actions>
                 <template v-if="!state.privacySignal && !state.storageError">
                     <button type="button" class="cd-button cd-button-secondary" @click="choose('accepted')">Accept analytics</button>

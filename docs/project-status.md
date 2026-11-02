@@ -1,5 +1,15 @@
 # Project status
 
+## 2026-11-02 Cookie settings wording (ADR-079 clarification)
+
+- Renamed the public footer control from Analytics preferences to **Cookie
+  settings** and aligned the consent-panel guidance, privacy notice and current
+  experience/deployment documentation. It opens the same analytics choice;
+  consent behavior, measurement scope and provider settings are unchanged.
+- Privacy policy regressions passed **29 tests / 240 assertions**; production
+  client and SSR builds passed. Deployment and actual desktop/mobile footer and
+  panel verification are pending; no browser or deployed result is claimed.
+
 ## 2026-11-02 Owner-authorized legal publication (FR-01/19; ADR-080)
 
 - Removed the public Privacy Policy review banner and Terms review banner,

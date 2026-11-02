@@ -1168,7 +1168,7 @@ Public marketing measurement uses a restrained AppNotice in a bounded bottom pan
 Explain the optional purpose and provide Accept analytics and Reject analytics
 with equal visual weight, at least 44px targets and a wrapping action row with
 10px gaps and 14px copy separation. Link the privacy notice. A persistent footer
-Analytics preferences control reopens the choice and permits withdrawal. Do not
+Cookie settings control reopens the choice and permits withdrawal. Do not
 block reading or make rejection require more steps. The saved/disabled state and
 browser privacy signal must be understandable; analytics failures never block
 navigation, sign-in or registration. Verify initial choice, rejection, reopening,

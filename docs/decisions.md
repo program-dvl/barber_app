@@ -2988,6 +2988,14 @@ establishes counsel approval, a DPO appointment, transfer certification or any
 other launch gate. Google terms acceptance and operator country require direct
 owner confirmation; record the actual outcome in the audit.
 
+### ADR-079 wording clarification — 2026-11-02
+
+The owner approved **Cookie settings** as the public footer label replacing
+**Analytics preferences**. It opens the same optional analytics choice and
+withdrawal control; consent behavior, tracking scope and provider configuration
+remain unchanged. Historical audit observations and screenshots retain the label
+that was visible when they were captured.
+
 ## ADR-080 — Owner-authorized public Privacy Policy and Terms publication
 
 - Status: Accepted for the requested public presentation; not a finding of legal

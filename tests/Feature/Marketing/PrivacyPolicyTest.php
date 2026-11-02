@@ -159,7 +159,7 @@ it('explains optional Google Analytics consent, exclusions and withdrawal withou
     $this->get('/privacy-policy')->assertOk()
         ->assertSee('Google Analytics 4')
         ->assertSee('Accept analytics')->assertSee('Reject analytics')
-        ->assertSee('Analytics preferences')
+        ->assertSee('Cookie settings')
         ->assertSee('without query strings, fragments or referrers')
         ->assertSee('does not automatically erase information already processed')
         ->assertSee('two-month retention')

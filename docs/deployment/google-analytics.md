@@ -59,7 +59,7 @@ personal browser identifiers. Local intercepted tests are not real Google receip
 
 Missing/blocked Google requests must never block reading, pricing, trial signup
 or account access. There are no automatic script-retry loops. Visitors can use
-Analytics preferences to reject; this stops future collection, removes accessible
+Cookie settings to reject; this stops future collection, removes accessible
 `cd_ga…` cookies and reloads a document that had loaded the tag. Preference storage
 is versioned and expires after 180 days; analytics cookies expire after 60 days.
 
