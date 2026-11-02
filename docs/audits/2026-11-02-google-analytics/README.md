@@ -235,3 +235,20 @@ customer acquisition, completed registrations or revenue. [Realtime screenshot](
 and [safe verification summary](verification.json) omit browser identifiers,
 credentials and raw collection payloads. The corrected production trial
 navigation and HTTP 204 delivery are separately recorded above.
+
+## Cookie settings wording — 2026-11-02
+
+The owner approved renaming the public footer control to **Cookie settings**.
+Revision **70575ad**, independently shown as Deployed in Forge, aligns the footer,
+consent-panel guidance and Privacy Policy. Tracking behavior and provider and
+environment settings were not changed. The existing privacy suite passed
+**29 tests / 240 assertions**; client/SSR builds and **21 public budgets** passed.
+
+Production checks confirmed the renamed footer opens the same choices on desktop
+1680×778, with working rejection and focus return. At phone 390×844, keyboard
+activation opened the panel with the updated guidance, 44px actions, a panel
+contained within the viewport and no horizontal overflow. Emulated screenshot
+capture was unreliable, so the saved image is from the restored normal desktop
+view. Temporary viewport overrides were cleared.
+
+[Live Cookie settings footer](cookie-settings-desktop.png).

@@ -7,8 +7,12 @@
   experience/deployment documentation. It opens the same analytics choice;
   consent behavior, measurement scope and provider settings are unchanged.
 - Privacy policy regressions passed **29 tests / 240 assertions**; production
-  client and SSR builds passed. Deployment and actual desktop/mobile footer and
-  panel verification are pending; no browser or deployed result is claimed.
+  client/SSR builds and all **21 public route budgets** passed. Forge confirmed
+  **70575ad** deployed. Live footer, panel guidance and privacy text use Cookie
+  settings. Desktop 1680×778 reopening/rejection and phone 390×844 keyboard
+  reopening passed; the phone panel stayed within the viewport, with 44px
+  actions and no horizontal overflow. Browser sizing was restored afterward.
+  [Live footer screenshot](audits/2026-11-02-google-analytics/cookie-settings-desktop.png).
 
 ## 2026-11-02 Owner-authorized legal publication (FR-01/19; ADR-080)
 
