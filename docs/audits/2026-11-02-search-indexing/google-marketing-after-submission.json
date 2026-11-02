@@ -1,0 +1,16 @@
+{
+  "checkedOn": "2026-11-02",
+  "purpose": "Recheck marketing URLs after sitemap acceptance; no further request-indexing submissions.",
+  "rows": [
+    {
+      "url": "https://clipperdesk.com/blog",
+      "status": "Page is not indexed: Discovered – currently not indexed",
+      "details": "info\nURL is not on Google\nThis page is not indexed. Pages that aren't indexed can't be served on Google. See the details below to learn why it wasn't indexed. Learn more\nVIEW CRAWLED PAGE\nPage changed?\nREQUEST INDEXING\ninfo\nPage indexing\nPage is not indexed: Discovered – currently not indexed\n\nDiscovery\nSitemaps\nhttps://clipperdesk.com/sitemap.xml\nReferring page\nNone detected\nCrawl\nLast crawl\nN/A\nCrawled as\nN/A\nCrawl allowed?\nN/A\nPage fetch\nN/A\nIndexing allowed?\nN/A\nIndexing\nUser-declared canonical\nN/A\nGoogle-selected canonical\n\nN/A\nLEARN MORE\nOPEN REPORT\nEnhancements and experience\nOnly indexed URLs can have enhancements"
+    },
+    {
+      "url": "https://clipperdesk.com/company",
+      "status": "Page is not indexed: URL is unknown to Google",
+      "details": "info\nURL is not on Google\nThis page is not indexed. Pages that aren't indexed can't be served on Google. See the details below to learn why it wasn't indexed. Learn more\nVIEW CRAWLED PAGE\nPage changed?\nREQUEST INDEXING\ninfo\nPage indexing\nPage is not indexed: URL is unknown to Google\n\nDiscovery\nSitemaps\nNo referring sitemaps detected\nReferring page\nNone detected\nURL might be known from other sources that are currently not reported\nCrawl\nLast crawl\nN/A\nCrawled as\nN/A\nCrawl allowed?\nN/A\nPage fetch\nN/A\nIndexing allowed?\ninfo\nN/A\nIndexing\nUser-declared canonical\nN/A\nGoogle-selected canonical\n\nN/A\nLEARN MORE\nEnhancements and experience\nOnly indexed URLs can have enhancements"
+    }
+  ]
+}

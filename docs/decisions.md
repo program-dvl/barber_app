@@ -2357,6 +2357,24 @@ editorial task: OPEN-10/13/15 and live provider/release gates remain unwaived.
 Specification and evidence: [Public website](modules/public-website.md) and
 [dated audit](audits/2026-10-13-public-content/README.md).
 
+### ADR-065 search operations follow-up — 2026-11-02
+
+The owner explicitly requested Google Search Console submission and indexing
+checks for the existing public website. Use the current curated eligible page
+set; this does not approve private booking/account indexing, legal effectiveness,
+new regional claims or general product launch. Report technical fetchability,
+Google sitemap acceptance, individual index status and impressions separately.
+Google's decisions and processing times cannot be promised.
+
+`PublicSitemap` now supplies both the endpoint and legacy `generate:sitemap`
+command. The command prints current XML without crawling or writing a static
+file that could override live publication gates. Read-only deployment checks
+must inspect HTTP status and rendered original HTML, rather than checking only
+robots body text, metadata or a running process. Production hosting repairs and
+pending Google actions are recorded in the [search audit](audits/2026-11-02-search-indexing/README.md)
+and [operations guide](deployment/search-indexing.md); no existing release gate
+is silently closed by those repairs.
+
 ## ADR-066 — Clear introduction decisions and real private booking previews
 
 - Date: 2026-10-14. Status: Accepted from the owner's eight setup requests and

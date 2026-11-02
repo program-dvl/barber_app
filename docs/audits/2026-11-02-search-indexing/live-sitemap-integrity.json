@@ -1,0 +1,9 @@
+{
+  "compressed_get_headers": "HTTP/2 200 \nserver: nginx\ncontent-type: application/xml; charset=UTF-8\nvary: Accept-Encoding\ncache-control: no-cache, private\ndate: Mon, 02 Nov 2026 10:14:03 GMT\nvary: X-Inertia\nx-correlation-id: f2246381-4bfe-4656-af4f-6eda26fb5044\nx-content-type-options: nosniff\nx-frame-options: DENY\nreferrer-policy: strict-origin-when-cross-origin\npermissions-policy: camera=(), microphone=(), geolocation=(), payment=(self)\nx-robots-tag: noindex, nofollow, noarchive\nstrict-transport-security: max-age=31536000; includeSubDomains\nx-frame-options: SAMEORIGIN\nx-xss-protection: 1; mode=block\nx-content-type-options: nosniff\ncontent-encoding: gzip\n",
+  "decoded_bytes": 9952,
+  "valid_utf8_xml": true,
+  "unique_url_count": 127,
+  "identical_decoded_to_plain": true,
+  "robots_headers": "HTTP/2 404 \nserver: nginx\ncontent-type: text/plain; charset=UTF-8\nvary: Accept-Encoding\ncache-control: no-cache, private\ndate: Mon, 02 Nov 2026 10:12:38 GMT\nvary: X-Inertia\nx-correlation-id: 716856d8-5e01-47d4-af3f-30cd89b84547\nx-content-type-options: nosniff\nx-frame-options: DENY\nreferrer-policy: strict-origin-when-cross-origin\npermissions-policy: camera=(), microphone=(), geolocation=(), payment=(self)\nx-robots-tag: noindex, nofollow, noarchive\nstrict-transport-security: max-age=31536000; includeSubDomains\n",
+  "note": "HTTP GET only, not Google-origin traffic; sensitive Set-Cookie headers excluded."
+}

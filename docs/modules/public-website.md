@@ -71,6 +71,25 @@ catalogs; never manufacture verified prices in a real billing database.
 
 Latest evidence and page inventory: [2026-10-13 audit](../audits/2026-10-13-public-content/README.md).
 
+## Search submission and deployment checks (2026-11-02)
+
+PRD sections 1–4/12/15 and ADR-024/065: `PublicSitemap` is the shared curated
+projection for the HTTP endpoint and `generate:sitemap`. The command prints XML;
+it does not crawl the website or write `public/sitemap.xml`. A static file could
+bypass current article/privacy publication gates under Nginx. Preserve any
+existing production file for explicit operator inspection rather than silently
+overwriting or deleting it.
+
+Run `node scripts/check-public-seo.mjs https://clipperdesk.com` after deployment.
+It checks the sitemap, robots HTTP status, and original HTML for all eligible
+public URLs, including rendered content. Passing HTTP checks, a Google live test,
+sitemap discovery, indexing and search impressions are separate evidence.
+Do not present submission as confirmed indexing or a ranking guarantee. Preserve
+private/noindex and legal approval gates. Operational checks and the pending
+robots routing repair are documented in [search operations](../deployment/search-indexing.md).
+The [2026-11-02 audit](../audits/2026-11-02-search-indexing/README.md) records live
+repairs, Google evidence, local code validation and unfinished work separately.
+
 ## Optional public measurement (2026-11-02)
 
 PRD sections 4/12/15 and ADR-079 approve a narrow GA4 adapter. The server gates

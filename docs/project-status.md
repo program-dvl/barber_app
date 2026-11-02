@@ -1,5 +1,43 @@
 # Project status
 
+## 2026-11-02 Google indexing and live crawl audit
+
+- Submitted the existing production sitemap in the authorized domain Search
+  Console property. Its initial Couldn't fetch status subsequently cleared to
+  **Success / 127 discovered pages**, confirmed in the UI and screenshot.
+  This is discovery evidence, not indexing of every page.
+- Inspected all 32 marketing URLs directly in Google: **16 indexed, 15 unknown
+  with no crawl, 1 duplicate** (`/use-cases`, historical Google-selected www
+  canonical). The aggregate Pages
+  report remains dated 2026-10-23 and reports 8 indexed / 12 excluded; it must
+  not replace the newer individual evidence. Subsequent Help inspection
+  verified **56 indexed / 1 discovered** out of 57; Google's daily property URL
+  inspection quota then stopped the remaining **38 Help pages**. Combined direct
+  evidence: **89 checked / 72 indexed / 17 not indexed / 38 uninspected**.
+- Enabled Forge's official supervised Inertia SSR service with deployment
+  restart selected. Before: 32 marketing pages had empty initial HTML. After:
+  **127/127 sitemap pages pass** status, canonical, metadata, rendered H1/main/
+  links and JSON-LD checks. Robots still returns HTTP 404; the overall production
+  readiness check correctly fails. Confirmed the existing Nginx exact robots
+  location has no Laravel fallback; prepared the precise repair, **not applied**.
+- Owner reconfirmed another chat is deploying; further hosting changes are on
+  hold. Browser control was restored after interruption. Google manual indexing
+  submission failed with a reCAPTCHA connection error, repeated after one reload;
+  **zero manual indexing submissions confirmed**. Stopped retries and quota work.
+  Manual actions and security issues both report No issues detected. Google
+  crawl host health has no problems; Core Web Vitals has insufficient field data.
+  Performance baseline: 28 impressions, 0 clicks, average position 61.8 in the
+  selected three-month report. Small samples do not establish durable rankings.
+- Local sitemap command now shares the curated endpoint source and never
+  crawls/writes a static public sitemap. Added a bounded read-only HTTP checker.
+  Marketing/Help regressions: **183 passed / 3,778 assertions**; checker 4 passed;
+  focused command rerun 3 passed / 21 assertions; scoped Pint/whitespace passed.
+  Actual Chrome desktop/390px checks of home, barbershops, pricing and Help pass
+  metadata, content, overflow, images and navigation. These code
+  changes are uncommitted and not deployed by this task. Concurrent Analytics
+  work in the shared checkout is separate. No launch/legal gate is waived.
+  [Evidence and remaining work](audits/2026-11-02-search-indexing/README.md).
+
 ## 2026-11-02 Optional Google Analytics implementation (PRD 4/12/15; ADR-079)
 
 - Implemented a single-measurement-ID, prior-opt-in GA4 adapter for guest curated
@@ -20,7 +58,6 @@
   Forge saved only the new measurement-ID line, with pre-save full-text comparison
   preserving existing content and post-reload ID readback. Code deployment pending.
   **Not live.** [Evidence and required continuation](audits/2026-11-02-google-analytics/README.md).
-
 
 
 ## 2026-11-01 Checkout rejection classification investigation

@@ -1,0 +1,33 @@
+url,scope,status,google_status,last_crawl_ui,user_declared_canonical,google_selected_canonical,sitemap_discovery,page_fetch,indexing_allowed
+https://clipperdesk.com/,marketing,indexed,Page is indexed,"31 Oct 2026, 00:11:29",https://www.clipperdesk.com/,Inspected URL,,Successful,Yes
+https://clipperdesk.com/blog,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/company,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/features,marketing,indexed,Page is indexed,"2 Nov 2026, 00:56:29",https://clipperdesk.com/features,,,Successful,Yes
+https://clipperdesk.com/features/calendar-and-walk-ins,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/features/checkout-and-reporting,marketing,indexed,Page is indexed,"1 Nov 2026, 03:41:30",https://clipperdesk.com/features/checkout-and-reporting,,,Successful,Yes
+https://clipperdesk.com/features/client-management,marketing,indexed,Page is indexed,"1 Nov 2026, 06:48:00",https://clipperdesk.com/features/client-management,,Temporary processing error,Successful,Yes
+https://clipperdesk.com/features/online-booking,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/guides/booking-policy-basics,marketing,indexed,Page is indexed,"29 Oct 2026, 16:22:35",https://www.clipperdesk.com/guides/booking-policy-basics,,,Successful,Yes
+https://clipperdesk.com/guides/salon-opening-checklist,marketing,indexed,Page is indexed,"1 Nov 2026, 00:32:59",https://clipperdesk.com/guides/salon-opening-checklist,,,Successful,Yes
+https://clipperdesk.com/pricing,marketing,indexed,Page is indexed,"2 Nov 2026, 04:03:01",https://clipperdesk.com/pricing,,,Successful,Yes
+https://clipperdesk.com/resources,marketing,indexed,Page is indexed,"1 Nov 2026, 06:10:30",https://clipperdesk.com/resources,,,Successful,Yes
+https://clipperdesk.com/security,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/solutions,marketing,indexed,Page is indexed,"30 Oct 2026, 21:40:31",https://www.clipperdesk.com/solutions,,,Successful,Yes
+https://clipperdesk.com/solutions/barbershops,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/solutions/fitness-recovery,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/solutions/health-practices,marketing,indexed,Page is indexed,"29 Oct 2026, 15:30:26",https://www.clipperdesk.com/solutions/health-practices,,,Successful,Yes
+https://clipperdesk.com/solutions/independent-stylists,marketing,indexed,Page is indexed,"2 Nov 2026, 09:02:59",https://clipperdesk.com/solutions/independent-stylists,,,Successful,Yes
+https://clipperdesk.com/solutions/massage,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/solutions/medspas,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/solutions/nail-salons,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/solutions/pet-grooming,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/solutions/physical-therapy,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/solutions/salons,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/solutions/spas,marketing,indexed,Page is indexed,"29 Oct 2026, 17:40:48",https://www.clipperdesk.com/solutions/spas,,,Successful,Yes
+https://clipperdesk.com/solutions/tanning-studios,marketing,indexed,Page is indexed,"29 Oct 2026, 12:50:09",https://www.clipperdesk.com/solutions/tanning-studios,,,Successful,Yes
+https://clipperdesk.com/solutions/tattoo-piercing,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/use-cases,marketing,duplicate,"Page is not indexed: Duplicate, Google chose different canonical than user","1 Nov 2026, 09:17:58",https://clipperdesk.com/use-cases,,,,
+https://clipperdesk.com/use-cases/keep-client-history-together,marketing,indexed,Page is indexed,"21 Sept 2026, 14:54:57",https://clipperdesk.com/use-cases/keep-client-history-together,,,Successful,Yes
+https://clipperdesk.com/use-cases/manage-walk-ins-and-appointments,marketing,unknown,Page is not indexed: URL is unknown to Google,N/A,N/A,N/A,No referring sitemaps detected,N/A,N/A
+https://clipperdesk.com/use-cases/protect-time-with-deposits,marketing,indexed,Page is indexed,"18 Oct 2026, 01:37:41",https://www.clipperdesk.com/use-cases/protect-time-with-deposits,,,Successful,Yes
+https://clipperdesk.com/use-cases/reduce-scheduling-conflicts,marketing,indexed,Page is indexed,"10 Oct 2026, 13:59:37",https://clipperdesk.com/use-cases/reduce-scheduling-conflicts,,,Successful,Yes

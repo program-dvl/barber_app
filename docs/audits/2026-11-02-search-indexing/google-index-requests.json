@@ -1,0 +1,11 @@
+{
+  "checkedOn": "2026-11-02",
+  "url": "https://clipperdesk.com/solutions/barbershops",
+  "latestStatus": "Discovered – currently not indexed",
+  "sitemapRecognized": true,
+  "confirmedRequests": 0,
+  "result": "Google submission failed",
+  "googleMessage": "We had a problem submitting your indexing request. Please try again later.",
+  "verificationMessage": "Could not connect to the reCAPTCHA service. Please check your internet connection and reload to get a reCAPTCHA challenge.",
+  "recovery": "Retried once after page reload; same explicit failure. Stopped further manual requests; accepted sitemap remains active."
+}

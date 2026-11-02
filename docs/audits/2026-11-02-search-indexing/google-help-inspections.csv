@@ -1,0 +1,96 @@
+url,scope,status,google_status,last_crawl_ui,user_declared_canonical,google_selected_canonical,sitemap_discovery,page_fetch,indexing_allowed,reason
+https://clipperdesk.com/help,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/account-delete,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/account-profile,help,,Page is not indexed: Discovered – currently not indexed,,,,,,,
+https://clipperdesk.com/help/articles/account-recovery,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/account-security,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/account-sign-in,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/appointments-add,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/appointments-change,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/appointments-no-slots,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/appointments-public-booking,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/appointments-self-service,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/appointments-status-cancel,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/appointments-waitlist,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/billing-access,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/billing-cancel,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/billing-capacity,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/billing-change-capacity,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/billing-invoices,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/billing-recovery,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/billing-start-subscription,help,,Page is indexed,,,,,,,
+https://clipperdesk.com/help/articles/billing-text-credits,help,,Page is indexed,"29 Oct 2026, 22:57:58",https://www.clipperdesk.com/help/articles/billing-text-credits,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/business-booking-link,help,,Page is indexed,"29 Oct 2026, 19:46:28",https://www.clipperdesk.com/help/articles/business-booking-link,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/business-booking-preferences,help,,Page is indexed,"2 Nov 2026, 07:48:01",https://clipperdesk.com/help/articles/business-booking-preferences,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/business-branding,help,,Page is indexed,"29 Oct 2026, 19:42:22",https://www.clipperdesk.com/help/articles/business-branding,Inspected URL,Temporary processing error,Successful,Yes,
+https://clipperdesk.com/help/articles/business-hours,help,,Page is indexed,"2 Nov 2026, 02:10:30",https://clipperdesk.com/help/articles/business-hours,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/business-location,help,,Page is indexed,"31 Oct 2026, 17:40:31",https://www.clipperdesk.com/help/articles/business-location,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/business-profile,help,,Page is indexed,"1 Nov 2026, 14:18:00",https://clipperdesk.com/help/articles/business-profile,Inspected URL,Temporary processing error,Successful,Yes,
+https://clipperdesk.com/help/articles/business-publish,help,,Page is indexed,"29 Oct 2026, 12:01:40",https://www.clipperdesk.com/help/articles/business-publish,Inspected URL,Temporary processing error,Successful,Yes,
+https://clipperdesk.com/help/articles/calendar-availability,help,,Page is indexed,"29 Oct 2026, 17:38:59",https://www.clipperdesk.com/help/articles/calendar-availability,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/calendar-blocks-closures,help,,Page is indexed,"30 Oct 2026, 01:15:29",https://www.clipperdesk.com/help/articles/calendar-blocks-closures,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/calendar-views,help,,Page is indexed,"31 Oct 2026, 22:40:31",https://clipperdesk.com/help/articles/calendar-views,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/checkout-deposits-taxes-tips,help,,Page is indexed,"29 Oct 2026, 18:03:17",https://www.clipperdesk.com/help/articles/checkout-deposits-taxes-tips,Inspected URL,Temporary processing error,Successful,Yes,
+https://clipperdesk.com/help/articles/checkout-payment-recovery,help,,Page is indexed,"29 Oct 2026, 18:10:48",https://www.clipperdesk.com/help/articles/checkout-payment-recovery,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/checkout-receipts-history,help,,Page is indexed,"2 Nov 2026, 07:10:31",https://clipperdesk.com/help/articles/checkout-receipts-history,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/checkout-record-payments,help,,Page is indexed,"1 Nov 2026, 18:03:03",https://clipperdesk.com/help/articles/checkout-record-payments,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/checkout-refund,help,,Page is indexed,"2 Nov 2026, 05:18:01",https://clipperdesk.com/help/articles/checkout-refund,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/checkout-review,help,,Page is indexed,"29 Oct 2026, 17:52:02",https://www.clipperdesk.com/help/articles/checkout-review,Inspected URL,Temporary processing error,Successful,Yes,
+https://clipperdesk.com/help/articles/clients-add-find,help,,Page is indexed,"29 Oct 2026, 17:44:52",https://www.clipperdesk.com/help/articles/clients-add-find,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/clients-duplicates,help,,Page is indexed,"2 Nov 2026, 03:25:31",https://clipperdesk.com/help/articles/clients-duplicates,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/clients-edit-preferences,help,,Page is indexed,"1 Nov 2026, 17:25:31",https://clipperdesk.com/help/articles/clients-edit-preferences,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/clients-forms,help,,Page is indexed,"30 Oct 2026, 10:48:31",https://www.clipperdesk.com/help/articles/clients-forms,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/clients-notes,help,,Page is indexed,"31 Oct 2026, 05:11:32",https://www.clipperdesk.com/help/articles/clients-notes,Inspected URL,Temporary processing error,Successful,Yes,
+https://clipperdesk.com/help/articles/clients-payments,help,,Page is indexed,"1 Nov 2026, 15:33:08",https://clipperdesk.com/help/articles/clients-payments,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/clients-privacy,help,,Page is indexed,"31 Oct 2026, 10:10:30",https://www.clipperdesk.com/help/articles/clients-privacy,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/clients-private-files,help,,Page is indexed,"29 Oct 2026, 15:52:13",https://www.clipperdesk.com/help/articles/clients-private-files,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/clients-visits-rebook,help,,Page is indexed,"29 Oct 2026, 15:56:33",https://www.clipperdesk.com/help/articles/clients-visits-rebook,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/inventory-availability,help,,Page is indexed,"31 Oct 2026, 07:40:30",https://www.clipperdesk.com/help/articles/inventory-availability,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/notifications-consent,help,,Page is indexed,"29 Oct 2026, 15:47:50",https://www.clipperdesk.com/help/articles/notifications-consent,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/notifications-delivery,help,,Page is indexed,"2 Nov 2026, 12:48:05",https://clipperdesk.com/help/articles/notifications-delivery,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/notifications-preferences,help,,Page is indexed,"29 Oct 2026, 17:01:41",https://www.clipperdesk.com/help/articles/notifications-preferences,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/ops-dashboard,help,,Page is indexed,"29 Oct 2026, 10:27:56",https://www.clipperdesk.com/help/articles/ops-dashboard,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/reports-bookings-clients,help,,Page is indexed,"29 Oct 2026, 16:53:00",https://www.clipperdesk.com/help/articles/reports-bookings-clients,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/reports-capacity-commission,help,,Page is indexed,"29 Oct 2026, 18:14:32",https://www.clipperdesk.com/help/articles/reports-capacity-commission,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/reports-export,help,,Page is indexed,"1 Nov 2026, 08:40:29",https://clipperdesk.com/help/articles/reports-export,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/reports-money,help,,Page is indexed,"1 Nov 2026, 02:25:30",https://clipperdesk.com/help/articles/reports-money,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/reports-run,help,,Page is indexed,"29 Oct 2026, 14:12:41",https://www.clipperdesk.com/help/articles/reports-run,Inspected URL,https://clipperdesk.com/sitemap.xml,Successful,Yes,
+https://clipperdesk.com/help/articles/services-addons,help,,Page is indexed,"29 Oct 2026, 14:56:42",https://www.clipperdesk.com/help/articles/services-addons,Inspected URL,Temporary processing error,Successful,Yes,
+https://clipperdesk.com/help/articles/services-assignments,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/services-categories,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/services-create,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/services-online-availability,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/services-prices-duration,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/services-update-retire,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/setup-create-account,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/setup-first-workspace,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/setup-import-records,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/setup-readiness,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/team-accept-invitation,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/team-activity,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/team-add-member,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/team-coverage,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/team-disable-restore-login,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/team-edit-profile,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/team-invite-login,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/team-roles-permissions,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/team-service-assignments,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/team-time-off,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/team-weekly-hours,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/walk-ins-add,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/walk-ins-order-alerts,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/articles/walk-ins-serve,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/account,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/appointments,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/billing,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/business,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/calendar,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/checkout,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/clients,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/getting-started,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/inventory,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/notifications,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/reports,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/services,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/team,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.
+https://clipperdesk.com/help/category/walk-ins,help,not_inspected_quota_exceeded,,,,,,,,Google Search Console property daily URL inspection quota exceeded before this URL could be inspected.

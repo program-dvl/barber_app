@@ -2,8 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Support\Seo\PublicSitemap;
 use Illuminate\Console\Command;
-use Spatie\Sitemap\SitemapGenerator;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class GenerateSitemap extends Command
 {
@@ -14,16 +15,13 @@ class GenerateSitemap extends Command
      */
     protected $signature = 'generate:sitemap';
 
-    protected $description = 'Generate sitemap';
+    protected $description = 'Print curated sitemap XML; /sitemap.xml is generated dynamically without a static file';
 
-    public function handle(): void
+    public function handle(PublicSitemap $sitemap): int
     {
-        $url = config('app.url');
+        // A public file would bypass the route's current publication/privacy gates.
+        $this->output->write($sitemap->xml(), false, OutputInterface::OUTPUT_RAW);
 
-        SitemapGenerator::create($url)->writeToFile(public_path('sitemap.xml'));
-
-        $time = now();
-        $output = "Sitemap generated {$time}";
-        $this->info($output);
+        return self::SUCCESS;
     }
 }

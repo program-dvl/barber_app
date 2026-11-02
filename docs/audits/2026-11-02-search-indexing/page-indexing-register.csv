@@ -1,0 +1,128 @@
+url,http_status,http_content_check,google_status,last_google_crawl_displayed,google_selected_canonical
+https://clipperdesk.com/,200,pass,Page is indexed,"31 Oct 2026, 00:11:29",Inspected URL
+https://clipperdesk.com/blog,200,pass,Page is not indexed: Discovered – currently not indexed,N/A,N/A
+https://clipperdesk.com/company,200,pass,Page is not indexed: URL is unknown to Google,N/A,N/A
+https://clipperdesk.com/features,200,pass,Page is indexed,"2 Nov 2026, 00:56:29",
+https://clipperdesk.com/features/calendar-and-walk-ins,200,pass,Page is not indexed: URL is unknown to Google,N/A,N/A
+https://clipperdesk.com/features/checkout-and-reporting,200,pass,Page is indexed,"1 Nov 2026, 03:41:30",
+https://clipperdesk.com/features/client-management,200,pass,Page is indexed,"1 Nov 2026, 06:48:00",
+https://clipperdesk.com/features/online-booking,200,pass,Page is not indexed: URL is unknown to Google,N/A,N/A
+https://clipperdesk.com/guides/booking-policy-basics,200,pass,Page is indexed,"29 Oct 2026, 16:22:35",
+https://clipperdesk.com/guides/salon-opening-checklist,200,pass,Page is indexed,"1 Nov 2026, 00:32:59",
+https://clipperdesk.com/help,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/account-delete,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/account-profile,200,pass,Page is not indexed: Discovered – currently not indexed,,
+https://clipperdesk.com/help/articles/account-recovery,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/account-security,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/account-sign-in,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/appointments-add,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/appointments-change,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/appointments-no-slots,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/appointments-public-booking,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/appointments-self-service,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/appointments-status-cancel,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/appointments-waitlist,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/billing-access,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/billing-cancel,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/billing-capacity,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/billing-change-capacity,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/billing-invoices,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/billing-recovery,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/billing-start-subscription,200,pass,Page is indexed,,
+https://clipperdesk.com/help/articles/billing-text-credits,200,pass,Page is indexed,"29 Oct 2026, 22:57:58",Inspected URL
+https://clipperdesk.com/help/articles/business-booking-link,200,pass,Page is indexed,"29 Oct 2026, 19:46:28",Inspected URL
+https://clipperdesk.com/help/articles/business-booking-preferences,200,pass,Page is indexed,"2 Nov 2026, 07:48:01",Inspected URL
+https://clipperdesk.com/help/articles/business-branding,200,pass,Page is indexed,"29 Oct 2026, 19:42:22",Inspected URL
+https://clipperdesk.com/help/articles/business-hours,200,pass,Page is indexed,"2 Nov 2026, 02:10:30",Inspected URL
+https://clipperdesk.com/help/articles/business-location,200,pass,Page is indexed,"31 Oct 2026, 17:40:31",Inspected URL
+https://clipperdesk.com/help/articles/business-profile,200,pass,Page is indexed,"1 Nov 2026, 14:18:00",Inspected URL
+https://clipperdesk.com/help/articles/business-publish,200,pass,Page is indexed,"29 Oct 2026, 12:01:40",Inspected URL
+https://clipperdesk.com/help/articles/calendar-availability,200,pass,Page is indexed,"29 Oct 2026, 17:38:59",Inspected URL
+https://clipperdesk.com/help/articles/calendar-blocks-closures,200,pass,Page is indexed,"30 Oct 2026, 01:15:29",Inspected URL
+https://clipperdesk.com/help/articles/calendar-views,200,pass,Page is indexed,"31 Oct 2026, 22:40:31",Inspected URL
+https://clipperdesk.com/help/articles/checkout-deposits-taxes-tips,200,pass,Page is indexed,"29 Oct 2026, 18:03:17",Inspected URL
+https://clipperdesk.com/help/articles/checkout-payment-recovery,200,pass,Page is indexed,"29 Oct 2026, 18:10:48",Inspected URL
+https://clipperdesk.com/help/articles/checkout-receipts-history,200,pass,Page is indexed,"2 Nov 2026, 07:10:31",Inspected URL
+https://clipperdesk.com/help/articles/checkout-record-payments,200,pass,Page is indexed,"1 Nov 2026, 18:03:03",Inspected URL
+https://clipperdesk.com/help/articles/checkout-refund,200,pass,Page is indexed,"2 Nov 2026, 05:18:01",Inspected URL
+https://clipperdesk.com/help/articles/checkout-review,200,pass,Page is indexed,"29 Oct 2026, 17:52:02",Inspected URL
+https://clipperdesk.com/help/articles/clients-add-find,200,pass,Page is indexed,"29 Oct 2026, 17:44:52",Inspected URL
+https://clipperdesk.com/help/articles/clients-duplicates,200,pass,Page is indexed,"2 Nov 2026, 03:25:31",Inspected URL
+https://clipperdesk.com/help/articles/clients-edit-preferences,200,pass,Page is indexed,"1 Nov 2026, 17:25:31",Inspected URL
+https://clipperdesk.com/help/articles/clients-forms,200,pass,Page is indexed,"30 Oct 2026, 10:48:31",Inspected URL
+https://clipperdesk.com/help/articles/clients-notes,200,pass,Page is indexed,"31 Oct 2026, 05:11:32",Inspected URL
+https://clipperdesk.com/help/articles/clients-payments,200,pass,Page is indexed,"1 Nov 2026, 15:33:08",Inspected URL
+https://clipperdesk.com/help/articles/clients-privacy,200,pass,Page is indexed,"31 Oct 2026, 10:10:30",Inspected URL
+https://clipperdesk.com/help/articles/clients-private-files,200,pass,Page is indexed,"29 Oct 2026, 15:52:13",Inspected URL
+https://clipperdesk.com/help/articles/clients-visits-rebook,200,pass,Page is indexed,"29 Oct 2026, 15:56:33",Inspected URL
+https://clipperdesk.com/help/articles/inventory-availability,200,pass,Page is indexed,"31 Oct 2026, 07:40:30",Inspected URL
+https://clipperdesk.com/help/articles/notifications-consent,200,pass,Page is indexed,"29 Oct 2026, 15:47:50",Inspected URL
+https://clipperdesk.com/help/articles/notifications-delivery,200,pass,Page is indexed,"2 Nov 2026, 12:48:05",Inspected URL
+https://clipperdesk.com/help/articles/notifications-preferences,200,pass,Page is indexed,"29 Oct 2026, 17:01:41",Inspected URL
+https://clipperdesk.com/help/articles/ops-dashboard,200,pass,Page is indexed,"29 Oct 2026, 10:27:56",Inspected URL
+https://clipperdesk.com/help/articles/reports-bookings-clients,200,pass,Page is indexed,"29 Oct 2026, 16:53:00",Inspected URL
+https://clipperdesk.com/help/articles/reports-capacity-commission,200,pass,Page is indexed,"29 Oct 2026, 18:14:32",Inspected URL
+https://clipperdesk.com/help/articles/reports-export,200,pass,Page is indexed,"1 Nov 2026, 08:40:29",Inspected URL
+https://clipperdesk.com/help/articles/reports-money,200,pass,Page is indexed,"1 Nov 2026, 02:25:30",Inspected URL
+https://clipperdesk.com/help/articles/reports-run,200,pass,Page is indexed,"29 Oct 2026, 14:12:41",Inspected URL
+https://clipperdesk.com/help/articles/services-addons,200,pass,Page is indexed,"29 Oct 2026, 14:56:42",Inspected URL
+https://clipperdesk.com/help/articles/services-assignments,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/services-categories,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/services-create,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/services-online-availability,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/services-prices-duration,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/services-update-retire,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/setup-create-account,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/setup-first-workspace,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/setup-import-records,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/setup-readiness,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/team-accept-invitation,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/team-activity,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/team-add-member,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/team-coverage,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/team-disable-restore-login,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/team-edit-profile,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/team-invite-login,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/team-roles-permissions,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/team-service-assignments,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/team-time-off,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/team-weekly-hours,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/walk-ins-add,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/walk-ins-order-alerts,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/articles/walk-ins-serve,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/account,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/appointments,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/billing,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/business,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/calendar,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/checkout,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/clients,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/getting-started,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/inventory,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/notifications,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/reports,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/services,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/team,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/help/category/walk-ins,200,pass,Not inspected — daily Google property quota reached,,
+https://clipperdesk.com/pricing,200,pass,Page is indexed,"2 Nov 2026, 04:03:01",
+https://clipperdesk.com/resources,200,pass,Page is indexed,"1 Nov 2026, 06:10:30",
+https://clipperdesk.com/security,200,pass,Page is not indexed: URL is unknown to Google,N/A,N/A
+https://clipperdesk.com/solutions,200,pass,Page is indexed,"30 Oct 2026, 21:40:31",
+https://clipperdesk.com/solutions/barbershops,200,pass,Page is not indexed: Discovered – currently not indexed,N/A,N/A
+https://clipperdesk.com/solutions/fitness-recovery,200,pass,Page is not indexed: URL is unknown to Google,N/A,N/A
+https://clipperdesk.com/solutions/health-practices,200,pass,Page is indexed,"29 Oct 2026, 15:30:26",
+https://clipperdesk.com/solutions/independent-stylists,200,pass,Page is indexed,"2 Nov 2026, 09:02:59",
+https://clipperdesk.com/solutions/massage,200,pass,Page is not indexed: URL is unknown to Google,N/A,N/A
+https://clipperdesk.com/solutions/medspas,200,pass,Page is not indexed: URL is unknown to Google,N/A,N/A
+https://clipperdesk.com/solutions/nail-salons,200,pass,Page is not indexed: URL is unknown to Google,N/A,N/A
+https://clipperdesk.com/solutions/pet-grooming,200,pass,Page is not indexed: URL is unknown to Google,N/A,N/A
+https://clipperdesk.com/solutions/physical-therapy,200,pass,Page is not indexed: URL is unknown to Google,N/A,N/A
+https://clipperdesk.com/solutions/salons,200,pass,Page is not indexed: URL is unknown to Google,N/A,N/A
+https://clipperdesk.com/solutions/spas,200,pass,Page is indexed,"29 Oct 2026, 17:40:48",
+https://clipperdesk.com/solutions/tanning-studios,200,pass,Page is indexed,"29 Oct 2026, 12:50:09",
+https://clipperdesk.com/solutions/tattoo-piercing,200,pass,Page is not indexed: URL is unknown to Google,N/A,N/A
+https://clipperdesk.com/use-cases,200,pass,"Page is not indexed: Duplicate, Google chose different canonical than user","1 Nov 2026, 09:17:58",https://www.clipperdesk.com/use-cases
+https://clipperdesk.com/use-cases/keep-client-history-together,200,pass,Page is indexed,"21 Sept 2026, 14:54:57",
+https://clipperdesk.com/use-cases/manage-walk-ins-and-appointments,200,pass,Page is not indexed: URL is unknown to Google,N/A,N/A
+https://clipperdesk.com/use-cases/protect-time-with-deposits,200,pass,Page is indexed,"18 Oct 2026, 01:37:41",
+https://clipperdesk.com/use-cases/reduce-scheduling-conflicts,200,pass,Page is indexed,"10 Oct 2026, 13:59:37",

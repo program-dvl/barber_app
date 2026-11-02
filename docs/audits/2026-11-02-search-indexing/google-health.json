@@ -1,0 +1,89 @@
+{
+  "checkedOn": "2026-11-02",
+  "property": "sc-domain:clipperdesk.com",
+  "method": "Read-only visible Google Search Console UI",
+  "coreWebVitals": {
+    "lastUpdated": "2026-10-31",
+    "source": "Chrome UX report",
+    "mobile": "Not enough usage data in the last 90 days",
+    "desktop": "Not enough usage data in the last 90 days",
+    "note": "No field pass or fail established"
+  },
+  "https": {
+    "lastUpdated": "2026-11-01",
+    "nonHttpsUrls": 0,
+    "httpsUrls": 7,
+    "criticalIssues": false,
+    "status": "No issues detected in the last 90 days",
+    "note": "Google aggregate coverage sample, not all 127 current sitemap URLs"
+  },
+  "robots": {
+    "status": "No robots.txt file",
+    "reportEnabled": false,
+    "note": "Visible Google Settings assessment; consistent with known public HTTP404 despite valid text body"
+  },
+  "propertyAddedUi": "12 October 2026",
+  "crawlStats": {
+    "lastUpdated": "2026-10-31",
+    "range": "last 90 days",
+    "totalCrawlRequestsUi": "1.97k",
+    "totalDownloadBytesUi": "26.4m",
+    "averageResponseMs": 139,
+    "hosts": [
+      {
+        "host": "clipperdesk.com",
+        "requests": 1748,
+        "status": "No problems"
+      },
+      {
+        "host": "www.clipperdesk.com",
+        "requests": 119,
+        "status": "No problems"
+      },
+      {
+        "host": "book.clipperdesk.com",
+        "requests": 99,
+        "status": "No problems"
+      }
+    ],
+    "byResponse": {
+      "200": "92%",
+      "301": "7%",
+      "302": "1%",
+      "404": "<1%"
+    },
+    "byPurpose": {
+      "refresh": "77%",
+      "discovery": "23%"
+    },
+    "byFileTypeVisible": {
+      "javascript": "60%",
+      "html": "24%",
+      "other": "8%",
+      "image": "5%",
+      "css": "3%"
+    },
+    "note": "Aggregate Google crawling includes resource loads and multiple hosts, not a count of indexed pages; breakdown percentages rounded",
+    "apex": {
+      "requestsUi": "1.75k",
+      "downloadBytesUi": "25.5m",
+      "averageResponseMs": 121,
+      "status": "Host had no problems in the last 90 days",
+      "byResponse": {
+        "200": "98%",
+        "301": "<1%",
+        "302": "1%",
+        "404": "<1%"
+      }
+    }
+  },
+  "hostStatus": {
+    "host": "clipperdesk.com",
+    "lastUpdated": "2026-10-31",
+    "status": "Host had no problems in the last 90 days; Google was generally able to crawl your site",
+    "robotsFetch": "Acceptable fail rate",
+    "dnsResolution": "Acceptable fail rate",
+    "serverConnectivity": "Acceptable fail rate",
+    "note": "Acceptable host-level fail rate is compatible with robots URL returning404 and is not proof robots exists"
+  }
+}

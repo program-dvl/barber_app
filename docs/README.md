@@ -102,5 +102,6 @@ checks.
 - [Google Maps location intelligence](modules/location-intelligence.md) and [Google Cloud setup](deployment/google-maps.md).
 
 - [Public website content, claims and SEO](modules/public-website.md).
+- [Google Search Console, crawl verification and robots recovery](deployment/search-indexing.md).
 
 - [Consent-based Google Analytics setup and recovery](deployment/google-analytics.md).

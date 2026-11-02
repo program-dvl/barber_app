@@ -1,0 +1,888 @@
+{
+  "inspected_on": "2026-11-02",
+  "property": "sc-domain:clipperdesk.com",
+  "method": "Authorized Google Search Console visible URL Inspection UI only; no indexing submission. URL verified after loading completed. UI dates are copied as displayed; Google did not display a time zone for crawl dates.",
+  "rows": [
+    {
+      "url": "https://clipperdesk.com/help",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-delete",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-profile",
+      "scope": "help",
+      "google_status": "Page is not indexed: Discovered \u2013 currently not indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-recovery",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-security",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-sign-in",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-add",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-change",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-no-slots",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-public-booking",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-self-service",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-status-cancel",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-waitlist",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-access",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-cancel",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-capacity",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-change-capacity",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-invoices",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-recovery",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-start-subscription",
+      "scope": "help",
+      "google_status": "Page is indexed",
+      "detail_capture": "Status transcribed from verified UI; expanded details were not retained after browser session reset."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-text-credits",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 22:57:58",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/billing-text-credits",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-booking-link",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 19:46:28",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/business-booking-link",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-booking-preferences",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "2 Nov 2026, 07:48:01",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/business-booking-preferences",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-branding",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 19:42:22",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/business-branding",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "Temporary processing error",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-hours",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "2 Nov 2026, 02:10:30",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/business-hours",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-location",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "31 Oct 2026, 17:40:31",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/business-location",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-profile",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "1 Nov 2026, 14:18:00",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/business-profile",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "Temporary processing error",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-publish",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 12:01:40",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/business-publish",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "Temporary processing error",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/calendar-availability",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 17:38:59",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/calendar-availability",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/calendar-blocks-closures",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "30 Oct 2026, 01:15:29",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/calendar-blocks-closures",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/calendar-views",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "31 Oct 2026, 22:40:31",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/calendar-views",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-deposits-taxes-tips",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 18:03:17",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/checkout-deposits-taxes-tips",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "Temporary processing error",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-payment-recovery",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 18:10:48",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/checkout-payment-recovery",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-receipts-history",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "2 Nov 2026, 07:10:31",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/checkout-receipts-history",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-record-payments",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "1 Nov 2026, 18:03:03",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/checkout-record-payments",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-refund",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "2 Nov 2026, 05:18:01",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/checkout-refund",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-review",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 17:52:02",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/checkout-review",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "Temporary processing error",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-add-find",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 17:44:52",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/clients-add-find",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-duplicates",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "2 Nov 2026, 03:25:31",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/clients-duplicates",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-edit-preferences",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "1 Nov 2026, 17:25:31",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/clients-edit-preferences",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-forms",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "30 Oct 2026, 10:48:31",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/clients-forms",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-notes",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "31 Oct 2026, 05:11:32",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/clients-notes",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "Temporary processing error",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-payments",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "1 Nov 2026, 15:33:08",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/clients-payments",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-privacy",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "31 Oct 2026, 10:10:30",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/clients-privacy",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-private-files",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 15:52:13",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/clients-private-files",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-visits-rebook",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 15:56:33",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/clients-visits-rebook",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/inventory-availability",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "31 Oct 2026, 07:40:30",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/inventory-availability",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/notifications-consent",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 15:47:50",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/notifications-consent",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/notifications-delivery",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "2 Nov 2026, 12:48:05",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/notifications-delivery",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/notifications-preferences",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 17:01:41",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/notifications-preferences",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/ops-dashboard",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 10:27:56",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/ops-dashboard",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-bookings-clients",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 16:53:00",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/reports-bookings-clients",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-capacity-commission",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 18:14:32",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/reports-capacity-commission",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-export",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "1 Nov 2026, 08:40:29",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/reports-export",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-money",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "1 Nov 2026, 02:25:30",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/reports-money",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-run",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 14:12:41",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/reports-run",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-addons",
+      "scope": "help",
+      "inspected_on": "2026-11-02",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 14:56:42",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/services-addons",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "Temporary processing error",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes",
+      "detail_capture": "Transcribed from expanded visible Google inspection result."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-assignments",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-categories",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-create",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-online-availability",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-prices-duration",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-update-retire",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/setup-create-account",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/setup-first-workspace",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/setup-import-records",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/setup-readiness",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-accept-invitation",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-activity",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-add-member",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-coverage",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-disable-restore-login",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-edit-profile",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-invite-login",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-roles-permissions",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-service-assignments",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-time-off",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-weekly-hours",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/walk-ins-add",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/walk-ins-order-alerts",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/walk-ins-serve",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/account",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/appointments",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/billing",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/business",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/calendar",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/checkout",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/clients",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/getting-started",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/inventory",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/notifications",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/reports",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/services",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/team",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/walk-ins",
+      "scope": "help",
+      "google_status": null,
+      "status": "not_inspected_quota_exceeded",
+      "reason": "Google Search Console property daily URL inspection quota exceeded before this URL could be inspected."
+    }
+  ],
+  "quota_limit": {
+    "observed_at": "2026-11-02T10:36:00Z",
+    "heading": "Quota exceeded",
+    "message": "You have exceeded your property's URL inspection quota. Quota is renewed daily.",
+    "attempted_url": "https://clipperdesk.com/help/articles/services-assignments",
+    "response": "Stopped all further inspection requests; no retries or quota bypass attempted."
+  },
+  "summary": {
+    "total": 95,
+    "inspected": 57,
+    "indexed": 56,
+    "discovered_not_indexed": 1,
+    "not_inspected_quota_exceeded": 38
+  }
+}

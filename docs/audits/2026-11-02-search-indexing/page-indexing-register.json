@@ -1,0 +1,1028 @@
+{
+  "checkedOn": "2026-11-02",
+  "scope": "Latest recorded per-URL UI observations combined with post-SSR original HTTP HTML; not a Google aggregate report or ranking guarantee.",
+  "summary": {
+    "total": 127,
+    "indexed": 72,
+    "not_indexed": 17,
+    "uninspected": 38
+  },
+  "rows": [
+    {
+      "url": "https://clipperdesk.com/",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "31 Oct 2026, 00:11:29",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/blog",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: Discovered \u2013 currently not indexed",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/company",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: URL is unknown to Google",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/features",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "2 Nov 2026, 00:56:29",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/features/calendar-and-walk-ins",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: URL is unknown to Google",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/features/checkout-and-reporting",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "1 Nov 2026, 03:41:30",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/features/client-management",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "1 Nov 2026, 06:48:00",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/features/online-booking",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: URL is unknown to Google",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/guides/booking-policy-basics",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 16:22:35",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/guides/salon-opening-checklist",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "1 Nov 2026, 00:32:59",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-delete",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-profile",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: Discovered \u2013 currently not indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-recovery",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-security",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-sign-in",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-add",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-change",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-no-slots",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-public-booking",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-self-service",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-status-cancel",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-waitlist",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-access",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-cancel",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-capacity",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-change-capacity",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-invoices",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-recovery",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-start-subscription",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-text-credits",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 22:57:58",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-booking-link",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 19:46:28",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-booking-preferences",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "2 Nov 2026, 07:48:01",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-branding",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 19:42:22",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-hours",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "2 Nov 2026, 02:10:30",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-location",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "31 Oct 2026, 17:40:31",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-profile",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "1 Nov 2026, 14:18:00",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-publish",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 12:01:40",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/calendar-availability",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 17:38:59",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/calendar-blocks-closures",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "30 Oct 2026, 01:15:29",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/calendar-views",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "31 Oct 2026, 22:40:31",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-deposits-taxes-tips",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 18:03:17",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-payment-recovery",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 18:10:48",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-receipts-history",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "2 Nov 2026, 07:10:31",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-record-payments",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "1 Nov 2026, 18:03:03",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-refund",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "2 Nov 2026, 05:18:01",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-review",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 17:52:02",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-add-find",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 17:44:52",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-duplicates",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "2 Nov 2026, 03:25:31",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-edit-preferences",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "1 Nov 2026, 17:25:31",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-forms",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "30 Oct 2026, 10:48:31",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-notes",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "31 Oct 2026, 05:11:32",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-payments",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "1 Nov 2026, 15:33:08",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-privacy",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "31 Oct 2026, 10:10:30",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-private-files",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 15:52:13",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-visits-rebook",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 15:56:33",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/inventory-availability",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "31 Oct 2026, 07:40:30",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/notifications-consent",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 15:47:50",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/notifications-delivery",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "2 Nov 2026, 12:48:05",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/notifications-preferences",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 17:01:41",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/ops-dashboard",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 10:27:56",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-bookings-clients",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 16:53:00",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-capacity-commission",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 18:14:32",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-export",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "1 Nov 2026, 08:40:29",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-money",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "1 Nov 2026, 02:25:30",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-run",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 14:12:41",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-addons",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 14:56:42",
+      "google_selected_canonical": "Inspected URL"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-assignments",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-categories",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-create",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-online-availability",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-prices-duration",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-update-retire",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/setup-create-account",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/setup-first-workspace",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/setup-import-records",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/setup-readiness",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-accept-invitation",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-activity",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-add-member",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-coverage",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-disable-restore-login",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-edit-profile",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-invite-login",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-roles-permissions",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-service-assignments",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-time-off",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-weekly-hours",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/walk-ins-add",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/walk-ins-order-alerts",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/walk-ins-serve",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/account",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/appointments",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/billing",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/business",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/calendar",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/checkout",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/clients",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/getting-started",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/inventory",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/notifications",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/reports",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/services",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/team",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/walk-ins",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Not inspected \u2014 daily Google property quota reached",
+      "last_google_crawl_displayed": "",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/pricing",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "2 Nov 2026, 04:03:01",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/resources",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "1 Nov 2026, 06:10:30",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/security",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: URL is unknown to Google",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/solutions",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "30 Oct 2026, 21:40:31",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/barbershops",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: Discovered \u2013 currently not indexed",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/fitness-recovery",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: URL is unknown to Google",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/health-practices",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 15:30:26",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/independent-stylists",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "2 Nov 2026, 09:02:59",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/massage",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: URL is unknown to Google",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/medspas",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: URL is unknown to Google",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/nail-salons",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: URL is unknown to Google",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/pet-grooming",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: URL is unknown to Google",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/physical-therapy",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: URL is unknown to Google",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/salons",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: URL is unknown to Google",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/spas",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 17:40:48",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/tanning-studios",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "29 Oct 2026, 12:50:09",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/tattoo-piercing",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: URL is unknown to Google",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/use-cases",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: Duplicate, Google chose different canonical than user",
+      "last_google_crawl_displayed": "1 Nov 2026, 09:17:58",
+      "google_selected_canonical": "https://www.clipperdesk.com/use-cases"
+    },
+    {
+      "url": "https://clipperdesk.com/use-cases/keep-client-history-together",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "21 Sept 2026, 14:54:57",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/use-cases/manage-walk-ins-and-appointments",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is not indexed: URL is unknown to Google",
+      "last_google_crawl_displayed": "N/A",
+      "google_selected_canonical": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/use-cases/protect-time-with-deposits",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "18 Oct 2026, 01:37:41",
+      "google_selected_canonical": ""
+    },
+    {
+      "url": "https://clipperdesk.com/use-cases/reduce-scheduling-conflicts",
+      "http_status": 200,
+      "http_content_check": "pass",
+      "google_status": "Page is indexed",
+      "last_google_crawl_displayed": "10 Oct 2026, 13:59:37",
+      "google_selected_canonical": ""
+    }
+  ]
+}
