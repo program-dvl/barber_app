@@ -49,5 +49,19 @@ provider/transfer facts.
 
 ## Deployment
 
-These changes have not been deployed by this task. Production verification is
-pending deployment and must not be inferred from local tests or screenshots.
+Forge independently confirmed **981dd17** deployed. Both actual production pages
+were checked at **1440×900 and 390×844** after deployment. Privacy showed version
+1.2 and last updated/effective November 2, 2026; Terms showed version 1.0 and
+last updated/effective 2 November 2026. Neither displayed an obsolete review/draft
+banner; Terms displayed no review-status field. Neither page overflowed
+horizontally at either width.
+
+| Live page | Desktop | Phone |
+| --- | --- | --- |
+| Privacy Policy | [Screenshot](live-privacy-desktop.jpg) | [Screenshot](live-privacy-mobile.jpg) |
+| Terms | [Screenshot](live-terms-desktop.jpg) | [Screenshot](live-terms-mobile.jpg) |
+
+This verifies the deployed public presentation. It does not establish counsel
+review, provider/retention/transfer operations, privacy release-check approval or
+changes to the existing noindex and sitemap gates. The separate Refund Policy's
+review presentation remains unchanged.

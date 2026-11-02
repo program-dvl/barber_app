@@ -4,7 +4,8 @@
   "account_id": "414302511",
   "property_id": "561865152",
   "stream_id": "16253588035",
-  "production_revision_observed": "467634e",
+  "production_revision_observed": "981dd17",
+  "earlier_production_revision_observed": "467634e",
   "production": {
     "google_requests_before_consent": 0,
     "google_requests_after_rejection": 0,
@@ -15,18 +16,44 @@
       "https://clipperdesk.com/pricing"
     ],
     "pricing_interval_event_http_status": 204,
+    "trial_cta_event_http_status": 204,
+    "trial_cta_event": "marketing_cta_clicked",
+    "trial_destination": "/register",
+    "trial_destination_heading": "Create your account",
+    "trial_destination_full_document": true,
+    "trial_destination_responsive": true,
     "query_and_fragment_removed": true,
     "referrer_omitted": true,
     "fixed_title": "ClipperDesk",
     "registration_google_tag_count": 0,
+    "requests_after_registration_navigation": 0,
     "withdrawal_google_tag_count": 0,
     "requests_after_withdrawal": 0,
     "mobile_width": 390,
     "mobile_height": 844,
     "horizontal_overflow": false,
-    "trial_navigation_initially_stalled": true,
-    "current_collection_enabled": false,
-    "rollback_scope": "Cleared only newly-added GOOGLE_ANALYTICS_MEASUREMENT_ID value pending correction deployment"
+    "trial_navigation_automation_stall_observed_initially": true,
+    "initial_stall_qualification": "Unsafe loaded-Google queue truncation was corrected. Later automation timeouts resolved through native accessibility inspection and signup succeeded; timeouts alone do not prove a persistent renderer freeze.",
+    "current_collection_enabled": true,
+    "historical_rollback_scope": "Temporarily cleared only newly-added GOOGLE_ANALYTICS_MEASUREMENT_ID value pending correction deployment",
+    "restoration_scope": "After Forge confirmed 981dd17 deployed, restored only G-G14K5KCP1X using targeted Find; no other environment value changed",
+    "mobile_signup_navigation_verified": true,
+    "mobile_registration_google_tag_count": 0,
+    "mobile_trial_event_http_status": null,
+    "mobile_network_limitation": "Mobile capture did not follow the new renderer; no separate mobile HTTP 204 is claimed",
+    "final_withdrawal_recheck": {
+      "production_revision": "981dd17",
+      "fresh_browser_tab": true,
+      "actual_consent_ui_used": true,
+      "accepted_google_script_count": 1,
+      "rejection_full_document_reload": true,
+      "after_rejection_google_script_count": 0,
+      "after_rejection_google_request_count": 0,
+      "subsequent_pricing_location": "https://clipperdesk.com/pricing",
+      "subsequent_pricing_google_script_count": 0,
+      "subsequent_pricing_google_request_count": 0,
+      "network_capture_cursor_truncated": false
+    }
   },
   "corrected_real_tag_local_test": {
     "real_google_library": true,
@@ -37,7 +64,8 @@
     "destination": "/register",
     "destination_google_script_count": 0,
     "responsive_after_navigation": true,
-    "deployed_production_fix_verified": false
+    "deployed_production_fix_verified": true,
+    "note": "The 4ms timing belongs to the local real-tag test; corrected deployed production navigation was subsequently verified separately."
   },
   "google_realtime_snapshot": {
     "active_users_30m": 3,
@@ -46,5 +74,27 @@
     "marketing_pricing_interval_changed": 1,
     "trial_key_event_count": 1,
     "note": "Includes deliberate production and local real-tag tests. Not customer acquisition or completed-signup evidence."
+  },
+  "legal_publication": {
+    "production_revision": "981dd17",
+    "viewports": ["1440x900", "390x844"],
+    "terms_version": "1.0",
+    "privacy_version": "1.2",
+    "public_updated_and_effective_date": "2026-11-02",
+    "obsolete_review_or_draft_banners": false,
+    "terms_review_status_field": false,
+    "horizontal_overflow": false,
+    "operational_approval_indexation_and_sitemap_gates_unchanged": true
+  },
+  "final_local_verification": {
+    "marketing_tests_passed": 153,
+    "marketing_assertions": 3503,
+    "frontend_tests_passed": 215,
+    "analytics_frontend_tests_passed": 25,
+    "client_and_ssr_builds_passed": true,
+    "public_route_budgets_passed": 21,
+    "scoped_pint_passed": true,
+    "diff_whitespace_passed": true,
+    "temporary_local_verification_servers_terminated": true
   }
 }

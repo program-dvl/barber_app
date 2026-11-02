@@ -2,7 +2,9 @@
 
 Scope: owner-requested Google Analytics setup for ClipperDesk, PRD sections
 4/12/15, FR-01/19, ADR-079. This record separates implementation from external
-setup. **Google receipt was verified, but collection is temporarily disabled pending the navigation correction.**
+setup. **Enabled and verified on production revision 981dd17:** sanitized public
+pageviews and the trial-click event reached Google, and signup opened a fresh,
+responsive document without Google tracking.
 
 ## Implemented locally
 
@@ -22,11 +24,12 @@ setup. **Google receipt was verified, but collection is temporarily disabled pen
   retries automatically and keeps collection disabled across navigation.
 - Privacy v1.2 discloses purpose, fields, choice, limitations and Google links.
   Existing legal environment flags, credentials and operational records unchanged.
-  The intended two-month Google retention setting remains an external setup step.
+  Two-month Google retention and its disabled activity reset were subsequently
+  saved and read back, as recorded below.
 
 ## Local verification
 
-- Marketing backend suite: **146 passed / 3,455 assertions** in the current
+- Final Marketing backend suite: **153 passed / 3,503 assertions** in the current
   workspace, including the new PublicAnalytics boundary and privacy disclosure
   cases. The workspace also contains another chat's sitemap tests/edits.
 - Frontend: **215 passed**, including **25 analytics tests** for consent,
@@ -98,21 +101,18 @@ Evidence: [desktop consent](consent-desktop.jpg), [phone consent](consent-mobile
   The Google script request itself uses no-referrer. These have local regression
   evidence, not a live Google delivery certification.
 
-## Required continuation
+## Earlier continuation checkpoint — completed
 
-Restore authorized browser access and use Continue to Home on the existing
-created account success screen. Read the new account/property/measurement IDs;
-**do not create another account or stream**. Verify Enhanced measurement remains
-off, disable ads/signals/user-provided data, and set two-month user/event
-retention with activity reset off. Append only the measurement ID to Forge,
-verify preservation, deploy only the analytics files and check real network plus
-the new property's Realtime receipt. Verify CTA delivery before navigation and
-delayed automatic engagement carry only the sanitized current public page. See [deployment and recovery](../../deployment/google-analytics.md).
+At that checkpoint the remaining steps were to restore browser access, read the
+existing resource IDs, confirm the privacy settings, add only the measurement ID
+in Forge and verify deployed delivery. The subsequent sections record their
+completion; no duplicate Google account or stream was created. See
+[deployment and recovery](../../deployment/google-analytics.md).
 
-No local screenshot, mocked tag or passing build closes that live evidence gap.
-No consent banner test grants regional legal/transfer approval or waives other
-launch controls. Unrelated concurrent sitemap edits must remain outside this
-change's deployment.
+Local screenshots, mocked tags and passing builds were not treated as provider
+receipt. Consent UI and live delivery do not establish regional legal/transfer
+approval or waive other launch controls. The concurrent sitemap work remained
+separate from this implementation.
 
 ## Browser recovery and saved configuration
 
@@ -163,15 +163,18 @@ change's deployment.
   This is a button click, not qualified signup/revenue. Added no automatic event
   rules, Ads links or financial values. Google documents immediate key-event
   transmission rather than ordinary batching.
-- Real Google processing exposed a failure the stub missed: a trial click could
-  freeze the public renderer. The request eventually included the CTA in its POST
-  batch, but navigation stalled and DOM inspection timed out. Mutating the loaded
-  Google command array during its processing callback was the plausible cause.
+- Real Google processing exposed unsafe loaded-queue truncation the stub missed:
+  a trial-click request included the CTA in its POST batch while browser automation
+  observed a navigation/inspection stall. Mutating Google's live command array
+  during its processing callback was unsafe and was corrected. Later tool
+  timeouts were resolved using native accessibility inspection, which confirmed
+  successful signup navigation; those timeouts alone do not prove a persistent
+  customer renderer freeze.
 - Corrected disable() to preserve Google's array after load while retaining
   ga-disable, consent withdrawal, expiry and fresh-document private navigation.
   A cursor-draining callback regression fails under the old truncation and passes
   under the correction. All 215 frontend tests/25 analytics, client/SSR builds and
-  21 budgets pass. The correction is not yet deployed.
+  21 budgets pass. Deployment was pending at this historical checkpoint.
 - To protect new signup visits pending correction, cleared **only the value of
   our newly added GOOGLE_ANALYTICS_MEASUREMENT_ID** in Forge. Before saving,
   copied-text equality confirmed the rest unchanged. A new actual production
@@ -189,13 +192,39 @@ Evidence: [live desktop consent](live-consent-desktop.jpg),
 [real-tag local signup](real-tag-signup-local.jpg),
 [account sharing off](google-account-sharing.jpg).
 
-## Current required continuation
+## Final production verification — 981dd17
 
-Deploy the queue correction (alongside the owner's requested legal publication
-copy update), restore only G-G14K5KCP1X in Forge, and rerun actual trial navigation,
-collect/Realtime receipt, withdrawal, private exclusion and desktop/mobile checks.
-Do not create new Google resources or alter other environment values. Keep
-Analytics off until the correction is deployed. Prior terms approval remains valid.
+- Forge independently confirmed revision **981dd17** deployed. Restored only
+  `GOOGLE_ANALYTICS_MEASUREMENT_ID=G-G14K5KCP1X` using targeted Find in the existing
+  environment editor. No other environment value was changed and no duplicate
+  Google resources were created. Collection is enabled with prior opt-in.
+- On the actual production pricing page, the page_view request used the intended
+  stream and sanitized public location. A trial click sent
+  **marketing_cta_clicked with HTTP 204**, then opened a full **/register**
+  document displaying **Create your account**. The destination was responsive,
+  contained **zero Google tags** and sent **no further Google requests**.
+- At **390×844**, the actual production trial action also opened the signup form
+  in a fresh tracker-free document. Mobile network capture did not follow the new
+  renderer, so this is navigation/exclusion evidence; it is **not a separate
+  mobile HTTP 204 observation**. The desktop network result above establishes
+  the observed trial-event delivery.
+- Both live legal pages were checked at **1440×900 and 390×844**: no obsolete
+  review/draft notice, no Terms review-status field and no horizontal overflow.
+  Terms showed version 1.0 and last updated/effective 2 November 2026; Privacy
+  showed version 1.2 and the same public date. See the
+  [legal publication evidence](../2026-11-02-legal-publication/README.md).
+- Final withdrawal recheck on revision **981dd17** passed in a fresh Chrome tab:
+  accepting through the actual UI loaded one Google script; reopening preferences
+  and rejecting caused a full-document reload with **zero Google scripts and zero
+  Google requests**. Clicking Pricing afterward opened the production pricing
+  page with **zero Google scripts and zero Google requests**. Network capture
+  followed this check without cursor truncation. Earlier withdrawal evidence is
+  retained as chronological context.
+
+[Corrected production signup](live-fixed-signup.jpg). No registration or payment
+was submitted. Public legal presentation does not change operational approval,
+indexation, sitemap or other release gates. Temporary local verification servers
+were terminated after the checks.
 
 ## Received event report
 
@@ -204,5 +233,5 @@ The later Realtime snapshot shows 3 test browser sessions, 8 pageviews,
 These include deliberate production and local real-tag checks; they are not
 customer acquisition, completed registrations or revenue. [Realtime screenshot](google-realtime.jpg)
 and [safe verification summary](verification.json) omit browser identifiers,
-credentials and raw collection payloads. Fixed-production trial navigation is
-still required after the correction deployment.
+credentials and raw collection payloads. The corrected production trial
+navigation and HTTP 204 delivery are separately recorded above.

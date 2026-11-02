@@ -16,7 +16,10 @@
   and whitespace passed. Actual built-app browser checks at 1440×900 and 390×844
   confirmed the current metadata, absence of the old notices and no horizontal
   overflow on both pages. Local preview used SSR-disabled fallback/client
-  integration; these changes are not deployed. [Evidence and limits](audits/2026-11-02-legal-publication/README.md).
+  integration. Forge then confirmed **981dd17** deployed; actual production checks
+  at both widths verified the same metadata, removed banners/status and no
+  overflow. Operational approval/indexation/sitemap gates remain unchanged.
+  [Evidence and limits](audits/2026-11-02-legal-publication/README.md).
 
 ## 2026-11-02 Google indexing and live crawl audit
 
@@ -63,7 +66,7 @@
   route gates exclude signed-in, Help, auth, booking and private/customer records.
   Added equal consent choices, footer withdrawal, privacy-signal handling and
   updated privacy v1.2; existing environment values and credentials preserved.
-- Local Marketing suite 146 passed / 3,455 assertions; frontend 215 passed,
+- Final Marketing suite 153 passed / 3,503 assertions; frontend 215 passed,
   including 25 analytics cases; client/SSR builds, 21 public budgets, scoped Pint
   and whitespace pass. Actual-component Chrome harness checked desktop/390px
   choice, rejection, opt-in, withdrawal, navigation and storage/tag failures
@@ -74,12 +77,22 @@
   414302511 / property 561865152 uses G-G14K5KCP1X. User/event retention is
   two months, activity resets and ads/Signals/user-provided/granular data off.
   Forge saved only the new measurement-ID line, with pre-save full-text comparison
-  preserving existing content and post-reload ID readback. Owner deployed 467634e;
-  actual pageviews/pricing 204 and Realtime receipt verified. Real-tag trial
-  processing then stalled navigation; queue correction passes local real-library
-  test (4ms signup navigation), but is not deployed yet. Cleared only the new
-  Analytics ID value temporarily to protect new visits. **Collection paused
-  until correction deployment and production recheck.** [Evidence and required continuation](audits/2026-11-02-google-analytics/README.md).
+  preserving existing content and post-reload ID readback. Initial production
+  pageviews/pricing 204 and Realtime receipt were verified. An observed automation
+  stall prompted correction of unsafe loaded-Google queue truncation and a
+  temporary pause using only the new ID value. Later tool timeouts resolved
+  through native accessibility inspection and signup succeeded.
+- Forge confirmed **981dd17** deployed; restored only G-G14K5KCP1X using targeted
+  Find, preserving other environment values. Actual production pricing pageview
+  and trial-click delivery used the right stream; **marketing_cta_clicked HTTP
+  204** was followed by a responsive full **/register** document with Create your
+  account, zero Google tags and no further Google requests. Phone 390×844 also
+  opened the signup form tracker-free; mobile capture did not follow the new renderer,
+  so no separate mobile 204 is claimed. Final fresh-tab withdrawal recheck passed:
+  actual UI rejection reloaded with zero Google tags/requests; subsequent Pricing
+  navigation also had zero tags/requests. **Collection enabled with
+  prior opt-in.** Realtime includes deliberate production/local test traffic,
+  not completed-signup or revenue evidence. [Evidence and limits](audits/2026-11-02-google-analytics/README.md).
 
 
 ## 2026-11-01 Checkout rejection classification investigation
