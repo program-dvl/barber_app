@@ -2,6 +2,7 @@
 import MarketingFooter from '@/Components/Marketing/MarketingFooter.vue';
 import MarketingHeader from '@/Components/Marketing/MarketingHeader.vue';
 import Banner from '@/Components/Profile/Banner.vue';
+import AnalyticsConsent from '@/Components/Marketing/AnalyticsConsent.vue';
 
 defineProps({
     pageClass: {
@@ -20,5 +21,6 @@ defineProps({
             <slot />
         </main>
         <MarketingFooter />
+        <AnalyticsConsent />
     </div>
 </template>

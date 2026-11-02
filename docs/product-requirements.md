@@ -987,6 +987,14 @@ Recommended release strategy: closed alpha with test businesses -> design-partne
 
 Metrics must be segmented by acquisition channel, plan, business type, staff band, geography and cohort where privacy-safe. Definitions should be versioned and available to product, finance and support.
 
+Approved addition (2026-11-02; ADR-079): the product owner selected Google
+Analytics 4 for optional public acquisition measurement. Limit it to guest
+visits on curated marketing pages, bounded trial CTA clicks and pricing-interval
+choices, with prior opt-in, an equally accessible reject action and later
+withdrawal. Exclude private/customer/account/booking data, query strings,
+referrers, advertising features and cross-service identity. This does not add
+Phase 2 marketing automation or replace first-party operational metrics.
+
 | Funnel | Metric | Definition | Initial target |
 | --- | --- | --- | --- |
 | Acquisition | Qualified trial starts | Verified businesses starting a trial | Baseline then improve |

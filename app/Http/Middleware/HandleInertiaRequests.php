@@ -13,6 +13,7 @@ use App\Domain\PlatformAccess\Models\SupportAccessSession;
 use App\Domain\PlatformAccess\Services\MembershipAccessManager;
 use App\Domain\PlatformAccess\Services\WorkspaceAccessService;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Support\Seo\PublicAnalytics;
 use App\Support\Seo\PublicIndexation;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\Request;
@@ -49,6 +50,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'appName' => config('brand.product_name'),
+            'publicAnalytics' => fn () => app(PublicAnalytics::class)->for($request),
             'help' => fn () => app(HelpContext::class)->for($request),
             'seoDefaults' => fn () => [
                 'title' => match ($request->route()?->getName()) {

@@ -1161,3 +1161,15 @@ Start again and Check again for support-required failures. Unknown transport
 outcomes remain protected and cannot be discarded as failed payments. Production
 reference 01M6B8F01JVY0G7BK4J67D3D9G still needs read-only diagnosis; a screenshot
 of a submitted local request is not evidence of a paid or failed Stripe session.
+
+## Optional analytics choice (2026-11-02)
+
+Public marketing measurement uses a restrained AppNotice in a bounded bottom panel.
+Explain the optional purpose and provide Accept analytics and Reject analytics
+with equal visual weight, at least 44px targets and a wrapping action row with
+10px gaps and 14px copy separation. Link the privacy notice. A persistent footer
+Analytics preferences control reopens the choice and permits withdrawal. Do not
+block reading or make rejection require more steps. The saved/disabled state and
+browser privacy signal must be understandable; analytics failures never block
+navigation, sign-in or registration. Verify initial choice, rejection, reopening,
+acceptance, withdrawal and phone wrapping, including a blocked Google script.

@@ -1,5 +1,28 @@
 # Project status
 
+## 2026-11-02 Optional Google Analytics implementation (PRD 4/12/15; ADR-079)
+
+- Implemented a single-measurement-ID, prior-opt-in GA4 adapter for guest curated
+  marketing pages, bounded trial clicks and interval choices. Production/host/
+  route gates exclude signed-in, Help, auth, booking and private/customer records.
+  Added equal consent choices, footer withdrawal, privacy-signal handling and
+  updated privacy v1.2; existing environment values and credentials preserved.
+- Local Marketing suite 146 passed / 3,455 assertions; frontend 213 passed,
+  including 23 analytics cases; client/SSR builds, 21 public budgets, scoped Pint
+  and whitespace pass. Actual-component Chrome harness checked desktop/390px
+  choice, rejection, opt-in, withdrawal, navigation and storage/tag failures
+  with Google requests intercepted. This is not live Google receipt evidence.
+- Owner approved Canada and both Google agreements; the separate ClipperDesk
+  account/property and public web stream 16253588035 were created with enhanced
+  measurement off. QRxpress was preserved. Browser access recovered; account
+  414302511 / property 561865152 uses G-G14K5KCP1X. User/event retention is
+  two months, activity resets and ads/Signals/user-provided/granular data off.
+  Forge saved only the new measurement-ID line, with pre-save full-text comparison
+  preserving existing content and post-reload ID readback. Code deployment pending.
+  **Not live.** [Evidence and required continuation](audits/2026-11-02-google-analytics/README.md).
+
+
+
 ## 2026-11-01 Checkout rejection classification investigation
 
 - Owner-supplied production diagnostic confirms Stripe HTTP 403

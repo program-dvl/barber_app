@@ -2,6 +2,7 @@
 import ProductMark from '@/Components/Product/ProductMark.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { getMarketingAnalytics } from '@/Support/googleAnalytics';
 
 const page = usePage();
 const hasRoute = (name) => Boolean(page.props.ziggy?.routes?.[name]);
@@ -69,7 +70,7 @@ const groups = computed(() => [
 
             <div class="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs leading-6 text-slate-400 sm:flex-row sm:items-center sm:justify-between">
                 <p>© {{ new Date().getFullYear() }} {{ page.props.brand?.product_name || 'ClipperDesk' }}.</p>
-
+                <button v-if="page.props.publicAnalytics" type="button" class="inline-flex min-h-11 items-center rounded-md text-sm text-slate-300 underline underline-offset-4 hover:text-white" @click="getMarketingAnalytics()?.openPreferences()">Analytics preferences</button>
             </div>
         </div>
     </footer>

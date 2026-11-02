@@ -151,3 +151,17 @@ it('provides a release check that fails without approval and passes a complete r
     approvePrivacyFixture();
     $this->artisan('legal:check-privacy')->assertSuccessful();
 });
+
+it('explains optional Google Analytics consent, exclusions and withdrawal without promising retroactive deletion', function () {
+    $this->get('/privacy-policy')->assertOk()
+        ->assertSee('Google Analytics 4')
+        ->assertSee('Accept analytics')->assertSee('Reject analytics')
+        ->assertSee('Analytics preferences')
+        ->assertSee('without query strings, fragments or referrers')
+        ->assertSee('does not automatically erase information already processed')
+        ->assertSee('two-month retention')
+        ->assertSee('aggregated standard reports may remain longer')
+        ->assertSee('https://policies.google.com/technologies/partner-sites', false)
+        ->assertDontSee('does not load advertising pixels, third-party marketing analytics');
+    expect(config('privacy.version'))->toBe('1.2');
+});

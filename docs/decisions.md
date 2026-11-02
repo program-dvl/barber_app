@@ -2929,6 +2929,47 @@ Twilio test is not a booking-flow certification.
   remain deployment certification work; local fixtures and mocked SDK are not live
   payment evidence. No existing launch gate is waived.
 
+## ADR-079 — Consent-based Google Analytics for public acquisition
+
+- Status: Accepted for the narrow owner-requested integration; external setup
+  and deployed evidence are recorded separately in the audit.
+- Date: 2026-11-02
+- Authority: explicit product-owner request to set up Google Analytics on
+  ClipperDesk, including required Google, Forge and repository changes.
+- Requirements: PRD sections 4, 12 and 15; FR-01/19; ADR-024; OPEN-12.
+
+Use Google Analytics 4 only for guest visits to the explicitly curated public
+marketing pages, approved CTA actions and monthly/yearly pricing choices.
+No tracking on authenticated, registration, booking, secure-link, Help search,
+admin, platform, API or error surfaces. Exclude arbitrary dynamic slugs, queries,
+fragments, referrers, tenant/user IDs, form input and commercial/customer records.
+Use a separate ClipperDesk account/property; preserve unrelated Google accounts.
+
+Implement basic prior opt-in: no Google tag or measurement request before
+Accept analytics. Reject analytics is equally accessible; a public footer
+Analytics preferences control allows withdrawal. GPC/DNT prevents collection.
+Version the choice and expire it after six months; restrict host-only analytics
+cookies to 60 days. Discard pending events when consent or route changes; disable
+collection before navigation and unload the tag before private destinations.
+
+Use only the necessary server-side measurement-ID environment value, default
+empty. Fail closed outside the primary production host, for signed-in visitors,
+invalid configuration and excluded routes. Never put credentials in the client.
+Disable automatic pageviews/enhanced measurement, Google Signals, ads
+personalization, user-provided data and advertising links. Send sanitized manual
+pageviews to avoid duplicates during Inertia navigation. Provider retention is
+two months for user/event data, with activity-based retention reset off;
+aggregated reporting has different retention and must not be promised to expire.
+
+The operator remains responsible for privacy requests through the existing
+support@clipperdesk.com intake. Withdrawal stops future sending and removes
+accessible integration cookies; it does not promise retroactive deletion.
+Operators review Analytics data-deletion requests when identifiable/applicable.
+The existing privacy notice is updated to version 1.2. Do not claim this work
+establishes counsel approval, a DPO appointment, transfer certification or any
+other launch gate. Google terms acceptance and operator country require direct
+owner confirmation; record the actual outcome in the audit.
+
 ## Open decisions
 
 2026-11-01 Stripe audit follow-up to **OPEN-13**: the SaaS billing dispatcher
@@ -2944,7 +2985,7 @@ not waive this existing financial-operations launch gate.
 | OPEN-09 | Approve the Prompt 00 remove/replace inventory for Larafast marketing, roadmap, AI, content, and superseded provider surfaces | Reduces dead code and prevents confusing product ownership | Before cleanup is authorized | **Retained.** Legacy surfaces remain quarantined; no destructive cleanup was silently assumed. Medium launch risk owned by Product/Engineering; named owner and date unassigned. |
 | OPEN-10 | Final data retention and anonymisation schedule plus destructive executor authorization | Client privacy, attachments, audit events, financial records, and closure are safely bounded by ADR-018 but cannot complete destructive requests | Before destructive processing or paid public launch | **Retained; Critical blocker.** Requires jurisdiction-appropriate privacy counsel and Product approval; the Canadian operator/contact facts in ADR-062 do not authorize destruction. No waiver or expiry exists. |
 | OPEN-11 | Complete counsel-led ClipperDesk trademark clearance and acquire the approved production domains | ADR-027 selects the identity, but naming rights, domain ownership, sender authentication, and defensive domains are external launch controls | Before public launch, outbound production mail, or printed collateral | **Retained; Critical/High blocker.** Product/Operations and counsel must approve and acquire the final public, app, and booking domains; configuration defaults do not establish ownership. No waiver or expiry exists. |
-| OPEN-12 | Approve marketing attribution/analytics provider, consent class, retention, and accountable privacy owner | Phase 1.5 can implement a bounded first-party event contract, but cannot load a tracker, advertising pixel, fingerprinting, session replay, or claim consent/retention approval | Before enabling any third-party marketing measurement or paid acquisition | **Open; bounded by ADR-024.** Product, Privacy/DPO, and Engineering must name the provider/purpose, allowed properties, consent behavior, retention and deletion process. |
+| OPEN-12 | Approve marketing attribution/analytics provider, consent class, retention, and accountable privacy owner | Phase 1.5 can implement a bounded first-party event contract, but cannot load a tracker, advertising pixel, fingerprinting, session replay, or claim consent/retention approval | Before enabling any third-party marketing measurement or paid acquisition | **Partially resolved by the owner-directed ADR-079.** GA4 is selected for prior-opt-in guest public-page/CTA/interval measurement, with bounded fields, short retention and the existing privacy intake. Broader attribution, advertising, cross-service identities and regional counsel/transfer review remain open; no privacy-owner appointment or legal approval is inferred. |
 | OPEN-13 | Approve the legal operator/contact suite and live refund responsibility for subscription and appointment payments | Stripe India website review expects public Terms, Privacy and Return/Refund/Cancellation URLs plus customer-service details and processing timelines; the current appointment adapter records internal refunds but has no certified provider refund executor or approved live merchant-of-record/connected-account allocation | Before legal documents become effective or any live payment is accepted | **Open; Critical/High blocker.** Legal/Product must approve operator, address, governing/dispute/liability terms and version acceptance; Finance/Operations must own direct support, request/decision/submission timelines, and the live Stripe subscription and appointment refund/reconciliation paths. Terms/refund remain non-effective review documents. ADR-062 supplies operator/contact facts and an approval-gated privacy notice; remaining contract, operations and refund approvals are retained. |
 | OPEN-14 | Restore the remaining module documentation referenced by AGENTS.md | Communications, dashboard, product experience and scheduling specifications are restored; other domain module documents remain absent or partial | Before the next affected domain scope change | **Partially resolved.** `docs/modules/communications.md`, `dashboard.md`, `product-experience.md` and `scheduling-operations.md` are restored; `client-records.md` now restores CRM, history, governed commands and operational linkage (ADR-046). `checkout-sales.md` now restores checkout, payments, receipt and refund boundaries (ADR-047). `team-availability.md` now restores workforce, reviewed schedule/service changes and read/access boundaries (ADR-048). `services.md` now restores the catalogue, reviewed commands and booking/commerce boundaries (ADR-049). `business-setup.md` now restores initialization, operational readiness, reviewed edits and explicit publication (ADR-053). Restore the remaining affected specifications before changing those domains. |
 | OPEN-15 | Approve the exact first-country launch order and complete regional legal, commerce and public-site profiles | The product owner selected the United States, Canada, the United Kingdom and selected Europe as target markets, while current commerce/public content still contains India/INR/`en-IN` assumptions; SMS registration, consent language, quiet hours, taxes, receipts, currency and privacy obligations differ by country | Before any paid regional launch or live mobile sending | **Open; Critical/High blocker bounded by ADR-039.** Product must choose the first exact countries and supported currencies. Named legal/privacy/finance owners must approve country-specific policies and provider registrations before live enablement. |

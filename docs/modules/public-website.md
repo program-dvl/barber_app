@@ -70,3 +70,19 @@ Use isolated fixtures to exercise unavailable/verified pricing and yearly-only
 catalogs; never manufacture verified prices in a real billing database.
 
 Latest evidence and page inventory: [2026-10-13 audit](../audits/2026-10-13-public-content/README.md).
+
+## Optional public measurement (2026-11-02)
+
+PRD sections 4/12/15 and ADR-079 approve a narrow GA4 adapter. The server gates
+configuration by production environment, primary host, guest status and explicit
+curated marketing route/path. The browser waits for prior opt-in; rejection,
+withdrawal, GPC/DNT, missing storage/configuration and excluded navigation fail
+closed. Public legal pages can expose preferences without being measured.
+Use sanitized manual pageviews and bounded CTA/pricing choices only. Never send
+queries, referrers, form input, arbitrary event properties or private business
+records. Keep all automatic enhanced measurement and advertising options off in
+Google. The deployment/audit record distinguishes local tests, actual Google
+configuration, Forge environment changes and production receipt evidence.
+
+[Setup and recovery](../deployment/google-analytics.md),
+[evidence](../audits/2026-11-02-google-analytics/README.md).

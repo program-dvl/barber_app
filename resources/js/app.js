@@ -2,12 +2,13 @@ import './bootstrap';
 import '../css/app.css';
 
 import { createApp, h } from 'vue';
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/index.js';
 import { i18nVue } from 'laravel-vue-i18n';
 import { installMarketingTelemetryContract } from './Support/marketingTelemetry';
 import { renderPublicApp } from './Components/PublicHead';
+import { installMarketingAnalytics } from './Support/googleAnalytics';
 
 installMarketingTelemetryContract();
 
@@ -19,6 +20,7 @@ createInertiaApp({
     },
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
+        installMarketingAnalytics(router, props.initialPage);
         return createApp({ render: () => renderPublicApp(App, props) })
             .use(plugin)
             .use(ZiggyVue)
