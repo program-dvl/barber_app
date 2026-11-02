@@ -2,7 +2,7 @@
 
 Scope: owner-requested Google Analytics setup for ClipperDesk, PRD sections
 4/12/15, FR-01/19, ADR-079. This record separates implementation from external
-setup. **Google collection is not live or independently verified.**
+setup. **Google receipt was verified, but collection is temporarily disabled pending the navigation correction.**
 
 ## Implemented locally
 
@@ -29,7 +29,7 @@ setup. **Google collection is not live or independently verified.**
 - Marketing backend suite: **146 passed / 3,455 assertions** in the current
   workspace, including the new PublicAnalytics boundary and privacy disclosure
   cases. The workspace also contains another chat's sitemap tests/edits.
-- Frontend: **213 passed**, including **23 analytics tests** for consent,
+- Frontend: **215 passed**, including **25 analytics tests** for consent,
   retention/expiry, privacy signals, bounded fields, route/race handling,
   withdrawal, script errors/timeouts, storage failure and private transitions.
 - Production client and SSR builds pass with Node 24.19.0. Public budgets pass
@@ -139,3 +139,70 @@ change's deployment.
 
 [Stream](google-stream.jpg), [retention](google-retention.jpg),
 [personalization disabled](google-personalization-off.jpg).
+
+## Production verification and temporary rollback
+
+- Owner deployed revision **467634e**, containing Analytics commit **cb8b77d**;
+  Forge showed Deployed from master. The agent's push had been rejected by
+  automatic review and was never performed. Owner deployment is independently
+  observed in Forge, rather than inferred from the owner's message alone.
+- Actual production guest test: zero Google requests before consent; zero after
+  rejection. Acceptance loaded the tag (200) and sent sanitized page_view to the
+  intended stream (204). Inertia pricing navigation added exactly one pageview;
+  user-selected annual pricing sent marketing_pricing_interval_changed (204).
+- A fresh pricing visit with a synthetic email-like query and fragment sent only
+  `https://clipperdesk.com/pricing`, fixed title ClipperDesk and no referrer. No
+  test query/fragment marker appeared in the collection query or POST body.
+- Realtime showed one active test visitor, two pageviews and the pricing event.
+  This establishes Google receipt for those paths, not a signup or paid conversion.
+- Actual withdrawal reloaded with zero Google scripts and zero subsequent Google
+  requests. Phone 390×844 choices wrapped without horizontal overflow and had
+  approximately 44px touch height. Registration was a separate tracker-free page.
+- Ordinary trial events initially did not appear. Marked **marketing_cta_clicked**
+  as a key event using Create with code, no default monetary value, once per event.
+  This is a button click, not qualified signup/revenue. Added no automatic event
+  rules, Ads links or financial values. Google documents immediate key-event
+  transmission rather than ordinary batching.
+- Real Google processing exposed a failure the stub missed: a trial click could
+  freeze the public renderer. The request eventually included the CTA in its POST
+  batch, but navigation stalled and DOM inspection timed out. Mutating the loaded
+  Google command array during its processing callback was the plausible cause.
+- Corrected disable() to preserve Google's array after load while retaining
+  ga-disable, consent withdrawal, expiry and fresh-document private navigation.
+  A cursor-draining callback regression fails under the old truncation and passes
+  under the correction. All 215 frontend tests/25 analytics, client/SSR builds and
+  21 budgets pass. The correction is not yet deployed.
+- To protect new signup visits pending correction, cleared **only the value of
+  our newly added GOOGLE_ANALYTICS_MEASUREMENT_ID** in Forge. Before saving,
+  copied-text equality confirmed the rest unchanged. A new actual production
+  homepage exposes no Analytics preferences/config and trial navigation remains
+  available. Existing unrelated keys and Google resources are preserved.
+- An independent local harness then used the actual current controller, consent
+  component and **real Google tag**, forwarding its real command layer and
+  declaring only sanitized public test pages. The corrected trial click emitted
+  marketing_cta_clicked and completed a new local /register document in **4ms**;
+  the destination had no tag and remained responsive. No registration or payment
+  was submitted. This is stronger than the mock but is not fixed-production proof.
+
+Evidence: [live desktop consent](live-consent-desktop.jpg),
+[live phone consent](live-consent-mobile.jpg),
+[real-tag local signup](real-tag-signup-local.jpg),
+[account sharing off](google-account-sharing.jpg).
+
+## Current required continuation
+
+Deploy the queue correction (alongside the owner's requested legal publication
+copy update), restore only G-G14K5KCP1X in Forge, and rerun actual trial navigation,
+collect/Realtime receipt, withdrawal, private exclusion and desktop/mobile checks.
+Do not create new Google resources or alter other environment values. Keep
+Analytics off until the correction is deployed. Prior terms approval remains valid.
+
+## Received event report
+
+The later Realtime snapshot shows 3 test browser sessions, 8 pageviews,
+4 marketing_cta_clicked events, 1 pricing interval event and 1 trial-click key event.
+These include deliberate production and local real-tag checks; they are not
+customer acquisition, completed registrations or revenue. [Realtime screenshot](google-realtime.jpg)
+and [safe verification summary](verification.json) omit browser identifiers,
+credentials and raw collection payloads. Fixed-production trial navigation is
+still required after the correction deployment.

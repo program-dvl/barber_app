@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-02",
+  "measurement_id": "G-G14K5KCP1X",
+  "account_id": "414302511",
+  "property_id": "561865152",
+  "stream_id": "16253588035",
+  "production_revision_observed": "467634e",
+  "production": {
+    "google_requests_before_consent": 0,
+    "google_requests_after_rejection": 0,
+    "initial_tag_http_status": 200,
+    "page_view_http_status": 204,
+    "page_view_locations": [
+      "https://clipperdesk.com/",
+      "https://clipperdesk.com/pricing"
+    ],
+    "pricing_interval_event_http_status": 204,
+    "query_and_fragment_removed": true,
+    "referrer_omitted": true,
+    "fixed_title": "ClipperDesk",
+    "registration_google_tag_count": 0,
+    "withdrawal_google_tag_count": 0,
+    "requests_after_withdrawal": 0,
+    "mobile_width": 390,
+    "mobile_height": 844,
+    "horizontal_overflow": false,
+    "trial_navigation_initially_stalled": true,
+    "current_collection_enabled": false,
+    "rollback_scope": "Cleared only newly-added GOOGLE_ANALYTICS_MEASUREMENT_ID value pending correction deployment"
+  },
+  "corrected_real_tag_local_test": {
+    "real_google_library": true,
+    "actual_current_controller": true,
+    "script_http_status": 200,
+    "trial_event_request_seen": true,
+    "signup_navigation_elapsed_ms": 4,
+    "destination": "/register",
+    "destination_google_script_count": 0,
+    "responsive_after_navigation": true,
+    "deployed_production_fix_verified": false
+  },
+  "google_realtime_snapshot": {
+    "active_users_30m": 3,
+    "page_views": 8,
+    "marketing_cta_clicked": 4,
+    "marketing_pricing_interval_changed": 1,
+    "trial_key_event_count": 1,
+    "note": "Includes deliberate production and local real-tag tests. Not customer acquisition or completed-signup evidence."
+  }
+}

@@ -1,7 +1,7 @@
 # Public website content and SEO
 
-Updated: 2026-10-13. Scope: approved public acquisition under PRD sections 1–4,
-[FR-01 through FR-20](../product-requirements.md), ADR-024/026/033/061/063/065.
+Updated: 2026-11-02. Scope: approved public acquisition under PRD sections 1–4,
+[FR-01 through FR-20](../product-requirements.md), ADR-024/026/033/061/063/065/080.
 This specification does not promote deferred product capabilities or waive launch gates.
 
 ## Customer content boundary
@@ -54,11 +54,17 @@ editorial wording before publication. Markdown rendering strips unsafe HTML/link
 and demotes article H1 headings below the page title. Human feature-claim review
 is still required; a marker scan cannot prove accuracy.
 
-Terms/refund remain non-effective review documents. Privacy becomes effective and
-indexable only through its existing approved-operation gates; the unapproved
-version has an explicit customer notice. Internal approval checklists and release
-notes are maintained in the audit, not public policies. No content task may invent
-legal terms, an effective date, a support SLA or live refund certification.
+The owner authorized public Privacy Policy and Terms publication on 2 November
+2026 (ADR-080). Terms version 1.0 shows version, last updated and effective date,
+without review labels or draft-only body text. Privacy version 1.2 shows its
+owner-authorized effective date without the review banner. That visible date
+is separate from the existing privacy approval, provider/operations, release
+check and indexation/sitemap gates; none are enabled by this presentation change.
+The separate Refund Policy remains a non-effective review document, including
+its shared-component warning and review metadata. Internal approval checklists
+and release notes stay in the audit. Do not invent legal approval, jurisdiction,
+liability caps, an effective date without owner authority, a support SLA or live
+refund certification.
 
 ## Verification
 
@@ -105,3 +111,5 @@ configuration, Forge environment changes and production receipt evidence.
 
 [Setup and recovery](../deployment/google-analytics.md),
 [evidence](../audits/2026-11-02-google-analytics/README.md).
+
+Publication evidence: [2026-11-02 legal publication audit](../audits/2026-11-02-legal-publication/README.md).

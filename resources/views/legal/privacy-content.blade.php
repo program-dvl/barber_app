@@ -7,14 +7,11 @@
                 <p class="cd-privacy-summary">{{ $seo['description'] }}</p>
                 <dl class="cd-privacy-dates">
                     <div><dt>Last updated</dt><dd><time datetime="{{ config('privacy.updated_at') }}">{{ \Carbon\CarbonImmutable::parse(config('privacy.updated_at'))->format('F j, Y') }}</time></dd></div>
-                    @if($published)
-                        <div><dt>Effective date</dt><dd><time datetime="{{ config('privacy.effective_at') }}">{{ \Carbon\CarbonImmutable::parse(config('privacy.effective_at'))->format('F j, Y') }}</time></dd></div>
+                    @if($effectiveAt)
+                        <div><dt>Effective date</dt><dd><time datetime="{{ $effectiveAt }}">{{ \Carbon\CarbonImmutable::parse($effectiveAt)->format('F j, Y') }}</time></dd></div>
                     @endif
                     <div><dt>Version</dt><dd>{{ config('privacy.version') }}</dd></div>
                 </dl>
-            @unless($published)
-                <p class="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-slate-800" role="status">This privacy policy is under review and is not yet effective.</p>
-            @endunless
             </div>
         </section>
         <div class="cd-public-container cd-privacy-layout">

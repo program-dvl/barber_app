@@ -33,6 +33,7 @@ class LegalDocumentController extends Controller
         $data = [
             ...$notice->content(),
             'published' => $notice->isPublished(),
+            'effectiveAt' => $notice->publicEffectiveAt(),
             'seo' => [
                 'title' => 'Clipperdesk Privacy Policy',
                 'description' => 'How Clipperdesk collects, uses, shares and retains account, booking and billing information, including Google Sign-In, and how to request privacy rights.',

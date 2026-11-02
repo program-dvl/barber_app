@@ -1173,3 +1173,15 @@ block reading or make rejection require more steps. The saved/disabled state and
 browser privacy signal must be understandable; analytics failures never block
 navigation, sign-in or registration. Verify initial choice, rejection, reopening,
 acceptance, withdrawal and phone wrapping, including a blocked Google script.
+
+## Public legal publication metadata (2026-11-02)
+
+Published policies show their version, last-updated date and effective date in
+a compact responsive definition list. Do not retain review-only warnings, empty
+review fields or proposed-contract wording on an owner-published document, and
+do not replace them with a redundant success notice. Terms uses three metadata
+items; the separate review-stage Refund Policy keeps its existing warning and
+four metadata items. This visible publication state does not represent counsel
+approval or an operational certification. Preserve readable wrapping, the shared
+Print or save as PDF action and the policy links at desktop and mobile widths.
+See ADR-080 and the public-website module.

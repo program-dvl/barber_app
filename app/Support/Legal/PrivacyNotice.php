@@ -7,6 +7,21 @@ use Illuminate\Support\Str;
 
 class PrivacyNotice
 {
+    public function publicEffectiveAt(): ?string
+    {
+        $date = config('privacy.effective_at');
+        if ($date === null || $date === '') {
+            $date = config('privacy.public_effective_at');
+        }
+        if (! is_string($date) || ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)
+            || ! strtotime($date) || date('Y-m-d', strtotime($date)) !== $date
+            || CarbonImmutable::parse($date, 'Asia/Kolkata')->startOfDay()->isFuture()) {
+            return null;
+        }
+
+        return $date;
+    }
+
     /** @return list<string> */
     public function blockers(): array
     {

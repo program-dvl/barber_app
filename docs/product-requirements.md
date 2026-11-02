@@ -670,6 +670,10 @@ Purpose: Centralise configuration and create accountability for hicd-risk operat
 - Manage booking, cancellation, tax, receipt, notifications, payment methods, statuses, roles, retention and booking-page branding.
 - Validate configuration combinations and warn when a change will affect published availability, future appointments or financial treatment.
 - Version critical policies with effective dates; do not silently apply new rules to past transactions.
+- Owner-authorized public Privacy Policy and Terms publication (2026-11-02,
+  ADR-080) shows the current version and effective date without review notices.
+  Keep privacy operational approval and search-indexing gates independent; this
+  presentation change does not establish counsel review or alter past records.
 
 #### Audit
 

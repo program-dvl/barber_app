@@ -40,7 +40,9 @@ export function createMarketingAnalytics({ window: browser, document: doc, now =
     }
     function disable() {
         if (id) browser[`ga-disable-${id}`] = true;
-        if (browser[layerName]) browser[layerName].length = 0;
+        // After load Google owns its queue and may be iterating it inside an event callback.
+        // Truncating that live array corrupts its cursor; ga-disable stops sending until the document unloads.
+        if (!loaded && browser[layerName]) browser[layerName].length = 0;
         if (timer !== null) browser.clearTimeout(timer);
         if (expiryTimer !== null) browser.clearTimeout(expiryTimer);
         expiryTimer = null;

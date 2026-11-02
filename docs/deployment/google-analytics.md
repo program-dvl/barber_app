@@ -79,3 +79,21 @@ References: [manual pageviews](https://developers.google.com/analytics/devguides
 [privacy controls](https://developers.google.com/tag-platform/security/guides/privacy),
 [data retention](https://support.google.com/analytics/answer/7667196),
 [enhanced measurement](https://support.google.com/analytics/answer/9216061).
+
+## Trial-click transport
+
+Mark `marketing_cta_clicked` as a key event in the dedicated property using
+Create with code, **no default monetary value** and once-per-event counting.
+The event means a trial-button click only. It is not a completed trial signup,
+purchase or revenue. Google's normal events can batch; key events transmit
+immediately. Do not create URL-based automatic events or add Ads links.
+
+The browser permits at most 200ms for Google's processing callback before signup
+navigation. After Google loads, never truncate its command array: the library
+owns a cursor into that live array and may be inside a callback. Disable through
+the supported ga-disable flag and unload on private navigation/withdrawal.
+Verify the real library, outgoing POST body and actual completed navigation;
+a mock callback alone did not catch the production processing failure.
+
+[Google event grouping](https://support.google.com/analytics/answer/9322688),
+[callback parameters](https://developers.google.com/tag-platform/gtagjs/reference/parameters).

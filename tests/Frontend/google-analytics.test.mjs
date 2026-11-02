@@ -8,7 +8,7 @@ const paths = ['/', '/features', '/pricing', '/solutions/salons'];
 const page = (path = '/', config = {}) => ({ url: `${path}?email=private@example.test#secret`, props: { publicAnalytics: {
     measurement_id: id, paths, page: { location: origin + path, path, title: 'ignored private title' }, ...config,
 } } });
-function fixture({ stored = null, privacy = {}, storageFailure = false } = {}) {
+function fixture({ stored = null, privacy = {}, storageFailure = false, liveGoogleDrain = false } = {}) {
     let clock = 100000, reloads = 0, timerSequence = 0;
     const scripts = [], commands = [], assignments = [], cookies = [], timers = new Map();
     const storage = new Map(stored === null ? [] : [[ANALYTICS_CONSENT_KEY, stored]]);
@@ -28,7 +28,23 @@ function fixture({ stored = null, privacy = {}, storageFailure = false } = {}) {
         const layer = browser.clipperDeskAnalyticsLayer;
         if (layer && !layer.captured) {
             layer.captured = true;
-            layer.push = function (command) { commands.push(Array.from(command)); return Array.prototype.push.call(this, command); };
+            if (liveGoogleDrain) {
+                let cursor = layer.length;
+                layer.push = function (command) {
+                    Array.prototype.push.call(this, command);
+                    // A real tag owns a cursor into this live queue, including while invoking callbacks.
+                    while (cursor !== this.length) {
+                        const item = this[cursor++];
+                        if (!item) throw Error('Google command queue was truncated while its cursor was active');
+                        const row = Array.from(item);
+                        commands.push(row);
+                        if (row[0] === 'event' && typeof row[2]?.event_callback === 'function') row[2].event_callback();
+                    }
+                    return this.length;
+                };
+            } else {
+                layer.push = function (command) { commands.push(Array.from(command)); return Array.prototype.push.call(this, command); };
+            }
         }
         scripts[index].onload();
     }
@@ -268,4 +284,22 @@ test('another navigation cancels a deferred CTA so its late callback never hijac
     f.analytics.beforeVisit({ detail: { visit: { method: 'get', url: origin + '/features' } }, preventDefault() { assert.fail(); } });
     callback(); f.advance(200); f.runDue(); assert.equal(f.assignments.length, 0);
     f.analytics.updatePage(page('/features')); assert.equal(f.browser[`ga-disable-${id}`], false);
+});
+
+test('a synchronous live Google queue callback completes trial navigation without truncating the array Google is processing', () => {
+    const f = fixture({ stored: accepted, liveGoogleDrain: true }); f.analytics.updatePage(page()); f.ready();
+    assert.doesNotThrow(() => trialClick(f));
+    assert.deepEqual(f.assignments, [origin + '/register?locations=2&staff=3']);
+    assert.equal(f.browser[`ga-disable-${id}`], true);
+    assert.equal(f.commands.filter(row => row[1] === 'marketing_cta_clicked').length, 1);
+    assert.ok(f.browser.clipperDeskAnalyticsLayer.length > 0);
+    f.advance(200); f.runDue(); assert.equal(f.assignments.length, 1);
+});
+
+test('withdrawal preserves Googles owned queue while disabling collection and reloading the document', () => {
+    const f = fixture({ stored: accepted, liveGoogleDrain: true }); f.analytics.updatePage(page()); f.ready();
+    const length = f.browser.clipperDeskAnalyticsLayer.length;
+    f.analytics.choose('rejected');
+    assert.equal(f.browser.clipperDeskAnalyticsLayer.length, length);
+    assert.equal(f.browser[`ga-disable-${id}`], true); assert.equal(f.reloads, 1);
 });

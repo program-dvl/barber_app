@@ -14,16 +14,24 @@ it('publishes factual company and security pages without invented assurance', fu
     ['marketing.security', 'Marketing/Security'],
 ]);
 
-it('keeps stable legal acceptance routes and publishes substantive versioned review drafts', function () {
+it('keeps stable acceptance routes and publishes owner-authorized terms with current effective metadata', function () {
     $this->get(route('terms.show'))->assertOk()->assertInertia(fn (Assert $page) => $page
         ->component('TermsOfService')
-        ->where('document.version', '0.4-review')
-        ->where('document.effective_at', 'Not yet effective')
+        ->where('document.version', '1.0')
+        ->where('document.published', true)
+        ->where('document.updated_at', '2 November 2026')
+        ->where('document.effective_at', '2 November 2026')
+        ->missing('document.status')
+        ->missing('document.owner')
         ->where('document.canonical', route('terms.show'))
         ->where('seo.canonical', route('terms.show'))
         ->where('terms', fn (string $terms) => str_contains($terms, 'Plans, trials, subscriptions and billing')
             && str_contains($terms, 'Salon-client bookings, payments and refunds')
-            && str_contains($terms, 'Liability, indemnities, governing law and disputes')));
+            && str_contains($terms, 'Legal rights and disputes')
+            && str_contains($terms, 'They take effect')
+            && ! str_contains(strtolower($terms), 'review draft')
+            && ! str_contains(strtolower($terms), 'not yet effective')
+            && ! str_contains(strtolower($terms), 'pending approval')));
     $this->get(route('register'))->assertOk()->assertInertia(fn (Assert $page) => $page->component('Auth/Register'));
 });
 

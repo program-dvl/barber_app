@@ -1,5 +1,23 @@
 # Project status
 
+## 2026-11-02 Owner-authorized legal publication (FR-01/19; ADR-080)
+
+- Removed the public Privacy Policy review banner and Terms review banner,
+  review-status field and draft-only body wording at the owner's instruction.
+  Terms is version 1.0, updated/effective 2 November 2026; Privacy stays v1.2
+  with the Analytics disclosure and an owner-authorized public effective date.
+- Public privacy date is separate from the existing operational effective-date
+  env, approval, provider/operations checks and indexation/sitemap gates. No
+  existing environment values, records, legal certifications or refund policy
+  were changed. The Refund Policy retains its review presentation.
+- Marketing regressions passed: **153 tests / 3,503 assertions**; final focused
+  privacy/trust rerun passed **35 tests / 339 assertions**, including the
+  independent public-date gate. Client/SSR build, 21 public budgets, scoped Pint
+  and whitespace passed. Actual built-app browser checks at 1440×900 and 390×844
+  confirmed the current metadata, absence of the old notices and no horizontal
+  overflow on both pages. Local preview used SSR-disabled fallback/client
+  integration; these changes are not deployed. [Evidence and limits](audits/2026-11-02-legal-publication/README.md).
+
 ## 2026-11-02 Google indexing and live crawl audit
 
 - Submitted the existing production sitemap in the authorized domain Search
@@ -45,8 +63,8 @@
   route gates exclude signed-in, Help, auth, booking and private/customer records.
   Added equal consent choices, footer withdrawal, privacy-signal handling and
   updated privacy v1.2; existing environment values and credentials preserved.
-- Local Marketing suite 146 passed / 3,455 assertions; frontend 213 passed,
-  including 23 analytics cases; client/SSR builds, 21 public budgets, scoped Pint
+- Local Marketing suite 146 passed / 3,455 assertions; frontend 215 passed,
+  including 25 analytics cases; client/SSR builds, 21 public budgets, scoped Pint
   and whitespace pass. Actual-component Chrome harness checked desktop/390px
   choice, rejection, opt-in, withdrawal, navigation and storage/tag failures
   with Google requests intercepted. This is not live Google receipt evidence.
@@ -56,8 +74,12 @@
   414302511 / property 561865152 uses G-G14K5KCP1X. User/event retention is
   two months, activity resets and ads/Signals/user-provided/granular data off.
   Forge saved only the new measurement-ID line, with pre-save full-text comparison
-  preserving existing content and post-reload ID readback. Code deployment pending.
-  **Not live.** [Evidence and required continuation](audits/2026-11-02-google-analytics/README.md).
+  preserving existing content and post-reload ID readback. Owner deployed 467634e;
+  actual pageviews/pricing 204 and Realtime receipt verified. Real-tag trial
+  processing then stalled navigation; queue correction passes local real-library
+  test (4ms signup navigation), but is not deployed yet. Cleared only the new
+  Analytics ID value temporarily to protect new visits. **Collection paused
+  until correction deployment and production recheck.** [Evidence and required continuation](audits/2026-11-02-google-analytics/README.md).
 
 
 ## 2026-11-01 Checkout rejection classification investigation

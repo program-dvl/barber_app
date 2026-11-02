@@ -2988,6 +2988,34 @@ establishes counsel approval, a DPO appointment, transfer certification or any
 other launch gate. Google terms acceptance and operator country require direct
 owner confirmation; record the actual outcome in the audit.
 
+## ADR-080 — Owner-authorized public Privacy Policy and Terms publication
+
+- Status: Accepted for the requested public presentation; not a finding of legal
+  review or completion of operational launch gates.
+- Date: 2026-11-02
+- Authority: product owner explicitly stated Clipperdesk is live and requested
+  removal of the privacy and terms review/non-effective notices and suitable
+  updates to their visible publication metadata.
+- Requirements: FR-01/19; PRD sections 12/15; ADR-062; OPEN-13.
+
+Publish Terms version 1.0 with last-updated and effective date 2 November 2026.
+Remove draft-only statements and the review-status field from that published
+page. Preserve the existing product, payment, retention and mandatory-rights
+boundaries; do not invent a jurisdiction, liability cap, indemnity or support
+SLA. The owner request does not establish that counsel approved those matters.
+
+Privacy remains version 1.2, including ADR-079's Analytics disclosure. Remove
+its public review banner and display the owner-authorized 2 November 2026 date.
+Keep that public date separate from `LEGAL_PRIVACY_EFFECTIVE_DATE`, approval,
+operations/provider verification, the privacy release checker and the existing
+indexation/sitemap gates. Do not set or imply any of those approvals from this
+request. Existing environment values remain authoritative and unchanged.
+
+The separate Refund Policy remains a review document. This decision does not
+alter prior transaction records, introduce retrospective acceptance, certify
+live payment/refund operation or waive any other OPEN-13/compliance gate.
+Record local and deployed evidence separately in the publication audit.
+
 ## Open decisions
 
 2026-11-01 Stripe audit follow-up to **OPEN-13**: the SaaS billing dispatcher

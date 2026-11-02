@@ -8,6 +8,8 @@ return [
     'canonical_url' => rtrim((string) env('BRAND_WEBSITE_URL', env('APP_URL', 'http://localhost')), '/').'/privacy-policy',
     'version' => '1.2',
     'updated_at' => '2026-11-02',
+    // Owner-authorized public date; operational/indexing approval is separate.
+    'public_effective_at' => '2026-11-02',
     'effective_at' => env('LEGAL_PRIVACY_EFFECTIVE_DATE'),
     // Set only after reviewing this exact version and completing the audit checklist.
     'approved' => (bool) env('LEGAL_PRIVACY_APPROVED', false),

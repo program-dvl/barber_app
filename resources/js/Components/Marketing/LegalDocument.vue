@@ -43,7 +43,7 @@ const printDocument = () => window.print();
 
             <section class="cd-public-section">
                 <PublicContainer>
-                    <div class="cd-legal-review-banner rounded-[var(--radius-lg)] border border-[var(--status-warning)]/30 bg-[var(--brand-accent-soft)]/16 p-5 sm:p-6" role="status">
+                    <div v-if="!document.published" class="cd-legal-review-banner rounded-[var(--radius-lg)] border border-[var(--status-warning)]/30 bg-[var(--brand-accent-soft)]/16 p-5 sm:p-6" role="status">
                         <div class="flex items-start gap-4">
                             <ExclamationTriangleIcon class="mt-0.5 size-6 shrink-0 text-[var(--status-warning)]" aria-hidden="true" />
                             <div>
@@ -53,11 +53,11 @@ const printDocument = () => window.print();
                         </div>
                     </div>
 
-                    <dl class="mt-8 grid overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--surface-raised)] sm:grid-cols-2 xl:grid-cols-4">
+                    <dl class="grid overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--surface-raised)] sm:grid-cols-2" :class="document.published ? 'xl:grid-cols-3' : 'mt-8 xl:grid-cols-4'">
                         <div class="border-b border-[var(--border-subtle)] p-5 sm:border-r xl:border-b-0"><dt class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">Version</dt><dd class="mt-2 font-semibold text-[var(--text-strong)]">{{ document.version }}</dd></div>
-                        <div class="border-b border-[var(--border-subtle)] p-5 xl:border-b-0 xl:border-r"><dt class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">Last reviewed</dt><dd class="mt-2 font-semibold text-[var(--text-strong)]">{{ document.reviewed_at }}</dd></div>
-                        <div class="border-b border-[var(--border-subtle)] p-5 sm:border-b-0 sm:border-r"><dt class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">Effective date</dt><dd class="mt-2 font-semibold text-[var(--text-strong)]">{{ document.effective_at }}</dd></div>
-                        <div class="p-5"><dt class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">Review status</dt><dd class="mt-2 font-semibold leading-6 text-[var(--text-strong)]">{{ document.owner }}</dd></div>
+                        <div class="border-b border-[var(--border-subtle)] p-5 xl:border-b-0 xl:border-r"><dt class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">{{ document.updated_at ? 'Last updated' : 'Last reviewed' }}</dt><dd class="mt-2 font-semibold text-[var(--text-strong)]">{{ document.updated_at || document.reviewed_at }}</dd></div>
+                        <div class="p-5" :class="!document.published && 'border-b border-[var(--border-subtle)] sm:border-b-0 sm:border-r'"><dt class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">Effective date</dt><dd class="mt-2 font-semibold text-[var(--text-strong)]">{{ document.effective_at }}</dd></div>
+                        <div v-if="!document.published" class="p-5"><dt class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">Review status</dt><dd class="mt-2 font-semibold leading-6 text-[var(--text-strong)]">{{ document.owner }}</dd></div>
                     </dl>
 
                     <div class="mt-12 grid gap-12 lg:grid-cols-[15rem_minmax(0,48rem)] lg:justify-center xl:gap-16">

@@ -55,10 +55,13 @@ it('avoids rendering a duplicate policy or title when the optional SSR service r
 it('keeps unapproved content out of indexing without showing internal review language', function () {
     $this->get('/privacy-policy')->assertOk()
         ->assertHeader('X-Robots-Tag', 'noindex, follow, noarchive')
-        ->assertDontSee('Review preview.')->assertDontSee('Effective date')
+        ->assertDontSee('Review preview.')->assertSee('Effective date')
+        ->assertSee('November 2, 2026')
+        ->assertDontSee('This privacy policy is under review and is not yet effective.')
         ->assertDontSee('Good Hours')
         ->assertDontSee('OPEN-')->assertDontSee('blocked_policy')
         ->assertDontSee('Privacy/DPO')->assertDontSee('Approval owner');
+    expect(app(PrivacyNotice::class)->isPublished())->toBeFalse();
     $html = app(PrivacyNotice::class)->content()['html'];
     expect($html)->not->toContain('proposed')->not->toContain('review draft')->not->toContain('{{');
 });
@@ -83,7 +86,7 @@ it('fails closed when an approved flag is set without complete publication facts
     $this->get('/privacy-policy')->assertOk()->assertHeader('X-Robots-Tag', 'noindex, follow, noarchive')->assertDontSee('Review preview');
 })->with([
     ['operator_name', null], ['operator_address', null], ['privacy_email', 'invalid'],
-    ['effective_at', '2099-01-01'], ['effective_at', '2026-02-30'],
+    ['effective_at', null], ['effective_at', '2099-01-01'], ['effective_at', '2026-02-30'],
     ['approval_reference', null], ['operations_verified', false], ['processing_countries', null],
     ['providers.hosting', null], ['canonical_url', 'http://clipperdesk.com/privacy-policy'],
 ]);
@@ -165,3 +168,21 @@ it('explains optional Google Analytics consent, exclusions and withdrawal withou
         ->assertDontSee('does not load advertising pixels, third-party marketing analytics');
     expect(config('privacy.version'))->toBe('1.2');
 });
+
+it('does not display an invalid or future public effective date', function (mixed $date) {
+    config(['privacy.effective_at' => $date, 'privacy.public_effective_at' => null]);
+    $this->get('/privacy-policy')->assertOk()
+        ->assertHeader('X-Robots-Tag', 'noindex, follow, noarchive')
+        ->assertDontSee('Effective date')
+        ->assertDontSee('This privacy policy is under review and is not yet effective.');
+})->with([null, 'invalid-date', '2026-02-30', '2099-01-01']);
+
+it('shows the owner publication date without satisfying a missing operational effective date', function (mixed $date) {
+    approvePrivacyFixture();
+    config(['privacy.effective_at' => $date]);
+    expect(app(PrivacyNotice::class)->isPublished())->toBeFalse();
+    $this->get('/privacy-policy')->assertOk()
+        ->assertHeader('X-Robots-Tag', 'noindex, follow, noarchive')
+        ->assertSee('Effective date')->assertSee('November 2, 2026');
+    $this->artisan('legal:check-privacy')->assertFailed();
+})->with([null, '']);

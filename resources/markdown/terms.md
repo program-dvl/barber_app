@@ -1,11 +1,9 @@
 <span id="status-and-scope"></span>
 ## 1. Status, scope and important definitions
 
-These proposed Terms and Conditions govern access to the Clipperdesk website,
-applications and related services (together, the **Platform**). They are a
-review draft and are not yet effective. The operator contact is listed below.
-Contract terms, governing law, notice handling and acceptance still require
-authorized review before these Terms take effect.
+These Terms and Conditions govern access to the Clipperdesk website,
+applications and related services (together, the **Platform**). They take effect
+on 2 November 2026. Our operator and contact details are listed below.
 
 In these Terms:
 
@@ -18,16 +16,15 @@ In these Terms:
 - **Salon Client** means a person who books, receives or pays for a Business
   Customer's services or products; and
 - **Customer Data** means information submitted to or generated through a
-  Business Customer's workspace, excluding Clipperdesk' own software,
+  Business Customer's workspace, excluding Clipperdesk's own software,
   documentation and aggregated information that cannot reasonably identify a
   person or Business Customer.
 
 The order form, pricing page, plan description, approved data-processing terms,
 refund policy and any written enterprise order accepted by both parties form
-part of the agreement. If those documents conflict, an approved signed order
-should control for its subject matter, followed by approved data-processing
-terms, these Terms, and then public product documentation. This priority still
-requires counsel approval.
+part of the agreement. If those documents conflict, a signed order controls
+for its subject matter, followed by applicable data-processing terms, these
+Terms, and then public product documentation.
 
 ### 1.1 What Clipperdesk provides
 
@@ -47,8 +44,7 @@ products it offers to Salon Clients.
 
 An individual who registers for or administers a Business Customer account
 must have legal capacity to contract and authority to bind that Business
-Customer. The final age and capacity language requires jurisdiction-specific
-legal approval.
+Customer.
 
 Business Customers and Authorized Users must:
 
@@ -143,7 +139,7 @@ or another provider processes payment information under its own terms and
 privacy notice.
 
 Original payment and correction records remain available when a Business Customer records an adjustment. See the [Refund, Return and Cancellation Policy](/refund-policy)
-for the proposed request and timing rules.
+for information about requests and processing times.
 
 <span id="acceptable-use"></span>
 ## 6. Acceptable use
@@ -177,12 +173,11 @@ its rights in Customer Data. It grants Clipperdesk and approved service provider
 the limited rights needed to host, secure, transmit, back up, support and
 otherwise provide the Platform.
 
-The roles of each party depend on the data and purpose. Clipperdesk expects to
-act as a service provider or processor for much of the salon client data a
-Business Customer controls, and as an independent controller or data fiduciary
-for account, security, subscription and direct website information. Those roles
-must be confirmed in the approved [Privacy Policy](/privacy-policy) and any
-data-processing agreement.
+The roles of each party depend on the data and purpose. The
+[Privacy Policy](/privacy-policy) describes Clipperdesk's responsibilities for
+information it controls and for customer records it processes on a business's
+instructions. Any applicable data-processing agreement also governs that
+processing.
 
 Each party must protect the other party's non-public business, technical and
 personal information using reasonable safeguards and use it only for the
@@ -235,7 +230,8 @@ operations. These controls reduce risk but do not guarantee that the Platform
 is error-free, uninterrupted or immune from attack. The [Security page](/security)
 describes the available safeguards; it does not claim a certification or guaranteed uptime.
 
-Contact {{privacy_email}} for support or security concerns. This draft does not provide a service-level or response-time guarantee.
+Contact {{privacy_email}} for support or security concerns. No service-level
+or response-time guarantee is included unless agreed separately in writing.
 
 <span id="termination"></span>
 ## 11. Suspension, cancellation and termination
@@ -250,8 +246,10 @@ Termination does not erase amounts properly due, prior payment evidence,
 rights that accrued before termination, or records that must be retained. The
 current product lifecycle provides a dated export-availability window of up to
 30 days after subscription termination where the account remains eligible.
-This is not a promise to delete all Customer Data after 30 days. The final
-record-specific retention and anonymisation schedule remains under review. Requests are reviewed before any deletion is authorised.
+This is not a promise to delete all Customer Data after 30 days. Retention and
+deletion depend on the record and applicable obligations, as described in the
+[Privacy Policy](/privacy-policy). Requests are reviewed before any deletion is
+authorized.
 
 ## 12. Service disclaimers
 
@@ -261,35 +259,34 @@ searches, reminders, estimates, reports and exports depend on the information
 and configuration supplied by the Business Customer and should be reviewed for
 the intended use.
 
-Any warranty disclaimer must preserve mandatory rights and must be approved for
-the launch market. This review draft intentionally does not invent a final
-"as-is" warranty, service level or remedy.
+Nothing in these Terms excludes a warranty, right or remedy that applicable
+law does not permit the parties to exclude.
 
 <span id="legal-terms"></span>
-## 13. Liability, indemnities, governing law and disputes
+## 13. Legal rights and disputes
 
-Governing law, dispute procedures and liability terms remain under legal review. This draft is not an effective contract. Nothing in it excludes a right or remedy that applicable law does not permit the parties to exclude.
+Applicable law and any separate written agreement govern the parties' legal
+rights and available remedies. Nothing in these Terms excludes a right or
+remedy that applicable law does not permit the parties to exclude.
+Contact {{privacy_email}} to raise a concern about the Platform.
 
 ## 14. Changes, notices and complete agreement
 
-The approved version must carry a version and effective date. Material changes
-should be notified through an approved account or direct channel before they
-take effect, and renewed acceptance should be collected where law or the nature
-of the change requires it. Continued use must not be treated as consent where
-an affirmative agreement is legally required.
+This page states the current version and effective date. Material changes
+will be communicated through an account notice or direct channel before they
+take effect. Renewed acceptance will be requested where law or the nature of
+the change requires it. Continued use is not treated as consent where an
+affirmative agreement is legally required.
 
-An approved order and these Terms should form the complete agreement for the
-Platform and replace earlier proposals on the same subject. Failure to enforce
-a term once is not a permanent waiver. Invalid terms should be narrowed or
-removed without invalidating the rest where law allows. Neither party may
-assign the agreement except under the approved assignment clause.
+An accepted order and these Terms form the agreement for the Platform and
+replace earlier proposals on the same subject. Failure to enforce a term once
+is not a permanent waiver. Invalid terms may be narrowed or removed without
+invalidating the rest where law allows.
 
 ## 15. Contact
 
 Operator: **{{operator_name}}**. Postal contact: {{operator_address}}.
-Support and privacy contact: **{{privacy_email}}**. Separate legal-notice
-arrangements and the final contract remain subject to review. Business Customers can currently use authenticated billing
-and account controls; Salon Clients should use the salon contact details and
-secure appointment link supplied with their booking.
-
-An effective version will state its approval status and effective date.
+Support, privacy and notices concerning these Terms: **{{privacy_email}}**.
+Business Customers can also use authenticated billing and account controls.
+Salon Clients should use the business contact details and secure appointment
+link supplied with their booking.
