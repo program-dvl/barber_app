@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Storage;
+use Illuminate\Support\Facades\Storage;
 
 #[ObservedBy([ArticleObserver::class])]
 class Article extends Model
@@ -52,7 +52,9 @@ class Article extends Model
 
     public function getIconAttribute(): string
     {
-        return Storage::url($this->attributes['thumbnail']);
+        $path = $this->attributes['thumbnail'] ?? '';
+
+        return filled($path) ? Storage::disk(config('articles.disk', 'public'))->url($path) : '';
     }
 
     public function scopePublishable(Builder $query): Builder

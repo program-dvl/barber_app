@@ -1,5 +1,31 @@
 # Project status
 
+## 2026-11-04 Article editor and featured-image upload repair
+
+- Restored explicit public article storage (preserving existing S3), private
+  temporary uploads, 5 MiB JPEG/PNG/WebP validation and named upload errors with
+  draft recovery. Added PHP-FPM per-directory transport settings of 32/40 MiB,
+  preserving existing salon-media limits; effective production limits unverified.
+- Added the existing editorial fields to admin creation/editing, including UTC
+  review/publication and scheduling. Drafts can save before an image is ready.
+  Added visible validation for raw/decoded blocked copy, private/temp/signed links,
+  missing visible text and oversized content. Public publication gates remain.
+- Fixed rich HTML being stripped as Markdown, preserved legacy Markdown with
+  Symfony sanitization, used featured images in public cards/detail/social data,
+  and removed unused synchronous social screenshot generation from saves.
+- Marketing/admin PHP **236 passed / 3,874 assertions**; frontend **217 passed**;
+  client/SSR builds, 21 budgets, scoped Pint and whitespace passed. Isolated
+  browser draft create/save/reopen and original PNG upload/save succeeded.
+  Saved image is identical to the original **2,269,879-byte PNG**; local public
+  URL returns 200/image/png with the full length.
+- **Not deployed or verified fixed on production.** Initial local PHP 2 MiB
+  rejection matches the reported wording but production FPM/proxy/S3 cause is
+  not established. Browser control became disabled again; final inline-upload,
+  public publication and desktop/mobile screen checks remain incomplete. Remote
+  read-only SSH attempt lacked an accepted key. No real article, customer data,
+  schema, provider setting or hosting configuration was changed. Hosting hold
+  remains. [Evidence and continuation](audits/2026-11-04-article-editor/README.md).
+
 ## 2026-11-04 Google search performance follow-up
 
 - Read-only Search Console: selected three-month view now 37 impressions,

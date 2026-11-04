@@ -40,6 +40,16 @@ an unverified product-wide replacement. FR-01–20 scope and financial rules rem
 
 ## Review and evidence
 
+The article editor now exposes Draft and Published or scheduled as explicit
+choices, with a reviewer and UTC review/publish dates. Authors can save text
+before adding a featured image. A failed featured-image upload keeps the text
+and offers saving the draft or choosing a valid replacement; never show raw
+`data.thumbnail.<id>` paths as recovery copy. Image guidance names JPEG/PNG/WebP
+and the 5 MB limit. Search/publication fields become required only on publication.
+Filament's native field-validation and brief save confirmations remain attached
+to the actual form controls; no extra stacked page notice is introduced.
+Verification and production limits belong in the dated article-upload audit.
+
 The 2026-10-29 owner refinement keeps optional gallery controls compact, opens
 only one photo editor at a time and previews chosen images before saving.
 Logo/cover/portrait changes retain clear saved/local state and draft recovery.

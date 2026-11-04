@@ -1,0 +1,29 @@
+{
+  "checked_on": "2026-11-04",
+  "environment": "Isolated SQLite and storage; synthetic administrator; real customer records untouched",
+  "browser_verified_before_interruption": [
+    "Create draft without image",
+    "Save/reopen retained draft text",
+    "Upload original reported PNG through native picker",
+    "Wait for completed upload and Save changes confirmation"
+  ],
+  "saved_draft": {
+    "id": 1,
+    "title": "A calmer day for appointments and walk-ins",
+    "status": "draft",
+    "thumbnail": "articles/01M6JYJH1HJX7YRXCAC40YB11G.png",
+    "content_length": 306,
+    "saved_image_bytes": 2269879,
+    "original_image_bytes": 2269879,
+    "identical_to_reported_original": true,
+    "local_image_http_status": 200,
+    "local_image_content_type": "image/png"
+  },
+  "limits": [
+    "Inline attachment picker began but completion/persistence not verified",
+    "Published page and phone browser checks incomplete",
+    "Production upload failure cause not independently verified",
+    "Browser control disabled again; live SSH existing key rejected authentication",
+    "No production deployment or hosting change made"
+  ]
+}

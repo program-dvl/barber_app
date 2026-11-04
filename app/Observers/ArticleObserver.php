@@ -3,55 +3,27 @@
 namespace App\Observers;
 
 use App\Models\Article;
-use App\Services\OgImageService;
 use Illuminate\Support\Facades\Storage;
 
 class ArticleObserver
 {
-    public function __construct(public OgImageService $ogImageService)
-    {
-        //
-    }
-
-    /**
-     * Handle the Article "created" event.
-     */
-    public function created(Article $article): void
-    {
-        $this->ogImageService->saveImage($article->title, $article->description);
-    }
-
-    /**
-     * Handle the Article "updated" event.
-     */
-    public function updated(Article $article): void
-    {
-        if ($article->isDirty('title') || $article->isDirty('description')) {
-            $this->ogImageService->saveImage($article->title, $article->description);
-        }
-    }
-
     /**
      * Handle the Article "deleted" event.
      */
     public function deleted(Article $article): void
     {
-        Storage::delete($article->thumbnail);
-    }
+        $path = $article->thumbnail;
+        // Only article-managed media belongs to this lifecycle. Never remove
+        // another disk's private file or an image still used by another article.
+        if (! is_string($path) || ! str_starts_with($path, 'articles/')
+            || str_contains($path, '\\') || array_intersect(explode('/', $path), ['.', '..'])) {
+            return;
+        }
 
-    /**
-     * Handle the Article "restored" event.
-     */
-    public function restored(Article $article): void
-    {
-        //
-    }
+        if (Article::query()->whereKeyNot($article->getKey())->where('thumbnail', $path)->exists()) {
+            return;
+        }
 
-    /**
-     * Handle the Article "force deleted" event.
-     */
-    public function forceDeleted(Article $article): void
-    {
-        //
+        Storage::disk(config('articles.disk', 'public'))->delete($path);
     }
 }

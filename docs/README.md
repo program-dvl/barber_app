@@ -103,5 +103,6 @@ checks.
 
 - [Public website content, claims and SEO](modules/public-website.md).
 - [Google Search Console, crawl verification and robots recovery](deployment/search-indexing.md).
+- [Article image uploads and editorial deployment checks](deployment/article-media.md).
 
 - [Consent-based Google Analytics setup and recovery](deployment/google-analytics.md).

@@ -1185,3 +1185,15 @@ four metadata items. This visible publication state does not represent counsel
 approval or an operational certification. Preserve readable wrapping, the shared
 Print or save as PDF action and the policy links at desktop and mobile widths.
 See ADR-080 and the public-website module.
+
+## Article editing recovery (2026-11-04)
+
+Within Filament Content → Articles, keep image-format/size guidance beside the
+featured-image control. Upload validation must name the image and preserve the
+article text, with draft saving available when the image is unavailable. Do not
+repeat the raw component state path or imply a failed image was saved. Keep
+native field feedback associated with its input and save confirmation brief;
+do not add a second persistent banner for the same field failure. Draft and
+publication choices must state their public outcome, and review/publish dates
+must show their time zone. Verify long recovery copy, actual save controls and
+upload/success states at desktop and phone widths before claiming UI completion.

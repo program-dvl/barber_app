@@ -2375,6 +2375,26 @@ pending Google actions are recorded in the [search audit](audits/2026-11-02-sear
 and [operations guide](deployment/search-indexing.md); no existing release gate
 is silently closed by those repairs.
 
+### ADR-065 article editor restoration — 2026-11-04
+
+Authority: the owner's request to repair the existing article module and image
+upload. This restores the already-approved editorial/publication workflow, not
+new acquisition scope. Article admin and the public renderer must agree on
+stored content: retain Markdown compatibility and sanitize rich-editor HTML
+through the installed Symfony sanitizer. Article-owned media uses an explicit
+public disk, preserving existing public S3 deployments; temporary Livewire files
+stay on the private local disk. Public article images and private client files
+remain separate. No existing object is automatically moved or destroyed.
+
+Expose the existing publication fields in the administrator form and validate
+them before marking an article published. Permit unfinished drafts without an
+image, retain work after upload errors, and keep scheduled/unreviewed/inactive
+articles out of listing, detail and sitemap under the current shared gate.
+Remove synchronous generation of unused social screenshots from article saves;
+the featured image is the article's social image. Deployment and actual failing
+upload verification are separate evidence; no production success is inferred
+from test uploads or a PHP configuration file.
+
 ## ADR-066 — Clear introduction decisions and real private booking previews
 
 - Date: 2026-10-14. Status: Accepted from the owner's eight setup requests and

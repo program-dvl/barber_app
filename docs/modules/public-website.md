@@ -45,6 +45,49 @@ pending regional approval under OPEN-15; no invented translated pages are publis
 
 ## Editorial and legal boundaries
 
+### Article administration and media (2026-11-04)
+
+The restored Content → Articles form supports draft saving without a featured
+image and provides the existing publication requirements explicitly: summary,
+topic, search title/description, reviewer, completed review date and publish time.
+Review/publish controls show UTC. A future publish time keeps the article out of
+the public blog, detail route and sitemap until reached. Active can hide a
+published article; it never publishes a draft. Publication validation reports
+incomplete/blocked content at the field and preserves the entered work.
+
+Featured and inline images accept JPEG, PNG or WebP up to 5 MiB. Final media uses
+`articles.disk`: `ARTICLE_MEDIA_DISK` when set, otherwise S3 for an existing S3
+deployment or `public` for a local deployment. Paths are generated under
+`articles/`; local files are served through `storage/app/public` and the normal
+public storage link. Existing S3 media must keep its configured public URL and
+accessibility; no migration/copy/deletion of existing objects is automatic.
+Saved article images are public media; private client records do not belong in
+article content. Livewire temporary uploads use the existing private local disk,
+with its signed preview, validation, throttle and cleanup rules retained.
+
+The public renderer supports existing Markdown and the admin rich editor's HTML,
+then sanitizes both through Symfony's installed HTML sanitizer. Headings, links,
+images, lists and tables survive; executable markup, unsafe URL schemes and
+arbitrary styles/classes do not. The page title owns H1. Unsupported alignment
+buttons are omitted from the editor. Public blog cards, article detail/related
+images and article social metadata use the saved featured image, with the
+existing editorial visual only as a fallback. Saving no longer blocks on unused browser-generated
+social images.
+
+Before publication, match both the stored-query marker policy and decoded text;
+report blocked links/attributes visibly rather than saving an article that the
+public query will exclude. Reject known private/task/temporary/signed links.
+The editor caps content at 100,000 characters and publication checks expanded
+HTML against the sanitizer limit, avoiding silent truncation. Draft text remains
+available for correction; no automatic publication or approval is inferred.
+
+The repository's PHP-FPM `.user.ini` raises upload/request transport limits to
+32/40 MiB while per-workflow validation stays authoritative (article images:
+5 MiB; existing salon-media limits remain). This does not configure PHP CLI,
+Nginx, S3 or load-balancer limits. The deployment runbook must verify the actual
+2.3 MB failing image journey; source/configuration alone is not production proof.
+See [article upload deployment and recovery](../deployment/article-media.md).
+
 Article publication requires nonblank content/search fields, an existing named
 author, owner, image, reached publication/review dates and published/active state.
 `PublicContentPolicy` excludes internal markers and obvious placeholders from the

@@ -46,7 +46,7 @@ class BlogController extends Controller
                 'title' => $seoTitle,
                 'description' => $article->seo_description ?? Str::limit($article->content, 160),
                 'canonical' => route('blog.article', ['article' => $article]),
-                'image' => url('/images/marketing/editorial/resources-planning.webp'),
+                'image' => url($article->icon),
             ],
         ]);
     }
