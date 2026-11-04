@@ -5,22 +5,38 @@ namespace App\Http\Controllers;
 use App\Domain\Marketing\Services\SafeArticleRenderer;
 use App\Models\Article;
 use App\Support\Seo\PublicPage;
+use App\Support\Seo\PublicUrl;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Response;
 
 class BlogController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $articles = Article::with('user')
-            ->publishable()->latest('published_at')->paginate(12)
+        $requestedPage = $request->query->has('page') ? $request->query('page') : '1';
+        abort_unless(is_string($requestedPage) && preg_match('/^[1-9][0-9]{0,8}$/D', $requestedPage), 404);
+        $page = (int) $requestedPage;
+        $query = Article::query()->publishable();
+        $total = $query->count();
+        abort_if($page > max(1, (int) ceil($total / 12)), 404);
+
+        $indexUrl = PublicUrl::canonical(route('blog.index'));
+        $articles = $query->with('user')->latest('published_at')->latest('id')
+            ->paginate(12, page: $page, total: $total)->withPath($indexUrl)
             ->through(fn (Article $article): array => $this->summary($article));
 
         return PublicPage::render('Blog', [
-            'articles' => $articles,
+            'articles' => [
+                'data' => $articles->items(),
+                'current_page' => $articles->currentPage(),
+                'last_page' => $articles->lastPage(),
+                'prev_page_url' => $page === 2 ? $indexUrl : $articles->previousPageUrl(),
+                'next_page_url' => $articles->nextPageUrl(),
+            ],
             'seo' => [
-                'title' => 'Service business operations blog | ClipperDesk',
-                'description' => 'Reviewed articles about booking, scheduling, client service and day-to-day operations for appointment-led service businesses.',
+                'title' => $page > 1 ? 'Service business operations blog: page '.$page.' | ClipperDesk' : 'Service business operations blog | ClipperDesk',
+                'description' => ($page > 1 ? 'Page '.$page.' of reviewed articles' : 'Reviewed articles').' about booking, scheduling, client service and day-to-day operations for appointment-led service businesses.',
                 'canonical' => route('blog.index'),
                 'image' => url('/images/marketing/editorial/resources-planning.webp'),
             ],

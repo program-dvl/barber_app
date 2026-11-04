@@ -268,3 +268,20 @@ the price card: a gift icon, compact campaign/percentage strip, discounted first
 payment, regular renewal and saving breakdown. Public pricing removes procedural
 paragraphs. Owner coupon entry is a disclosure above Review subscription, with
 real AppNotice validation feedback retained. [Desktop/mobile evidence](../audits/2026-11-01-offer-presentation/README.md).
+
+## Crawlable article archive — 2026-11-04
+
+PRD sections 1–4/12/15 and ADR-065: the public blog shows 12 eligible articles
+per page, with a stable publication-date/ID order. When more articles exist,
+Previous and Next are ordinary crawlable links in an Article pages navigation
+region. A visible current-page indicator explains location; first/last pages do
+not offer unavailable actions. Related actions wrap with shared 44px buttons and
+12px gaps. A one-page or empty archive has no redundant pagination controls.
+
+Page one keeps the clean `/blog` identity. Later pages have their own normalized
+`?page=N` canonical, social URL and WebPage schema URL on the primary production
+host. Tracking/private query values do not enter page identity or navigation.
+Invalid or out-of-range pages return a non-indexable 404; empty first-page
+resource guidance remains available. Draft, future, inactive, incomplete and
+blocked articles never enter archive counts or results. This change makes older
+articles discoverable; it does not claim Google indexing or rankings.

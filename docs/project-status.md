@@ -1,5 +1,17 @@
 # Project status
 
+## 2026-11-04 Search discovery repairs
+
+- Owner-authorized Nginx robots fallback applied through Forge; live robots now
+  returns200/text/plain with canonical sitemap. Existing upload limit preserved.
+- Implemented crawlable twelve-post archive navigation with distinct page
+  canonicals and successful marketing-only alias redirects. Tenant booking,
+  private/auth/API routes and mutations retain their behavior.
+- Marketing276 passed/4246 assertions; frontend219 passed; client/SSR build,
+  21budgets and scoped formatting passed. Isolated25-post browser navigation
+  and390px/44px controls passed. Source deployment pending final verification.
+  [Evidence](audits/2026-11-04-search-discovery/README.md).
+
 ## 2026-11-04 Article status-only publishing
 
 - At the owner's request, replaced the separate Publication section and manual

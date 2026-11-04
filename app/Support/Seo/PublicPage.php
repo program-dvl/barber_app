@@ -11,6 +11,11 @@ class PublicPage
     {
         if (filled($props['seo']['canonical'] ?? null)) {
             $props['seo']['canonical'] = PublicUrl::canonical($props['seo']['canonical']);
+            // Blog pages contain different articles. Only the controller's
+            // validated page number becomes URL identity; query input stays out.
+            if (request()->routeIs('blog.index') && ($page = data_get($props, 'articles.current_page', 1)) > 1) {
+                $props['seo']['canonical'] .= '?page='.$page;
+            }
         }
         $props['seo'] = [
             'image' => url(config('brand.social_image')),

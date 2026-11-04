@@ -50,3 +50,28 @@ test('renders the saved card image in the blog and retains an image fallback', a
     assert.ok(!html.includes('src=""'));
     assert.match(html, /href="\/blog\/prepare-the-day"/);
 });
+
+test('renders crawlable archive links and an announced current page in the actual blog component', async () => {
+    const html = await renderToString(app(Blog, {
+        articles: { data: [article], current_page: 2, last_page: 3, prev_page_url: '/blog', next_page_url: '/blog?page=3' },
+        seo: { title: 'Articles: page 2' },
+    }));
+    assert.match(html, /<nav[^>]+aria-label="Article pages"/);
+    assert.match(html, /<a[^>]+href="\/blog"[^>]+rel="prev"[^>]*>Previous<\/a>/);
+    assert.match(html, /<a[^>]+href="\/blog\?page=3"[^>]+rel="next"[^>]*>Next<\/a>/);
+    assert.match(html, /aria-current="page">Page 2<\/span> of 3/);
+});
+
+test('does not offer dead archive controls at the first last or only page', async () => {
+    for (const [current, previous, next] of [[1, null, '/blog?page=2'], [3, '/blog?page=2', null]]) {
+        const html = await renderToString(app(Blog, {
+            articles: { data: [article], current_page: current, last_page: 3, prev_page_url: previous, next_page_url: next },
+            seo: { title: 'Articles' },
+        }));
+        assert.equal(html.includes('rel="prev"'), Boolean(previous));
+        assert.equal(html.includes('rel="next"'), Boolean(next));
+        assert.ok(!html.includes('href="null"'));
+    }
+    const onlyPage = await renderToString(app(Blog, { articles: { data: [article], current_page: 1, last_page: 1 }, seo: { title: 'Articles' } }));
+    assert.ok(!onlyPage.includes('aria-label="Article pages"'));
+});

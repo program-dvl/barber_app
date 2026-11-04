@@ -168,3 +168,18 @@ configuration, Forge environment changes and production receipt evidence.
 [evidence](../audits/2026-11-02-google-analytics/README.md).
 
 Publication evidence: [2026-11-02 legal publication audit](../audits/2026-11-02-legal-publication/README.md).
+
+## Search discovery repair — 2026-11-04
+
+The blog archive exposes crawlable Previous/Next links after twelve eligible
+articles, with a current-page label and stable publication-date/id ordering.
+Each later page has its own canonical `?page=N`; page one links use `/blog`.
+Invalid or out-of-range pages return noindex 404 without exposing drafts.
+
+In production, successful curated marketing GET/HEAD responses on the configured
+booking host or www alias redirect permanently to the primary HTTPS origin.
+The route registry and successful response gate preserve tenant booking, private
+links, authentication, APIs, assets, mutations, signed queries and missing pages.
+Inertia visits use its external-location response to avoid cross-origin XHR.
+The booking-host root redirects because it resolves to marketing.home; actual
+`/{salon-slug}` and `/book` booking entry points retain their origin.

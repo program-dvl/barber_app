@@ -100,7 +100,9 @@ it('rejects internal and placeholder copy in the active public templates includi
 it('uses the configured primary production host for canonicals sitemap and schema', function () {
     $this->app->detectEnvironment(fn () => 'production');
     config(['brand.website_url' => 'https://clipperdesk.com']);
-    $response = $this->get('https://www.clipperdesk.com/features?utm_source=alias')->assertOk();
+    $this->get('https://www.clipperdesk.com/features?utm_source=alias')->assertStatus(301)
+        ->assertRedirect('https://clipperdesk.com/features?utm_source=alias');
+    $response = $this->get('https://clipperdesk.com/features?utm_source=alias')->assertOk();
     $props = $response->viewData('page')['props'];
     expect($props['seo']['canonical'])->toBe('https://clipperdesk.com/features');
     expect(collect($props['structuredData']['@graph'])->firstWhere('@type', 'WebSite')['url'])->toBe('https://clipperdesk.com');

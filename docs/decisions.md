@@ -3119,3 +3119,14 @@ Continue rejecting changed offers/amounts before submitting payment. A genuine
 mismatch returns billing_offer_changed, closes the obsolete review, preserves
 selection and allows immediate new review; do not label this an outage or impose
 a retry cooldown. No stored quote, invoice, rate or Stripe attempt is rewritten.
+
+### ADR-065 crawlable archives and marketing host consolidation — 2026-11-04
+
+Authority: owner explicitly requested robots.txt and point-one discovery repairs.
+Use sequential crawlable article archive links and distinct page canonicals,
+without changing publication/privacy gates. Consolidate only successful explicit
+marketing routes from known production aliases onto the configured primary host.
+Never blanket-redirect the booking domain: tenant booking and private tasks must
+keep their origin. Preserve raw marketing queries in redirects; only validated
+archive page numbers enter canonical identity. Repair the existing Nginx robots
+location with Laravel fallback, retaining generated rules and sitemap ownership.

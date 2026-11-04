@@ -32,11 +32,12 @@ existing `error_page 404 /index.php` invokes Laravel but preserves the HTTP 404
 status. The response body is the correct generated robots text, so inspecting
 body text alone misses the failure.
 
-Further hosting changes are on hold while the owner's separate deployment is
-in progress. No robots nginx repair is claimed applied by this task. Check the
-current saved nginx configuration and deployment status before making a change.
+The owner explicitly authorized this repair on 2026-11-04. The exact fallback
+below was saved through Forge; HTTP verification now returns 200/text/plain
+with the canonical sitemap declaration. The existing 40m upload setting and all
+other configuration were preserved. Earlier evidence above describes the failure.
 
-## Pending robots repair
+## Robots repair applied — 2026-11-04
 
 When the active deployment is complete, preserve the current Forge configuration
 and add exactly one fallback inside the existing robots block:
@@ -129,3 +130,16 @@ After the robots repair and a stable full HTTP check:
 Evidence is retained in the
 [2026-11-02 search-indexing audit](../audits/2026-11-02-search-indexing/README.md).
 No ongoing monitor or recurring automation is created by this runbook.
+
+## Archive and alias deployment — 2026-11-04
+
+Deploy BlogController, PublicPage, Blog.vue, RedirectPublicMarketingAliases and
+Kernel together with matching client/SSR builds. No schema or environment change
+is needed. Refresh normal route/config/view caches and managed SSR as part of the
+existing Forge release. Check ordinary marketing aliases return301 to the same
+primary-host path; Inertia visits use409/X-Inertia-Location. Booking routes,
+private links, APIs and mutations must not receive marketing redirects.
+
+With only four live posts the archive correctly has no pagination controls;
+25 eligible isolated articles verify pages1–3, forward/back links, accurate
+canonical identity and44px phone actions without production test content.

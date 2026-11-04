@@ -11,6 +11,7 @@ use App\Http\Middleware\EnsurePlatformAdministrator;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\RedirectPublicMarketingAliases;
 use App\Http\Middleware\RequireEntitlement;
 use App\Http\Middleware\RequireWorkspaceFeature;
 use App\Http\Middleware\ResolveTenantContext;
@@ -96,6 +97,7 @@ class Kernel extends HttpKernel
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
             SubstituteBindings::class,
+            RedirectPublicMarketingAliases::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ],

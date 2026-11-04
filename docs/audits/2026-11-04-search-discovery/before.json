@@ -1,0 +1,3302 @@
+{
+  "checkedAt": "2026-11-04T16:48:13.849Z",
+  "origin": "https://clipperdesk.com",
+  "scope": "Original HTTP HTML only. Does not establish Google crawling, indexing or rankings.",
+  "sitemap": {
+    "url": "https://clipperdesk.com/sitemap.xml",
+    "status": 200,
+    "seconds": 1.041,
+    "problems": []
+  },
+  "robots": {
+    "url": "https://clipperdesk.com/robots.txt",
+    "status": 404,
+    "seconds": 0.468,
+    "problems": [
+      "Robots must return HTTP 200; received 404"
+    ]
+  },
+  "pages": [
+    {
+      "url": "https://clipperdesk.com/",
+      "status": 200,
+      "seconds": 1.098,
+      "titles": [
+        "Appointment scheduling & service business software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Run booking, staff calendars, client records, walk-ins, checkout and reporting in one workspace for beauty, wellness, fitness, health and pet-care businesses."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Your whole day, beautifully run."
+      ],
+      "mainWords": 595,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/blog",
+      "status": 200,
+      "seconds": 2.56,
+      "titles": [
+        "Service business operations blog | ClipperDesk"
+      ],
+      "descriptions": [
+        "Reviewed articles about booking, scheduling, client service and day-to-day operations for appointment-led service businesses."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/blog"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Articles"
+      ],
+      "mainWords": 232,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/blog/best-salon-management-software-in-2027-features-pricing-buying-guide",
+      "status": 200,
+      "seconds": 2.733,
+      "titles": [
+        "Best Salon Management Software 2027: Buying Guide | ClipperDesk"
+      ],
+      "descriptions": [
+        "Compare salon management software features, pricing, online booking, staff scheduling, and more. Find the right solution for your salon in 2027."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/blog/best-salon-management-software-in-2027-features-pricing-buying-guide"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Best Salon Management Software in 2027: Features, Pricing & Buying Guide"
+      ],
+      "mainWords": 1222,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/blog/how-to-reduce-salon-no-shows-10-practical-strategies-that-work",
+      "status": 200,
+      "seconds": 1.837,
+      "titles": [
+        "How to Reduce Salon No-Shows: 10 Proven Strategies | ClipperDesk"
+      ],
+      "descriptions": [
+        "Reduce salon no-shows with 10 practical strategies. Learn about appointment reminders, cancellation policies, booking systems, and a 30-day improvement plan."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/blog/how-to-reduce-salon-no-shows-10-practical-strategies-that-work"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "How to Reduce Salon No-Shows: 10 Practical Strategies That Work"
+      ],
+      "mainWords": 1125,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/blog/how-to-run-a-successful-salon-or-barbershop-in-2027-a-complete-guide",
+      "status": 200,
+      "seconds": 2.196,
+      "titles": [
+        "How to Run a Successful Salon or Barbershop in 2027 | ClipperDesk"
+      ],
+      "descriptions": [
+        "Learn how to grow your salon or barbershop in 2027 with better online booking, staff management, customer retention, and smarter business operations."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/blog/how-to-run-a-successful-salon-or-barbershop-in-2027-a-complete-guide"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "How to Run a Successful Salon or Barbershop in 2027: A Complete Guide"
+      ],
+      "mainWords": 1427,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/blog/how-to-start-a-hair-salon-in-2027-costs-checklist-business-plan",
+      "status": 200,
+      "seconds": 2.305,
+      "titles": [
+        "How to Start a Hair Salon in 2027: Costs & Checklist | ClipperDesk"
+      ],
+      "descriptions": [
+        "Learn how to start a hair salon in 2027. Explore startup costs, licenses, equipment, business planning, break-even calculations, and an opening checklist."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/blog/how-to-start-a-hair-salon-in-2027-costs-checklist-business-plan"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "How to Start a Hair Salon in 2027: Costs, Checklist & Business Plan"
+      ],
+      "mainWords": 1620,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/company",
+      "status": 200,
+      "seconds": 2.181,
+      "titles": [
+        "About ClipperDesk | Service business management software"
+      ],
+      "descriptions": [
+        "Learn how ClipperDesk connects appointments, client records, team schedules and recorded sales for independent professionals and growing service businesses."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/company"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "About ClipperDesk"
+      ],
+      "mainWords": 155,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/features",
+      "status": 200,
+      "seconds": 1.598,
+      "titles": [
+        "Service business management software features | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore online booking, staff calendars, walk-ins, client management, checkout and reporting for appointment-led service businesses."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/features"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage the work around every appointment."
+      ],
+      "mainWords": 172,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/features/calendar-and-walk-ins",
+      "status": 200,
+      "seconds": 2.119,
+      "titles": [
+        "Calendar and walk-in software for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate staff schedules, chairs and rooms, appointment changes and waiting clients."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/features/calendar-and-walk-ins"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage appointments and walk-ins together"
+      ],
+      "mainWords": 237,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/features/checkout-and-reporting",
+      "status": 200,
+      "seconds": 2.177,
+      "titles": [
+        "Checkout and reporting for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Record service payments, create receipts and trace report totals to the original sale."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/features/checkout-and-reporting"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Complete checkout and understand your reports"
+      ],
+      "mainWords": 260,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/features/client-management",
+      "status": 200,
+      "seconds": 1.478,
+      "titles": [
+        "Client management software for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Find past visits, preferences, notes, forms and files in one client profile, with access controlled by role."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/features/client-management"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Keep client history and preferences together"
+      ],
+      "mainWords": 232,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/features/online-booking",
+      "status": 200,
+      "seconds": 1.934,
+      "titles": [
+        "Online booking software for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Let clients book appointments on their phone, choosing services, staff and available times."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/features/online-booking"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Book appointments online"
+      ],
+      "mainWords": 241,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/guides/booking-policy-basics",
+      "status": 200,
+      "seconds": 1.982,
+      "titles": [
+        "Booking policy guide for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Set booking, deposit and cancellation terms your clients can understand and your team can apply consistently."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/guides/booking-policy-basics"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Set a clear booking policy"
+      ],
+      "mainWords": 223,
+      "anchorCount": 25,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/guides/salon-opening-checklist",
+      "status": 200,
+      "seconds": 1.651,
+      "titles": [
+        "Service business opening checklist | ClipperDesk"
+      ],
+      "descriptions": [
+        "Prepare the minimum business, location, service, staff and booking rules needed before sharing an online booking link."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/guides/salon-opening-checklist"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Prepare your business for online booking"
+      ],
+      "mainWords": 200,
+      "anchorCount": 25,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help",
+      "status": 200,
+      "seconds": 1.919,
+      "titles": [
+        "Help Center | ClipperDesk"
+      ],
+      "descriptions": [
+        "Find step-by-step ClipperDesk guides for business setup, bookings, team, clients, sales and billing."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Good answers. A smoother working day."
+      ],
+      "mainWords": 335,
+      "anchorCount": 45,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-delete",
+      "status": 200,
+      "seconds": 2.316,
+      "titles": [
+        "Understand account deletion and business closure | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Review the consequences before permanently removing your personal sign-in account."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/account-delete"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand account deletion and business closure"
+      ],
+      "mainWords": 391,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-profile",
+      "status": 200,
+      "seconds": 2.241,
+      "titles": [
+        "Update your name, email, photo or password | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Manage personal sign-in information separately from the business profile. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/account-profile"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Update your name, email, photo or password"
+      ],
+      "mainWords": 388,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-recovery",
+      "status": 200,
+      "seconds": 1.416,
+      "titles": [
+        "Recover a forgotten password or lost authenticator | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Use the correct recovery route while keeping business access and private credentials safe."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/account-recovery"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Recover a forgotten password or lost authenticator"
+      ],
+      "mainWords": 399,
+      "anchorCount": 37,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-security",
+      "status": 200,
+      "seconds": 2.055,
+      "titles": [
+        "Set up two-factor authentication and review devices | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Protect sign-in with an authenticator app and remove other browser sessions. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/account-security"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Set up two-factor authentication and review devices"
+      ],
+      "mainWords": 408,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-sign-in",
+      "status": 200,
+      "seconds": 2.092,
+      "titles": [
+        "Sign in to the correct workspace | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Use your own account and enter the business your role can access. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/account-sign-in"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Sign in to the correct workspace"
+      ],
+      "mainWords": 344,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-add",
+      "status": 200,
+      "seconds": 1.645,
+      "titles": [
+        "Add an appointment at reception | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Create a visit with the correct client, services, staff and local start time. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/appointments-add"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add an appointment at reception"
+      ],
+      "mainWords": 501,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-change",
+      "status": 200,
+      "seconds": 1.783,
+      "titles": [
+        "Reschedule, reassign or change an appointment | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Review changes to a visit while preserving its previous details and history. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/appointments-change"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Reschedule, reassign or change an appointment"
+      ],
+      "mainWords": 435,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-no-slots",
+      "status": 200,
+      "seconds": 1.996,
+      "titles": [
+        "Troubleshoot missing services or online time slots | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Check publication, location, service, staff and scheduling settings in a useful order."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/appointments-no-slots"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Troubleshoot missing services or online time slots"
+      ],
+      "mainWords": 485,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-public-booking",
+      "status": 200,
+      "seconds": 1.963,
+      "titles": [
+        "Understand the customer’s online booking journey | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Learn what customers choose and what makes a booking confirmed. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/appointments-public-booking"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand the customer’s online booking journey"
+      ],
+      "mainWords": 571,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-self-service",
+      "status": 200,
+      "seconds": 1.752,
+      "titles": [
+        "Help customers manage an appointment securely | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Use private confirmation links for permitted changes without exposing a customer’s booking."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/appointments-self-service"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Help customers manage an appointment securely"
+      ],
+      "mainWords": 448,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-status-cancel",
+      "status": 200,
+      "seconds": 1.963,
+      "titles": [
+        "Record visit progress, cancellation and no-shows | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Keep arrivals, service progress and appointment history accurate. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/appointments-status-cancel"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Record visit progress, cancellation and no-shows"
+      ],
+      "mainWords": 432,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-waitlist",
+      "status": 200,
+      "seconds": 2.057,
+      "titles": [
+        "Understand waitlists and opening offers | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Help customers request a suitable opening and respond to a private offer. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/appointments-waitlist"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand waitlists and opening offers"
+      ],
+      "mainWords": 420,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-access",
+      "status": 200,
+      "seconds": 1.816,
+      "titles": [
+        "Why is a feature missing or the workspace read-only? | ClipperDesk He…"
+      ],
+      "descriptions": [
+        "Distinguish permissions, branch scope, setup requirements and subscription restrictions."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/billing-access"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Why is a feature missing or the workspace read-only?"
+      ],
+      "mainWords": 448,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-cancel",
+      "status": 200,
+      "seconds": 2.199,
+      "titles": [
+        "Cancel renewal or keep your subscription | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Schedule cancellation for the end of the paid term, or reverse it before that date."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/billing-cancel"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Cancel renewal or keep your subscription"
+      ],
+      "mainWords": 386,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-capacity",
+      "status": 200,
+      "seconds": 2.123,
+      "titles": [
+        "Understand locations, bookable staff and pricing | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Know what counts toward capacity and how the subscription estimate is calculated."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/billing-capacity"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand locations, bookable staff and pricing"
+      ],
+      "mainWords": 443,
+      "anchorCount": 39,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-change-capacity",
+      "status": 200,
+      "seconds": 1.743,
+      "titles": [
+        "Change capacity or switch monthly and yearly billing | ClipperDesk He…"
+      ],
+      "descriptions": [
+        "Review when a change takes effect and what is due before confirming it. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/billing-change-capacity"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Change capacity or switch monthly and yearly billing"
+      ],
+      "mainWords": 408,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-invoices",
+      "status": 200,
+      "seconds": 1.895,
+      "titles": [
+        "View subscription invoices and manage your payment method | ClipperDe… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Read invoice history and open the secure billing portal for account payment details."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/billing-invoices"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "View subscription invoices and manage your payment method"
+      ],
+      "mainWords": 415,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-recovery",
+      "status": 200,
+      "seconds": 1.914,
+      "titles": [
+        "Recover an unfinished checkout or delayed billing update | ClipperDes… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Continue the saved payment safely, or close it before reviewing another selection."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/billing-recovery"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Recover an unfinished checkout or delayed billing update"
+      ],
+      "mainWords": 537,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-start-subscription",
+      "status": 200,
+      "seconds": 1.755,
+      "titles": [
+        "Review and start a paid subscription | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Choose capacity and billing cycle, review the complete price, then continue to secure checkout."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/billing-start-subscription"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Review and start a paid subscription"
+      ],
+      "mainWords": 464,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/billing-text-credits",
+      "status": 200,
+      "seconds": 1.834,
+      "titles": [
+        "Understand monthly text credits and optional credit packs | ClipperDe… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Track included usage, prepaid balances and credit purchases shown for your account."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/billing-text-credits"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand monthly text credits and optional credit packs"
+      ],
+      "mainWords": 423,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-booking-link",
+      "status": 200,
+      "seconds": 1.92,
+      "titles": [
+        "Change and share your booking link | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Choose a readable unique link while preserving previously used business links. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/business-booking-link"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Change and share your booking link"
+      ],
+      "mainWords": 361,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-booking-preferences",
+      "status": 200,
+      "seconds": 1.835,
+      "titles": [
+        "Configure online booking preferences | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Choose booking intervals, staff choice, new-client rules, cancellation cutoffs and link expiry."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/business-booking-preferences"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Configure online booking preferences"
+      ],
+      "mainWords": 459,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-branding",
+      "status": 200,
+      "seconds": 1.952,
+      "titles": [
+        "Add your logo, cover image and accent colour | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Personalize the booking experience without delaying internal setup. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/business-branding"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add your logo, cover image and accent colour"
+      ],
+      "mainWords": 345,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-hours",
+      "status": 200,
+      "seconds": 2.005,
+      "titles": [
+        "Set opening hours and split opening periods | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Review the opening week and check affected appointments before saving. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/business-hours"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Set opening hours and split opening periods"
+      ],
+      "mainWords": 438,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-location",
+      "status": 200,
+      "seconds": 2.054,
+      "titles": [
+        "Add or edit a location | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Set the branch address, time zone, public contacts and initial opening hours. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/business-location"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add or edit a location"
+      ],
+      "mainWords": 482,
+      "anchorCount": 39,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-profile",
+      "status": 200,
+      "seconds": 2.026,
+      "titles": [
+        "Edit your business profile and regional settings | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Update public identity, contact details, booking policies and local formats. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/business-profile"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Edit your business profile and regional settings"
+      ],
+      "mainWords": 414,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/business-publish",
+      "status": 200,
+      "seconds": 2.068,
+      "titles": [
+        "Preview, publish or resume your booking page | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Review the real saved page and explicitly choose when clients can book online. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/business-publish"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Preview, publish or resume your booking page"
+      ],
+      "mainWords": 449,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/calendar-availability",
+      "status": 200,
+      "seconds": 2.042,
+      "titles": [
+        "Understand staff availability and booking conflicts | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Find out why visible space on the calendar may not be bookable. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/calendar-availability"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand staff availability and booking conflicts"
+      ],
+      "mainWords": 450,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/calendar-blocks-closures",
+      "status": 200,
+      "seconds": 1.778,
+      "titles": [
+        "Block staff time and record operational disruption | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Keep non-bookable time visible and review appointments affected by disruption. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/calendar-blocks-closures"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Block staff time and record operational disruption"
+      ],
+      "mainWords": 421,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/calendar-views",
+      "status": 200,
+      "seconds": 1.948,
+      "titles": [
+        "Find appointments and choose a Calendar view | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Use Team, Day, Week and Agenda views, date controls, filters and printed schedules."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/calendar-views"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Find appointments and choose a Calendar view"
+      ],
+      "mainWords": 445,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-deposits-taxes-tips",
+      "status": 200,
+      "seconds": 1.936,
+      "titles": [
+        "Review deposits, tax and staff tips at checkout | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Understand how existing deposits, configured tax and explicit tips affect the amount due."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/checkout-deposits-taxes-tips"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Review deposits, tax and staff tips at checkout"
+      ],
+      "mainWords": 449,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-payment-recovery",
+      "status": 200,
+      "seconds": 1.713,
+      "titles": [
+        "Recover an interrupted payment record safely | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Check the same saved request and history before recording or collecting anything again."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/checkout-payment-recovery"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Recover an interrupted payment record safely"
+      ],
+      "mainWords": 451,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-receipts-history",
+      "status": 200,
+      "seconds": 1.922,
+      "titles": [
+        "Find sales, outstanding balances and receipts | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Search saved sales, inspect payment history and print the original issued receipt."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/checkout-receipts-history"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Find sales, outstanding balances and receipts"
+      ],
+      "mainWords": 424,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-record-payments",
+      "status": 200,
+      "seconds": 1.915,
+      "titles": [
+        "Record received, split or partial payments | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Save money you have actually received and keep unpaid balances visible. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/checkout-record-payments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Record received, split or partial payments"
+      ],
+      "mainWords": 473,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-refund",
+      "status": 200,
+      "seconds": 1.863,
+      "titles": [
+        "Record money returned through the original payment method | ClipperDe… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Review refund or void amounts, reasons and product disposition without rewriting the original sale."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/checkout-refund"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Record money returned through the original payment method"
+      ],
+      "mainWords": 462,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-review",
+      "status": 200,
+      "seconds": 2.019,
+      "titles": [
+        "Review and save a sale after a visit | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Check performed services, adjustments and totals before recording payment. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/checkout-review"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Review and save a sale after a visit"
+      ],
+      "mainWords": 476,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-add-find",
+      "status": 200,
+      "seconds": 2.054,
+      "titles": [
+        "Find or add a client | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Keep one useful client record and avoid accidental duplicates. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/clients-add-find"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Find or add a client"
+      ],
+      "mainWords": 447,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-duplicates",
+      "status": 200,
+      "seconds": 1.92,
+      "titles": [
+        "Review and merge duplicate client profiles | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Keep the right profile and preserve connected history after a careful comparison."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/clients-duplicates"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Review and merge duplicate client profiles"
+      ],
+      "mainWords": 407,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-edit-preferences",
+      "status": 200,
+      "seconds": 2.093,
+      "titles": [
+        "Update a client’s details and preferences | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Correct contacts, record preferences and tags, and save a reason for the change."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/clients-edit-preferences"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Update a client’s details and preferences"
+      ],
+      "mainWords": 465,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-forms",
+      "status": 200,
+      "seconds": 2.107,
+      "titles": [
+        "Create form templates and request a client form | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Publish clear questions and keep completed forms tied to the wording the client saw."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/clients-forms"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Create form templates and request a client form"
+      ],
+      "mainWords": 469,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-notes",
+      "status": 200,
+      "seconds": 1.885,
+      "titles": [
+        "Add useful client notes and control visibility | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Save service context with a clear type, importance and appropriate visibility. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/clients-notes"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add useful client notes and control visibility"
+      ],
+      "mainWords": 421,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-payments",
+      "status": 200,
+      "seconds": 2.125,
+      "titles": [
+        "Understand a client’s payments and outstanding balance | ClipperDesk…"
+      ],
+      "descriptions": [
+        "Read recorded spending, payments and unfinished checkouts without confusing them with visit prices."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/clients-payments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand a client’s payments and outstanding balance"
+      ],
+      "mainWords": 400,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-privacy",
+      "status": 200,
+      "seconds": 1.989,
+      "titles": [
+        "Record and process a client privacy request | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Track exports, corrections, withdrawals and deletion reviews without silently erasing history."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/clients-privacy"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Record and process a client privacy request"
+      ],
+      "mainWords": 434,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-private-files",
+      "status": 200,
+      "seconds": 1.767,
+      "titles": [
+        "Store and access private client files | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Upload supported visit images and documents with appropriate visibility and expiring links."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/clients-private-files"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Store and access private client files"
+      ],
+      "mainWords": 426,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-visits-rebook",
+      "status": 200,
+      "seconds": 1.863,
+      "titles": [
+        "Review a client’s visits and book their next appointment | ClipperDes… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Follow past and upcoming visits, then rebook using today’s eligible services. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/clients-visits-rebook"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Review a client’s visits and book their next appointment"
+      ],
+      "mainWords": 421,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/inventory-availability",
+      "status": 200,
+      "seconds": 2.034,
+      "titles": [
+        "Understand retail inventory availability | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Know which retail tools are currently visible and how saved retail sales affect stock."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/inventory-availability"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand retail inventory availability"
+      ],
+      "mainWords": 449,
+      "anchorCount": 37,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/notifications-consent",
+      "status": 200,
+      "seconds": 1.967,
+      "titles": [
+        "Understand SMS consent, opt-outs and text allowances | ClipperDesk He…"
+      ],
+      "descriptions": [
+        "Know why a notification may be stopped even when SMS is enabled. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/notifications-consent"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand SMS consent, opt-outs and text allowances"
+      ],
+      "mainWords": 454,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/notifications-delivery",
+      "status": 200,
+      "seconds": 1.345,
+      "titles": [
+        "Check whether a client notification was delivered | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Read delivery history, understand status and investigate a missing update. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/notifications-delivery"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Check whether a client notification was delivered"
+      ],
+      "mainWords": 452,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/notifications-preferences",
+      "status": 200,
+      "seconds": 1.929,
+      "titles": [
+        "Choose client notification channels and quiet hours | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Manage email and SMS preferences while ClipperDesk handles message wording and sending."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/notifications-preferences"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Choose client notification channels and quiet hours"
+      ],
+      "mainWords": 462,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/ops-dashboard",
+      "status": 200,
+      "seconds": 2.002,
+      "titles": [
+        "Use your daily workspace | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Follow today’s appointments, arrivals, waiting clients and payment follow-up from one place."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/ops-dashboard"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Use your daily workspace"
+      ],
+      "mainWords": 489,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-bookings-clients",
+      "status": 200,
+      "seconds": 1.684,
+      "titles": [
+        "Understand appointment, walk-in and client reports | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Use recorded outcomes and paying-client definitions without reading them as forecasts."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/reports-bookings-clients"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand appointment, walk-in and client reports"
+      ],
+      "mainWords": 420,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-capacity-commission",
+      "status": 200,
+      "seconds": 2.008,
+      "titles": [
+        "Read team capacity, tips and commission reports | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Separate configured working time from attendance and compensation records from payroll."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/reports-capacity-commission"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Read team capacity, tips and commission reports"
+      ],
+      "mainWords": 436,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-export",
+      "status": 200,
+      "seconds": 2.08,
+      "titles": [
+        "Export or print a report | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Create a CSV with the report’s actual filters and download it when ready. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/reports-export"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Export or print a report"
+      ],
+      "mainWords": 415,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-money",
+      "status": 200,
+      "seconds": 1.863,
+      "titles": [
+        "Understand sales, receipts, taxes and refunds in Reports | ClipperDes… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Choose the correct date basis so payment activity and sale-period totals make sense."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/reports-money"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand sales, receipts, taxes and refunds in Reports"
+      ],
+      "mainWords": 513,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/reports-run",
+      "status": 200,
+      "seconds": 2.048,
+      "titles": [
+        "Run and compare a report | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Choose a report, date range, location and permitted filters, then inspect the details."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/reports-run"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Run and compare a report"
+      ],
+      "mainWords": 467,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-addons",
+      "status": 200,
+      "seconds": 2.232,
+      "titles": [
+        "Create and attach an optional add-on | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Offer extras only with eligible parent services and account for their extra time and price."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/services-addons"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Create and attach an optional add-on"
+      ],
+      "mainWords": 361,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-assignments",
+      "status": 200,
+      "seconds": 2.277,
+      "titles": [
+        "Choose service locations and qualified staff | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Configure eligibility and price or timing exceptions without changing existing appointments."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/services-assignments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Choose service locations and qualified staff"
+      ],
+      "mainWords": 445,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-categories",
+      "status": 200,
+      "seconds": 2.564,
+      "titles": [
+        "Organize, reorder or archive service categories | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Keep the catalogue and online selection easy to browse. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/services-categories"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Organize, reorder or archive service categories"
+      ],
+      "mainWords": 352,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-create",
+      "status": 200,
+      "seconds": 4.086,
+      "titles": [
+        "Create a service | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Add a clear service name, price and timing, then choose where and by whom it can be delivered."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/services-create"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Create a service"
+      ],
+      "mainWords": 484,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-online-availability",
+      "status": 200,
+      "seconds": 4.52,
+      "titles": [
+        "Why is a service missing online or showing no times? | ClipperDesk He…"
+      ],
+      "descriptions": [
+        "Check publication, visibility, eligibility, assignments, hours and booking rules in order."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/services-online-availability"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Why is a service missing online or showing no times?"
+      ],
+      "mainWords": 538,
+      "anchorCount": 39,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-prices-duration",
+      "status": 200,
+      "seconds": 4.609,
+      "titles": [
+        "Understand service prices and appointment timing | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Learn base and override prices, active time, processing and cleanup. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/services-prices-duration"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand service prices and appointment timing"
+      ],
+      "mainWords": 434,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-update-retire",
+      "status": 200,
+      "seconds": 3.25,
+      "titles": [
+        "Update, duplicate, activate or deactivate a service | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Manage catalogue changes while preserving booked visits and financial history. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/services-update-retire"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Update, duplicate, activate or deactivate a service"
+      ],
+      "mainWords": 413,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/setup-create-account",
+      "status": 200,
+      "seconds": 2.765,
+      "titles": [
+        "Create your owner account | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Start a trial with email or Google, then enter your private business setup. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/setup-create-account"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Create your owner account"
+      ],
+      "mainWords": 389,
+      "anchorCount": 37,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/setup-first-workspace",
+      "status": 200,
+      "seconds": 1.892,
+      "titles": [
+        "Prepare your first workspace | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Choose your business type, owner working profile, region and starter services. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/setup-first-workspace"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Prepare your first workspace"
+      ],
+      "mainWords": 481,
+      "anchorCount": 39,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/setup-import-records",
+      "status": 200,
+      "seconds": 2.023,
+      "titles": [
+        "Import clients, staff, services or products | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Use a CSV template, review the preview and choose how duplicate rows should be handled."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/setup-import-records"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Import clients, staff, services or products"
+      ],
+      "mainWords": 546,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/setup-readiness",
+      "status": 200,
+      "seconds": 2.077,
+      "titles": [
+        "Finish setup and understand readiness | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Separate the essentials for daily work from the steps for accepting online bookings."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/setup-readiness"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Finish setup and understand readiness"
+      ],
+      "mainWords": 434,
+      "anchorCount": 39,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-accept-invitation",
+      "status": 200,
+      "seconds": 1.857,
+      "titles": [
+        "Accept a team invitation | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Join the correct business using the email address named in your invitation. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/team-accept-invitation"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Accept a team invitation"
+      ],
+      "mainWords": 381,
+      "anchorCount": 37,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-activity",
+      "status": 200,
+      "seconds": 1.779,
+      "titles": [
+        "Review the business activity log | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Find who changed access, appointments, clients, payments or configuration. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/team-activity"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Review the business activity log"
+      ],
+      "mainWords": 314,
+      "anchorCount": 35,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-add-member",
+      "status": 200,
+      "seconds": 1.883,
+      "titles": [
+        "Add a team member | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Create a working profile, assign initial services and hours, and optionally invite the person to sign in."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/team-add-member"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add a team member"
+      ],
+      "mainWords": 533,
+      "anchorCount": 39,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-coverage",
+      "status": 200,
+      "seconds": 2.322,
+      "titles": [
+        "Read live availability and weekly coverage | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Understand free staff time, booked time, breaks, time off and running visits. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/team-coverage"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Read live availability and weekly coverage"
+      ],
+      "mainWords": 446,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-disable-restore-login",
+      "status": 200,
+      "seconds": 2.569,
+      "titles": [
+        "Disable or restore a team login | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "End workspace access while preserving the person’s working profile and history. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/team-disable-restore-login"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Disable or restore a team login"
+      ],
+      "mainWords": 328,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-edit-profile",
+      "status": 200,
+      "seconds": 2.508,
+      "titles": [
+        "Edit a working profile or make a person inactive | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Update contact details, working branches, biography and future bookability. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/team-edit-profile"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Edit a working profile or make a person inactive"
+      ],
+      "mainWords": 386,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-invite-login",
+      "status": 200,
+      "seconds": 2.962,
+      "titles": [
+        "Invite an existing team member to sign in | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Choose the person’s workspace role and accessible locations, then send a secure invitation."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/team-invite-login"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Invite an existing team member to sign in"
+      ],
+      "mainWords": 423,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-roles-permissions",
+      "status": 200,
+      "seconds": 1.461,
+      "titles": [
+        "Understand roles, capabilities and location access | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Give people the tools they need without confusing professional titles with permissions."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/team-roles-permissions"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand roles, capabilities and location access"
+      ],
+      "mainWords": 446,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-service-assignments",
+      "status": 200,
+      "seconds": 1.316,
+      "titles": [
+        "Assign services and staff-specific prices or durations | ClipperDesk…"
+      ],
+      "descriptions": [
+        "Choose what a person can perform and whether that assignment is available online."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/team-service-assignments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Assign services and staff-specific prices or durations"
+      ],
+      "mainWords": 399,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-time-off",
+      "status": 200,
+      "seconds": 1.422,
+      "titles": [
+        "Add time off, breaks or temporary hours | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Set dated absences or working exceptions and review their appointment impact. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/team-time-off"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add time off, breaks or temporary hours"
+      ],
+      "mainWords": 406,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-weekly-hours",
+      "status": 200,
+      "seconds": 1.88,
+      "titles": [
+        "Set a person’s weekly hours and split shifts | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Review schedule changes and handle affected appointments before saving. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/team-weekly-hours"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Set a person’s weekly hours and split shifts"
+      ],
+      "mainWords": 477,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/walk-ins-add",
+      "status": 200,
+      "seconds": 1.964,
+      "titles": [
+        "Add a walk-in to the queue | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Check in a new or existing client with their requested service and preferred staff."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/walk-ins-add"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add a walk-in to the queue"
+      ],
+      "mainWords": 438,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/walk-ins-order-alerts",
+      "status": 200,
+      "seconds": 1.879,
+      "titles": [
+        "Notify waiting clients, reorder the queue or mark a client as left |… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Use explicit front-desk actions while preserving the queue’s real order. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/walk-ins-order-alerts"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Notify waiting clients, reorder the queue or mark a client as left"
+      ],
+      "mainWords": 413,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/walk-ins-serve",
+      "status": 200,
+      "seconds": 1.76,
+      "titles": [
+        "Assign staff and start a walk-in service | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Check staff readiness, start the visit and complete checkout without losing queue history."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/articles/walk-ins-serve"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Assign staff and start a walk-in service"
+      ],
+      "mainWords": 458,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/account",
+      "status": 200,
+      "seconds": 1.728,
+      "titles": [
+        "Account, access & security help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for account, access & security. Sign-in, profile, security and help with restricted access."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/account"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Account, access & security"
+      ],
+      "mainWords": 115,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/appointments",
+      "status": 200,
+      "seconds": 1.682,
+      "titles": [
+        "Online booking & appointments help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for online booking & appointments. Publish your booking page and help clients manage their visits."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/appointments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Online booking & appointments"
+      ],
+      "mainWords": 149,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/billing",
+      "status": 200,
+      "seconds": 1.739,
+      "titles": [
+        "Subscriptions & billing help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for subscriptions & billing. Trials, purchased capacity, invoices and subscription recovery."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/billing"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Subscriptions & billing"
+      ],
+      "mainWords": 183,
+      "anchorCount": 31,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/business",
+      "status": 200,
+      "seconds": 1.752,
+      "titles": [
+        "Business & locations help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for business & locations. Business details, opening hours, branding and booking settings."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/business"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Business & locations"
+      ],
+      "mainWords": 145,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/calendar",
+      "status": 200,
+      "seconds": 1.745,
+      "titles": [
+        "Calendar & daily workspace help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for calendar & daily workspace. Plan the day, manage visits and protect available time."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/calendar"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Calendar & daily workspace"
+      ],
+      "mainWords": 83,
+      "anchorCount": 26,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/checkout",
+      "status": 200,
+      "seconds": 1.753,
+      "titles": [
+        "Checkout & sales help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for checkout & sales. Review baskets, record received payments, refunds and receipts."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/checkout"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Checkout & sales"
+      ],
+      "mainWords": 139,
+      "anchorCount": 29,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/clients",
+      "status": 200,
+      "seconds": 1.765,
+      "titles": [
+        "Clients & records help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for clients & records. Client profiles, notes, forms, consent and privacy requests."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/clients"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Clients & records"
+      ],
+      "mainWords": 192,
+      "anchorCount": 32,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/getting-started",
+      "status": 200,
+      "seconds": 1.691,
+      "titles": [
+        "Getting started help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for getting started. Prepare your business and get ready for your first client."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/getting-started"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Getting started"
+      ],
+      "mainWords": 112,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/inventory",
+      "status": 200,
+      "seconds": 1.816,
+      "titles": [
+        "Retail availability help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for retail availability. Understand current retail and stock-management availability."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/inventory"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Retail availability"
+      ],
+      "mainWords": 39,
+      "anchorCount": 24,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/notifications",
+      "status": 200,
+      "seconds": 2.049,
+      "titles": [
+        "Client notifications help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for client notifications. Email and text preferences, quiet hours and delivery history."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/notifications"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Client notifications"
+      ],
+      "mainWords": 79,
+      "anchorCount": 26,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/reports",
+      "status": 200,
+      "seconds": 2.023,
+      "titles": [
+        "Reports help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for reports. Understand your numbers, scopes, comparisons and exports."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/reports"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Reports"
+      ],
+      "mainWords": 112,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/services",
+      "status": 200,
+      "seconds": 1.748,
+      "titles": [
+        "Services help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for services. Your catalogue, prices, durations and bookable team."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/services"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Services"
+      ],
+      "mainWords": 148,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/team",
+      "status": 200,
+      "seconds": 1.746,
+      "titles": [
+        "Team & availability help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for team & availability. Team profiles, invitations, roles, working hours and time off."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/team"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Team & availability"
+      ],
+      "mainWords": 224,
+      "anchorCount": 34,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/walk-ins",
+      "status": 200,
+      "seconds": 1.728,
+      "titles": [
+        "Walk-in Queue help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for walk-in queue. Welcome arrivals, manage waiting clients and start service."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/help/category/walk-ins"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Walk-in Queue"
+      ],
+      "mainWords": 85,
+      "anchorCount": 26,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/pricing",
+      "status": 200,
+      "seconds": 2.227,
+      "titles": [
+        "Pricing for your locations and team | ClipperDesk"
+      ],
+      "descriptions": [
+        "One complete ClipperDesk subscription, with transparent location pricing and progressive staff rates. Explore monthly or yearly billing and start a free trial."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/pricing"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "One platform. A price that grows with you."
+      ],
+      "mainWords": 656,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/resources",
+      "status": 200,
+      "seconds": 2.138,
+      "titles": [
+        "Service business management guides | ClipperDesk"
+      ],
+      "descriptions": [
+        "Practical booking, scheduling and operations guides for appointment-led beauty, wellness, fitness, health and pet-service businesses."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/resources"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Practical guides for your business."
+      ],
+      "mainWords": 114,
+      "anchorCount": 26,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/security",
+      "status": 200,
+      "seconds": 1.962,
+      "titles": [
+        "Account and data security | ClipperDesk"
+      ],
+      "descriptions": [
+        "Understand ClipperDesk business data separation, role-based team access, account protection, private appointment links and payment change history."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/security"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "How we protect your business data."
+      ],
+      "mainWords": 232,
+      "anchorCount": 26,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions",
+      "status": 200,
+      "seconds": 1.761,
+      "titles": [
+        "Software for appointment-led service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore ClipperDesk for beauty, wellness, personal care, fitness, recovery, health and pet-service businesses, from independents to larger teams."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Built around the way you work."
+      ],
+      "mainWords": 435,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/barbershops",
+      "status": 200,
+      "seconds": 1.917,
+      "titles": [
+        "Barbershop scheduling and walk-in software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Manage barber appointments, walk-in queues, staff availability, client preferences and checkout from one workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/barbershops"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage barbershop appointments and walk-ins"
+      ],
+      "mainWords": 255,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/fitness-recovery",
+      "status": 200,
+      "seconds": 2.002,
+      "titles": [
+        "Fitness and recovery scheduling software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate coaches, rooms, recovery equipment, client bookings and payments across a busy studio day."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/fitness-recovery"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Schedule fitness and recovery appointments"
+      ],
+      "mainWords": 255,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/health-practices",
+      "status": 200,
+      "seconds": 1.898,
+      "titles": [
+        "Health practice scheduling software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Organise practitioner schedules, client booking, non-clinical business forms and payment records alongside your clinical systems."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/health-practices"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage appointments for your health practice"
+      ],
+      "mainWords": 256,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/independent-stylists",
+      "status": 200,
+      "seconds": 1.821,
+      "titles": [
+        "Independent stylist booking software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Move from guided setup to booking, the working calendar, client history and checkout without needing a separate admin team."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/independent-stylists"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage your appointments as an independent stylist"
+      ],
+      "mainWords": 264,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/massage",
+      "status": 200,
+      "seconds": 1.901,
+      "titles": [
+        "Massage studio booking software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Bring online booking, practitioner schedules, treatment rooms, client preferences and checkout into one calm flow."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/massage"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage massage appointments and room availability"
+      ],
+      "mainWords": 255,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/medspas",
+      "status": 200,
+      "seconds": 1.711,
+      "titles": [
+        "Medspa scheduling and business software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Manage non-clinical medspa scheduling, practitioner availability, business forms and payment records alongside your clinical systems."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/medspas"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage medspa appointments and client records"
+      ],
+      "mainWords": 250,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/nail-salons",
+      "status": 200,
+      "seconds": 1.799,
+      "titles": [
+        "Nail salon booking and scheduling software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Keep technicians, manicure stations, service timing, client preferences and checkout moving in one polished day."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/nail-salons"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage nail salon appointments"
+      ],
+      "mainWords": 267,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/pet-grooming",
+      "status": 200,
+      "seconds": 1.911,
+      "titles": [
+        "Pet grooming booking and scheduling software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate service timing, groomer availability, stations, client contact, pet context and checkout across the day."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/pet-grooming"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage pet grooming appointments"
+      ],
+      "mainWords": 268,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/physical-therapy",
+      "status": 200,
+      "seconds": 1.889,
+      "titles": [
+        "Physical therapy scheduling software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate appointment capacity, rooms, practitioners, reminders and payments while keeping clinical systems separate."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/physical-therapy"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Schedule physical therapy appointments"
+      ],
+      "mainWords": 249,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/salons",
+      "status": 200,
+      "seconds": 1.784,
+      "titles": [
+        "Salon booking and business management software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate service timing, staff handoffs, client preferences, booking policy and checkout without splitting the visit into disconnected records."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/salons"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage salon appointments and services"
+      ],
+      "mainWords": 264,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/spas",
+      "status": 200,
+      "seconds": 1.77,
+      "titles": [
+        "Spa and sauna scheduling software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Manage non-medical spa bookings, practitioner schedules, client preferences and checkout in one workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/spas"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage spa appointments, practitioners and rooms"
+      ],
+      "mainWords": 252,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/tanning-studios",
+      "status": 200,
+      "seconds": 1.788,
+      "titles": [
+        "Tanning studio booking software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate room capacity, staff, client booking, operational forms and checkout with clear limits."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/tanning-studios"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage tanning studio appointments"
+      ],
+      "mainWords": 252,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/tattoo-piercing",
+      "status": 200,
+      "seconds": 1.824,
+      "titles": [
+        "Tattoo and piercing studio software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Manage artist schedules, consultation forms, client preferences, appointment changes and recorded payments in one studio workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/tattoo-piercing"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage tattoo and piercing appointments"
+      ],
+      "mainWords": 263,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/use-cases",
+      "status": 200,
+      "seconds": 1.89,
+      "titles": [
+        "Service business operations use cases | ClipperDesk"
+      ],
+      "descriptions": [
+        "Practical guidance for scheduling conflicts, walk-ins, deposits and connected client history across appointment-led service businesses."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/use-cases"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Make daily work easier."
+      ],
+      "mainWords": 202,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/use-cases/keep-client-history-together",
+      "status": 200,
+      "seconds": 1.895,
+      "titles": [
+        "Keep service business client history connected | ClipperDesk"
+      ],
+      "descriptions": [
+        "Keep client visits, preferences, notes, forms, messages and purchases together, with sensitive information restricted to authorised team members."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/use-cases/keep-client-history-together"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Keep client history together"
+      ],
+      "mainWords": 330,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/use-cases/manage-walk-ins-and-appointments",
+      "status": 200,
+      "seconds": 1.753,
+      "titles": [
+        "Manage walk-ins and appointments together | ClipperDesk"
+      ],
+      "descriptions": [
+        "Keep walk-ins visible, review estimated waits and check staff availability before starting service around existing appointments."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/use-cases/manage-walk-ins-and-appointments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage walk-ins alongside appointments"
+      ],
+      "mainWords": 328,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/use-cases/protect-time-with-deposits",
+      "status": 200,
+      "seconds": 1.697,
+      "titles": [
+        "Booking deposits for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Set deposit and cancellation rules, show clients the terms before confirmation and keep the agreed policy with their appointment."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/use-cases/protect-time-with-deposits"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Set clear deposit rules"
+      ],
+      "mainWords": 363,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "https://clipperdesk.com/use-cases/reduce-scheduling-conflicts",
+      "status": 200,
+      "seconds": 1.478,
+      "titles": [
+        "How to reduce scheduling conflicts | ClipperDesk"
+      ],
+      "descriptions": [
+        "Keep online and front-desk bookings aligned with current staff hours, service durations and availability, with a final check before confirmation."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/use-cases/reduce-scheduling-conflicts"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Avoid scheduling conflicts"
+      ],
+      "mainWords": 347,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    }
+  ],
+  "summary": {
+    "sitemapUrls": 131,
+    "checkedPages": 131,
+    "failedPages": 0,
+    "passed": false
+  }
+}
