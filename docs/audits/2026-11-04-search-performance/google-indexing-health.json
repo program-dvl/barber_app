@@ -1,0 +1,260 @@
+{
+  "checked_on": "2026-11-04",
+  "property": "sc-domain:clipperdesk.com",
+  "method": "Authorized Google Search Console visible UI, read-only. Each inspected URL was verified after loading completed and its indexing panel expanded. No indexing request, sitemap resubmission, security change or hosting mutation was made by this audit.",
+  "date_precision": "Crawl dates copied exactly as displayed by Google. The UI did not show their time zone. Inspection timestamps use UTC.",
+  "sitemap": {
+    "url": "https://clipperdesk.com/sitemap.xml",
+    "submitted_ui": "2 Nov 2026",
+    "last_read_ui": "2 Nov 2026",
+    "status": "Success",
+    "discovered_pages": 127,
+    "discovered_videos": 0,
+    "note": "Sitemap acceptance confirms discovery, not indexing or rankings of every included URL."
+  },
+  "aggregate_pages_report": {
+    "last_update_ui": "23/10/2026",
+    "indexed": 8,
+    "not_indexed": 12,
+    "reasons": [
+      {
+        "reason": "Page with redirect",
+        "pages": 8
+      },
+      {
+        "reason": "Alternative page with proper canonical tag",
+        "pages": 2
+      },
+      {
+        "reason": "Excluded by ‘noindex’ tag",
+        "pages": 1
+      },
+      {
+        "reason": "Duplicate, Google chose different canonical than user",
+        "pages": 1
+      }
+    ],
+    "limitation": "This aggregate report has not refreshed since 23 October. It must not be presented as the current count of indexed pages or as contradicting fresher individual inspections."
+  },
+  "manual_actions": "No issues detected",
+  "security_issues": "No issues detected",
+  "inspection_summary": {
+    "sample_size": 10,
+    "indexed": 7,
+    "discovered_currently_not_indexed": 3,
+    "scope": "Bounded key-page and Help sample; not a new census of all 127 sitemap URLs."
+  },
+  "inspections": [
+    {
+      "url": "https://clipperdesk.com/",
+      "inspected_at": "2026-11-04T07:46:19.213Z",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "3 Nov 2026, 05:40:31",
+      "crawled_as": "Googlebot smartphone",
+      "crawl_allowed": "Yes",
+      "user_declared_canonical": "https://clipperdesk.com/",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "referring_page": "https://clipperdesk.com/help",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes"
+    },
+    {
+      "url": "https://clipperdesk.com/pricing",
+      "inspected_at": "2026-11-04T07:46:23.103Z",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "2 Nov 2026, 20:55:29",
+      "crawled_as": "Googlebot smartphone",
+      "crawl_allowed": "Yes",
+      "user_declared_canonical": "https://clipperdesk.com/pricing",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "referring_page": "https://book.clipperdesk.com/pricing",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes"
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/barbershops",
+      "inspected_at": "2026-11-04T07:46:26.339Z",
+      "google_status": "Page is not indexed: Discovered – currently not indexed",
+      "last_crawl_ui": "N/A",
+      "crawled_as": "N/A",
+      "crawl_allowed": "N/A",
+      "user_declared_canonical": "N/A",
+      "google_selected_canonical": "N/A",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "referring_page": "https://book.clipperdesk.com/solutions/barbershops",
+      "page_fetch": "N/A",
+      "indexing_allowed": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/salons",
+      "inspected_at": "2026-11-04T07:46:29.538Z",
+      "google_status": "Page is not indexed: Discovered – currently not indexed",
+      "last_crawl_ui": "N/A",
+      "crawled_as": "N/A",
+      "crawl_allowed": "N/A",
+      "user_declared_canonical": "N/A",
+      "google_selected_canonical": "N/A",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "referring_page": "https://book.clipperdesk.com/solutions/salons",
+      "page_fetch": "N/A",
+      "indexing_allowed": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/features/online-booking",
+      "inspected_at": "2026-11-04T07:46:33.324Z",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "4 Nov 2026, 11:24:22",
+      "crawled_as": "Googlebot smartphone",
+      "crawl_allowed": "Yes",
+      "user_declared_canonical": "https://clipperdesk.com/features/online-booking",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "referring_page": "https://book.clipperdesk.com/features/online-booking",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes"
+    },
+    {
+      "url": "https://clipperdesk.com/use-cases",
+      "inspected_at": "2026-11-04T07:46:42.483Z",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "3 Nov 2026, 16:39:26",
+      "crawled_as": "Googlebot smartphone",
+      "crawl_allowed": "Yes",
+      "user_declared_canonical": "https://clipperdesk.com/use-cases",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "referring_page": "https://book.clipperdesk.com/use-cases",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/account-profile",
+      "inspected_at": "2026-11-04T07:46:46.147Z",
+      "google_status": "Page is not indexed: Discovered – currently not indexed",
+      "last_crawl_ui": "N/A",
+      "crawled_as": "N/A",
+      "crawl_allowed": "N/A",
+      "user_declared_canonical": "N/A",
+      "google_selected_canonical": "N/A",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "referring_page": "https://clipperdesk.com/help/articles/account-delete",
+      "page_fetch": "N/A",
+      "indexing_allowed": "N/A"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/services-assignments",
+      "inspected_at": "2026-11-04T07:46:49.953Z",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 13:20:40",
+      "crawled_as": "Googlebot smartphone",
+      "crawl_allowed": "Yes",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/articles/services-assignments",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "referring_page": "https://clipperdesk.com/help/articles/team-service-assignments",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes"
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/team-weekly-hours",
+      "inspected_at": "2026-11-04T07:46:53.957Z",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "3 Nov 2026, 14:02:26",
+      "crawled_as": "Googlebot smartphone",
+      "crawl_allowed": "Yes",
+      "user_declared_canonical": "https://clipperdesk.com/help/articles/team-weekly-hours",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "referring_page": "https://clipperdesk.com/help/articles/setup-readiness",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes"
+    },
+    {
+      "url": "https://clipperdesk.com/help/category/services",
+      "inspected_at": "2026-11-04T07:46:58.312Z",
+      "google_status": "Page is indexed",
+      "last_crawl_ui": "29 Oct 2026, 22:39:14",
+      "crawled_as": "Googlebot smartphone",
+      "crawl_allowed": "Yes",
+      "user_declared_canonical": "https://www.clipperdesk.com/help/category/services",
+      "google_selected_canonical": "Inspected URL",
+      "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+      "referring_page": "https://clipperdesk.com/help",
+      "page_fetch": "Successful",
+      "indexing_allowed": "Yes"
+    }
+  ],
+  "changes_since_2026_11_02": [
+    "Online booking feature URL changed from unknown to Google to indexed, with a 4 November Googlebot crawl.",
+    "Use-cases changed from duplicate excluded with a www Google canonical to indexed with the inspected non-www canonical after a 3 November crawl.",
+    "Homepage now has a 3 November Google snapshot declaring the non-www canonical.",
+    "Barbershops, salons and account-profile are discovered in the accepted sitemap but still show no Google crawl."
+  ],
+  "aliasObservations": {
+    "trigger": "Parent agent observed book-host public solution URLs receiving Google Search impressions in 24-hour Performance report.",
+    "bounded_scope": "Two public marketing paths on apex and book hosts; no tenant booking URL or secure/private appointment link inspected.",
+    "finding": "Both book-host public solution URLs are independently indexed: Google selects inspected book URL despite user-declared apex canonical. Apex medspas is also indexed; apex physical-therapy is discovered but uncrawled.",
+    "limitation": "Stored Google crawl snapshots differ by date. This is not a live URL test or proof that private booking links are indexed.",
+    "inspections": [
+      {
+        "url": "https://clipperdesk.com/solutions/medspas",
+        "inspected_at": "2026-11-04T07:48:16.566Z",
+        "google_status": "Page is indexed",
+        "last_crawl_ui": "3 Nov 2026, 14:09:37",
+        "crawled_as": "Googlebot smartphone",
+        "crawl_allowed": "Yes",
+        "user_declared_canonical": "https://clipperdesk.com/solutions/medspas",
+        "google_selected_canonical": "Inspected URL",
+        "sitemap_discovery": "Temporary processing error",
+        "referring_page": "https://book.clipperdesk.com/solutions/medspas",
+        "page_fetch": "Successful",
+        "indexing_allowed": "Yes"
+      },
+      {
+        "url": "https://clipperdesk.com/solutions/physical-therapy",
+        "inspected_at": "2026-11-04T07:48:19.614Z",
+        "google_status": "Page is not indexed: Discovered – currently not indexed",
+        "last_crawl_ui": "N/A",
+        "crawled_as": "N/A",
+        "crawl_allowed": "N/A",
+        "user_declared_canonical": "N/A",
+        "google_selected_canonical": "N/A",
+        "sitemap_discovery": "https://clipperdesk.com/sitemap.xml",
+        "referring_page": "https://book.clipperdesk.com/solutions/physical-therapy",
+        "page_fetch": "N/A",
+        "indexing_allowed": "N/A"
+      },
+      {
+        "url": "https://book.clipperdesk.com/solutions/medspas",
+        "inspected_at": "2026-11-04T07:48:38.387Z",
+        "google_status": "Page is indexed",
+        "last_crawl_ui": "2 Nov 2026, 21:32:59",
+        "crawled_as": "Googlebot smartphone",
+        "crawl_allowed": "Yes",
+        "user_declared_canonical": "https://clipperdesk.com/solutions/medspas",
+        "google_selected_canonical": "Inspected URL",
+        "sitemap_discovery": "Temporary processing error",
+        "referring_page": "https://book.clipperdesk.com/solutions",
+        "page_fetch": "Successful",
+        "indexing_allowed": "Yes"
+      },
+      {
+        "url": "https://book.clipperdesk.com/solutions/physical-therapy",
+        "inspected_at": "2026-11-04T07:48:42.243Z",
+        "google_status": "Page is indexed",
+        "last_crawl_ui": "3 Nov 2026, 16:04:16",
+        "crawled_as": "Googlebot smartphone",
+        "crawl_allowed": "Yes",
+        "user_declared_canonical": "https://clipperdesk.com/solutions/physical-therapy",
+        "google_selected_canonical": "Inspected URL",
+        "sitemap_discovery": "No referring sitemaps detected",
+        "referring_page": "https://book.clipperdesk.com/solutions",
+        "page_fetch": "Successful",
+        "indexing_allowed": "Yes"
+      }
+    ],
+    "mutations_performed": false
+  }
+}

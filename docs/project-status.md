@@ -1,5 +1,30 @@
 # Project status
 
+## 2026-11-04 Google search performance follow-up
+
+- Read-only Search Console: selected three-month view now 37 impressions,
+  0 clicks, 0% CTR, average position 55.8, with finalized dates through
+  1 November. Prior 2 November check was 28 impressions / 0 clicks / 61.8;
+  periods differ by one reported day and cannot attribute improvement to the
+  2 November repairs. Fresh 3–4 November 24-hour view: 12 impressions / 0 clicks /
+  43.1; preliminary data is separate, never added to the finalized total.
+- Sitemap remains Success / 127 URLs. All 127 current live page checks pass
+  including SSR; robots still returns 404. Bounded sample of ten: seven indexed,
+  three discovered/no crawl. Online-booking and use-cases now indexed; the
+  latter selects apex rather than www. Barber/salon pages remain discovered.
+  Aggregate Pages report still dated 23 October; no new full index total claimed.
+- Newly verified duplicate marketing pages on book.clipperdesk.com return
+  200/indexable despite apex canonicals. Google separately indexes two sampled
+  solution aliases and selects book host, and they receive fresh impressions.
+  Narrow marketing-only redirects are recommended, preserving salon/private
+  booking; no code or hosting change made. Owner's prior hosting hold respected.
+- Manual actions/security clean. Google's Links report shows zero reported
+  external links (lagging sample, not proof of actual absence). Content audit
+  confirms zero published blog articles, two short guides and 95 Help URLs.
+  Prioritized consolidation, commercial-page crawl/content, genuine product
+  evidence and useful reviewed guides; no unsupported feature claims promoted.
+  [Metrics, evidence and improvement plan](audits/2026-11-04-search-performance/README.md).
+
 ## 2026-11-02 Cookie settings wording (ADR-079 clarification)
 
 - Renamed the public footer control from Analytics preferences to **Cookie

@@ -1,0 +1,31 @@
+{
+  "checkedOn": "2026-11-04",
+  "property": "sc-domain:clipperdesk.com",
+  "method": "Read-only Google Search Console visible Links report and internal More drilldown; no external domains opened and no mutations",
+  "externalLinks": {
+    "totalReported": 0,
+    "topLinkedPages": "No data",
+    "topLinkingSites": "No data",
+    "topLinkingText": "No data"
+  },
+  "internalLinks": {
+    "totalReported": 14,
+    "totalTargetPagesReported": 2,
+    "pages": [
+      {
+        "url": "https://clipperdesk.com/",
+        "internalLinks": 7
+      },
+      {
+        "url": "https://clipperdesk.com/solutions",
+        "internalLinks": 7
+      }
+    ]
+  },
+  "limits": [
+    "No last-updated date was displayed in these Links screens.",
+    "Google Links report is a reported/sampled dataset and may lag actual discovery. Zero reported external links does not prove no external links exist.",
+    "Internal totals do not represent a fresh full crawl of the current 127 public pages.",
+    "The report alone does not establish that links are causing low visibility or predict ranking gains."
+  ]
+}

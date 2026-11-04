@@ -1,0 +1,572 @@
+{
+  "checkedOn": "2026-11-04",
+  "property": "sc-domain:clipperdesk.com",
+  "baseline": {
+    "checkedOn": "2026-11-02",
+    "clicks": 0,
+    "impressions": 28,
+    "averagePosition": 61.8,
+    "chartThrough": "2026-10-31"
+  },
+  "current": {
+    "selectedRange": "3 months",
+    "chartFrom": "2026-10-11",
+    "chartThrough": "2026-11-01",
+    "lastUpdateUi": "3.5 hours ago",
+    "clicks": 0,
+    "impressions": 37,
+    "ctr": 0,
+    "averagePosition": 55.8
+  },
+  "queries": [
+    [
+      "Top queries",
+      "Clicks",
+      "Impressions",
+      "CTR",
+      "Position"
+    ],
+    [
+      "pre-visit planning software",
+      "0",
+      "10",
+      "0%",
+      "32.1"
+    ],
+    [
+      "schedule spa software",
+      "0",
+      "3",
+      "0%",
+      "88.3"
+    ],
+    [
+      "piercing shop management software",
+      "0",
+      "2",
+      "0%",
+      "91.0"
+    ],
+    [
+      "spa staff scheduling software",
+      "0",
+      "2",
+      "0%",
+      "91.0"
+    ],
+    [
+      "nerde bu yer",
+      "0",
+      "1",
+      "0%",
+      "1.0"
+    ],
+    [
+      "piercing shop appointment software",
+      "0",
+      "1",
+      "0%",
+      "85.0"
+    ],
+    [
+      "spa softwares",
+      "0",
+      "1",
+      "0%",
+      "85.0"
+    ],
+    [
+      "spa appointment scheduling software",
+      "0",
+      "1",
+      "0%",
+      "86.0"
+    ],
+    [
+      "keeping clients date status",
+      "0",
+      "1",
+      "0%",
+      "87.0"
+    ],
+    [
+      "hair removal studio management software",
+      "0",
+      "1",
+      "0%",
+      "88.0"
+    ],
+    [
+      "spa software",
+      "0",
+      "1",
+      "0%",
+      "88.0"
+    ],
+    [
+      "personal stylist booking system",
+      "0",
+      "1",
+      "0%",
+      "91.0"
+    ],
+    [
+      "spa schedule software",
+      "0",
+      "1",
+      "0%",
+      "91.0"
+    ],
+    [
+      "medical practice scheduling software",
+      "0",
+      "1",
+      "0%",
+      "97.0"
+    ]
+  ],
+  "pages": [
+    [
+      "Top pages",
+      "Clicks",
+      "Impressions",
+      "CTR",
+      "Position"
+    ],
+    [
+      "https://clipperdesk.com/solutions/health-practices",
+      "0",
+      "11",
+      "0%",
+      "38.0"
+    ],
+    [
+      "https://clipperdesk.com/solutions/spas",
+      "0",
+      "9",
+      "0%",
+      "88.6"
+    ],
+    [
+      "https://clipperdesk.com/solutions",
+      "0",
+      "8",
+      "0%",
+      "46.4"
+    ],
+    [
+      "https://clipperdesk.com/",
+      "0",
+      "3",
+      "0%",
+      "1.7"
+    ],
+    [
+      "https://clipperdesk.com/use-cases/protect-time-with-deposits",
+      "0",
+      "3",
+      "0%",
+      "5.0"
+    ],
+    [
+      "https://clipperdesk.com/use-cases/keep-client-history-together",
+      "0",
+      "3",
+      "0%",
+      "31.3"
+    ],
+    [
+      "https://clipperdesk.com/solutions/independent-stylists",
+      "0",
+      "3",
+      "0%",
+      "32.7"
+    ],
+    [
+      "https://www.clipperdesk.com/use-cases/manage-walk-ins-and-appointments",
+      "0",
+      "2",
+      "0%",
+      "7.0"
+    ],
+    [
+      "https://clipperdesk.com/use-cases/reduce-scheduling-conflicts",
+      "0",
+      "2",
+      "0%",
+      "7.5"
+    ],
+    [
+      "https://clipperdesk.com/guides/salon-opening-checklist",
+      "0",
+      "2",
+      "0%",
+      "69.0"
+    ],
+    [
+      "https://clipperdesk.com/help/articles/account-recovery",
+      "0",
+      "1",
+      "0%",
+      "1.0"
+    ],
+    [
+      "https://www.clipperdesk.com/",
+      "0",
+      "1",
+      "0%",
+      "1.0"
+    ],
+    [
+      "https://www.clipperdesk.com/use-cases",
+      "0",
+      "1",
+      "0%",
+      "6.0"
+    ],
+    [
+      "https://www.clipperdesk.com/features/client-management",
+      "0",
+      "1",
+      "0%",
+      "14.0"
+    ],
+    [
+      "https://clipperdesk.com/help/articles/services-prices-duration",
+      "0",
+      "1",
+      "0%",
+      "20.0"
+    ],
+    [
+      "https://clipperdesk.com/solutions/tanning-studios",
+      "0",
+      "1",
+      "0%",
+      "43.0"
+    ],
+    [
+      "https://clipperdesk.com/help/articles/account-delete",
+      "0",
+      "1",
+      "0%",
+      "96.0"
+    ]
+  ],
+  "countries": [
+    [
+      "Country",
+      "Clicks",
+      "Impressions",
+      "CTR",
+      "Position"
+    ],
+    [
+      "United States",
+      "0",
+      "24",
+      "0%",
+      "55.2"
+    ],
+    [
+      "India",
+      "0",
+      "3",
+      "0%",
+      "29.3"
+    ],
+    [
+      "Sweden",
+      "0",
+      "2",
+      "0%",
+      "69.0"
+    ],
+    [
+      "New Zealand",
+      "0",
+      "2",
+      "0%",
+      "86.5"
+    ],
+    [
+      "Turkey",
+      "0",
+      "1",
+      "0%",
+      "1.0"
+    ],
+    [
+      "Saudi Arabia",
+      "0",
+      "1",
+      "0%",
+      "20.0"
+    ],
+    [
+      "Brazil",
+      "0",
+      "1",
+      "0%",
+      "43.0"
+    ],
+    [
+      "Australia",
+      "0",
+      "1",
+      "0%",
+      "91.0"
+    ],
+    [
+      "Italy",
+      "0",
+      "1",
+      "0%",
+      "91.0"
+    ],
+    [
+      "Russia",
+      "0",
+      "1",
+      "0%",
+      "96.0"
+    ]
+  ],
+  "devices": [
+    [
+      "Device",
+      "Clicks",
+      "Impressions",
+      "CTR",
+      "Position"
+    ],
+    [
+      "Desktop",
+      "0",
+      "20",
+      "0%",
+      "61.0"
+    ],
+    [
+      "Mobile",
+      "0",
+      "17",
+      "0%",
+      "49.8"
+    ]
+  ],
+  "days": [
+    [
+      "Day",
+      "Clicks",
+      "Impressions",
+      "CTR",
+      "Position"
+    ],
+    [
+      "1 Nov 2026",
+      "0",
+      "9",
+      "0%",
+      "37.3"
+    ],
+    [
+      "31 Oct 2026",
+      "0",
+      "11",
+      "0%",
+      "70.4"
+    ],
+    [
+      "30 Oct 2026",
+      "0",
+      "5",
+      "0%",
+      "66.0"
+    ],
+    [
+      "29 Oct 2026",
+      "0",
+      "2",
+      "0%",
+      "43.5"
+    ],
+    [
+      "28 Oct 2026",
+      "0",
+      "0",
+      "—",
+      "—"
+    ],
+    [
+      "27 Oct 2026",
+      "0",
+      "3",
+      "0%",
+      "89.0"
+    ],
+    [
+      "26 Oct 2026",
+      "0",
+      "1",
+      "0%",
+      "1.0"
+    ],
+    [
+      "25 Oct 2026",
+      "0",
+      "0",
+      "—",
+      "—"
+    ],
+    [
+      "24 Oct 2026",
+      "0",
+      "1",
+      "0%",
+      "88.0"
+    ],
+    [
+      "23 Oct 2026",
+      "0",
+      "2",
+      "0%",
+      "2.0"
+    ]
+  ],
+  "recent24Hours": {
+    "dateRangeUi": "3 November 2026 to 4 November 2026",
+    "timezoneUi": "local time zone",
+    "lastUpdateUi": "3.5 hours ago",
+    "clicks": 0,
+    "impressions": 12,
+    "ctr": 0,
+    "averagePosition": 43.1,
+    "queries": [
+      [
+        "Top queries",
+        "Clicks",
+        "Impressions",
+        "CTR",
+        "Position"
+      ],
+      [
+        "\"medical spa software programs\"",
+        "0",
+        "1",
+        "0%",
+        "13.0"
+      ],
+      [
+        "\"medical spa appointment software\"",
+        "0",
+        "1",
+        "0%",
+        "15.0"
+      ],
+      [
+        "spa payroll software",
+        "0",
+        "1",
+        "0%",
+        "87.0"
+      ],
+      [
+        "spa scheduling software",
+        "0",
+        "1",
+        "0%",
+        "87.0"
+      ],
+      [
+        "physical therapy scheduling software",
+        "0",
+        "1",
+        "0%",
+        "94.0"
+      ]
+    ],
+    "note": "Fresh/partial 24-hour report, separate from the three-month finalized report; do not add totals.",
+    "pages": [
+      [
+        "Top pages",
+        "Clicks",
+        "Impressions",
+        "CTR",
+        "Position"
+      ],
+      [
+        "https://book.clipperdesk.com/solutions/medspas",
+        "0",
+        "3",
+        "0%",
+        "16.0"
+      ],
+      [
+        "https://clipperdesk.com/solutions/spas",
+        "0",
+        "3",
+        "0%",
+        "87.7"
+      ],
+      [
+        "https://clipperdesk.com/help/articles/checkout-receipts-history",
+        "0",
+        "2",
+        "0%",
+        "4.5"
+      ],
+      [
+        "https://clipperdesk.com/solutions/tanning-studios",
+        "0",
+        "2",
+        "0%",
+        "51.0"
+      ],
+      [
+        "https://clipperdesk.com/help",
+        "0",
+        "1",
+        "0%",
+        "1.0"
+      ],
+      [
+        "https://book.clipperdesk.com/solutions/physical-therapy",
+        "0",
+        "1",
+        "0%",
+        "94.0"
+      ]
+    ],
+    "countries": [
+      [
+        "Country",
+        "Clicks",
+        "Impressions",
+        "CTR",
+        "Position"
+      ],
+      [
+        "United States",
+        "0",
+        "10",
+        "0%",
+        "34.3"
+      ],
+      [
+        "Australia",
+        "0",
+        "1",
+        "0%",
+        "87.0"
+      ],
+      [
+        "Canada",
+        "0",
+        "1",
+        "0%",
+        "87.0"
+      ]
+    ]
+  }
+}

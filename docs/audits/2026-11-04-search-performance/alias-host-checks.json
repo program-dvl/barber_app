@@ -1,0 +1,182 @@
+{
+  "checked_at": "2026-11-04T07:48:03.622816+00:00",
+  "method": "Unauthenticated HTTP GET with redirects disabled, original HTML only. GSC is a separate source; HTTP behavior does not establish current Google-selected canonical.",
+  "pages": [
+    {
+      "url": "https://clipperdesk.com/solutions/medspas",
+      "status": 200,
+      "location": null,
+      "robots_header": "index, follow, max-image-preview:large",
+      "content_type": "text/html; charset=utf-8",
+      "response_date": "Wed, 04 Nov 2026 07:47:57 GMT",
+      "titles": [
+        "Medspa scheduling and business software | ClipperDesk"
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/medspas"
+      ],
+      "robots_meta": [
+        "index, follow, max-image-preview:large"
+      ],
+      "h1": [
+        "Manage medspa appointments and client records"
+      ],
+      "main_count": 1,
+      "anchor_count": 30
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/physical-therapy",
+      "status": 200,
+      "location": null,
+      "robots_header": "index, follow, max-image-preview:large",
+      "content_type": "text/html; charset=utf-8",
+      "response_date": "Wed, 04 Nov 2026 07:47:57 GMT",
+      "titles": [
+        "Physical therapy scheduling software | ClipperDesk"
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/physical-therapy"
+      ],
+      "robots_meta": [
+        "index, follow, max-image-preview:large"
+      ],
+      "h1": [
+        "Schedule physical therapy appointments"
+      ],
+      "main_count": 1,
+      "anchor_count": 30
+    },
+    {
+      "url": "https://clipperdesk.com/features",
+      "status": 200,
+      "location": null,
+      "robots_header": "index, follow, max-image-preview:large",
+      "content_type": "text/html; charset=utf-8",
+      "response_date": "Wed, 04 Nov 2026 07:47:59 GMT",
+      "titles": [
+        "Service business management software features | ClipperDesk"
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/features"
+      ],
+      "robots_meta": [
+        "index, follow, max-image-preview:large"
+      ],
+      "h1": [
+        "Manage the work around every appointment."
+      ],
+      "main_count": 1,
+      "anchor_count": 27
+    },
+    {
+      "url": "https://clipperdesk.com/",
+      "status": 200,
+      "location": null,
+      "robots_header": "index, follow, max-image-preview:large",
+      "content_type": "text/html; charset=utf-8",
+      "response_date": "Wed, 04 Nov 2026 07:47:59 GMT",
+      "titles": [
+        "Appointment scheduling & service business software | ClipperDesk"
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/"
+      ],
+      "robots_meta": [
+        "index, follow, max-image-preview:large"
+      ],
+      "h1": [
+        "Your whole day, beautifully run."
+      ],
+      "main_count": 1,
+      "anchor_count": 38
+    },
+    {
+      "url": "https://book.clipperdesk.com/solutions/medspas",
+      "status": 200,
+      "location": null,
+      "robots_header": "index, follow, max-image-preview:large",
+      "content_type": "text/html; charset=utf-8",
+      "response_date": "Wed, 04 Nov 2026 07:48:00 GMT",
+      "titles": [
+        "Medspa scheduling and business software | ClipperDesk"
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/medspas"
+      ],
+      "robots_meta": [
+        "index, follow, max-image-preview:large"
+      ],
+      "h1": [
+        "Manage medspa appointments and client records"
+      ],
+      "main_count": 1,
+      "anchor_count": 30
+    },
+    {
+      "url": "https://book.clipperdesk.com/solutions/physical-therapy",
+      "status": 200,
+      "location": null,
+      "robots_header": "index, follow, max-image-preview:large",
+      "content_type": "text/html; charset=utf-8",
+      "response_date": "Wed, 04 Nov 2026 07:48:00 GMT",
+      "titles": [
+        "Physical therapy scheduling software | ClipperDesk"
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/physical-therapy"
+      ],
+      "robots_meta": [
+        "index, follow, max-image-preview:large"
+      ],
+      "h1": [
+        "Schedule physical therapy appointments"
+      ],
+      "main_count": 1,
+      "anchor_count": 30
+    },
+    {
+      "url": "https://book.clipperdesk.com/features",
+      "status": 200,
+      "location": null,
+      "robots_header": "index, follow, max-image-preview:large",
+      "content_type": "text/html; charset=utf-8",
+      "response_date": "Wed, 04 Nov 2026 07:48:02 GMT",
+      "titles": [
+        "Service business management software features | ClipperDesk"
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/features"
+      ],
+      "robots_meta": [
+        "index, follow, max-image-preview:large"
+      ],
+      "h1": [
+        "Manage the work around every appointment."
+      ],
+      "main_count": 1,
+      "anchor_count": 27
+    },
+    {
+      "url": "https://book.clipperdesk.com/",
+      "status": 200,
+      "location": null,
+      "robots_header": "index, follow, max-image-preview:large",
+      "content_type": "text/html; charset=utf-8",
+      "response_date": "Wed, 04 Nov 2026 07:48:02 GMT",
+      "titles": [
+        "Appointment scheduling & service business software | ClipperDesk"
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/"
+      ],
+      "robots_meta": [
+        "index, follow, max-image-preview:large"
+      ],
+      "h1": [
+        "Your whole day, beautifully run."
+      ],
+      "main_count": 1,
+      "anchor_count": 38
+    }
+  ]
+}

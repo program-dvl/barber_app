@@ -1,0 +1,3 @@
+Use clipperdesk-email-avatar.png for both mailbox profile photos. It preserves the existing brand mark with clear space for circular crops. Suggested display names: ClipperDesk Sales and ClipperDesk Support.
+
+Open each signature HTML file in a browser, copy the rendered signature, and paste into the email signature editor with formatted text enabled. If formatting is removed, use the corresponding text file. Signatures use live text and links, so they do not depend on remote image loading. Send yourself a test email after saving. These files have not been installed into the mailboxes or tested in PrivateEmail.
