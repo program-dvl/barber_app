@@ -1,0 +1,10 @@
+--- Forge site 3340514 / General site configuration (current editor fragment)
++++ Forge site 3340514 / General site configuration (proposed editor fragment)
+@@ -10,6 +10,7 @@
+ index index.html index.htm index.php;
+ 
+ charset utf-8;
++client_max_body_size 40m;
+ 
+ # FORGE CONFIG (DO NOT REMOVE!)
+ include forge-conf/3340514/server/*;

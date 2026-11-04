@@ -8,10 +8,27 @@ schema changed and no deployment/hosting setting was changed by this task.
 ## Findings
 
 The supplied production screenshot shows a 2.3 MB PNG failing with Livewire's
-generic `data.thumbnail.<id>` message. Local PHP's upload limit is 2 MiB and a
-simulated PHP size rejection produces matching wording, but this is a **leading
-hypothesis, not verified production root cause**. The real production upload
-response and effective FPM/proxy configuration remain unconfirmed.
+generic `data.thumbnail.<id>` message. A local 2 MiB PHP size rejection initially
+produced matching wording, but that hypothesis did not establish the live cause.
+A later retry of the original **2,269,879-byte PNG** on the preserved live
+`/admin/articles/create` form returned **HTTP 413, text/html**, with Nginx's
+`413 Request Entity Too Large` body from
+`POST /livewire-e88050f8/upload-file`. The preceding and following Livewire update
+requests returned 200. The current live failure is a verified Nginx request-size
+rejection before PHP; effective FPM limits and downstream storage remain unknown.
+
+[Live failure screenshot](live-nginx-upload-error.jpg) shows the original image
+and the preserved form. No cookies, signed upload URL or full form payload is
+retained. A read-only Forge command to inspect inherited Nginx limits was marked
+Finished, but its output returned a missing provision-output file; it did not
+establish the effective limit or inspect those included files.
+
+Read-only Forge overview inspection shows **746682a / Deployed**, push-to-deploy
+**82065079**. The task did not trigger that deployment. The General site
+configuration contains no explicit `client_max_body_size`, but its
+`forge-conf/3340514/server/*` includes were not read. The apex server includes
+`forge-conf/3340514/site.conf`, with no other body-size override visible. This
+does not establish an exact effective Nginx limit.
 
 Independent code review found these actual defects:
 
@@ -29,7 +46,10 @@ Independent code review found these actual defects:
   filter would exclude. Known private/temporary links and exceptionally large
   bodies needed explicit publication failures rather than leakage/truncation.
 
-## Implemented locally
+## Implemented source
+
+The following changes were verified locally; Forge now reports their source
+revision deployed. Successful production image upload is still unverified.
 
 - Explicit public article disk; existing S3 deployments retain S3 by default,
   local storage uses `public`, and `ARTICLE_MEDIA_DISK` permits an explicit
@@ -66,6 +86,8 @@ Independent code review found these actual defects:
 | Isolated browser: original reported PNG upload and Save changes confirmation | Passed before browser interruption |
 | Saved original PNG bytes | **2,269,879**, hash matches the reported original file exactly |
 | Local public image URL | **HTTP 200, image/png, Content-Length 2,269,879** |
+| Forge deployment overview | **746682a / Deployed**, push-to-deploy **82065079**; not triggered by this task |
+| Live retry of the original PNG on the preserved create form | **413 text/html**, Nginx `413 Request Entity Too Large`; surrounding Livewire updates **200** |
 
 The isolated fixture uses disposable SQLite/storage and a synthetic administrator
 at localhost:8051, with fake/disabled providers. Normal local MySQL and real
@@ -85,25 +107,36 @@ PHP-FPM or Nginx and cannot certify those transport limits.
 
 - The browser extension's automated file-setting API requires Allow access to
   file URLs; native picker fallback worked locally. Browser control later became
-  disabled in Work settings again, blocking continued browser use. The owner
-  has a pending enablement request. An attempted existing SSH connection was
+  disabled in Work settings, then was restored before the live retry above.
+  Browser access is now enabled. An attempted existing SSH connection was
   rejected for lack of an accepted key; no remote command executed.
 - Inline attachment selection began locally but save/reload and public rendering
   of that actual inline upload were not completed in the browser. Automated
   content/image tests pass, but they are not that browser journey.
-- Desktop/mobile publication and actual long upload-error/success feedback
-  screenshots remain outstanding. No phone-layout certification is claimed.
-- **No source deployment, production runtime repair or successful production
-  upload is claimed.** Production session was restored by the owner, but final
-  upload observation was blocked. The earlier hosting/deployment hold has not
-  been silently waived by this local repair.
+- A desktop production upload-error screenshot is now retained. Desktop/mobile
+  publication, mobile error feedback and upload-success screenshots remain
+  outstanding. No phone-layout certification is claimed.
+- **No production runtime repair or successful production upload is claimed.**
+  Forge reports the source deployed, but Nginx rejects the original upload.
+  No real article was saved/published and no hosting setting was changed by this
+  task. The owner's earlier hosting/deployment hold remains in effect.
+
+## Prepared hosting repair — not applied
+
+Add `client_max_body_size 40m;` immediately after `charset utf-8;` in the General
+site configuration's existing `server` context, preserving every other setting.
+The [context-only patch](nginx-upload-limit.patch) is prepared for review. Check
+included/location overrides, then use Forge's validation/save/reload flow after
+the owner explicitly clears the hosting hold. This aligns Nginx with the source
+POST ceiling while article validation stays 5 MiB. It does not prove effective
+FPM settings or storage success. See the [deployment and rollback runbook](../../deployment/article-media.md).
 
 ## Continue from here
 
-1. Restore browser control and finish the isolated editor's inline-image,
+1. Finish the isolated editor's inline-image,
    publication, error recovery and desktop/390px checks, capturing actual screens.
-2. After the hosting hold is explicitly cleared, deploy the reviewed source and
-   verify media configuration/storage link plus FPM/proxy limits using the
+2. After the hosting hold is explicitly cleared, validate/apply the prepared
+   Nginx repair and verify media configuration/storage link plus FPM limits using the
    [article-media runbook](../../deployment/article-media.md). Never expose a
    client-private disk or publish a synthetic production article for testing.
 3. Upload the original 2.3 MB image to an authorized draft, wait for completion,

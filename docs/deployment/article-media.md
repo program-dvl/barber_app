@@ -53,11 +53,42 @@ real article text and do not publish synthetic production content.
 
 ## Diagnosis and rollback
 
-The reported screenshot's generic Livewire message does not identify its cause.
-Local PHP's 2 MiB default rejects a 2.3 MB image with matching wording, but the
-actual production upload response and FPM/proxy settings must establish the
-production cause. Capture only status and sanitized error details: never retain
-cookies, signed upload URLs, provider credentials or full page state in an audit.
+The original generic Livewire message and the replacement friendly message do
+not identify the cause. On 2026-11-04, retrying the original 2,269,879-byte PNG
+on the preserved live article form returned **HTTP 413, text/html**, with Nginx's
+`413 Request Entity Too Large` body. The preceding and following Livewire update
+requests returned 200. This establishes Nginx request-size rejection before the
+upload reaches PHP; it does not establish effective PHP-FPM limits or successful
+temporary/final storage. The earlier local 2 MiB PHP limit was a hypothesis,
+not the verified cause of this live response.
+
+Read-only Forge inspection shows source `746682a` deployed (push-to-deploy
+`82065079`). The General site configuration has no explicit
+`client_max_body_size`; its `forge-conf/3340514/server/*` includes were not read.
+The apex server includes `forge-conf/3340514/site.conf`, with no other body-size
+override visible. The exact effective Nginx limit is therefore unconfirmed.
+
+The prepared repair, **not applied while the owner's hosting hold remains**, is
+to add this directive immediately after `charset utf-8;` in the General site
+configuration's existing `server` context:
+
+```nginx
+client_max_body_size 40m;
+```
+
+Preserve every other setting. Check included/location configuration for a
+conflicting override, then use Forge's normal validation/save/reload flow only
+after the hold is explicitly cleared. The 40 MiB ceiling aligns with the source
+POST limit and preserves existing salon-media workflows; article validation
+remains 5 MiB. Nginx's [request-size directive](https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size)
+is separate from PHP's `.user.ini`. A context-only [proposed patch](../audits/2026-11-04-article-editor/nginx-upload-limit.patch)
+is retained for review; it is not a saved production configuration.
+
+Retry the original PNG without refreshing away the entered article text. If a
+new PHP/validation/storage failure appears after the Nginx repair, inspect that
+response and effective request-SAPI settings before another change. Capture
+only status and sanitized error details: never retain cookies, signed upload
+URLs, provider credentials or full page state in an audit.
 
 If local temporary upload works but final media fails, inspect the configured
 article disk, write permission and resulting public URL. For S3, verify existing
@@ -67,6 +98,9 @@ or weaken client-file access to repair an article image.
 Keep the last known source release/configuration for rollback. Preserve saved
 article and media records across any rollback. Do not delete uploads, rewrite
 stored articles or turn off publication validation to force a success message.
+For the proposed Nginx change, preserve the current General site configuration
+and restore it through Forge's validation/reload flow if the change fails or
+causes unrelated regressions; the current upload 413 is the known rollback state.
 An older renderer may not display newly authored rich HTML correctly, so verify
 the public article body after any rollback as well as the admin save.
 

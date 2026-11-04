@@ -18,13 +18,20 @@
   browser draft create/save/reopen and original PNG upload/save succeeded.
   Saved image is identical to the original **2,269,879-byte PNG**; local public
   URL returns 200/image/png with the full length.
-- **Not deployed or verified fixed on production.** Initial local PHP 2 MiB
-  rejection matches the reported wording but production FPM/proxy/S3 cause is
-  not established. Browser control became disabled again; final inline-upload,
-  public publication and desktop/mobile screen checks remain incomplete. Remote
-  read-only SSH attempt lacked an accepted key. No real article, customer data,
-  schema, provider setting or hosting configuration was changed. Hosting hold
-  remains. [Evidence and continuation](audits/2026-11-04-article-editor/README.md).
+- Forge now reports **746682a / Deployed**, push-to-deploy **82065079**; this task
+  did not trigger deployment. With browser access restored, the original PNG
+  retry on the preserved live create form returned **413 text/html**, Nginx
+  `413 Request Entity Too Large`, while surrounding Livewire updates returned
+  200. This confirms Nginx request-size rejection; effective FPM/storage behavior
+  remains unverified. **The production upload issue is not fixed.**
+- Read-only site configuration has no explicit `client_max_body_size`; included
+  server files were not read, so the effective limit is unconfirmed. Prepared
+  `client_max_body_size 40m;` after `charset utf-8;` in the General site server
+  context; not applied while the owner's hosting hold remains. No real article,
+  customer data, schema, provider setting or hosting configuration was changed.
+  Inline-upload, public publication and desktop/mobile checks remain incomplete.
+  The earlier SSH attempt lacked an accepted key.
+  [Evidence and continuation](audits/2026-11-04-article-editor/README.md).
 
 ## 2026-11-04 Google search performance follow-up
 
