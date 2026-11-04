@@ -38,7 +38,7 @@
     }
   },
   "limitations": [
-    "Status-only source is not deployed by this task.",
+    "Automatic metadata writes were verified in the isolated browser; the owner\u2019s production article was not published for testing. Subsequent deployment/live UI verification is in status-live-evidence.json.",
     "Actual inline-image picker save/reload remains unverified; browser automated file setting requires extension file-URL permission."
   ],
   "production_article_published": false

@@ -20,9 +20,17 @@
   Required-field failures retained text/image and expanded the search section.
   Desktop **1440×900** and phone **390×844** have no horizontal overflow; actual
   phone Status/Save/Cancel targets measure **44px**. Browser sizing was restored.
-- **Status-only source is not deployed by this task yet.** No real article was
-  published. The separately approved production image-upload repair below is
-  complete. [Evidence](audits/2026-11-04-article-editor/status-local-evidence.json).
+- The owner deployed **69cad43** through push-to-deploy; Forge deployment
+  **82069727** reports **Deployed**. Read-only live verification confirms the
+  single Draft/Published control, absence of manual reviewer/date fields and
+  Publication section, and the owner's saved article still Draft with its
+  image. Desktop screenshot retained; phone DOM at **390×844** has no overflow
+  and a **44px** Status control. Live phone screenshot capture returned a blank
+  background under the existing browser zoom, so phone visual evidence remains
+  the isolated check. Browser sizing was restored. No real article was published;
+  automatic timestamp writes were verified in the isolated browser, not by
+  publishing the owner's article. The production image repair below is complete.
+  [Live evidence](audits/2026-11-04-article-editor/status-live-evidence.json).
 
 ## 2026-11-04 Article editor and featured-image upload repair
 

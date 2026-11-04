@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-04",
+  "commit": "69cad43",
+  "deployment_id": 82069727,
+  "forge_status": "Deployed",
+  "deployed_by": "owner through push-to-deploy; not triggered by this task",
+  "checks": {
+    "single_status_control": true,
+    "status_options": [
+      "Draft",
+      "Published"
+    ],
+    "publication_section_removed": true,
+    "manual_reviewer_and_date_inputs_removed": true,
+    "saved_article_status": "draft",
+    "featured_image_preserved": true,
+    "no_article_published_for_testing": true
+  },
+  "phone_dom": {
+    "css_width": 390,
+    "css_height": 844,
+    "scroll_width": 390,
+    "status_height_css_px": 43.99305725097656
+  },
+  "screenshots": {
+    "live_desktop": "status-live-desktop.jpg",
+    "phone_visual": "status-mobile-published.jpg (isolated browser)"
+  },
+  "limitations": [
+    "Live phone screenshot capture returned a blank background under existing browser zoom and was discarded; phone DOM measurements passed.",
+    "Automatic metadata writes and first-date preservation were verified in the isolated browser; no production article was published.",
+    "Actual inline-image picker save/reload remains unverified."
+  ],
+  "browser_sizing_restored": true
+}

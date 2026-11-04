@@ -163,9 +163,18 @@ targets. Browser sizing was restored. Screens:
 [phone validation](status-mobile-validation.jpg).
 Machine-readable evidence: [status-local-evidence.json](status-local-evidence.json).
 
-This status-only source is **not deployed by this task yet**. The production
-image-upload repair above is complete; no production article was published to
-test these controls.
+The owner subsequently deployed **69cad43** through push-to-deploy; Forge
+deployment **82069727** reports **Deployed**. Read-only live checks confirm the
+single Status control, removal of the Publication section and manual reviewer/
+dates, saved Draft state and preserved image. [Live desktop](status-live-desktop.jpg).
+At a **390×844 CSS viewport**, live DOM reports no horizontal overflow and a
+44px Status control. Phone screenshot capture returned a blank background under
+the existing browser zoom; that blank capture was discarded. Phone visual proof
+is the isolated screenshot above. All temporary sizing was restored.
+
+The production upload repair is complete. No production article was published
+to test these controls; automatic metadata writes and preservation were tested
+in the isolated browser. [Live evidence](status-live-evidence.json).
 
 ## Remaining editor checks
 
@@ -177,17 +186,18 @@ test these controls.
 - Inline attachment selection began locally but save/reload and public rendering
   of that actual inline upload were not completed in the browser. Automated
   content/image tests pass, but they are not that browser journey.
-- Desktop production failure/reopened-image and isolated desktop/phone status
-  and validation screenshots are retained. Live status-only UI verification
-  follows an authorized source deployment.
+- Desktop production failure/reopened-image/live status and isolated desktop/
+  phone status/validation screenshots are retained. Production publication was
+  intentionally not exercised against the owner's draft.
 
 ## Continue from here
 
 1. Complete a real inline-image picker save/reload separately when browser upload
    access permits; do not equate automated renderer tests with that journey.
-2. After an authorized source deployment, verify the status-only controls while
-   preserving the owner's open form and article. Never expose client-private
-   storage or publish synthetic production content.
+2. Preserve the owner's open form and article. The deployed status-only controls
+   are verified; publication should occur only when the owner completes and
+   chooses to publish their actual article. Never publish synthetic production
+   content for this check.
 3. Preserve the approved [Nginx change](nginx-upload-limit.patch) and use the
    [article-media runbook](../../deployment/article-media.md) for future releases.
 
