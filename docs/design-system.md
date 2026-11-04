@@ -1194,6 +1194,14 @@ article text, with draft saving available when the image is unavailable. Do not
 repeat the raw component state path or imply a failed image was saved. Keep
 native field feedback associated with its input and save confirmation brief;
 do not add a second persistent banner for the same field failure. Draft and
-publication choices must state their public outcome, and review/publish dates
-must show their time zone. Verify long recovery copy, actual save controls and
+publication choices must state their public outcome. Use one Status control,
+Draft or Published, in Article; infer the named administrator and UTC review/
+publication times when the action completes. Do not ask for a separate reviewer
+or date when the platform can record it. Preserve the first publication date on
+ordinary edits, and label displayed timestamps with UTC. Clear an old upload
+error when its replacement upload succeeds, without clearing unrelated errors.
+The native Status select itself has a 44px minimum hit area; the wrapper alone
+does not establish the control's touch size. Retain the shared Filament mobile
+button sizing and wrapping action spacing.
+Verify long recovery copy, actual save controls and
 upload/success states at desktop and phone widths before claiming UI completion.

@@ -8,6 +8,9 @@ The public publication/privacy gates and administrator authorization remain.
 1. Deploy the reviewed article code and `config/articles.php`, `config/livewire.php`
    and `public/.user.ini` together. Refresh the normal Laravel configuration cache.
    No schema migration is required: editorial lifecycle columns already exist.
+   The status-only follow-up removes manual lifecycle entry. The verified admin
+   actor and current server UTC time supply reviewer/publication metadata;
+   preserve the reached original publication date on normal later edits.
 2. Preserve existing media. `ARTICLE_MEDIA_DISK` explicitly selects public article
    storage. Without it, existing `FILESYSTEM_DISK=s3` deployments retain S3;
    other deployments use the named `public` disk. Do not point this to client
@@ -44,9 +47,12 @@ real article text and do not publish synthetic production content.
   with a permitted replacement or save without an image as Draft. A persistent
   transport/configuration error is an operator issue, not a customer settings task.
 - Publish only an actually reviewed article with complete summary/topic/search
-  fields, reviewer and reached UTC review/publish dates. Confirm the blog listing,
-  article body/featured image, canonical/social metadata and sitemap agree.
-  Verify a future-dated article remains hidden until its publish time.
+  fields and image by choosing Published and saving. Verify the reviewer and
+  current UTC time were recorded automatically and a later ordinary save does
+  not replace the first publication time. Confirm blog listing, article body/
+  featured image, canonical/social metadata and sitemap agree. Existing future
+  schedules remain gated until reached unless an administrator explicitly saves
+  Published, which now means publish immediately. No new scheduling UI is offered.
 - Check desktop and 390px: readable feedback, separated controls, preserved text,
   no overflow and successful save/reload. Ordinary/support/auditor identities must
   not gain article administration access.
@@ -68,21 +74,29 @@ Read-only Forge inspection shows source `746682a` deployed (push-to-deploy
 The apex server includes `forge-conf/3340514/site.conf`, with no other body-size
 override visible. The exact effective Nginx limit is therefore unconfirmed.
 
-The prepared repair, **not applied while the owner's hosting hold remains**, is
-to add this directive immediately after `charset utf-8;` in the General site
-configuration's existing `server` context:
+After the owner explicitly approved this upload fix, the following directive
+was added immediately after `charset utf-8;` in the General site configuration's
+existing `server` context:
 
 ```nginx
 client_max_body_size 40m;
 ```
 
-Preserve every other setting. Check included/location configuration for a
-conflicting override, then use Forge's normal validation/save/reload flow only
-after the hold is explicitly cleared. The 40 MiB ceiling aligns with the source
+The complete before/after editor fragment was compared to preserve every other
+setting. Forge completed its save/reload flow; reopening confirmed the saved
+content, apart from normalization of final blank lines. The 40 MiB ceiling aligns with the source
 POST limit and preserves existing salon-media workflows; article validation
 remains 5 MiB. Nginx's [request-size directive](https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size)
-is separate from PHP's `.user.ini`. A context-only [proposed patch](../audits/2026-11-04-article-editor/nginx-upload-limit.patch)
-is retained for review; it is not a saved production configuration.
+is separate from PHP's `.user.ini`. The applied [context-only patch](../audits/2026-11-04-article-editor/nginx-upload-limit.patch)
+records the narrow change; other hosting changes were not authorized by this approval.
+
+The original PNG then reported Upload complete. The owner's article was saved
+once as Draft and reopened with the exact same title and complete editor HTML.
+Its durable public image returns **200 / image/png / 2,269,879 bytes**, with
+SHA-256 identical to the original. The saved draft remains excluded from the
+blog/sitemap and returns 404 publicly. This verifies the reported featured-image
+journey; effective FPM INI values and other upload journeys are not certified.
+See [live evidence](../audits/2026-11-04-article-editor/live-upload-evidence.json).
 
 Retry the original PNG without refreshing away the entered article text. If a
 new PHP/validation/storage failure appears after the Nginx repair, inspect that
@@ -98,9 +112,10 @@ or weaken client-file access to repair an article image.
 Keep the last known source release/configuration for rollback. Preserve saved
 article and media records across any rollback. Do not delete uploads, rewrite
 stored articles or turn off publication validation to force a success message.
-For the proposed Nginx change, preserve the current General site configuration
+For this Nginx change, preserve the previous General site configuration
 and restore it through Forge's validation/reload flow if the change fails or
-causes unrelated regressions; the current upload 413 is the known rollback state.
+causes unrelated regressions; restoring the previous setting may restore the
+known upload 413.
 An older renderer may not display newly authored rich HTML correctly, so verify
 the public article body after any rollback as well as the admin save.
 

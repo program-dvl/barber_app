@@ -1,5 +1,29 @@
 # Project status
 
+## 2026-11-04 Article status-only publishing
+
+- At the owner's request, replaced the separate Publication section and manual
+  reviewer/dates with one **Status: Draft / Published** control. On a valid
+  Published save, the verified administrator's account supplies the reviewer and
+  server UTC time supplies review/first-publication dates. Ordinary edits retain
+  the original publication date; changed public content refreshes its review.
+  Stored history and authorization remain server-owned; forged lifecycle values
+  are ignored. Drafts and Active alone never publish an article.
+- Retained summary/topic/search/image/content publication checks. A successful
+  image retry now clears the previous image error. Native Status control has a
+  44px hit area; shared mobile Save/Cancel actions already provide 44px targets.
+- Marketing + administrator-resource checks **250 passed / 3,990 assertions**;
+  scoped Pint and whitespace passed. Isolated browser publication succeeded
+  without entering reviewer/dates, recorded the synthetic editor and current
+  UTC time, retained the first date after a later save, and appeared in the
+  public article/sitemap with the correct image/social image and one H1.
+  Required-field failures retained text/image and expanded the search section.
+  Desktop **1440×900** and phone **390×844** have no horizontal overflow; actual
+  phone Status/Save/Cancel targets measure **44px**. Browser sizing was restored.
+- **Status-only source is not deployed by this task yet.** No real article was
+  published. The separately approved production image-upload repair below is
+  complete. [Evidence](audits/2026-11-04-article-editor/status-local-evidence.json).
+
 ## 2026-11-04 Article editor and featured-image upload repair
 
 - Restored explicit public article storage (preserving existing S3), private
@@ -18,19 +42,21 @@
   browser draft create/save/reopen and original PNG upload/save succeeded.
   Saved image is identical to the original **2,269,879-byte PNG**; local public
   URL returns 200/image/png with the full length.
-- Forge now reports **746682a / Deployed**, push-to-deploy **82065079**; this task
-  did not trigger deployment. With browser access restored, the original PNG
-  retry on the preserved live create form returned **413 text/html**, Nginx
-  `413 Request Entity Too Large`, while surrounding Livewire updates returned
-  200. This confirms Nginx request-size rejection; effective FPM/storage behavior
-  remains unverified. **The production upload issue is not fixed.**
-- Read-only site configuration has no explicit `client_max_body_size`; included
-  server files were not read, so the effective limit is unconfirmed. Prepared
-  `client_max_body_size 40m;` after `charset utf-8;` in the General site server
-  context; not applied while the owner's hosting hold remains. No real article,
-  customer data, schema, provider setting or hosting configuration was changed.
-  Inline-upload, public publication and desktop/mobile checks remain incomplete.
-  The earlier SSH attempt lacked an accepted key.
+- Forge reports **746682a / Deployed** (**82065079**), then **271a34e / Deployed**
+  (**82066589**); this task did not trigger either deployment. A live retry
+  established Nginx **413 text/html** before PHP, with surrounding updates 200.
+  The owner then explicitly approved this upload fix. Added only
+  `client_max_body_size 40m;` after `charset utf-8;`, verified complete readback
+  and Forge's finished reload. Reopening matches the approved file apart from
+  final-newline normalization. Other hosting changes remain outside that approval.
+- **The reported production featured-image journey now succeeds.** Retried the
+  original image, saved the owner's article once as Draft and reopened article
+  **1** with exactly matching title and full **16,051-character** editor HTML.
+  The durable image returns **200 / image/png / 2,269,879 bytes** and its SHA-256
+  matches the original. Saved draft remains absent from blog/sitemap (127 URLs)
+  and returns 404 publicly. No article was published or schema/provider changed.
+  Effective FPM INI values and other upload workflows remain unverified.
+  Inline-image/public-publication and full desktop/mobile checks remain separate.
   [Evidence and continuation](audits/2026-11-04-article-editor/README.md).
 
 ## 2026-11-04 Google search performance follow-up

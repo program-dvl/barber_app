@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-04",
+  "environment": "isolated localhost:8051; disposable SQLite/storage, synthetic administrator",
+  "form": {
+    "status_options": [
+      "Draft",
+      "Published"
+    ],
+    "publication_section_removed": true,
+    "manual_reviewer_and_dates_removed": true
+  },
+  "browser": {
+    "incomplete_publish_retains_content_and_image": true,
+    "missing_search_fields_expand_section": true,
+    "publish_saved_notice": true,
+    "automatic_reviewer": "Article Review Editor",
+    "automatic_first_published_at_utc": "2026-11-04 10:40:07",
+    "automatic_reviewed_at_utc": "2026-11-04 10:40:07",
+    "unchanged_save_preserves_dates": true,
+    "public_article_body_and_featured_image_visible": true,
+    "public_h1_count": 1,
+    "public_social_image_matches_featured": true,
+    "published_article_added_to_sitemap": true
+  },
+  "layouts": {
+    "desktop": {
+      "width": 1440,
+      "height": 900,
+      "scroll_width": 1440,
+      "status_height": 44
+    },
+    "phone": {
+      "width": 390,
+      "height": 844,
+      "scroll_width": 390,
+      "status_height": 44,
+      "save_cancel_height": 44
+    }
+  },
+  "limitations": [
+    "Status-only source is not deployed by this task.",
+    "Actual inline-image picker save/reload remains unverified; browser automated file setting requires extension file-URL permission."
+  ],
+  "production_article_published": false
+}

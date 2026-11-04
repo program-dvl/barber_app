@@ -16,7 +16,7 @@ class CreateArticle extends CreateRecord
     {
         $data['user_id'] = auth()->id();
 
-        return app(ArticlePublication::class)->prepare($data);
+        return app(ArticlePublication::class)->prepare($data, auth()->user());
     }
 
     protected function getRedirectUrl(): string

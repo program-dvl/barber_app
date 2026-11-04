@@ -1,17 +1,21 @@
 <?php
 
+use App\Domain\Marketing\Services\ArticlePublication;
 use App\Domain\PlatformAccess\Enums\PlatformRole;
 use App\Domain\PlatformAccess\Models\PlatformRoleAssignment;
 use App\Filament\Resources\Articles\Pages\CreateArticle;
 use App\Filament\Resources\Articles\Pages\EditArticle;
 use App\Models\Article;
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Select;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use Livewire\Livewire;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 uses(RefreshDatabase::class);
 
@@ -35,9 +39,7 @@ function articleWorkflowFields(array $overrides = []): array
         'topic' => 'Daily operations',
         'seo_title' => 'Prepare the reception desk',
         'seo_description' => 'Prepare appointments and arrival information before the working day begins.',
-        'active' => true, 'status' => 'published', 'content_owner' => 'Editorial team',
-        'reviewed_at' => now()->subMinute()->format('Y-m-d H:i:s'),
-        'published_at' => now()->subMinute()->format('Y-m-d H:i:s'),
+        'active' => true, 'status' => 'published',
     ], $overrides);
 }
 
@@ -76,6 +78,9 @@ it('saves an unfinished draft without a featured image or search details', funct
     $article = Article::sole();
     expect($article->user_id)->toBe($editor->id)
         ->and($article->status)->toBe('draft')
+        ->and($article->published_at)->toBeNull()
+        ->and($article->reviewed_at)->toBeNull()
+        ->and($article->content_owner)->toBeNull()
         ->and($article->thumbnail)->toBe('')
         ->and($article->icon)->toBe('');
     $this->get(route('blog.article', $article))->assertNotFound();
@@ -111,13 +116,18 @@ it('stores a real image larger than two MiB publicly and retains it when editing
 });
 
 it('publishes a complete reviewed article through the real admin form to the blog and sitemap', function () {
-    $this->actingAs(articleWorkflowAdministrator());
+    $this->travelTo(CarbonImmutable::parse('2026-11-04T16:27:34.627915+05:30'));
+    $editor = articleWorkflowAdministrator();
+    $this->actingAs($editor);
     Livewire::test(CreateArticle::class)
         ->fillForm([...articleWorkflowFields(), 'thumbnail' => UploadedFile::fake()->image('reception.png', 800, 450)])
         ->call('create')->assertHasNoFormErrors();
 
     $article = Article::sole();
-    expect(Article::publishable()->whereKey($article)->exists())->toBeTrue();
+    expect(Article::publishable()->whereKey($article)->exists())->toBeTrue()
+        ->and($article->content_owner)->toBe($editor->name)
+        ->and($article->published_at->toDateTimeString())->toBe('2026-11-04 10:57:34')
+        ->and($article->reviewed_at->equalTo($article->published_at))->toBeTrue();
     $this->get(route('blog.index'))->assertOk()->assertInertia(fn (Assert $page) => $page
         ->has('articles.data', 1)->where('articles.data.0.slug', $article->slug)
         ->where('articles.data.0.thumbnail', Storage::disk('public')->url($article->thumbnail)));
@@ -127,18 +137,22 @@ it('publishes a complete reviewed article through the real admin form to the blo
     $this->get('/sitemap.xml')->assertOk()->assertSee('/blog/'.$article->slug);
 });
 
-it('keeps a scheduled article hidden until its publish time has arrived', function () {
-    $this->actingAs(articleWorkflowAdministrator());
-    Livewire::test(CreateArticle::class)
-        ->fillForm([...articleWorkflowFields(['published_at' => now()->addDay()->format('Y-m-d H:i:s')]),
-            'thumbnail' => UploadedFile::fake()->image('scheduled.png', 800, 450)])
-        ->call('create')->assertHasNoFormErrors();
-
-    $article = Article::sole();
+it('publishes an old future schedule now when the administrator explicitly saves Published', function () {
+    $editor = articleWorkflowAdministrator();
+    $this->actingAs($editor);
+    Storage::disk('public')->put('articles/scheduled.png', UploadedFile::fake()->image('scheduled.png')->get());
+    $article = Article::create([...articleWorkflowFields(), 'user_id' => $editor->id,
+        'thumbnail' => 'articles/scheduled.png', 'content_owner' => 'Previous reviewer',
+        'reviewed_at' => now()->subDay(), 'published_at' => now()->addDay()]);
     $this->get(route('blog.index'))->assertInertia(fn (Assert $page) => $page->has('articles.data', 0));
     $this->get(route('blog.article', $article))->assertNotFound();
     $this->get('/sitemap.xml')->assertDontSee('/blog/'.$article->slug);
-    $this->travel(2)->days();
+    Livewire::test(EditArticle::class, ['record' => $article->id])
+        ->call('save')->assertHasNoFormErrors();
+    $article->refresh();
+    expect($article->published_at->toDateTimeString())->toBe(now('UTC')->toDateTimeString())
+        ->and($article->reviewed_at->equalTo($article->published_at))->toBeTrue()
+        ->and($article->content_owner)->toBe($editor->name);
     $this->get(route('blog.article', $article))->assertOk();
     $this->get('/sitemap.xml')->assertSee('/blog/'.$article->slug);
 });
@@ -147,7 +161,7 @@ it('reports missing publication details without creating an incomplete published
     $this->actingAs(articleWorkflowAdministrator());
     Livewire::test(CreateArticle::class)
         ->fillForm(['title' => 'A publication to review', 'content' => '<p>Practical advice.</p>', 'status' => 'published'])
-        ->call('create')->assertHasFormErrors(['thumbnail', 'excerpt', 'topic', 'seo_title', 'seo_description', 'content_owner', 'reviewed_at', 'published_at']);
+        ->call('create')->assertHasFormErrors(['thumbnail', 'excerpt', 'topic', 'seo_title', 'seo_description']);
     expect(Article::count())->toBe(0);
 });
 
@@ -221,4 +235,165 @@ it('keeps entered text after a transport upload failure and allows saving the dr
         ->assertSet('data.title', 'Keep this article')
         ->call('create')->assertHasNoFormErrors();
     expect(Article::sole()->content)->toBe('<p>This work must stay available.</p>');
+});
+
+it('offers only Status in the article section without manual reviewer or date fields', function () {
+    $this->actingAs(articleWorkflowAdministrator());
+    Livewire::test(CreateArticle::class)
+        ->assertFormFieldExists('status', fn (Select $field) => $field->getLabel() === 'Status'
+            && $field->getOptions() === ['draft' => 'Draft', 'published' => 'Published'])
+        ->assertFormFieldDoesNotExist('content_owner')
+        ->assertFormFieldDoesNotExist('reviewed_at')
+        ->assertFormFieldDoesNotExist('published_at');
+});
+
+it('publishes a saved draft with the current reviewer and keeps its first publication time through edits', function () {
+    $original = articleWorkflowAdministrator();
+    $this->actingAs($original);
+    Livewire::test(CreateArticle::class)
+        ->fillForm([...articleWorkflowFields(['status' => 'draft']),
+            'thumbnail' => UploadedFile::fake()->image('reception.png')])
+        ->call('create')->assertHasNoFormErrors();
+    $article = Article::sole();
+    expect($article->published_at)->toBeNull()->and($article->reviewed_at)->toBeNull();
+
+    $reviewer = articleWorkflowAdministrator();
+    $reviewer->update(['name' => 'The publishing administrator']);
+    $this->actingAs($reviewer);
+    $this->travel(1)->hour();
+    Livewire::test(EditArticle::class, ['record' => $article->id])
+        ->fillForm(['status' => 'published'])->call('save')->assertHasNoFormErrors();
+    $article->refresh();
+    $firstPublishedAt = $article->published_at;
+    $firstReviewedAt = $article->reviewed_at;
+    expect($article->user_id)->toBe($original->id)
+        ->and($article->content_owner)->toBe($reviewer->name)
+        ->and($firstPublishedAt->toDateTimeString())->toBe(now('UTC')->toDateTimeString());
+
+    $this->travel(1)->hour();
+    Livewire::test(EditArticle::class, ['record' => $article->id])
+        ->call('save')->assertHasNoFormErrors();
+    expect($article->fresh()->published_at->equalTo($firstPublishedAt))->toBeTrue()
+        ->and($article->fresh()->reviewed_at->equalTo($firstReviewedAt))->toBeTrue();
+
+    $this->actingAs($original);
+    $this->travel(1)->hour();
+    Livewire::test(EditArticle::class, ['record' => $article->id])
+        ->fillForm(['content' => '<p>The revised working day guidance.</p>'])
+        ->call('save')->assertHasNoFormErrors();
+    expect($article->fresh()->published_at->equalTo($firstPublishedAt))->toBeTrue()
+        ->and($article->fresh()->reviewed_at->toDateTimeString())->toBe(now('UTC')->toDateTimeString())
+        ->and($article->fresh()->materially_updated_at->equalTo($article->fresh()->reviewed_at))->toBeTrue()
+        ->and($article->fresh()->content_owner)->toBe($original->name);
+
+    $this->travel(1)->hour();
+    Livewire::test(EditArticle::class, ['record' => $article->id])
+        ->fillForm(['status' => 'draft', 'active' => true])->call('save')->assertHasNoFormErrors();
+    $this->get(route('blog.article', $article))->assertNotFound();
+    expect($article->fresh()->published_at->equalTo($firstPublishedAt))->toBeTrue();
+    $this->travel(1)->hour();
+    Livewire::test(EditArticle::class, ['record' => $article->id])
+        ->fillForm(['status' => 'published'])->call('save')->assertHasNoFormErrors();
+    expect($article->fresh()->published_at->equalTo($firstPublishedAt))->toBeTrue()
+        ->and($article->fresh()->reviewed_at->toDateTimeString())->toBe(now('UTC')->toDateTimeString());
+});
+
+it('derives publication history from the administrator and clock instead of supplied hidden state', function () {
+    $editor = articleWorkflowAdministrator();
+    $this->travelTo(CarbonImmutable::parse('2026-11-04T18:47:29.843201+05:30'));
+    $data = app(ArticlePublication::class)->prepare([...articleWorkflowFields(),
+        'thumbnail' => 'articles/reception.png', 'content_owner' => 'An invented reviewer',
+        'reviewed_at' => '2099-01-01', 'published_at' => '2000-01-01',
+        'materially_updated_at' => '2099-01-01'], $editor);
+
+    expect($data['content_owner'])->toBe($editor->name)
+        ->and($data['published_at']->toDateTimeString())->toBe('2026-11-04 13:17:29')
+        ->and($data['reviewed_at']->equalTo($data['published_at']))->toBeTrue()
+        ->and($data['materially_updated_at'])->toBeNull();
+    $draft = app(ArticlePublication::class)->prepare([...$data, 'status' => 'draft'], $editor);
+    expect($draft['content_owner'])->toBeNull()->and($draft['reviewed_at'])->toBeNull()
+        ->and($draft['published_at'])->toBeNull();
+
+    $article = Article::create([...articleWorkflowFields(), 'user_id' => $editor->id,
+        'thumbnail' => 'articles/reception.png', 'content_owner' => 'The original reviewer',
+        'reviewed_at' => now()->subDay(), 'published_at' => now()->subDays(2),
+        'materially_updated_at' => now()->subDay()]);
+    $saved = app(ArticlePublication::class)->prepare([...$data,
+        'content_owner' => 'Another invented reviewer', 'published_at' => '2099-01-01',
+        'reviewed_at' => '2099-01-01', 'materially_updated_at' => '2099-01-01'], $editor, $article);
+    expect($saved['content_owner'])->toBe($article->content_owner)
+        ->and($saved['published_at']->equalTo($article->published_at))->toBeTrue()
+        ->and($saved['reviewed_at']->equalTo($article->reviewed_at))->toBeTrue()
+        ->and($saved['materially_updated_at']->equalTo($article->materially_updated_at))->toBeTrue();
+});
+
+it('refreshes the named review for public-facing article changes without replacing its first publication date', function (string $field, string $value) {
+    $editor = articleWorkflowAdministrator();
+    $article = Article::create([...articleWorkflowFields(), 'user_id' => $editor->id,
+        'thumbnail' => 'articles/reception.png', 'content_owner' => 'Original reviewer',
+        'reviewed_at' => now()->subDay(), 'published_at' => now()->subDays(2)]);
+    $data = app(ArticlePublication::class)->prepare([...articleWorkflowFields(),
+        'thumbnail' => 'articles/reception.png', $field => $value], $editor, $article);
+    expect($data['content_owner'])->toBe($editor->name)
+        ->and($data['reviewed_at']->toDateTimeString())->toBe(now('UTC')->toDateTimeString())
+        ->and($data['materially_updated_at']->equalTo($data['reviewed_at']))->toBeTrue()
+        ->and($data['published_at']->equalTo($article->published_at))->toBeTrue();
+})->with([
+    ['title', 'Prepare the busy reception desk'],
+    ['content', '<p>Review the reception diary carefully.</p>'],
+    ['excerpt', 'Practical reception advice for a busy working day.'],
+    ['topic', 'Reception'],
+    ['thumbnail', 'articles/replacement.png'],
+    ['seo_title', 'Prepare the reception desk for a busy day'],
+    ['seo_description', 'Practical advice for keeping reception appointments organized on a busy working day.'],
+    ['seo_keywords', 'reception, appointments'],
+]);
+
+it('requires a verified administrator with an account name to publish', function () {
+    $ordinary = User::factory()->create();
+    expect(fn () => app(ArticlePublication::class)->prepare([...articleWorkflowFields(),
+        'thumbnail' => 'articles/reception.png'], $ordinary))->toThrow(HttpException::class);
+
+    $unverified = articleWorkflowAdministrator();
+    $unverified->forceFill(['email_verified_at' => null])->save();
+    expect(fn () => app(ArticlePublication::class)->prepare([...articleWorkflowFields(),
+        'thumbnail' => 'articles/reception.png'], $unverified))->toThrow(HttpException::class);
+
+    $editor = articleWorkflowAdministrator();
+    $editor->update(['name' => '   ']);
+    $this->actingAs($editor);
+    Livewire::test(CreateArticle::class)
+        ->fillForm([...articleWorkflowFields(), 'thumbnail' => UploadedFile::fake()->image('reception.png')])
+        ->call('create')->assertHasFormErrors(['status']);
+    expect(Article::count())->toBe(0);
+});
+
+it('keeps review attribution and publication history when only Active changes', function () {
+    $editor = articleWorkflowAdministrator();
+    $article = Article::create([...articleWorkflowFields(), 'user_id' => $editor->id,
+        'thumbnail' => 'articles/reception.png', 'content_owner' => 'Original reviewer',
+        'reviewed_at' => now()->subDay(), 'published_at' => now()->subDays(2)]);
+    $data = app(ArticlePublication::class)->prepare([...articleWorkflowFields(['active' => false]),
+        'thumbnail' => 'articles/reception.png'], $editor, $article);
+    expect($data['content_owner'])->toBe('Original reviewer')
+        ->and($data['reviewed_at']->equalTo($article->reviewed_at))->toBeTrue()
+        ->and($data['published_at']->equalTo($article->published_at))->toBeTrue()
+        ->and($data['materially_updated_at'])->toBeNull();
+});
+
+it('clears the upload error after a successful retry while retaining entered text', function () {
+    $this->actingAs(articleWorkflowAdministrator());
+    $component = Livewire::test(CreateArticle::class)
+        ->fillForm(['content' => '<p>Keep this article text.</p>'])
+        ->call('create')->assertHasFormErrors(['title'])
+        ->call('_uploadErrored', 'data.thumbnail.retry', null, false)
+        ->assertHasFormErrors(['thumbnail']);
+    $component->upload('data.thumbnail', [UploadedFile::fake()->image('recovered.png')])
+        ->assertHasNoFormErrors(['thumbnail'])
+        ->assertSet('data.content', fn ($content) => str_contains(json_encode($content), 'Keep this article text.'))
+        ->fillForm(['title' => 'A recovered draft'])
+        ->call('create')->assertHasNoFormErrors();
+    expect(Article::sole()->status)->toBe('draft')
+        ->and(Article::sole()->content)->toContain('Keep this article text.');
+    Storage::disk('public')->assertExists(Article::sole()->thumbnail);
 });

@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-04",
+  "hosting": {
+    "approvedByOwner": true,
+    "siteId": 3340514,
+    "directive": "client_max_body_size 40m;",
+    "onlyAdditionVerified": true,
+    "forgeTrailingWhitespaceNormalized": true,
+    "reloadObserved": true
+  },
+  "article": {
+    "id": 1,
+    "statusAtSavedReopen": "draft",
+    "titleUnchanged": true,
+    "contentUnchanged": true,
+    "richEditorHtmlCharacters": 16051,
+    "featuredImage": "articles/01M6K178HVACEF3V2FFYEY5P0H.png"
+  },
+  "image": {
+    "url": "https://clipperdesk.com/storage/articles/01M6K178HVACEF3V2FFYEY5P0H.png",
+    "status": 200,
+    "mimeType": "image/png",
+    "bytes": 2269879,
+    "sha256": "23d78f585869ebe0214521b5517be7d7a7f04de2da5fd5011b46d2a061c0ec7c",
+    "matchesOriginal": true,
+    "width": 1672,
+    "height": 941
+  },
+  "privacy": {
+    "publicDetailStatus": 404,
+    "excludedFromBlog": true,
+    "excludedFromSitemap": true,
+    "sitemapUrlCount": 127
+  },
+  "limits": {
+    "articleImageMiB": 5,
+    "effectiveFpmIniNotInspected": true
+  },
+  "note": "No synthetic production article or publication. The owner’s original article was saved once as draft. No full form payload, cookies or signed URLs retained."
+}

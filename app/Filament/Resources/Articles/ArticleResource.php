@@ -9,7 +9,6 @@ use App\Models\Article;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -99,6 +98,16 @@ class ArticleResource extends Resource
                             ->maxLength(64)
                             ->required(fn (Get $get): bool => $get('status') === 'published'),
 
+                        Select::make('status')
+                            ->label('Status')
+                            ->options(['draft' => 'Draft', 'published' => 'Published'])
+                            ->default('draft')
+                            ->required()
+                            ->live()
+                            ->native()
+                            ->extraInputAttributes(['style' => 'min-height: 44px'])
+                            ->helperText('Save as Published when the article is ready to appear on the blog.'),
+
                         Toggle::make('active')
                             ->label('Active')
                             ->default(true)
@@ -132,28 +141,6 @@ class ArticleResource extends Resource
                     ->collapsible()
                     ->collapsed(),
 
-                Section::make('Publication')
-                    ->description('Save as a draft while you write. Publish after checking the content, image and search details.')
-                    ->schema([
-                        Select::make('status')
-                            ->label('Publication status')
-                            ->options(['draft' => 'Draft', 'published' => 'Published or scheduled'])
-                            ->default('draft')->required()->live()->native(),
-                        TextInput::make('content_owner')
-                            ->label('Reviewed by')
-                            ->maxLength(255)
-                            ->required(fn (Get $get): bool => $get('status') === 'published'),
-                        DateTimePicker::make('reviewed_at')
-                            ->label('Review completed at (UTC)')
-                            ->timezone('UTC')->seconds(false)
-                            ->required(fn (Get $get): bool => $get('status') === 'published')
-                            ->beforeOrEqual('now'),
-                        DateTimePicker::make('published_at')
-                            ->label('Publish at (UTC)')
-                            ->timezone('UTC')->seconds(false)
-                            ->helperText('A future date schedules the article. It stays private until that time.')
-                            ->required(fn (Get $get): bool => $get('status') === 'published'),
-                    ])->columns(2),
             ])
             ->columns(1);
     }
@@ -165,8 +152,8 @@ class ArticleResource extends Resource
                 TextColumn::make('title')
                     ->searchable(),
                 TextColumn::make('slug'),
-                TextColumn::make('status')->label('Publication')->badge(),
-                TextColumn::make('published_at')->label('Publish at')->dateTime(timezone: 'UTC'),
+                TextColumn::make('status')->label('Status')->badge(),
+                TextColumn::make('published_at')->label('Published at (UTC)')->dateTime(timezone: 'UTC'),
                 IconColumn::make('active')
                     ->sortable()
                     ->boolean(),

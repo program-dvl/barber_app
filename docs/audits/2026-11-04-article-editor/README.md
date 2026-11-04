@@ -2,8 +2,10 @@
 
 Scope: owner-requested repair of Content → Articles and the reported featured
 image failure. Requirements: PRD sections 1–4/12/15; public-website module and
-ADR-065 article restoration. No production article was saved or published, no
-schema changed and no deployment/hosting setting was changed by this task.
+ADR-065 article restoration. The owner explicitly approved the narrow Nginx
+upload repair after the initial hosting hold. This task then saved the owner's
+existing entered article once as a draft and verified its image. No article was
+published, schema changed or source deployment triggered by this task.
 
 ## Findings
 
@@ -14,8 +16,9 @@ A later retry of the original **2,269,879-byte PNG** on the preserved live
 `/admin/articles/create` form returned **HTTP 413, text/html**, with Nginx's
 `413 Request Entity Too Large` body from
 `POST /livewire-e88050f8/upload-file`. The preceding and following Livewire update
-requests returned 200. The current live failure is a verified Nginx request-size
-rejection before PHP; effective FPM limits and downstream storage remain unknown.
+requests returned 200. This established a Nginx request-size rejection before
+PHP. After the approved Nginx repair, upload, draft save/reopen and durable image
+retrieval succeeded. Effective FPM INI values were not independently inspected.
 
 [Live failure screenshot](live-nginx-upload-error.jpg) shows the original image
 and the preserved form. No cookies, signed upload URL or full form payload is
@@ -48,8 +51,8 @@ Independent code review found these actual defects:
 
 ## Implemented source
 
-The following changes were verified locally; Forge now reports their source
-revision deployed. Successful production image upload is still unverified.
+The following initial changes were verified locally; Forge reports their source
+revision deployed. Production featured-image upload is now verified below.
 
 - Explicit public article disk; existing S3 deployments retain S3 by default,
   local storage uses `public`, and `ARTICLE_MEDIA_DISK` permits an explicit
@@ -61,9 +64,9 @@ revision deployed. Successful production image upload is still unverified.
 - `public/.user.ini` supplies PHP-FPM upload/request ceilings of 32/40 MiB,
   preserving existing 20 MiB salon-media journeys. This source file alone does
   not establish actual production limits or repair Nginx/S3 configuration.
-- Summary, topic, search fields, publication status, reviewer and UTC review/
-  publish controls restore the existing editorial lifecycle. Scheduled, draft,
-  incomplete, blocked and inactive articles remain excluded by the shared gate.
+- Initially restored summary, topic, search fields and manual editorial lifecycle
+  controls. The subsequent status-only refinement below replaces manual reviewer/
+  date entry; the shared public-content and authorization gates remain.
 - HTML and legacy Markdown share Symfony sanitization; headings, links, lists,
   images and tables survive without executable markup or arbitrary CSS. Public
   article/card/social images now use the saved featured image.
@@ -86,8 +89,13 @@ revision deployed. Successful production image upload is still unverified.
 | Isolated browser: original reported PNG upload and Save changes confirmation | Passed before browser interruption |
 | Saved original PNG bytes | **2,269,879**, hash matches the reported original file exactly |
 | Local public image URL | **HTTP 200, image/png, Content-Length 2,269,879** |
-| Forge deployment overview | **746682a / Deployed**, push-to-deploy **82065079**; not triggered by this task |
-| Live retry of the original PNG on the preserved create form | **413 text/html**, Nginx `413 Request Entity Too Large`; surrounding Livewire updates **200** |
+| Forge deployment overview | Initial source **746682a / Deployed**, **82065079**; later **271a34e / Deployed**, **82066589**; neither triggered by this task |
+| Live upload before the hosting repair | **413 text/html**, Nginx `413 Request Entity Too Large`; surrounding Livewire updates **200** |
+| Approved Nginx repair | Added only `client_max_body_size 40m;`; Forge reload finished; reopened file matches the approved content apart from Forge trimming final newlines |
+| Original live PNG after repair | FilePond **Upload complete**, then one successful draft save and reopen of article **1** |
+| Preserved entered work | Title and full RichEditor HTML (**16,051 characters**) match exactly after reopening; summary/topic unchanged |
+| Durable production image | **200 / image/png / 2,269,879 bytes / 1672×941**; SHA-256 matches the original exactly |
+| Draft privacy | Saved list reports **draft**; public detail **404**; absent from blog and the **127-URL** sitemap |
 
 The isolated fixture uses disposable SQLite/storage and a synthetic administrator
 at localhost:8051, with fake/disabled providers. Normal local MySQL and real
@@ -103,7 +111,63 @@ content. Actual Vue components are rendered to verify featured/related/card
 images rather than checking source strings. Livewire tests do not run through
 PHP-FPM or Nginx and cannot certify those transport limits.
 
-## Still unfinished
+## Production upload repair — completed
+
+The owner answered **Yes, apply this upload fix**. Added
+`client_max_body_size 40m;` immediately after `charset utf-8;` in General site
+configuration's existing server context. Before editing, the complete current
+editor fragment matched the reviewed version. Before saving, full readback
+confirmed this was the only addition. Forge reported updating/reloading Nginx,
+then completed; reopening verified the saved content, with only final blank-line
+normalization by Forge. [Saved hosting limit](live-nginx-upload-limit.jpg).
+
+Retried the already-selected original image without reloading the owner's form.
+FilePond reported Upload complete. The old upload validation message remained
+until Save; the reopened draft has no upload error. Saved once as Draft, reopened
+the resulting article **1**, and compared the title and complete editor HTML in
+memory only. [Reopened saved image](live-featured-image-saved.jpg).
+
+The durable `/storage/articles/01M6K178HVACEF3V2FFYEY5P0H.png` returned the original
+PNG bytes. SHA-256: `23d78f585869ebe0214521b5517be7d7a7f04de2da5fd5011b46d2a061c0ec7c`.
+The article remains absent from the blog/sitemap and returns 404 publicly.
+Machine-readable evidence: [live-upload-evidence.json](live-upload-evidence.json).
+Article validation remains 5 MiB; this does not certify every other upload
+workflow or the exact FPM INI values. Other hosting changes remain outside this
+specific approval.
+
+## Status-only form follow-up — verified locally
+
+The owner requested **No need Publication tab, just status is fine, dates should
+be the time when it's done**. The form now has one Draft/Published Status control
+in Article, without the separate Publication section or manual reviewer/dates.
+The server uses the verified administrator's name and UTC save time on publication.
+It preserves a reached first-publication date on later edits, refreshes the review
+for changed public fields and normalizes legacy future dates only on an explicit
+Published save. Client-supplied lifecycle metadata cannot rewrite that history.
+Draft/Active controls and the existing content/image/search gates remain distinct.
+
+Marketing + admin resource checks: **250 passed / 3,990 assertions**; scoped Pint
+and whitespace passed. A successful temporary-image retry clears the previous
+featured-image error while retaining text. The native Status control now has its
+own 44px hit area; shared phone Save/Cancel actions already meet that height.
+
+In the isolated browser, attempted publication with missing summary/topic/search
+fields produced inline errors, expanded Search appearance when needed and kept
+the text/image. Completing those details and saving Published recorded
+`Article Review Editor` and **2026-11-04 10:40:07 UTC** automatically. A later save
+kept both dates. The local article displays its body, correct featured/social
+image and one H1, and appears in the sitemap. Desktop **1440×900** and phone
+**390×844** checks show no horizontal overflow and actual 44px Status/Save/Cancel
+targets. Browser sizing was restored. Screens:
+[desktop](status-desktop-published.jpg), [phone](status-mobile-published.jpg),
+[phone validation](status-mobile-validation.jpg).
+Machine-readable evidence: [status-local-evidence.json](status-local-evidence.json).
+
+This status-only source is **not deployed by this task yet**. The production
+image-upload repair above is complete; no production article was published to
+test these controls.
+
+## Remaining editor checks
 
 - The browser extension's automated file-setting API requires Allow access to
   file URLs; native picker fallback worked locally. Browser control later became
@@ -113,34 +177,18 @@ PHP-FPM or Nginx and cannot certify those transport limits.
 - Inline attachment selection began locally but save/reload and public rendering
   of that actual inline upload were not completed in the browser. Automated
   content/image tests pass, but they are not that browser journey.
-- A desktop production upload-error screenshot is now retained. Desktop/mobile
-  publication, mobile error feedback and upload-success screenshots remain
-  outstanding. No phone-layout certification is claimed.
-- **No production runtime repair or successful production upload is claimed.**
-  Forge reports the source deployed, but Nginx rejects the original upload.
-  No real article was saved/published and no hosting setting was changed by this
-  task. The owner's earlier hosting/deployment hold remains in effect.
-
-## Prepared hosting repair — not applied
-
-Add `client_max_body_size 40m;` immediately after `charset utf-8;` in the General
-site configuration's existing `server` context, preserving every other setting.
-The [context-only patch](nginx-upload-limit.patch) is prepared for review. Check
-included/location overrides, then use Forge's validation/save/reload flow after
-the owner explicitly clears the hosting hold. This aligns Nginx with the source
-POST ceiling while article validation stays 5 MiB. It does not prove effective
-FPM settings or storage success. See the [deployment and rollback runbook](../../deployment/article-media.md).
+- Desktop production failure/reopened-image and isolated desktop/phone status
+  and validation screenshots are retained. Live status-only UI verification
+  follows an authorized source deployment.
 
 ## Continue from here
 
-1. Finish the isolated editor's inline-image,
-   publication, error recovery and desktop/390px checks, capturing actual screens.
-2. After the hosting hold is explicitly cleared, validate/apply the prepared
-   Nginx repair and verify media configuration/storage link plus FPM limits using the
-   [article-media runbook](../../deployment/article-media.md). Never expose a
-   client-private disk or publish a synthetic production article for testing.
-3. Upload the original 2.3 MB image to an authorized draft, wait for completion,
-   save/reopen and confirm its actual public image URL. Only then report the
-   deployed upload problem resolved. Preserve the owner's entered article text.
+1. Complete a real inline-image picker save/reload separately when browser upload
+   access permits; do not equate automated renderer tests with that journey.
+2. After an authorized source deployment, verify the status-only controls while
+   preserving the owner's open form and article. Never expose client-private
+   storage or publish synthetic production content.
+3. Preserve the approved [Nginx change](nginx-upload-limit.patch) and use the
+   [article-media runbook](../../deployment/article-media.md) for future releases.
 
 Machine-readable local evidence: `local-evidence.json`.

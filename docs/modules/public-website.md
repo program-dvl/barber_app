@@ -48,10 +48,22 @@ pending regional approval under OPEN-15; no invented translated pages are publis
 ### Article administration and media (2026-11-04)
 
 The restored Content → Articles form supports draft saving without a featured
-image and provides the existing publication requirements explicitly: summary,
-topic, search title/description, reviewer, completed review date and publish time.
-Review/publish controls show UTC. A future publish time keeps the article out of
-the public blog, detail route and sitemap until reached. Active can hide a
+image. Its Article section has one **Status** choice, **Draft** or **Published**;
+there is no separate Publication section or manual reviewer/date entry. Saving
+Published records the named signed-in platform administrator as reviewer and
+the current UTC review/first-publication time. Summary, topic, featured image
+and search title/description remain required before publication, alongside the
+existing content/privacy gates. Selecting Published is the administrator's
+review/publish action; the platform never changes a draft to Published itself.
+
+Ordinary saves retain the first actual publication date. Material changes to
+public content, images or search fields update the review attribution/date and
+materially-updated date; no-op and Active-only saves retain their prior review.
+Changing back to Draft retains historical dates without public visibility;
+republishing updates the review while retaining an actual prior publication
+date. An old future schedule remains hidden until reached unless an administrator
+explicitly saves Published, which publishes now and replaces that future date.
+New scheduling is not exposed in this simplified editor. Active can hide a
 published article; it never publishes a draft. Publication validation reports
 incomplete/blocked content at the field and preserves the entered work.
 

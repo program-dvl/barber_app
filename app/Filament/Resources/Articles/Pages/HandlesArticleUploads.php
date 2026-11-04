@@ -6,6 +6,15 @@ use Illuminate\Validation\ValidationException;
 
 trait HandlesArticleUploads
 {
+    public function _finishUpload($name, $tmpPath, $isMultiple, $append = true)
+    {
+        parent::_finishUpload($name, $tmpPath, $isMultiple, $append);
+
+        if ($name === 'data.thumbnail' || str_starts_with($name, 'data.thumbnail.')) {
+            $this->resetValidation('data.thumbnail');
+        }
+    }
+
     public function _uploadErrored($name, $errorsInJson, $isMultiple)
     {
         if ($name === 'data.thumbnail' || str_starts_with($name, 'data.thumbnail.')) {

@@ -2395,6 +2395,32 @@ the featured image is the article's social image. Deployment and actual failing
 upload verification are separate evidence; no production success is inferred
 from test uploads or a PHP configuration file.
 
+### ADR-065 simplified article status and automatic dates — 2026-11-04
+
+Authority: the owner explicitly requested, “No need Publication tab, just status
+is fine, dates should be the time when its done.” The Article section therefore
+offers only Draft and Published as Status choices, without a separate Publication
+section, reviewer entry or scheduling/date inputs. This supersedes the manual
+editorial fields exposed earlier the same day; publication eligibility and
+private-content protections remain in force.
+
+The verified, authorized platform administrator who saves Published is the
+reviewer, and review/first-publication timestamps come from the server in UTC.
+Supplied hidden reviewer/date values are ignored. A no-op/visibility-only save
+retains the previous review; changes to public content, images and search fields
+record the current reviewer and updated time. An actual first publication date
+is retained across edits and re-publication. Saving Draft keeps historical dates
+but never publishes the article, regardless of Active. New drafts have no review
+or publication date.
+
+Existing future-dated records remain subject to the public query's reached-date
+gate. An explicit Published save in the simplified editor publishes now, replacing
+a future/missing publication date and recording a current review. The editor
+does not offer new schedules. This does not publish any existing record during
+deployment or waive image, summary, topic, search, content, named-author or
+administrator authorization requirements. Local verification and deployment
+evidence remain separate.
+
 ## ADR-066 — Clear introduction decisions and real private booking previews
 
 - Date: 2026-10-14. Status: Accepted from the owner's eight setup requests and

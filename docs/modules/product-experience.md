@@ -40,12 +40,19 @@ an unverified product-wide replacement. FR-01–20 scope and financial rules rem
 
 ## Review and evidence
 
-The article editor now exposes Draft and Published or scheduled as explicit
-choices, with a reviewer and UTC review/publish dates. Authors can save text
+The article editor uses a single Status control, Draft or Published, within
+Article. The owner's 2026-11-04 refinement removes the separate Publication
+section and manual reviewer/date fields. Saving Published records the current
+named administrator and UTC time automatically; routine edits retain the first
+publication date. Material content, image and search changes refresh the review
+and updated date. Draft remains private regardless of Active. The article list
+labels its read-only timestamp Published at (UTC). Authors can save text
 before adding a featured image. A failed featured-image upload keeps the text
 and offers saving the draft or choosing a valid replacement; never show raw
 `data.thumbnail.<id>` paths as recovery copy. Image guidance names JPEG/PNG/WebP
-and the 5 MB limit. Search/publication fields become required only on publication.
+and the 5 MB limit. A successful retry clears the old image error while preserving
+unrelated field feedback. Required image, summary, topic and search fields are
+checked on publication; removing manual date entry does not bypass those gates.
 Filament's native field-validation and brief save confirmations remain attached
 to the actual form controls; no extra stacked page notice is introduced.
 Verification and production limits belong in the dated article-upload audit.

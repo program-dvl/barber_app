@@ -15,12 +15,7 @@ class EditArticle extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data = app(ArticlePublication::class)->prepare($data);
-        if (collect(['title', 'content', 'excerpt'])->contains(fn ($field) => ($data[$field] ?? null) !== $this->record->getAttribute($field))) {
-            $data['materially_updated_at'] = now();
-        }
-
-        return $data;
+        return app(ArticlePublication::class)->prepare($data, auth()->user(), $this->record);
     }
 
     protected function getHeaderActions(): array

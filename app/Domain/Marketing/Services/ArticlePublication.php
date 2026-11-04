@@ -2,6 +2,9 @@
 
 namespace App\Domain\Marketing\Services;
 
+use App\Domain\PlatformAccess\Enums\PlatformRole;
+use App\Models\Article;
+use App\Models\User;
 use DOMDocument;
 use DOMXPath;
 use Illuminate\Support\Facades\Validator;
@@ -11,9 +14,46 @@ use Illuminate\Validation\ValidationException;
 
 class ArticlePublication
 {
-    public function prepare(array $data): array
+    private const REVIEWED_FIELDS = ['title', 'content', 'excerpt', 'topic', 'thumbnail', 'seo_title', 'seo_description', 'seo_keywords'];
+
+    public function prepare(array $data, User $actor, ?Article $article = null): array
     {
+        abort_unless($actor->hasVerifiedEmail() && $actor->hasPlatformRole(PlatformRole::Administrator), 403);
+
         $publishing = ($data['status'] ?? 'draft') === 'published';
+        $now = now('UTC');
+        $changed = $article && collect(self::REVIEWED_FIELDS)->contains(
+            fn ($field) => array_key_exists($field, $data)
+                && ($data[$field] ?? '') !== ($article->getAttribute($field) ?? '')
+        );
+
+        // Review and publication history belongs to the saved record and actor,
+        // never a client-supplied reviewer or date hidden in form state.
+        foreach (['content_owner', 'reviewed_at', 'published_at', 'materially_updated_at'] as $field) {
+            $data[$field] = $article?->getAttribute($field);
+        }
+        if ($changed) {
+            $data['materially_updated_at'] = $now;
+        }
+        if ($publishing) {
+            $reviewer = trim((string) $actor->name);
+            if ($reviewer === '' || mb_strlen($reviewer) > 255) {
+                throw ValidationException::withMessages(['data.status' => 'Add your name to your account before publishing.']);
+            }
+
+            // Publishing means now. Preserve an actual first publication date,
+            // but an old future schedule must not silently hide this explicit save.
+            $publishingNow = ! $article?->published_at || $article->published_at->greaterThan($now);
+            if ($publishingNow) {
+                $data['published_at'] = $now;
+            }
+            if (! $article || $article->status !== 'published' || $publishingNow || $changed
+                || blank($article->content_owner) || ! $article->reviewed_at || $article->reviewed_at->greaterThan($now)) {
+                $data['content_owner'] = $reviewer;
+                $data['reviewed_at'] = $now;
+            }
+        }
+
         $rules = [
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string', 'max:100000'],
@@ -23,9 +63,6 @@ class ArticlePublication
             'thumbnail' => [Rule::requiredIf($publishing), 'nullable', 'string'],
             'seo_title' => [Rule::requiredIf($publishing), 'nullable', 'string', 'max:60'],
             'seo_description' => [Rule::requiredIf($publishing), 'nullable', 'string', 'max:160'],
-            'content_owner' => [Rule::requiredIf($publishing), 'nullable', 'string', 'max:255'],
-            'reviewed_at' => [Rule::requiredIf($publishing), 'nullable', 'date', 'before_or_equal:now'],
-            'published_at' => [Rule::requiredIf($publishing), 'nullable', 'date'],
         ];
         $validator = Validator::make($data, $rules);
         if ($validator->fails()) {

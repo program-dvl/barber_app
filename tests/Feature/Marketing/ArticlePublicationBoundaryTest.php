@@ -31,11 +31,14 @@ function publicationBoundaryFields(array $overrides = []): array
 beforeEach(function () {
     config(['app.url' => 'https://clipperdesk.com', 'brand.website_url' => 'https://clipperdesk.com',
         'booking.host' => 'book.clipperdesk.com', 'articles.disk' => 'public']);
+    $this->articleReviewer = User::factory()->create(['name' => 'Boundary administrator']);
+    PlatformRoleAssignment::create(['user_id' => $this->articleReviewer->id, 'role' => PlatformRole::Administrator,
+        'reason' => 'Check the article publication boundary.']);
 });
 
 it('reports blocked markers in raw stored attributes as well as decoded visible text', function (string $content) {
     try {
-        app(ArticlePublication::class)->prepare(publicationBoundaryFields(['content' => $content]));
+        app(ArticlePublication::class)->prepare(publicationBoundaryFields(['content' => $content]), $this->articleReviewer);
         $this->fail('A query-blocked article must not be saved as published.');
     } catch (ValidationException $exception) {
         expect($exception->errors())->toHaveKey('data.content');
@@ -48,7 +51,7 @@ it('reports blocked markers in raw stored attributes as well as decoded visible 
 ]);
 
 it('rejects private and temporary URLs in HTML and Markdown before publication', function (string $content) {
-    expect(fn () => app(ArticlePublication::class)->prepare(publicationBoundaryFields(['content' => $content])))
+    expect(fn () => app(ArticlePublication::class)->prepare(publicationBoundaryFields(['content' => $content]), $this->articleReviewer))
         ->toThrow(ValidationException::class);
 })->with([
     '<p>Read this.</p><a href="/appointments/secure/abc123">Appointment</a>',
@@ -72,26 +75,26 @@ it('rejects private and temporary URLs in HTML and Markdown before publication',
 
 it('allows reviewed public links images and legacy Markdown', function () {
     $content = "## Prepare the day\n\nRead [our guide](/blog/prepare-the-day) and [booking help](https://clipperdesk.com/help/articles/appointments-add).\n\n![Reception](/storage/articles/reception.png)\n\n<a href=\"https://example.com/client-files-public-guide\">External guide</a>";
-    $data = app(ArticlePublication::class)->prepare(publicationBoundaryFields(['content' => $content]));
+    $data = app(ArticlePublication::class)->prepare(publicationBoundaryFields(['content' => $content]), $this->articleReviewer);
 
     expect($data['content'])->toBe($content)->and($data['status'])->toBe('published');
 });
 
 it('retains unfinished private links in a saved draft without making it public', function () {
     $content = '<p>Draft notes.</p><a href="/client-files/abc123">Replace before publishing</a>';
-    $data = app(ArticlePublication::class)->prepare(publicationBoundaryFields(['status' => 'draft', 'content' => $content]));
+    $data = app(ArticlePublication::class)->prepare(publicationBoundaryFields(['status' => 'draft', 'content' => $content]), $this->articleReviewer);
 
     expect($data['content'])->toBe($content)->and($data['status'])->toBe('draft');
 });
 
 it('requires visible article text after stripping unsafe HTML and blank entities', function (string $content) {
-    expect(fn () => app(ArticlePublication::class)->prepare(publicationBoundaryFields(['content' => $content])))
+    expect(fn () => app(ArticlePublication::class)->prepare(publicationBoundaryFields(['content' => $content]), $this->articleReviewer))
         ->toThrow(ValidationException::class);
 })->with(['<p>&nbsp; &#160; </p>', '<script>alert(1)</script>', '<p><img src="/storage/articles/reception.png"></p>']);
 
 it('rejects content beyond the editor limit instead of silently truncating a public article', function () {
     try {
-        app(ArticlePublication::class)->prepare(publicationBoundaryFields(['content' => str_repeat('a', 100001)]));
+        app(ArticlePublication::class)->prepare(publicationBoundaryFields(['content' => str_repeat('a', 100001)]), $this->articleReviewer);
         $this->fail('Oversized content must be rejected.');
     } catch (ValidationException $exception) {
         expect($exception->errors())->toHaveKey('data.content');
@@ -101,7 +104,7 @@ it('rejects content beyond the editor limit instead of silently truncating a pub
 it('preserves bounded multibyte content without mistaking bytes for the editor character count', function () {
     $content = str_repeat('😀', 99000)."\n\nFinal sentence.";
     expect(mb_strlen($content))->toBeLessThanOrEqual(100000);
-    $data = app(ArticlePublication::class)->prepare(publicationBoundaryFields(['content' => $content]));
+    $data = app(ArticlePublication::class)->prepare(publicationBoundaryFields(['content' => $content]), $this->articleReviewer);
     expect($data['content'])->toBe($content);
 });
 
