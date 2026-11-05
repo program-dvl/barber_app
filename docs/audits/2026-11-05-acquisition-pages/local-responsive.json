@@ -1,0 +1,170 @@
+[
+  {
+    "h1": " Your whole day,beautifully run. ",
+    "path": "/",
+    "printButton": [],
+    "screenshotButtons": 1,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "h1": "Manage salon appointments and services",
+    "path": "/solutions/salons",
+    "printButton": [],
+    "screenshotButtons": 1,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "h1": "Manage barbershop appointments and walk-ins",
+    "path": "/solutions/barbershops",
+    "printButton": [],
+    "screenshotButtons": 1,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "h1": "Book appointments online",
+    "path": "/features/online-booking",
+    "printButton": [],
+    "screenshotButtons": 1,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "h1": "One platform.A price that grows with you.",
+    "path": "/pricing",
+    "printButton": [],
+    "screenshotButtons": 0,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "h1": "Practical guides for your business.",
+    "path": "/resources",
+    "printButton": [],
+    "screenshotButtons": 0,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "h1": "Follow a visit from booking to checkout.",
+    "path": "/features/product-walkthrough",
+    "printButton": [],
+    "screenshotButtons": 5,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "h1": "Daily opening and closing checklist",
+    "notice": 736,
+    "path": "/guides/daily-operations-checklist",
+    "printButton": [
+      {
+        "height": 44,
+        "width": 170.484375
+      }
+    ],
+    "screenshotButtons": 0,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "h1": "Prepare your business for online booking",
+    "notice": 736,
+    "path": "/guides/salon-opening-checklist",
+    "printButton": [
+      {
+        "height": 44,
+        "width": 170.484375
+      }
+    ],
+    "screenshotButtons": 0,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "h1": " Your whole day,beautifully run. ",
+    "path": "/",
+    "printButton": [],
+    "screenshotButtons": 1,
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "h1": "Manage salon appointments and services",
+    "path": "/solutions/salons",
+    "printButton": [],
+    "screenshotButtons": 1,
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "h1": "Manage barbershop appointments and walk-ins",
+    "path": "/solutions/barbershops",
+    "printButton": [],
+    "screenshotButtons": 1,
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "h1": "Book appointments online",
+    "path": "/features/online-booking",
+    "printButton": [],
+    "screenshotButtons": 1,
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "h1": "One platform.A price that grows with you.",
+    "path": "/pricing",
+    "printButton": [],
+    "screenshotButtons": 0,
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "h1": "Practical guides for your business.",
+    "path": "/resources",
+    "printButton": [],
+    "screenshotButtons": 0,
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "h1": "Follow a visit from booking to checkout.",
+    "path": "/features/product-walkthrough",
+    "printButton": [],
+    "screenshotButtons": 5,
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "h1": "Daily opening and closing checklist",
+    "notice": 358,
+    "path": "/guides/daily-operations-checklist",
+    "printButton": [
+      {
+        "height": 44,
+        "width": 170.484375
+      }
+    ],
+    "screenshotButtons": 0,
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "h1": "Prepare your business for online booking",
+    "notice": 358,
+    "path": "/guides/salon-opening-checklist",
+    "printButton": [
+      {
+        "height": 44,
+        "width": 170.484375
+      }
+    ],
+    "screenshotButtons": 0,
+    "scrollWidth": 390,
+    "width": 390
+  }
+]

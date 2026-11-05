@@ -9,6 +9,14 @@ return [
             'title' => 'Book appointments online',
             'description' => 'Let clients book appointments on their phone, choosing services, staff and available times.',
             'definition' => 'Clients reserve appointments using the same availability and booking rules as your front desk.',
+            'screens' => ['booking'],
+            'scenario' => ['title' => 'A client books while your team is busy', 'body' => 'A client opens your booking link on a phone, chooses a published service and professional, and sees available times. Your front desk uses the same saved availability when booking by phone. Publish accurate staff hours and service durations before sharing the link.'],
+            'faqs' => [
+                ['question' => 'Does the client need an account?', 'answer' => 'No. Clients can book on a phone without creating an account. Private appointment links let them view or change a booking within the permitted rules.'],
+                ['question' => 'Can I take deposits online?', 'answer' => 'Online deposit collection is currently unavailable. When a booking requires a deposit, the client must contact your business to finish.'],
+                ['question' => 'Will this work beyond hair and beauty?', 'answer' => 'The same service, staff and availability workflow can fit other appointment-led businesses. Check the relevant industry page for specialist limitations before choosing.'],
+                ['question' => 'Does booking automatically send every reminder?', 'answer' => 'Confirmations and reminders depend on the delivery services enabled for your business. Text messages also require consent, supported numbers and available credits.'],
+            ],
             'requirements' => ['FR-03', 'FR-04', 'FR-05', 'FR-06', 'FR-07', 'FR-09', 'FR-10'],
             'workflow' => [
                 ['title' => 'Show current choices', 'body' => 'Show the locations, services and staff you have made available for online booking.'],
@@ -34,6 +42,12 @@ return [
             'title' => 'Manage appointments and walk-ins together',
             'description' => 'Coordinate staff schedules, chairs and rooms, appointment changes and waiting clients.',
             'definition' => 'The calendar brings scheduled visits, staff availability and walk-ins into one view.',
+            'screens' => ['calendar'],
+            'scenario' => ['title' => 'The next walk-in cannot delay a booked visit', 'body' => 'Check the whole service window before assigning the next waiting client. A professional who is free now may have a booking before that service would finish. Keep staff hours, breaks and appointment changes in the same calendar.'],
+            'faqs' => [
+                ['question' => 'Are waiting times guaranteed?', 'answer' => 'No. Queue times are estimates that can change with service delays and staff availability. Review the current schedule before promising a start.'],
+                ['question' => 'Can everyone change the calendar?', 'answer' => 'Actions depend on each team member’s permissions. Staff and space conflicts are checked when appointments are saved.'],
+            ],
             'requirements' => ['FR-03', 'FR-05', 'FR-06', 'FR-07', 'FR-08'],
             'workflow' => [
                 ['title' => 'See the day in useful views', 'body' => 'View today, a day or week, or separate staff schedules. Filter by location, professional, service or status.'],
@@ -59,6 +73,12 @@ return [
             'title' => 'Keep client history and preferences together',
             'description' => 'Find past visits, preferences, notes, forms and files in one client profile, with access controlled by role.',
             'definition' => 'Each client profile connects visits, messages and purchases. Sensitive notes have more limited access.',
+            'screens' => ['clients'],
+            'scenario' => ['title' => 'A returning client sees another professional', 'body' => 'Find the existing client profile and review relevant visits and preferences before service. Keep factual notes together while limiting sensitive information to team members with permission.'],
+            'faqs' => [
+                ['question' => 'Can I bring existing client records?', 'answer' => 'Client CSV imports let you review invalid rows and possible duplicates before adding valid records. Check the available fields and your responsibilities before moving personal information.'],
+                ['question' => 'Is this a specialist clinical record system?', 'answer' => 'No. Client notes and forms do not make ClipperDesk a medical record system, and it does not claim healthcare regulatory compliance.'],
+            ],
             'requirements' => ['FR-11', 'FR-12', 'FR-13', 'FR-19'],
             'workflow' => [
                 ['title' => 'Find or add the client', 'body' => 'Reuse matching contact details. Review possible duplicates before merging them.'],
@@ -84,6 +104,12 @@ return [
             'title' => 'Complete checkout and understand your reports',
             'description' => 'Record service payments, create receipts and trace report totals to the original sale.',
             'definition' => 'Review sales, tax, payments, commissions and tips using the records from completed checkout.',
+            'screens' => ['checkout'],
+            'scenario' => ['title' => 'Explain the final total before recording payment', 'body' => 'Review completed services, products, tax, discounts and tips. Record payments received by cash or an external payment service, issue a receipt and follow the saved sale into reporting.'],
+            'faqs' => [
+                ['question' => 'Does checkout charge a client’s card?', 'answer' => 'No. ClipperDesk records money received elsewhere. Use your payment service to charge cards or send card refunds, then record the result in the business.'],
+                ['question' => 'Can I record a partial or split payment?', 'answer' => 'Yes. Record the amounts received by supported methods, or leave an unpaid balance. Adjustments preserve the original financial history.'],
+            ],
             'requirements' => ['FR-14', 'FR-15', 'FR-16', 'FR-17', 'FR-18'],
             'workflow' => [
                 ['title' => 'Build checkout from the appointment', 'body' => 'Review services, products, taxes, discounts, tips and any deposit before recording payment.'],
@@ -113,6 +139,14 @@ return [
             'image_alt' => 'A barber giving a precise haircut in a busy modern barbershop',
             'accent' => 'cobalt',
             'fit' => 'ClipperDesk fits barbershops that need to balance appointments with walk-in demand without treating the queue as a separate spreadsheet or whiteboard.',
+            'screens' => ['calendar'],
+            'scenario' => ['title' => 'A busy Saturday with bookings and walk-ins', 'body' => 'Before accepting a walk-in, compare the requested service duration with each eligible barber’s next booking. Record queue changes and explain estimated waits. When service is complete, carry the visit into checkout instead of creating a separate record.'],
+            'faqs' => [
+                ['question' => 'Can I combine appointments and walk-ins?', 'answer' => 'Yes. The calendar and walk-in queue use staff availability and service timing together. Waiting times remain estimates.'],
+                ['question' => 'Can clients choose a barber?', 'answer' => 'Clients can select an available qualified professional or any available team member, according to the services and staff you publish.'],
+                ['question' => 'Will ClipperDesk find new clients for my shop?', 'answer' => 'You share your own booking link. ClipperDesk does not include a consumer marketplace or guarantee new bookings.'],
+                ['question' => 'Is this only for barbershops?', 'answer' => 'Barbershops and salons are a main focus. The same booking, calendar, client and checkout tools also serve other appointment-led businesses, with specific fit and limits explained on their industry pages.'],
+            ],
             'requirements' => ['FR-04', 'FR-05', 'FR-06', 'FR-08', 'FR-11', 'FR-14', 'FR-15'],
             'challenges' => [
                 ['title' => 'The next walk-in cannot break the next booking', 'body' => 'Review estimated waits and staff availability before fitting a walk-in around booked appointments.'],
@@ -132,6 +166,14 @@ return [
             'image_alt' => 'A stylist consulting with a client in a polished modern salon',
             'accent' => 'coral',
             'fit' => 'ClipperDesk fits appointment-led hair and beauty salons that need staff schedules, service timing, add-ons and client preferences in one workspace.',
+            'screens' => ['booking'],
+            'scenario' => ['title' => 'One client, several services and a clear handoff', 'body' => 'Give each service a realistic duration and qualified professional. Keep the booked services, staff handoffs and client preferences connected, then review the completed visit at checkout. Test your own colour, wash and finishing sequence before offering it online.'],
+            'faqs' => [
+                ['question' => 'Can one visit contain several services?', 'answer' => 'Yes. A visit can contain multiple service lines and staff handoffs. Set up and test the timing and staff eligibility for the services you offer.'],
+                ['question' => 'Can I keep client formulas and preferences?', 'answer' => 'Client profiles connect visit history, preferences and notes. Access to sensitive information is limited by team permissions.'],
+                ['question' => 'Are deposits and loyalty packages included?', 'answer' => 'Online deposit collection is unavailable; deposit-required bookings need business contact. Memberships, packages, loyalty programmes and automated marketing campaigns are not included.'],
+                ['question' => 'Does the same subscription fit other services?', 'answer' => 'The subscription provides shared appointment and operating tools. Beauty, wellness, fitness and other supported industries have their own pages explaining fit and specialist limitations.'],
+            ],
             'requirements' => ['FR-04', 'FR-05', 'FR-06', 'FR-07', 'FR-09', 'FR-11', 'FR-12', 'FR-14'],
             'challenges' => [
                 ['title' => 'One visit can contain more than one service', 'body' => 'Book several services in one visit, with the services and their timing visible to your team.'],
@@ -435,6 +477,24 @@ return [
         ],
     ],
     'guides' => [
+        'daily-operations-checklist' => [
+            'seo_title' => 'Daily opening and closing checklist | ClipperDesk',
+            'image' => '/images/marketing/editorial/product-workday.webp',
+            'title' => 'Daily opening and closing checklist',
+            'description' => 'A free printable daily checklist for appointment-led teams: staff hours, bookings, walk-ins, client handoffs, received payments and closing checks.',
+            'topic' => 'Daily operations', 'published_at' => '2026-11-05', 'reviewed_by' => 'ClipperDesk editorial team', 'reviewed_at' => '2026-11-05',
+            'intro' => 'Keep this checklist beside the front desk in a salon, barbershop, studio, spa or other appointment-led business. Assign each check to a person, use your local working date and adapt it to the services and safety rules that apply to you.',
+            'sections' => [
+                ['title' => 'Before opening: confirm people and time', 'body' => 'Check the working location, staff hours, breaks and absences. Review long services, handoffs and any required rooms or equipment. Resolve conflicting plans before promising an appointment or a walk-in start time.'],
+                ['title' => 'Before the first visit: check the booking information', 'body' => 'Review changes and cancellations since the previous shift. Confirm service, professional, time and location. Check whether confirmations or reminders failed, and use the appropriate contact process while respecting client preferences.'],
+                ['title' => 'During service: keep the working plan current', 'body' => 'Record arrivals, service progress and appointment changes. Before fitting in a walk-in, check that the whole service fits around reserved time. Explain waiting-time changes promptly and keep relevant client preferences available only to the right people.'],
+                ['title' => 'At checkout: explain and record the sale', 'body' => 'Confirm delivered services, products, tax, discounts, tips and any payment already received. Record the method and amount actually collected, issue the receipt and explain any unpaid balance. Use your external payment service for card charges or card refunds.'],
+                ['title' => 'Before closing: leave a clear handoff', 'body' => 'Check completed visits against saved sales, receipts and payment records. Investigate differences rather than changing totals to make them match. List unpaid balances and unresolved tasks, then review tomorrow’s first appointments and assign follow-up work.'],
+            ],
+            'checklist' => ['Working date, location and person responsible', 'Staff hours, breaks, absences and service eligibility checked', 'Long visits, handoffs and room needs reviewed', 'Changes, cancellations and message failures reviewed', 'Walk-ins fit around reserved appointments', 'Relevant client notes available to the right team members', 'Delivered items and received payments recorded', 'Receipts and unpaid balances checked', 'Closing differences and follow-up owner recorded', 'Tomorrow’s exceptions handed over'],
+            'limitation' => 'Adapt this operating checklist to your business. It does not replace local safety, licensing, accounting or clinical procedures. ClipperDesk records payments received elsewhere and does not collect deposits online.',
+            'feature' => 'calendar-and-walk-ins',
+        ],
         'booking-policy-basics' => [
             'seo_title' => 'Booking policy guide for service businesses | ClipperDesk',
             'image' => '/images/marketing/editorial/resources-planning.webp',

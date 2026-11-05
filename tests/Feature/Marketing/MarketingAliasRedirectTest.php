@@ -22,6 +22,8 @@ it('permanently redirects successful public marketing aliases to the primary HTT
 })->with([
     ['book.clipperdesk.com', '/'],
     ['book.clipperdesk.com', '/features'],
+    ['book.clipperdesk.com', '/features/product-walkthrough'],
+    ['book.clipperdesk.com', '/guides/daily-operations-checklist'],
     ['book.clipperdesk.com', '/features/online-booking'],
     ['book.clipperdesk.com', '/solutions'],
     ['book.clipperdesk.com', '/solutions/barbershops'],

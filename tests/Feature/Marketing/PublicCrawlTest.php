@@ -14,7 +14,7 @@ it('crawls every curated sitemap URL as a canonical indexable 200 page', functio
 
     $help = app(HelpCatalog::class);
     $helpUrls = 1 + count($help->articles()) + collect($help->categories())->where('article_count', '>', 0)->count();
-    expect($urls)->toHaveCount(32 + $helpUrls);
+    expect($urls)->toHaveCount(34 + $helpUrls);
     foreach ($urls as $url) {
         $path = parse_url($url, PHP_URL_PATH) ?: '/';
         $response = $this->get($path);

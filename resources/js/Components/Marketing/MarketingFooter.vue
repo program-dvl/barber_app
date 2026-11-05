@@ -12,6 +12,7 @@ const groups = computed(() => [
         label: 'Product',
         links: [
             ['Features', 'marketing.features'],
+            ['Product walkthrough', 'marketing.product-tour'],
             ['Pricing', 'marketing.pricing'],
             ['Security', 'marketing.security'],
         ],

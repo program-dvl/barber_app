@@ -183,3 +183,41 @@ links, authentication, APIs, assets, mutations, signed queries and missing pages
 Inertia visits use its external-location response to avoid cross-origin XHR.
 The booking-host root redirects because it resolves to marketing.home; actual
 `/{salon-slug}` and `/book` booking entry points retain their origin.
+
+## Live editorial maintenance — 2026-11-05
+
+The owner-authorised four-article review uses the normal admin publication save.
+Retain stable slugs and first publication dates when changing article intent,
+headings, summaries and search metadata. Material revisions receive the actual
+updated date through the existing publication service. Use descriptive links to
+relevant product pages and supporting articles; shared topics enable the existing
+related-article projection. Preserve official sourcing, clear illustrative-data
+labels and current feature limits. Buying guides must not imply independent
+product testing or customer results without evidence. Current editorial content,
+rollback copies and live desktop/phone checks are recorded in the
+[dated review](../audits/2026-11-05-blog-editorial/README.md); successful page checks
+are separate from Google indexing, ranking and traffic outcomes.
+
+## Acquisition proof and working resources — 2026-11-05
+
+The homepage keeps broad appointment-led positioning with salons and barbershops
+as the leading examples. All thirteen industry pages remain available. Priority
+industry pages and all four shared feature pages add scenario-specific copy,
+FAQs and real demo screenshots. `ProductEvidence` resolves only named reviewed
+public media through `HelpCatalog`; invalid/missing media fail closed while the
+text and normal actions remain available. Captions identify sample data and
+preserve payment/deposit and specialist limits.
+
+`/features/product-walkthrough` shows five real product screens with trial checks,
+feature links and published Help destinations. It is a curated WebPage in the
+sitemap and alias policy, not a customer story or a claimed live interactive demo.
+Its guest page views use the existing prior-consent analytics contract; no new
+tracking type or private route is enabled. Existing CTA allowlists remain.
+
+The existing Resources hub gains a daily operations guide with five workflow
+sections and ten checks. All maintained guides have Print or save as PDF; print
+styles retain the title/body and remove navigation, illustrations and actions.
+Limitations use the shared AppNotice. Pricing clarifies shared industry coverage,
+optional extra text credits, separate client payment fees and recorded checkout
+without changing rates or subscription behaviour. See the
+[dated implementation review](../audits/2026-11-05-acquisition-pages/README.md).

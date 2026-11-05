@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\Seo\ProductEvidence;
 use App\Support\Seo\PublicPage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,7 @@ class HomeController extends Controller
         return PublicPage::render('Home', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
+            'screenshots' => app(ProductEvidence::class)->screenshots(['calendar']),
             'seo' => [
                 'title' => 'Appointment scheduling & service business software | ClipperDesk',
                 'description' => 'Run booking, staff calendars, client records, walk-ins, checkout and reporting in one workspace for beauty, wellness, fitness, health and pet-care businesses.',

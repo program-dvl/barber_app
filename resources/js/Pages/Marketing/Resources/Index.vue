@@ -20,7 +20,7 @@ defineProps({ guides: Array, articleCount: Number, seo: Object });
                     <div class="cd-family-hero-copy">
                         <p class="cd-eyebrow">Resources</p>
                         <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">Practical guides for your business.</h1>
-                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Set clearer booking rules, prepare your online booking page and plan the daily work around your clients.</p>
+                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Free guides and printable checklists for salons, barbershops and other appointment-led businesses. Prepare booking, plan the day and leave a clear closing handoff.</p>
                     </div>
                     <figure class="cd-family-hero-media">
                         <img class="cd-family-hero-image" :src="marketingFamilyVisuals.resources.src" :alt="marketingFamilyVisuals.resources.alt" width="1536" height="1024" fetchpriority="high" />
@@ -51,6 +51,7 @@ defineProps({ guides: Array, articleCount: Number, seo: Object });
                     </article>
                 </div>
 
+                <div class="mt-10 flex flex-wrap gap-3"><Link :href="route('marketing.product-tour')" class="cd-button cd-button-secondary">Explore the product walkthrough</Link><Link :href="route('marketing.guides.show', 'daily-operations-checklist')" class="cd-button cd-button-quiet">Get the daily checklist</Link></div>
                 <div class="cd-resource-band mt-12 flex flex-col gap-6 p-7 sm:flex-row sm:items-center sm:justify-between sm:p-10">
                     <div>
                         <p class="text-xs font-extrabold uppercase tracking-[0.15em] text-[#fde047]">ClipperDesk editorial</p>

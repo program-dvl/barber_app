@@ -1,0 +1,83 @@
+{
+  "release": "3122f24",
+  "deployment": 82111204,
+  "routes": [
+    {
+      "url": "https://book.clipperdesk.com/",
+      "status": 301,
+      "location": "https://clipperdesk.com/",
+      "content_type": "text/html; charset=utf-8",
+      "robots": "index, follow, max-image-preview:large"
+    },
+    {
+      "url": "https://book.clipperdesk.com/blog",
+      "status": 301,
+      "location": "https://clipperdesk.com/blog",
+      "content_type": "text/html; charset=utf-8",
+      "robots": "index, follow, max-image-preview:large"
+    },
+    {
+      "url": "https://book.clipperdesk.com/solutions/barbershops",
+      "status": 301,
+      "location": "https://clipperdesk.com/solutions/barbershops",
+      "content_type": "text/html; charset=utf-8",
+      "robots": "index, follow, max-image-preview:large"
+    },
+    {
+      "url": "https://www.clipperdesk.com/features",
+      "status": 301,
+      "location": "https://clipperdesk.com/features",
+      "content_type": "text/html",
+      "robots": null
+    },
+    {
+      "url": "https://clipperdesk.com/blog",
+      "status": 200,
+      "location": null,
+      "content_type": "text/html; charset=utf-8",
+      "robots": "index, follow, max-image-preview:large"
+    },
+    {
+      "url": "https://book.clipperdesk.com/book",
+      "status": 200,
+      "location": null,
+      "content_type": "text/html; charset=utf-8",
+      "robots": "noindex, follow, noarchive"
+    },
+    {
+      "url": "https://book.clipperdesk.com/manage-appointment",
+      "status": 200,
+      "location": null,
+      "content_type": "text/html; charset=utf-8",
+      "robots": "noindex, nofollow, noarchive"
+    },
+    {
+      "url": "https://clipperdesk.com/robots.txt",
+      "status": 200,
+      "location": null,
+      "content_type": "text/plain; charset=UTF-8",
+      "robots": "noindex, nofollow, noarchive"
+    },
+    {
+      "url": "https://clipperdesk.com/sitemap.xml",
+      "status": 200,
+      "location": null,
+      "content_type": "application/xml; charset=UTF-8",
+      "robots": "noindex, nofollow, noarchive"
+    },
+    {
+      "url": "https://clipperdesk.com/blog?page=2",
+      "status": 404,
+      "location": null,
+      "content_type": "text/html; charset=utf-8",
+      "robots": "noindex, nofollow, noarchive"
+    },
+    {
+      "url": "https://clipperdesk.com/storage/articles/01M6K178HVACEF3V2FFYEY5P0H.png",
+      "status": 200,
+      "location": null,
+      "content_type": "image/png",
+      "robots": null
+    }
+  ]
+}

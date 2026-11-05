@@ -1,10 +1,12 @@
 <script setup>
 import ConversionBand from '@/Components/Marketing/ConversionBand.vue';
+import HelpScreenshot from '@/Components/Help/HelpScreenshot.vue';
 import FaqList from '@/Components/Marketing/FaqList.vue';
 import PublicContainer from '@/Components/Marketing/PublicContainer.vue';
 import PublicCta from '@/Components/Marketing/PublicCta.vue';
 import HomeLayout from '@/Layouts/HomeLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import '../../css/help-center.css';
 import {
     ArrowRightIcon,
     CalendarDaysIcon,
@@ -15,6 +17,7 @@ defineProps({
     canLogin: Boolean,
     canRegister: Boolean,
     seo: Object,
+    screenshots: Array,
 });
 
 const storyMoments = [
@@ -102,6 +105,7 @@ const resetPerspective = (event) => {
                     <p class="mt-7 max-w-xl text-lg leading-8 text-slate-300 sm:text-xl">
                         Manage appointments, walk-ins, clients, team schedules and recorded payments in one place.
                     </p>
+                    <p class="mt-4 max-w-xl leading-7 text-slate-300">For salons and barbershops, and appointment-led teams across beauty, wellness, fitness, health and pet care.</p>
                     <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
                         <PublicCta context="homepage_hero" />
                         <Link :href="route('marketing.solutions')" class="cd-button cd-button-hero-secondary">
@@ -144,7 +148,7 @@ const resetPerspective = (event) => {
                 <div class="cd-home-story-note">
                     <span aria-hidden="true">✦</span>
                     <p><strong>One continuous record.</strong> Appointments, client history and recorded sales stay together.</p>
-                    <Link :href="route('marketing.features')">See how the product connects <ArrowRightIcon class="size-4" aria-hidden="true" /></Link>
+                    <Link :href="route('marketing.product-tour')">See how the product connects <ArrowRightIcon class="size-4" aria-hidden="true" /></Link>
                 </div>
             </PublicContainer>
         </section>
@@ -163,9 +167,7 @@ const resetPerspective = (event) => {
                         </ul>
                         <Link :href="route('marketing.features.show', 'calendar-and-walk-ins')" class="mt-7 inline-flex min-h-11 items-center font-extrabold text-[var(--brand-secondary)] hover:underline">Explore calendar and walk-ins <ArrowRightIcon class="ml-2 size-4" aria-hidden="true" /></Link>
                     </div>
-                    <figure class="cd-system-visual" @pointermove="updatePerspective" @pointerleave="resetPerspective">
-                        <img src="/images/marketing/industries/barbershop.webp" alt="A busy modern barbershop balancing active services and waiting clients" width="1400" height="933" class="cd-system-visual-image" loading="lazy">
-                    </figure>
+                    <div class="min-w-0"><HelpScreenshot v-for="media in screenshots" :key="media.key" :media="media" /></div>
                 </article>
 
                 <article class="cd-home-feature grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">

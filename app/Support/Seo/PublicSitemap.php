@@ -10,7 +10,7 @@ class PublicSitemap
 {
     public function xml(): string
     {
-        $urls = collect([route('marketing.home'), route('marketing.features'), route('marketing.solutions'), route('marketing.use-cases'), route('marketing.pricing'), route('marketing.security'), route('marketing.company'), route('marketing.resources'), route('blog.index')])
+        $urls = collect([route('marketing.home'), route('marketing.product-tour'), route('marketing.features'), route('marketing.solutions'), route('marketing.use-cases'), route('marketing.pricing'), route('marketing.security'), route('marketing.company'), route('marketing.resources'), route('blog.index')])
             ->merge(collect(array_keys(config('frontsite.features')))->map(fn ($slug) => route('marketing.features.show', $slug)))
             ->merge(collect(array_keys(config('frontsite.solutions')))->map(fn ($slug) => route('marketing.solutions.show', $slug)))
             ->merge(collect(array_keys(config('frontsite.use_cases')))->map(fn ($slug) => route('marketing.use-cases.show', $slug)))

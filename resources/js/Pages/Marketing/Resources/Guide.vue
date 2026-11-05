@@ -1,5 +1,6 @@
 <script setup>
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
+import AppNotice from '@/Components/Product/AppNotice.vue';
 import PublicContainer from '@/Components/Marketing/PublicContainer.vue';
 import HomeLayout from '@/Layouts/HomeLayout.vue';
 import { guideVisuals, marketingFamilyVisuals, visualFor } from '@/Support/marketingVisuals';
@@ -7,12 +8,13 @@ import { CheckIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
 defineProps({ guide: Object, seo: Object });
+const printGuide = () => window.print();
 </script>
 
 <template>
     <HomeLayout>
         <Head :title="seo.title" />
-        <article>
+        <article class="cd-printable-guide">
             <header class="cd-public-section cd-family-hero" data-tone="amber">
                 <PublicContainer>
                     <Breadcrumbs :items="[{ label: 'Home', href: route('marketing.home') }, { label: 'Resources', href: route('marketing.resources') }, { label: guide.title }]" />
@@ -21,6 +23,7 @@ defineProps({ guide: Object, seo: Object });
                             <p class="cd-eyebrow">{{ guide.topic }}</p>
                             <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[1] tracking-[-0.055em] text-balance">{{ guide.title }}</h1>
                             <p class="mt-7 max-w-3xl text-lg leading-8">{{ guide.intro }}</p>
+                            <div class="mt-6 flex flex-wrap gap-3"><button type="button" class="cd-button cd-button-hero-secondary" @click="printGuide">Print or save as PDF</button><Link :href="route('marketing.resources')" class="cd-button cd-button-hero-secondary">Browse free resources</Link></div>
                             <p class="mt-6 text-sm font-semibold text-white/60">Published {{ guide.published_at }} · Updated {{ guide.reviewed_at }} · {{ guide.reviewed_by }}</p>
                         </div>
                         <figure class="cd-family-hero-media">
@@ -50,7 +53,7 @@ defineProps({ guide: Object, seo: Object });
                                 <li v-for="item in guide.checklist" :key="item" class="flex gap-3 leading-7 text-[var(--text-muted)]"><span class="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-indigo-50"><CheckIcon class="size-4 text-[var(--action-primary)]" aria-hidden="true" /></span>{{ item }}</li>
                             </ul>
                         </div>
-                        <div class="mt-5 rounded-[var(--radius-lg)] border-l-4 border-[var(--status-warning)] bg-[var(--status-warning-soft)] p-6 leading-7 text-[var(--text-muted)]">{{ guide.limitation }}</div>
+                        <AppNotice class="mt-5" title="Before you use this guide" :description="guide.limitation" />
                         <Link :href="route('marketing.features.show', guide.feature)" class="cd-button cd-button-secondary mt-6">Explore the supporting feature</Link>
                     </aside>
                 </PublicContainer>
@@ -58,3 +61,14 @@ defineProps({ guide: Object, seo: Object });
         </article>
     </HomeLayout>
 </template>
+
+<style scoped>
+@media print {
+    .cd-printable-guide > header { display: block !important; padding: 0 0 1rem; background: white; color: black; }
+    .cd-printable-guide > header figure, .cd-printable-guide nav, .cd-printable-guide .cd-eyebrow { display: none !important; }
+    .cd-printable-guide :deep(h1) { font-size: 26pt; color: black; }
+    .cd-printable-guide :deep(p), .cd-printable-guide :deep(li) { color: black; }
+    .cd-printable-guide :deep(.cd-family-hero-grid) { display: block; margin-top: 0; }
+    .cd-printable-guide :deep(.cd-story-row) { break-inside: avoid; }
+}
+</style>

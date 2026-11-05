@@ -1,0 +1,121 @@
+[
+  {
+    "brokenLoadedImages": [],
+    "canonical": "http://127.0.0.1:8051/",
+    "h1": [
+      " Your whole day,beautifully run. "
+    ],
+    "path": "/",
+    "screenshotButtons": 1,
+    "scrollWidth": 1512,
+    "title": "Appointment scheduling & service business software | ClipperDesk",
+    "viewport": 1512,
+    "stage": "local-desktop"
+  },
+  {
+    "brokenLoadedImages": [],
+    "canonical": "http://127.0.0.1:8051/solutions/salons",
+    "h1": [
+      "Manage salon appointments and services"
+    ],
+    "path": "/solutions/salons",
+    "screenshotButtons": 1,
+    "scrollWidth": 1512,
+    "title": "Salon booking and business management software | ClipperDesk",
+    "viewport": 1512,
+    "stage": "local-desktop"
+  },
+  {
+    "brokenLoadedImages": [],
+    "canonical": "http://127.0.0.1:8051/solutions/barbershops",
+    "h1": [
+      "Manage barbershop appointments and walk-ins"
+    ],
+    "path": "/solutions/barbershops",
+    "screenshotButtons": 1,
+    "scrollWidth": 1512,
+    "title": "Barbershop scheduling and walk-in software | ClipperDesk",
+    "viewport": 1512,
+    "stage": "local-desktop"
+  },
+  {
+    "brokenLoadedImages": [],
+    "canonical": "http://127.0.0.1:8051/features/online-booking",
+    "h1": [
+      "Book appointments online"
+    ],
+    "path": "/features/online-booking",
+    "screenshotButtons": 1,
+    "scrollWidth": 1512,
+    "title": "Online booking software for service businesses | ClipperDesk",
+    "viewport": 1512,
+    "stage": "local-desktop"
+  },
+  {
+    "brokenLoadedImages": [],
+    "canonical": "http://127.0.0.1:8051/pricing",
+    "h1": [
+      "One platform.A price that grows with you."
+    ],
+    "path": "/pricing",
+    "screenshotButtons": 0,
+    "scrollWidth": 1512,
+    "title": "Pricing for your locations and team | ClipperDesk",
+    "viewport": 1512,
+    "stage": "local-desktop"
+  },
+  {
+    "brokenLoadedImages": [],
+    "canonical": "http://127.0.0.1:8051/resources",
+    "h1": [
+      "Practical guides for your business."
+    ],
+    "path": "/resources",
+    "screenshotButtons": 0,
+    "scrollWidth": 1512,
+    "title": "Service business management guides | ClipperDesk",
+    "viewport": 1512,
+    "stage": "local-desktop"
+  },
+  {
+    "brokenLoadedImages": [],
+    "canonical": "http://127.0.0.1:8051/features/product-walkthrough",
+    "h1": [
+      "Follow a visit from booking to checkout."
+    ],
+    "path": "/features/product-walkthrough",
+    "screenshotButtons": 5,
+    "scrollWidth": 1512,
+    "title": "Product walkthrough: booking to checkout | ClipperDesk",
+    "viewport": 1512,
+    "stage": "local-desktop"
+  },
+  {
+    "brokenLoadedImages": [],
+    "canonical": "http://127.0.0.1:8051/guides/daily-operations-checklist",
+    "h1": [
+      "Daily opening and closing checklist"
+    ],
+    "notice": "Before you use this guideAdapt this operating checklist to your business. It does not replace local safety, licensing, accounting or clinical procedures. ClipperDesk records payments received elsewhere and does not collect deposits online.",
+    "path": "/guides/daily-operations-checklist",
+    "screenshotButtons": 0,
+    "scrollWidth": 1512,
+    "title": "Daily opening and closing checklist | ClipperDesk",
+    "viewport": 1512,
+    "stage": "local-desktop"
+  },
+  {
+    "brokenLoadedImages": [],
+    "canonical": "http://127.0.0.1:8051/guides/salon-opening-checklist",
+    "h1": [
+      "Prepare your business for online booking"
+    ],
+    "notice": "Before you use this guideThis checklist does not replace tax, employment, licensing, safety, insurance or privacy advice for a specific service business.",
+    "path": "/guides/salon-opening-checklist",
+    "screenshotButtons": 0,
+    "scrollWidth": 1512,
+    "title": "Service business opening checklist | ClipperDesk",
+    "viewport": 1512,
+    "stage": "local-desktop"
+  }
+]

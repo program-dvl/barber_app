@@ -1,0 +1,18 @@
+<?php
+
+return [
+    'screens' => [
+        'booking' => ['key' => 'booking-services', 'alt' => 'Client booking page with service names, durations and prices', 'caption' => 'Example business and sample prices. Clients choose from the services you publish.'],
+        'calendar' => ['key' => 'calendar', 'alt' => 'ClipperDesk calendar showing appointments across three staff schedules', 'caption' => 'Example business with sample appointments. Status labels keep changes visible to the front desk.'],
+        'walk-ins' => ['key' => 'walk-in-queue', 'alt' => 'Walk-in queue with waiting clients and service estimates', 'caption' => 'Example business with sample clients. Waiting times are estimates, not guaranteed start times.'],
+        'clients' => ['key' => 'client-profile', 'alt' => 'Client profile connecting visit history and preferences', 'caption' => 'Example client record. Your team sees information according to its permissions.'],
+        'checkout' => ['key' => 'checkout', 'alt' => 'Checkout showing service items, tax, a previously paid deposit and the remaining balance', 'caption' => 'Example sale and sample amounts. Payments and deposits shown here were received elsewhere; ClipperDesk records them.'],
+    ],
+    'steps' => [
+        ['id' => 'booking', 'title' => 'Let the client choose a service and time', 'body' => 'Publish services, prices, qualified staff and working hours. Clients use your link to choose from current availability on their phone, without creating an account.', 'check' => 'Try a new-client booking, check the local time and read the confirmation. A booking requiring a deposit needs business contact because online deposit collection is unavailable.', 'help' => 'appointments-public-booking', 'feature' => 'online-booking'],
+        ['id' => 'calendar', 'title' => 'Bring the booking into the working day', 'body' => 'See appointments alongside staff hours and blocked time. Record arrival and service progress, and review availability when a visit changes.', 'check' => 'Check what happens when someone is absent or a service runs late. Reassign or reschedule the affected visit without double-booking staff or space.', 'help' => 'calendar-views', 'feature' => 'calendar-and-walk-ins'],
+        ['id' => 'walk-ins', 'title' => 'Fit walk-ins around reserved appointments', 'body' => 'Add the requested service to the queue, review the estimated wait and assign an eligible professional when the full service window is available.', 'check' => 'A free chair is not enough if the service overlaps the next booking. Keep clients informed as waits change.', 'help' => 'walk-ins-serve', 'feature' => 'calendar-and-walk-ins'],
+        ['id' => 'clients', 'title' => 'Keep useful client context with the visit', 'body' => 'Find previous visits and relevant preferences in one client profile. Notes, forms and files have access controls for the people who need them.', 'check' => 'Try the workflow as a receptionist and a professional. Sensitive client details should be available only to the right team members.', 'help' => 'clients-visits-rebook', 'feature' => 'client-management'],
+        ['id' => 'checkout', 'title' => 'Review the sale and record payment received', 'body' => 'Carry completed services into checkout. Review items, tax, discounts, tips and any payment already received, then save the sale and issue a receipt.', 'check' => 'ClipperDesk records cash, external card and other received payments. It does not charge cards or send refunds to a payment provider. Trace report totals back to saved sales.', 'help' => 'checkout-record-payments', 'feature' => 'checkout-and-reporting'],
+    ],
+];

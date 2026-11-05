@@ -21,7 +21,7 @@ class PublicAnalytics
             return null;
         }
 
-        $paths = ['/', '/features', '/solutions', '/use-cases', '/pricing', '/company', '/security', '/resources', '/blog'];
+        $paths = ['/', '/features/product-walkthrough', '/features', '/solutions', '/use-cases', '/pricing', '/company', '/security', '/resources', '/blog'];
         foreach (['features' => '/features/', 'solutions' => '/solutions/', 'use_cases' => '/use-cases/', 'guides' => '/guides/'] as $key => $prefix) {
             foreach (array_keys(config('frontsite.'.$key, [])) as $slug) {
                 if (is_string($slug) && preg_match('/^[a-z0-9-]+$/D', $slug)) {

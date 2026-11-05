@@ -18,6 +18,7 @@ use App\Http\Controllers\Invoices\DownloadInvoiceController;
 use App\Http\Controllers\Marketing\FeatureController;
 use App\Http\Controllers\Marketing\LegalDocumentController;
 use App\Http\Controllers\Marketing\PricingController;
+use App\Http\Controllers\Marketing\ProductTourController;
 use App\Http\Controllers\Marketing\ResourceController;
 use App\Http\Controllers\Marketing\SolutionController;
 use App\Http\Controllers\Marketing\TrustController;
@@ -146,6 +147,7 @@ $platformModules = [
 
 Route::get('/', [HomeController::class, 'index'])->name('marketing.home');
 Route::get('/features', [FeatureController::class, 'index'])->name('marketing.features');
+Route::get('/features/product-walkthrough', ProductTourController::class)->name('marketing.product-tour');
 Route::get('/pricing', PricingController::class)->name('marketing.pricing');
 Route::get('/company', [TrustController::class, 'company'])->name('marketing.company');
 Route::get('/security', [TrustController::class, 'security'])->name('marketing.security');

@@ -40,11 +40,13 @@ const features = [
     { icon: CalendarDaysIcon, title: 'Appointments & walk-ins', body: 'Bring bookings, availability and your walk-in queue together.' },
     { icon: BuildingStorefrontIcon, title: 'Online booking', body: 'Give clients a booking link for your services, team and locations.' },
     { icon: UsersIcon, title: 'Clients & staff schedules', body: 'Keep client history, staff schedules and access permissions organized.' },
-    { icon: CreditCardIcon, title: 'Checkout & sales', body: 'Keep services, payments, tips and receipts together.' },
+    { icon: CreditCardIcon, title: 'Checkout & sales', body: 'Review services and record payments received elsewhere, with tips and receipts.' },
     { icon: ChartBarIcon, title: 'Business reporting', body: 'Understand appointments, sales and team performance.' },
-    { icon: BellIcon, title: 'Client notifications', body: 'Keep clients informed with booking confirmations and reminders.' },
+    { icon: BellIcon, title: 'Client notifications', body: 'Send confirmations and reminders where delivery is enabled, with consent and available text credits.' },
 ];
 const faq = computed(() => [
+    { question: 'Is pricing different for a salon, studio or another business type?', answer: 'The same subscription model applies across supported business types. Your selected locations and bookable staff determine the estimate. Check your industry page for the workflows and specialist limitations that apply to you.' },
+    { question: 'Could there be charges beyond the subscription?', answer: 'Applicable subscription tax is shown before payment. Optional extra text credits cost separately and are never purchased automatically. Your own card or other client payment service may charge its own fees; those fees are separate from ClipperDesk.' },
     { question: 'Who counts as bookable staff?', answer: 'Each active person who takes appointments counts once, even if they work at several locations. Receptionists and administrators who don’t take appointments are included at no extra charge.' },
     { question: 'How does the free trial work?', answer: `Create an account and verify your email to start your ${props.catalog.trial_days}-day trial. No credit card is required. Choose and confirm a paid subscription separately; the trial never charges you automatically.` },
     { question: 'Can I change my team size or cancel?', answer: 'Review changes in Subscription & billing before confirming. Added locations and staff become available when payment is complete; reductions and changes to your billing cycle or pricing start at your next renewal. Your price reflects the locations and bookable staff you choose. Cancel to stop renewal and keep access until your paid period ends.' },
@@ -117,6 +119,7 @@ watch(interval, value => emitMarketingEvent('marketing_pricing_interval_changed'
                 <p v-if="catalog.available" class="pricing-tax-note">Prices are in USD, before tax. Fees charged by your client payment service are separate.</p>
             </PublicContainer></section>
 
+            <section class="cd-public-section"><PublicContainer><h2 class="font-display text-3xl font-semibold text-[var(--text-strong)]">Check the fit before choosing a subscription.</h2><p class="mt-5 max-w-3xl leading-8 text-[var(--text-muted)]">See the actual booking, calendar and checkout screens. The same core tools serve salons, barbershops and other supported appointment-led businesses; industry pages explain specialist limits.</p><div class="mt-6 flex flex-wrap gap-3"><Link :href="route('marketing.product-tour')" class="cd-button cd-button-secondary">Explore the product walkthrough</Link><Link :href="route('marketing.solutions')" class="cd-button cd-button-quiet">Find your business type</Link></div></PublicContainer></section>
             <section class="pricing-faq" aria-labelledby="pricing-faq-title"><PublicContainer><div class="pricing-faq-grid"><div class="pricing-section-heading"><h2 id="pricing-faq-title">Pricing questions, answered.</h2><p><a v-if="page.props.brand?.support_email" :href="`mailto:${page.props.brand.support_email}`">Contact support <ArrowRightIcon aria-hidden="true"/></a><Link v-else :href="route('marketing.features')">Explore the product <ArrowRightIcon aria-hidden="true"/></Link></p></div><FaqList :items="faq"/></div><p class="pricing-policy-note">Read our <Link :href="route('refund.show')">refund and cancellation policy</Link> before subscribing.</p></PublicContainer></section>
         </div>
     </HomeLayout>

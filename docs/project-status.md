@@ -1,5 +1,37 @@
 # Project status
 
+## 2026-11-05 Public acquisition pages and product walkthrough
+
+- Implemented owner-approved broad positioning with salons/barbershops prominent;
+  retained all13 industry pages. Added genuine demo screenshots/use examples/FAQs
+  on priority industry and shared feature pages, clearer pricing questions and
+  contextual trial/product links. Added a read-only five-step walkthrough and
+  distinct daily operating checklist; maintained guides gain print styling and
+  shared AppNotice guidance. Existing finance, provider and privacy gates remain.
+- Local Marketing282/4,412 assertions, frontend219, client/SSR builds,22 route
+  budgets and formatting pass. Desktop1512px/tablet768px/phone390×844 checks of
+  nine paths pass layout/metadata; screenshot enlargement/focus return, FAQ,
+  Inertia navigation and guide print styling verified. Isolated preview has SSR
+  disabled. Deployment and live SSR verification pending; no ranking claim.
+  [Scope and evidence](audits/2026-11-05-acquisition-pages/README.md).
+
+## 2026-11-05 Owner-authorised live blog editorial review
+
+- Reviewed and revised all four published articles through the live admin editor:
+  clearer distinct intent/titles, practical operating/trial/opening checklists,
+  no-show message examples and measurement, labelled financial illustrations,
+  official sources and contextual links. Updated summaries/search metadata and
+  grouped the operating/software guides for existing related-article discovery.
+- Preserved original URLs, first publication dates, authors, images and published
+  status. Public material-update dates correctly show 5 November. No invented
+  customer evidence or feature claims; payment/deposit limits are explicit.
+- Four original article URLs pass live HTTP/SSR metadata, headings and JSON-LD
+  checks; all remain in the sitemap. All17 distinct linked pages return200.
+  Exact rendered body/metadata/schema match; all images load. Desktop1512px and
+  phone390×844 checks show no overflow; screenshots reviewed, viewport restored.
+  No code deployment or Google indexing/ranking outcome is claimed.
+  [Content, backups and verification](audits/2026-11-05-blog-editorial/README.md).
+
 ## 2026-11-04 Search discovery repairs
 
 - Owner-authorized Nginx robots fallback applied through Forge; live robots now
@@ -8,8 +40,12 @@
   canonicals and successful marketing-only alias redirects. Tenant booking,
   private/auth/API routes and mutations retain their behavior.
 - Marketing276 passed/4246 assertions; frontend219 passed; client/SSR build,
-  21budgets and scoped formatting passed. Isolated25-post browser navigation
-  and390px/44px controls passed. Source deployment pending final verification.
+  21 route budgets and scoped formatting passed. Isolated 25-post browser
+  navigation and 390px/44px controls passed. Source **3122f24** deployed through
+  Forge **82111204**. Live alias301 redirects and preserved booking entry200
+  responses verified; primary blog/sitemap/image remain200. All131 sitemap
+  pages pass the post-robots crawl. Only four live posts exist, so later archive
+  pages are verified with synthetic local content rather than production inserts.
   [Evidence](audits/2026-11-04-search-discovery/README.md).
 
 ## 2026-11-04 Article status-only publishing

@@ -1,4 +1,6 @@
 <script setup>
+import ProductEvidence from '@/Components/Marketing/ProductEvidence.vue';
+import PublicCta from '@/Components/Marketing/PublicCta.vue';
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
 import ConversionBand from '@/Components/Marketing/ConversionBand.vue';
 import PublicContainer from '@/Components/Marketing/PublicContainer.vue';
@@ -26,6 +28,7 @@ defineProps({ feature: Object, related: Array, seo: Object });
                         <p class="cd-eyebrow">{{ feature.label }}</p>
                         <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">{{ feature.title }}</h1>
                         <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">{{ feature.description }}</p>
+                        <div class="mt-8 flex flex-wrap gap-3"><PublicCta :context="`feature_${feature.slug}_hero`" /><Link :href="route('marketing.product-tour')" class="cd-button cd-button-hero-secondary">See the product walkthrough</Link></div>
                     </div>
                     <figure class="cd-family-hero-media">
                         <img class="cd-family-hero-image" :src="visualFor(featureVisuals, feature.slug, marketingFamilyVisuals.product).src" :alt="visualFor(featureVisuals, feature.slug, marketingFamilyVisuals.product).alt" width="1536" height="1024" fetchpriority="high" />
@@ -94,6 +97,8 @@ defineProps({ feature: Object, related: Array, seo: Object });
                 </div>
             </PublicContainer>
         </section>
+
+        <ProductEvidence v-if="feature.screenshots?.length || feature.faqs?.length" :screenshots="feature.screenshots" :scenario="feature.scenario" :faqs="feature.faqs" :context="`feature_${feature.slug}_evidence`" />
 
         <ConversionBand :title="`Bring ${feature.label.toLowerCase()} into your working day.`" description="Set up your services and team, then preview your booking page before sharing it." :context="`feature_${feature.slug}_final`" />
     </HomeLayout>

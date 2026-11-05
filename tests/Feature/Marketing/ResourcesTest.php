@@ -8,8 +8,8 @@ use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
 
-it('publishes a focused resources hub and two maintained guides', function () {
-    $this->get(route('marketing.resources'))->assertOk()->assertInertia(fn (Assert $page) => $page->has('guides', 2)->where('articleCount', 0));
+it('publishes a focused resources hub and maintained working guides', function () {
+    $this->get(route('marketing.resources'))->assertOk()->assertInertia(fn (Assert $page) => $page->has('guides', 3)->where('articleCount', 0));
     $this->get(route('marketing.guides.show', 'booking-policy-basics'))->assertOk()->assertInertia(fn (Assert $page) => $page->has('guide.sections', 4)->has('guide.checklist', 7));
     $this->get('/guides/instant-growth-hacks')->assertNotFound();
 });

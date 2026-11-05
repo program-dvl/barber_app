@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Controller;
+use App\Support\Seo\ProductEvidence;
 use App\Support\Seo\PublicPage;
 use Inertia\Response;
 
@@ -45,7 +46,7 @@ class FeatureController extends Controller
             ->values();
 
         return PublicPage::render('Marketing/Features/Show', [
-            'feature' => [...collect($content)->except('requirements')->all(), 'slug' => $feature],
+            'feature' => [...collect($content)->except('requirements')->all(), 'slug' => $feature, 'screenshots' => app(ProductEvidence::class)->screenshots($content['screens'] ?? [])],
             'related' => $related,
             'seo' => [
                 'title' => $content['seo_title'],

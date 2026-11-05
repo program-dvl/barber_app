@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Controller;
+use App\Support\Seo\ProductEvidence;
 use App\Support\Seo\PublicPage;
 use Inertia\Response;
 
@@ -40,7 +41,7 @@ class SolutionController extends Controller
         $features = config('frontsite.features');
 
         return PublicPage::render('Marketing/Solutions/Show', [
-            'solution' => [...collect($content)->except('requirements')->all(), 'slug' => $solution],
+            'solution' => [...collect($content)->except('requirements')->all(), 'slug' => $solution, 'screenshots' => app(ProductEvidence::class)->screenshots($content['screens'] ?? [])],
             'features' => collect($content['features'])->map(fn (string $slug): array => [
                 'slug' => $slug,
                 'label' => $features[$slug]['label'],

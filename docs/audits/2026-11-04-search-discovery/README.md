@@ -20,5 +20,14 @@ build and all21 route budgets passed. Scoped Pint/whitespace passed. Isolated
 actions are44px. Actual Vue SSR tests verify crawlable link markup.
 
 Robots screenshot: robots-live.jpg. Archive phone screenshot: pagination-phone.jpg.
-Source deployment and final live alias checks remain pending at this checkpoint.
+Source **3122f24** deployed through Forge push-to-deploy **82111204**, confirmed
+Deployed. Live route checks (live-routes.json) confirm book-host home/blog/
+barbershop solution and www features redirect301 to matching primary paths.
+Primary blog/sitemap/image return200; book/manage-appointment retain200 and
+noindex without marketing redirects. Page2 correctly returns404 while only four
+eligible posts exist; the25-article isolated preview verifies later-page behavior.
+The live browser follows book-host/blog to clipperdesk.com/blog with all four posts.
+Full131-page post-robots crawl passes (after-robots.json); final route probes were
+performed after source deployment. No production booking or article was created.
+No Google Search Console indexing request or ranking improvement is claimed.
 Google indexing/ranking is outside these technical verification claims.

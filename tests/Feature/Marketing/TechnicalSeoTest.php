@@ -38,7 +38,7 @@ it('publishes a deterministic curated sitemap and canonical robots reference', f
     expect($urls)->toContain(route('marketing.home'), route('marketing.pricing'), route('marketing.resources'))->not->toContain(route('register'))->not->toContain(url('/book'))->not->toContain(url('/roadmap'));
     $help = app(HelpCatalog::class);
     $helpUrls = 1 + count($help->articles()) + collect($help->categories())->where('article_count', '>', 0)->count();
-    expect($urls->count())->toBe(32 + $helpUrls);
+    expect($urls->count())->toBe(34 + $helpUrls);
     $this->get('/sitemap')->assertRedirect(route('sitemap.xml'))->assertStatus(301);
     $this->get('/robots.txt')->assertOk()
         ->assertSee("User-agent: OAI-SearchBot\nAllow: /", false)

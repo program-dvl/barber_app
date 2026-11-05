@@ -3130,3 +3130,26 @@ Never blanket-redirect the booking domain: tenant booking and private tasks must
 keep their origin. Preserve raw marketing queries in redirects; only validated
 archive page numbers enter canonical identity. Repair the existing Nginx robots
 location with Laravel fallback, retaining generated rules and sitemap ownership.
+
+### ADR-065 acquisition evidence and broader industry positioning — 2026-11-05
+
+Authority: the owner approved the public-page improvement plan and explicitly
+clarified that salons/barbershops are the main focus while other supported
+appointment-led industries remain part of the product. Requirements: PRD sections
+1–4/12/15; FR-01/04/06/08/11/14/18/21; ADR-024/065/070/079.
+
+Keep all thirteen existing industry destinations and the broad brand/entity
+profile. Strengthen priority industry pages and shared features with truthful
+use examples, FAQs and existing reviewed public demo screenshots. Resolve media
+through the Help catalog's file/dimension/hash checks, publish sample-data
+captions and retain accessible enlargement. A screenshot is not customer evidence
+or certification of a live integration.
+
+Add one read-only product walkthrough at `/features/product-walkthrough`, within
+the already reserved Product prefix so tenant root booking addresses retain their
+namespace. Add one distinct daily opening/closing checklist under existing guides;
+reuse the resource hub and add a printable rendition to maintained guides. Keep
+curated sitemap/indexation/alias and consent rules aligned. No new tracking type,
+financial workflow, private customer record, specialist capability or release
+waiver is introduced. Customer stories require real evidence and permission;
+do not publish a fictitious story or an empty coming-soon destination.

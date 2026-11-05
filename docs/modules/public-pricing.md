@@ -103,3 +103,11 @@ retained-rate comparison guards remain. Pricing page signed-in owner actions,
 including header/mobile CTA, open an authorized workspace's subscription Plan tab
 with Manage subscription wording. Accounts without billing authority retain the
 existing workspace fallback; no authorization is bypassed.
+
+## Acquisition clarity — 2026-11-05
+
+Added answers about shared pricing across supported business types and potential
+subscription tax, optional extra text credits and separate external payment fees.
+Feature copy distinguishes recorded payments and enabled/consented messaging.
+A product-walkthrough/industry handoff lets visitors check fit before subscribing.
+Rates, calculations, offers, signup intent and financial actions are unchanged.

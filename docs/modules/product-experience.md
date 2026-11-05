@@ -285,3 +285,15 @@ Invalid or out-of-range pages return a non-indexable 404; empty first-page
 resource guidance remains available. Draft, future, inactive, incomplete and
 blocked articles never enter archive counts or results. This change makes older
 articles discoverable; it does not claim Google indexing or rankings.
+
+## Public product evidence and printable guides — 2026-11-05
+
+Under ADR-065, use the existing HelpScreenshot disclosure for real public demo
+screens on acquisition pages; retain labelled enlargement, modal Escape/close
+and trigger focus return. Captions explain sample data and money-recording limits.
+No customer relationship is inferred. Product proof and FAQs reuse existing
+public tokens, FaqList and wrapping 12px action gaps with 44px touch targets.
+Guide limitations use AppNotice. Printable guides retain the title and written
+checklist while hiding navigation, action buttons and editorial illustrations.
+The read-only walkthrough links each step to the actual feature and public Help;
+it does not write example appointments into a visitor's business.

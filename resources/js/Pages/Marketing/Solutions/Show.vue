@@ -1,4 +1,5 @@
 <script setup>
+import ProductEvidence from '@/Components/Marketing/ProductEvidence.vue';
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
 import ConversionBand from '@/Components/Marketing/ConversionBand.vue';
 import PublicCta from '@/Components/Marketing/PublicCta.vue';
@@ -78,6 +79,8 @@ defineProps({ solution: Object, features: Array, seo: Object });
                 </div>
             </PublicContainer>
         </section>
+        <ProductEvidence v-if="solution.screenshots?.length || solution.faqs?.length" :screenshots="solution.screenshots" :scenario="solution.scenario" :faqs="solution.faqs" :context="`solution_${solution.slug}_evidence`" />
+
         <ConversionBand title="Bring your appointments and daily work together." description="Add your services and team, set working hours and preview your booking page." :context="`solution_${solution.slug}_final`" />
     </HomeLayout>
 </template>
