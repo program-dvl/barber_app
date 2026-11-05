@@ -12,7 +12,12 @@
   budgets and formatting pass. Desktop1512px/tablet768px/phone390×844 checks of
   nine paths pass layout/metadata; screenshot enlargement/focus return, FAQ,
   Inertia navigation and guide print styling verified. Isolated preview has SSR
-  disabled. Deployment and live SSR verification pending; no ranking claim.
+  disabled. Source3474540 is active in Forge release82151140. Live original-HTML
+  crawl passes133/133 sitemap pages plus robots; focused twelve-page rendering,
+ 19 linked destinations, new-page aliases and preserved booking entries pass.
+  Live browser control was disabled; owner chose to finish with available checks,
+  so production visuals/interactions remain distinct from local evidence. No
+  Google indexing, ranking or traffic improvement is claimed.
   [Scope and evidence](audits/2026-11-05-acquisition-pages/README.md).
 
 ## 2026-11-05 Owner-authorised live blog editorial review

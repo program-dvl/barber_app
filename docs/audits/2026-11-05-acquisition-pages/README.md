@@ -52,5 +52,29 @@ Existing demo media provenance is recorded in the
 
 ## Deployment
 
-Pending. Local validation does not establish live deployment, Google crawling,
-indexing or increased traffic. Post-deployment evidence will be appended here.
+Source **3474540** was pushed through the existing Forge push-to-deploy
+connection. Read-only SSH confirms active release **82151140** and the matching
+commit. The previous release stayed active until the new build completed; no
+manual hosting, environment or protected server-file edits were needed.
+
+- [Full public crawl](live-seo.json): **133/133 pages pass**, zero failed pages,
+  valid sitemap and HTTP200 plain-text robots. Checked at2026-11-05T04:08:00Z.
+- [Focused deployed check](live-detail.json): twelve priority/changed URLs pass
+  original-HTML status, canonical, metadata, rendered H1/main and JSON-LD checks.
+  New walkthrough HTML includes its actual product image markup and content.
+- All19 distinct linked feature/industry/guide/Help destinations return200.
+- Both new marketing paths on the booking alias redirect301 to the primary
+  domain; `/book` and `/manage-appointment` retain200 without a redirect.
+- Live browser control became disabled after deployment. The owner explicitly
+  chose “Finish with the available checks.” Production visual/enlargement/print
+  interactions were therefore **not rechecked in the live browser**; desktop,
+  tablet, phone and keyboard evidence above is local. Initial live browser request
+  occurred before activation and correctly showed the old release's404; the
+  post-activation HTTP checks supersede that pre-deployment observation.
+- Temporary viewport and print overrides were cleared before browser access was
+  disabled. Local preview was stopped. The final audit/evidence updates remain
+  documentation-only and do not require another production deployment.
+
+This establishes deployed technical fetchability and server rendering, not a
+Google recrawl, Google index acceptance, better rankings or increased visits.
+No fresh Search Console or Analytics outcome was measured during this release.

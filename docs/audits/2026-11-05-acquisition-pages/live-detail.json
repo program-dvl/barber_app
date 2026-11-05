@@ -1,0 +1,479 @@
+{
+  "checkedAt": "2026-11-05T04:08:16.614Z",
+  "commit": "3474540",
+  "release": "82151140",
+  "pages": [
+    {
+      "url": "https://clipperdesk.com/",
+      "status": 200,
+      "titles": [
+        "Appointment scheduling & service business software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Run booking, staff calendars, client records, walk-ins, checkout and reporting in one workspace for beauty, wellness, fitness, health and pet-care businesses."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Your whole day, beautifully run."
+      ],
+      "mainWords": 648,
+      "anchorCount": 39,
+      "schemaCount": 1,
+      "problems": [],
+      "demoScreens": [
+        "/images/help/calendar.webp",
+        "/images/help/calendar.webp"
+      ],
+      "hasWalkthroughLink": true,
+      "hasChecklistLink": false,
+      "workingChecklist": false
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/salons",
+      "status": 200,
+      "titles": [
+        "Salon booking and business management software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate service timing, staff handoffs, client preferences, booking policy and checkout without splitting the visit into disconnected records."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/salons"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage salon appointments and services"
+      ],
+      "mainWords": 494,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": [],
+      "demoScreens": [
+        "/images/help/booking-services.webp",
+        "/images/help/booking-services.webp"
+      ],
+      "hasWalkthroughLink": true,
+      "hasChecklistLink": false,
+      "workingChecklist": false
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/barbershops",
+      "status": 200,
+      "titles": [
+        "Barbershop scheduling and walk-in software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Manage barber appointments, walk-in queues, staff availability, client preferences and checkout from one workspace."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/solutions/barbershops"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage barbershop appointments and walk-ins"
+      ],
+      "mainWords": 481,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": [],
+      "demoScreens": [
+        "/images/help/calendar.webp",
+        "/images/help/calendar.webp"
+      ],
+      "hasWalkthroughLink": true,
+      "hasChecklistLink": false,
+      "workingChecklist": false
+    },
+    {
+      "url": "https://clipperdesk.com/features/online-booking",
+      "status": 200,
+      "titles": [
+        "Online booking software for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Let clients book appointments on their phone, choosing services, staff and available times."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/features/online-booking"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Book appointments online"
+      ],
+      "mainWords": 482,
+      "anchorCount": 32,
+      "schemaCount": 1,
+      "problems": [],
+      "demoScreens": [
+        "/images/help/booking-services.webp",
+        "/images/help/booking-services.webp"
+      ],
+      "hasWalkthroughLink": true,
+      "hasChecklistLink": false,
+      "workingChecklist": false
+    },
+    {
+      "url": "https://clipperdesk.com/features/calendar-and-walk-ins",
+      "status": 200,
+      "titles": [
+        "Calendar and walk-in software for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate staff schedules, chairs and rooms, appointment changes and waiting clients."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/features/calendar-and-walk-ins"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage appointments and walk-ins together"
+      ],
+      "mainWords": 409,
+      "anchorCount": 32,
+      "schemaCount": 1,
+      "problems": [],
+      "demoScreens": [
+        "/images/help/calendar.webp",
+        "/images/help/calendar.webp"
+      ],
+      "hasWalkthroughLink": true,
+      "hasChecklistLink": false,
+      "workingChecklist": false
+    },
+    {
+      "url": "https://clipperdesk.com/features/client-management",
+      "status": 200,
+      "titles": [
+        "Client management software for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Find past visits, preferences, notes, forms and files in one client profile, with access controlled by role."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/features/client-management"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Keep client history and preferences together"
+      ],
+      "mainWords": 396,
+      "anchorCount": 32,
+      "schemaCount": 1,
+      "problems": [],
+      "demoScreens": [
+        "/images/help/client-profile.webp",
+        "/images/help/client-profile.webp"
+      ],
+      "hasWalkthroughLink": true,
+      "hasChecklistLink": false,
+      "workingChecklist": false
+    },
+    {
+      "url": "https://clipperdesk.com/features/checkout-and-reporting",
+      "status": 200,
+      "titles": [
+        "Checkout and reporting for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Record service payments, create receipts and trace report totals to the original sale."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/features/checkout-and-reporting"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Complete checkout and understand your reports"
+      ],
+      "mainWords": 440,
+      "anchorCount": 32,
+      "schemaCount": 1,
+      "problems": [],
+      "demoScreens": [
+        "/images/help/checkout.webp",
+        "/images/help/checkout.webp"
+      ],
+      "hasWalkthroughLink": true,
+      "hasChecklistLink": false,
+      "workingChecklist": false
+    },
+    {
+      "url": "https://clipperdesk.com/pricing",
+      "status": 200,
+      "titles": [
+        "Pricing for your locations and team | ClipperDesk"
+      ],
+      "descriptions": [
+        "One complete ClipperDesk subscription, with transparent location pricing and progressive staff rates. Explore monthly or yearly billing and start a free trial."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/pricing"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "One platform. A price that grows with you."
+      ],
+      "mainWords": 795,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": [],
+      "demoScreens": [],
+      "hasWalkthroughLink": true,
+      "hasChecklistLink": false,
+      "workingChecklist": false
+    },
+    {
+      "url": "https://clipperdesk.com/resources",
+      "status": 200,
+      "titles": [
+        "Service business management guides | ClipperDesk"
+      ],
+      "descriptions": [
+        "Practical booking, scheduling and operations guides for appointment-led beauty, wellness, fitness, health and pet-service businesses."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/resources"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Practical guides for your business."
+      ],
+      "mainWords": 158,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": [],
+      "demoScreens": [],
+      "hasWalkthroughLink": true,
+      "hasChecklistLink": true,
+      "workingChecklist": false
+    },
+    {
+      "url": "https://clipperdesk.com/features/product-walkthrough",
+      "status": 200,
+      "titles": [
+        "Product walkthrough: booking to checkout | ClipperDesk"
+      ],
+      "descriptions": [
+        "See real ClipperDesk screens for online booking, calendars, walk-ins, client history and recorded checkout. Explore the workflow before starting a trial."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/features/product-walkthrough"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Follow a visit from booking to checkout."
+      ],
+      "mainWords": 663,
+      "anchorCount": 44,
+      "schemaCount": 1,
+      "problems": [],
+      "demoScreens": [
+        "/images/help/booking-services.webp",
+        "/images/help/booking-services.webp",
+        "/images/help/calendar.webp",
+        "/images/help/calendar.webp",
+        "/images/help/walk-in-queue.webp",
+        "/images/help/walk-in-queue.webp",
+        "/images/help/client-profile.webp",
+        "/images/help/client-profile.webp",
+        "/images/help/checkout.webp",
+        "/images/help/checkout.webp"
+      ],
+      "hasWalkthroughLink": true,
+      "hasChecklistLink": true,
+      "workingChecklist": false
+    },
+    {
+      "url": "https://clipperdesk.com/guides/daily-operations-checklist",
+      "status": 200,
+      "titles": [
+        "Daily opening and closing checklist | ClipperDesk"
+      ],
+      "descriptions": [
+        "A free printable daily checklist for appointment-led teams: staff hours, bookings, walk-ins, client handoffs, received payments and closing checks."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/guides/daily-operations-checklist"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Daily opening and closing checklist"
+      ],
+      "mainWords": 396,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": [],
+      "demoScreens": [],
+      "hasWalkthroughLink": true,
+      "hasChecklistLink": true,
+      "workingChecklist": true
+    },
+    {
+      "url": "https://clipperdesk.com/guides/salon-opening-checklist",
+      "status": 200,
+      "titles": [
+        "Service business opening checklist | ClipperDesk"
+      ],
+      "descriptions": [
+        "Prepare the minimum business, location, service, staff and booking rules needed before sharing an online booking link."
+      ],
+      "canonicals": [
+        "https://clipperdesk.com/guides/salon-opening-checklist"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Prepare your business for online booking"
+      ],
+      "mainWords": 213,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": [],
+      "demoScreens": [],
+      "hasWalkthroughLink": true,
+      "hasChecklistLink": false,
+      "workingChecklist": true
+    }
+  ],
+  "links": [
+    {
+      "url": "https://clipperdesk.com/features/product-walkthrough",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/features/calendar-and-walk-ins",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/features/client-management",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/features/checkout-and-reporting",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/barbershops",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/salons",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/nail-salons",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/spas",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/fitness-recovery",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/solutions/pet-grooming",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/features/online-booking",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/guides/daily-operations-checklist",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/guides/booking-policy-basics",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/guides/salon-opening-checklist",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/appointments-public-booking",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/calendar-views",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/walk-ins-serve",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/clients-visits-rebook",
+      "status": 200
+    },
+    {
+      "url": "https://clipperdesk.com/help/articles/checkout-record-payments",
+      "status": 200
+    },
+    {
+      "url": "https://book.clipperdesk.com/features/product-walkthrough",
+      "status": 301,
+      "location": "https://clipperdesk.com/features/product-walkthrough"
+    },
+    {
+      "url": "https://book.clipperdesk.com/guides/daily-operations-checklist",
+      "status": 301,
+      "location": "https://clipperdesk.com/guides/daily-operations-checklist"
+    },
+    {
+      "url": "https://book.clipperdesk.com/book",
+      "status": 200,
+      "location": null
+    },
+    {
+      "url": "https://book.clipperdesk.com/manage-appointment",
+      "status": 200,
+      "location": null
+    }
+  ],
+  "summary": {
+    "pages": 12,
+    "failedPages": [],
+    "linkedPages": 19,
+    "failedLinkedPages": []
+  }
+}
