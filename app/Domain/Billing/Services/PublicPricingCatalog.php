@@ -38,7 +38,7 @@ class PublicPricingCatalog
         return [
             'available' => count($markets) > 0,
             'seasonal_offer' => Schema::hasTable('billing_promotions') ? app(SubscriptionPromotions::class)->seasonal() : null,
-            'trial_days' => (int) config('billing.trial_days'),
+            'trial_label' => config('billing.trial_label'), 'trial_days' => (int) config('billing.trial_days'),
             'markets' => $markets,
             'max_locations' => (int) config('capacity-billing.max_locations'),
             'max_staff' => (int) config('capacity-billing.max_staff'),

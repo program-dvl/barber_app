@@ -1248,3 +1248,32 @@ relevant walkthrough anchors and industry pages. Templates collect no input.
 Reuse shared typography, cards, focus styles and wrapping 44px actions. Print
 shows the worksheet alone. Preserve stable article URLs, metadata and dates;
 no database publication, fabricated review or ranking guarantee is introduced.
+
+
+## Three-month account trial — 2026-11-07
+
+Owner-approved FR-01 change: newly verified accounts receive three calendar months,
+clamping month-end dates without overflow. Existing saved trial dates and paid
+subscriptions are unchanged. Public pricing uses “Three months to make it yours”
+and “3-month free trial”, without launch/urgency claims. No card is required;
+a paid subscription requires separate confirmation. Actual saved end dates remain
+authoritative in the subscription workspace.
+
+Pricing trial CTA refinement: “Start your free trial” carries a compact, static
+lightning badge reading “3 months free” at the top right. The contrasting lime
+badge has no animation or urgency claim. Visual verification remains pending.
+
+Trial badge palette refinement: pricing and signed-out desktop/mobile header
+trial actions use pale indigo, navy text and a gold lightning icon. Authenticated
+subscription/dashboard actions omit the badge. Supersedes the lime palette above.
+
+
+### Seeded demonstration readiness — 2026-11-07
+
+Demonstration fixtures must save actual guided-completion state and pass the same
+readiness projection as operational businesses. Keep demo provenance separate
+from generated starter provenance, so an established demo shows its current
+configuration rather than introduction prompts or claims that no client activity
+exists. The Canadian demo was checked at desktop1440 and phone390×844; see
+[the evidence](audits/2026-11-07-canadian-demo/README.md). No shared layout, notice
+component or ordinary customer onboarding branch changed.

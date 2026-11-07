@@ -26,7 +26,7 @@ service provider to limit.
 
 ### 2.1 Trial and first charge
 
-A verified owner registration currently begins a {{trial_days}}-day trial and does not
+A verified owner registration currently begins a {{trial_label}} trial and does not
 charge a payment method. A Business Customer reviews the plan, billing interval,
 currency, amount and applicable provider information before entering payment
 details. The trial does not charge automatically. A Business Customer must separately review and confirm a paid subscription.

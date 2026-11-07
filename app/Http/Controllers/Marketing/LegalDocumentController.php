@@ -71,6 +71,7 @@ class LegalDocumentController extends Controller
         foreach (['operator_name', 'operator_address', 'privacy_email'] as $field) {
             $html = str_replace('{{'.$field.'}}', e(config('privacy.'.$field)), $html);
         }
+        $html = str_replace('{{trial_label}}', config('billing.trial_label'), $html);
         $html = str_replace('{{trial_days}}', (string) (int) config('billing.trial_days'), $html);
 
         $related = collect($document['related'])

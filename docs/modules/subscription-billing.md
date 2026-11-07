@@ -486,3 +486,13 @@ only after repair, using its existing keys and reviewed snapshot. Inspect-checko
 now prioritizes permission repair and future permission failures record a safe
 customer_create/coupon_create/checkout_create stage without provider messages.
 The deployed endpoint/permission change and successful recovery are not verified.
+
+
+## Three-month account trial — 2026-11-07
+
+Owner-approved FR-01 change: newly verified accounts receive three calendar months,
+clamping month-end dates without overflow. Existing saved trial dates and paid
+subscriptions are unchanged. Public pricing uses “Three months to make it yours”
+and “3-month free trial”, without launch/urgency claims. No card is required;
+a paid subscription requires separate confirmation. Actual saved end dates remain
+authoritative in the subscription workspace.

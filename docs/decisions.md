@@ -3132,6 +3132,20 @@ supports first-party branded URLs rather than public shared shorteners.
 
 ## Open decisions
 
+### 2026-11-07 Hamilton founding-customer pilot offer
+
+The founder authorized a three-month trial and assisted shop setup for initial
+customers recruited by their sales partner in Hamilton. This is a targeted sales
+offer, not a change to the default 14-day signup trial. No software configuration,
+account extension, deployment or regional launch gate is changed by documenting
+it. See the [partner brief](sales/hamilton-partner-sales-brief.md).
+
+Before enrollment, Founder/Operations must resolve the exact Hamilton geography,
+eligibility, calendar-month versus day interpretation, account activation and
+expiry, allowances, setup/migration scope and costs, support ownership and
+end-of-trial account options. Partner compensation and negotiating authority also
+remain unspecified. Existing regional, privacy, messaging and payment gates apply.
+
 2026-11-01 Stripe audit follow-up to **OPEN-13**: the SaaS billing dispatcher
 does not yet project charge refunds, disputes or early fraud warnings. Finance/
 Product must approve the access/refund/recovery response before these events can
@@ -3225,3 +3239,76 @@ workflow is added. Describe clients and upcoming appointments/bookings explicitl
 other records depend on review. Agree scope, timing and any costs before work;
 never promise universal compatibility, free service or a fixed turnaround. Ask
 for no client files in the initial email. Owner review precedes going live.
+
+
+## Three-month account trial — 2026-11-07
+
+Owner-approved FR-01 change: newly verified accounts receive three calendar months,
+clamping month-end dates without overflow. Existing saved trial dates and paid
+subscriptions are unchanged. Public pricing uses “Three months to make it yours”
+and “3-month free trial”, without launch/urgency claims. No card is required;
+a paid subscription requires separate confirmation. Actual saved end dates remain
+authoritative in the subscription workspace.
+
+
+## Opt-in live pitch-demonstration tenant — 2026-11-07
+
+Owner-authorized implementation under FR-01–FR-19: provide a separately invoked
+`PitchDemoSeeder` for the owner to deploy and run on production. Ten seats mean
+ten active bookable professionals (five per location), with ten physical chairs
+and four additional role-demonstration logins. Do not change shared catalogue,
+normal trial duration, platform roles, product release gates or existing tenants.
+The demo alone receives a one-year non-provider trial, a complimentary zero-value
+manual invoice and capacity for two branches/ten professionals. All monetary
+history is fictional and tenant-contained; no external charges or deliveries.
+Bundle generated fictional portraits/interiors, keep reviews private, and label
+the business as a demo. Replays preserve existing dates/passwords/history rather
+than reset or rewrite ledgers. Database creation and completion audit are atomic;
+tracked new media is removed on failure. See [run guide](demo-account.md).
+
+The existing gallery is business-wide: show each interior with a location caption;
+no new location-photo schema or service-resource behavior is approved by this task.
+Shared services do not attach resources from two different branches because the
+current engine requires every attached resource to match the booked location.
+
+### Open demo follow-ups
+
+- Branch-specific gallery ownership and branch-scoped resource requirements need
+  a separate reviewed product contract if required beyond the named demo gallery
+  photos and physical-chair records. No invisible model change is made here.
+- A rolling demonstration refresh or expiry extension must define append-only
+  history and credential preservation before adding a reset/refresh command.
+  The initial ±30-day window and one-year access are explicit, not perpetual.
+
+
+### Pitch-demo password selection — 2026-11-07
+
+The owner explicitly selected `Password@123` for all fourteen pitch-demo logins,
+superseding the supplied-secret/password-preservation rule for this demo only.
+Fresh seeding uses that password; rerunning restores it only after verifying all
+fourteen expected accounts belong exclusively to the completed demo tenant.
+Changed credentials clear remember tokens and are audited without secret values.
+Financial records, appointment dates and other tenant accounts remain untouched.
+
+
+### Canadian demo setup and extended window — 2026-11-07
+
+Owner-approved demo-only refinement (FR-01–06/15/18/19): version 2 uses fictional
+Toronto locations, en-CA, CAD catalogue/checkout/inventory/compensation and local
+America/Toronto instants. Its access terms and complimentary invoice are CAD/zero;
+this does not promote paid CAD SaaS pricing or authorize a currency conversion.
+Use month-end-safe dates from two calendar months before creation/upgrade through
+two calendar months after it, including today and timezone-offset changes.
+
+A marked version-one demo upgrades once inside a transaction. Retain every issued
+financial/receipt/commission/cash-close/invoice snapshot in its original currency;
+change current catalogue settings, add new CAD activity and cancel only generated
+still-active INR bookings with lifecycle history and an explicit reason. Preserve
+manual appointments; conflicts stop and roll back rather than silently move them.
+Subsequent runs restore only the existing demo password and completion metadata,
+without regenerating the window or financial history. No rolling reset is approved.
+
+The seeded introduction must be complete (`personalized_at`, `guided_completed_at`
+and the four steps), and canonical readiness must pass. Demo provenance uses
+`demo_version`, avoiding the normal starter claim that no client activity exists.
+Keep ordinary onboarding, global plans and customer trial lengths unchanged.

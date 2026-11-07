@@ -2,7 +2,9 @@
 
 return [
     'provider' => 'stripe',
-    'trial_days' => (int) env('BILLING_TRIAL_DAYS', 14),
+    'trial_months' => 3,
+    'trial_days' => 90,
+    'trial_label' => '3-month',
     'trial_notice_days' => [7, 3, 1],
     'grace_days' => (int) env('BILLING_GRACE_DAYS', 7),
     'export_days_after_termination' => (int) env('BILLING_EXPORT_DAYS_AFTER_TERMINATION', 30),

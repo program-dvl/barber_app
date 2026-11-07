@@ -4,7 +4,7 @@ import { inject as injectRoute } from 'vue';
 const route = injectRoute('route');
 import { computed, ref, watch } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { GiftIcon, ArrowRightIcon, CheckIcon, CalendarDaysIcon, UsersIcon, BuildingStorefrontIcon, ChartBarIcon, BellIcon, CreditCardIcon } from '@heroicons/vue/24/outline';
+import { BoltIcon, GiftIcon, ArrowRightIcon, CheckIcon, CalendarDaysIcon, UsersIcon, BuildingStorefrontIcon, ChartBarIcon, BellIcon, CreditCardIcon } from '@heroicons/vue/24/outline';
 import HomeLayout from '@/Layouts/HomeLayout.vue';
 import PublicContainer from '@/Components/Marketing/PublicContainer.vue';
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
@@ -21,7 +21,7 @@ const interval = ref(market.value?.intervals.monthly ? 'monthly' : 'annual');
 const monthlyRate = computed(() => market.value?.intervals.monthly);
 const subscriptionHref = computed(() => { const workspace = page.props.account?.workspaces?.find(item => item.can_manage_billing); return workspace ? route('business.billing.show', { business: workspace.public_id, section: 'plan' }) : route('dashboard'); });
 const trialHref = computed(() => authenticated.value ? subscriptionHref.value : route('register'));
-const trialLabel = computed(() => authenticated.value ? 'Manage subscription' : `Start your ${props.catalog.trial_days}-day free trial`);
+const trialLabel = computed(() => authenticated.value ? 'Manage subscription' : 'Start your free trial');
 const staffTiers = computed(() => monthlyRate.value?.staff_tiers || []);
 const staffRange = computed(() => staffTiers.value.length ? `${money(staffTiers.value.at(-1).unit_minor)}–${money(staffTiers.value[0].unit_minor)}` : money(monthlyRate.value?.staff_minor || 0));
 function reset() { interval.value = market.value?.intervals.monthly ? 'monthly' : 'annual'; locations.value = 1; staff.value = 1; }
@@ -49,7 +49,7 @@ const faq = computed(() => [
     { question: 'Is pricing different for a salon, studio or another business type?', answer: 'The same subscription model applies across supported business types. Your selected locations and bookable staff determine the estimate. Check your industry page for the workflows and specialist limitations that apply to you.' },
     { question: 'Could there be charges beyond the subscription?', answer: 'Applicable subscription tax is shown before payment. Optional extra text credits cost separately and are never purchased automatically. Your own card or other client payment service may charge its own fees; those fees are separate from ClipperDesk.' },
     { question: 'Who counts as bookable staff?', answer: 'Each active person who takes appointments counts once, even if they work at several locations. Receptionists and administrators who don’t take appointments are included at no extra charge.' },
-    { question: 'How does the free trial work?', answer: `Create an account and verify your email to start your ${props.catalog.trial_days}-day trial. No credit card is required. Choose and confirm a paid subscription separately; the trial never charges you automatically.` },
+    { question: 'How does the free trial work?', answer: `Create an account and verify your email to start your ${props.catalog.trial_label} trial. No credit card is required. Choose and confirm a paid subscription separately; the trial never charges you automatically.` },
     { question: 'Can I change my team size or cancel?', answer: 'Review changes in Subscription & billing before confirming. Added locations and staff become available when payment is complete; reductions and changes to your billing cycle or pricing start at your next renewal. Your price reflects the locations and bookable staff you choose. Cancel to stop renewal and keep access until your paid period ends.' },
     { question: 'What is included in the text allowance?', answer: market.value ? `${market.value.intervals.monthly?.sms_monthly_allowance ?? market.value.intervals.annual?.sms_monthly_allowance ?? 0} credits per bookable staff member each month, shared across your business. Credits reset monthly, including on yearly billing, and do not roll over. Text messages are available for US and Canadian numbers, with client consent and enough credits. Longer messages use more credits. Extra credits are never purchased automatically. Existing subscriptions keep their allowances.` : 'The current text allowance is shown with available subscription prices and in your billing workspace. Text messages require client consent and enough credits and are available for US and Canadian numbers. Extra credits are never purchased automatically.' },
     { question: 'Are taxes included?', answer: 'All subscription prices are in USD. Applicable tax is added at checkout and shown before payment. Your business’s operating currency stays unchanged.' },
@@ -80,7 +80,8 @@ watch(interval, value => emitMarketingEvent('marketing_pricing_interval_changed'
                             <small>USD · 1 location + 1 bookable staff member</small>
                         </div>
                         <p v-else class="pricing-start-unavailable">Explore ClipperDesk with a free trial.</p>
-                        <Link :href="trialHref" class="cd-button cd-button-primary pricing-hero-cta" data-cta-context="pricing_hero" :data-cta-action="authenticated ? 'dashboard' : 'trial'">{{ trialLabel }}<ArrowRightIcon aria-hidden="true"/></Link>
+                        <Link :href="trialHref" class="cd-button cd-button-primary pricing-hero-cta" data-cta-context="pricing_hero" :data-cta-action="authenticated ? 'dashboard' : 'trial'"><span v-if="!authenticated" class="pricing-trial-badge"><BoltIcon aria-hidden="true"/>3 months free</span>{{ trialLabel }}<ArrowRightIcon aria-hidden="true"/></Link>
+                        <p class="pricing-trial-note">Three months to make it yours. Bring your team, settle into your routine and see what a smoother day feels like.</p>
                         <div class="pricing-trial-note"><CheckIcon aria-hidden="true"/><span>No credit card required</span></div>
                     </div>
                 </div>

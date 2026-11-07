@@ -95,7 +95,7 @@ business-specific policies govern the salon service relationship. These Clipperd
 
 The public Pricing page and the checkout review show the available plan,
 billing interval, currency, included capabilities and then-current price. A
-verified owner registration currently starts a {{trial_days}}-day trial without charging a
+verified owner registration currently starts a {{trial_label}} trial without charging a
 payment method. A plan selection made during registration is a preference only;
 the Business Customer reviews the actual order before payment.
 

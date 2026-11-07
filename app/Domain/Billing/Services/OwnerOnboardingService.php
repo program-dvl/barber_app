@@ -78,7 +78,7 @@ class OwnerOnboardingService
                 'status' => SubscriptionStatus::Trialing,
                 'restriction_level' => RestrictionLevel::None,
                 'trial_started_at' => $trialStartedAt,
-                'trial_ends_at' => $trialStartedAt->copy()->addDays(config('billing.trial_days')),
+                'trial_ends_at' => $trialStartedAt->copy()->addMonthsNoOverflow(config('billing.trial_months')),
             ]);
 
             $intent->update(['business_id' => $business->getKey(), 'status' => 'completed', 'completed_at' => now()]);

@@ -233,6 +233,6 @@ class CapacityPricingCatalog
             }
         }
 
-        return ['markets' => $markets, 'trial_days' => (int) config('billing.trial_days'), 'available' => count($markets) > 0];
+        return ['markets' => $markets, 'trial_label' => config('billing.trial_label'), 'trial_days' => (int) config('billing.trial_days'), 'available' => count($markets) > 0];
     }
 }

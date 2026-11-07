@@ -171,3 +171,22 @@ settings authorization, tenant isolation, no-store and noindex. Preview viewing
 and explicit “I reviewed this preview” remain separate. Publication stays explicit.
 
 [Evidence and limitations](../audits/2026-10-14-setup-refinement/README.md).
+
+
+## Owner-run pitch demonstration (2026-11-07)
+
+FR-01–05/19: the explicit [PitchDemoSeeder](../demo-account.md) creates an isolated
+fictional two-location business with ten bookable professionals, four operational
+role accounts, named gallery interiors and a dedicated demo trial. It is excluded
+from ordinary registration/default seeds, does not change customer onboarding or
+shared plans, and preserves existing financial histories on repeat invocation.
+
+
+The Canadian demo update sets both personalization and guided-completion timestamps
+and all four introduction steps on fresh creation and the audited version-one
+upgrade. Demo provenance uses `demo_version` rather than the normal starter
+`version`, so the readiness UI recognizes existing configuration and does not show
+the “no clients or transactions were added” starter disclaimer. The same readiness
+evaluator still validates real staff/service/hour paths; no general onboarding
+bypass or extra default services are added. Current demo region is CA/en-CA/CAD,
+America/Toronto, with two calendar months of past and future activity.

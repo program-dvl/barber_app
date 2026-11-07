@@ -38,6 +38,10 @@ exists.
 
 ## Document map
 
+Sales partner reference: [Hamilton pilot sales brief](sales/hamilton-partner-sales-brief.md)
+covers positioning, discovery, pricing, the founder-authorized three-month pilot,
+assisted setup and presentation preparation. It does not change account trials.
+
 | Document | Purpose | Update trigger |
 | --- | --- | --- |
 | `product-requirements.md` | Canonical transcription of the complete Phase 1 PRD | Approved scope or acceptance change |
@@ -106,3 +110,5 @@ checks.
 - [Article image uploads and editorial deployment checks](deployment/article-media.md).
 
 - [Consent-based Google Analytics setup and recovery](deployment/google-analytics.md).
+
+- [Owner-run pitch demo account and deployment guide](demo-account.md).

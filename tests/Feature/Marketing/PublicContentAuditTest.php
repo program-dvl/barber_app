@@ -111,10 +111,10 @@ it('uses the configured primary production host for canonicals sitemap and schem
 });
 
 it('keeps legal trial descriptions aligned with current subscription configuration', function () {
-    config(['billing.trial_days' => 21]);
+    config(['billing.trial_label' => '3-month']);
     foreach (['/terms-of-service' => 'terms', '/refund-policy' => 'refund'] as $path => $prop) {
         $response = $this->get($path)->assertOk();
         $html = $response->viewData('page')['props'][$prop];
-        expect($html)->toContain('21-day trial')->not->toContain('{{trial_days}}');
+        expect($html)->toContain('3-month trial')->not->toContain('{{trial_days}}');
     }
 });

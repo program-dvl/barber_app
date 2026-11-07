@@ -18,8 +18,7 @@ change a trial, or grant an entitlement.
 ## Presentation
 
 - Shared public SEO hero/breadcrumbs/typography with starting USD 29/month and
-  a trial panel. Primary signup carries no quantities; trial is 14 days by
-  current config, starts after verification, requires no card and never charges
+  a trial panel. Primary signup carries no quantities; trial is three calendar months, starts after verification, requires no card and never charges
   automatically. Publish prices only when current mappings are verified.
 - Six concise, implemented capability groups precede transparent base/location
   rates and a progressive staff-band disclosure. No artificial feature tiers,
@@ -111,3 +110,21 @@ subscription tax, optional extra text credits and separate external payment fees
 Feature copy distinguishes recorded payments and enabled/consented messaging.
 A product-walkthrough/industry handoff lets visitors check fit before subscribing.
 Rates, calculations, offers, signup intent and financial actions are unchanged.
+
+
+## Three-month account trial — 2026-11-07
+
+Owner-approved FR-01 change: newly verified accounts receive three calendar months,
+clamping month-end dates without overflow. Existing saved trial dates and paid
+subscriptions are unchanged. Public pricing uses “Three months to make it yours”
+and “3-month free trial”, without launch/urgency claims. No card is required;
+a paid subscription requires separate confirmation. Actual saved end dates remain
+authoritative in the subscription workspace.
+
+Pricing trial CTA refinement: “Start your free trial” carries a compact, static
+lightning badge reading “3 months free” at the top right. The contrasting lime
+badge has no animation or urgency claim. Visual verification remains pending.
+
+Trial badge palette refinement: pricing and signed-out desktop/mobile header
+trial actions use pale indigo, navy text and a gold lightning icon. Authenticated
+subscription/dashboard actions omit the badge. Supersedes the lime palette above.

@@ -1,5 +1,45 @@
 # Project status
 
+## 2026-11-07 Canadian pitch demo and completed setup (version 2)
+
+- Demo now uses CA/en-CA/CAD, Toronto addresses and +1 416 example contacts,
+  America/Toronto, Canadian-dollar service/retail prices and complimentary CAD
+  software access. No global paid-CAD rate card or exchange conversion was added.
+- Fresh seeds cover two calendar months before/after the seed date, including
+  today. The 2026-11-07 isolated preview has **1,640 visits** across September 7–
+  January 7 and 734 sales at the inspected local run time. DST offsets are retained.
+- Fixed missing personalization/guided-completion timestamps and demo provenance;
+  Business setup shows **6/6 essentials ready / Your current setup**, with no
+  introduction or inaccurate starter-data disclaimer. Canonical readiness passes.
+- Rerunning on a marked version-one demo performs a one-time transactional upgrade.
+  Issued financial/receipt histories retain original amounts/currencies; generated
+  active INR visits receive audited cancellation and new CAD appointments. Manual
+  clients/appointments are preserved. Later replays do not duplicate the window.
+- Local scoped suite **4 passed / 955 assertions**; the final focused upgrade
+  regression **1 passed / 35 assertions** additionally verifies manual client and
+  appointment preservation. See the
+  [Canadian demo audit](audits/2026-11-07-canadian-demo/README.md). Desktop1440 and
+  phone390×844 browser checks show ready setup/CAD/Toronto and no horizontal
+  overflow; screenshot evidence retained. Scoped formatting/whitespace pass.
+  Not deployed or run against production; no external payment/message performed.
+
+## 2026-11-07 Owner-run pitch demo seeder
+
+- Completed opt-in PitchDemoSeeder with two locations, ten linked bookable staff,
+  four administrative role logins, sixteen bundled generated images, sixty clients,
+  820 appointments across ±30 days, canonical sales/receipts/refund/stock/commission
+  history, forms, queue/waitlist, cash closes and private sample feedback.
+- Demo-only one-year trial, two-location/ten-staff access and complimentary invoice;
+  messaging starts disabled, history is suppressed and no provider calls are made.
+  Repeat invocation preserves records and restores the owner-selected demo password;
+  late failure rolls back data/media.
+- Isolated SQLite **3 passed / 537 assertions**, including actual owner login,
+  twelve owner workspace responses, staff calendar, public gallery/private portrait
+  media, readiness, overlaps, financial totals, replay and rollback. Scoped Pint,
+  PHP syntax and whitespace pass. Generated assets visually inspected. Deployed,
+  MySQL-concurrency and browser visual checks were not performed. The owner will
+  deploy/run it; see [credentials and live run guide](demo-account.md).
+
 ## 2026-11-07 Focused audience content improvements
 
 - Local source adds publication-gated industry article cards, matching reviewed
@@ -3490,3 +3530,19 @@ on-call, status communications, backups, restore, DR, and rollback; and run an
 independent WCAG plus Chrome/Safari/Edge/Firefox matrix. Then repeat Section 7
 and the complete Section 17 representative-shop test without direct database
 work or product-team assistance. OPEN-09/10/11 remain explicitly retained.
+
+
+## 2026-11-07 Three-month trial
+
+New account trial calculation changed to three calendar months without month-end
+overflow. Pricing and legal templates use a shared 3-month label; billing retains
+the actual saved end date. Existing records are not extended. Deployment and
+desktop/mobile visual verification remain outstanding.
+
+Pricing trial CTA refinement: “Start your free trial” carries a compact, static
+lightning badge reading “3 months free” at the top right. The contrasting lime
+badge has no animation or urgency claim. Visual verification remains pending.
+
+Trial badge palette refinement: pricing and signed-out desktop/mobile header
+trial actions use pale indigo, navy text and a gold lightning icon. Authenticated
+subscription/dashboard actions omit the badge. Supersedes the lime palette above.

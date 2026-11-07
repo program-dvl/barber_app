@@ -182,3 +182,8 @@
 .pricing-growth-price small { color:var(--text-muted); }
 .pricing-estimator { box-shadow:0 8px 24px #17255406; }
 .pricing-faq { background:#fff; border-top:1px solid #dce3ef; }
+
+/* Trial duration stays attached to its action without covering nearby copy. */
+.pricing-start-card .pricing-hero-cta { position:relative; margin-top:18px; overflow:visible; }
+.pricing-trial-badge { position:absolute; top:-15px; right:10px; display:inline-flex; align-items:center; gap:4px; padding:5px 9px; border:1px solid #c7d2fe; border-radius:999px; background:#eef2ff; color:#253363; font-size:11px; font-weight:750; line-height:1.2; letter-spacing:.01em; transform:rotate(3deg); white-space:nowrap; box-shadow:0 2px 5px #00000018; }
+.pricing-start-card .pricing-trial-badge svg { width:13px; height:13px; color:#a66b08; fill:#fbbf24; stroke-width:1.5; }
