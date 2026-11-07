@@ -127,7 +127,7 @@ it('prints receipts in the appointment time zone without rewriting the issued sn
     $snapshot = $receipt->snapshot;
     $hash = $receipt->content_hash;
     $this->actingAs($user)->get(route('business.checkout.receipt', [$path['business'], $sale]))
-        ->assertOk()->assertSee('02 Oct 2026, 11:45 Asia/Kolkata')
+        ->assertOk()->assertSee('02 Oct 2026, 11:45')->assertSee('Asia/Kolkata')
         ->assertSee('Unit price')->assertSee('Payments recorded')->assertSee('INR 30.00');
     expect($receipt->fresh()->snapshot)->toBe($snapshot)->and($receipt->content_hash)->toBe($hash);
 });

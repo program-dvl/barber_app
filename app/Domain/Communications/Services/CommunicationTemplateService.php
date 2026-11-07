@@ -24,7 +24,7 @@ class CommunicationTemplateService
 
         return CommunicationSetting::query()->firstOrCreate(['business_id' => $businessId], [
             'email_provider' => 'ses', 'mobile_provider' => 'twilio',
-            'email_enabled' => true, 'sms_enabled' => true,
+            'automatic_receipt_email' => true, 'automatic_review_email' => false, 'email_enabled' => true, 'sms_enabled' => true,
             'default_locale' => $locale, 'mobile_channel' => 'sms', 'fallback_mobile_channel' => null,
             'sender_mode' => 'platform', 'smart_fallback_enabled' => false, 'two_way_enabled' => false,
             'reminder_offsets_minutes' => config('communications.default_reminder_offsets_minutes', [1440]),

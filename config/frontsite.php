@@ -139,7 +139,7 @@ return [
             'image_alt' => 'A barber giving a precise haircut in a busy modern barbershop',
             'accent' => 'cobalt',
             'fit' => 'ClipperDesk fits barbershops that need to balance appointments with walk-in demand without treating the queue as a separate spreadsheet or whiteboard.',
-            'screens' => ['calendar'],
+            'screens' => ['calendar', 'walk-ins'],
             'scenario' => ['title' => 'A busy Saturday with bookings and walk-ins', 'body' => 'Before accepting a walk-in, compare the requested service duration with each eligible barber’s next booking. Record queue changes and explain estimated waits. When service is complete, carry the visit into checkout instead of creating a separate record.'],
             'faqs' => [
                 ['question' => 'Can I combine appointments and walk-ins?', 'answer' => 'Yes. The calendar and walk-in queue use staff availability and service timing together. Waiting times remain estimates.'],
@@ -166,7 +166,7 @@ return [
             'image_alt' => 'A stylist consulting with a client in a polished modern salon',
             'accent' => 'coral',
             'fit' => 'ClipperDesk fits appointment-led hair and beauty salons that need staff schedules, service timing, add-ons and client preferences in one workspace.',
-            'screens' => ['booking'],
+            'screens' => ['booking', 'clients'],
             'scenario' => ['title' => 'One client, several services and a clear handoff', 'body' => 'Give each service a realistic duration and qualified professional. Keep the booked services, staff handoffs and client preferences connected, then review the completed visit at checkout. Test your own colour, wash and finishing sequence before offering it online.'],
             'faqs' => [
                 ['question' => 'Can one visit contain several services?', 'answer' => 'Yes. A visit can contain multiple service lines and staff handoffs. Set up and test the timing and staff eligibility for the services you offer.'],

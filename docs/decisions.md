@@ -3070,6 +3070,66 @@ alter prior transaction records, introduce retrospective acceptance, certify
 live payment/refund operation or waive any other OPEN-13/compliance gate.
 Record local and deployed evidence separately in the publication audit.
 
+## ADR-081 — Compact first-party SMS capabilities
+
+- Status: Accepted
+- Date: 2026-11-05
+- Authority: Owner requested secure, unique, substantially shorter SMS booking
+  links, allowing a longer code than 6–7 characters when security requires it.
+- Requirements: FR-09/10/13/19; refines ADR-064/067 without enabling a channel or
+  changing consent, financial policy or business-owner controls.
+
+Use `https://clipperdesk.com/s/{code}` in production, using the configured
+application origin locally. Generate 128 random bits with `random_bytes(16)` and
+encode as 22 URL-safe characters. Keep the existing action row as the tenant,
+target, purpose, expiry, revocation and consumption authority, with a unique
+SHA-256 token hash and encrypted recoverable token for stable SMS retries.
+Neither credential is serialized to workspaces. Generate lazily under a row lock
+so old queued messages require no bulk rewrite; already-sent signed links and
+email links retain their behavior. Codes contain no customer or sequential data.
+
+Route directly into the existing action handler with IP throttling and private,
+no-store, no-referrer/noindex responses; never shorten arbitrary external URLs.
+Preserve single-use appointment bridges, reusable receipts, and explicit atomic
+waitlist POST claims. SMS with an appointment action keeps address/arrival/maps
+on the existing appointment page instead of appending another long URL. Render
+before SMS credit reservation. No third-party service, extra environment
+credentials, provider shortener or tracking is introduced.
+
+Security rationale: [OWASP token generation](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)
+supports CSPRNG/128-bit generated credentials; the specific 22-character format
+is our implementation choice. [Twilio branded-link guidance](https://www.twilio.com/docs/api/errors/30525)
+supports first-party branded URLs rather than public shared shorteners.
+[Implementation and evidence](audits/2026-11-05-sms-short-links/README.md).
+
+## ADR-082 — Receipt PDF delivery and completed-visit review emails
+
+- Date: 2026-11-05. Status: Accepted by explicit product-owner authorization.
+- Requirements: FR-09, FR-13, FR-15, FR-19. Supersedes ADR-074's prohibition
+  only for appointment-bound review email. Broader marketing remains deferred.
+- Reuse the communication intent/message/attempt pipeline and existing policies.
+  Receipt automatic email defaults on to preserve behavior; review automatic
+  email defaults off, including existing businesses. An enable timestamp excludes
+  older completed visits; no scan or bulk backfill occurs. Consent is never inferred
+  from a business switch. Review invitations retain marketing classification,
+  subscribed status, explicit email selection and suppression requirements; their
+  narrow legal-basis marker does not enable feedback/rebooking campaigns or SMS.
+- Manual and automatic sends serialize on the appointment and reuse a stable
+  intent. Once requested, repeated clicks do not create another send, including
+  provider-uncertain outcomes. Recovery uses tracked delivery/support rather than
+  another charge or untracked resend. Missing email/permission blocks the request.
+  Queue delivery rechecks preferences, automation (for automatic sends), completion
+  and existing feedback. Manual delivery works when automation alone is disabled.
+- Use installed Browsershot/Puppeteer with managed Chromium for PDF generation,
+  sharing escaped Blade receipt presentation. New snapshots retain issue locale
+  and zone; older immutable snapshots use the existing route fallback. Snapshot
+  content/hash and existing links are unchanged. A4 has repeating table headers,
+  page numbers and grouped totals. PDF rendering failure occurs before provider
+  submission and may retry; uncertain SES acceptance still requires operator review.
+- One issued receipt remains original history, even after refunds; this does not
+  introduce provisional receipts or rewrite outstanding historical snapshots.
+  No launch-market tax/legal approval or live delivery certification is implied.
+
 ## Open decisions
 
 2026-11-01 Stripe audit follow-up to **OPEN-13**: the SaaS billing dispatcher
@@ -3153,3 +3213,15 @@ curated sitemap/indexation/alias and consent rules aligned. No new tracking type
 financial workflow, private customer record, specialist capability or release
 waiver is introduced. Customer stories require real evidence and permission;
 do not publish a fictitious story or an empty coming-soon destination.
+
+## Email-led setup and migration assistance — 2026-11-06
+
+Owner-approved FR-02 acquisition refinement: promote personal account setup and
+reviewed migration help on Home, Pricing, industry solution pages, feature detail
+pages and the product walkthrough. Shared SetupSupport uses existing marketing
+tokens, a wrapping action row and the configured support email. Requirements are
+gathered manually by email; no intake form, upload, migration engine or in-app
+workflow is added. Describe clients and upcoming appointments/bookings explicitly;
+other records depend on review. Agree scope, timing and any costs before work;
+never promise universal compatibility, free service or a fixed turnaround. Ask
+for no client files in the initial email. Owner review precedes going live.

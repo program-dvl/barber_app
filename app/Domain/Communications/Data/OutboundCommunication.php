@@ -18,5 +18,6 @@ final readonly class OutboundCommunication
         public ?int $senderProfileId = null,
         public bool $conversationReply = false,
         public ?string $htmlBody = null,
+        public array $attachments = [],
     ) {}
 }

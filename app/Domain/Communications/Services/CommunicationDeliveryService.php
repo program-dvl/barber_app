@@ -14,6 +14,7 @@ use App\Domain\Communications\Models\CommunicationConversation;
 use App\Domain\Communications\Models\CommunicationDeliveryAttempt;
 use App\Domain\Communications\Models\CommunicationMessage;
 use App\Domain\Communications\Models\CommunicationSenderProfile;
+use App\Domain\MoneyCommerce\Services\ReceiptPdfService;
 use App\Domain\SchedulingOperations\Models\Appointment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -83,6 +84,16 @@ class CommunicationDeliveryService
                 $this->refreshIntent($current);
 
                 return null;
+            }
+            if (in_array($current->intent->intent_type, ['visit_review', 'payment_receipt'], true) && $current->intent->source_type === Appointment::class) {
+                $visit = Appointment::query()->where('business_id', $current->business_id)->find($current->intent->source_id);
+                $blocked = ! $visit || app(VisitEmailService::class)->blocked($visit, $current->intent->intent_type, $current->intent->event_type !== 'visit.email.manual');
+                if ($blocked) {
+                    $current->update(['status' => 'suppressed', 'suppression_reason' => 'visit_email_no_longer_eligible', 'next_attempt_at' => null]);
+                    $this->refreshIntent($current);
+
+                    return null;
+                }
             }
             if ($this->preferenceWithdrawn($current)) {
                 $updates = ['status' => 'suppressed', 'suppression_reason' => 'channel_preference_withdrawn', 'next_attempt_at' => null];
@@ -186,6 +197,7 @@ class CommunicationDeliveryService
                     data_get($message->template->fallbacks, '__platform_revision') === CommunicationTemplateService::PLATFORM_REVISION ? $message->intent->intent_type : null,
                     [...$variables, ...$rendered['variables']], $rendered['body'], $rendered['subject'],
                 ) : null,
+                $message->channel === 'email' && $message->intent->intent_type === 'payment_receipt' ? app(ReceiptPdfService::class)->attachments($message) : [],
             );
             $result = $message->channel === 'email' ? $this->email->send($outbound) : $this->mobile->send($outbound);
             DB::transaction(function () use ($message, $attempt, $result, $rendered): void {
@@ -252,12 +264,18 @@ class CommunicationDeliveryService
             $link = CommunicationActionLink::query()->where('business_id', $message->business_id)->findOrFail($id);
             $this->links->assertUsable($link);
             $key = $link->purpose === 'feedback' ? 'feedback_link' : 'action_link';
-            $variables[$key] = $this->links->url($link);
+            $variables[$key] = $message->channel === 'sms' ? $this->links->shortUrl($link) : $this->links->url($link);
+            if ($message->channel === 'sms' && $link->target_type === Appointment::class
+                && in_array($link->purpose, ['appointment_view', 'appointment_rebook', 'appointment_payment'], true)) {
+                // The secure appointment page already has the captured address,
+                // arrival notes and directions; avoid a second long SMS URL.
+                unset($variables['__location_footer']);
+            }
         }
         if ($id = $variables['__unsubscribe_link_id'] ?? null) {
             $link = CommunicationActionLink::query()->where('business_id', $message->business_id)->findOrFail($id);
             $this->links->assertUsable($link);
-            $variables['unsubscribe_link'] = $this->links->url($link);
+            $variables['unsubscribe_link'] = $message->channel === 'sms' ? $this->links->shortUrl($link) : $this->links->url($link);
         }
         unset($variables['__action_link_id'], $variables['__unsubscribe_link_id']);
 

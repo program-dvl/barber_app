@@ -5,9 +5,14 @@ import PublicContainer from '@/Components/Marketing/PublicContainer.vue';
 import HomeLayout from '@/Layouts/HomeLayout.vue';
 import { guideVisuals, marketingFamilyVisuals, visualFor } from '@/Support/marketingVisuals';
 import { CheckIcon } from '@heroicons/vue/24/outline';
+import { computed } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ guide: Object, seo: Object });
+const props = defineProps({ guide: Object, seo: Object });
+const example = computed(() => ({
+    'booking-policy-basics': { title: 'Turn your decisions into clear wording', body: 'Use this outline after agreeing your own rules. Replace every bracketed field and review the finished policy before publishing.', lines: ['Your appointment reserves [service and duration] with [professional or team].', 'To change or cancel, use [working contact or appointment link] before [your deadline].', 'If you arrive late, [explain your actual options and who confirms any changes].', 'Any deposit, fee or refund follows [your reviewed terms]. Contact [business contact] if you need help.'] },
+    'salon-opening-checklist': { title: 'Test one complete booking before sharing your link', body: 'Use fictional client details. This example is a test plan, not a suggested service duration or price.', lines: ['Add one service using your actual price, duration and qualified team member.', 'Set working hours and a break; confirm that the break cannot be booked.', 'Preview the page on a phone and complete an available appointment.', 'Check the confirmation, local time, location and instructions for changing the visit.', 'Reschedule the test appointment, then confirm the calendar and public availability agree.'] },
+})[props.guide.slug]);
 const printGuide = () => window.print();
 </script>
 
@@ -44,6 +49,11 @@ const printGuide = () => window.print();
                                 <p class="leading-8 text-[var(--text-muted)]">{{ section.body }}</p>
                             </li>
                         </ol>
+                        <section v-if="example" class="mt-10 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-subtle)] p-6 sm:p-8" aria-labelledby="guide-example-title">
+                            <h2 id="guide-example-title" class="font-display text-2xl font-bold text-[var(--text-strong)]">{{ example.title }}</h2>
+                            <p class="mt-4 leading-8 text-[var(--text-muted)]">{{ example.body }}</p>
+                            <ol class="mt-6 list-decimal space-y-4 pl-5 leading-8 text-[var(--text-default)]"><li v-for="line in example.lines" :key="line">{{ line }}</li></ol>
+                        </section>
                     </div>
                     <aside class="lg:sticky lg:top-28 lg:self-start">
                         <div class="cd-checklist-panel">

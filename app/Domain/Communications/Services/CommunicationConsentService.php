@@ -25,10 +25,10 @@ class CommunicationConsentService
             return ['allowed' => false, 'reason' => 'channel_paused', 'basis' => $legalBasis];
         }
         if ($category === 'marketing') {
-            if (! $settings->marketing_enabled || ! $client || $client->marketing_status !== 'subscribed' || ! $this->prefers($client, $channel)) {
+            if ((! $settings->marketing_enabled && $legalBasis !== 'completed_visit_review') || ! $client || $client->marketing_status !== 'subscribed' || ! $this->prefers($client, $channel)) {
                 return ['allowed' => false, 'reason' => 'marketing_consent_missing', 'basis' => 'explicit_consent_required'];
             }
-            $legalBasis = 'explicit_marketing_consent';
+            $legalBasis = $legalBasis === 'completed_visit_review' ? $legalBasis : 'explicit_marketing_consent';
         }
         if (in_array($channel, ['sms', 'whatsapp'], true)) {
             $optedIn = $client && ClientConsent::query()->where('business_id', $settings->business_id)->where('client_id', $client->id)

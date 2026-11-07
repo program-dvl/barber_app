@@ -1205,3 +1205,46 @@ does not establish the control's touch size. Retain the shared Filament mobile
 button sizing and wrapping action spacing.
 Verify long recovery copy, actual save controls and
 upload/success states at desktop and phone widths before claiming UI completion.
+
+
+## Visit email actions and issued receipts (2026-11-05)
+
+Completed-visit review actions use a wrapping Send review email / Copy review
+link row, with 10px gaps and 14px separation. Existing feedback replaces outreach
+actions. Persistent email outcomes use AppNotice and direct staff to Client
+notifications for delivery evidence. No generate/preview/send sequence is required.
+Receipt actions distinguish View receipt, Download PDF and Send receipt; native
+PDF links download rather than requesting an Inertia page. The issued document
+shares a restrained navy heading, local issue metadata, paid/outstanding label,
+itemized table and right-aligned summary between online and A4 output. Print
+repeats item headings and keeps summary totals together. No toast announces inbox
+delivery merely because a request was queued.
+
+## Email-led setup and migration assistance — 2026-11-06
+
+Owner-approved FR-02 acquisition refinement: promote personal account setup and
+reviewed migration help on Home, Pricing, industry solution pages, feature detail
+pages and the product walkthrough. Shared SetupSupport uses existing marketing
+tokens, a wrapping action row and the configured support email. Requirements are
+gathered manually by email; no intake form, upload, migration engine or in-app
+workflow is added. Describe clients and upcoming appointments/bookings explicitly;
+other records depend on review. Agree scope, timing and any costs before work;
+never promise universal compatibility, free service or a fixed turnaround. Ask
+for no client files in the initial email. Owner review precedes going live.
+
+The receipt refinement uses the existing ClipperDesk monogram embedded locally,
+a thin indigo top rule, subdued metadata panel and small Powered by ClipperDesk
+footer. Business identity remains primary; status is aligned beside it and issue
+metadata is separate from customer details. Mobile metadata stacks naturally.
+
+
+## Focused audience resources — 2026-11-07
+
+Existing salon/barbershop pages add server-selected editorial links using the
+normal Article publishable scope. Hidden, future and draft articles remain
+excluded. Reviewed client-profile and walk-in-queue media supplement existing
+screens. Five existing articles offer blank printable worksheets and links to
+relevant walkthrough anchors and industry pages. Templates collect no input.
+Reuse shared typography, cards, focus styles and wrapping 44px actions. Print
+shows the worksheet alone. Preserve stable article URLs, metadata and dates;
+no database publication, fabricated review or ranking guarantee is introduced.

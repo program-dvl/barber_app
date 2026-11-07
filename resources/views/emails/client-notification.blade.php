@@ -62,7 +62,7 @@
                     @else
                         <p style="margin:0;font-size:15px;line-height:25px;color:#475569;overflow-wrap:anywhere;">{!! nl2br(e($text)) !!}</p>
                     @endif
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;border-top:1px solid #edf0f5;"><tr><td style="padding-top:20px;font-size:12px;line-height:20px;color:#64748b;">Questions about your visit? Contact {{ $values['business_name'] ?? 'the business' }} directly.<br>Please don’t reply to this automated email.</td></tr></table>
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;border-top:1px solid #edf0f5;"><tr><td style="padding-top:20px;font-size:12px;line-height:20px;color:#64748b;">@if(filled($values['unsubscribe_link'] ?? null))<a href="{{ $values['unsubscribe_link'] }}" style="color:#475569;display:inline-block;padding:12px 0;">Stop review emails</a><br>@endif Questions about your visit? Contact {{ $values['business_name'] ?? 'the business' }} directly.<br>Please don’t reply to this automated email.</td></tr></table>
                 </td></tr>
             </table>
         </td></tr>

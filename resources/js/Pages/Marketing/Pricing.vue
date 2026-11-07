@@ -1,4 +1,5 @@
 <script setup>
+import SetupSupport from '@/Components/Marketing/SetupSupport.vue';
 import { inject as injectRoute } from 'vue';
 const route = injectRoute('route');
 import { computed, ref, watch } from 'vue';
@@ -120,6 +121,7 @@ watch(interval, value => emitMarketingEvent('marketing_pricing_interval_changed'
             </PublicContainer></section>
 
             <section class="cd-public-section"><PublicContainer><h2 class="font-display text-3xl font-semibold text-[var(--text-strong)]">Check the fit before choosing a subscription.</h2><p class="mt-5 max-w-3xl leading-8 text-[var(--text-muted)]">See the actual booking, calendar and checkout screens. The same core tools serve salons, barbershops and other supported appointment-led businesses; industry pages explain specialist limits.</p><div class="mt-6 flex flex-wrap gap-3"><Link :href="route('marketing.product-tour')" class="cd-button cd-button-secondary">Explore the product walkthrough</Link><Link :href="route('marketing.solutions')" class="cd-button cd-button-quiet">Find your business type</Link></div></PublicContainer></section>
+        <SetupSupport />
             <section class="pricing-faq" aria-labelledby="pricing-faq-title"><PublicContainer><div class="pricing-faq-grid"><div class="pricing-section-heading"><h2 id="pricing-faq-title">Pricing questions, answered.</h2><p><a v-if="page.props.brand?.support_email" :href="`mailto:${page.props.brand.support_email}`">Contact support <ArrowRightIcon aria-hidden="true"/></a><Link v-else :href="route('marketing.features')">Explore the product <ArrowRightIcon aria-hidden="true"/></Link></p></div><FaqList :items="faq"/></div><p class="pricing-policy-note">Read our <Link :href="route('refund.show')">refund and cancellation policy</Link> before subscribing.</p></PublicContainer></section>
         </div>
     </HomeLayout>

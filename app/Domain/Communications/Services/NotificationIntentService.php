@@ -28,6 +28,9 @@ class NotificationIntentService
 
     public function create(CommunicationIntentData $data, bool $dispatch = true): CommunicationIntent
     {
+        if ($data->legalBasis === 'completed_visit_review' && ($data->intentType !== 'visit_review' || $data->sourceType !== Appointment::class)) {
+            throw new \InvalidArgumentException('Invalid completed visit review source.');
+        }
         $business = Business::query()->findOrFail($data->businessId);
         $settings = $this->templates->settings($business);
         $client = $data->clientId ? Client::query()->where('business_id', $business->id)->findOrFail($data->clientId) : null;
@@ -50,6 +53,9 @@ class NotificationIntentService
             $target = $this->target($data);
             $primaryMobileMessageId = null;
             foreach ($this->orderedRecipients($data->recipients, $settings) as $channel => $destination) {
+                if ($data->intentType === 'visit_review' && $channel !== 'email') {
+                    continue;
+                }
                 if (! in_array($channel, ['email', ...config('communications.client_mobile_channels', ['sms'])], true) || blank($destination)) {
                     continue;
                 }

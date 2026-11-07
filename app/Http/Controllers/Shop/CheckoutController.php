@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Domain\Billing\Services\EntitlementEvaluator;
+use App\Domain\Communications\Services\VisitEmailService;
 use App\Domain\MoneyCommerce\Models\Deposit;
 use App\Domain\MoneyCommerce\Models\PaymentTransaction;
 use App\Domain\MoneyCommerce\Models\Sale;
@@ -10,6 +11,7 @@ use App\Domain\MoneyCommerce\Services\CashCloseService;
 use App\Domain\MoneyCommerce\Services\CheckoutBasketService;
 use App\Domain\MoneyCommerce\Services\CheckoutService;
 use App\Domain\MoneyCommerce\Services\CheckoutWorkspaceQuery;
+use App\Domain\MoneyCommerce\Services\ReceiptPdfService;
 use App\Domain\MoneyCommerce\Services\ReceiptService;
 use App\Domain\PlatformAccess\Enums\PermissionName;
 use App\Domain\PlatformAccess\Models\Business;
@@ -315,6 +317,17 @@ class CheckoutController extends Controller
         return response()->json(['refund' => $refund->only(['public_id', 'amount_minor', 'kind']), 'sale' => $this->workspace->sale($sale->fresh())]);
     }
 
+    public function sendReceipt(Request $request, Business $business, Sale $sale)
+    {
+        abort_unless($sale->business_id === $business->id, 404);
+        $this->assertLocationAccess($business, $sale->location_id);
+        abort_unless($request->user()->can(PermissionName::CheckoutManage->value) && $request->user()->can(PermissionName::ClientContactView->value), 403);
+        $intent = app(VisitEmailService::class)->request($sale->appointment, 'payment_receipt');
+        $this->audit->write('receipt.email_requested', $business, $request->user(), $sale, after: ['intent_id' => $intent->id]);
+
+        return response()->json(['message' => app(VisitEmailService::class)->deliveryFeedback($intent), 'status' => $intent->status]);
+    }
+
     public function receipt(Request $request, Business $business, Sale $sale)
     {
         abort_unless($sale->business_id === $business->id, 404);
@@ -324,6 +337,10 @@ class CheckoutController extends Controller
         $receipt = $this->receipts->issue($sale);
 
         $sale->loadMissing('appointment.business');
+
+        if ($request->query('format') === 'pdf') {
+            return app(ReceiptPdfService::class)->download($receipt);
+        }
 
         return view('receipts.sale', [
             'receipt' => $receipt,

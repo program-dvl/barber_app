@@ -9,6 +9,8 @@ use App\Domain\Communications\Exceptions\CommunicationProviderException;
 use App\Domain\Communications\Services\ClientNotificationEmail;
 use Aws\Exception\AwsException;
 use Aws\Ses\SesClient;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 use Throwable;
 
 class SesEmailProvider implements EmailChannelProvider
@@ -50,7 +52,19 @@ class SesEmailProvider implements EmailChannelProvider
             $payload['ConfigurationSetName'] = config('communications.ses.configuration_set');
         }
         try {
-            $result = $this->client->sendEmail($payload);
+            if ($message->attachments) {
+                $mail = (new Email)->from(new Address($source, $name))->to($message->destination)->subject($message->subject)->text($message->body)->html($message->htmlBody ?? nl2br(e($message->body)));
+                foreach ($message->attachments as $attachment) {
+                    $mail->attach($attachment['content'], $attachment['filename'], $attachment['content_type']);
+                }
+                $raw = ['Source' => $payload['Source'], 'Destinations' => [$message->destination], 'RawMessage' => ['Data' => $mail->toString()], 'Tags' => $payload['Tags']];
+                if (isset($payload['ConfigurationSetName'])) {
+                    $raw['ConfigurationSetName'] = $payload['ConfigurationSetName'];
+                }
+                $result = $this->client->sendRawEmail($raw);
+            } else {
+                $result = $this->client->sendEmail($payload);
+            }
         } catch (AwsException $error) {
             $code = $error->getAwsErrorCode();
             // SES SendEmail has no idempotency token. Only an explicit rejection

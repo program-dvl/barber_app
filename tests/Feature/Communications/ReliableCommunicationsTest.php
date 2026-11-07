@@ -31,12 +31,14 @@ use App\Domain\Communications\Services\CommunicationTemplateService;
 use App\Domain\Communications\Services\InboundCommunicationService;
 use App\Domain\Communications\Services\NotificationIntentService;
 use App\Domain\Communications\Services\OperationalCommunicationService;
+use App\Domain\Communications\Services\SmsSegmentCounter;
 use App\Domain\Communications\Services\TemplateVariableCatalog;
 use App\Domain\PlatformAccess\Enums\StarterRole;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\SchedulingOperations\Models\Appointment;
 use App\Domain\SchedulingOperations\Models\OperationalNotificationEvent;
+use App\Support\Locations\LocationData;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -44,6 +46,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
+use Inertia\Testing\AssertableInertia as Assert;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 uses(RefreshDatabase::class);
@@ -130,13 +133,15 @@ function communicationFixture(array $clientOverrides = [], ?Business $business =
         'mobile' => '+919999999999', 'normalized_mobile' => '919999999999',
         'communication_preferences' => ['email', 'sms'], ...$clientOverrides,
     ]);
+    $starts = CarbonImmutable::now('UTC')->addDays(2)->setTime(5, 30);
     $appointment = Appointment::query()->create([
         'business_id' => $business->id, 'location_id' => $location->id, 'client_id' => $client->id,
         'idempotency_key' => 'communications-fixture-'.str()->uuid(), 'request_hash' => hash('sha256', (string) str()->uuid()),
         'status' => 'confirmed', 'source' => 'online', 'client_name' => $client->name, 'client_email' => $client->email,
         'client_mobile' => $client->mobile, 'communication_preferences' => ['email', 'sms'],
-        'starts_at_utc' => CarbonImmutable::parse('2026-11-02 05:30:00', 'UTC'), 'ends_at_utc' => CarbonImmutable::parse('2026-11-02 06:30:00', 'UTC'),
-        'time_zone' => 'America/New_York', 'local_starts_at' => '2026-11-02 00:30:00 -05:00', 'local_ends_at' => '2026-11-02 01:30:00 -05:00',
+        'starts_at_utc' => $starts, 'ends_at_utc' => $starts->addHour(),
+        'time_zone' => 'America/New_York', 'local_starts_at' => $starts->setTimezone('America/New_York')->format('Y-m-d H:i:s P'),
+        'local_ends_at' => $starts->addHour()->setTimezone('America/New_York')->format('Y-m-d H:i:s P'),
         'price_minor' => 3500, 'currency_code' => 'INR', 'confirmed_at' => now(),
     ]);
 
@@ -168,7 +173,8 @@ function intentFor(array $fixture, string $eventKey, string $intent = 'booking_c
         $recipients ?: ['email' => $fixture['client']->email, 'sms' => $fixture['client']->mobile],
         [
             'client_name' => $fixture['client']->name, 'service_name' => 'Signature cut', 'location_name' => $fixture['location']->name,
-            'appointment_date' => '2 November 2026', 'appointment_time' => '00:30', 'time_zone' => 'America/New_York',
+            'appointment_date' => $fixture['appointment']->starts_at_utc->setTimezone('America/New_York')->format('j F Y'),
+            'appointment_time' => $fixture['appointment']->starts_at_utc->setTimezone('America/New_York')->format('H:i'), 'time_zone' => 'America/New_York',
             'booking_reference' => $fixture['appointment']->booking_reference, 'business_name' => $fixture['business']->name,
         ], $fixture['client']->id, Appointment::class, $fixture['appointment']->id, '123e4567-e89b-12d3-a456-426614174000',
     );
@@ -280,6 +286,7 @@ it('calculates quiet-hour boundaries and preserves explicit offsets across dayli
     $fixture = communicationFixture();
     $settings = app(CommunicationTemplateService::class)->settings($fixture['business']);
     $settings->update(['quiet_hours_start' => '21:00', 'quiet_hours_end' => '08:00']);
+    $fixture['appointment']->update(['starts_at_utc' => CarbonImmutable::parse('2026-11-02T05:30:00Z')]);
     expect($schedule->reminderTime($fixture['appointment'], 120, $settings)->setTimezone('America/New_York')->format('Y-m-d H:i P'))
         ->toBe('2026-11-01 20:59 -05:00');
 });
@@ -509,6 +516,137 @@ it('creates revocable purpose-bound short-lived action links and explicit tenant
     $job = new DeliverCommunicationMessage($message->id, '123e4567-e89b-12d3-a456-426614174999');
     expect($job->tenantBusinessId())->toBe($fixture['business']->id)
         ->and($job->correlationId())->toBe('123e4567-e89b-12d3-a456-426614174999');
+});
+
+it('uses stable unique opaque short codes without exposing raw tokens in storage or model projections', function () {
+    $fixture = communicationFixture();
+    $links = app(CommunicationActionLinkService::class);
+    $first = $links->issue($fixture['business']->id, $fixture['client'], 'appointment_view', $fixture['appointment'], now()->addHour()->toImmutable());
+    $second = $links->issue($fixture['business']->id, $fixture['client'], 'appointment_view', $fixture['appointment'], now()->addHour()->toImmutable());
+    expect($first->fresh()->short_token_hash)->toBeNull();
+    $url = $links->shortUrl($first);
+    $code = basename(parse_url($url, PHP_URL_PATH));
+    expect($code)->toMatch('/^[A-Za-z0-9_-]{22}$/D')
+        ->and($url)->not->toContain('?', $first->public_id)
+        ->and($links->shortUrl($first->fresh()))->toBe($url)
+        ->and($links->shortUrl($second))->not->toBe($url)
+        ->and($links->resolveShort($code)->id)->toBe($first->id)
+        ->and($first->fresh()->short_token_hash)->toBe(hash('sha256', $code))
+        ->and($first->fresh()->getRawOriginal('short_token'))->not->toBe($code)
+        ->and($first->fresh()->toArray())->not->toHaveKeys(['short_token', 'short_token_hash']);
+});
+
+it('opens the correct appointment through the compact URL and keeps already-sent signed links working', function () {
+    $fixture = communicationFixture();
+    $links = app(CommunicationActionLinkService::class);
+    $link = $links->issue($fixture['business']->id, $fixture['client'], 'appointment_view', $fixture['appointment'], now()->addHour()->toImmutable());
+    $url = $links->shortUrl($link);
+    $response = $this->get($url.'?url=https://untrusted.example&business_id=999');
+    $response->assertRedirect()->assertHeader('Referrer-Policy', 'no-referrer')
+        ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
+    expect($response->headers->get('Cache-Control'))->toContain('private', 'no-store');
+    $this->get($response->headers->get('Location'))->assertInertia(fn (Assert $page) => $page
+        ->component('Booking/Manage')->where('appointment.reference', $fixture['appointment']->booking_reference));
+    $this->get($url)->assertGone(); // Preserve the existing single-use appointment bridge.
+
+    $legacy = $links->issue($fixture['business']->id, $fixture['client'], 'appointment_view', $fixture['appointment'], now()->addHour()->toImmutable());
+    $this->get(route('communications.action', $legacy->public_id))->assertForbidden();
+    $this->get($links->url($legacy))->assertRedirect();
+});
+
+it('rejects malformed unknown altered expired revoked and used short capabilities', function () {
+    $fixture = communicationFixture();
+    $links = app(CommunicationActionLinkService::class);
+    $this->getJson('/s/short')->assertNotFound();
+    $this->getJson('/s/'.str_repeat('A', 22))->assertNotFound();
+    $this->getJson('/s/'.$fixture['appointment']->public_id)->assertNotFound();
+    foreach (['expired', 'revoked', 'used'] as $state) {
+        $link = $links->issue($fixture['business']->id, $fixture['client'], 'appointment_view', $fixture['appointment'], now()->addHour()->toImmutable());
+        $url = $links->shortUrl($link);
+        $code = basename($url);
+        $altered = ($code[0] === 'A' ? 'B' : 'A').substr($code, 1);
+        $this->getJson(route('communications.action.short', $altered))->assertNotFound();
+        $link->update(match ($state) {
+            'expired' => ['expires_at' => now()->subSecond()],
+            'revoked' => ['revoked_at' => now()],
+            'used' => ['used_at' => now()],
+        });
+        $this->getJson($url)->assertGone()->assertHeader('Referrer-Policy', 'no-referrer');
+    }
+    expect($fixture['appointment']->fresh()->status)->toBe('confirmed');
+});
+
+it('keeps tenant and purpose checks when resolving a valid compact capability', function () {
+    $fixture = communicationFixture();
+    $other = Business::factory()->create();
+    $links = app(CommunicationActionLinkService::class);
+    $foreign = $links->issue($other->id, null, 'appointment_view', $fixture['appointment'], now()->addHour()->toImmutable());
+    $this->getJson($links->shortUrl($foreign))->assertNotFound();
+    $wrongPurpose = $links->issue($fixture['business']->id, $fixture['client'], 'receipt_view', $fixture['client'], now()->addHour()->toImmutable());
+    $this->getJson($links->shortUrl($wrongPurpose))->assertGone();
+    expect($fixture['appointment']->fresh()->status)->toBe('confirmed');
+});
+
+it('limits short-link guessing per IP without blocking a different recipient', function () {
+    for ($attempt = 0; $attempt < 60; $attempt++) {
+        $this->getJson('/s/'.str_repeat('A', 22))->assertNotFound();
+    }
+    $this->getJson('/s/'.str_repeat('A', 22))->assertStatus(429)->assertHeader('Retry-After');
+    $this->withServerVariables(['REMOTE_ADDR' => '192.0.2.2'])
+        ->getJson('/s/'.str_repeat('A', 22))->assertNotFound();
+});
+
+it('sends a compact SMS link with arrival details behind it while email keeps its full content', function () {
+    $fixture = communicationFixture();
+    app(CommunicationConsentService::class)->recordSmsOptIn($fixture['client'], 'booking');
+    $fixture['location']->update(['address' => "18 Example Street\nUnit #18", 'entrance_instructions' => 'Use the side entrance']);
+    $fixture['appointment']->update(['location_snapshot' => LocationData::snapshot($fixture['location']->fresh())]);
+    $fixture['business']->subscription->update(['capacity_snapshot' => ['locations' => 1, 'staff' => 1, 'sms_monthly_allowance' => 100, 'features' => []]]);
+    $data = intentFor($fixture, 'short-reminder', 'appointment_reminder');
+    $data = new CommunicationIntentData(
+        $data->businessId, $data->eventKey, $data->eventType, $data->intentType, $data->category, $data->legalBasis,
+        $data->locale, $data->timeZone, $data->scheduledForUtc, $data->recipients,
+        [...$data->variables, 'location_address' => "18 Example Street\nUnit #18", 'arrival_instructions' => 'Use the side entrance',
+            'directions_link' => 'https://www.google.com/maps/dir/?api=1&destination=18%20Example%20Street%0AUnit%20%2318'],
+        $data->clientId, $data->sourceType, $data->sourceId,
+    );
+    $messages = app(NotificationIntentService::class)->create($data, false)->messages;
+    $sms = $messages->firstWhere('channel', 'sms');
+    $email = $messages->firstWhere('channel', 'email');
+    $smsResult = app(CommunicationDeliveryService::class)->deliver($sms);
+    expect($smsResult->suppression_reason)->toBeNull();
+    app(CommunicationDeliveryService::class)->deliver($email);
+    $body = $this->mobileProvider->calls[0]->body;
+    $links = app(CommunicationActionLinkService::class);
+    $short = $links->shortUrl($sms->actionLink);
+    $oldBody = str_replace($short, $links->url($sms->actionLink), $body)."\n".$sms->template_variables['__location_footer'];
+    expect($sms->fresh()->status)->toBe('sent')->and($email->fresh()->status)->toBe('sent')
+        ->and($body)->toContain('/s/', $fixture['business']->name, $data->variables['appointment_date'], 'America/New_York')
+        ->not->toContain('signature=', 'expires=', 'Directions:', 'google.com/maps', 'Unit #18')
+        ->and(app(SmsSegmentCounter::class)->segments($body))
+        ->toBeLessThan(app(SmsSegmentCounter::class)->segments($oldBody))
+        ->and(DB::table('sms_usage_reservations')->where('communication_message_id', $sms->id)->value('quantity'))
+        ->toBe(app(SmsSegmentCounter::class)->segments($body))
+        ->and($this->emailProvider->calls[0]->body)->toContain('signature=', 'Unit #18', 'Use the side entrance', 'google.com/maps');
+    $fixture['location']->update(['address' => 'New address must not replace the captured visit']);
+    $redirect = $this->get($short)->assertRedirect();
+    $this->get($redirect->headers->get('Location'))->assertInertia(fn (Assert $page) => $page
+        ->where('appointment.location_details.address', "18 Example Street\nUnit #18")
+        ->where('appointment.location_details.entrance_instructions', 'Use the side entrance')
+        ->where('appointment.location_details.directions_url', fn ($url) => str_contains($url, 'google.com/maps')));
+});
+
+it('reuses the exact short capability and body hash across provider retries', function () {
+    $fixture = communicationFixture();
+    app(CommunicationConsentService::class)->recordSmsOptIn($fixture['client'], 'booking');
+    $sms = app(NotificationIntentService::class)->create(intentFor($fixture, 'short-retry', recipients: ['sms' => $fixture['client']->mobile]), false)->messages->first();
+    $this->mobileProvider->failures[] = new CommunicationProviderException('Synthetic outage', 'twilio_http_503', true);
+    expect(fn () => app(CommunicationDeliveryService::class)->deliver($sms))->toThrow(CommunicationProviderException::class);
+    $this->travel(61)->seconds();
+    app(CommunicationDeliveryService::class)->deliver($sms->fresh());
+    expect($sms->fresh()->status)->toBe('sent')->and($this->mobileProvider->calls)->toHaveCount(2)
+        ->and($this->mobileProvider->calls[1]->body)->toBe($this->mobileProvider->calls[0]->body)
+        ->and($sms->fresh()->body_hash)->toBe(hash('sha256', $this->mobileProvider->calls[1]->body));
 });
 
 it('creates only one SMS message when deferred channel data is still present', function () {

@@ -53,7 +53,7 @@ it('projects existing rules and both channels without credentials or secure link
     config(['services.ses.key' => 'secret-email-key', 'services.ses.secret' => 'secret-email-secret', 'communications.twilio.auth_token' => 'secret-text-token']);
     workspaceMessage($this->business, $this->client);
     $response = $this->getJson(route('business.communications.index', $this->business))->assertOk();
-    $response->assertJsonCount(10, 'automations')->assertJsonPath('history.total', 1)->assertJsonPath('history.data.0.client_name', 'Synthetic Sarah');
+    $response->assertJsonCount(11, 'automations')->assertJsonPath('history.total', 1)->assertJsonPath('history.data.0.client_name', 'Synthetic Sarah');
     expect($response->getContent())->not->toContain('secret-email-key', 'secret-email-secret', 'secret-text-token', 'template_variables', '__action_link_id');
 });
 
@@ -243,14 +243,19 @@ it('opens the exact issued receipt through a signed private link and rejects cro
     $this->get($url)->assertOk()->assertSee('REVIEW-R-1')->assertSee('USD 45.00')->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive')->assertHeader('Referrer-Policy', 'no-referrer');
     // A receipt can be viewed again until expiry; it is never regenerated.
     $this->get($url)->assertOk();
+    $short = $links->shortUrl($message->actionLink);
+    $this->get($short)->assertOk()->assertSee('REVIEW-R-1')->assertHeader('Referrer-Policy', 'no-referrer');
+    $this->get($short)->assertOk()->assertSee('REVIEW-R-1');
     $legacy = $links->issue($this->business->id, $this->client, 'receipt_view', $appointment, now()->addHour()->toImmutable());
     $this->get($links->url($legacy))->assertOk()->assertSee('REVIEW-R-1');
     $this->get(route('communications.action', $message->actionLink->public_id))->assertForbidden();
     [, $other] = createTenantMembership();
     $foreign = $links->issue($other->id, null, 'receipt_view', $receipt, now()->addHour()->toImmutable());
     $this->get($links->url($foreign))->assertNotFound();
+    $this->get($links->shortUrl($foreign))->assertNotFound();
     $message->actionLink->update(['revoked_at' => now()]);
     $this->get($url)->assertGone();
+    $this->get($short)->assertGone();
     expect(SaleReceipt::query()->count())->toBe(1);
 });
 

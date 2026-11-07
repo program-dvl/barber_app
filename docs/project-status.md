@@ -1,5 +1,60 @@
 # Project status
 
+## 2026-11-07 Focused audience content improvements
+
+- Local source adds publication-gated industry article cards, matching reviewed
+  screenshots, five printable article worksheets and practical setup/policy examples.
+- Production client/SSR builds and frontsite budgets pass; isolated SQLite checks
+  verify eligible, draft, scheduled and unrelated-industry links. Desktop, 390px
+  phone and print-media worksheet previews inspected using fictional content.
+- Existing live article records and production deployment remain unchanged.
+  Indexing and ranking outcomes require post-deployment Google evidence.
+
+
+## 2026-11-06 Receipt delivery and completed-visit review emails
+
+- Implemented per-business automatic receipt/review email preferences, direct
+  staff send/copy/download actions, branded online/PDF receipts and tracked MIME
+  attachments. Reviews default off, retain client permission and public-consent
+  boundaries, and exclude historical visits. Stable intents and delivery checks
+  cover duplicate events, queued preference changes and receipt/completion order.
+- Local scoped backend **114 passed / 961 assertions**; frontend **10 passed**;
+  client/SSR builds and whitespace checks pass. PDF/layout evidence, deployment
+  requirements and remaining release checks are recorded in the
+  [visit-email audit](audits/2026-11-05-visit-emails/README.md). Node/Chromium must
+  be provisioned for workers; additive migration and worker restart required.
+  No production migration/deployment or real customer email was performed.
+
+
+## 2026-11-06 Public setup and migration assistance
+
+- Added shared email-led setup/migration messaging to Home, Pricing, industry
+  solutions, feature details and the product walkthrough. Covers new-business
+  configuration, clients and upcoming appointments, with other records reviewed
+  individually and scope/timing/costs agreed first. Existing support email only;
+  no platform workflow or automated migration capability added.
+- Client/SSR production build and whitespace checks pass locally. Desktop/mobile
+  visual verification and deployed verification have not been performed.
+
+## 2026-11-05 Compact secure SMS action links
+
+- Implemented first-party `/s/{code}` SMS URLs with 128 random bits encoded in
+  22 characters, a unique lookup hash, encrypted retry copy, hidden model fields
+  and per-IP throttling. Existing purpose/tenant, expiry/revocation/consumption
+  checks and signed email/previously sent links retain their behavior. Older
+  queued SMS gains a code at rendering without a bulk rewrite or new settings.
+- SMS with an appointment action omits the appended address/maps footer; the
+  existing appointment page retains the captured address, arrival and directions.
+  Credits use final rendered segments. Fixed an existing waitlist HTTP response
+  type error found while checking compact GET preview and atomic POST claim.
+- Scoped backend **225 passed / 2,583 assertions**; Pint/whitespace pass. Isolated
+  browser desktop1512px/phone390×844 verifies the compact-link journey, arrival
+  details, directions, no overflow and 44px phone directions action; expired-link
+  410 checked and viewport restored. Fake providers only; not deployed or sent.
+  Additive migration required, no environment/Twilio changes. Existing single-use
+  appointment-bridge behavior remains, including consumption on GET.
+  [Scope, evidence and deployment](audits/2026-11-05-sms-short-links/README.md).
+
 ## 2026-11-05 Public acquisition pages and product walkthrough
 
 - Implemented owner-approved broad positioning with salons/barbershops prominent;

@@ -23,6 +23,17 @@ class CommunicationActionController extends Controller
     public function __invoke(Request $request, CommunicationActionLink $link, CommunicationActionLinkService $links, CommunicationConsentService $consent, SecureAppointmentLinkService $appointments, WaitlistService $waitlist): Response
     {
         abort_unless($request->hasValidSignature(), 403);
+
+        return $this->perform($request, $link, $links, $consent, $appointments, $waitlist);
+    }
+
+    public function short(Request $request, string $code, CommunicationActionLinkService $links, CommunicationConsentService $consent, SecureAppointmentLinkService $appointments, WaitlistService $waitlist): Response
+    {
+        return $this->perform($request, $links->resolveShort($code), $links, $consent, $appointments, $waitlist);
+    }
+
+    private function perform(Request $request, CommunicationActionLink $link, CommunicationActionLinkService $links, CommunicationConsentService $consent, SecureAppointmentLinkService $appointments, WaitlistService $waitlist): Response
+    {
         $links->assertUsable($link);
         if ($link->purpose === 'receipt_view') {
             $receipt = SaleReceipt::query()->where('business_id', $link->business_id);
@@ -53,7 +64,7 @@ class CommunicationActionController extends Controller
         if ($link->target_type === Appointment::class && $link->target_id) {
             $appointment = Appointment::query()->where('business_id', $link->business_id)->findOrFail($link->target_id);
             $purpose = match ($link->purpose) {
-                'appointment_rebook' => 'rebook', 'appointment_payment' => 'payment_status', default => 'view',
+                'visit_review' => 'review', 'appointment_rebook' => 'rebook', 'appointment_payment' => 'payment_status', default => 'view',
             };
             $issued = $appointments->issue($appointment->loadMissing('business'), $purpose);
             $link->update(['used_at' => now()]);
@@ -71,11 +82,11 @@ class CommunicationActionController extends Controller
             }
 
             return Inertia::render('Booking/WaitlistOffer', [
-                'token' => null, 'action_url' => $links->url($link), 'status' => $match->status,
+                'token' => null, 'action_url' => $request->routeIs('communications.action.short') ? $links->shortUrl($link) : $links->url($link), 'status' => $match->status,
                 'expires_at' => $match->expires_at->toIso8601String(), 'business' => $match->request->business->name,
                 'location' => $match->request->location->name, 'service' => $match->request->service->name,
                 'starts_at' => $match->slot_starts_at_utc->setTimezone($match->request->location->time_zone)->toIso8601String(),
-            ]);
+            ])->toResponse($request);
         }
 
         abort(410, 'This action is no longer available.');

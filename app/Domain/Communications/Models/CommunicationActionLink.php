@@ -12,6 +12,8 @@ class CommunicationActionLink extends Model
 
     protected $fillable = ['business_id', 'client_id', 'public_id', 'purpose', 'target_type', 'target_id', 'expires_at', 'used_at', 'revoked_at'];
 
+    protected $hidden = ['short_token', 'short_token_hash'];
+
     protected static function booted(): void
     {
         static::creating(fn (self $link) => $link->public_id ??= (string) Str::ulid());
@@ -19,7 +21,7 @@ class CommunicationActionLink extends Model
 
     protected function casts(): array
     {
-        return ['expires_at' => 'immutable_datetime', 'used_at' => 'immutable_datetime', 'revoked_at' => 'immutable_datetime'];
+        return ['short_token' => 'encrypted', 'expires_at' => 'immutable_datetime', 'used_at' => 'immutable_datetime', 'revoked_at' => 'immutable_datetime'];
     }
 
     public function getRouteKeyName(): string

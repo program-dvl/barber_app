@@ -128,7 +128,11 @@ schedule reasons are excluded. Public creation and mutation endpoints are
 rate-limited. Provider-backed communication now extends the same privacy and
 idempotency rules through one
 Business/event/channel/recipient message key, encrypted destinations, signed
-short-lived action links, and content-minimized support history. Provider-backed
+short-lived email action links, compact random-token SMS capabilities (ADR-081),
+and content-minimized support history. Both link forms preserve expiry,
+revocation, tenant/purpose and consumption checks. SMS links open the existing
+appointment page with its captured address/arrival/directions; they do not expose
+a public booking identifier as authentication. Provider-backed
 payment events in Prompt 10 must reuse the deposit/receipt intents.
 
 ## Receipt notification actions (2026-10-04, FR-13/14)

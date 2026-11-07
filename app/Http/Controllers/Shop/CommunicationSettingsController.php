@@ -64,6 +64,7 @@ class CommunicationSettingsController extends Controller
             'fallback_mobile_channel' => ['prohibited'],
             'smart_fallback_enabled' => ['required', 'declined'],
             'sender_mode' => ['required', 'in:platform'],
+            'automatic_receipt_email' => ['sometimes', 'boolean'], 'automatic_review_email' => ['sometimes', 'boolean'],
             'email_enabled' => ['required', 'boolean'], 'sms_enabled' => ['required', 'boolean'],
             'two_way_enabled' => ['required', 'declined'],
             'settings_revision' => ['required', 'string', 'size:64'],
@@ -84,6 +85,12 @@ class CommunicationSettingsController extends Controller
             }
             unset($data['settings_revision']);
             $before = $settings->only(array_keys($data));
+            if (array_key_exists('automatic_review_email', $data) && $data['automatic_review_email'] && ! $settings->automatic_review_email) {
+                $data['review_email_enabled_at'] = now();
+            }
+            if (array_key_exists('automatic_receipt_email', $data) && $data['automatic_receipt_email'] && ! $settings->automatic_receipt_email) {
+                $data['receipt_email_enabled_at'] = now();
+            }
             $settings->fill($data);
             if ($settings->isDirty()) {
                 $settings->save();
@@ -203,7 +210,7 @@ class CommunicationSettingsController extends Controller
 
     private function settingsRevision(CommunicationSetting $settings): string
     {
-        return hash('sha256', json_encode($settings->only(['email_enabled', 'sms_enabled', 'default_locale', 'quiet_hours_start', 'quiet_hours_end'])));
+        return hash('sha256', json_encode($settings->only(['automatic_receipt_email', 'automatic_review_email', 'email_enabled', 'sms_enabled', 'default_locale', 'quiet_hours_start', 'quiet_hours_end'])));
     }
 
     /** @return array<string, mixed> */
@@ -213,7 +220,7 @@ class CommunicationSettingsController extends Controller
         $manage = $membership->hasPermissionTo(PermissionName::SettingsManage->value, 'web');
         $settings = $templates->settings($business);
         $allowance = $entitlements->value($business, 'messaging.monthly_allowance');
-        $visibleSettings = $settings->only(['email_provider', 'mobile_provider', 'sender_mode', 'email_enabled', 'sms_enabled', 'default_locale', 'quiet_hours_start', 'quiet_hours_end']);
+        $visibleSettings = $settings->only(['automatic_receipt_email', 'automatic_review_email', 'email_provider', 'mobile_provider', 'sender_mode', 'email_enabled', 'sms_enabled', 'default_locale', 'quiet_hours_start', 'quiet_hours_end']);
         $visibleSettings = [...$visibleSettings,
             'email_provider' => 'ses',
             'sender_mode' => 'platform',

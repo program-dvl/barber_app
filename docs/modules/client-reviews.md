@@ -65,3 +65,34 @@ database uniqueness, consent withdrawal, pending/cancelled/no-show eligibility,
 expired/revoked/wrong-purpose links, secure-page integration and operator policy.
 Local automated evidence and browser evidence are recorded in project status by
 the coordinating change; no deployed review journey or client send is implied.
+
+
+## Receipt and completed-visit email update (ADR-082, 2026-11-05)
+
+FR-09/13/15/19 now permit the narrow completed-visit review email workflow.
+This supersedes earlier no-email wording in this module; SMS reviews, rebooking
+and broader marketing remain deferred. Client notifications contains independent
+Automatically email receipts (on by default) and Automatically email review
+requests (off by default) preferences. Turning on reviews records an enable time;
+only newly completed visits qualify. Client permission is still required.
+
+Calendar completed visits offer Send review email and Copy review link directly.
+Neither action is offered after feedback exists. Review email uses ClipperDesk
+branding, the business name and the existing secure review-purpose experience,
+with optional private feedback and separate public-display consent. Staff access
+uses the appointment update policy; email also requires contact permission.
+
+Checkout exposes View receipt, Download PDF and Send receipt. Receipt email
+attaches a PDF while retaining its secure link. Only issued snapshots are rendered;
+new snapshots capture locale/time zone, and existing ones are never rewritten.
+The shared online/PDF layout handles local timestamps, currency minor-unit digits,
+item discounts, tax, tips, deposits, payment history, totals and balance-at-issue.
+The current staff final-receipt workflow remains fully-paid checkout only.
+
+VisitEmailService serializes manual/automatic requests on the visit, shares a
+stable intent, and rejects incomplete visits, absent email, missing client permission
+and suppressed addresses. Delivery rechecks eligibility and automation where
+applicable. Provider attempts/callbacks and uncertain-result recovery retain the
+existing pipeline. One request per visit is deliberate; manual repeated clicks
+show its existing delivery outcome rather than resending. See the dated
+[verification and deployment notes](../audits/2026-11-05-visit-emails/README.md).

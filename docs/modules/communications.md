@@ -294,6 +294,34 @@ and [SES SNS events](https://docs.aws.amazon.com/ses/latest/dg/event-publishing-
 
 ## Secure actions and receipt handoff
 
+### Compact SMS links (2026-11-05)
+
+SMS action links use the existing application origin and `/s/{code}`. A
+22-character, URL-safe code encodes 16 cryptographically random bytes (128 bits);
+6–7-character bearer codes are not used for private appointment access. Store a
+unique SHA-256 lookup hash and an encrypted copy for stable delivery retries;
+hide both from model serialization. Resolve the existing purpose/tenant-bound
+action, never an arbitrary destination supplied in a query. Apply a 60/minute/IP
+limit, private/no-store, no-referrer and noindex headers. Existing signed URLs
+and email rendering remain supported. No third-party shortener, new credentials,
+provider feature or click-tracking service is involved.
+
+Generate a code under the action-row lock when rendering an eligible SMS, so
+older queued actions work without a bulk data rewrite and retries retain the
+same code. The shortened final body is used for segment/credit accounting. SMS
+with an appointment action omits the appended address/arrival/directions footer;
+the appointment page retains its captured location and directions. Messages
+without that action retain the footer; email keeps its detailed content.
+Expiry, revocation and consumption behavior are unchanged: appointment bridges
+are single-use, receipt viewing is reusable until expiry, and waitlist GET only
+previews while POST runs the existing atomic claim. Opening a link remains
+possession-based access and clients must keep it private.
+
+Deploy the additive `2026_11_05_000001_add_short_communication_action_tokens`
+migration before serving the new delivery code. Restart long-lived workers and
+refresh route caches through the normal deployment. No environment or Twilio
+console changes are required. [Verification](../audits/2026-11-05-sms-short-links/README.md).
+
 Link expiry starts from the later of creation and intended delivery, so a future
 reminder cannot ship an already expired action. Existing tenant/revocation/expiry
 checks remain. Receipt intents target the issued immutable SaleReceipt and render
@@ -326,3 +354,34 @@ prepaid purchases require verified payment, with automatic purchases off. See
 ## Appointment arrival details (2026-10-12; ADR-064)
 
 New appointment intents capture assigned-location snapshots, address, optional arrival/parking notes and key-free directions. A captured footer supplies those details to existing templates without rewriting published versions or queued messages. The actual final content is used for SMS segment accounting. [Locations contract](location-intelligence.md). WhatsApp remains disabled under ADR-041.
+
+
+## Receipt and completed-visit email update (ADR-082, 2026-11-05)
+
+FR-09/13/15/19 now permit the narrow completed-visit review email workflow.
+This supersedes earlier no-email wording in this module; SMS reviews, rebooking
+and broader marketing remain deferred. Client notifications contains independent
+Automatically email receipts (on by default) and Automatically email review
+requests (off by default) preferences. Turning on reviews records an enable time;
+only newly completed visits qualify. Client permission is still required.
+
+Calendar completed visits offer Send review email and Copy review link directly.
+Neither action is offered after feedback exists. Review email uses ClipperDesk
+branding, the business name and the existing secure review-purpose experience,
+with optional private feedback and separate public-display consent. Staff access
+uses the appointment update policy; email also requires contact permission.
+
+Checkout exposes View receipt, Download PDF and Send receipt. Receipt email
+attaches a PDF while retaining its secure link. Only issued snapshots are rendered;
+new snapshots capture locale/time zone, and existing ones are never rewritten.
+The shared online/PDF layout handles local timestamps, currency minor-unit digits,
+item discounts, tax, tips, deposits, payment history, totals and balance-at-issue.
+The current staff final-receipt workflow remains fully-paid checkout only.
+
+VisitEmailService serializes manual/automatic requests on the visit, shares a
+stable intent, and rejects incomplete visits, absent email, missing client permission
+and suppressed addresses. Delivery rechecks eligibility and automation where
+applicable. Provider attempts/callbacks and uncertain-result recovery retain the
+existing pipeline. One request per visit is deliberate; manual repeated clicks
+show its existing delivery outcome rather than resending. See the dated
+[verification and deployment notes](../audits/2026-11-05-visit-emails/README.md).

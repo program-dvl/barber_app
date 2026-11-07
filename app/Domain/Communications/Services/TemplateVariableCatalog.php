@@ -37,6 +37,7 @@ final class TemplateVariableCatalog
             'waitlist_opening' => ['subject' => 'A waitlist opening is available', 'body' => '{{business_name}}: Hi {{client_name}}, an opening for {{service_name}} at {{location_name}} is available on {{appointment_date}} at {{appointment_time}} ({{time_zone}}). Claim it: {{action_link}}', 'category' => 'transactional', 'action_purpose' => 'waitlist_claim'],
             'queue_update' => ['subject' => 'Queue update', 'body' => '{{business_name}}: Hi {{client_name}}, your estimated turn is {{queue_estimate}} at {{location_name}}.', 'category' => 'transactional', 'action_purpose' => null],
             'conversation_reply' => ['subject' => '', 'body' => '{{reply_body}}', 'category' => 'transactional', 'action_purpose' => null],
+            'visit_review' => ['subject' => 'How was your visit to {{business_name}}?', 'body' => '{{business_name}}: Hi {{client_name}}, thank you for visiting. Share optional private feedback or choose to display your review publicly: {{action_link}}. Unsubscribe: {{unsubscribe_link}}', 'category' => 'marketing', 'action_purpose' => 'visit_review'],
             'feedback_request' => ['subject' => 'How was your visit?', 'body' => 'Hi {{client_name}}, tell {{business_name}} about your visit: {{feedback_link}}. Unsubscribe: {{unsubscribe_link}}', 'category' => 'marketing', 'action_purpose' => 'feedback'],
             'rebooking_reminder' => ['subject' => 'Ready to book again?', 'body' => 'Hi {{client_name}}, it may be time to book {{service_name}} again: {{action_link}}. Unsubscribe: {{unsubscribe_link}}', 'category' => 'marketing', 'action_purpose' => 'appointment_rebook'],
             default => throw new \InvalidArgumentException('Unsupported communication intent type.'),
@@ -46,6 +47,6 @@ final class TemplateVariableCatalog
     /** @return list<string> */
     public static function intents(): array
     {
-        return ['booking_confirmation', 'booking_pending', 'booking_approved', 'booking_rejected', 'appointment_reminder', 'appointment_changed', 'appointment_cancelled', 'deposit_request', 'deposit_received', 'payment_receipt', 'waitlist_opening', 'queue_update', 'conversation_reply', 'feedback_request', 'rebooking_reminder'];
+        return ['visit_review', 'booking_confirmation', 'booking_pending', 'booking_approved', 'booking_rejected', 'appointment_reminder', 'appointment_changed', 'appointment_cancelled', 'deposit_request', 'deposit_received', 'payment_receipt', 'waitlist_opening', 'queue_update', 'conversation_reply', 'feedback_request', 'rebooking_reminder'];
     }
 }

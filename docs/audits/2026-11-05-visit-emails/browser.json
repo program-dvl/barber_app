@@ -1,0 +1,49 @@
+{
+  "evidence": [
+    {
+      "width": 1440,
+      "overflow": false,
+      "toggles": [
+        {
+          "checked": true,
+          "label": ""
+        },
+        {
+          "checked": true,
+          "label": "Automatically email receipts\nIncludes a PDF and secure online receipt."
+        },
+        {
+          "checked": false,
+          "label": "Automatically email review requests\nFor newly completed visits, only when the client has given permission. No past visits are emailed."
+        },
+        {
+          "checked": true,
+          "label": ""
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "toggles": [
+        {
+          "checked": true,
+          "label": ""
+        },
+        {
+          "checked": true,
+          "label": "Automatically email receipts\nIncludes a PDF and secure online receipt."
+        },
+        {
+          "checked": false,
+          "label": "Automatically email review requests\nFor newly completed visits, only when the client has given permission. No past visits are emailed."
+        },
+        {
+          "checked": true,
+          "label": ""
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

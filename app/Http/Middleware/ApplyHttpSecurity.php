@@ -33,7 +33,7 @@ class ApplyHttpSecurity
         $response->headers->set('X-Correlation-ID', $correlationId);
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-Frame-Options', $response->getStatusCode() === 200 && $request->routeIs('business.configuration.booking-preview') ? 'SAMEORIGIN' : 'DENY');
-        $response->headers->set('Referrer-Policy', $response->headers->get('Referrer-Policy') === 'no-referrer' ? 'no-referrer' : 'strict-origin-when-cross-origin');
+        $response->headers->set('Referrer-Policy', $this->isTokenProtectedPath($request) || $response->headers->get('Referrer-Policy') === 'no-referrer' ? 'no-referrer' : 'strict-origin-when-cross-origin');
         $geolocation = $response->getStatusCode() === 200 && $request->routeIs('booking.business', 'booking.business.fallback') ? '(self)' : '()';
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation='.$geolocation.', payment=(self)');
         $response->headers->set('X-Robots-Tag', $this->indexation->directive($request, $response));
@@ -58,6 +58,7 @@ class ApplyHttpSecurity
             'client-forms/secure/*',
             'client-files/*',
             'communications/actions/*',
+            's/*',
         );
     }
 }

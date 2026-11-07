@@ -14,6 +14,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class OperationalCommunicationService
 {
@@ -81,6 +82,17 @@ class OperationalCommunicationService
         $appointment = Appointment::query()->where('business_id', $event->business_id)->with(['client', 'location', 'serviceLines.primaryStaff'])->find($event->subject_id);
         if (! $appointment) {
             return false;
+        }
+        if ($event->event_type === 'payment.receipt' || ($event->event_type === 'appointment.status_changed' && data_get($event->payload, 'status') === 'completed')) {
+            $types = $event->event_type === 'payment.receipt' ? ['payment_receipt'] : ['visit_review', 'payment_receipt'];
+            foreach ($types as $type) {
+                try {
+                    app(VisitEmailService::class)->request($appointment, $type, true);
+                } catch (ValidationException) { /* Either completion or receipt issuance may arrive first. */
+                }
+            }
+
+            return true;
         }
         $intent = match ($event->event_type) {
             'appointment.created', 'appointment.confirmed' => 'booking_confirmation',

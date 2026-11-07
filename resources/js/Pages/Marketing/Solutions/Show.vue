@@ -1,4 +1,5 @@
 <script setup>
+import SetupSupport from '@/Components/Marketing/SetupSupport.vue';
 import ProductEvidence from '@/Components/Marketing/ProductEvidence.vue';
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
 import ConversionBand from '@/Components/Marketing/ConversionBand.vue';
@@ -10,7 +11,7 @@ import HomeLayout from '@/Layouts/HomeLayout.vue';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ solution: Object, features: Array, seo: Object });
+defineProps({ solution: Object, features: Array, seo: Object, guides: { type: Array, default: () => [] } });
 </script>
 
 <template>
@@ -81,6 +82,21 @@ defineProps({ solution: Object, features: Array, seo: Object });
         </section>
         <ProductEvidence v-if="solution.screenshots?.length || solution.faqs?.length" :screenshots="solution.screenshots" :scenario="solution.scenario" :faqs="solution.faqs" :context="`solution_${solution.slug}_evidence`" />
 
+        <section v-if="guides.length" class="cd-public-section bg-[var(--surface-subtle)]" aria-labelledby="industry-guides-heading">
+            <PublicContainer>
+                <p class="cd-eyebrow">Put it into practice</p>
+                <h2 id="industry-guides-heading" class="mt-4 font-display text-3xl font-semibold text-[var(--text-strong)]">Practical guides for your team</h2>
+                <p class="mt-4 max-w-2xl leading-8 text-[var(--text-muted)]">Use these examples and checklists to plan the way your business works, then try the workflow in ClipperDesk.</p>
+                <div class="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                    <MarketingCard v-for="guide in guides" :key="guide.href" class="flex flex-col">
+                        <h3 class="text-xl font-bold text-[var(--text-strong)]"><Link :href="guide.href" class="rounded underline-offset-4 hover:underline">{{ guide.title }}</Link></h3>
+                        <p class="mt-4 leading-7 text-[var(--text-muted)]">{{ guide.excerpt }}</p>
+                        <Link :href="guide.href" class="cd-arrow-link mt-5" :aria-label="`Read ${guide.title}`">Read the guide</Link>
+                    </MarketingCard>
+                </div>
+            </PublicContainer>
+        </section>
+        <SetupSupport />
         <ConversionBand title="Bring your appointments and daily work together." description="Add your services and team, set working hours and preview your booking page." :context="`solution_${solution.slug}_final`" />
     </HomeLayout>
 </template>

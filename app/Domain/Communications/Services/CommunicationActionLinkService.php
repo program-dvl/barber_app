@@ -6,6 +6,7 @@ use App\Domain\ClientRecords\Models\Client;
 use App\Domain\Communications\Models\CommunicationActionLink;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 
 class CommunicationActionLinkService
@@ -21,6 +22,34 @@ class CommunicationActionLinkService
     public function url(CommunicationActionLink $link): string
     {
         return URL::temporarySignedRoute('communications.action', $link->expires_at, ['link' => $link->public_id]);
+    }
+
+    public function shortUrl(CommunicationActionLink $link): string
+    {
+        // Lock the existing capability so retries/concurrent rendering reuse one
+        // code. Older queued links gain a code only when they are rendered.
+        $token = DB::transaction(function () use ($link): string {
+            $current = CommunicationActionLink::query()->where('business_id', $link->business_id)
+                ->lockForUpdate()->findOrFail($link->id);
+            $this->assertUsable($current);
+            if (! $current->short_token) {
+                $token = rtrim(strtr(base64_encode(random_bytes(16)), '+/', '-_'), '=');
+                $current->forceFill(['short_token' => $token, 'short_token_hash' => hash('sha256', $token)])->save();
+            }
+
+            return $current->short_token;
+        }, 3);
+
+        return URL::route('communications.action.short', ['code' => $token]);
+    }
+
+    public function resolveShort(string $token): CommunicationActionLink
+    {
+        abort_unless(preg_match('/^[A-Za-z0-9_-]{22}$/D', $token), 404);
+        $link = CommunicationActionLink::query()->where('short_token_hash', hash('sha256', $token))->firstOrFail();
+        $this->assertUsable($link);
+
+        return $link;
     }
 
     public function assertUsable(CommunicationActionLink $link): void

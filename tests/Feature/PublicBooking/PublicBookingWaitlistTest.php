@@ -7,6 +7,7 @@ use App\Domain\BusinessConfiguration\Models\StaffServiceAssignment;
 use App\Domain\BusinessConfiguration\Services\BookingSlugManager;
 use App\Domain\ClientRecords\Models\Client;
 use App\Domain\ClientRecords\Services\ClientIdentityService;
+use App\Domain\Communications\Services\CommunicationActionLinkService;
 use App\Domain\MoneyCommerce\Services\DepositPolicyService;
 use App\Domain\PlatformAccess\Enums\StarterRole;
 use App\Domain\PlatformAccess\Models\Business;
@@ -264,7 +265,14 @@ it('deduplicates matching waitlist requests and awards one opening to the first 
     $cancelled = app(AppointmentLifecycleCommand::class)->transition($booking, 'cancelled_by_shop', 'open-waitlist-slot', 1, 'calendar', 'user', $path['user']->id, 'Client requested a different day.');
     $offers = $waitlist->offerForOpening($cancelled);
     expect($offers)->toHaveCount(2)->and($offers[0]['match']->batch_id)->toBe($offers[1]['match']->batch_id);
-    $claimed = $waitlist->claim($offers[0]['token']);
+    $actionLinks = app(CommunicationActionLinkService::class);
+    $link = $actionLinks->issue($path['business']->id, null, 'waitlist_claim', $offers[0]['match'], $offers[0]['match']->expires_at);
+    $shortUrl = $actionLinks->shortUrl($link);
+    $this->get($shortUrl)->assertInertia(fn (Assert $page) => $page->component('Booking/WaitlistOffer')->where('action_url', $shortUrl));
+    expect($link->fresh()->used_at)->toBeNull(); // A preview never claims the opening.
+    $this->post($shortUrl)->assertRedirect();
+    $claimed = Appointment::query()->findOrFail($offers[0]['match']->fresh()->appointment_id);
+    $this->post($shortUrl)->assertGone();
     expect($claimed->source)->toBe('waitlist')
         ->and($first->fresh()->status)->toBe('booked')
         ->and($second->fresh()->status)->toBe('active')

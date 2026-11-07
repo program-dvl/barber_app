@@ -543,6 +543,10 @@ Purpose: Keep clients and staff informed while respecting consent, local time an
 #### Templates And Timing
 
 - Manage versioned notification content centrally in ClipperDesk, with validated client, staff, service, location, date, recorded amount and secure action values. Provide professional responsive HTML email and a plain-text alternative; SMS remains concise text. Owners cannot edit, draft or publish content (ADR-067).
+- Use a compact first-party secure action URL in SMS, retaining tenant/purpose,
+  expiry and revocation checks. Keep captured address and directions on the
+  linked appointment page when that action is available; retain email detail
+  and existing links (owner-requested refinement, 2026-11-05; ADR-081).
 - Use one 24-hour reminder by default, respect quiet hours in the appointment/location time zone, and prevent duplicate sends after retries or schedule changes.
 - Provide read-only sample email/SMS examples without contacting providers or creating message records. Offer only top-level email/SMS enablement, one-reminder timing and quiet hours. Channel pauses stop waiting work and never bypass client consent or resend stopped messages on re-enable. Preserve safe fallbacks for absent optional values (ADR-067).
 
@@ -1057,3 +1061,23 @@ The Phase 1 product is genuinely ready to charge for only when a representative 
 - [ ] Receive support without invisible or unaudited account access.
 
 DECISION RULE If any step requires routine database intervention, manual payment repair, cross-system reconciliation or the product team's help, the product has not yet met the self-serve chargeability standard.
+
+
+### Approved receipt delivery and visit-review email addition (2026-11-05)
+
+FR-09/13/15/19: The product owner explicitly promotes only configurable,
+appointment-bound completed-visit review **email**, superseding earlier blanket
+feedback-email deferral. Businesses may enable automatic review invitations for
+newly completed visits or staff may send directly/copy a private link. Completion,
+no existing feedback, client email preference, subscribed marketing permission
+and active suppression checks are mandatory at request and delivery. Configuration
+never creates consent. Public display remains a separate explicit client choice.
+SMS reviews, rebooking outreach, campaigns and other deferred marketing remain off.
+
+Businesses independently control automatic receipt email (default on, preserving
+existing behavior) and automatic review email (default off for all businesses).
+Receipts attach a professionally rendered PDF from the immutable issued snapshot
+and retain existing secure online links. Authorized staff can download the PDF
+or request delivery through the tracked pipeline. Automatic and manual requests
+share one invitation/receipt delivery per visit, with safe provider retries.
+Enabling review automation never sends historical visits. See ADR-082.

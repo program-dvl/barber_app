@@ -253,6 +253,8 @@ Route::post('communications/webhooks/twilio/inbound', [CommunicationWebhookContr
 Route::post('api/webhooks/twilio/status', [CommunicationWebhookController::class, 'twilio'])->name('communications.webhooks.twilio.status');
 Route::post('api/webhooks/twilio/inbound', [CommunicationWebhookController::class, 'twilioInbound'])->name('communications.webhooks.twilio.inbound.public');
 Route::match(['get', 'post'], 'communications/actions/{link}', CommunicationActionController::class)->name('communications.action');
+Route::match(['get', 'post'], 's/{code}', [CommunicationActionController::class, 'short'])
+    ->where('code', '[A-Za-z0-9_-]{22}')->middleware('throttle:communication-actions')->name('communications.action.short');
 
 Route::middleware([
     'auth:web',
@@ -292,6 +294,7 @@ Route::middleware([
             Route::post('/appointments/{appointment}/checkout', [CheckoutController::class, 'open'])->name('business.checkout.open');
             Route::post('/sales/{sale}/tenders', [CheckoutController::class, 'tender'])->name('business.checkout.tender');
             Route::post('/sales/{sale}/payments/{payment}/refunds', [CheckoutController::class, 'refund'])->name('business.checkout.refund');
+            Route::post('/sales/{sale}/receipt-email', [CheckoutController::class, 'sendReceipt'])->name('business.checkout.receipt-email');
             Route::get('/sales/{sale}/receipt', [CheckoutController::class, 'receipt'])->name('business.checkout.receipt');
             Route::post('/locations/{location}/cash-close', [CheckoutController::class, 'close'])->name('business.cash-close.store');
 
@@ -360,6 +363,7 @@ Route::middleware([
             Route::post('/team/staff/{staffProfile}/photo', [StaffPhotoController::class, 'store'])->name('business.team.photo.store');
             Route::delete('/team/staff/{staffProfile}/photo', [StaffPhotoController::class, 'destroy'])->name('business.team.photo.destroy');
             Route::get('/team/staff/{staffProfile}/photo/{version}', [StaffPhotoController::class, 'show'])->where('version', '[a-f0-9]{24}')->name('business.team.photo.show');
+            Route::post('/appointments/{appointment}/review-email', [AppointmentReviewLinkController::class, 'send'])->name('business.appointments.review-email');
             Route::post('/appointments/{appointment}/review-link', AppointmentReviewLinkController::class)->middleware('throttle:10,1')->name('business.appointments.review-link');
             Route::put('/team/staff/{staffProfile}/services', [StaffOperationsController::class, 'services'])->name('business.team.services.update');
             Route::post('/activation/providers', [TeamManagementController::class, 'store'])->name('business.team.providers.store');

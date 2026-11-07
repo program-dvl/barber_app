@@ -221,3 +221,27 @@ Limitations use the shared AppNotice. Pricing clarifies shared industry coverage
 optional extra text credits, separate client payment fees and recorded checkout
 without changing rates or subscription behaviour. See the
 [dated implementation review](../audits/2026-11-05-acquisition-pages/README.md).
+
+## Email-led setup and migration assistance — 2026-11-06
+
+Owner-approved FR-02 acquisition refinement: promote personal account setup and
+reviewed migration help on Home, Pricing, industry solution pages, feature detail
+pages and the product walkthrough. Shared SetupSupport uses existing marketing
+tokens, a wrapping action row and the configured support email. Requirements are
+gathered manually by email; no intake form, upload, migration engine or in-app
+workflow is added. Describe clients and upcoming appointments/bookings explicitly;
+other records depend on review. Agree scope, timing and any costs before work;
+never promise universal compatibility, free service or a fixed turnaround. Ask
+for no client files in the initial email. Owner review precedes going live.
+
+
+## Focused audience resources — 2026-11-07
+
+Existing salon/barbershop pages add server-selected editorial links using the
+normal Article publishable scope. Hidden, future and draft articles remain
+excluded. Reviewed client-profile and walk-in-queue media supplement existing
+screens. Five existing articles offer blank printable worksheets and links to
+relevant walkthrough anchors and industry pages. Templates collect no input.
+Reuse shared typography, cards, focus styles and wrapping 44px actions. Print
+shows the worksheet alone. Preserve stable article URLs, metadata and dates;
+no database publication, fabricated review or ranking guarantee is introduced.

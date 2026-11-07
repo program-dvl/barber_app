@@ -1,4 +1,5 @@
 <script setup>
+import SetupSupport from '@/Components/Marketing/SetupSupport.vue';
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
 import ConversionBand from '@/Components/Marketing/ConversionBand.vue';
 import HelpScreenshot from '@/Components/Help/HelpScreenshot.vue';
@@ -40,6 +41,7 @@ defineProps({ steps: Array, seo: Object });
             </PublicContainer>
         </section>
         <section class="cd-public-section"><PublicContainer><h2 class="font-display text-3xl font-semibold text-[var(--text-strong)]">Try the workflow for your business.</h2><p class="mt-5 max-w-3xl leading-8 text-[var(--text-muted)]">The screenshots use example businesses and sample data. Your services, hours, permissions and booking rules determine the choices your team and clients see. Specialist clinical records, payroll, memberships and automated marketing campaigns are not included.</p><div class="mt-6 flex flex-wrap gap-3"><Link :href="route('marketing.solutions')" class="cd-button cd-button-secondary">Find your business type</Link><Link :href="route('marketing.guides.show', 'daily-operations-checklist')" class="cd-button cd-button-quiet">Get the daily checklist</Link></div></PublicContainer></section>
+        <SetupSupport />
         <ConversionBand title="Make the next day easier to run." description="Add your services and staff, preview booking and try a complete visit before publishing your page." context="product_tour_final" />
     </HomeLayout>
 </template>

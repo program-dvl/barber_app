@@ -1,4 +1,5 @@
 <script setup>
+import SetupSupport from '@/Components/Marketing/SetupSupport.vue';
 import ConversionBand from '@/Components/Marketing/ConversionBand.vue';
 import HelpScreenshot from '@/Components/Help/HelpScreenshot.vue';
 import FaqList from '@/Components/Marketing/FaqList.vue';
@@ -245,6 +246,7 @@ const resetPerspective = (event) => {
             </PublicContainer>
         </section>
 
+        <SetupSupport />
         <ConversionBand
             title="Run the next working day with confidence."
             description="Create your account, add services and working hours, and preview your booking page before sharing it."

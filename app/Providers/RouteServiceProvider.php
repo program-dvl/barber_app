@@ -28,6 +28,8 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
 
+        RateLimiter::for('communication-actions', fn (Request $request) => Limit::perMinute(60)->by($request->ip()));
+
         foreach (['status' => 30, 'restart' => 5, 'review' => 10, 'confirm' => 5] as $action => $perMinute) {
             RateLimiter::for('billing-capacity-'.$action, function (Request $request) use ($perMinute) {
                 return Limit::perMinute($perMinute)->by((string) ($request->user()?->id ?? $request->ip()))

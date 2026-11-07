@@ -1,4 +1,5 @@
 <script setup>
+import SetupSupport from '@/Components/Marketing/SetupSupport.vue';
 import ProductEvidence from '@/Components/Marketing/ProductEvidence.vue';
 import PublicCta from '@/Components/Marketing/PublicCta.vue';
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
@@ -100,6 +101,7 @@ defineProps({ feature: Object, related: Array, seo: Object });
 
         <ProductEvidence v-if="feature.screenshots?.length || feature.faqs?.length" :screenshots="feature.screenshots" :scenario="feature.scenario" :faqs="feature.faqs" :context="`feature_${feature.slug}_evidence`" />
 
+        <SetupSupport />
         <ConversionBand :title="`Bring ${feature.label.toLowerCase()} into your working day.`" description="Set up your services and team, then preview your booking page before sharing it." :context="`feature_${feature.slug}_final`" />
     </HomeLayout>
 </template>

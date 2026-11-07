@@ -164,7 +164,7 @@ class ArticlePublication
         $path = '/'.implode('/', $segments);
 
         foreach (['appointments/secure', 'client-files', 'client-forms', 'waitlist-offers', 'manage-appointment',
-            'communications/actions', 'staff-invitations', 'livewire', 'livewire-tmp', 'storage/livewire-tmp',
+            'communications/actions', 's', 'staff-invitations', 'livewire', 'livewire-tmp', 'storage/livewire-tmp',
             'storage/private', 'businesses', 'admin', 'dashboard', 'app'] as $privatePath) {
             if ($path === '/'.$privatePath || str_starts_with($path, '/'.$privatePath.'/')) {
                 return true;

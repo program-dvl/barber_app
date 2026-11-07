@@ -10,6 +10,7 @@ final class NotificationWorkspaceCatalog
     public static function automations(): array
     {
         return [
+            'visit_review' => ['name' => 'Visit review email', 'group' => 'Reviews', 'trigger' => 'Service completed', 'timing' => 'When enabled and permitted', 'description' => 'Optional private feedback with an explicit choice for public display. Email only.'],
             'booking_confirmation' => ['name' => 'Booking confirmation', 'group' => 'Appointments', 'trigger' => 'Appointment confirmed', 'timing' => 'Immediately', 'description' => 'Reassure clients with their service, location and appointment time.'],
             'appointment_reminder' => ['name' => 'Appointment reminder', 'group' => 'Appointments', 'trigger' => 'Appointment approaching', 'timing' => '24 hours before', 'description' => 'One reminder when there is enough notice, adjusted around local quiet hours.'],
             'appointment_changed' => ['name' => 'Appointment changed', 'group' => 'Appointments', 'trigger' => 'Time, staff or service changes', 'timing' => 'Immediately', 'description' => 'Share the latest appointment details and a secure link to review them.'],
@@ -48,7 +49,7 @@ final class NotificationWorkspaceCatalog
             'location_name' => 'Main studio', 'appointment_date' => now()->setTimezone($business->time_zone ?: 'UTC')->addDays(3)->format('j F Y'), 'appointment_time' => '14:30',
             'time_zone' => $business->time_zone ?: 'UTC', 'amount' => '45.00', 'currency' => $business->currency_code ?: 'USD',
             'booking_reference' => 'BK-1042', 'action_link' => 'https://example.test/your-secure-link',
-            'queue_estimate' => '15 minutes', 'business_name' => $business->name];
+            'unsubscribe_link' => 'https://example.test/unsubscribe', 'queue_estimate' => '15 minutes', 'business_name' => $business->name];
     }
 
     public static function issue(?string $code): ?string
@@ -71,6 +72,8 @@ final class NotificationWorkspaceCatalog
             'sender_not_ready', 'branded_sender_not_ready' => 'The selected text sender is awaiting setup or approval.',
             'template_render_failed', 'template_not_published' => 'The message template needs attention before it can be sent.',
             'channel_paused', 'mobile_marketing_paused', 'marketing_consent_missing' => 'This communication is unavailable or lacks the required consent.',
+            'receipt_pdf_unavailable' => 'The receipt PDF could not be prepared. Your receipt remains saved. A safe retry is scheduled when attempts remain; contact support if it continues.',
+            'visit_email_no_longer_eligible' => 'This email was stopped because notification preferences, client permission or visit eligibility changed.',
             'retry_limit_reached' => 'The retry limit has been reached. Contact support to investigate.',
             default => 'The message could not be sent. Contact support to investigate safely.',
         };

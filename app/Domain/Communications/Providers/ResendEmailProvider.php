@@ -25,7 +25,8 @@ class ResendEmailProvider implements EmailChannelProvider
             'Idempotency-Key' => $message->idempotencyKey, 'X-Correlation-ID' => $message->correlationId,
         ])->timeout(10)->post(rtrim((string) config('communications.resend.api_url'), '/').'/emails', [
             'from' => config('communications.resend.from'), 'to' => [$message->destination],
-            'subject' => $message->subject, 'html' => nl2br(e($message->body)),
+            'subject' => $message->subject, 'html' => $message->htmlBody ?? nl2br(e($message->body)),
+            'attachments' => array_map(fn ($attachment) => ['filename' => $attachment['filename'], 'content' => base64_encode($attachment['content'])], $message->attachments),
         ]);
         if (! $response->successful()) {
             $retryable = $response->status() === 429 || $response->serverError();

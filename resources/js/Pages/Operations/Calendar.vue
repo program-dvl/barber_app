@@ -41,6 +41,13 @@ const activeEvent = ref(null);
 const detailDialog = ref(null);
 const noShowDialog = ref(null);
 const attentionOpen = ref(false);
+const reviewEmailBusy = ref(false), reviewEmailNotice = ref('');
+async function sendReviewEmail(){
+ if(reviewEmailBusy.value || !activeEvent.value)return; reviewEmailBusy.value=true; reviewLinkError.value='';
+ try{const {data}=await axios.post(route('business.appointments.review-email',[route().params.business,activeEvent.value.id]));reviewEmailNotice.value=data.message;}
+ catch(error){reviewLinkError.value=Object.values(error.response?.data?.errors || {}).flat().join(' ') || 'The email could not be confirmed. Check Client notifications before trying again.';}
+ finally{reviewEmailBusy.value=false;}
+}
 const reviewLink = ref(''), reviewLinkBusy = ref(false), reviewLinkError = ref(''), reviewLinkCopied = ref(false);
 const reviewRetrySeconds = ref(0);
 let reviewRetryTimer;
@@ -94,7 +101,7 @@ const issues = computed(() => attentionItems(appointments.value,now.value,props.
 const attentionCount = computed(() => issues.value.length + props.calendar.counts.walkInsWaiting);
 async function selectAppointment(event) {
     ++reviewLinkRequestVersion; reviewLinkBusy.value = false;
-    reviewLink.value = ''; reviewLinkError.value = ''; reviewLinkCopied.value = false;
+    reviewEmailNotice.value = ''; reviewLink.value = ''; reviewLinkError.value = ''; reviewLinkCopied.value = false;
     activeEvent.value = appointments.value.find(e=>e.id===event.id) || event;
     statusForm.clearErrors();
     await detailDialog.value?.open();
@@ -632,11 +639,11 @@ onBeforeUnmount(()=>{clearInterval(ticker);clearInterval(refresher);clearTimeout
             <section v-if="activeEvent.canManage && activeEvent.status === 'completed'" class="mt-5 space-y-4">
                 <h3 class="text-sm font-semibold">Client feedback</h3>
                 <template v-if="activeEvent.review"><p class="text-sm font-semibold">{{ activeEvent.review.rating }} out of 5 · {{ activeEvent.review.public_consent ? 'Public review' : 'Private feedback' }}</p><p v-if="activeEvent.review.body" class="whitespace-pre-wrap break-words text-sm leading-6">{{ activeEvent.review.body }}</p></template>
-                <p v-else class="text-sm text-[var(--text-muted)]">Invite the client to share their experience. This private link expires in 7 days; no message is sent automatically.</p>
-                <AppNotice v-if="reviewLinkError" tone="error" title="Review link unavailable" :description="reviewLinkError" />
+                <p v-else class="text-sm text-[var(--text-muted)]">Invite the client to share their experience. Send an optional feedback email or copy a private link. Automatic emails follow your Client notifications preferences.</p>
+                <AppNotice v-if="reviewEmailNotice" tone="success" title="Review email" :description="reviewEmailNotice" /><AppNotice v-if="reviewLinkError" tone="error" title="Review link unavailable" :description="reviewLinkError" />
                 <AppNotice v-else-if="reviewLink" tone="success" :title="reviewLinkCopied ? 'Review link copied' : 'Your review link is ready'"><p>Share this link only with this client. It also opens their private appointment details.</p><label class="mt-3 block text-xs font-semibold" for="appointment-review-link">Private review link</label><input id="appointment-review-link" :value="reviewLink" readonly class="cd-input mt-1" @focus="$event.target.select()" /></AppNotice>
                 <p v-if="reviewRetrySeconds" class="text-sm text-[var(--text-muted)]" aria-live="off">You can create another link in {{ reviewRetrySeconds }} seconds.</p>
-                <div class="mt-[14px] flex flex-wrap gap-2.5"><AppButton variant="secondary" :loading="reviewLinkBusy" :disabled="reviewRetrySeconds > 0" @click="copyReviewLink">{{ reviewLink ? 'Copy review link' : 'Create review link' }}</AppButton><a v-if="reviewLinkError" class="min-h-11 inline-flex items-center text-sm underline" href="mailto:support@clipperdesk.com">Contact support</a></div>
+                <div v-if="!activeEvent.review" class="mt-[14px] flex flex-wrap gap-2.5"><AppButton :loading="reviewEmailBusy" :disabled="!!reviewEmailNotice" @click="sendReviewEmail">Send review email</AppButton><AppButton variant="secondary" :loading="reviewLinkBusy" :disabled="reviewRetrySeconds > 0" @click="copyReviewLink">Copy review link</AppButton><a v-if="reviewLinkError" class="min-h-11 inline-flex items-center text-sm underline" href="mailto:support@clipperdesk.com">Contact support</a></div>
             </section>
             <div v-if="activeEvent.canManage" class="cal-quick-actions">
                 <template v-if="!terminalStatuses.has(activeEvent.status)"><button type="button" @click="reviewAction(()=>openChange(activeEvent))"><ClockIcon aria-hidden="true" />Reschedule</button><button type="button" @click="reviewAction(()=>openChange(activeEvent,'resize'))"><ArrowsPointingOutIcon aria-hidden="true" />Duration</button><button v-if="permissions.reassign" type="button" @click="reviewAction(()=>openChange(activeEvent,'reassign'))"><UserIcon aria-hidden="true" />Change staff</button><button type="button" @click="reviewAction(()=>openChange(activeEvent,'services_changed'))"><ScissorsIcon aria-hidden="true" />Edit services</button></template>

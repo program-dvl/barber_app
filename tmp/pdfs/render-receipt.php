@@ -1,0 +1,8 @@
+<?php
+require __DIR__.'/../../vendor/autoload.php';
+$app = require __DIR__.'/../../bootstrap/app.php';
+$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+config(['receipts.chrome_path' => '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', 'receipts.node_binary' => '/Users/dhavalprajapati/.nvm/versions/node/v22.23.2/bin/node']);
+$receipt = new App\Domain\MoneyCommerce\Models\SaleReceipt(['receipt_number' => 'CD-20261105-EXAMPLE-LONG-REFERENCE-0001', 'issued_at' => now(), 'snapshot' => ['time_zone'=>'Asia/Kolkata','locale'=>'en','business'=>['name'=>'The Barber & Beauty Studio','address'=>'14 Studio Lane, Example City','phone'=>'+1 202 555 0100','email'=>'studio@example.test'],'client'=>'Alexandra Example Customer with a long family name','visit_reference'=>'BK-LONG-REFERENCE-0123456789','location'=>'Central Studio','tax_inclusive'=>false,'sale'=>['currency_code'=>'KWD','subtotal_minor'=>125000,'discount_minor'=>5000,'tax_minor'=>6000,'tip_minor'=>10000,'total_minor'=>136000,'deposit_applied_minor'=>20000,'paid_minor'=>116000,'balance_minor'=>0], 'lines'=>array_fill(0,36,['description'=>'Precision haircut, styling and finishing with a detailed consultation and care recommendations','staff'=>'Jordan Example','quantity'=>1,'unit_price_minor'=>3500,'discount_minor'=>0,'line_total_minor'=>3500]),'payments'=>[['method'=>'card','kind'=>'payment','amount_minor'=>116000]]]]);
+file_put_contents(__DIR__.'/sample.html', view('receipts.sale',['receipt'=>$receipt])->render());
+file_put_contents(__DIR__.'/sample.pdf',app(App\Domain\MoneyCommerce\Services\ReceiptPdfService::class)->bytes($receipt));
