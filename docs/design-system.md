@@ -1459,3 +1459,12 @@ checkbox and approval/pilot notices are removed. Show a compact update/failure n
 only when it explains an actual saved change or recovery action. Booking activity
 and its outcome report retain operational definitions. This refines MP-04’s owner
 workflow without introducing another setup form.
+
+### Marketplace card ratings and cookie footer — 2026-11-11
+
+Use namespaced presentation classes for read-only review scores; `.rating` belongs
+to the shared interactive star widget and masks children. Show score and count in
+one compact row with a complete accessible label. Place Cookie settings beside the
+existing footer links, aligned right, transparent, matching footer text, with visible
+focus and a 44px target. Do not add a separate padded strip beneath the public canvas.
+Consent choices continue to use the shared notice and existing action spacing.

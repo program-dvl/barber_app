@@ -3877,3 +3877,17 @@ Local browser use is disabled in Work settings. Production deployment and Google
 indexing/ranking/customer-outcome verification remain pending.
 
 [Implementation, migration recovery and evidence](audits/2026-11-11-marketplace-automatic-publication/README.md).
+
+### 2026-11-11 Marketplace card rating and footer cleanup
+
+Discovery cards no longer use the conflicting shared star-widget class or the
+cramped verified-visits suffix. Actual scores/counts remain accessible. Cookie
+settings now sits right aligned in the existing footer, on its background, instead
+of a separate strip. Both Marketplace and direct-booking controls reopen the existing
+consent panel. Saved-choice rejection/deletion and acceptance/observation are tested.
+
+Verified locally:247 frontend tests;9 SEO tests/152 assertions with the live built
+SSR renderer, including actual footer HTML; client+SSR build;25 frontsite budgets;
+scoped Pint and whitespace checks. Desktop/mobile browser checks remain blocked by
+“Local browser use is disabled in Work settings”. No deployed visual success claimed.
+[Evidence](audits/2026-11-11-marketplace-card-footer/README.md).

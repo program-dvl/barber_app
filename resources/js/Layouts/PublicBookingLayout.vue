@@ -1,10 +1,11 @@
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { LockClosedIcon } from '@heroicons/vue/24/outline';
 import ProductMark from '@/Components/Product/ProductMark.vue';
 import BookingSkeleton from '@/Components/Booking/BookingSkeleton.vue';
 import MarketplaceLayout from '@/Layouts/MarketplaceLayout.vue';
+import { openAcquisitionPreferences } from '@/Support/marketplaceAttribution';
 import { bookingTheme } from '@/Support/bookingTheme';
 
 const props = defineProps({
@@ -23,6 +24,7 @@ const props = defineProps({
     },
 });
 
+const page = usePage();
 const navigating = ref(false);
 let stopStart, stopFinish;
 onMounted(() => {
@@ -74,8 +76,13 @@ const marketplaceShell = computed(() => (props.marketplace || props.mode === 'se
         </main>
 
         <footer v-if="!marketplaceShell" class="mx-auto max-w-6xl px-4 pb-8 text-center text-xs leading-5 text-[var(--text-muted)] sm:px-6">
-            Keep your appointment links private. Your information is used for this appointment and the preferences you choose.
+            <span>Keep your appointment links private. Your information is used for this appointment and the preferences you choose.</span>
+            <button v-if="page.props.acquisitionPublic" type="button" class="booking-cookie-settings" @click="openAcquisitionPreferences">Cookie settings</button>
         </footer>
     </div>
     </component>
 </template>
+
+<style scoped>
+.booking-cookie-settings{display:flex;align-items:center;justify-content:center;min-height:44px;margin-left:auto;padding:0;background:transparent;border:0;font:inherit;color:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.booking-cookie-settings:focus-visible{outline:2px solid var(--action-primary);outline-offset:3px}
+</style>

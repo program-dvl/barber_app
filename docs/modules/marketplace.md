@@ -332,3 +332,12 @@ existing tables by restoring missing indexes/constraints while preserving rows.
 `php artisan migrate` can finish the reported partial MySQL run. The repeatable
 local MySQL regression is `php scripts/verify-marketplace-mysql-migration.php`.
 See [2026-11-11 evidence](../audits/2026-11-11-marketplace-automatic-publication/README.md).
+
+### Discovery rating and cookie footer — 2026-11-11
+
+MP-01/MPG-06/08: Cards show the real rating and review count using a namespaced
+class that avoids the shared star-widget mask. Remove the redundant verified-visits
+suffix. Cookie settings is a compact, right-aligned control in the existing footer
+on the same canvas; direct booking retains its own footer control. Both reopen the
+existing consent panel, with acceptance/rejection and privacy signals preserved.
+[Local checks and browser limitation](../audits/2026-11-11-marketplace-card-footer/README.md).

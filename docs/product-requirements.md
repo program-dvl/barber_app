@@ -1230,3 +1230,10 @@ constraint names must fit MySQL identifier limits.
 
 Individual profile readiness uses the real public name, address and qualified
 services. The description remains optional and has no minimum character quota.
+
+### Marketplace card and cookie-footer cleanup — 2026-11-11
+
+MP-01/MPG-06/08. Remove the cramped verified-visits wording from directory cards.
+Keep the real average/count readable with styles scoped to the card. Cookie settings
+belongs at the right end of the existing footer navigation, using its background
+and compact spacing. Preserve accessible touch targets and working consent choices.

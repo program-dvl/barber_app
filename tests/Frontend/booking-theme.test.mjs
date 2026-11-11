@@ -51,6 +51,7 @@ async function compileActual(path) {
         .replace(/import MarketplaceLayout from '[^']+';/,`const MarketplaceLayout=globalThis.bookingShellTest.MarketplaceLayout;`)
         .replace(/import marketplaceMark from '[^']+';/,`const marketplaceMark='/assets/clipperdesk-marketplace-mark.svg';`)
         .replace(/import '[^']+\.css';/g,'')
+        .replace("from '@/Support/marketplaceAttribution';",`from '${pathToFileURL(resolve('resources/js/Support/marketplaceAttribution.js')).href}';`)
         .replace("from '@/Support/bookingTheme';",`from '${pathToFileURL(resolve('resources/js/Support/bookingTheme.js')).href}';`)
         .replace("from '@/Support/useActionMenus';",`from '${pathToFileURL(resolve('resources/js/Support/useActionMenus.js')).href}';`);
     return(await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`)).default;
@@ -118,4 +119,19 @@ test('private customer management, review, waitlist and forms share Marketplace 
         assert.match(html,/data-private-content/);assert.match(html,new RegExp(title));
         assert.doesNotMatch(html,/data-product-mark|cd-product-flow|Step 0 of|Ready to start/);
     }
+});
+
+test('cookie settings stays inside the actual Marketplace or direct-booking footer',async()=>{
+    const Layout=await actualLayout();
+    pageState.props={errors:{},brand:{support_email:'support@example.test'},acquisitionPublic:{page:'/marketplace',kind:'entry'}};
+    try{
+        for(const marketplace of [true,false]){
+            const app=createSSRApp({render:()=>h(Layout,{marketplace,title:'Sample Studio'})});
+            app.config.globalProperties.route=()=>'/';
+            const html=await renderToString(app);
+            const footer=html.match(/<footer[\s\S]*?<\/footer>/)?.[0];
+            assert.ok(footer);assert.match(footer,/Cookie settings/);assert.equal((html.match(/Cookie settings/g)||[]).length,1);
+            assert.doesNotMatch(html,/acquisition-choice/);
+        }
+    }finally{pageState.props={errors:{},brand:{support_email:'support@example.test'}};}
 });

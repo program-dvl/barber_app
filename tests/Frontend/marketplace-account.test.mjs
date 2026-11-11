@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parse, compileScript } from '@vue/compiler-sfc';
 import { createRenderer, h, nextTick, reactive } from 'vue';
+import { openAcquisitionPreferences, ACQUISITION_CONSENT_KEY } from '../../resources/js/Support/marketplaceAttribution.js';
 const vue = pathToFileURL(resolve('node_modules/vue/dist/vue.runtime.esm-bundler.js')).href;
 const container = {setup(props,{slots}){return()=>h('div',[slots.actions?.(),slots.default?.()]);}};
 const Link = {props:['href'],setup(props,{attrs,slots}){return()=>h('a',{...attrs,href:props.href},slots.default?.());}};
@@ -16,8 +17,10 @@ async function load(path){
         .replace(/from (['"])vue\1/g,`from '${vue}'`)
         .replace(/import \{ ([^}]+) \} from '@heroicons\/vue\/24\/outline';/g,(_,names)=>names.split(',').map(name=>`const ${name.trim()}={render(){return null}};`).join('\n'))
         .replace(/import \{([^}]+)\} from '@inertiajs\/vue3';/g,(_,names)=>names.split(',').map(name=>{name=name.trim();return `const ${name} = ${name==='useForm'?'(...args)=>globalThis.accountUiTest.form(...args)':name==='usePage'?'()=>globalThis.accountUiTest.page':name==='router'?' {reload:(...args)=>globalThis.accountUiTest.reload(...args),get:(...args)=>globalThis.accountUiTest.get(...args),on:()=>()=>{}}':name==='Link'?'globalThis.accountUiTest.Link':'globalThis.accountUiTest.container'};`;}).join('\n'))
+        .replace("import axios from 'axios';", 'const axios={post:(...args)=>globalThis.accountUiTest.axios.post(...args),delete:(...args)=>globalThis.accountUiTest.axios.delete(...args)};')
         .replace(/import (\w+) from '(?:@\/|\.\/)[^']+';/g,(_,name)=>`const ${name}=globalThis.accountUiTest.components.${name} || {render(){return null}};`)
-        .replace(/import '[^']+\.css';/g,'');
+        .replace(/import '[^']+\.css';/g,'')
+        .replace("from '@/Support/marketplaceAttribution';",`from '${pathToFileURL(resolve('resources/js/Support/marketplaceAttribution.js')).href}';`);
     return(await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`)).default;
 }
 globalThis.accountUiTest.components.AppButton=await load('resources/js/Components/Product/AppButton.vue');
@@ -31,6 +34,7 @@ const Account=await load('resources/js/Pages/Marketplace/Account.vue');
 const Inbox=await load('resources/js/Pages/Marketplace/Inbox.vue');
 const Profile=await load('resources/js/Pages/Marketplace/Profile.vue');
 const Conversation=await load('resources/js/Pages/Marketplace/Conversation.vue');
+const AcquisitionConsent=await load('resources/js/Components/Marketplace/AcquisitionConsent.vue');
 const Recovery=await load('resources/js/Components/Product/MarketplaceRecovery.vue');
 const Shell=await load('resources/js/Layouts/MarketplaceAccountLayout.vue');
 const flush=async()=>{for(let i=0;i<20;i++)await nextTick();};
@@ -170,4 +174,22 @@ test('Business listing follows published booking setup with one optional visibil
         assert.equal(f.nodes().filter(node=>node.tagName==='FORM').length,1);
         await f.submit();assert.equal(f.calls[0].url,listing.save_url);assert.equal(f.calls[0].body.version,3);assert.equal(f.calls[0].body.consent,true);
     }finally{f.app.unmount();}
+});
+
+test('footer cookie action reopens saved choices and rejection remains functional without an extra settings strip',async()=>{
+    const priorWindow=globalThis.window,priorStorage=globalThis.localStorage;
+    const values=new Map([[ACQUISITION_CONSENT_KEY,JSON.stringify({version:'mpg-consent-v1',choice:'rejected',expires_at:Date.now()+86400000})]]);
+    const browser=new EventTarget();browser.navigator={};browser.location={href:'https://example.test/marketplace'};
+    browser.localStorage={getItem:key=>values.get(key)||null,setItem:(key,value)=>values.set(key,value)};
+    globalThis.window=browser;globalThis.localStorage=browser.localStorage;
+    const calls=[];globalThis.accountUiTest.axios={post:async()=>calls.push('post'),delete:async()=>calls.push('delete')};
+    const f=mount(AcquisitionConsent,{}, {acquisitionPublic:{page:'/marketplace',kind:'entry'}});await flush();
+    try{
+        assert.equal(f.nodes().filter(node=>node.tagName==='BUTTON').length,0);
+        openAcquisitionPreferences();await flush();assert.match(f.text(),/Your cookie choices/);
+        await f.click(f.button('Reject optional cookies'));assert.equal(JSON.parse(values.get(ACQUISITION_CONSENT_KEY)).choice,'rejected');assert.deepEqual(calls,['delete']);
+        assert.ok(!f.nodes().some(node=>node.tagName==='ASIDE'));
+        openAcquisitionPreferences();await flush();await f.click(f.button('Accept optional cookies'));
+        assert.equal(JSON.parse(values.get(ACQUISITION_CONSENT_KEY)).choice,'accepted');assert.deepEqual(calls,['delete','post']);
+    }finally{f.app.unmount();globalThis.window=priorWindow;globalThis.localStorage=priorStorage;}
 });

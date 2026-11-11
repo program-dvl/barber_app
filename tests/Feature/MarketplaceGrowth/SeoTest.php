@@ -178,10 +178,16 @@ it('renders real built SSR directory and canonical booking HTML when the local r
     $hub = growthApproveHub($f);
     $r = $this->get($hub->path)->assertOk()->assertDontSee('data-marketplace-fallback', false);
     expect(growthMainHtml($r))->toContain('Dog grooming', 'Explore & book', 'Test City');
+    expect($r->getContent())->toMatch('/<footer[^>]*class="mp-footer"[^>]*>.*?class="mp-cookie-settings"[^>]*>Cookie settings<.*?<\/footer>/s');
+    expect(substr_count($r->getContent(), '>Cookie settings</button>'))->toBe(1);
+    $r->assertDontSee('acquisition-choice', false);
     $r = $this->get('/marketplace/salons/'.$f['business']->booking_slug)->assertOk()->assertDontSee('data-marketplace-fallback', false);
     $r->assertSee('Clipperdesk Marketplace home')->assertSee('mp-booking-flow', false)
         ->assertDontSee('ClipperDesk booking home');
     expect(growthMainHtml($r))->toContain('Dog grooming', 'Pine & Palm Studio');
+    expect($r->getContent())->toMatch('/<footer[^>]*class="mp-footer"[^>]*>.*?Cookie settings.*?<\/footer>/s');
+    expect(substr_count($r->getContent(), '>Cookie settings</button>'))->toBe(1);
+    $r->assertDontSee('acquisition-choice', false);
     $r = $this->get('/appointments/secure/not-a-real-token')->assertNotFound()
         ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive')->assertHeader('Cache-Control', 'no-store, private');
     expect(growthMainHtml($r))->toContain('Check your appointment link', 'Open the latest link in your confirmation email');

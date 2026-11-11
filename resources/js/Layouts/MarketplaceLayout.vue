@@ -4,6 +4,7 @@ import { Link, usePage, router } from '@inertiajs/vue3';
 import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import AppNotice from '@/Components/Product/AppNotice.vue';
 import marketplaceMark from '../../images/brand/clipperdesk-marketplace-mark.svg';
+import { openAcquisitionPreferences } from '@/Support/marketplaceAttribution';
 import {useActionMenus} from '@/Support/useActionMenus';
 useActionMenus();
 import '../../css/marketplace.css';
@@ -27,6 +28,6 @@ const status = computed(() => page.props.marketplaceStatus);
     <div v-if="status" class="mp-status"><AppNotice tone="success" :title="status" /></div>
     <div v-if="page.props.errors?.marketplace" class="mp-status"><AppNotice tone="warning" title="Let’s help you continue" :description="page.props.errors.marketplace"><template #actions><span v-if="remaining">Try again in {{remaining}} seconds</span><a class="mp-button secondary" :href="`mailto:${page.props.brand?.support_email}`">Contact support</a></template></AppNotice></div>
     <fieldset id="marketplace-main" tabindex="-1" :disabled="remaining>0 || page.props.marketplaceBlocked" style="min-width:0;border:0;padding:0;margin:0"><slot /></fieldset>
-    <footer class="mp-footer"><Link href="/marketplace" class="mp-footer-brand">Clipperdesk<small>marketplace</small></Link><p>A little time for you.</p><nav aria-label="Footer"><a href="/help">Help</a><a :href="`mailto:${page.props.brand?.support_email}`">Contact support</a><a href="/privacy-policy">Privacy</a><a href="/marketplace/terms">Terms</a><a href="/">Clipperdesk Business ↗</a></nav></footer>
+    <footer class="mp-footer"><Link href="/marketplace" class="mp-footer-brand">Clipperdesk<small>marketplace</small></Link><p>A little time for you.</p><nav aria-label="Footer"><a href="/help">Help</a><a :href="`mailto:${page.props.brand?.support_email}`">Contact support</a><a href="/privacy-policy">Privacy</a><a href="/marketplace/terms">Terms</a><a href="/">Clipperdesk Business ↗</a><button v-if="page.props.acquisitionPublic" type="button" class="mp-cookie-settings" @click="openAcquisitionPreferences">Cookie settings</button></nav></footer>
 </div>
 </template>

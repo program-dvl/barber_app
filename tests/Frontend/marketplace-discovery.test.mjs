@@ -104,3 +104,14 @@ test('Google location selection requests only transient geometry and ignores lat
     assert.deepEqual(fields,[['location']]); assert.deepEqual(selected,[{lat:43.65123456,lng:-79.38123456}]);
     f.app.unmount(); await widget.listeners['gmp-select'](event); assert.equal(selected.length,1);
 });
+
+test('listing ratings show the actual score and count without the conflicting star-widget class or visit label',()=>{
+    const f=mount(Discover,{filters:{q:'',location:'',rating:'',date:'',category:''},results:{data:[{name:'Rock Studio',url:'/marketplace/salons/rock',address:'601 Upper James Street',reviews:{count:1,average:4},distance:null}],total:1}});
+    try{
+        const rating=f.nodes().find(node=>node.props?.class==='salon-rating');
+        assert.ok(rating);assert.equal(rating.props['aria-label'],'Rated 4.0 out of 5 from 1 review');
+        assert.match(f.text(),/4\.0 \(1\)/);assert.doesNotMatch(f.text(),/verified visits/);
+        assert.ok(!f.nodes().some(node=>node.props?.class==='rating'));
+        assert.match(f.text(),/601 Upper James Street/);
+    }finally{f.app.unmount();}
+});

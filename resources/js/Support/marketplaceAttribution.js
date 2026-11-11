@@ -1,3 +1,10 @@
+export const ACQUISITION_PREFERENCES_EVENT = 'clipperdesk:acquisition-preferences';
+export function openAcquisitionPreferences() {
+    if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event(ACQUISITION_PREFERENCES_EVENT));
+    }
+}
+
 export const ACQUISITION_CONSENT_KEY = 'clipperdesk:marketplace-acquisition:v1';
 export function acquisitionConsent(browser = globalThis.window, now = Date.now()) {
     try {

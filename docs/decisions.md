@@ -3600,3 +3600,12 @@ normal SEO rollout setting, default false. The existing enabled config key remai
 MARKETPLACE_GROWTH_ENABLED environment variable has no effect. The old slug list is unused and removed. This refines
 MPG-05/07’s manual profile/pilot controls. Production indexing is still an explicit
 platform deployment choice.
+
+### Marketplace rating and cookie-footer presentation — 2026-11-11
+
+Accepted from the owner’s screenshots. Replace the generic rating class that collides
+with the installed star-rating styles. Show the actual score and review count with
+an accessible label. Put the existing discovery-cookie opener in the shared footer,
+using a browser event to open the existing global consent panel. Direct owner-booking
+pages expose the same opener in their footer when discovery consent is available.
+Consent storage, expiry and privacy controls retain their existing semantics.
