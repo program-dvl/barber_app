@@ -234,7 +234,7 @@ preview and publish endpoints return authenticated 410; foreign records return
 404, and unauthorized roles remain 403.
 
 SES receives responsive, inline-styled HTML and plain text. The structured email
-uses ClipperDesk branding, a status/preheader, purpose-specific introduction,
+uses Clipperdesk Marketplace branding, a status/preheader, purpose-specific introduction,
 local date/time/timezone, available visit/recorded payment facts, location arrival
 information and a labelled action button. Buttons are omitted when no validated
 HTTP(S) action exists. Pending bookings never claim confirmation; cancellation
@@ -385,3 +385,65 @@ applicable. Provider attempts/callbacks and uncertain-result recovery retain the
 existing pipeline. One request per visit is deliberate; manual repeated clicks
 show its existing delivery outcome rather than resending. See the dated
 [verification and deployment notes](../audits/2026-11-05-visit-emails/README.md).
+
+## Marketplace booking inbox — 2026-11-08
+
+MP-02 now adds a separate in-app marketplace conversation store/service. It does
+not enable the retained SMS/WhatsApp conversational adapters, send chat emails or
+spend SMS credits. Customer ownership, tenant/branch/own-staff authorization,
+encrypted content, UUID replay, displayed-page read status and pause/report rules
+are defined in [Marketplace](marketplace.md#booking-conversations-and-support).
+
+Marketplace thread presentation now separates the labelled history, composer and
+booking/control sidebar; inbox refresh is explicit with a loading-disabled action.
+Customer and Business views retain sender-aware wording, exact send keys, drafts,
+read timestamps, pause/report and all existing permissions. No realtime/push/provider
+chat delivery was added. [UI evidence/limits](../audits/2026-11-08-marketplace-account-design/README.md).
+
+## Marketplace identity for client emails — 2026-11-08
+
+Owner-approved branding refinement: all client-facing emails use the forest/lime CD
+badge with sparkle, capital-C Clipperdesk wordmark and Marketplace descriptor. This
+includes confirmations, pending/approval/rejection, changes/cancellations, reminders,
+waitlist/queue updates, receipts and consented review email. Salon name, appointment
+facts, purpose-specific status/actions, directions and existing consent/suppression
+remain authoritative. Legacy unstructured email gets the same escaped branded shell.
+
+Client SES display name becomes Clipperdesk Marketplace; verified sender address,
+configuration set, signatures, replay policy, attachment handling and provider safety
+stay unchanged. New email content captures revision `2026-11-08-marketplace`; old
+queued versions/plain text are retained and both supported platform revisions still
+render structured purpose-specific HTML. SMS body revision, sender registration,
+credits and all mobile-channel rules remain unchanged. Business account/security/
+billing/team email remains separately Business-branded.
+
+The shared email partial uses a192px PNG export of the CD vector with sparkle,
+displayed at44px, from a stable public asset path under the configured brand website.
+No SVG/data-URL dependency is imposed on mail clients. Deploy the public PNG with
+views/config/code. Local renderer/SES mocks pass; actual inbox display and provider
+sending have not been newly verified.
+
+### Booking conversation alerts and email rendering repair — 2026-11-09
+
+FR-13/MP-04 adds transactional email alerts for new Marketplace booking messages,
+independent of deferred inbound SMS/WhatsApp conversations. Customer messages notify
+one current verified owner; business replies notify the verified booking customer.
+The ordinary framework mailer and EmailNotificationDelivery ledger record actual
+transport acceptance. A message/alert UUID commits atomically, then an after-commit
+job rechecks recipients/pause/read state. Failed or uncertain mail leaves the
+conversation saved; no blind resend or historical backfill occurs. Authenticated
+conversation links contain no bearer token. Bodies, appointment details and CRM
+content stay in the authorized inbox. See [Marketplace](marketplace.md#focused-business-messages-and-transactional-email--2026-11-09)
+for queue, disable and recovery rules. Optional analytics consent does not authorize
+mail, and message alerts do not grant marketing consent.
+
+MarketplaceEmailBrand embeds the existing PNG for sign-in and conversation mail,
+and supplies a stable CID reference for ClientNotificationEmail. SES uses its
+existing raw-MIME path for a related logo (with or without PDF attachments), keeping
+sender, configuration sets/tags, text alternatives, PDF bytes and uncertain-send
+handling. No dependency on an inbox proxy fetching a development URL remains.
+The Marketplace theme removes inherited blue body/footer colours; account/security/
+billing operator themes remain unchanged. Synthetic self-contained HTML and MIME
+samples are in the [audit](../audits/2026-11-09-marketplace-messages-email/README.md).
+Array delivery and SES mocks prove structure; real Gmail/Outlook rendering and
+production delivery remain unverified. No external email was sent during this work.

@@ -38,7 +38,7 @@ it('keeps all thirteen industry choices and adds evidence only to reviewed indus
     $this->get(route('marketing.solutions'))->assertOk()->assertInertia(fn (Assert $page) => $page->has('solutions', 13));
     foreach (['salons', 'barbershops'] as $slug) {
         $this->get(route('marketing.solutions.show', $slug))->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->has('solution.screenshots', 1)->has('solution.faqs', 4));
+            ->assertInertia(fn (Assert $page) => $page->has('solution.screenshots', 2)->has('solution.faqs', 4));
     }
     $this->get(route('marketing.solutions.show', 'pet-grooming'))->assertOk()
         ->assertInertia(fn (Assert $page) => $page->has('solution.screenshots', 0)->where('solution.slug', 'pet-grooming'));

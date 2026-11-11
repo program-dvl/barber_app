@@ -7,6 +7,7 @@ use App\Domain\Communications\Data\OutboundCommunication;
 use App\Domain\Communications\Data\ProviderSendResult;
 use App\Domain\Communications\Exceptions\CommunicationProviderException;
 use App\Domain\Communications\Services\ClientNotificationEmail;
+use App\Support\Mail\MarketplaceEmailBrand;
 use Aws\Exception\AwsException;
 use Aws\Ses\SesClient;
 use Symfony\Component\Mime\Address;
@@ -38,7 +39,7 @@ class SesEmailProvider implements EmailChannelProvider
             throw new CommunicationProviderException('provider_not_configured', false);
         }
         $source = config('communications.ses.from_address');
-        $name = trim(str_replace(["\r", "\n", '<', '>', '"'], '', (string) config('brand.product_name', 'ClipperDesk')));
+        $name = trim(str_replace(["\r", "\n", '<', '>', '"'], '', (string) config('brand.marketplace_email_name', 'Clipperdesk Marketplace')));
         $payload = [
             'Source' => $name !== '' ? '"'.$name.'" <'.$source.'>' : $source,
             'Destination' => ['ToAddresses' => [$message->destination]],
@@ -52,8 +53,10 @@ class SesEmailProvider implements EmailChannelProvider
             $payload['ConfigurationSetName'] = config('communications.ses.configuration_set');
         }
         try {
-            if ($message->attachments) {
-                $mail = (new Email)->from(new Address($source, $name))->to($message->destination)->subject($message->subject)->text($message->body)->html($message->htmlBody ?? nl2br(e($message->body)));
+            $html = $payload['Message']['Body']['Html']['Data'];
+            if ($message->attachments || str_contains($html, MarketplaceEmailBrand::SOURCE)) {
+                $mail = (new Email)->from(new Address($source, $name))->to($message->destination)->subject($message->subject)->text($message->body)->html($html);
+                app(MarketplaceEmailBrand::class)->attach($mail);
                 foreach ($message->attachments as $attachment) {
                     $mail->attach($attachment['content'], $attachment['filename'], $attachment['content_type']);
                 }

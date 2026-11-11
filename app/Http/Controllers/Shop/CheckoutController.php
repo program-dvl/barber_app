@@ -18,7 +18,6 @@ use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
 use App\Domain\PlatformAccess\Models\StaffProfile;
 use App\Domain\SchedulingOperations\Models\Appointment;
-use App\Domain\SchedulingOperations\Models\OperationalNotificationEvent;
 use App\Http\Controllers\Controller;
 use App\Support\Audit\AuditWriter;
 use App\Support\Tenancy\TenantContext;
@@ -246,9 +245,6 @@ class CheckoutController extends Controller
             return;
         }
         $this->receipts->issue($sale);
-        if ($sale->appointment_id) {
-            OperationalNotificationEvent::query()->firstOrCreate(['business_id' => $sale->business_id, 'idempotency_key' => 'sale:'.$sale->id.':payment-receipt'], ['event_type' => 'payment.receipt', 'subject_type' => Appointment::class, 'subject_id' => $sale->appointment_id, 'payload' => ['amount_minor' => $sale->total_minor, 'currency' => $sale->currency_code, 'sale_public_id' => $sale->public_id], 'status' => 'pending', 'occurred_at' => now()]);
-        }
     }
 
     public function open(Request $request, Business $business, Appointment $appointment)

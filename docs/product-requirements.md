@@ -1091,3 +1091,142 @@ subscriptions are unchanged. Public pricing uses “Three months to make it your
 and “3-month free trial”, without launch/urgency claims. No card is required;
 a paid subscription requires separate confirmation. Actual saved end dates remain
 authoritative in the subscription workspace.
+
+## Owner-approved marketplace expansion — 2026-11-08
+
+MP-01: The owner promotes customer discovery marketplace and its connection to
+Clipperdesk Business from deferred Phase 2 scope. Two related branded public
+experiences serve business operators and customers respectively. Discovery covers
+service/business/location search, salon profiles and canonical online booking.
+MP-02: Customer signup/login, owned booking history and management, favourites and
+appointment-linked messaging are approved expansion scope; these require dedicated
+identity/ownership and consent boundaries, not shared access to tenant CRM records.
+MP-03: Booking payments remain external/manual. Businesses record the amount and
+method collected using existing checkout history. No booking gateway, online card
+collection or automatic provider refunds are requested. SaaS subscription billing
+is independent. Existing required-deposit protections must not be bypassed silently.
+MP-04: Explicit listing consent, truthful reviews, private-record isolation and
+mobile usability are launch requirements. See modules/marketplace.md for delivery
+stages and remaining decisions. This promotion does not waive existing release gates.
+
+### Marketplace implementation clarification — 2026-11-08
+
+MP-01–04 implementation uses first-party `/marketplace`, optional guest booking,
+separate passwordless verified customer accounts, private-link-plus-email legacy
+claiming, shared canonical availability/holds/commit and audited owner listing
+consent. Customer and Business in-app conversations are booking-bound; direct
+message provider sends and marketing are not implied. Manual payments remain
+externally collected/recorded; required-deposit gates are preserved. See
+[the module contract](modules/marketplace.md) for implemented journeys and
+[release evidence](audits/2026-11-08-marketplace/README.md) for certification limits.
+
+### Owner-approved marketplace refinements — 2026-11-08
+
+Supersedes the explicit opt-in/default-hidden and private-link claiming portions
+above. MP-01/04: existing active, published online-booking salons appear by default;
+a saved owner pause wins. Service/location/optional date are the primary search;
+remove customer-facing currency/price filters. MP-02: preserve remembered customer
+sessions, add Google verified-email sign-in, dedicated profile and visible logout.
+Automatically associate unclaimed appointments with the same verified email,
+without merging CRM records or reassigning another customer's links. Remove the
+manual claim-by-link interface. Transactional email retains the shared Business
+format with Marketplace colours. MP-03 manual payments remain unchanged.
+
+### Owner-approved unified booking/location refinement — 2026-11-08
+
+MP-01/04: replace the duplicate Marketplace salon service/time preview with the
+established booking page directly; preserve service/location/date through old entry
+links. Search suggestions must use eligible public Services records. Hair/Barber/
+Nails cards must filter and visibly reveal results. Reuse configured Google Places
+and Maps for location suggestions and a responsive map/list with selectable pins.
+Current location requests device high accuracy on explicit action; retain precision
+only in a short-lived search session, not customer records or coordinate URLs.
+Manual booking payment and canonical scheduling/authorization rules remain unchanged.
+
+### Owner-approved customer email branding — 2026-11-08
+
+MP-02/FR-13: Marketplace account emails and client booking/reminder/change/receipt/
+review/waitlist/service emails carry the Marketplace CD logo, capital-C Clipperdesk
+wordmark and related palette. Preserve the salon identity, transactional facts,
+consent, safe actions and retained queued text. Operator account/security/billing/
+team emails keep Business branding. No additional sends, channels or collection
+of booking payments are approved by this presentation change.
+
+## Owner-approved Marketplace local growth execution — 2026-11-08
+
+This request approves local stages A–D of [the strategy](strategy/marketplace-local-growth-plan.md),
+under MP-01–04 and FR-02–09/15/18/19. Stage E, legal/regional approval and production
+indexation remain separate gates. No gateway, commission, ads, clinical workflows,
+external posting or acquisition guarantee is approved.
+
+| ID | Approved implementation acceptance |
+| --- | --- |
+| MPG-01 | Versioned many-to-many audience/family/concept mappings cover every Solutions audience; keep operational types and tenant service names, including legacy nail_salon. Ambiguous names remain searchable without invented labels. |
+| MPG-02 | Owner-reviewed stable geography and explicit address-publication choices; no automatic city guessing or retained Google catalogue. |
+| MPG-03 | Tenant-safe eligible service/location read projection, transactional dirty outbox, after-commit refresh, retry and reconciliation. Dirty or no-longer-qualified supply fails closed. |
+| MPG-04 | Bounded retrieval/suggestions, deterministic versioned ranking, relevant bounded new-business exploration and honest nearby alternatives. No crawler availability fan-out. |
+| MPG-05 | Reviewed inventory-backed SEO registry; independent substantive profiles; curated country/city/audience/service hubs, configurable editorial thresholds, separate draft/readiness/publication/withdrawal. |
+| MPG-06 | Canonical existing provider booking page, real aliases/statuses, useful initial guest HTML including SSR outage, truthful visible schema, breadcrumbs, accurate lastmod, sitemap index/shards. |
+| MPG-07 | Global indexation default-off and exact-origin/pilot gates; arbitrary filters/private/account/token pages noindex, private no-store; cache only public projections independent of identities. |
+| MPG-08 | Consent-required first/last discovery observation, owner shared-link source and booking entry recorded separately, versioned bounded attribution; missing consent/source stays unknown. No private URLs, phrases, fingerprints or contacts. |
+| MPG-09 | Authorized tenant/branch reports reproduce confirmation/completion/cancellation/no-show/new-client and append-only recorded collection/refund facts, separate currencies and booked/collected value. No incremental-revenue claim. |
+| MPG-10 | Optional aggregate Search Console import interface; retention, privacy, query/build/crawl evidence, recovery and concrete stage-E package. No invented external data. |
+
+### Customer photo and cookie wording refinement — 2026-11-09
+
+MP-05: The owner approves optional customer profile photo upload/removal, displayed
+only in that customer’s own profile and account navigation. Preserve separate
+customer ownership, private storage, image validation and metadata stripping.
+Centre the My account chevron. Use familiar optional-cookie wording with equally
+reachable acceptance/rejection; no consent or tracking expansion is inferred.
+
+### Marketplace booking visual continuity — 2026-11-09
+
+MP-01/MPG-06: entering an existing business booking page from Marketplace retains
+the shared Marketplace wordmark, navigation/account controls, ivory background,
+forest/sage surfaces and footer through every booking step. Keep the business’s
+name, logo, gallery, service/staff/location data, prices, policies and saved accent
+inside the booking content. Direct owner booking links and private preview retain
+their established shell; no extra selection page or booking command is added.
+
+### Marketplace email and private customer journey continuity — 2026-11-09
+
+MP-02/FR-13: Marketplace account and client-service email uses a reliable embedded
+raster logo and one consistent ivory surround, with restrained white content and
+forest/sage text/actions. Keep private sign-in/actions, expiry and sender safety.
+MP-01/MPG-07: secure appointment management, reschedule/cancel/review/payment-status,
+waitlist offers and existing client forms/completion use the Marketplace shell.
+No new authentication, clinical workflow, message sends or payment behavior.
+
+### Focused Business Messages and transactional alerts — 2026-11-09
+
+MP-04/FR-13: rename the Business navigation item to Messages. Provide a focused,
+standard Business inbox/conversation workspace; listing/publication settings and
+booking-entry counters belong outside it. Preserve owner listing controls through
+Business setup → Marketplace listing. Retain existing tenant/branch/appointment/
+client-contact permissions, escaped encrypted messages, paging, pause and replay.
+New saved customer messages notify one active verified owner/main account; business
+replies notify the currently verified booking customer. Alerts contain no message
+body or private bearer link, open the authenticated conversation and are queued
+after commit with durable deduplication/status. No sockets/realtime promise.
+
+### Automatic Marketplace publication — 2026-11-11
+
+MP-01/04, MPG-03/05/07 refinement approved by the owner’s deployment feedback.
+Completing and publishing a bookable business makes it available in Marketplace
+search automatically. Public discovery runs by default. Store owners use their
+existing Business setup, Services and Locations workflows plus an optional listing
+pause. Individual profiles derive their SEO readiness and publication record from
+saved public booking facts automatically. The profile policy accepts the existing
+public booking address without a separate geography approval. Curated area hubs
+continue to use reviewed geography and real inventory. Remove per-business pilot
+allowlists and the duplicate growth-origin setting. Reuse BRAND_WEBSITE_URL for
+canonical-host checks. Retain one default-off platform search-indexing switch and
+private noindex/no-store protections. Actual Google appearance depends on crawling.
+
+The local-growth migration must resume a partially completed MySQL DDL run by
+restoring missing constraints/indexes while preserving existing rows. Explicit
+constraint names must fit MySQL identifier limits.
+
+Individual profile readiness uses the real public name, address and qualified
+services. The description remains optional and has no minimum character quota.

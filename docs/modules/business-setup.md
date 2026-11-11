@@ -190,3 +190,29 @@ the “no clients or transactions were added” starter disclaimer. The same rea
 evaluator still validates real staff/service/hour paths; no general onboarding
 bypass or extra default services are added. Current demo region is CA/en-CA/CAD,
 America/Toronto, with two calendar months of past and future activity.
+
+## Local search readiness (MPG-02–05)
+
+Marketplace & messages reuses Business details, Locations and Services, with a
+compact readiness/publication panel and links into those editors. No second setup
+form or score is introduced. Registration does not publish; an eligible public
+booking path is required for discovery, then owner review request and separate
+operator approval for SEO. Empty approved geography is an operator task, not a
+customer configuration repair. Photos and reviews remain optional.
+
+### Marketplace listing controls separated from Messages — 2026-11-09
+
+MP-04/MPG-05: Business setup → Marketplace listing opens the existing listing,
+publication readiness and booking-entry/outcome controls at
+`business.marketplace.settings`. BusinessSetupAccess still requires settings
+permission and owner/full-location scope. Messages now opens only the operational
+inbox; publication consent, versions and default-off SEO launch gates are unchanged.
+
+
+### Automatic Marketplace availability — 2026-11-11
+
+MP-01/04. Publishing completed online booking also refreshes Marketplace supply
+immediately after commit. Owners manage services, staff, branches and public details
+through this setup. Marketplace listing provides an optional pause/resume control.
+Individual profile preparation follows public details automatically. A separate SEO
+request, geography approval and pilot enrollment are removed from this owner journey.

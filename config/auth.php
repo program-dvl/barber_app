@@ -38,6 +38,7 @@ return [
     */
 
     'guards' => [
+        'marketplace' => ['driver' => 'session', 'provider' => 'marketplace_customers'],
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
@@ -62,6 +63,7 @@ return [
     */
 
     'providers' => [
+        'marketplace_customers' => ['driver' => 'eloquent', 'model' => \App\Domain\Marketplace\Models\Customer::class],
         'users' => [
             'driver' => 'eloquent',
             'model' => User::class,

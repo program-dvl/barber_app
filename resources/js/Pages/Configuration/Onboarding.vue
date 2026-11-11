@@ -369,6 +369,7 @@ const commitImport = async () => {
         <template v-else>
         <PageHeader title="Business setup">
             <template #actions>
+                <AppButton :href="route('business.marketplace.settings', business.public_id)" variant="secondary">Marketplace listing</AppButton>
                 <AppButton v-if="business.configuration_published_at && business.online_booking_enabled" :href="bookingUrl" variant="secondary">View booking page</AppButton>
             </template>
         </PageHeader>

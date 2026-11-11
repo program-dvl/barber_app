@@ -158,7 +158,7 @@ it('provides a release check that fails without approval and passes a complete r
 it('explains optional Google Analytics consent, exclusions and withdrawal without promising retroactive deletion', function () {
     $this->get('/privacy-policy')->assertOk()
         ->assertSee('Google Analytics 4')
-        ->assertSee('Accept analytics')->assertSee('Reject analytics')
+        ->assertSee('Accept optional cookies')->assertSee('Reject optional cookies')
         ->assertSee('Cookie settings')
         ->assertSee('without query strings, fragments or referrers')
         ->assertSee('does not automatically erase information already processed')

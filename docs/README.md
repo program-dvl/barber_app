@@ -38,6 +38,8 @@ exists.
 
 ## Document map
 
+Marketplace acquisition planning: [multi-industry local growth strategy](strategy/marketplace-local-growth-plan.md) and [separate-thread Codex prompt](prompts/marketplace-local-growth.md). These are planning artifacts, not shipped SEO or publication approval.
+
 Sales partner reference: [Hamilton pilot sales brief](sales/hamilton-partner-sales-brief.md)
 covers positioning, discovery, pricing, the founder-authorized three-month pilot,
 assisted setup and presentation preparation. It does not change account trials.
@@ -53,6 +55,7 @@ assisted setup and presentation preparation. It does not change account trials.
 | `quality-and-testing.md` | Quality attributes, testing strategy, and release evidence | Quality gate or test strategy change |
 | `deployment/public-booking.md` | Primary booking host, fallback, migration and infrastructure verification | Booking routing or deployment changes |
 | `public-booking-journey.md` | Implemented public flow, secure-link, waitlist, failure, and placeholder contract | Public booking, communications, or payment coordination change |
+| `modules/marketplace.md` | Customer discovery/accounts/booking linkage, listing consent and booking inbox | Every Marketplace change |
 | `modules/booking-presentation.md` | Optional salon gallery, portraits, owner image previews and public page presentation | Public salon or owner media workflow change |
 | `modules/client-reviews.md` | Completed-visit private feedback, public consent and secure review links | Reviews, consent, public projection or owner feedback change |
 | `roadmap.md` | Dependency-aware delivery sequence and prompt map | Stage ordering or scope change |

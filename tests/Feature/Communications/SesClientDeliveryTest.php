@@ -10,6 +10,7 @@ use App\Domain\Communications\Providers\SesEmailProvider;
 use App\Domain\Communications\Services\ClientNotificationEmail;
 use App\Domain\Communications\Services\CommunicationDeliveryService;
 use App\Domain\Communications\Services\CommunicationSupportService;
+use App\Domain\Communications\Services\CommunicationTemplateService;
 use App\Domain\Communications\Services\NotificationIntentService;
 use Aws\Command;
 use Aws\Exception\AwsException;
@@ -21,6 +22,24 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 
 uses(RefreshDatabase::class);
+
+/** Decode the actual MIME text alternatives; do not treat an HTML-only body as delivery evidence. */
+function sesTestBodies($command): array
+{
+    if (isset($command['Message'])) {
+        return ['html' => $command['Message']['Body']['Html']['Data'], 'text' => $command['Message']['Body']['Text']['Data']];
+    }
+    $bodies = [];
+    foreach (preg_split('/\\r?\\n--[^\\r\\n]+\\r?\\n/', $command['RawMessage']['Data']) as $part) {
+        $pieces = explode("\r\n\r\n", $part, 2);
+        if (count($pieces) !== 2 || ! preg_match('/Content-Type: text\\/(plain|html);/i', $pieces[0], $type)) {
+            continue;
+        }
+        $bodies[$type[1] === 'plain' ? 'text' : 'html'] = rtrim(str_contains(strtolower($pieces[0]), 'content-transfer-encoding: base64') ? base64_decode($pieces[1]) : quoted_printable_decode($pieces[1]), "\r\n");
+    }
+
+    return $bodies;
+}
 
 beforeEach(function () {
     Queue::fake();
@@ -66,7 +85,7 @@ it('uses configured SES with a real message identifier, escaped HTML and no inte
     $result = $provider->send(new OutboundCommunication('sarah@example.test', 'Your booking', "Hi Sarah\n<script>private</script>", str_repeat('a', 64), 'correlation'));
     expect($provider->name())->toBe('ses')->and($result->providerMessageId)->toBe('ses-accepted')->and($result->providerRequestId)->toBe('request-1');
     $command = $handler->getLastCommand();
-    expect($command['Source'])->toBe('"ClipperDesk" <notifications@example.test>')->and($command['Destination']['ToAddresses'])->toBe(['sarah@example.test'])->and($command['Message']['Body']['Html']['Data'])->toContain('&lt;script&gt;')->and($command['ConfigurationSetName'])->toBe('client-delivery')->and($command['Tags'][0]['Value'])->toBe(str_repeat('a', 64));
+    expect($command['Source'])->toBe('"Clipperdesk Marketplace" <notifications@example.test>')->and($command['Destinations'])->toBe(['sarah@example.test'])->and(sesTestBodies($command)['html'])->toContain('&lt;script&gt;')->and($command['ConfigurationSetName'])->toBe('client-delivery')->and($command['Tags'][0]['Value'])->toBe(str_repeat('a', 64));
     config(['services.ses.key' => '']);
     expect(fn () => $provider->send(new OutboundCommunication('sarah@example.test', 'test', 'test', 'key', 'correlation')))->toThrow(CommunicationProviderException::class, 'provider_not_configured');
 });
@@ -92,9 +111,9 @@ it('sends the structured platform email through SES with the retained plain-text
     $message = sesTestMessage($this->business, $this->client, 'platform-email');
     $sent = app(CommunicationDeliveryService::class)->deliver($message);
     $command = $handler->getLastCommand();
-    $html = $command['Message']['Body']['Html']['Data'];
-    expect($sent->status)->toBe('sent')->and($html)->toContain('Your request is in.', 'Haircut', '14:30', 'UTC', 'ClipperDesk', '<table')
-        ->and($command['Message']['Body']['Text']['Data'])->toStartWith('ClipperDesk · ')
+    $html = sesTestBodies($command)['html'];
+    expect($sent->status)->toBe('sent')->and($html)->toContain('Your request is in.', 'Haircut', '14:30', 'UTC', 'Clipperdesk Marketplace', '<table')
+        ->and(sesTestBodies($command)['text'])->toStartWith('Clipperdesk Marketplace · ')
         ->and($html)->not->toContain('View appointment', 'Your appointment is confirmed.');
 });
 
@@ -177,4 +196,30 @@ it('does not move uncertain historical provider attempts to SES automatically', 
     $message->update(['provider' => 'resend', 'status' => 'retried', 'attempt_count' => 1, 'last_error_code' => 'resend_http_503']);
     $result = app(CommunicationDeliveryService::class)->deliver($message);
     expect($result->last_error_code)->toBe('provider_changed_requires_review')->and($result->status)->toBe('failed')->and($handler->getLastCommand())->toBeNull();
+});
+
+it('brands every client email purpose as Marketplace while retaining salon identity and safe actions', function (string $type) {
+    $html = app(ClientNotificationEmail::class)->render($type, [
+        'business_name' => 'Juniper Salon', 'client_name' => 'Jordan', 'service_name' => 'Signature cut',
+        'appointment_date' => '10 November', 'appointment_time' => '10:00', 'time_zone' => 'America/Toronto',
+        'action_link' => 'https://example.test/private-visit', 'booking_reference' => 'TEST-VISIT',
+    ], 'Saved client wording', 'Your visit update');
+    expect($html)->toContain('clipperdesk-marketplace-mark.png', 'Clipperdesk', 'MARKETPLACE', 'Juniper Salon', '#202d29', '#faf9f5')
+        ->not->toContain('clipperdesk-logo.png', '#4338ca');
+})->with(['booking_confirmation', 'booking_pending', 'booking_approved', 'booking_rejected', 'appointment_reminder', 'appointment_changed', 'appointment_cancelled', 'payment_receipt', 'visit_review', 'waitlist_opening', 'queue_update']);
+
+it('preserves queued text and old structured rendering when a new email branding revision is created', function () {
+    $message = sesTestMessage($this->business, $this->client, 'retained-branding');
+    $template = $message->template;
+    $template->update(['body' => 'ClipperDesk · Retained appointment wording for {{business_name}}', 'fallbacks' => [...$template->fallbacks, '__platform_revision' => CommunicationTemplateService::PLATFORM_REVISION]]);
+    $fresh = app(CommunicationTemplateService::class)->platformTemplate($this->business->id, 'booking_pending', 'email', 'en-US');
+    expect($fresh->id)->not->toBe($template->id);
+    expect($template->fresh()->body)->toStartWith('ClipperDesk · Retained');
+    $handler = new MockHandler([new Result(['MessageId' => 'retained-email'])]);
+    app()->instance(SesClient::class, sesTestClient($handler));
+    app(CommunicationDeliveryService::class)->deliver($message);
+    $command = $handler->getLastCommand();
+    expect(sesTestBodies($command)['text'])->toStartWith('ClipperDesk · Retained')
+        ->and(sesTestBodies($command)['html'])->toContain('Your request is in.', 'cid:');
+    expect($command['RawMessage']['Data'])->toContain('clipperdesk-marketplace-mark.png', 'image/png', 'Content-ID:');
 });

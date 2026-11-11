@@ -166,3 +166,16 @@ with fictional addresses and separate branch staff; it is not a published custom
 business or a production provider account. No customer was booked or notified in
 browser testing. The isolated 8041 review server was stopped after browser access
 was declined. Do not deploy or import preview databases as production customer data.
+
+### Marketplace geographic search refinement — 2026-11-08
+
+The browser-only customer-location statement above applies to branch ordering in
+one salon's booking. Owner-approved Marketplace search now submits the selected
+Places/device centre to the server session with a30-minute use expiry, cleared on
+expiry check/removal. Provider suggestions/POI data are not stored as a catalogue;
+only selected geometry is temporarily retained. Existing owner entrance pins remain
+the salon map data. Review the revised privacy disclosure before public rollout.
+Live validation of Places and the new map on an authorized origin remains pending:
+Chrome automation reported disabled Work settings in this continuation. Automated
+mocks/builds do not certify the API key, map rendering or browser geolocation grant.
+No key restriction, Google Cloud configuration or provider credentials were changed.

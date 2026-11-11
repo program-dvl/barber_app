@@ -37,6 +37,11 @@ class Service extends Model
         ];
     }
 
+    public function discoveryMappings(): HasMany
+    {
+        return $this->hasMany(\App\Domain\Marketplace\LocalGrowth\Models\ServiceConcept::class);
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(ServiceCategory::class, 'service_category_id');
@@ -59,7 +64,7 @@ class Service extends Model
 
     public function locations(): BelongsToMany
     {
-        return $this->belongsToMany(Location::class, 'location_service')->withPivot(['business_id', 'is_eligible', 'price_minor'])->withTimestamps();
+        return $this->belongsToMany(Location::class, 'location_service')->withPivot(['business_id', 'is_eligible', 'price_minor'])->withTimestamps()->whereColumn('locations.business_id', 'location_service.business_id');
     }
 
     public function addons(): BelongsToMany

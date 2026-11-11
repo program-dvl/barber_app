@@ -18,7 +18,7 @@ use Illuminate\Validation\ValidationException;
 /** Current catalogue commands. Booking and sale snapshots are never rewritten. */
 class ServiceCatalogManager
 {
-    public const RELATIONS = ['category', 'locations', 'staffAssignments.staffProfile.locations', 'segments', 'resourceRequirements.resource', 'addons'];
+    public const RELATIONS = ['category', 'locations', 'staffAssignments.staffProfile.locations', 'segments', 'resourceRequirements.resource', 'addons', 'discoveryMappings'];
 
     public const FIELDS = ['kind', 'name', 'description', 'price_type', 'price_minor', 'duration_minutes', 'processing_minutes', 'cleanup_minutes', 'minimum_notice_minutes', 'maximum_advance_days', 'deposit_type', 'deposit_value', 'client_eligibility', 'consultation_required', 'online_visible', 'tax_category', 'is_active'];
 
@@ -40,6 +40,7 @@ class ServiceCatalogManager
             $service->staffAssignments->sortBy('id')->map->only(['id', 'staff_profile_id', 'is_active', 'is_qualified', 'online_visible', 'price_minor', 'duration_minutes', 'processing_minutes', 'cleanup_minutes', 'commission_rate', 'effective_from', 'effective_until'])->values()->all(),
             $service->segments->map->only(['id', 'kind', 'sequence', 'duration_minutes', 'occupies_staff'])->all(),
             $service->addons->pluck('id')->sort()->values()->all(),
+            $service->discoveryMappings->pluck('concept')->sort()->values()->all(),
             $service->resourceRequirements->sortBy('id')->map->only(['id', 'physical_resource_id', 'service_segment_id', 'quantity'])->values()->all(),
         ], JSON_THROW_ON_ERROR));
     }
@@ -262,6 +263,18 @@ class ServiceCatalogManager
             if (array_key_exists('addon_ids', $data)) {
                 $service->addons()->syncWithPivotValues($addons->pluck('id')->all(), ['business_id' => $business->id]);
             }
+            if (config('marketplace-growth.enabled') && array_key_exists('discovery_concepts', $data)) {
+                $concepts = array_values(array_unique($data['discovery_concepts'] ?? []));
+                $known = array_keys(config('marketplace-taxonomy.concepts'));
+                if (array_diff($concepts, $known)) {
+                    $this->fail('discovery_concepts', 'Choose the appointment services you actually offer.');
+                }
+                $service->discoveryMappings()->delete();
+                foreach ($concepts ?: ['__unmapped__'] as $concept) {
+                    $service->discoveryMappings()->create(['business_id' => $business->id, 'concept' => $concept, 'source' => 'owner-reviewed', 'reviewed_by' => auth('web')->id()]);
+                }
+                app(\App\Domain\Marketplace\LocalGrowth\Services\ProjectionWork::class)->mark($business->id);
+            }
             $service->refresh()->load(self::RELATIONS);
             if ($before !== $this->auditValues($service)) {
                 $this->audit->write($subject ? 'service.catalog.updated' : 'service.catalog.created', $business, target: $service, reason: $data['reason'] ?? '', before: $before, after: $this->auditValues($service));
@@ -315,7 +328,7 @@ class ServiceCatalogManager
 
     private function auditValues(Service $service): array
     {
-        return [...$service->only(self::FIELDS), 'currency_code' => $service->currency_code, 'staff_count' => $this->currentAssignments($service)->where('is_qualified', true)->count(), 'location_count' => $service->locations->count(), 'category' => $service->category?->name,
+        return [...$service->only(self::FIELDS), 'currency_code' => $service->currency_code, 'staff_count' => $this->currentAssignments($service)->where('is_qualified', true)->count(), 'location_count' => $service->locations->count(), 'category' => $service->category?->name, 'discovery_concepts' => $service->discoveryMappings->pluck('concept')->all(),
             'locations' => $service->locations->map(fn ($l) => ['name' => $l->name, 'price_minor' => $l->pivot->price_minor])->all(),
             'staff' => $this->currentAssignments($service)->where('is_qualified', true)->map(fn ($a) => ['name' => $a->staffProfile?->display_name, ...$a->only(['price_minor', 'duration_minutes', 'processing_minutes', 'cleanup_minutes', 'online_visible', 'commission_rate'])])->all(), 'addons' => $service->addons->pluck('name')->all()];
     }

@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<title>ClipperDesk</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<style>
+@media only screen and (max-width: 680px) {
+.header,
+.body {
+padding-left: 12px !important;
+padding-right: 12px !important;
+}
+
+.header {
+padding-top: 18px !important;
+}
+
+.header-shell,
+.inner-body,
+.footer {
+width: 100% !important;
+}
+
+.content-cell {
+padding: 34px 28px 32px !important;
+}
+}
+
+@media only screen and (max-width: 500px) {
+h1 {
+font-size: 25px !important;
+}
+
+.brand-context {
+display: none !important;
+}
+
+.button {
+text-align: center !important;
+width: 100% !important;
+}
+
+.content-cell {
+padding-left: 22px !important;
+padding-right: 22px !important;
+}
+}
+</style>
+
+</head>
+<body bgcolor="#faf9f5" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; -webkit-text-size-adjust: none; height: 100%; line-height: 1.65; width: 100% !important; color: #39473e; margin: 0; padding: 0; background-color: #faf9f5;">
+
+<table bgcolor="#faf9f5" class="wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 100%; margin: 0; padding: 0; width: 100%; background-color: #faf9f5; color: #39473e;">
+<tr>
+<td align="center" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;">
+<table bgcolor="#faf9f5" class="content" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 100%; margin: 0; padding: 0; width: 100%; background-color: #faf9f5;">
+<tr>
+<td class="header" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; padding: 30px 20px 20px; text-align: center;">
+<table class="header-shell" align="center" width="600" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 600px; background-color: #ffffff; border: 1px solid #dedfd6; border-radius: 16px; box-shadow: none; margin: 0 auto; padding: 14px 18px; width: 600px;">
+<tr>
+<td class="brand-logo-cell" width="56" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; width: 56px; vertical-align: middle; padding-right: 12px;">
+<a href="https://example.test/marketplace" aria-label="Clipperdesk Marketplace home" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; color: #38573a; text-decoration: none;">
+<img src="data:image/png;base64,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" width="44" height="44" alt="" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; max-width: 100%; display: block; width: 44px; height: 44px; border: 0;">
+</a>
+</td>
+<td class="brand-copy" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; vertical-align: middle; text-align: left;">
+<a href="https://example.test/marketplace" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; text-decoration: none; color: #202d29;">
+<span class="brand-name" style="box-sizing: border-box; display: block; font-family: Arial,Helvetica,sans-serif; font-size: 25px; line-height: 30px; font-weight: 700; letter-spacing: -0.8px; color: #202d29;">Clipperdesk</span>
+<span class="brand-tagline" style="box-sizing: border-box; display: block; margin-top: 3px; font-family: Arial,Helvetica,sans-serif; font-size: 9px; line-height: 15px; font-weight: 600; letter-spacing: 3px; color: #526844;">MARKETPLACE</span>
+</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+
+<!-- Email Body -->
+<tr>
+<td bgcolor="#faf9f5" class="body" width="100%" cellpadding="0" cellspacing="0" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 100%; background-color: #faf9f5; margin: 0; padding: 0 20px; width: 100%; border: hidden !important;">
+<table class="inner-body" align="center" width="600" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 600px; background-color: #ffffff; border: 1px solid #dedfd6; border-radius: 18px; border-top: 4px solid #304c3c; box-shadow: none; margin: 0 auto; padding: 0; width: 600px; border-top-color: #77905a;">
+<!-- Body content -->
+<tr>
+<td class="content-cell" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; max-width: 100vw; padding: 32px 36px;">
+<h1 style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; font-size: 26px; font-weight: 750; letter-spacing: -0.7px; line-height: 1.22; margin: 0 0 22px; text-align: left; color: #202d29;">New message from Sample Studio</h1>
+<p style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; text-align: left; color: #58664f; font-size: 16px; margin: 0 0 20px;">You have a new message about your appointment.</p>
+<table class="action" align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 100%; margin: 30px auto 32px; padding: 0; text-align: left; width: 100%;">
+<tr>
+<td align="center" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;">
+<tr>
+<td align="center" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;">
+<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;">
+<tr>
+<td style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;">
+<a href="https://example.test/marketplace/messages" class="button button-primary" target="_blank" rel="noopener" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; -webkit-text-size-adjust: none; border-radius: 10px; box-shadow: none; color: #ffffff !important; display: inline-block; font-size: 15px; font-weight: 750; letter-spacing: -0.1px; overflow: hidden; text-decoration: none; background-color: #202d29; border-top: 12px solid #202d29; border-right: 24px solid #202d29; border-bottom: 12px solid #202d29; border-left: 24px solid #202d29; word-break: break-word;">Open conversation</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<p style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; text-align: left; color: #58664f; font-size: 16px; margin: 0 0 20px;">Read and reply in Messages. Please don’t reply to this email.</p>
+
+
+
+</td>
+</tr>
+</table>
+</td>
+</tr>
+
+<tr>
+<td style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;">
+<table class="footer" align="center" width="600" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 600px; margin: 0 auto; padding: 26px 0 38px; text-align: center; width: 600px;">
+<tr>
+<td class="content-cell" align="center" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; max-width: 100vw; padding: 0 30px;">
+<p class="footer-brand" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; line-height: 1.55; margin: 3px 0; text-align: center; color: #202d29; font-size: 14px; letter-spacing: -0.2px; margin-bottom: 1px;"><strong style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;">Clipperdesk</strong></p>
+<p style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; color: #6b7861; font-size: 12px; line-height: 1.55; margin: 3px 0; text-align: center;">Marketplace · A little time for you.</p>
+<p class="footer-links" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; color: #6b7861; font-size: 12px; line-height: 1.55; text-align: center; margin: 13px 0;">
+<a href="https://example.test/marketplace" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; color: #58664f; font-weight: 650; text-decoration: underline;">Visit Clipperdesk Marketplace</a>
+<span aria-hidden="true" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;"> · </span>
+<a href="https://example.test/security" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; color: #58664f; font-weight: 650; text-decoration: underline;">Security</a>
+<span aria-hidden="true" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;"> · </span>
+<a href="mailto:support@clipperdesk.com" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; color: #58664f; font-weight: 650; text-decoration: underline;">Get help</a>
+</p>
+<p class="footer-service-note" style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; color: #6b7861; font-size: 12px; line-height: 1.55; text-align: center; margin: 12px auto; max-width: 500px;">This email helps you access your Marketplace account. Keep your sign-in link private.</p>
+<p style="box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; color: #6b7861; font-size: 12px; line-height: 1.55; margin: 3px 0; text-align: center;">© 2026 Clipperdesk. All rights reserved.</p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>

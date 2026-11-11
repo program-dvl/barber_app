@@ -20,7 +20,7 @@ class Appointment extends Model
 
     protected $fillable = [
         'business_id', 'location_id', 'client_id', 'rescheduled_from_appointment_id', 'rescheduled_to_appointment_id',
-        'public_id', 'booking_reference', 'idempotency_key', 'request_hash', 'status', 'source', 'client_name',
+        'marketplace_attribution_root_id', 'public_id', 'booking_reference', 'idempotency_key', 'request_hash', 'status', 'source', 'client_name',
         'client_mobile', 'client_email', 'client_date_of_birth', 'referral_source', 'communication_preferences',
         'location_snapshot', 'marketing_opt_in', 'special_request', 'public_policy_snapshot', 'internal_notes', 'starts_at_utc', 'ends_at_utc', 'time_zone',
         'local_starts_at', 'local_ends_at', 'price_minor', 'currency_code', 'confirmed_at',

@@ -6,6 +6,7 @@ import LocationCard from '@/Components/Locations/LocationCard.vue';
 import BranchPicker from '@/Components/Locations/BranchPicker.vue';
 import { computed, nextTick, onMounted, onBeforeUnmount, ref, watch } from 'vue';
 import axios from 'axios';
+import { acquisitionConsent } from '@/Support/marketplaceAttribution';
 import { ArrowLeftIcon, ArrowRightIcon, CalendarDaysIcon, CheckCircleIcon, ClockIcon, MapPinIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import { effectiveCatalogPreview, durationLabel } from '@/Support/serviceCatalog';
 import { shiftDate, slotGroups, eligibleService, safeRead, safeWrite } from '@/Support/publicBooking';
@@ -19,15 +20,28 @@ import ClientReviewsSection from '@/Components/Booking/ClientReviewsSection.vue'
 import AppNotice from '@/Components/Product/AppNotice.vue';
 import PublicBookingLayout from '@/Layouts/PublicBookingLayout.vue';
 
-const props = defineProps({ business: Object, catalog: Object, preview: Boolean });
+const props = defineProps({ business: Object, catalog: Object, preview: Boolean, marketplace: Boolean, initialChoice: Object, saved: Boolean });
+import { usePage, useForm } from '@inertiajs/vue3';
+const marketplacePage = usePage();
+const customer = marketplacePage.props.marketplaceCustomer;
+const favourite = useForm({ saved: props.saved });
+const saveFavourite = () => { favourite.saved = !props.saved; favourite.post(`/marketplace/salons/${props.business.booking_slug}/favourite`, { preserveScroll: true }); };
 const step = ref(props.business ? 1 : 0);
 const busy = ref(false), loadingSlots = ref(false), restoring = ref(false), error = ref(''), notice = ref(''), fieldErrors = ref({});
 const flow = ref(null), secret = ref(null), expiresAt = ref(null), held = ref(null), confirmation = ref(null);
 const selection = ref({ location: props.catalog?.locations?.[0]?.public_id || '', services: [], staff: '', date: props.catalog?.locations?.[0]?.today || '', client_eligibility: 'auto' });
+if (props.marketplace && props.initialChoice) {
+    const choice = props.initialChoice;
+    const chosenLocation = props.catalog?.locations.find(l => l.public_id === choice.location);
+    if (chosenLocation) { selection.value.location = chosenLocation.public_id; selection.value.date = choice.date || chosenLocation.today; }
+    if (choice.date) selection.value.date = choice.date;
+    const service = props.catalog?.services.find(s => s.public_id === choice.service && s.location_ids.includes(selection.value.location));
+    if (service) selection.value.services = [service.public_id];
+}
 const searchText = ref(''), category = ref('All'), slots = ref([]), waitlistOpen = ref(false), waitlistSaved = ref(false);
 const detailsChecked = ref(false);
 const retryAt = ref(0);
-const details = ref({ client_name: '', client_mobile: '', client_email: '', client_date_of_birth: '', referral_source: '', special_request: '', communication_preferences: ['email'], marketing_opt_in: false, policy_accepted: false });
+const details = ref({ client_name: props.marketplace ? customer?.name || '' : '', client_mobile: props.marketplace ? customer?.phone || '' : '', client_email: props.marketplace ? customer?.email || '' : '', client_date_of_birth: '', referral_source: '', special_request: '', communication_preferences: ['email'], marketing_opt_in: false, policy_accepted: false });
 const waitlist = ref({ client_name: '', client_mobile: '', client_email: '', acceptable_from: '', acceptable_until: '', time_from: '09:00', time_until: '18:00', notification_method: 'email', notes: '' });
 const location = computed(() => props.catalog?.locations.find(item => item.public_id === selection.value.location));
 const zone = computed(() => location.value?.time_zone || 'UTC');
@@ -73,8 +87,8 @@ const slotLabels = computed(() => {
 });
 const slotLabel = slot => slotLabels.value.get(slot.starts_at_utc);
 const dateChoices = computed(() => Array.from({ length: 7 }, (_, index) => shiftDate(selection.value.date || today.value, index)).filter(date => date <= lastDate.value));
-const storageKey = computed(() => `clipperdesk-booking-${props.business?.booking_slug}`);
-const api = name => route(name, props.business.booking_slug, false);
+const storageKey = computed(() => `clipperdesk-booking-${props.business?.booking_slug}${props.marketplace ? '-marketplace-'+(customer?.public_id || 'guest') : ''}`);
+const api = name => props.marketplace && name.startsWith('public.booking.') ? `/marketplace/salons/${encodeURIComponent(props.business.booking_slug)}/booking/${name.split('.').pop()}` : route(name, props.business.booking_slug, false);
 const credentials = () => ({ flow: flow.value, secret: secret.value });
 const remember = () => safeWrite(storageKey.value, { ...credentials(), expires_at: expiresAt.value, confirmed: !!confirmation.value, selection: selection.value }, sessionStorage);
 const go = async value => { step.value = value; error.value = ''; fieldErrors.value = {}; await nextTick(); document.querySelector('#booking-heading')?.focus(); window.scrollTo({ top: 0 }); };
@@ -93,7 +107,7 @@ let startingFlow;
 const ensureFlow = async () => {
     if (props.preview) return;
     if (flow.value && Date.parse(expiresAt.value) > Date.now() + 5000) return;
-    if (!startingFlow) startingFlow = axios.post(api('public.booking.start')).then(response => {
+    if (!startingFlow) startingFlow = axios.post(api('public.booking.start'), {}, {headers:{'X-Marketplace-Analytics-Consent':acquisitionConsent() ? '1' : '0'}}).then(response => {
         flow.value = response.data.flow; secret.value = response.data.secret; expiresAt.value = response.data.expires_at; held.value = null; remember();
     }).finally(() => { startingFlow = null; });
     await startingFlow;
@@ -205,7 +219,7 @@ const confirm = async () => {
     busy.value = true; error.value = ''; fieldErrors.value = {}; notice.value = '';
     confirmPayload ||= { ...credentials(), ...details.value, communication_preferences: [...details.value.communication_preferences], idempotency_key: `confirm-${flow.value}` };
     try {
-        const { data } = await axios.post(api('public.booking.confirm'), confirmPayload);
+        const { data } = await axios.post(api('public.booking.confirm'), confirmPayload, {headers:{'X-Marketplace-Analytics-Consent':acquisitionConsent() ? '1' : '0'}});
         confirmation.value = data; uncertainConfirm.value = false; await go(4); remember();
     } catch (requestError) {
         const code = requestError.response?.data?.code;
@@ -232,9 +246,10 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
 
 <template>
     <PublicBookingLayout
-        :title="business ? `Book with ${business.name}` : 'Book an appointment'"
+        :title="marketplacePage.props.seo?.title || (business ? `Book with ${business.name}` : 'Book an appointment')"
         :current-step="step"
         :preview="preview"
+        :marketplace="marketplace"
         :brand-color="business?.brand_color"
         :steps="['Services', 'Staff & time', 'Confirm', 'Booked']"
     >
@@ -245,7 +260,8 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
         <template v-else>
             <AppNotice v-if="preview" title="Private preview" description="Browse your saved services, photos and profiles. Booking is disabled here." class="mb-5" />
             <SalonShowcase v-if="step === 1" :business="business" :location="location" :reviews="business.reviews" :has-team="!!branchTeam.length" />
-            <header v-else class="booking-business compact" :class="{ 'booking-business-complete': step === 4 }">
+            <div v-if="marketplace && !preview && step === 1" class="mb-5 flex flex-wrap gap-3"><button v-if="customer" class="inline-flex min-h-11 items-center rounded-lg border px-4 text-sm font-medium" :disabled="favourite.processing" @click="saveFavourite">{{ saved ? '♥ Saved to favourites' : '♡ Save this business' }}</button><a v-else href="/marketplace/sign-in" class="inline-flex min-h-11 items-center underline text-sm">Log in to save this business</a></div>
+            <header v-if="step !== 1" class="booking-business compact" :class="{ 'booking-business-complete': step === 4 }">
                 <div class="min-w-0">
                     <p class="text-xs font-semibold text-[var(--text-muted)]">Book an appointment</p>
                     <h1 class="mt-1 text-xl font-bold tracking-tight text-[var(--text-strong)] sm:text-2xl">{{ business.name }}</h1>
@@ -583,9 +599,9 @@ onBeforeUnmount(() => { clearInterval(clockTimer); clearTimeout(searchTimer); se
                     <h2 id="salon-team-title" class="mb-5 text-2xl font-semibold text-[var(--text-strong)]">Meet the team</h2>
                     <ProfessionalCards :members="branchTeam" />
                 </section>
-                <ClientReviewsSection id="salon-reviews" :summary="business.reviews" />
+                <ClientReviewsSection id="salon-reviews" :summary="preview ? {...business.reviews,next_url:null} : business.reviews" />
                 <section id="salon-about" aria-labelledby="salon-about-title" class="booking-about">
-                    <div><h2 id="salon-about-title" class="text-2xl font-semibold text-[var(--text-strong)]">About &amp; location</h2><p v-if="business.description" class="mt-4 whitespace-pre-line text-sm leading-7 text-[var(--text-muted)]">{{ business.description }}</p><LocationCard v-if="location" :location="location" class="mt-5" /><div class="mt-4 flex flex-wrap items-center gap-3"><a v-if="business.phone" :href="`tel:${business.phone}`" class="booking-back underline">Call {{ business.phone }}</a><a v-if="business.email" :href="`mailto:${business.email}`" class="booking-back underline">Email the salon</a></div></div>
+                    <div><h2 id="salon-about-title" class="text-2xl font-semibold text-[var(--text-strong)]">About &amp; location</h2><p v-if="business.description" class="mt-4 whitespace-pre-line text-sm leading-7 text-[var(--text-muted)]">{{ business.description }}</p><LocationCard v-if="location" :location="location" class="mt-5" /><div class="mt-4 flex flex-wrap items-center gap-3"><a v-if="business.phone" :href="`tel:${business.phone}`" class="booking-back underline">Call {{ business.phone }}</a><a v-if="business.email" :href="`mailto:${business.email}`" class="booking-back underline">Email the business</a></div></div>
                     <div v-if="location?.opening_hours?.length"><h3 class="font-semibold">Usual opening hours</h3><p class="mt-2 text-xs text-[var(--text-muted)]">{{ zone.replaceAll('_', ' ') }} · Holiday hours may vary. Available appointment times are shown when booking.</p><dl class="mt-4 space-y-3 text-sm"><div v-for="day in usualDays" :key="day" class="flex justify-between gap-4"><dt>{{ weekDay(day) }}</dt><dd class="text-right text-[var(--text-muted)]"><template v-if="location.opening_hours.some(hours => hours.day === day)"><span v-for="(hours, index) in location.opening_hours.filter(hours => hours.day === day)" :key="index" class="block">{{ openingTime(hours.opens_at) }}–{{ openingTime(hours.closes_at) }}</span></template><span v-else>Closed</span></dd></div></dl></div>
                 </section>
             </div>

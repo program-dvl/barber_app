@@ -2,6 +2,7 @@
 
 namespace App\Domain\SchedulingOperations\Services;
 
+use App\Domain\Marketplace\Models\CustomerBooking;
 use App\Domain\SchedulingOperations\Contracts\AppointmentLifecycleCommand;
 use App\Domain\SchedulingOperations\Data\BookingRequest;
 use App\Domain\SchedulingOperations\Enums\AppointmentStatus;
@@ -198,6 +199,7 @@ class AppointmentLifecycleService implements AppointmentLifecycleCommand
             $plan = $this->rules->plan($request, true, null, $current->id);
             $replacement = $this->bookings->persistAppointment($request, $plan, $idempotencyKey, $hash, $current->client_id);
             $replacement->update(['rescheduled_from_appointment_id' => $current->id,
+                'marketplace_attribution_root_id' => $current->marketplace_attribution_root_id,
                 'location_snapshot' => $request->locationId === $current->location_id ? ($current->location_snapshot ?: LocationData::snapshot($current->location)) : $replacement->location_snapshot,
             ]);
             $walkIns = WalkInEntry::query()->where('business_id', $current->business_id)->where('appointment_id', $current->id)
@@ -222,6 +224,11 @@ class AppointmentLifecycleService implements AppointmentLifecycleCommand
                 'rescheduled_to_appointment_id' => $replacement->id,
                 'version' => $current->version + 1,
             ]);
+            $marketplaceBooking = CustomerBooking::query()->where('business_id', $current->business_id)->where('appointment_id', $current->id)->first();
+            if ($marketplaceBooking) {
+                CustomerBooking::query()->firstOrCreate(['appointment_id' => $replacement->id], ['business_id' => $current->business_id, 'customer_id' => $marketplaceBooking->customer_id, 'messages_paused' => $marketplaceBooking->messages_paused]);
+            }
+
             AppointmentStatusHistory::query()->create([
                 'business_id' => $current->business_id,
                 'appointment_id' => $current->id,

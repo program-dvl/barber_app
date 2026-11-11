@@ -46,7 +46,8 @@ class ServiceManagementController extends Controller
             'staff' => $staff->map(fn ($s) => [...$s->only(['public_id', 'display_name', 'title', 'online_visible', 'status']), 'location_ids' => $s->locations->pluck('public_id')->all(), 'has_working_hours' => $s->availabilityRules->where('kind', 'working')->isNotEmpty()])->values(),
             'category_order_revision' => hash('sha256', $categories->map(fn ($c) => $this->catalog->categoryRevision($c))->implode('|')),
             'categories' => $categories->map(fn ($c) => [...$c->only(['public_id', 'name', 'display_order', 'is_active']), 'revision' => $this->catalog->categoryRevision($c), 'count' => $services->where('service_category_id', $c->id)->count()]),
-            'services' => $services->map(function ($s) use ($visits, $staff, $services) {
+            'discoveryConcepts' => config('marketplace-growth.enabled') ? collect(config('marketplace-taxonomy.concepts'))->map(fn ($c, $key) => ['key' => $key, 'label' => $c['label']])->values()->all() : [],
+            'services' => $services->map(function ($s) use ($visits, $staff, $services, $business) {
                 $current = $this->catalog->currentAssignments($s)->where('is_qualified', true);
                 $eligibleLocations = $s->locations->filter(fn ($l) => $l->pivot->is_eligible && $l->is_active && $l->status === 'active');
                 $available = $current->filter(fn ($a) => $staff->where('status', 'active')->contains('id', $a->staff_profile_id) && $a->staffProfile->locations->pluck('id')->intersect($eligibleLocations->pluck('id'))->isNotEmpty());
@@ -73,7 +74,7 @@ class ServiceManagementController extends Controller
                     $warnings[] = 'Category inactive';
                 }
 
-                return [...$s->only([...ServiceCatalogManager::FIELDS, 'public_id', 'currency_code', 'tax_inclusive', 'image_path']), 'updated_at' => $s->updated_at?->toIso8601String(),
+                return ['discovery_concepts' => $s->discoveryMappings->isNotEmpty() ? $s->discoveryMappings->pluck('concept')->reject(fn ($c) => $c === '__unmapped__')->values()->all() : app(\App\Domain\Marketplace\LocalGrowth\Services\DiscoveryTaxonomy::class)->concepts($s->name, $business->business_type, locale: $business->locale), ...$s->only([...ServiceCatalogManager::FIELDS, 'public_id', 'currency_code', 'tax_inclusive', 'image_path']), 'updated_at' => $s->updated_at?->toIso8601String(),
                     'category' => $s->category?->name, 'category_id' => $s->category?->public_id, 'category_order' => $s->category?->display_order ?? 65535,
                     'revision' => $this->catalog->revision($s), 'impact_revision' => $this->catalog->impactRevision($upcoming), 'upcoming_count' => $upcoming->count(),
                     'upcoming' => $upcoming->take(5)->map->only(['public_id', 'starts_at_utc'])->values(), 'warnings' => $warnings,
@@ -195,6 +196,7 @@ class ServiceManagementController extends Controller
             'staff_overrides.*.online_visible' => ['required', 'boolean'], 'staff_overrides.*.commission_rate' => ['nullable', 'numeric', 'between:0,1'],
             'location_overrides' => ['sometimes', 'array'], 'location_overrides.*.location' => ['required', 'string', 'distinct'], 'location_overrides.*.price_minor' => ['nullable', 'integer', 'between:0,100000000'],
             'addon_ids' => ['sometimes', 'array'], 'addon_ids.*' => ['required', 'string', 'distinct'],
+            'discovery_concepts' => ['sometimes', 'nullable', 'array', 'max:10'], 'discovery_concepts.*' => ['string', 'distinct', Rule::in(array_keys(config('marketplace-taxonomy.concepts')))],
             'command_key' => ['sometimes', 'uuid'], 'revision' => ['nullable', 'string', 'size:64'], 'impact_revision' => ['nullable', 'string', 'size:64'], 'reason' => ['nullable', 'string', 'max:1000'],
         ]);
         foreach (['price_minor', 'duration_minutes', 'processing_minutes', 'cleanup_minutes', 'minimum_notice_minutes', 'maximum_advance_days', 'deposit_value'] as $field) {

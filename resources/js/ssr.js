@@ -1,3 +1,4 @@
+import AcquisitionConsent from './Components/Marketplace/AcquisitionConsent.vue';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from '@vue/server-renderer';
 import { createInertiaApp } from '@inertiajs/vue3';
@@ -18,7 +19,7 @@ createServer((page) =>
         },
         resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
         setup({ App, props, plugin }) {
-            return createSSRApp({ render: () => renderPublicApp(App, props) })
+            return createSSRApp({ render: () => [...renderPublicApp(App, props), h(AcquisitionConsent)] })
                 .use(plugin)
                 .use(ZiggyVue, {
                     ...page.props.ziggy,

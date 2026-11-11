@@ -17,15 +17,15 @@ const choose = choice => getMarketingAnalytics()?.choose(choice);
 
 <template>
     <aside v-if="state.visible" ref="panel" class="cd-analytics-consent" aria-label="Website analytics choices">
-        <AppNotice title="Your analytics choice">
+        <AppNotice title="Your cookie choices">
             <p v-if="state.privacySignal">Your browser asks us to keep analytics off. We respect that choice.</p>
             <p v-else-if="state.storageError">Your browser couldn't save this choice. Analytics is off. You can keep browsing.</p>
-            <p v-else>With your permission, Google Analytics helps us understand visits and trial buttons on our public website. It stays off until you accept. Your bookings and workspace are excluded.</p>
+            <p v-else>We use essential cookies for sign-in and account security. With your permission, optional cookies from Google Analytics helps us understand visits and trial buttons on our public website. It stays off until you accept. Your bookings and workspace are excluded.</p>
             <p><a href="/privacy-policy#cookies-and-website-measurement" class="underline underline-offset-4">Read our privacy policy</a>. Change your choice anytime using Cookie settings in the footer.</p>
             <template #actions>
                 <template v-if="!state.privacySignal && !state.storageError">
-                    <button type="button" class="cd-button cd-button-secondary" @click="choose('accepted')">Accept analytics</button>
-                    <button type="button" class="cd-button cd-button-secondary" @click="choose('rejected')">Reject analytics</button>
+                    <button type="button" class="cd-button cd-button-secondary" @click="choose('accepted')">Accept optional cookies</button>
+                    <button type="button" class="cd-button cd-button-secondary" @click="choose('rejected')">Reject optional cookies</button>
                 </template>
                 <button v-if="state.choice || state.storageError" type="button" class="cd-button cd-button-quiet" @click="getMarketingAnalytics()?.closePreferences()">Close</button>
             </template>

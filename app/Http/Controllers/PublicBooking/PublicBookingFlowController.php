@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\PublicBooking;
 
 use App\Domain\BusinessConfiguration\Services\BookingSlugManager;
+use App\Domain\Marketplace\Services\MarketplaceListings;
 use App\Domain\PublicBooking\Services\PublicBookingService;
 use App\Domain\SchedulingOperations\Exceptions\BookingRuleViolation;
 use App\Http\Controllers\Controller;
@@ -11,13 +12,24 @@ use App\Support\Locations\LocationData;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PublicBookingFlowController extends Controller
 {
-    public function start(string $slug, BookingSlugManager $slugs, PublicBookingService $booking): JsonResponse
+    public function start(Request $request, string $slug, BookingSlugManager $slugs, PublicBookingService $booking): JsonResponse
     {
         $business = $this->business($slug, $slugs);
-        $started = $booking->start($business);
+        $started = \Illuminate\Support\Facades\DB::transaction(function () use ($booking, $business, $request) {
+            $started = $booking->start($business);
+            if ($request->routeIs('marketplace.booking.*')) {
+                $started['flow']->forceFill(['marketplace_customer_id' => Auth::guard('marketplace')->id(), 'discovery_source' => 'marketplace'])->save();
+            }
+            app(\App\Domain\Marketplace\LocalGrowth\Services\BookingAttribution::class)->started($started['flow'], $request, $request->routeIs('marketplace.booking.*') ? 'marketplace_profile' : 'owner_booking_link');
+            return $started;
+        });
+        if (config('marketplace-growth.enabled')) {
+            $request->session()->put('marketplace_attribution_flows', array_slice(array_values(array_unique([...$request->session()->get('marketplace_attribution_flows', []), $started['flow']->id])), -20));
+        }
 
         return response()->json(['flow' => $started['flow']->public_id, 'secret' => $started['secret'], 'expires_at' => $started['flow']->expires_at->toIso8601String()]);
     }
@@ -129,6 +141,9 @@ class PublicBookingFlowController extends Controller
                     return response()->json(['code' => 'DETAILS_REVIEW_REQUIRED', 'message' => 'Review your appointment details before confirming.'], 409);
                 }
             }
+            if (config('marketplace-growth.enabled') && ($request->header('X-Marketplace-Analytics-Consent') !== '1' || ! app(\App\Domain\Marketplace\LocalGrowth\Services\BookingAttribution::class)->privacyAllows($request))) {
+                app(\App\Domain\Marketplace\LocalGrowth\Services\BookingAttribution::class)->forget($request);
+            }
             $result = $booking->confirm($business, $flow, $data, $data['idempotency_key']);
         } catch (BookingRuleViolation $error) {
             return response()->json($error->toDomainError(), 409);
@@ -158,6 +173,9 @@ class PublicBookingFlowController extends Controller
     private function business(string $slug, BookingSlugManager $slugs)
     {
         $business = $slugs->resolve($slug);
+        if (request()->routeIs('marketplace.booking.*')) {
+            app(MarketplaceListings::class)->resolve($slug);
+        }
         abort_unless($business && $business->booking_slug === $slug && $business->isActive() && $business->configuration_published_at && $business->online_booking_enabled, 404);
 
         return $business;

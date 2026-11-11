@@ -1,0 +1,955 @@
+{
+  "observed_local_date": "2026-11-09 Asia/Kolkata",
+  "environment": "Isolated SQLite, PHP 8.5; no production database/deployment",
+  "broad_regression": {
+    "runner": "python3 scripts/verify-marketplace-growth.py --all",
+    "method": "109 exact PHP class selections in separate serial processes; full definitions loaded for legacy shared fixture helpers",
+    "latest_totals": {
+      "passed": 1310,
+      "failed": 0,
+      "skipped": 31,
+      "assertions": 14166
+    },
+    "results": [
+      {
+        "file": "tests/Feature/AccountNotifications/BusinessEmailJourneyTest.php",
+        "exit": 0,
+        "seconds": 2.64,
+        "summary": [
+          "8 passed (38 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/ApiTokenPermissionsTest.php",
+        "exit": 0,
+        "seconds": 0.78,
+        "summary": [
+          "1 skipped (0 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/AuthenticationTest.php",
+        "exit": 0,
+        "seconds": 1.61,
+        "summary": [
+          "3 passed (8 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Billing/BillingWorkspaceTest.php",
+        "exit": 0,
+        "seconds": 2.17,
+        "summary": [
+          "23 passed (133 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Billing/CapacityBillingTest.php",
+        "exit": 0,
+        "seconds": 10.07,
+        "summary": [
+          "207 passed (1458 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Billing/ProductionBillingCheckTest.php",
+        "exit": 0,
+        "seconds": 0.85,
+        "summary": [
+          "5 passed (45 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Billing/StripeCapacitySetupTest.php",
+        "exit": 0,
+        "seconds": 1.97,
+        "summary": [
+          "35 passed (369 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Billing/StripeCatalogSyncCommandTest.php",
+        "exit": 0,
+        "seconds": 0.86,
+        "summary": [
+          "6 passed (27 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Billing/SubscriptionLifecycleTest.php",
+        "exit": 0,
+        "seconds": 2.17,
+        "summary": [
+          "22 passed (111 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/BrowserSessionsTest.php",
+        "exit": 0,
+        "seconds": 1.49,
+        "summary": [
+          "1 passed (1 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/BusinessConfiguration/BookingPreviewTest.php",
+        "exit": 0,
+        "seconds": 1.27,
+        "summary": [
+          "3 passed (64 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/BusinessConfiguration/BrandImagesTest.php",
+        "exit": 0,
+        "seconds": 1.88,
+        "summary": [
+          "11 passed (70 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/BusinessConfiguration/BusinessActivationJourneyTest.php",
+        "exit": 0,
+        "seconds": 1.62,
+        "summary": [
+          "3 passed (100 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/BusinessConfiguration/BusinessPhotoAvailabilityTest.php",
+        "exit": 0,
+        "seconds": 1.01,
+        "summary": [
+          "1 passed (9 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/BusinessConfiguration/BusinessPhotoBatchCompatibilityTest.php",
+        "exit": 0,
+        "seconds": 1.21,
+        "summary": [
+          "3 passed (35 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/BusinessConfiguration/BusinessPhotoGalleryTest.php",
+        "exit": 0,
+        "seconds": 1.63,
+        "summary": [
+          "9 passed (93 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/BusinessConfiguration/BusinessSetupReadinessTest.php",
+        "exit": 0,
+        "seconds": 3.18,
+        "summary": [
+          "34 passed (165 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/BusinessConfiguration/ConfigurationFoundationTest.php",
+        "exit": 0,
+        "seconds": 1.99,
+        "summary": [
+          "17 passed (102 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/BusinessConfiguration/GuidedOnboardingExperienceTest.php",
+        "exit": 0,
+        "seconds": 2.19,
+        "summary": [
+          "20 passed (227 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/BusinessConfiguration/LocationIntelligenceTest.php",
+        "exit": 0,
+        "seconds": 1.98,
+        "summary": [
+          "15 passed (111 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/BusinessConfiguration/ServiceCatalogTest.php",
+        "exit": 0,
+        "seconds": 2.36,
+        "summary": [
+          "19 passed (139 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/ClientRecords/ClientCrmConsentTest.php",
+        "exit": 0,
+        "seconds": 1.64,
+        "summary": [
+          "9 passed (113 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/ClientRecords/ClientWorkspaceTest.php",
+        "exit": 0,
+        "seconds": 2.18,
+        "summary": [
+          "12 passed (305 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Communications/GlobalSmsQuotaTest.php",
+        "exit": 0,
+        "seconds": 1.76,
+        "summary": [
+          "17 passed (101 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Communications/NotificationWorkspaceTest.php",
+        "exit": 0,
+        "seconds": 2.14,
+        "summary": [
+          "15 passed (178 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Communications/ReliableCommunicationsTest.php",
+        "exit": 0,
+        "seconds": 2.79,
+        "summary": [
+          "30 passed (301 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Communications/SesClientDeliveryTest.php",
+        "exit": 0,
+        "seconds": 2.22,
+        "summary": [
+          "22 passed (153 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Communications/TwilioProductionTest.php",
+        "exit": 0,
+        "seconds": 1.44,
+        "summary": [
+          "12 passed (47 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Communications/VisitEmailTest.php",
+        "exit": 0,
+        "seconds": 1.76,
+        "summary": [
+          "17 passed (49 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/CreateApiTokenTest.php",
+        "exit": 0,
+        "seconds": 0.88,
+        "summary": [
+          "1 skipped (0 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/CreateTeamTest.php",
+        "exit": 0,
+        "seconds": 0.84,
+        "summary": [
+          "1 skipped (0 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Dashboard/DailyWorkspaceTest.php",
+        "exit": 0,
+        "seconds": 2.48,
+        "summary": [
+          "15 passed (251 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Database/FoundationMigrationRecoveryTest.php",
+        "exit": 0,
+        "seconds": 1.04,
+        "summary": [
+          "3 passed (16 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/DeleteAccountTest.php",
+        "exit": 0,
+        "seconds": 1.39,
+        "summary": [
+          "2 passed (2 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/DeleteApiTokenTest.php",
+        "exit": 0,
+        "seconds": 0.79,
+        "summary": [
+          "1 skipped (0 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/DeleteTeamTest.php",
+        "exit": 0,
+        "seconds": 0.87,
+        "summary": [
+          "2 skipped (0 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Demo/PitchDemoSeederTest.php",
+        "exit": 0,
+        "seconds": 89.67,
+        "summary": [
+          "4 passed (957 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/EmailVerificationTest.php",
+        "exit": 0,
+        "seconds": 1.44,
+        "summary": [
+          "3 passed (6 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/ExampleTest.php",
+        "exit": 0,
+        "seconds": 0.53,
+        "summary": [
+          "1 passed (1 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/GoogleAuthenticationTest.php",
+        "exit": 0,
+        "seconds": 1.58,
+        "summary": [
+          "7 passed (85 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/HelpCenter/HelpCenterTest.php",
+        "exit": 0,
+        "seconds": 1.77,
+        "summary": [
+          "22 passed (214 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/HelpCenter/PublishedHelpContentTest.php",
+        "exit": 0,
+        "seconds": 0.87,
+        "summary": [
+          "15 passed (109 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/InventoryCommissionReporting/InventoryCommissionReportingTest.php",
+        "exit": 0,
+        "seconds": 1.64,
+        "summary": [
+          "8 passed (95 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/InviteTeamMemberTest.php",
+        "exit": 0,
+        "seconds": 0.85,
+        "summary": [
+          "2 skipped (0 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/InvoiceTest.php",
+        "exit": 0,
+        "seconds": 1.1,
+        "summary": [
+          "4 passed (12 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/LaunchHardening/DemoTenantChargeabilityTest.php",
+        "exit": 0,
+        "seconds": 1.11,
+        "summary": [
+          "1 passed (17 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/LeaveTeamTest.php",
+        "exit": 0,
+        "seconds": 0.84,
+        "summary": [
+          "2 skipped (0 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/ArticleAdminWorkflowTest.php",
+        "exit": 0,
+        "seconds": 2.55,
+        "summary": [
+          "29 passed (274 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/ArticleContentRenderingTest.php",
+        "exit": 0,
+        "seconds": 1.31,
+        "summary": [
+          "14 passed (76 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/ArticlePublicationBoundaryTest.php",
+        "exit": 0,
+        "seconds": 1.58,
+        "summary": [
+          "30 passed (42 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/BlogPaginationTest.php",
+        "exit": 0,
+        "seconds": 1.42,
+        "summary": [
+          "11 passed (153 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/FeaturesTest.php",
+        "exit": 0,
+        "seconds": 1.04,
+        "summary": [
+          "6 passed (118 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/FrontsiteQualityTest.php",
+        "exit": 0,
+        "seconds": 0.56,
+        "summary": [
+          "3 passed (58 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/GeoAeoConsistencyTest.php",
+        "exit": 0,
+        "seconds": 0.51,
+        "summary": [
+          "3 passed (15 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/HomepageTest.php",
+        "exit": 0,
+        "seconds": 0.89,
+        "summary": [
+          "2 passed (44 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/MarketingAliasRedirectTest.php",
+        "exit": 0,
+        "seconds": 2.33,
+        "summary": [
+          "42 passed (202 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/PricingTest.php",
+        "exit": 0,
+        "seconds": 1.96,
+        "summary": [
+          "16 passed (239 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/PrivacyPolicyTest.php",
+        "exit": 0,
+        "seconds": 2.16,
+        "summary": [
+          "29 passed (240 assertions)"
+        ],
+        "original_sweep": {
+          "exit": 1,
+          "summary": [
+            "1 failed, 28 passed (231 assertions)"
+          ]
+        },
+        "recheck": "After updating expected cookie button wording"
+      },
+      {
+        "file": "tests/Feature/Marketing/ProductTourTest.php",
+        "exit": 0,
+        "seconds": 0.99,
+        "summary": [
+          "4 passed (130 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/PublicAnalyticsTest.php",
+        "exit": 0,
+        "seconds": 1.34,
+        "summary": [
+          "26 passed (56 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/PublicContentAuditTest.php",
+        "exit": 0,
+        "seconds": 2.31,
+        "summary": [
+          "17 passed (372 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/PublicCrawlTest.php",
+        "exit": 0,
+        "seconds": 2.05,
+        "summary": [
+          "2 passed (522 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/PublicDesignSystemTest.php",
+        "exit": 0,
+        "seconds": 1.12,
+        "summary": [
+          "3 passed (40 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/ResourcesTest.php",
+        "exit": 0,
+        "seconds": 1.14,
+        "summary": [
+          "4 passed (56 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/SitemapCommandTest.php",
+        "exit": 0,
+        "seconds": 1.11,
+        "summary": [
+          "3 passed (21 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/SolutionsTest.php",
+        "exit": 0,
+        "seconds": 1.64,
+        "summary": [
+          "16 passed (345 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/TechnicalSeoTest.php",
+        "exit": 0,
+        "seconds": 2.36,
+        "summary": [
+          "12 passed (1232 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/TrustPagesTest.php",
+        "exit": 0,
+        "seconds": 1.0,
+        "summary": [
+          "6 passed (99 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Marketing/UseCasesTest.php",
+        "exit": 0,
+        "seconds": 1.0,
+        "summary": [
+          "6 passed (117 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/MarketplaceAccountsTest.php",
+        "exit": 0,
+        "seconds": 2.68,
+        "summary": [
+          "22 passed (338 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/MarketplaceDiscoveryTest.php",
+        "exit": 0,
+        "seconds": 1.06,
+        "summary": [
+          "4 passed (84 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/MarketplaceGrowth/AttributionTest.php",
+        "exit": 0,
+        "seconds": 2.03,
+        "summary": [
+          "6 passed (106 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/MarketplaceGrowth/CustomerPhotoTest.php",
+        "exit": 0,
+        "seconds": 0.99,
+        "summary": [
+          "4 passed (49 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/MarketplaceGrowth/OwnerWorkflowTest.php",
+        "exit": 0,
+        "seconds": 1.39,
+        "summary": [
+          "3 passed (50 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/MarketplaceGrowth/SeoTest.php",
+        "exit": 0,
+        "seconds": 2.11,
+        "summary": [
+          "1 skipped, 8 passed (126 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/MarketplaceGrowth/SupplyTest.php",
+        "exit": 0,
+        "seconds": 12.4,
+        "summary": [
+          "7 passed (81 assertions)"
+        ],
+        "recheck": "After adding a no-availability-call expectation to the load fixture"
+      },
+      {
+        "file": "tests/Feature/MarketplaceRefinementTest.php",
+        "exit": 0,
+        "seconds": 1.43,
+        "summary": [
+          "10 passed (148 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/MoneyCommerce/CheckoutWorkspaceTest.php",
+        "exit": 0,
+        "seconds": 2.29,
+        "summary": [
+          "14 passed (176 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/MoneyCommerce/MoneyCommerceTest.php",
+        "exit": 0,
+        "seconds": 1.27,
+        "summary": [
+          "6 passed (38 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/PasswordConfirmationTest.php",
+        "exit": 0,
+        "seconds": 1.45,
+        "summary": [
+          "3 passed (4 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/PasswordResetTest.php",
+        "exit": 0,
+        "seconds": 2.06,
+        "summary": [
+          "4 passed (6 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/PlatformAccess/AdminResourceAccessTest.php",
+        "exit": 0,
+        "seconds": 2.52,
+        "summary": [
+          "25 passed (96 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/PlatformAccess/AuditEventPresentationTest.php",
+        "exit": 0,
+        "seconds": 1.18,
+        "summary": [
+          "4 passed (25 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/PlatformAccess/AuditEventTest.php",
+        "exit": 0,
+        "seconds": 1.0,
+        "summary": [
+          "1 passed (9 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/PlatformAccess/HttpSecurityHardeningTest.php",
+        "exit": 0,
+        "seconds": 1.1,
+        "summary": [
+          "3 passed (18 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/PlatformAccess/MakeAdminTest.php",
+        "exit": 0,
+        "seconds": 4.48,
+        "summary": [
+          "13 passed (97 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/PlatformAccess/PlatformOperationsTest.php",
+        "exit": 0,
+        "seconds": 1.57,
+        "summary": [
+          "10 passed (80 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/PlatformAccess/TeamAccessExperienceTest.php",
+        "exit": 0,
+        "seconds": 1.52,
+        "summary": [
+          "4 passed (83 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/PlatformAccess/TenantIsolationTest.php",
+        "exit": 0,
+        "seconds": 1.9,
+        "summary": [
+          "17 passed (81 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/PlatformAccess/WorkspaceAccessTest.php",
+        "exit": 0,
+        "seconds": 1.21,
+        "summary": [
+          "3 passed (39 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/ProductShellTest.php",
+        "exit": 0,
+        "seconds": 1.78,
+        "summary": [
+          "15 passed (185 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/ProfileInformationTest.php",
+        "exit": 0,
+        "seconds": 1.15,
+        "summary": [
+          "3 passed (32 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/PublicBooking/ClientReviewsTest.php",
+        "exit": 0,
+        "seconds": 2.03,
+        "summary": [
+          "22 passed (148 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/PublicBooking/PublicBookingWaitlistTest.php",
+        "exit": 0,
+        "seconds": 5.26,
+        "summary": [
+          "33 passed (283 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/RegistrationTest.php",
+        "exit": 0,
+        "seconds": 2.3,
+        "summary": [
+          "1 skipped, 6 passed (45 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/RemoveTeamMemberTest.php",
+        "exit": 0,
+        "seconds": 0.94,
+        "summary": [
+          "2 skipped (0 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Reporting/ReportsWorkspaceTest.php",
+        "exit": 0,
+        "seconds": 2.18,
+        "summary": [
+          "18 passed (125 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/RoadmapTest.php",
+        "exit": 0,
+        "seconds": 1.49,
+        "summary": [
+          "4 passed (15 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/SchedulingOperations/BookingEngineTest.php",
+        "exit": 0,
+        "seconds": 1.83,
+        "summary": [
+          "12 passed (69 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/SchedulingOperations/CalendarWalkInOperationsTest.php",
+        "exit": 0,
+        "seconds": 4.45,
+        "summary": [
+          "33 passed (426 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/SchedulingOperations/MySqlBookingConcurrencyTest.php",
+        "exit": 0,
+        "seconds": 0.62,
+        "summary": [
+          "14 skipped (0 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Team/StaffPhotoTest.php",
+        "exit": 0,
+        "seconds": 1.95,
+        "summary": [
+          "11 passed (105 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/Team/TeamWorkspaceTest.php",
+        "exit": 0,
+        "seconds": 4.1,
+        "summary": [
+          "26 passed (215 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/TwoFactorAuthenticationSettingsTest.php",
+        "exit": 0,
+        "seconds": 1.13,
+        "summary": [
+          "3 passed (6 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/UpdatePasswordTest.php",
+        "exit": 0,
+        "seconds": 2.3,
+        "summary": [
+          "3 passed (5 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/UpdateTeamMemberRoleTest.php",
+        "exit": 0,
+        "seconds": 0.82,
+        "summary": [
+          "2 skipped (0 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Feature/UpdateTeamNameTest.php",
+        "exit": 0,
+        "seconds": 0.8,
+        "summary": [
+          "1 skipped (0 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Unit/ExampleTest.php",
+        "exit": 0,
+        "seconds": 0.39,
+        "summary": [
+          "1 passed (1 assertions)"
+        ]
+      },
+      {
+        "file": "tests/Unit/TranslationTest.php",
+        "exit": 0,
+        "seconds": 0.48,
+        "summary": [
+          "1 passed (4 assertions)"
+        ]
+      }
+    ],
+    "limitations": "31 skipped include 14 production-MySQL concurrency scenarios, optional boilerplate configuration and the opt-in live SSR case. Live SSR is verified separately below. No SQLite concurrency guarantee."
+  },
+  "focused_growth_after_formatting": [
+    {
+      "file": "tests/Feature/MarketplaceGrowth/AttributionTest.php",
+      "exit": 0,
+      "seconds": 1.98,
+      "summary": [
+        "6 passed (106 assertions)"
+      ]
+    },
+    {
+      "file": "tests/Feature/MarketplaceGrowth/CustomerPhotoTest.php",
+      "exit": 0,
+      "seconds": 0.92,
+      "summary": [
+        "4 passed (49 assertions)"
+      ]
+    },
+    {
+      "file": "tests/Feature/MarketplaceGrowth/OwnerWorkflowTest.php",
+      "exit": 0,
+      "seconds": 1.31,
+      "summary": [
+        "3 passed (50 assertions)"
+      ]
+    },
+    {
+      "file": "tests/Feature/MarketplaceGrowth/SeoTest.php",
+      "exit": 0,
+      "seconds": 2.0,
+      "summary": [
+        "1 skipped, 8 passed (126 assertions)"
+      ]
+    },
+    {
+      "file": "tests/Feature/MarketplaceGrowth/SupplyTest.php",
+      "exit": 0,
+      "seconds": 11.7,
+      "summary": [
+        "7 passed (80 assertions)"
+      ]
+    }
+  ],
+  "final_supply_recheck": "7 passed (81 assertions)",
+  "final_customer_account_backend": "36 passed (535 assertions)",
+  "real_built_ssr_and_fallback": "9 passed (141 assertions)",
+  "frontend": {
+    "passed": 237,
+    "failed": 0,
+    "command": "Node24 node --test tests/Frontend/*.test.mjs",
+    "scope": "Actual compiled components including shared AppDialog; confirmation/cancel/failure, native picker wiring, preserved drafts, consent and privacy. These tests are not browser visual proof."
+  },
+  "build": "Client and SSR build passed on Node24; existing CSS/font warnings retained",
+  "frontsite_budget": "Passed for 25 route entries including Marketplace Discover/Local and Booking Welcome",
+  "whitespace": "git diff --check and explicit implementation/new-file scan passed",
+  "visual_gap": "CUA returned: Local browser use is disabled in Work settings. Final corner-photo dialog/control density, owner publication/report and full booking visual journeys remain pending. Earlier actual local/cookie captures are listed in visual-evidence.md.",
+  "production_claims": [],
+  "error_page_repair": "Final live crawl found generic error rendering missing the normal Ziggy route config. Exception rendering now provides the same definitions; real invalid-token HTML, status404, private no-store and noindex verified.",
+  "final_exception_route_regressions": "51 passed (1620 assertions)"
+}

@@ -1,0 +1,988 @@
+{
+  "prepared_local_date": "2026-11-11 Asia/Kolkata",
+  "base_commit": "8de93f16a06f8c8622bdb38f483edc86c78f69c6",
+  "scope": "Review hashes for the current local implementation and shared working-tree dependencies. Includes preexisting user work in shared files; not a patch, commit, deployment authorization or database export.",
+  "files": [
+    {
+      "path": ".env.example",
+      "sha256": "c728623b4ad7d0c69afc4b054c11b90a2983ccf1e40aec8d6dd3f886167d8cb7",
+      "bytes": 6750
+    },
+    {
+      "path": "app/Console/Commands/PruneMarketplaceAttribution.php",
+      "sha256": "197106996ac012debdb270d6f98d4ffb8c814f52b3f6c478a7ffe7d582294044",
+      "bytes": 945
+    },
+    {
+      "path": "app/Console/Commands/ReconcileMarketplaceGrowth.php",
+      "sha256": "0054018927d502acc2fe3fe1c8099affdbff24ec85fcce1cd095de015fbce1a6",
+      "bytes": 2230
+    },
+    {
+      "path": "app/Console/Commands/ReviewMarketplaceGeography.php",
+      "sha256": "ded4262df7ae0176fb02b3a639ae894a33b5ee2c413b876fc11baa5a18b2ac70",
+      "bytes": 2046
+    },
+    {
+      "path": "app/Console/Commands/ReviewMarketplacePages.php",
+      "sha256": "321376c94905b01e5f3cabfcca0a91244544594868ef71290a4bc98eddd7315c",
+      "bytes": 5636
+    },
+    {
+      "path": "app/Console/Commands/SweepMarketplaceMessageEmails.php",
+      "sha256": "7b05ebcb82fa84e93ed645352d3b97d311935112e0cb1acf6e6a5035d30e1a38",
+      "bytes": 1711
+    },
+    {
+      "path": "app/Console/Kernel.php",
+      "sha256": "4fd5e2d16ded301f96c7401e0e1f2a2269b2caafebfda1de5a0dcf88e3d1af50",
+      "bytes": 1495
+    },
+    {
+      "path": "app/Domain/BusinessConfiguration/Models/Service.php",
+      "sha256": "83db0870093f7f753b4ff4abd5d4bf54702958204803de07a15e8e396d2b05e9",
+      "bytes": 2847
+    },
+    {
+      "path": "app/Domain/BusinessConfiguration/Services/BusinessActivationManager.php",
+      "sha256": "27276a3d1a9389e36b671c7825be302c25ba045da40847c0152cc2a262bdd9f5",
+      "bytes": 19227
+    },
+    {
+      "path": "app/Domain/BusinessConfiguration/Services/ServiceCatalogManager.php",
+      "sha256": "f043714f4e53b6095c8e607f64aa1b88637ae991282f35c4f0dd795fb12acb93",
+      "bytes": 25419
+    },
+    {
+      "path": "app/Domain/Communications/Providers/SesEmailProvider.php",
+      "sha256": "12baa8caa49ed518262df910d4b04f7bd252fb7daa9bc7a56a2c8e0a5a6c4cc9",
+      "bytes": 5202
+    },
+    {
+      "path": "app/Domain/Marketplace/Jobs/SendMessageEmail.php",
+      "sha256": "ef26e23312df6ea6b9c503eef92fb185435afba1837f3da9b88495155762c5a1",
+      "bytes": 4145
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Jobs/RefreshPublicSupply.php",
+      "sha256": "adc2761b79840db8232287bfb9937194248e7065939da6ca15aabfab3f3cc921",
+      "bytes": 1870
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Models/ServiceConcept.php",
+      "sha256": "91a257fad0dd7fff60cf130f51eaeed6527aa4722a9824170a1868e137f8cac4",
+      "bytes": 301
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Services/BookingAttribution.php",
+      "sha256": "debc6969017f902f207c867244544826b8d86f1948f8dc3e72f6af204d115d4c",
+      "bytes": 5324
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Services/DiscoveryTaxonomy.php",
+      "sha256": "a7f1c4e52bc7081cba58c76d3a1315ce47bc859eb8ef0a8522333be8705db9a9",
+      "bytes": 2254
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Services/GrowthOutcomeReport.php",
+      "sha256": "808984fe9906f677d9c10d870b25a009ee6600ce33459aa95a5ce22e4c5327ba",
+      "bytes": 8029
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Services/GrowthSitemap.php",
+      "sha256": "9c932d56e7ffea05b6a33ea44b908cab066019d71bdc22734b1201a59711dce6",
+      "bytes": 2077
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Services/MarketplacePublicPage.php",
+      "sha256": "6889c6ca3bcfc45b4edc727e5f4024eec02d1df1df9ac4569fa5a3ee54a73373",
+      "bytes": 5371
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Services/OwnerDiscoverySettings.php",
+      "sha256": "e56c4b4d0367b60fa47e7a2c42738e38a411e8b291e6ff94c3da8fdd64ae6954",
+      "bytes": 2449
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Services/ProjectionWork.php",
+      "sha256": "76d44eb3316ae433de4a5c6160d7a8d9fe79eb7e133a75004ba6a7f302fe888e",
+      "bytes": 1820
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Services/PublicOfferQuery.php",
+      "sha256": "2d22449cd0fafb037079da44d82f58077127581ca0dd2cb0379f4be9fe427836",
+      "bytes": 4140
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Services/PublicSupplyProjection.php",
+      "sha256": "546301aa9652291eaac3687d354075e95e7f45d45d007c2cbfe549763bc60f0d",
+      "bytes": 8762
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Services/SearchPerformanceImport.php",
+      "sha256": "f5484df24f1604c761293510f85867b2d7bab5497ae99772a667b045e90e72da",
+      "bytes": 2666
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Services/SeoPageRegistry.php",
+      "sha256": "240ac998f5213bafb504149324c314169121a5db095e770bbbeeb1022fd42b32",
+      "bytes": 7568
+    },
+    {
+      "path": "app/Domain/Marketplace/LocalGrowth/Services/SupplyDiscovery.php",
+      "sha256": "22d51dc62d178aa6cbe9770192b69964f84351ee68c924c91287f7bd517e8bca",
+      "bytes": 9035
+    },
+    {
+      "path": "app/Domain/Marketplace/Models/Customer.php",
+      "sha256": "93bcb9efbd4818a56a9c369f11e38497a04afa8f744741d7dd3f6c86772790b8",
+      "bytes": 775
+    },
+    {
+      "path": "app/Domain/Marketplace/Models/CustomerBooking.php",
+      "sha256": "6fa6c138367864ae83224e2a760a50868f85ef39507cc53ba4a4bc8582afe128",
+      "bytes": 991
+    },
+    {
+      "path": "app/Domain/Marketplace/Services/BookingMessages.php",
+      "sha256": "18dcf34533d98a81d0d37425a98a35ce4436cfc97c4dde3bde5526979e2f7043",
+      "bytes": 3991
+    },
+    {
+      "path": "app/Domain/Marketplace/Services/CustomerConversationReturn.php",
+      "sha256": "c4df4e5671ebb8c4656caa5e8dccf06117a92a9b659dbb4acbdca6ccf0f8ee7d",
+      "bytes": 563
+    },
+    {
+      "path": "app/Domain/Marketplace/Services/CustomerPhoto.php",
+      "sha256": "55f6b71c6e10c1b4c39b7c2143dc09a41791c65d9a0b9c1218905c416cbc93d2",
+      "bytes": 4017
+    },
+    {
+      "path": "app/Domain/Marketplace/Services/DiscoveryCatalogue.php",
+      "sha256": "712ddd868a094632ce5eb93664cda858b1e88d766d4daec17ff422a1d63c32cd",
+      "bytes": 2437
+    },
+    {
+      "path": "app/Domain/Marketplace/Services/DiscoveryFilters.php",
+      "sha256": "9a85f7b65d60c1c2d708a781c9fe265a0d38bbf3586d38347fbc2cdd52e3a8f0",
+      "bytes": 4152
+    },
+    {
+      "path": "app/Domain/Marketplace/Services/MarketplaceListings.php",
+      "sha256": "59f4c2fffe764a49a821f83e5263bc071bf80b31322376cd0d33b50da5d7f981",
+      "bytes": 1131
+    },
+    {
+      "path": "app/Domain/MoneyCommerce/Services/ReceiptService.php",
+      "sha256": "9e995a65a91d4e8b9c87e5605c1a2d75a15699111ce1729f052b040a56ed3069",
+      "bytes": 3232
+    },
+    {
+      "path": "app/Domain/PublicBooking/Services/PublicBookingService.php",
+      "sha256": "2c966d53804a77572218b6a648d51f208a2bda1d283d7a837ad6e12e298743eb",
+      "bytes": 31862
+    },
+    {
+      "path": "app/Domain/SchedulingOperations/Models/Appointment.php",
+      "sha256": "d54ef0b798b96fd610e0c49fff97208c6c419c9cfdf495fcc2a2ffa7ac137c12",
+      "bytes": 3947
+    },
+    {
+      "path": "app/Domain/SchedulingOperations/Services/AppointmentLifecycleService.php",
+      "sha256": "56fa33e4b20260298f4596cc3ec00b5efe0818f44aaea8e6472c56da89e8a775",
+      "bytes": 22810
+    },
+    {
+      "path": "app/Exceptions/Handler.php",
+      "sha256": "3f2bd3b4220c7d063259b3012a7496bf5cb8a593c3c9aa1b6bb854ab5b5ae0da",
+      "bytes": 5812
+    },
+    {
+      "path": "app/Http/Controllers/CommunicationActionController.php",
+      "sha256": "ccae4ca7b6d0c8f8d5e029b45a96999991352de80c68cb8ff5dbb9154ece7925",
+      "bytes": 5923
+    },
+    {
+      "path": "app/Http/Controllers/Marketplace/AcquisitionController.php",
+      "sha256": "23c87cc4c749d0b1f3df74068a7f70a136d56b25305f24188720456fb9677c14",
+      "bytes": 2150
+    },
+    {
+      "path": "app/Http/Controllers/Marketplace/BusinessMarketplaceController.php",
+      "sha256": "bc648d6cadfb887fa12ed5646f697c82986b638e124fd648b259e03e131c446e",
+      "bytes": 13292
+    },
+    {
+      "path": "app/Http/Controllers/Marketplace/CustomerAccountController.php",
+      "sha256": "4df760eac65e13d91f68e7f8c5f0b110c1a70a59049e61d30766c0ea3c6a444a",
+      "bytes": 11678
+    },
+    {
+      "path": "app/Http/Controllers/Marketplace/CustomerAuthController.php",
+      "sha256": "fcc2c82ffad3b353d239d5c35898d128511b211629ae9e768880e415dc9a7be0",
+      "bytes": 6922
+    },
+    {
+      "path": "app/Http/Controllers/Marketplace/CustomerGoogleController.php",
+      "sha256": "8d6c46cdde814f97ce7357dab0ffe7a652c64d824431fba98a8b9c6b2cae5a9e",
+      "bytes": 4639
+    },
+    {
+      "path": "app/Http/Controllers/Marketplace/DiscoveryController.php",
+      "sha256": "1773abfa03a22f853f6fd804fbf61e6422d32aba33e46820641af0a2bc52c983",
+      "bytes": 11108
+    },
+    {
+      "path": "app/Http/Controllers/Marketplace/GrowthReportController.php",
+      "sha256": "31d3424c2735e3026283b7a4aa30d105fe9b8065a160a8bebceb89fafc639422",
+      "bytes": 2424
+    },
+    {
+      "path": "app/Http/Controllers/Marketplace/GrowthSitemapController.php",
+      "sha256": "d3a125c8d9c41669ffd3bff439492e5748f16e4ce1ea3f5dcb9c5eab681b51fd",
+      "bytes": 741
+    },
+    {
+      "path": "app/Http/Controllers/Marketplace/LocalPageController.php",
+      "sha256": "1ac40d602089f2b5af3195c062c6fa55f9f1acddb9e9ab0ad9bd9ecec55fec8c",
+      "bytes": 2458
+    },
+    {
+      "path": "app/Http/Controllers/Marketplace/SalonController.php",
+      "sha256": "ff8eef99749bb4964be017e30e94e9457b47f363624349548f876a37459d0511",
+      "bytes": 4310
+    },
+    {
+      "path": "app/Http/Controllers/PublicBooking/BookingBusinessController.php",
+      "sha256": "2c84d83c08bdc2677635a5dee2ed46228bd25cd244a9e9587e406c48dc95efe4",
+      "bytes": 2012
+    },
+    {
+      "path": "app/Http/Controllers/PublicBooking/PublicBookingFlowController.php",
+      "sha256": "a941cb266563cc36b786d85b9a48ddf784ae7d53868a254887574e106e555d21",
+      "bytes": 10683
+    },
+    {
+      "path": "app/Http/Controllers/Shop/CheckoutController.php",
+      "sha256": "89ca05dd2adde7bc95c450be3606363382988018c8619f9379b9c8446b7df6f7",
+      "bytes": 28464
+    },
+    {
+      "path": "app/Http/Controllers/Shop/LocationSetupController.php",
+      "sha256": "d3ce37495bd46aaa10c0fed0bda3a1a55a2449ab57532c938e9269e71b94ab43",
+      "bytes": 4708
+    },
+    {
+      "path": "app/Http/Controllers/Shop/ServiceManagementController.php",
+      "sha256": "80a3fd1480bb6fd53318615c5fa3efebc1668614b36535868b877555374df027",
+      "bytes": 19486
+    },
+    {
+      "path": "app/Http/Controllers/SitemapController.php",
+      "sha256": "19e949b009162af31fa90892d478a5f14bd424d297336769a104cf02a0ac8027",
+      "bytes": 1124
+    },
+    {
+      "path": "app/Http/Middleware/ApplyHttpSecurity.php",
+      "sha256": "bb086bd0a7421583574a04edd366536e373b8367bea078a292dac13a16bc6eff",
+      "bytes": 2769
+    },
+    {
+      "path": "app/Http/Middleware/HandleInertiaRequests.php",
+      "sha256": "591f8c4f580df5247f890551339ded905650a3177f7855c41350c693e29bd473",
+      "bytes": 13301
+    },
+    {
+      "path": "app/Http/Middleware/MarketplaceSession.php",
+      "sha256": "56f45d40ac8d9a719981fa7dd39d30dceeb5fd0f761add04fa111150d7fa30cc",
+      "bytes": 958
+    },
+    {
+      "path": "app/Notifications/BookingMessageNotification.php",
+      "sha256": "a696b04c6c4f7cb8c8a67d84e9edf5a18e5cfeac4050b8e7727e2af3280b4672",
+      "bytes": 1759
+    },
+    {
+      "path": "app/Providers/AppServiceProvider.php",
+      "sha256": "19ec43a51f34b1a2ac63f0fa6ece4ce489cf4d9b3c6077c951fc55a5236ad785",
+      "bytes": 5348
+    },
+    {
+      "path": "app/Support/Audit/AuditWriter.php",
+      "sha256": "7bbeb9f20fa3ae2f893f9b230a488d362b4a692a02ddec7526901bda9ad58df9",
+      "bytes": 2946
+    },
+    {
+      "path": "app/Support/Mail/MarketplaceEmailBrand.php",
+      "sha256": "b23f2191238c8ef7cd93c181b26602c6114e211cd02780480df10aa88f993656",
+      "bytes": 1391
+    },
+    {
+      "path": "app/Support/Seo/PublicIndexation.php",
+      "sha256": "8a4f4660f9fee65e0d30f9b9c37c2180a022129dc268e67101b4bcd95ab8d4d6",
+      "bytes": 2323
+    },
+    {
+      "path": "composer.lock",
+      "sha256": "ffa2826e428eb3c923706492e8e2efd3d3ec6b29916549143492656b59ff180d",
+      "bytes": 591973
+    },
+    {
+      "path": "config/marketplace-growth.php",
+      "sha256": "023c15784a4073373ca4bc6a029303f247f83ed85441fc0ed979137f7a144586",
+      "bytes": 413
+    },
+    {
+      "path": "config/marketplace-taxonomy.php",
+      "sha256": "54a78560c8a12f90ec09dcaaf02f003cf361bc1dc61119a99dc1ef71b2fcfe6d",
+      "bytes": 6901
+    },
+    {
+      "path": "config/marketplace.php",
+      "sha256": "511e124efc07f549adb20b323df81f8cf623bbaf91da8403bc6846060604d9dc",
+      "bytes": 98
+    },
+    {
+      "path": "database/migrations/2026_11_08_000005_create_marketplace_local_growth.php",
+      "sha256": "a84b349c776750a9f6994cd56902c45d1850fa97a35473f3317f0d37b482ad19",
+      "bytes": 10600
+    },
+    {
+      "path": "database/migrations/2026_11_08_000006_add_marketplace_attribution_lineage.php",
+      "sha256": "2f225af58b3f2708b608cbe3f7ff8b79c2917e3fe6fbc5b35c3827c4313796a2",
+      "bytes": 951
+    },
+    {
+      "path": "database/migrations/2026_11_09_000001_add_marketplace_customer_photo.php",
+      "sha256": "16e1198a69007112803e77f8d7012cfb29e385d6b1652e42428d84021fa5568a",
+      "bytes": 470
+    },
+    {
+      "path": "database/migrations/2026_11_09_000002_add_marketplace_message_email.php",
+      "sha256": "008ca49b8a6585763319c8a4ffe8e8112d9fdcf3d816741e4d0f5ffe1a37cbcb",
+      "bytes": 629
+    },
+    {
+      "path": "docs/audits/2026-11-08-marketplace-local-growth/README.md",
+      "sha256": "7a89ac1b75dda45d8c3f7b8c888ba86168bb92d363704c98d189752be3a7e01d",
+      "bytes": 15809
+    },
+    {
+      "path": "docs/audits/2026-11-08-marketplace-local-growth/cookies-desktop.jpg",
+      "sha256": "9775f89374cab3860c3fc623351e2bdf1d916627e9cd7b66703e011f63f2181a",
+      "bytes": 44461
+    },
+    {
+      "path": "docs/audits/2026-11-08-marketplace-local-growth/cookies-mobile.jpg",
+      "sha256": "e095504603ac95fb817e47f18652872da35fea6778ae976f935999ef61b60e4f",
+      "bytes": 92304
+    },
+    {
+      "path": "docs/audits/2026-11-08-marketplace-local-growth/crawl-local.json",
+      "sha256": "a78a9eec0fae1ef09a4d14eb0c5058987478bcf992c382a4573cf516f3537a63",
+      "bytes": 4265
+    },
+    {
+      "path": "docs/audits/2026-11-08-marketplace-local-growth/load-local.json",
+      "sha256": "1375785018b44a6fac19dab43af8e80a139b687049f87a841a701838617f5b2e",
+      "bytes": 245
+    },
+    {
+      "path": "docs/audits/2026-11-08-marketplace-local-growth/local-desktop.jpg",
+      "sha256": "d0326c2c6c43bca948e8d9d673147756e15580329b9def216067a08bfcf0a8b4",
+      "bytes": 96693
+    },
+    {
+      "path": "docs/audits/2026-11-08-marketplace-local-growth/local-mobile.jpg",
+      "sha256": "40ce984e3432c67fec3adee38402f9dd237e3f52d41376f437a4bb4bca21bb71",
+      "bytes": 75835
+    },
+    {
+      "path": "docs/audits/2026-11-08-marketplace-local-growth/profile-photo-mobile-preview.jpg",
+      "sha256": "fcbc01ab360e81640c7374b1a6514933eadcd008a0c6bc608d1b64895aced732",
+      "bytes": 56617
+    },
+    {
+      "path": "docs/audits/2026-11-08-marketplace-local-growth/validation.json",
+      "sha256": "4b15a20c3c0fb8008fe8f08f0caa4495d459a27e88935726a55c46eab30df83c",
+      "bytes": 24970
+    },
+    {
+      "path": "docs/audits/2026-11-08-marketplace-local-growth/visual-evidence.md",
+      "sha256": "2b06f8ba22c2245f441923e5d1c0152a2128606067e31844f22776505cf7f160",
+      "bytes": 1691
+    },
+    {
+      "path": "docs/audits/2026-11-09-marketplace-booking-shell/README.md",
+      "sha256": "b556491780633c02cd97b35fc5f0e808ddb652ee3b8ffd96cb9b800dbf7b7051",
+      "bytes": 3171
+    },
+    {
+      "path": "docs/audits/2026-11-09-marketplace-messages-email/README.md",
+      "sha256": "31c8a24b21faf2ad0fa1151bbbc78a70556be39d5589cbcb8c1f94c11631257d",
+      "bytes": 10424
+    },
+    {
+      "path": "docs/audits/2026-11-09-marketplace-messages-email/backend.txt",
+      "sha256": "8ea9a38c973e864beaf3bc2f21a1853dc0124e41f7061a70aa2314ba4ccc6d2d",
+      "bytes": 15553
+    },
+    {
+      "path": "docs/audits/2026-11-09-marketplace-messages-email/budgets.txt",
+      "sha256": "cddaa116c83b99b5e5321c6c03834b3a25d5938a1e75faae2fe07b5e33f739c6",
+      "bytes": 118
+    },
+    {
+      "path": "docs/audits/2026-11-09-marketplace-messages-email/build.txt",
+      "sha256": "1390a7576ce83812fca4717af80842e6cf84f8f9e1c4180ea3408fc7138e2495",
+      "bytes": 40750
+    },
+    {
+      "path": "docs/audits/2026-11-09-marketplace-messages-email/format.txt",
+      "sha256": "cd1a94fc2cf6a965b86e1a4809d6c7fb9148b1ee374e1010ed2ac96ff4876ec2",
+      "bytes": 33
+    },
+    {
+      "path": "docs/audits/2026-11-09-marketplace-messages-email/frontend.txt",
+      "sha256": "eea5aa4c659852fad7473b3cd9d231cbefee2186446b0f8fa84e4c7bebc859bf",
+      "bytes": 24794
+    },
+    {
+      "path": "docs/audits/2026-11-09-marketplace-messages-email/message-preview.html",
+      "sha256": "23a1005899bea937e6171cf784b95c02b0389d8aef5c01e65c85ebe7c40fa7e7",
+      "bytes": 24099
+    },
+    {
+      "path": "docs/audits/2026-11-09-marketplace-messages-email/message-sample.eml",
+      "sha256": "830e271fdb67e71301bbddc4335f9bdb933a057128c4ab82b1242df32c3693fb",
+      "bytes": 26557
+    },
+    {
+      "path": "docs/audits/2026-11-09-marketplace-messages-email/sign-in-preview.html",
+      "sha256": "bbd27d7bd05a3e2639298c4f276d1b31fc0564cc832edb1ba2f432b563084571",
+      "bytes": 26187
+    },
+    {
+      "path": "docs/audits/2026-11-09-marketplace-messages-email/sign-in-sample.eml",
+      "sha256": "03f119203a4ede19e3307be26768ea116fa5f455cd104e10d226b22ffe38e3c3",
+      "bytes": 28841
+    },
+    {
+      "path": "docs/audits/2026-11-09-marketplace-messages-email/ssr.txt",
+      "sha256": "0290d54d77e2122f7e48c95f6b6ba6c6c10b1bb641ea0b009d0890db553fff1f",
+      "bytes": 2541
+    },
+    {
+      "path": "docs/audits/2026-11-09-marketplace-messages-email/validation.json",
+      "sha256": "7b4961b0811a7691d9b2d76507dbe841dde81c343ddf7d8022570a7589b38db6",
+      "bytes": 684
+    },
+    {
+      "path": "docs/audits/2026-11-11-marketplace-automatic-publication/README.md",
+      "sha256": "4d73ff2fef48a4bce7ec3f3072a147fd97ec94ba28f377a7c882618ec33ea16a",
+      "bytes": 8350
+    },
+    {
+      "path": "docs/audits/2026-11-11-marketplace-automatic-publication/backend.txt",
+      "sha256": "e208a249ca22453fe104f3d2f38b93a09a672a2dd71f09dbe0612e865f13dce9",
+      "bytes": 19986
+    },
+    {
+      "path": "docs/audits/2026-11-11-marketplace-automatic-publication/budgets.txt",
+      "sha256": "cddaa116c83b99b5e5321c6c03834b3a25d5938a1e75faae2fe07b5e33f739c6",
+      "bytes": 118
+    },
+    {
+      "path": "docs/audits/2026-11-11-marketplace-automatic-publication/build.txt",
+      "sha256": "b72953598e30cc37162310b5727c35f17e925c05e1394784945049f8bb7fd978",
+      "bytes": 40750
+    },
+    {
+      "path": "docs/audits/2026-11-11-marketplace-automatic-publication/format.txt",
+      "sha256": "cd1a94fc2cf6a965b86e1a4809d6c7fb9148b1ee374e1010ed2ac96ff4876ec2",
+      "bytes": 33
+    },
+    {
+      "path": "docs/audits/2026-11-11-marketplace-automatic-publication/frontend.txt",
+      "sha256": "54960e268f1ccc28662449278cae98c8eddc851fe328284412b0526d344d155c",
+      "bytes": 24941
+    },
+    {
+      "path": "docs/audits/2026-11-11-marketplace-automatic-publication/load.json",
+      "sha256": "d68891efbefd29cd32019852028f73f95ae5f8ef63f732e2387e9fcb3a3adc15",
+      "bytes": 245
+    },
+    {
+      "path": "docs/audits/2026-11-11-marketplace-automatic-publication/local-migrate.txt",
+      "sha256": "70cd73d2f119c9fca4e6bfaef5211e21a152170568633e12f0480f23d96bf0be",
+      "bytes": 271
+    },
+    {
+      "path": "docs/audits/2026-11-11-marketplace-automatic-publication/local-recheck.txt",
+      "sha256": "9a70d0169290097b056d5809116789fbeaa194c1a5ae0a6e9af8f0a2648a7536",
+      "bytes": 33
+    },
+    {
+      "path": "docs/audits/2026-11-11-marketplace-automatic-publication/local-reconcile.txt",
+      "sha256": "f6edcc383d768482c38aafec6ad0d9453bf1f1d1f4cefc0d221060b78eba2cdc",
+      "bytes": 62
+    },
+    {
+      "path": "docs/audits/2026-11-11-marketplace-automatic-publication/mysql.txt",
+      "sha256": "8fc696f77e9f57d1b2e5649a4fa25a802c8481e72ebd92dcad8d9fc21e00de1b",
+      "bytes": 338
+    },
+    {
+      "path": "docs/audits/2026-11-11-marketplace-automatic-publication/ssr.txt",
+      "sha256": "b2ca89c9e2309f43bb33b218acb1e1fe4d46146ea14ae2e6f7bf7cfcbec21636",
+      "bytes": 3203
+    },
+    {
+      "path": "docs/audits/2026-11-11-marketplace-automatic-publication/validation.json",
+      "sha256": "6fd3561a529a7e763c133f6dbfca45bce3f10c73cdcdf60b0fdce7de16e40a81",
+      "bytes": 878
+    },
+    {
+      "path": "docs/decisions.md",
+      "sha256": "5e91593d1f9196abb33ab72e9747d017085bea3bdceae4e1e84eaa8795cbc44e",
+      "bytes": 234387
+    },
+    {
+      "path": "docs/deployment/search-indexing.md",
+      "sha256": "55b87fc1c42ca764e17727dc60f09a0512c25ec3cf32ca8d4f437218ac6eaf78",
+      "bytes": 9221
+    },
+    {
+      "path": "docs/design-system.md",
+      "sha256": "9dc6fb894a834bf87b3b93bae8a916d10b89d8c7b7f577614605d70f87bd91ac",
+      "bytes": 85188
+    },
+    {
+      "path": "docs/modules/booking-presentation.md",
+      "sha256": "e9f5c340797a028fed02ad29d154c89e7d5d8ea2dae4cac4772a5c8fcdd4a43a",
+      "bytes": 10093
+    },
+    {
+      "path": "docs/modules/business-setup.md",
+      "sha256": "448408c8255312c6feb0079f69e13047a0aebd7a22a1bd479d923973fa5d4cf0",
+      "bytes": 13760
+    },
+    {
+      "path": "docs/modules/client-reviews.md",
+      "sha256": "a97ba089204fd8980c3a73150d618916ab6762812d98320589ab005a1536c8cf",
+      "bytes": 6391
+    },
+    {
+      "path": "docs/modules/location-intelligence.md",
+      "sha256": "038fdf72752b292c7a5026036c9b03b6fb3baf96c58c8d971ebea197f910eb2a",
+      "bytes": 10145
+    },
+    {
+      "path": "docs/modules/marketplace.md",
+      "sha256": "ab937a96ce0ab4e4d5416e7108ff579e757cb965fcc709a844cc6166d5a1792f",
+      "bytes": 22470
+    },
+    {
+      "path": "docs/modules/public-website.md",
+      "sha256": "fce302909a592ae46ef45d923f4fb903b10d08eb266ddc8c1bda61a38434eec3",
+      "bytes": 18000
+    },
+    {
+      "path": "docs/modules/reports.md",
+      "sha256": "b9ac783d6d4d5d49cbc9ebe864326aa74942a080276ca4fbe1ecbd4c98771e56",
+      "bytes": 3976
+    },
+    {
+      "path": "docs/modules/services.md",
+      "sha256": "9d4b47f205a10bdcc689beabc804ed99ed56cbc3c83b0ce7a87771762c2f5b4f",
+      "bytes": 11714
+    },
+    {
+      "path": "docs/product-requirements.md",
+      "sha256": "f508873089900533adee91b370dfc1eca870cf0f79a6910a17e942c84bb5cfc8",
+      "bytes": 84497
+    },
+    {
+      "path": "docs/project-status.md",
+      "sha256": "07b480f04caf076bf22f05fffd2482d1bb73cd5a1f7b4abc050546572e19745a",
+      "bytes": 263112
+    },
+    {
+      "path": "docs/public-booking-journey.md",
+      "sha256": "beb1a3e7fbb3241cd91e6ad4c0c56972190b2464610817e05e9f4db5828186ac",
+      "bytes": 13345
+    },
+    {
+      "path": "docs/quality-and-testing.md",
+      "sha256": "7c87f1148a42b7724806d9b846991397d02d7dced11e0f3d030f77bd72c32292",
+      "bytes": 13822
+    },
+    {
+      "path": "docs/release/2026-11-08-marketplace-local-growth/README.md",
+      "sha256": "8a5927e3e373520ca62fda365d26a3406192f29c1092898941021941324716fb",
+      "bytes": 14942
+    },
+    {
+      "path": "docs/release/2026-11-08-marketplace-local-growth/geographies.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    {
+      "path": "docs/release/2026-11-08-marketplace-local-growth/outcomes.csv",
+      "sha256": "b81ff7f73081e640805432e04c3ad9cef23f731b8c2e7c96de4d3f964c6e9dd2",
+      "bytes": 315
+    },
+    {
+      "path": "docs/release/2026-11-08-marketplace-local-growth/pages.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    {
+      "path": "docs/release/2026-11-08-marketplace-local-growth/pilot-cohort.csv",
+      "sha256": "e5447ce7b3aded4260ccc468f30dad335b991b06290079b738a7d0f884fdabb5",
+      "bytes": 105
+    },
+    {
+      "path": "docs/release/2026-11-08-marketplace-local-growth/pilot-report.md",
+      "sha256": "29b12d7a848f58f4f735f0e4ff3c7cc1292f8077f90e85a77ebcd519df02bc72",
+      "bytes": 2243
+    },
+    {
+      "path": "docs/release/2026-11-08-marketplace-local-growth/search-performance.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    {
+      "path": "docs/release/2026-11-08-marketplace-local-growth/weekly-operations.md",
+      "sha256": "75a02335a7fce3b5357df38fa071d136bbc8f625c80d88843b16ef60fcd10daa",
+      "bytes": 3246
+    },
+    {
+      "path": "docs/strategy/marketplace-local-growth-plan.md",
+      "sha256": "597290dad1c34cbe6dd2765ab28d65ea0a239dae144def2a8a47996687ac887a",
+      "bytes": 28842
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "8993ece0f932190a19a61b3e205c445a0a9ca1ffa59a8dc80d4bba54a4c37cfe",
+      "bytes": 111544
+    },
+    {
+      "path": "resources/css/marketplace-account.css",
+      "sha256": "0c12aa53f075dd90507340d6f8cc5ff8346dc6733bd35772a0ad68750a29b845",
+      "bytes": 18186
+    },
+    {
+      "path": "resources/css/marketplace.css",
+      "sha256": "0700bd868745333cd602cbc5631c2a28871b557e0a76d7544a839ccbabd47435",
+      "bytes": 11817
+    },
+    {
+      "path": "resources/js/Components/Marketing/AnalyticsConsent.vue",
+      "sha256": "897da453568314e88895cc5c900925d7acbd16b1cf3f4d55c45f007498a54043",
+      "bytes": 2784
+    },
+    {
+      "path": "resources/js/Components/Marketplace/AcquisitionConsent.vue",
+      "sha256": "5ab4a66eaeda626aa367ba22cc604d1954d6c626cb6d79466c5354cfebed6501",
+      "bytes": 4404
+    },
+    {
+      "path": "resources/js/Components/Marketplace/DiscoverySearch.vue",
+      "sha256": "87f085f58d660fb298a12356890216bbfab797c8d13a46921986b4bb6209c5d4",
+      "bytes": 9558
+    },
+    {
+      "path": "resources/js/Components/Marketplace/LocationSearch.vue",
+      "sha256": "ac69e78a1c6e264799dc9a1251756d87bd2b49aa05d82405080495d5f5487dd0",
+      "bytes": 2205
+    },
+    {
+      "path": "resources/js/Components/Product/MarketplaceRecovery.vue",
+      "sha256": "d6d1be44c9c63ae051c9e8952ec0c83c119a843d58b3c095996a4d6203026fa8",
+      "bytes": 1274
+    },
+    {
+      "path": "resources/js/Layouts/BusinessMessagesLayout.vue",
+      "sha256": "617d629401a072bfc6e9295b4042d3d23a64b0fe3a56e12e18d9d47e96c50d43",
+      "bytes": 8474
+    },
+    {
+      "path": "resources/js/Layouts/MarketplaceAccountLayout.vue",
+      "sha256": "26308f9a73bc216d471f4b61f247a70ee7e63985753cf287b7bab78d776f0eb6",
+      "bytes": 2919
+    },
+    {
+      "path": "resources/js/Layouts/MarketplaceLayout.vue",
+      "sha256": "38dcddb6fc074587f35ead173ff244a312fdf9de5a3ad27d359421f1910261fc",
+      "bytes": 3688
+    },
+    {
+      "path": "resources/js/Layouts/PublicBookingLayout.vue",
+      "sha256": "3e1f63755b2eb11088dfa64c0d0754dbc68430949631bcb23c0750e6a119976e",
+      "bytes": 5541
+    },
+    {
+      "path": "resources/js/Pages/Activation/Location.vue",
+      "sha256": "303d41fb2497976b20ec7e9e9fb179999818aefffc3ed2d0c27ec4e03ce98042",
+      "bytes": 14611
+    },
+    {
+      "path": "resources/js/Pages/Booking/Welcome.vue",
+      "sha256": "48bfd72d48ea22fd042b39fe688c08734ce3dda5b90dc5278d4dce45e411938b",
+      "bytes": 59468
+    },
+    {
+      "path": "resources/js/Pages/Marketplace/Account.vue",
+      "sha256": "6794c5546c0ee10c809265992dd2268afb18d0204a4c18f995788cd0284c7bdf",
+      "bytes": 4740
+    },
+    {
+      "path": "resources/js/Pages/Marketplace/Business.vue",
+      "sha256": "ab98d4cf8e8000776c4d78f8c28a1c3f76adfe353affc4650153fce6ae0bc6ea",
+      "bytes": 5653
+    },
+    {
+      "path": "resources/js/Pages/Marketplace/BusinessInbox.vue",
+      "sha256": "85548b213b11087c5b67483f2d3665dab458577891a681c1b492ad4aa526f569",
+      "bytes": 964
+    },
+    {
+      "path": "resources/js/Pages/Marketplace/Conversation.vue",
+      "sha256": "292783a4e3c7dfbe0322fe6ae0d08ec6853c91c1f55be8f6cf92f569ccb139c4",
+      "bytes": 17128
+    },
+    {
+      "path": "resources/js/Pages/Marketplace/Discover.vue",
+      "sha256": "b503f2b99d633d416e2e139f763ecb704a680acf316f5c1fc3df4d5f2908ce5c",
+      "bytes": 24603
+    },
+    {
+      "path": "resources/js/Pages/Marketplace/GrowthReport.vue",
+      "sha256": "e11d6b806c248bb5d812d2c86f6fd789e5ed44d537c1ab764c68dd1ffb1b8380",
+      "bytes": 6196
+    },
+    {
+      "path": "resources/js/Pages/Marketplace/Inbox.vue",
+      "sha256": "c89baca9f5aa753747a1041142de5afb1e0bb68951c26057acad2fa7a93e643c",
+      "bytes": 2682
+    },
+    {
+      "path": "resources/js/Pages/Marketplace/Local.vue",
+      "sha256": "31fbc32e9f2ab7b25cf45ab6a1fcf8c8226e2eb23a8eb8c8554b0377d9a853c7",
+      "bytes": 3626
+    },
+    {
+      "path": "resources/js/Pages/Marketplace/Profile.vue",
+      "sha256": "76da885c27bb2499ccc7019afe3c22739344af9ddb6a5de476b4862274f0b66b",
+      "bytes": 7965
+    },
+    {
+      "path": "resources/js/Pages/Marketplace/Reports.vue",
+      "sha256": "4ed82604b6b1a2e8199b398b05b8a7c8b47b31acd177ababe1f48755fd0e5990",
+      "bytes": 1877
+    },
+    {
+      "path": "resources/js/Pages/Marketplace/SignIn.vue",
+      "sha256": "65fab083a8f48cbe28b33bc769b7dbfc88f57e9d19fa67d5455b58497d4bb59c",
+      "bytes": 4674
+    },
+    {
+      "path": "resources/js/Pages/Marketplace/Terms.vue",
+      "sha256": "1e06f8d12778de895723b0fe2e9144a93127aa39b2317a79b15120f3ba646fd7",
+      "bytes": 2040
+    },
+    {
+      "path": "resources/js/Pages/Marketplace/Unavailable.vue",
+      "sha256": "8f3138d95f6e07576c59659abc18921914056bcab5505bc6e5c068d05e2da7f0",
+      "bytes": 1590
+    },
+    {
+      "path": "resources/js/Pages/Services/Index.vue",
+      "sha256": "4361139faea7b37c31944d03077145b5343085a25981ab615894848117cc5581",
+      "bytes": 49985
+    },
+    {
+      "path": "resources/js/Support/marketplaceAttribution.js",
+      "sha256": "51b3ab3113da04a9ec16b75d6f7e280ca8e68a6e033bd881066a3fe30b47e3bf",
+      "bytes": 1570
+    },
+    {
+      "path": "resources/js/app.js",
+      "sha256": "f6ab6a47f85178c9aee4dbfccf4967e201038b8d424a6c1a657b93c7b5967046",
+      "bytes": 1629
+    },
+    {
+      "path": "resources/js/ssr.js",
+      "sha256": "8275f64d1a676a286855d858dfe1022ecde612fcc63388afb4b8697258406479",
+      "bytes": 1636
+    },
+    {
+      "path": "resources/markdown/policy.md",
+      "sha256": "597b333f5bb05a973fad794e46c15122f5198494fd65985a3c2e4b6335ca2181",
+      "bytes": 29375
+    },
+    {
+      "path": "resources/views/app.blade.php",
+      "sha256": "692a8af4799f5d7c1cb6b07198d6ba640b28b8dfd5fe7d779e4ef3f782983c12",
+      "bytes": 2067
+    },
+    {
+      "path": "resources/views/emails/marketplace/message-alert.blade.php",
+      "sha256": "abc3d1bc5473dbb6765b438e1f16f8365d108d0382b609ae6ed8d80fc610cd26",
+      "bytes": 584
+    },
+    {
+      "path": "resources/views/marketplace/public-content.blade.php",
+      "sha256": "836efc579b5f60176ef1fe306e1b1bdafbb977680b61398ea62f9e124a8816a4",
+      "bytes": 4508
+    },
+    {
+      "path": "resources/views/receipts/sale.blade.php",
+      "sha256": "0be98100ab88c5a83c92ab1b026adcfa8b581c04858f30b699cb23bc2bb70430",
+      "bytes": 9837
+    },
+    {
+      "path": "routes/marketplace.php",
+      "sha256": "420e50ce61a2a9a057d22e83fd82edbf8163c1f647c42c9f6b5986a370696e94",
+      "bytes": 5776
+    },
+    {
+      "path": "scripts/check-frontsite-budgets.mjs",
+      "sha256": "e1c7750381d7210113911423b27d12ebbd4d4bf589b95f36cefb7b00281a3255",
+      "bytes": 2032
+    },
+    {
+      "path": "scripts/check-marketplace-growth-seo.mjs",
+      "sha256": "d28ed6115a725423f455bc3c97c5b92f593a65bb66ec0b9fcaf5c24b9d82ffa2",
+      "bytes": 2648
+    },
+    {
+      "path": "scripts/prepare-marketplace-growth-qa.php",
+      "sha256": "9a67478f23e9699dbf61c4a0e34bb33e9dd2428a3a91c29f932442111757d9ee",
+      "bytes": 3930
+    },
+    {
+      "path": "scripts/verify-marketplace-growth.py",
+      "sha256": "b695610311864113d31ac39a839152ba2337b91300a440b018e1632d04a5ce33",
+      "bytes": 2501
+    },
+    {
+      "path": "scripts/verify-marketplace-mysql-migration.php",
+      "sha256": "8c6743504788cd87d43162ded10d019962e421e7aed4592fbc7d214614f1321a",
+      "bytes": 5657
+    },
+    {
+      "path": "tests/Feature/Communications/NotificationWorkspaceTest.php",
+      "sha256": "ae3284fd0d7a62685a3c777903ef186bd9bec199f7f177518565dfef3f2b2bcf",
+      "bytes": 23921
+    },
+    {
+      "path": "tests/Feature/Communications/SesClientDeliveryTest.php",
+      "sha256": "09a595fb9eb019d1cc30acbd83e1e443ee0bdd76fe59d0ef563c1340f0bc56f4",
+      "bytes": 16779
+    },
+    {
+      "path": "tests/Feature/Marketing/PrivacyPolicyTest.php",
+      "sha256": "ac8b75ede98291fdd3ad4d11fddad551bcd279f5ac385837e12ad80fd8e4fbe0",
+      "bytes": 10311
+    },
+    {
+      "path": "tests/Feature/MarketplaceAccountsTest.php",
+      "sha256": "c54c1956caee183722eed0adeaa42c94e3c8c3e475b8ac14af1530d39d952c14",
+      "bytes": 24094
+    },
+    {
+      "path": "tests/Feature/MarketplaceDiscoveryTest.php",
+      "sha256": "1be208ea3ab2116cdf73335f9a18ecc422058f0712a8c910ee402e4823c84712",
+      "bytes": 3409
+    },
+    {
+      "path": "tests/Feature/MarketplaceEmailPresentationTest.php",
+      "sha256": "ba0b2ef2a92e298b5dd19dfcbef43a6380ac848b5bcbbeb846b7f54c0ba2ea76",
+      "bytes": 3794
+    },
+    {
+      "path": "tests/Feature/MarketplaceGrowth/AttributionTest.php",
+      "sha256": "c77e72a72cb0a7a84968af9c11728592cd38749fb51cf8650d905f74eb32b3c4",
+      "bytes": 14221
+    },
+    {
+      "path": "tests/Feature/MarketplaceGrowth/AutomaticPublicationTest.php",
+      "sha256": "ced297c25b7ba4c52422b5e0e851dc755ab28b9961653fd4d05370e8df0e67f3",
+      "bytes": 8978
+    },
+    {
+      "path": "tests/Feature/MarketplaceGrowth/CustomerPhotoTest.php",
+      "sha256": "ee3ec043679addb026787cac22892d984475f67f69a146df8cc32893874df30b",
+      "bytes": 3653
+    },
+    {
+      "path": "tests/Feature/MarketplaceGrowth/MigrationRecoveryTest.php",
+      "sha256": "d6a02ab604ea656fbc2df2c7f6f522498b2c330b22feec8c3bc3443bdc743cd1",
+      "bytes": 2080
+    },
+    {
+      "path": "tests/Feature/MarketplaceGrowth/OwnerWorkflowTest.php",
+      "sha256": "5b005886072162e61f92d9163bc33e38bbbc8f18de8f78a31356b0e15d7d41d1",
+      "bytes": 4738
+    },
+    {
+      "path": "tests/Feature/MarketplaceGrowth/SeoTest.php",
+      "sha256": "930336da5fe7a0e16102c0f9c24e76b93b74cdf891b32e5d679eb1abfa1904c9",
+      "bytes": 11926
+    },
+    {
+      "path": "tests/Feature/MarketplaceGrowth/SupplyTest.php",
+      "sha256": "d67f22bb8b24e3505879ebeb487c92c22b7f46fa8b2291f53882b3ab657fadac",
+      "bytes": 10907
+    },
+    {
+      "path": "tests/Feature/MarketplaceMessageEmailTest.php",
+      "sha256": "4176a1f38efa428481ee53d2aecdb5388c2a0efd22e2990411c3f65496391ac7",
+      "bytes": 17597
+    },
+    {
+      "path": "tests/Feature/MarketplaceRefinementTest.php",
+      "sha256": "8aeab0455dbae15286fc910f2cae3e1fdea53755ec79be287fd43eba5014bb3e",
+      "bytes": 9240
+    },
+    {
+      "path": "tests/Feature/SchedulingOperations/CalendarWalkInOperationsTest.php",
+      "sha256": "737d3271037f2415835406a76d221631086d8991c2c332c338dcbb728698dc31",
+      "bytes": 61671
+    },
+    {
+      "path": "tests/Frontend/booking-presentation.test.mjs",
+      "sha256": "5f0e419485e3022b6ae0df10a4dd9b077bc41a709105b33244e74a618ffe3a24",
+      "bytes": 15712
+    },
+    {
+      "path": "tests/Frontend/booking-theme.test.mjs",
+      "sha256": "4b5250ec2c2547d58cbbada8d752ae914c9e7412ed5071d1a4908d31207e3de7",
+      "bytes": 8567
+    },
+    {
+      "path": "tests/Frontend/marketplace-account.test.mjs",
+      "sha256": "f081e6352f4318ba7237663b654cb4f0b62325da56ddb7ef6d782919297cd4e5",
+      "bytes": 19178
+    },
+    {
+      "path": "tests/Frontend/marketplace-discovery.test.mjs",
+      "sha256": "3bf955feb6915106f6458064fd9b04ff82569debd0a3bf14cc6f420bf010d315",
+      "bytes": 9843
+    },
+    {
+      "path": "tests/Frontend/marketplace-growth.test.mjs",
+      "sha256": "a4ebdce38a4abd305e81a2a01ea83852c5c1d0a35eb3447e3a01678659f8b829",
+      "bytes": 3073
+    },
+    {
+      "path": "tests/Support/MarketplaceGrowthFixture.php",
+      "sha256": "71bceed8b719215ae6a9ff8ccb80f53765f63c9101ae94c7564d36cd95dc5950",
+      "bytes": 3713
+    }
+  ],
+  "candidate_update": "2026-11-09 Marketplace booking shell; source/header branding only, no deployment/indexation"
+}

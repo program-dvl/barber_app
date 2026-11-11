@@ -29,7 +29,8 @@ it('keeps marketing navigation on real named routes with accessible mobile behav
 
     expect($header)
         ->toContain('cd-marketing-header')
-        ->toContain('<ProductMark use-logo-image />')
+        ->toContain('<ProductMark compact />')
+        ->toContain('cd-business-brand-copy')
         ->not->toContain('<ProductMark inverse />')
         ->toContain('aria-controls="marketing-mobile-menu"')
         ->toContain(':aria-expanded="menuOpen"')

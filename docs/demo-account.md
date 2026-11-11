@@ -21,6 +21,12 @@ Run this from the deployed application root. No password environment variable is
 php artisan db:seed --class=PitchDemoSeeder --force
 ```
 
+If Forge reports a tunnel/command failure after “Seeding database”, do not infer
+that the seed rolled back. Forge's command session has its own execution limit.
+Check the existing demo login and completion record before rerunning. On
+2026-11-07 the Forge run reported failure, but production had all 1,640 visits
+and the live demo login/setup passed; see [the live verification](audits/2026-11-07-canadian-demo/README.md#production-verification-after-forge-command-errors--2026-11-07).
+
 Sign in at `/login`. The owner explicitly selected **Password@123** for all fourteen
 demo accounts. It is stored as a password hash in the database. Rerunning the
 seeder restores that password for the original fourteen demo-only accounts while

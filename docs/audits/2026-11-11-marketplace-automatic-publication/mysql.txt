@@ -1,0 +1,5 @@
+Reproduced original MySQL 1059 after partial table creation.
+Resumed migration, preserved existing row, restored tenant FK, unique keys and lookup indexes.
+Repeated migration is idempotent.
+Fresh MySQL growth migration passes; all Marketplace constraint/index identifiers fit 64 characters.
+Removed isolated synthetic migration database.

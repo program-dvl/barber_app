@@ -132,3 +132,25 @@ Locations has a dedicated desktop/mobile workspace menu entry beside Services,
 using the existing settings visibility and access rules. Its selected navigation
 state belongs to Locations. Existing paid-limit checks still control Add location;
 at the limit, Upgrade to add locations opens the established billing journey.
+
+## Marketplace discovery integration — 2026-11-08
+
+The browser-only branch-sort privacy rule above still applies inside an individual
+salon's booking. Marketplace discovery now additionally reuses the configured
+Google widget for location suggestions and a professional results map. An explicitly
+selected Google/device search centre is sent to Clipperdesk for within25km matching
+and kept only in the server browsing session, valid30minutes, cleared on expiry
+check or explicit removal. Full device precision is retained; hardware accuracy is
+not guaranteed. No profile/booking location history or coordinate URL is added.
+Selected provider geometry is not used as an owner entrance or persisted in a
+business record. See [Marketplace](marketplace.md) for the contract and verification
+limits. The public privacy notice distinguishes these two optional location uses.
+
+## Reviewed local discovery areas (MPG-02/03)
+
+Locations adds an optional reviewed area and customer-facing-address choice to its
+existing save transaction and authority. Stable geography records have explicit
+operator source/reviewer/time; there is no guessed city or imported Places catalogue.
+The binding includes the actual address hash and owner review. Removing the choice
+or changing the address invalidates SEO geography until reviewed again. An area
+not yet supported offers contact support while ordinary location saving works.

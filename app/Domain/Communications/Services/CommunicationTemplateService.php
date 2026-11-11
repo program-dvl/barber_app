@@ -13,6 +13,8 @@ class CommunicationTemplateService
 {
     public const PLATFORM_REVISION = '2026-10-14';
 
+    public const EMAIL_PLATFORM_REVISION = '2026-11-08-marketplace';
+
     public function __construct(private readonly CommunicationTemplateRenderer $renderer) {}
 
     public function settings(Business|int $business): CommunicationSetting
@@ -90,19 +92,20 @@ class CommunicationTemplateService
             Business::query()->whereKey($businessId)->lockForUpdate()->firstOrFail();
             $query = CommunicationTemplate::query()->where('business_id', $businessId)
                 ->where('intent_type', $intent)->where('channel', $channel)->where('locale', $locale);
-            $existing = (clone $query)->where('fallbacks->__platform_revision', self::PLATFORM_REVISION)->where('status', 'published')->first();
+            $revision = $channel === 'email' ? self::EMAIL_PLATFORM_REVISION : self::PLATFORM_REVISION;
+            $existing = (clone $query)->where('fallbacks->__platform_revision', $revision)->where('status', 'published')->first();
             if ($existing) {
                 return $existing;
             }
             $defaults = TemplateVariableCatalog::defaults($intent);
-            $body = config('brand.product_name', 'ClipperDesk').($channel === 'sms' ? ': ' : ' · ').$defaults['body'];
+            $body = ($channel === 'email' ? config('brand.marketplace_email_name') : config('brand.product_name', 'ClipperDesk')).($channel === 'sms' ? ': ' : ' · ').$defaults['body'];
             $variables = $this->renderer->variables($defaults['subject'], $body);
 
             return CommunicationTemplate::query()->create([
                 'business_id' => $businessId, 'intent_type' => $intent, 'channel' => $channel, 'locale' => $locale,
                 'version' => ((int) (clone $query)->max('version')) + 1, 'status' => 'published',
                 'subject' => $defaults['subject'], 'body' => $body, 'variables' => $variables,
-                'fallbacks' => [...collect(TemplateVariableCatalog::SAFE_FALLBACKS)->only($variables)->all(), '__platform_revision' => self::PLATFORM_REVISION],
+                'fallbacks' => [...collect(TemplateVariableCatalog::SAFE_FALLBACKS)->only($variables)->all(), '__platform_revision' => $revision],
                 'published_at' => now(),
             ]);
         });

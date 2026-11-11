@@ -1,0 +1,201 @@
+
+   PASS  Tests\Feature\AccountNotifications\BusinessEmailJourneyTest
+  ✓ it sends the verified owner journey from registration through works… 0.76s  
+  ✓ it alerts once for a known browser and again when a different brows… 1.34s  
+  ✓ it notifies both sides of an email change without exposing the full… 0.02s  
+  ✓ it sends dedicated two-factor security notices for critical changes  0.01s  
+  ✓ it records accepted mail without retaining the full recipient addre… 0.08s  
+  ✓ it renders the ClipperDesk mail theme and exposes the SES configura… 0.04s  
+  ✓ it prunes expired browser activity using the configured retention b… 0.02s  
+  ✓ it notifies owners about platform status and approved support acces… 0.04s  
+
+   PASS  Tests\Feature\Communications\NotificationWorkspaceTest
+  ✓ it projects existing rules and both channels without credentials or… 0.07s  
+  ✓ it retires template mutations and previews without changing retaine… 0.06s  
+  ✓ it uses immutable platform content for new events while keeping que… 0.06s  
+  ✓ it returns sample-only branded examples for connected rules without… 0.07s  
+  ✓ it pauses new and waiting messages per channel without bypassing op… 0.12s  
+  ✓ it forces new messages onto the platform sender despite a retained…  0.06s  
+  ✓ it paginates history, filters local dates and searches exact encryp… 0.14s  
+  ✓ it allows reception to view branch-scoped history while denying edi… 0.15s  
+  ✓ it requires a current settings revision and audits only saved chang… 0.06s  
+  ✓ it serializes retry commands and never retries a queued or accepted… 0.05s  
+  ✓ it keeps future reminder links usable through their actual send tim… 0.04s  
+  ✓ it suppresses queued SMS when its captured sender becomes inactive…  0.05s  
+  ✓ it does not revive an elapsed day-before reminder by shifting it ou… 0.04s  
+  ✓ it opens the exact issued receipt through a signed private link and… 0.31s  
+  ✓ it retains explicit client channel withdrawals when editing other p… 0.06s  
+
+   PASS  Tests\Feature\Communications\SesClientDeliveryTest
+  ✓ it uses configured SES with a real message identifier, escaped HTML… 0.05s  
+  ✓ it only retries explicit SES throttling and holds uncertain accepta… 0.05s  
+  ✓ it sends the structured platform email through SES with the retaine… 0.04s  
+  ✓ it escapes client details and omits dangerous or unavailable action… 0.04s  
+  ✓ it accepts signed SES delivery and bounce evidence idempotently wit… 0.09s  
+  ✓ it rejects unsigned, wrong-topic and redirected certificates before… 0.06s  
+  ✓ it keeps local email simulation separate from SES delivery           0.04s  
+  ✓ it confirms only a signed subscription for the explicitly configure… 0.10s  
+  ✓ it asks SNS to retry a delivery callback that races the provider re… 0.07s  
+  ✓ it does not move uncertain historical provider attempts to SES auto… 0.04s  
+  ✓ it brands every client email purpose as Marketplace while retaining… 0.04s  
+  ✓ it brands every client email purpose as Marketplace while retaining… 0.04s  
+  ✓ it brands every client email purpose as Marketplace while retaining… 0.04s  
+  ✓ it brands every client email purpose as Marketplace while retaining… 0.04s  
+  ✓ it brands every client email purpose as Marketplace while retaining… 0.05s  
+  ✓ it brands every client email purpose as Marketplace while retaining… 0.04s  
+  ✓ it brands every client email purpose as Marketplace while retaining… 0.04s  
+  ✓ it brands every client email purpose as Marketplace while retaining… 0.04s  
+  ✓ it brands every client email purpose as Marketplace while retaining… 0.04s  
+  ✓ it brands every client email purpose as Marketplace while retaining… 0.04s  
+  ✓ it brands every client email purpose as Marketplace while retaining… 0.04s  
+  ✓ it preserves queued text and old structured rendering when a new em… 0.05s  
+
+   PASS  Tests\Feature\Communications\VisitEmailTest
+  ✓ it defaults review automation off and shares one manual and automat… 0.05s  
+  ✓ it requires client permission even for manual requests               0.04s  
+  ✓ it does not send old visits when automation is enabled               0.05s  
+  ✓ it blocks missing email unfinished visits and opted out clients wit… 0.04s  
+  ✓ it blocks missing email unfinished visits and opted out clients wit… 0.04s  
+  ✓ it blocks missing email unfinished visits and opted out clients wit… 0.04s  
+  ✓ it blocks missing email unfinished visits and opted out clients wit… 0.04s  
+  ✓ it blocks missing email unfinished visits and opted out clients wit… 0.04s  
+  ✓ it rechecks client consent and business automation before delivery…  0.04s  
+  ✓ it rechecks client consent and business automation before delivery…  0.04s  
+  ✓ it rechecks client consent and business automation before delivery…  0.04s  
+  ✓ it processes duplicate completion events once without sending histo… 0.04s  
+  ✓ it queues receipt attachments from the immutable issued snapshot an… 0.05s  
+  ✓ it uses SES MIME attachments with text HTML and delivery tracking    0.03s  
+  ✓ it authorizes direct review emails within tenant branch scope and b… 0.07s  
+  ✓ it renders business email controls with explicit safe defaults       0.05s  
+  ✓ it handles receipt issuance before completion and suppresses disabl… 0.05s  
+
+   PASS  Tests\Feature\MarketplaceAccountsTest
+  ✓ it creates only verified customer accounts with single use sign in…  0.03s  
+  ✓ it rejects expired sign in and protects account routes               0.02s  
+  ✓ it throttles sign in email and invalidates a link after delivery fa… 0.02s  
+  ✓ it requires a private link and matching verified email to claim a b… 0.07s  
+  ✓ it keeps messages private and makes duplicate sending idempotent     0.06s  
+  ✓ it lets only authorized salon staff see and reply to a booking conv… 0.12s  
+  ✓ it lets owners explicitly list and pause without disabling direct b… 0.07s  
+  ✓ it saves favourites without leaking hidden salons and records conce… 0.06s  
+  ✓ it books through canonical availability with automatic account link… 0.19s  
+  ✓ it filters nearby salons using a short-lived precise session point   0.06s  
+  ✓ it checks starting prices and dates through the canonical public ca… 0.18s  
+  ✓ it keeps deposits protected and cannot collect a booking payment     0.16s  
+  ✓ it preserves the business sign in when the customer signs out        0.04s  
+  ✓ it stops mutations on persistent failures and gives safe cooldowns   0.13s  
+  ✓ it pages message history without exposing another booking and revok… 0.07s  
+  ✓ it never shares a customer email with unrelated public or business…  0.03s  
+  ✓ it requires terms acceptance before creating a customer and remembe… 0.02s  
+  ✓ it audits customer actions without attributing them to a simultaneo… 0.05s  
+  ✓ it allows authorized support to review concerns and prevents salon…  0.07s  
+  ✓ it uses the existing booking page directly for marketplace salons a… 0.06s  
+  ✓ it offers only real eligible public services and categories from di… 0.05s  
+  ✓ it finds cross-specialty salons from their actual service categorie… 0.08s  
+
+   PASS  Tests\Feature\MarketplaceEmailPresentationTest
+  ✓ it delivers the Marketplace sign-in logo as a related PNG instead o… 0.03s  
+  ✓ it renders a self-contained logo preview and a consistent ivory sur… 0.02s  
+  ✓ it keeps text branding useful without an image and scopes the palet… 0.02s  
+  ✓ it uses the same embedded logo reference for client appointment and… 0.02s  
+
+   PASS  Tests\Feature\MarketplaceGrowth\OwnerWorkflowTest
+  ✓ it keeps reviewed many-to-many corrections inside the authorized Se… 0.11s  
+  ✓ it requires an explicit public location choice and rejects foreign…  0.07s  
+  ✓ it requests profile review without granting publication and scopes…  0.17s  
+
+   WARN  Tests\Feature\MarketplaceMessageEmailTest
+  ✓ it commits one durable alert per new message and repairs a lost que… 0.04s  
+  ✓ it rolls back the message and alert together and never queues an un… 0.04s  
+  ✓ it sends customer alerts only to the main active verified owner wit… 0.05s  
+  ✓ it delivers business replies through the real array mail channel wi… 0.05s  
+  ✓ it does not send to an unverified owner or fall back to the public…  0.04s  
+  ✓ it rechecks changed recipients paused conversations read messages a… 0.04s  
+  ✓ it rechecks changed recipients paused conversations read messages a… 0.04s  
+  ✓ it rechecks changed recipients paused conversations read messages a… 0.04s  
+  ✓ it rechecks changed recipients paused conversations read messages a… 0.04s  
+  ✓ it keeps the saved message when email fails and never blindly repla… 0.04s  
+  ✓ it reclassifies interrupted delivery conservatively without replayi… 0.04s  
+  ✓ it opens a focused scoped inbox and keeps publication controls in a… 0.19s  
+  ✓ it resumes a message alert after sign in without accepting arbitrar… 0.06s  
+  ✓ it bounds inbox retrieval to one page with aggregate unread and lat… 0.23s  
+  ✓ it never falls back to another tenant owner when the intended busin… 0.05s  
+  - it renders actual Business inbox conversation and private appointme… 0.02s  
+  ✓ it disables new and queued email work without erasing conversations… 0.04s  
+  ✓ it uses the Business email stream for a single main owner even when… 0.05s  
+  ✓ it keeps receptionists inside their assigned branches and prevents…  0.11s  
+
+   PASS  Tests\Feature\MarketplaceRefinementTest
+  ✓ it keeps the customer signed in after saving a profile from a stale… 0.03s  
+  ✓ it automatically adds same verified email bookings across salons wi… 0.08s  
+  ✓ it never reassigns an already linked appointment to a different acc… 0.05s  
+  ✓ it shows active published salons without enrollment while respectin… 0.06s  
+  ✓ it persists marketplace login using a separate remember cookie and…  0.02s  
+  ✓ it routes a verified Google customer to Marketplace without creatin… 0.02s  
+  ✓ it requires terms for a new Google customer without sending an emai… 0.03s  
+  ✓ it rejects an unverified Google email and preserves email sign in a… 0.02s  
+  ✓ it uses the existing shared Google callback even while a Business o… 0.02s  
+  ✓ it reuses the transactional email shell with the Marketplace palett… 0.02s  
+
+   PASS  Tests\Feature\PublicBooking\ClientReviewsTest
+  ✓ it saves private feedback by default and safely replays the same su… 0.04s  
+  ✓ it publishes consented reviews of every rating with initials and no… 0.05s  
+  ✓ it lets the client withdraw public display consent without deleting… 0.04s  
+  ✓ it does not permit feedback until service is completed with ('confi… 0.04s  
+  ✓ it does not permit feedback until service is completed with ('in_se… 0.04s  
+  ✓ it does not permit feedback until service is completed with ('cance… 0.04s  
+  ✓ it does not permit feedback until service is completed with ('cance… 0.04s  
+  ✓ it does not permit feedback until service is completed with ('no_sh… 0.04s  
+  ✓ it does not permit feedback until service is completed with ('resch… 0.04s  
+  ✓ it rejects expired revoked and wrong purpose review links with ('ex… 0.04s  
+  ✓ it rejects expired revoked and wrong purpose review links with ('re… 0.04s  
+  ✓ it rejects expired revoked and wrong purpose review links with ('pu… 0.04s  
+  ✓ it enforces one review per tenant appointment at the database bound… 0.04s  
+  ✓ it rejects a cross-business appointment review relationship at the…  0.04s  
+  ✓ it renders feedback in the same secure appointment journey and acce… 0.07s  
+  ✓ it issues a review link only to an authorized operator for a comple… 0.06s  
+  ✓ it denies operators who have no appointment management permission    0.05s  
+  ✓ it denies review link access to an operator assigned only to anothe… 0.05s  
+  ✓ it shows private feedback to the authorized appointment manager in…  0.08s  
+  ✓ it pages every public rating without exposing private feedback and…  0.06s  
+  ✓ it returns saved review state for JSON submission and consent withd… 0.04s  
+  ✓ it preserves submitted feedback and consent evidence through a revi… 0.05s  
+
+   PASS  Tests\Feature\PublicBooking\PublicBookingWaitlistTest
+  ✓ it presents a complete no-photo salon with public biographies and l… 0.06s  
+  ✓ it books passwordlessly through one shared hold and commit engine w… 0.15s  
+  ✓ it confirms an unchanged hold after the service snapshot observatio… 0.15s  
+  ✓ it fails safely for changed policy expired flow and an unconnected…  0.25s  
+  ✓ it returns an actionable conflict when availability is requested wi… 0.05s  
+  ✓ it records a selected client cancellation reason through secure sel… 0.17s  
+  ✓ it keeps secure links purpose-bound expiring revocable and versione… 0.16s  
+  ✓ it deduplicates matching waitlist requests and awards one opening t… 0.17s  
+  ✓ it expires an offer while preserving its request for a later eligib… 0.05s  
+  ✓ it serves the mobile booking surface while resisting tenant and ide… 0.10s  
+  ✓ it lets a secure client join and leave a waitlist without reusing c… 0.17s  
+  ✓ it rate limits repeated public booking session creation              0.07s  
+  ✓ it shows visit time separately from reserved cleanup time without c… 0.04s  
+  ✓ it renders both booking URL formats with one primary canonical and…  0.06s  
+  ✓ it keeps aliases working in both URL formats and handles paused ina… 0.08s  
+  ✓ it releases and replaces held times atomically without leaking inte… 0.26s  
+  ✓ it preserves a previous hold when a replacement time fails           0.14s  
+  ✓ it restores a confirmed appointment after an ambiguous response wit… 0.15s  
+  ✓ it rejects a held confirmation after online bookings are paused and… 0.15s  
+  ✓ it shows available rescheduling times through purpose-bound links a… 0.27s  
+  ✓ it returns JSON waitlist validation and success instead of redirect… 0.05s  
+  ✓ it recognizes returning contacts only within the business and recal… 0.17s  
+  ✓ it requires a reviewed contact quote and keeps secrets out of persi… 0.06s  
+  ✓ it does not let a self-declared returning client bypass first-visit… 0.05s  
+  ✓ it matches a late-day waitlist opening without truncating it behind… 0.15s  
+  ✓ it rejects incompatible first-visit and returning service combinati… 0.04s  
+  ✓ it removes legacy raw flow secrets during a resumable booking slug…  0.04s  
+  ✓ it honors the accepted cancellation cutoff when the business later…  0.25s  
+  ✓ it exposes only eligible branches and preserves the assigned locati… 0.16s  
+  ✓ it rejects services and staff that belong to another branch without… 0.04s  
+  ✓ it requires fresh location review if the branch address changes whi… 0.14s  
+  ✓ it permits user-initiated geolocation only on successful public boo… 0.06s  
+  ✓ it confirms reviewed contacts after JSON storage reorders an unchan… 0.16s  
+
+  Tests:    1 skipped, 174 passed (1622 assertions)
+  Duration: 14.33s
+

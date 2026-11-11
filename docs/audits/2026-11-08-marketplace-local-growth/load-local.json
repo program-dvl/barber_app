@@ -1,0 +1,8 @@
+{
+    "fixture": "100 businesses \/ 1000 real qualified service offers; isolated SQLite",
+    "retrieval_plus_suggestions_queries": 4,
+    "elapsed_ms": 12.71,
+    "peak_memory_bytes": 141557760,
+    "results": 100,
+    "availability_calls": 0
+}

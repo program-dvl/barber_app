@@ -28,7 +28,6 @@ final class ClientNotificationEmail
             'appointment' => $appointment,
             'action' => $presentation['action'] ? self::safeUrl($variables['action_link'] ?? null) : null,
             'directions' => $appointment ? self::safeUrl($variables['directions_link'] ?? null) : null,
-            'logo' => self::safeUrl(url(config('brand.logo'))),
         ])->render();
     }
 

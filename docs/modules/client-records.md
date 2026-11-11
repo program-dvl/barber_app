@@ -123,3 +123,13 @@ labels, never historical bodies or secure links. Assigned-location, own-calendar
 and financial boundaries match the communication workspace. List/map preference
 compatibility and explicit channel withdrawals are governed by the
 [Communications specification](communications.md).
+
+## Marketplace account boundary — 2026-11-08
+
+Marketplace customer identity is separate from tenant Client. No global email
+lookup exposes or merges CRM records. The owner-approved refinement automatically
+links unclaimed visits with the same normalized verified customer email. Existing
+account links are never reassigned; signed-in booking flows also link successful
+matching-email appointments. Only the safe booking projection is exposed. Account views exclude notes,
+files and private CRM preferences. Contact changes revoke account projections
+unless the current verified email still matches. [Marketplace](marketplace.md).

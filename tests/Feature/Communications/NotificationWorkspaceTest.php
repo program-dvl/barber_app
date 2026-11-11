@@ -80,8 +80,8 @@ it('uses immutable platform content for new events while keeping queued historic
     $queued->update(['communication_template_id' => $custom->id]);
     $fresh = workspaceMessage($this->business, $this->client, 'fresh');
     $again = workspaceMessage($this->business, $this->client, 'again');
-    expect($fresh->template->body)->toStartWith('ClipperDesk · ')
-        ->and($fresh->template->fallbacks['__platform_revision'])->toBe(CommunicationTemplateService::PLATFORM_REVISION)
+    expect($fresh->template->body)->toStartWith('Clipperdesk Marketplace · ')
+        ->and($fresh->template->fallbacks['__platform_revision'])->toBe(CommunicationTemplateService::EMAIL_PLATFORM_REVISION)
         ->and($again->communication_template_id)->toBe($fresh->communication_template_id)
         ->and($queued->fresh()->communication_template_id)->toBe($custom->id)
         ->and($custom->fresh()->body)->toBe('Owner body');
@@ -96,7 +96,7 @@ it('returns sample-only branded examples for connected rules without creating de
             continue;
         }
         $response = $this->getJson(route('business.communications.example', $this->business).'?type='.$type)->assertOk();
-        expect($response->json('html'))->toContain('ClipperDesk', '<table', e($this->business->name))
+        expect($response->json('html'))->toContain('Clipperdesk', '<table', e($this->business->name))
             ->not->toContain($this->client->name, $this->client->email, 'NotificationsReview');
     }
     $this->getJson(route('business.communications.example', $this->business).'?type=deposit_request')->assertUnprocessable();
@@ -240,7 +240,7 @@ it('opens the exact issued receipt through a signed private link and rejects cro
     expect($message->actionLink->target_type)->toBe(SaleReceipt::class)->and($message->actionLink->target_id)->toBe($receipt->id);
     $links = app(CommunicationActionLinkService::class);
     $url = $links->url($message->actionLink);
-    $this->get($url)->assertOk()->assertSee('REVIEW-R-1')->assertSee('USD 45.00')->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive')->assertHeader('Referrer-Policy', 'no-referrer');
+    $this->get($url)->assertOk()->assertSee('REVIEW-R-1')->assertSee('USD 45.00')->assertSee('Clipperdesk Marketplace')->assertSee('data:image/png;base64,', false)->assertHeader('Cache-Control', 'no-store, private')->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive')->assertHeader('Referrer-Policy', 'no-referrer');
     // A receipt can be viewed again until expiry; it is never regenerated.
     $this->get($url)->assertOk();
     $short = $links->shortUrl($message->actionLink);

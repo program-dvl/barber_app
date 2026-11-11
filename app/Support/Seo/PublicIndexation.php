@@ -20,6 +20,15 @@ class PublicIndexation
             return 'noindex, nofollow, noarchive';
         }
         $name = $request->route()?->getName();
+        if (in_array($name, ['marketplace.discover', 'marketplace.local', 'marketplace.local.country', 'marketplace.local.service', 'marketplace.salon'], true)) {
+            $page = $request->attributes->get('marketplace_seo_page');
+            $allowedQuery = $name === 'marketplace.salon' ? [] : ['page'];
+            if ($page && array_diff(array_keys($request->query()), $allowedQuery) === []
+                && app(\App\Domain\Marketplace\LocalGrowth\Services\SeoPageRegistry::class)->indexable($page)) {
+                return 'index, follow, max-image-preview:large';
+            }
+            return 'noindex, follow, noarchive';
+        }
         if ($name === 'policy.show' && app(PrivacyNotice::class)->isPublished()) {
             return 'index, follow, max-image-preview:large';
         }

@@ -22,6 +22,7 @@ const items = [
     ['notification-logs', 'Failed operations'],
     ['system-health', 'System health'],
     ['feature-flags', 'Feature flags'],
+    ['marketplace-reports', 'Marketplace concerns'],
     ['audit-logs', 'Audit log'],
 ];
 const routeNames = {
@@ -31,6 +32,7 @@ const routeNames = {
     'notification-logs': 'platform.failures.index',
     'system-health': 'platform.health',
     'feature-flags': 'platform.feature-flags.index',
+    'marketplace-reports': 'platform.marketplace.reports',
     'audit-logs': 'platform.audit-events.index',
 };
 const platformHref = key => routeNames[key] ? route(routeNames[key]) : route('platform.module', key);

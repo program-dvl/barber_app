@@ -147,3 +147,13 @@ reload, account restrictions, rejected-image recovery and leaving during upload.
 Desktop/mobile browser evidence and deployment verification are recorded by the
 parent booking audit; these tests alone do not establish deployment or complete
 accessibility certification.
+
+## Marketplace visual continuity — 2026-11-09
+
+Under MP-01/MPG-06, Marketplace provider pages keep the shared Marketplace shell
+and palette through service/time/details/confirmation. The business’s identity,
+photos, public catalogue, policies and saved accent remain inside the booking
+content. Accent styling is scoped below MarketplaceLayout so the shared wordmark,
+header/account navigation, ivory background and footer remain consistent with
+discovery. Direct public booking and private preview keep their established shell.
+This changes presentation only; the canonical hold/commit flow is reused.

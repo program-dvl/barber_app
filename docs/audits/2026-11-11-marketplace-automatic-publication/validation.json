@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-11 Asia/Kolkata",
+  "backend": {
+    "passed": 221,
+    "skipped_live_ssr": 2,
+    "assertions": 2066
+  },
+  "live_ssr": {
+    "passed": 35,
+    "assertions": 510
+  },
+  "frontend": {
+    "passed": 244
+  },
+  "mysql": {
+    "fresh": "passed",
+    "partial_recovery": "passed",
+    "replay": "passed",
+    "retained_row": "passed",
+    "identifier_limits": "passed",
+    "fixture_database_removed": true
+  },
+  "actual_local_migration": "completed; Nothing to migrate on repeat",
+  "local_reconciliation": {
+    "processed": 23,
+    "failed": 0
+  },
+  "runtime_config": {
+    "environment": "local",
+    "discovery_enabled": true,
+    "indexation_enabled": false
+  },
+  "build": "Node24 client+SSR passed",
+  "frontsite_route_entries": 25,
+  "browser_visual": "blocked: Local browser use is disabled in Work settings",
+  "production_deployment": "pending"
+}

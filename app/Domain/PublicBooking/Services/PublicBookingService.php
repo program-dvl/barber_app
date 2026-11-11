@@ -5,6 +5,8 @@ namespace App\Domain\PublicBooking\Services;
 use App\Domain\BusinessConfiguration\Models\Service;
 use App\Domain\BusinessConfiguration\Services\StaffPhotoService;
 use App\Domain\ClientRecords\Services\ClientIdentityService;
+use App\Domain\Marketplace\Models\Customer;
+use App\Domain\Marketplace\Services\BookingOwnership;
 use App\Domain\MoneyCommerce\Services\DepositPolicyService;
 use App\Domain\PlatformAccess\Models\Business;
 use App\Domain\PlatformAccess\Models\Location;
@@ -286,6 +288,10 @@ class PublicBookingService
                 $flow->forceFill(['appointment_id' => $appointment->id, 'status' => 'confirmed', 'last_step' => 5, 'confirmed_at' => now()])->save();
                 $this->track($business, $flow, 'booking_completed', $flow->secret_hash, ['source' => 'online'], $appointment);
             }
+            app(\App\Domain\Marketplace\LocalGrowth\Services\BookingAttribution::class)->confirmed($flow, $appointment);
+            if ($flow->marketplace_customer_id) {
+                app(BookingOwnership::class)->attach(Customer::query()->findOrFail($flow->marketplace_customer_id), $appointment);
+            }
             $view = $this->links->issue($appointment->loadMissing('business'), 'view');
 
             return [
@@ -319,9 +325,9 @@ class PublicBookingService
         $staff = StaffProfile::query()->where('business_id', $business->id)->where('status', 'active')->where('online_visible', true)->with(['locations', 'serviceAssignments'])->orderBy('display_name')->get();
 
         $locations = $locations->filter(fn (Location $location) => $services->contains(fn (Service $service) => $service->kind === 'service'
-            && $service->locations->contains(fn ($branch) => $branch->id === $location->id && $branch->pivot->is_eligible)
+            && $service->locations->contains(fn ($branch) => $branch->business_id === $business->id && $branch->pivot->business_id === $business->id && $branch->id === $location->id && $branch->pivot->is_eligible)
             && $staff->contains(fn (StaffProfile $profile) => $profile->locations->contains('id', $location->id)
-                && $profile->serviceAssignments->contains(fn ($assignment) => $assignment->service_id === $service->id && $assignment->is_active && $assignment->is_qualified && $assignment->online_visible && (! $assignment->effective_from || $assignment->effective_from->lte(now())) && (! $assignment->effective_until || $assignment->effective_until->gt(now()))))))->values();
+                && $profile->serviceAssignments->contains(fn ($assignment) => $assignment->business_id === $business->id && $assignment->service_id === $service->id && $assignment->is_active && $assignment->is_qualified && $assignment->online_visible && (! $assignment->effective_from || $assignment->effective_from->lte(now())) && (! $assignment->effective_until || $assignment->effective_until->gt(now()))))))->values();
 
         return [
             'locations' => $locations->map(function (Location $location) {
@@ -356,7 +362,7 @@ class PublicBookingService
                 'public_id' => $profile->public_id, 'display_name' => $profile->display_name,
                 'title' => $profile->title, 'biography' => $profile->biography,
                 'photo_url' => app(StaffPhotoService::class)->url($business, $profile, $privatePreview),
-                'location_ids' => $profile->locations->pluck('public_id')->all(),
+                'location_ids' => $profile->locations->where('business_id', $business->id)->pluck('public_id')->all(),
                 'service_ids' => $services->whereIn('id', $profile->serviceAssignments->filter(fn ($a) => $a->is_active && $a->is_qualified && $a->online_visible && (! $a->effective_from || $a->effective_from->lte(now())) && (! $a->effective_until || $a->effective_until->gt(now())))->sortByDesc('effective_from')->unique('service_id')->pluck('service_id'))->pluck('public_id')->all(),
                 'service_variants' => $profile->serviceAssignments->filter(fn ($a) => $a->is_active && $a->is_qualified && $a->online_visible && (! $a->effective_from || $a->effective_from->lte(now())) && (! $a->effective_until || $a->effective_until->gt(now())))->sortByDesc('effective_from')->unique('service_id')->filter(fn ($a) => $services->contains('id', $a->service_id))->map(fn ($a) => ['service' => $services->firstWhere('id', $a->service_id)->public_id, ...$a->only(['price_minor', 'duration_minutes', 'processing_minutes', 'cleanup_minutes'])])->values(),
             ]),
@@ -375,7 +381,7 @@ class PublicBookingService
         $location = Location::query()->where('business_id', $business->id)->where('public_id', $locationPublicId)->where('is_active', true)->where('status', 'active')->firstOrFail();
         $ids = array_values(array_unique($servicePublicIds));
         $services = Service::query()->where('business_id', $business->id)->whereIn('public_id', $ids)->where('is_active', true)->where('online_visible', true)->with('locations')->get()->keyBy('public_id');
-        if ($services->count() !== count($ids) || ! $services->every(fn ($service) => $service->locations->contains(fn ($branch) => $branch->id === $location->id && $branch->pivot->is_eligible))) {
+        if ($services->count() !== count($ids) || ! $services->every(fn ($service) => $service->locations->contains(fn ($branch) => $branch->business_id === $business->id && $branch->pivot->business_id === $business->id && $branch->id === $location->id && $branch->pivot->is_eligible))) {
             throw ValidationException::withMessages(['services' => 'These services are unavailable at this branch. Choose current branch services.']);
         }
         $staff = $staffPublicId ? StaffProfile::query()->where('business_id', $business->id)->where('public_id', $staffPublicId)->whereHas('locations', fn ($query) => $query->where('locations.id', $location->id))->where('status', 'active')->where('online_visible', true)->firstOrFail() : null;

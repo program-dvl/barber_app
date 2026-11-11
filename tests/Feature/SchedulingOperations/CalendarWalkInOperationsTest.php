@@ -413,6 +413,11 @@ it('records a full manual payment once and removes the settled visit from checko
         'evidence' => ['manually_confirmed' => true],
     ])->assertOk()->assertJsonPath('sale.status', 'completed')->assertJsonPath('sale.balance_minor', 0);
 
+    $this->actingAs($path['user'])->postJson(route('business.checkout.tender', [$path['business'], $sale['public_id']]), [
+        'method' => 'cash', 'amount_minor' => $sale['balance_minor'], 'idempotency_key' => 'manual-payment-http',
+        'evidence' => ['manually_confirmed' => true],
+    ])->assertOk()->assertJsonPath('sale.balance_minor', 0);
+
     expect(Sale::query()->where('business_id', $path['business']->id)->count())->toBe(1)
         ->and(OperationalNotificationEvent::query()->where('event_type', 'payment.receipt')->where('subject_id', $appointment->id)->count())->toBe(1);
     $this->actingAs($path['user'])->get(route('business.checkout.index', [$path['business'], 'appointment' => $appointment->public_id]))

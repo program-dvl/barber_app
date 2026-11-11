@@ -35,3 +35,5 @@ lang/php_*.json
 
 # Isolated Help Center fixtures, private demo sign-in and browser scratch files
 /tmp/help-center/
+
+/tmp/marketplace-qa/

@@ -47,7 +47,7 @@ class AuditWriter
         ?string $correlationId = null,
     ): AuditEvent {
         $business ??= $this->context->hasBusiness() ? $this->context->business() : null;
-        $actor ??= $this->request->user();
+        $actor ??= $source === 'marketplace_customer' ? null : $this->request->user('web');
         $membership = $this->context->membership();
         $platformRole = $actor?->activePlatformRoles()->first()?->role?->value;
 

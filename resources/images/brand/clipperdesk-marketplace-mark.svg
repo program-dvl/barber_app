@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Clipperdesk Marketplace mark</title>
+  <desc id="desc">An interlocking C and D monogram for Clipperdesk Marketplace.</desc>
+  <rect width="64" height="64" rx="18" fill="#202D29"/>
+  <path d="M43 13H30C19.5 13 11 21.5 11 32s8.5 19 19 19h13" fill="none" stroke="#D5F18B" stroke-width="8" stroke-linecap="round"/>
+  <path d="M34 21h7c7.2 0 13 4.9 13 11s-5.8 11-13 11h-7V21Z" fill="#202D29" stroke="#D5F18B" stroke-width="6" stroke-linejoin="round"/>
+</svg>

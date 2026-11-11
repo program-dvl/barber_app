@@ -26,6 +26,9 @@ return [
         'BRAND_EMAIL_LOGO_URL',
         'https://clipperdesk.com/build/assets/clipperdesk-mark-CDKNGozz.svg'
     ),
+    'marketplace_product_name' => 'Clipperdesk',
+    'marketplace_email_name' => 'Clipperdesk Marketplace',
+    'marketplace_email_logo' => '/images/brand/clipperdesk-marketplace-mark.png',
     'favicon' => '/favicon.svg',
     'social_image' => '/images/brand/clipperdesk-social.png',
 

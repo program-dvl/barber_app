@@ -2,7 +2,7 @@
 import AppNotice from '@/Components/Product/AppNotice.vue';
 import ContextualHelp from '@/Components/Help/ContextualHelp.vue';
 import '../../css/workspace-records.css';
-import { computed, nextTick, provide, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, inject, nextTick, provide, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import {
     ArrowRightOnRectangleIcon,
@@ -47,6 +47,7 @@ const props = defineProps({
 });
 
 const page = usePage();
+const route = inject('route');
 const businessRouteParameter = computed(() => page.props.tenant?.public_id);
 const isBusinessWorkspace = computed(() => Boolean(businessRouteParameter.value));
 const accountWorkspaces = computed(() => page.props.account?.workspaces ?? []);
@@ -103,6 +104,7 @@ const navigation = computed(() => {
     { key: 'locations', featureKey: 'settings', label: 'Locations', href: route('business.locations.index', businessRouteParameter.value), icon: MapPinIcon },
     // Inventory remains implemented internally but is deferred from the menu.
     { key: 'reports', label: 'Reports', href: route('business.reports.index', businessRouteParameter.value), icon: ChartBarIcon },
+    { key: 'marketplace', label: 'Messages', href: route('business.marketplace.index', businessRouteParameter.value), icon: ChatBubbleLeftRightIcon },
     { key: 'communications', label: 'Client notifications', href: route('business.communications.page', businessRouteParameter.value), icon: ChatBubbleLeftRightIcon },
     { key: 'settings', label: 'Business setup', href: route('business.configuration.show', businessRouteParameter.value), icon: Cog6ToothIcon },
     { key: 'subscription-billing', label: 'Subscription & billing', href: route('business.billing.show', businessRouteParameter.value), icon: CreditCardIcon },
@@ -128,7 +130,7 @@ const navigation = computed(() => {
 
 const primaryMobileNavigation = computed(() => navigation.value.filter(item => ['dashboard', 'calendar', 'walk-in-queue', 'clients'].includes(item.key)));
 const normalizedPath = computed(() => page.url.split('?')[0]);
-const isActive = item => item.badge !== 'Upgrade' && (new URL(item.href, 'http://app.local').pathname === normalizedPath.value || (item.key === 'clients' && normalizedPath.value.startsWith(new URL(item.href, 'http://app.local').pathname + '/')));
+const isActive = item => item.badge !== 'Upgrade' && (new URL(item.href, 'http://app.local').pathname === normalizedPath.value || (['clients', 'marketplace'].includes(item.key) && normalizedPath.value.startsWith(new URL(item.href, 'http://app.local').pathname + '/')));
 const currentLabel = computed(() => navigation.value.find(isActive)?.label || props.title || 'Shop application');
 provide('workspaceBreadcrumbs', computed(() => {
     if (!businessRouteParameter.value) return [{ label: 'Account' }];

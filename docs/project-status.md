@@ -1,5 +1,178 @@
 # Project status
 
+## 2026-11-08 Multi-industry Marketplace growth planning
+
+- Created a concrete strategy and separate-thread implementation prompt for local
+  service discovery, inventory-led SEO, new-business exposure and measured outcomes
+  across all 13 Solutions audiences. Repository code and current official Google/
+  competitor documentation informed the plan; the supplied live Solutions URL
+  could not be fetched, so its repository source supplied the audience list.
+- Planning only: no product code, indexation flags, sitemaps, tracking permissions,
+  business publication state, external campaigns or production settings changed.
+  No ranking, conversion or revenue lift claimed.
+- [Strategy](strategy/marketplace-local-growth-plan.md) ·
+  [Executable prompt](prompts/marketplace-local-growth.md).
+
+## 2026-11-08 Marketplace branding across customer emails (local)
+
+- Shared email CD/sparkle PNG and capital-C Clipperdesk/Marketplace lockup now used
+  by customer sign-in and client appointment/service email, including reminders,
+  changes/cancellations, receipts, review invitations and waitlist/queue updates.
+  Client HTML retains salon details/actions and adopts the forest/sage palette.
+- Client SES display name and new immutable email text revision use Clipperdesk
+  Marketplace. Old queued text/revisions remain intact and structured HTML still
+  supports the previous platform revision. Operator Business mail, verified sender
+  address, SMS configuration/credits, consent and delivery safety remain unchanged.
+- Relevant communications/Marketplace/account-mail suites: **131 passed / 1,015
+  assertions**. The new PNG was visually inspected; rendered HTML/SES mocks verify
+  branding, purpose/status/action safety, escaping, retained text and receipts.
+  Initial OpenSSL fixture writes needed writable `RANDFILE` in `/tmp`; the final
+  complete run passed without source/security changes for that environment issue.
+- Deploy the new public PNG alongside config/views/code. No new asset build or
+  migration required; no deployment, real client/provider email or inbox-render
+  certification performed. Log: `/tmp/marketplace-email-brand-tests.log`.
+
+## 2026-11-08 Marketplace monogram refinement (local)
+
+- Header badge reuses the exact Business CD path geometry in forest/lime, retaining
+  the sparkle. Header/footer wordmark now reads Clipperdesk with a capital C.
+- SVG path comparison, client/SSR build and whitespace checks pass. No deployment
+  or new browser visual verification claimed.
+
+## 2026-11-08 Profile sidebar simplification (local)
+
+- Removed the two right-hand profile information cards and duplicate logout button;
+  profile form uses the account content width. Shared navigation logout remains.
+- Six existing mounted account tests and client/SSR build pass; whitespace clean.
+  No deployment or new visual verification claimed.
+
+## 2026-11-08 Business header and customer account redesign (local)
+
+- Replaced detached Business qualifier with compact real mark/name/Business lockup;
+  removed the large Home appointment-prompt strip. Find a salon remains in shared
+  navigation; below1280px the existing drawer keeps branding/actions from crowding.
+- Rebuilt customer bookings, inbox, profile and conversation around one account
+  rail/header/form/card system with mobile navigation. Visit cards separate date,
+  status/details/actions; inbox uses compact rows; profile aligns name/phone/email;
+  chat has dedicated history/composer and booking/control sidebar. Business thread
+  adapts its wording in the existing workspace shell. No backend schema/routes,
+  tenant/ownership boundaries, manual payment or external chat behavior changed.
+- Verified backend **316 passed / 4,935 assertions**, frontend **230 passed** including
+  six new mounted account tests. Source/build evidence covers preserved visit links,
+  profile validation drafts, send UUID replay/draft retention, paused/reopen, refresh
+  loading and customer logout. Client/SSR build passes; existing CSS/font warnings.
+- CUA inventory again reported browser use disabled in Work settings. No new
+  desktop/mobile screenshots or visual/a11y certification; the supplied screenshot
+  is before-only. Final browser review remains required. No real customer/provider
+  mutation, migration or deployment. [Evidence](audits/2026-11-08-marketplace-account-design/README.md).
+
+## 2026-11-08 Unified Marketplace booking and Maps implementation (local)
+
+- Marketplace salon URLs now render the established `Booking/Welcome` directly;
+  removed the duplicate service/time preview. Old `/book` entry URLs redirect with
+  service/location/date intact. Existing canonical holds/commit, public direct
+  links, manual payments and required-deposit rules remain intact.
+- Service suggestions use actual publicly eligible canonical catalogue names and
+  categories. Broad cards match business type or public service/category terms,
+  show selected feedback and reveal results. No invented service records added.
+- Added configured Google Places widget to location search and device high-accuracy
+  geolocation on request. Search centres retain reported precision in the session,
+  valid30minutes, cleared on expiry check/removal; no coordinate URL/profile/booking
+  history. Updated privacy disclosure to distinguish discovery from branch-only
+  browser distance sorting. No key/provider settings or database migration changed.
+- Map implementation pairs numbered pins with cards, selection highlighting,
+  Explore & book and Show all pins. No-pin cards and provider-failure list fallback
+  remain accessible; phone layout stacks map/list. These interactions have mounted
+  component tests, but live rendering/mobile appearance are not newly certified.
+- Backend regression **116 passed / 1,259 assertions**, privacy/security **32 passed /
+  258 assertions**, frontend **224 passed**; client/SSR build passes. Tests cover
+  canonical page/legacy redirect, real service eligibility/hidden salons, mixed
+  service categories, precise-centre expiry, category click/result reveal, map
+  selection/failure and transient Places geometry/stale callbacks. Existing font/
+  CSS warnings remain. No deployment, real booking, provider message or payment.
+- Chrome review was attempted on configured local origin8000; computer use returned
+  “Local browser use is disabled in Work settings”. Live Places suggestions, map
+  rendering/key authorization, device permission grant/denial, and desktop/mobile
+  visual QA remain pending. Earlier screenshots certify the previous iteration only.
+  [Updated evidence](audits/2026-11-08-marketplace/README.md#unified-booking-and-google-map-continuation).
+
+## 2026-11-08 Marketplace account/search refinement (local)
+
+- Fixed the reported name-save journey: explicit profile redirect, remembered
+  customer login and authenticated sign-in/confirmation redirects. Added dedicated
+  name/mobile profile and avatar/profile logout, independently of Business login.
+- Added stateful Google verified-email signup/login through the existing callback;
+  new customers still review terms. No Business account or provider token is created.
+  Google provider responses are mocked in tests; live callback remains unverified.
+- Existing unclaimed same-verified-email appointments automatically join the account;
+  another customer's links cannot be reassigned. Removed manual claim-by-link UI.
+- Published active online-booking salons appear by default; explicit owner pause
+  wins. Local read-only count found 7 eligible of 23 businesses; no mass update or
+  production enrollment occurred. Draft/inactive/disabled listings stay hidden.
+- Unified service/location/date search with contextual category/current-result
+  suggestions and Any day/Today/Tomorrow choices; compact rating/today controls,
+  no currency/price UI. Shared transactional email structure uses Marketplace colours.
+- Retained Business root/stable acquisition URLs, added prominent customer entry
+  on Home and `/business` permanent redirect. Marketplace remains noindex pending
+  its existing launch gates; no deployed SEO result is claimed.
+- Regression **332 passed / 5,073 assertions**, frontend **219 passed**, client/SSR
+  build and all 22 frontsite budgets passed. Final focused rerun covers the small
+  listing audit correction. Migration 000004 applied to local MySQL and preview
+  SQLite. Existing font/CSS build warnings remain.
+- Chrome access restored: reviewed logged-in Fresha and Salonist search/account/
+  profile navigation. Isolated fictional local browser checks verified name save,
+  retained login, old confirmation redirect, logout, expired-link recovery, populated
+  default list, unmatched-location/clear recovery, search/date panels and Escape.
+  Profile/search inspected at desktop and phone390×844; no horizontal overflow,
+  header logo touch height44px. Saved screenshots and precise remaining launch
+  limits are in [the evidence](audits/2026-11-08-marketplace/README.md#customer-refinement-verification).
+- No deployment, real provider email/SMS send, external booking or booking payment.
+
+## 2026-11-08 Connected Marketplace implementation (local)
+
+- Added dedicated customer email-link signup/login/recovery, terms acceptance,
+  upcoming/past visits, safe private-link claiming, favourites and booking inbox.
+  Customer guard/identity remains separate from Business/CRM; current contact,
+  tenant, branch and own-staff authorization apply to account/messages.
+- Salon profiles reuse canonical gallery/team/reviews/location/services. Search
+  adds category, rating/sort, price/currency, date/today, approximate nearby and
+  map/list. Canonical booking automatically links matching-email signed-in visits;
+  replacement lifecycle preserves linkage. Manual payment recording and required-
+  deposit protections remain; no gateway or external chat sends were added.
+- Business gains listing preview/publish/pause with revision/audit, inbox/replies
+  and source session counts. Customer pauses/reports, encrypted message history,
+  read status, send replay and permission-gated platform concerns are implemented.
+  Existing acquisition gets explicit Business identity and Marketplace links.
+- Final backend **377 passed / 5,343 assertions** (Marketplace, public booking,
+  reviews, access, marketing and booking engine); frontend **219 passed**; client/
+  SSR build, 22 frontsite route budgets and whitespace checks pass. Existing
+  CSS/font build warnings remain. Three migrations applied to local MySQL;
+  interrupted composite-FK/index creation was corrected and safely completed.
+- Isolated fictional browser journey completed salon → booking → confirmation →
+  automatic account sync; favourite and separate email-link login worked. Customer
+  message, salon reply and read status observed from both sides. Desktop1440
+  account inspected; phone390 conversation had no overflow or short action buttons.
+  Browser access was later disabled, so final map/filter/navigation/wordmark and
+  full failure/cooldown/mobile rechecks remain release work, not claimed verified.
+- No deployment, real salon enrollment, external email/SMS chat delivery or booking
+  charge occurred. Public terms/privacy review, exact-origin mail/maps, broad-search
+  load checks and controlled deployed journeys remain launch gates. See
+  [contract](modules/marketplace.md) and [evidence/rollout limits](audits/2026-11-08-marketplace/README.md).
+
+
+## 2026-11-07 Live pitch demo verified after Forge command errors
+
+- The owner's Forge runs reported tunnel failure after “Seeding database”. A
+  separate read-only production check confirms the CAD demo completion audit
+  and **1,640 saved appointments**. PHP CLI reports 512M/no execution time limit;
+  the precise cause of Forge's session failure is unconfirmed.
+- Deployed owner login with the supplied demo password succeeds. Live dashboard
+  shows seeded activity; Business setup shows **6/6 essentials ready**,
+  **CA/CAD/America/Toronto**, two locations/eight services/ten staff and the current
+  setup view. Screenshot retained in the [live evidence](audits/2026-11-07-canadian-demo/README.md#production-verification-after-forge-command-errors--2026-11-07).
+- No seeder rerun, server/SSH changes or deployment performed during diagnosis.
+  The demo is already available; no repeat run is needed.
+
 ## 2026-11-07 Canadian pitch demo and completed setup (version 2)
 
 - Demo now uses CA/en-CA/CAD, Toronto addresses and +1 416 example contacts,
@@ -98,7 +271,7 @@
 ## 2026-11-05 Public acquisition pages and product walkthrough
 
 - Implemented owner-approved broad positioning with salons/barbershops prominent;
-  retained all13 industry pages. Added genuine demo screenshots/use examples/FAQs
+  retained all 13 industry pages. Added genuine demo screenshots/use examples/FAQs
   on priority industry and shared feature pages, clearer pricing questions and
   contextual trial/product links. Added a read-only five-step walkthrough and
   distinct daily operating checklist; maintained guides gain print styling and
@@ -3546,3 +3719,161 @@ badge has no animation or urgency claim. Visual verification remains pending.
 Trial badge palette refinement: pricing and signed-out desktop/mobile header
 trial actions use pale indigo, navy text and a gold lightning icon. Authenticated
 subscription/dashboard actions omit the badge. Supersedes the lime palette above.
+
+New-signup verification: RegistrationTest passes locally (6 passed, 45 assertions;
+1 configuration-dependent skip). Verified-email signup asserts the saved trial
+end equals its start plus three calendar months without overflow; repeated
+verification retains the existing account. Not verified on production.
+
+## 2026-11-08 Marketplace discovery foundation (local only)
+
+- Added `/marketplace` with distinct customer branding, service/name and location
+  address search, public salon cards, pagination and canonical booking handoff.
+  Existing appointment payments remain manually recorded; no gateway added.
+- Discovery requires explicit operator-reviewed slug enrollment and active,
+  published online-booking businesses with active locations. Enrollment is empty
+  by default; no existing businesses were automatically listed.
+- Local discovery suite: **4 passed / 84 assertions**. Client/SSR build passes on
+  Node 24 (existing CSS/font warnings). Browser checked desktop1440 and phone390;
+  no horizontal overflow at either width. Phone query submission and broader-search
+  recovery verified. Fixed a framework hero-class collision observed visually.
+  [Desktop screenshot](audits/2026-11-08-marketplace/desktop.png).
+- Customer accounts/dashboard, messaging, nearby maps, live-time/price/rating
+  filters, owner listing controls and final Business-front branding remain
+  unimplemented. Populated listing/complete booking journey, notices during an
+  outage, real customer sends and deployed verification remain outstanding.
+  Scope, sequencing and open policy questions: [marketplace](modules/marketplace.md).
+  No deployment, production enrollment or financial/provider action performed.
+
+
+## 2026-11-09 Marketplace local growth candidate and account refinement
+
+Supersedes the earlier foundation-only implementation notes above for this local
+working tree. MPG-01–10 now have a local implementation: all13 Solutions audiences,
+reviewed many-to-many service concepts/geography, tenant-safe public supply/work
+projection with retry/reconciliation, bounded versioned discovery, registry-backed
+local hubs and independent provider readiness, initial HTML with real SSR/outage
+fallback, conditional schema/canonical/sitemaps, default-off indexation, consented
+source evidence and owner-only appointment/ledger outcomes. Owner shared links,
+discovery origin and booking entry remain distinct; missing/expired/withdrawn
+source evidence remains Unknown. Aggregate Search Console import is implemented;
+no Google data or connection is claimed. Booking holds/commit, timezone/DST,
+manual collections and append-only ledger history remain authoritative.
+
+Customer profile photos now use private normalized raster storage and the existing
+verified session. Selecting the avatar opens the picker. A small corner × shows
+on hover/focus (available on touch), with a tooltip and shared Keep photo / Remove
+photo confirmation. Cancel/failure preserves the saved picture and other profile
+drafts. Header/rail use the saved photo or initials; the account chevron is centred.
+My bookings, Inbox, Profile and Conversation use the compact shared customer shell:
+less padding,36px desktop buttons/40px fields and44px mobile targets. Repeated
+promotional/advice cards and the separate photo-settings block were removed.
+Cookie choices use Accept optional cookies / Reject optional cookies with existing
+purpose, opt-out and privacy boundaries intact.
+
+Verified locally:109 serial exact PHP class selections with latest rechecks yield
+**1,310 passed /31 skipped /14,166 assertions**. The separate built live SSR SEO
+run passes9/141.31 skips include14 production-MySQL concurrency cases and optional
+configuration; SQLite does not certify concurrency. **237 frontend tests pass**;
+final account backend recheck36/535. Client+SSR Node24 build and25-entry frontsite
+budgets pass. Synthetic100-business/1,000-offer retrieval+suggestions uses4 SQL
+queries and no live availability matching.12-path local raw HTML crawl passes;
+all synthetic pages remain noindex. Scoped formatting and whitespace checks pass.
+An existing duplicate receipt event producer was found and consolidated under
+ReceiptService; the repeated manual payment HTTP regression now passes.
+
+Final avatar hover/dialog, compact customer pages, owner publication/report notices
+and full booking visual journey remain unverified because CUA returned exactly
+“Local browser use is disabled in Work settings”. Earlier real local hub/cookie
+screenshots are retained with dates/limitations; they do not prove this final UI.
+No production deployment/indexing/ranking/customer acquisition/revenue was verified.
+All growth flags remain safe by default. Market/cohort/origin, revised disclosure
+approval and production-engine/browser release checks remain operator gates.
+
+[Implementation audit and evidence](audits/2026-11-08-marketplace-local-growth/README.md)
+· [Stage-E review/release package](release/2026-11-08-marketplace-local-growth/README.md).
+
+
+### 2026-11-09 Marketplace → booking branding continuity
+
+PublicBookingLayout now reuses the actual MarketplaceLayout on Marketplace provider
+booking routes through all four steps. Header/logo/account navigation, ivory canvas
+and footer match discovery. The business’s logo/media/catalogue/policies and saved
+accent remain in the booking content; the accent cannot recolour the shared shell.
+Duplicate booking-header links/status copies were removed. Direct owner booking
+and private preview keep their existing presentation and canonical booking rules.
+
+Verified locally:239 frontend tests;14/197 Marketplace refinement/photo backend;
+33/283 public booking/waitlist;9/144 real built SSR SEO/private/fallback tests.
+Client+SSR build and25-entry frontsite budgets pass; whitespace checks pass.
+The actual desktop/mobile BeGreat handoff remains visually unverified because CUA
+returned “Local browser use is disabled in Work settings”. No deployment or
+indexation flag was changed. [Evidence](audits/2026-11-09-marketplace-booking-shell/README.md).
+
+### 2026-11-09 Business Messages and Marketplace email/private-page follow-up
+
+Business navigation now reads Messages and opens a focused white/slate Business
+inbox: customer/reference search, All/Unread, bounded previews/unread totals,
+explicit Refresh and shared desktop conversation/mobile return. Listing/publication/
+booking-entry panels moved to Business setup → Marketplace listing with existing
+full-business settings authorization. Scoped reads/replies, encrypted messages,
+paging, pause and idempotent drafts remain intact. Shared AppLayout now injects
+Ziggy's per-app route helper so actual Business SSR can render.
+
+New saved messages create a durable email alert after commit: customer → one active
+verified main owner; business → the currently matching verified booking customer.
+Recipients/pause/read state are rechecked. Emails contain no message body/CRM data
+or bearer link; sign-in resumes a validated conversation path. Duplicate jobs,
+rollback and unknown-send handling preserve messages/history. An every-minute
+recovery sweep processes queued new alerts only; no historical backfill. The
+additive UUID migration was applied to the local development MySQL database.
+`MARKETPLACE_MESSAGE_EMAIL_ENABLED=false` disables alerts without deleting history.
+
+Marketplace sign-in/client email now embeds its PNG instead of requiring an inbox
+proxy to fetch a local hostname; its surround uses consistent ivory rather than
+mixed blue/ivory. Secure Manage booking/actions, waitlist and existing client forms/
+completion/error pages share Marketplace branding. Customer receipt HTML adopts
+Marketplace presentation without changing its issued financial snapshot or owner/PDF
+rendering. Existing guest link, booking, timezone and manual collection rules remain.
+
+Verified locally:174 targeted backend tests passed/1 skipped/1,622 assertions; the
+separate built live SSR run passed28/383 including the skipped case.243 frontend
+tests, client+SSR build,25-entry frontsite budgets and whitespace checks pass.
+Synthetic100-booking inbox returns25 with at most3 message-bearing SELECTs. Array
+mail/SES mocks verify logo MIME, sender/PDF/text continuity and conservative retries.
+No real email was sent, and SQLite does not certify production lock contention.
+Browser/desktop/mobile and real inbox visuals remain pending: CUA returned
+“Local browser use is disabled in Work settings”. No deployment or indexation gate
+changed. [Audit, samples and operator recovery](audits/2026-11-09-marketplace-messages-email/README.md).
+
+### 2026-11-11 Automatic store discovery and MySQL migration repair
+
+Published, qualified online-booking stores now enter Marketplace search automatically.
+Publication/resume refreshes supply after commit before returning when available,
+with durable queued/scheduled recovery. Existing stores are refreshed by the scheduler.
+Individual SEO profile status/hash follows the public description, address and bookable
+services. Profile geography approval, manual SEO requests and per-store pilot IDs
+are retired. Curated hubs retain editorial review. The owner page has one optional
+visibility form. Discovery is enabled internally. The normal environment example
+contains MARKETPLACE_GROWTH_INDEXATION=false and MARKETPLACE_MESSAGE_EMAIL_ENABLED=true.
+Canonical-host checks reuse BRAND_WEBSITE_URL. The four retired rollout variables
+are ignored. Private-page protections remain verified on index enable/rollback.
+
+The reported MySQL1059 failure was reproduced against native MySQL. A short explicit
+attribution tenant FK name fixes the identifier limit. The growth migration now
+resumes partial table creation and restores missing constraints, uniqueness and
+lookup indexes while retaining existing rows. Fresh, partial-recovery and repeated
+runs passed in an isolated MySQL database. The actual local migration completed the
+pending growth, lineage and photo migrations. Rechecking reports Nothing to migrate.
+Local reconciliation processed23 businesses with0 failures. Indexing remains false.
+
+Verified locally,221 targeted backend tests passed with2 live-renderer cases skipped
+in that run,2,066 assertions. The separate live SSR run passed35/510, including those
+cases and the normal automatic publication/profile/owner-settings journey.244 frontend
+tests, client+SSR build,25-entry frontsite budgets, scoped formatting and whitespace
+checks pass. The100-business/1,000-offer fixture retains4 retrieval/suggestion SELECTs
+and0 live availability calls. Browser visual checks remain pending because CUA returned
+Local browser use is disabled in Work settings. Production deployment and Google
+indexing/ranking/customer-outcome verification remain pending.
+
+[Implementation, migration recovery and evidence](audits/2026-11-11-marketplace-automatic-publication/README.md).

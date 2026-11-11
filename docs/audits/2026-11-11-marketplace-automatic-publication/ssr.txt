@@ -1,0 +1,45 @@
+
+   PASS  Tests\Feature\MarketplaceGrowth\AutomaticPublicationTest
+  ✓ it enables discovery without legacy environment configuration or pe… 0.44s  
+  ✓ it makes a completed store searchable through normal publication be… 0.45s  
+  ✓ it does not expose rolled-back publication unfinished stores or unq… 0.08s  
+  ✓ it automatically updates profile readiness and respects an owner pa… 0.11s  
+  ✓ it uses one global indexing choice and the existing canonical origi… 0.12s  
+  ✓ it renders Marketplace recovery with route configuration when an ex… 0.02s  
+  ✓ it prepares a published store profile from real services and addres… 0.07s  
+
+   PASS  Tests\Feature\MarketplaceGrowth\SeoTest
+  ✓ it renders substantive initial HTML for an individual profile befor… 0.06s  
+  ✓ it aligns exact-origin robots meta canonical schema and sitemap whi… 0.11s  
+  ✓ it serves only reviewed inventory-backed hubs and truthful noindex…  0.14s  
+  ✓ it removes paused or withdrawn delivery and handles only real slug…  0.11s  
+  ✓ it gives an approved nonempty hub a bounded editorial review window… 0.13s  
+  ✓ it does not mix cookies identities secure links or precise search c… 0.08s  
+  ✓ it self canonicalizes distinct clean pagination and excludes filter… 0.40s  
+  ✓ it falls back to useful public HTML when the SSR gateway is unavail… 0.09s  
+  ✓ it renders real built SSR directory and canonical booking HTML when… 0.10s  
+
+   PASS  Tests\Feature\MarketplaceMessageEmailTest
+  ✓ it commits one durable alert per new message and repairs a lost que… 0.05s  
+  ✓ it rolls back the message and alert together and never queues an un… 0.04s  
+  ✓ it sends customer alerts only to the main active verified owner wit… 0.05s  
+  ✓ it delivers business replies through the real array mail channel wi… 0.09s  
+  ✓ it does not send to an unverified owner or fall back to the public…  0.04s  
+  ✓ it rechecks changed recipients paused conversations read messages a… 0.04s  
+  ✓ it rechecks changed recipients paused conversations read messages a… 0.04s  
+  ✓ it rechecks changed recipients paused conversations read messages a… 0.04s  
+  ✓ it rechecks changed recipients paused conversations read messages a… 0.04s  
+  ✓ it keeps the saved message when email fails and never blindly repla… 0.04s  
+  ✓ it reclassifies interrupted delivery conservatively without replayi… 0.04s  
+  ✓ it opens a focused scoped inbox and keeps publication controls in a… 0.19s  
+  ✓ it resumes a message alert after sign in without accepting arbitrar… 0.06s  
+  ✓ it bounds inbox retrieval to one page with aggregate unread and lat… 0.23s  
+  ✓ it never falls back to another tenant owner when the intended busin… 0.05s  
+  ✓ it renders actual Business inbox conversation and private appointme… 0.18s  
+  ✓ it disables new and queued email work without erasing conversations… 0.04s  
+  ✓ it uses the Business email stream for a single main owner even when… 0.05s  
+  ✓ it keeps receptionists inside their assigned branches and prevents…  0.11s  
+
+  Tests:    35 passed (510 assertions)
+  Duration: 4.14s
+

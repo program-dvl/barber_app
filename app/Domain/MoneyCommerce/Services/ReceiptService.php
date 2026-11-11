@@ -25,7 +25,7 @@ class ReceiptService
 
             $receipt = SaleReceipt::query()->create(['business_id' => $sale->business_id, 'sale_id' => $sale->id, 'receipt_number' => 'GH-'.now()->format('Ymd').'-'.$sale->public_id, 'content_hash' => hash('sha256', json_encode($snapshot, JSON_THROW_ON_ERROR)), 'snapshot' => $snapshot, 'issued_at' => now()]);
             if ($sale->appointment_id) {
-                OperationalNotificationEvent::query()->firstOrCreate(['business_id' => $sale->business_id, 'idempotency_key' => 'receipt:'.$receipt->id.':issued'], ['event_type' => 'payment.receipt', 'subject_type' => Appointment::class, 'subject_id' => $sale->appointment_id, 'payload' => [], 'status' => 'pending', 'occurred_at' => now()]);
+                OperationalNotificationEvent::query()->firstOrCreate(['business_id' => $sale->business_id, 'idempotency_key' => 'receipt:'.$receipt->id.':issued'], ['event_type' => 'payment.receipt', 'subject_type' => Appointment::class, 'subject_id' => $sale->appointment_id, 'payload' => ['amount_minor' => $sale->total_minor, 'currency' => $sale->currency_code, 'sale_public_id' => $sale->public_id], 'status' => 'pending', 'occurred_at' => now()]);
             }
 
             return $receipt;

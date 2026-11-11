@@ -112,6 +112,7 @@ class BusinessActivationManager
                     'hours' => $this->storedLocationWindows($location),
                 ],
             );
+            app(\App\Domain\Marketplace\LocalGrowth\Services\OwnerDiscoverySettings::class)->location($lockedBusiness, $location, $data);
             $this->onboarding->saveStep($lockedBusiness, 'hours');
 
             return $location;

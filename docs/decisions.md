@@ -3312,3 +3312,291 @@ The seeded introduction must be complete (`personalized_at`, `guided_completed_a
 and the four steps), and canonical readiness must pass. Demo provenance uses
 `demo_version`, avoiding the normal starter claim that no client activity exists.
 Keep ordinary onboarding, global plans and customer trial lengths unchanged.
+
+## Marketplace expansion approval — 2026-11-08
+
+Accepted, owner instruction in marketplace implementation chat: promote only the
+marketplace/customer expansion recorded as MP-01–04 in the PRD. Keep Business and
+Marketplace visibly related with distinct customer journeys. Reuse canonical
+availability and booking commands; do not fork calendars, CRM or financial history.
+Appointment payments remain manually recorded by businesses; subscription payments
+remain separate. No marketplace commission or ranking policy is inferred.
+
+Initial discovery enrollment uses an explicit reviewed `MARKETPLACE_LISTED_SLUGS`
+allowlist (empty by default). Existing direct-page publication alone is not consent
+to marketplace discovery. This is an interim operator control, not an owner listing
+editor. Customer identity and inbox must be completed before advertising accounts.
+
+Open marketplace decisions: confirm canonical production hostname/navigation;
+customer identity verification and historical appointment claiming rules; messaging
+retention/abuse handling; listing-consent owner workflow; location search/map data
+licensing and ranking; required-deposit policy for the manual-payment marketplace;
+commercial fees and attribution. The discovery delivery does not waive these gates.
+
+### Marketplace implementation contract — 2026-11-08
+
+The owner's “finish the implementation” instruction authorizes completion of
+MP-01–04. Accepted implementation choices: keep the marketplace at the first-party
+`/marketplace` path; separate customer session guard/table; email-link verification
+and recovery; claim old bookings only with a valid private view link plus matching
+verified email; preserve CRM ownership; link rescheduled replacements atomically.
+Public accounts never acquire Business roles. Customer audit actors use explicit
+`marketplace_customer` source/public identity, not a concurrent Business login.
+
+Owner listing controls supersede the interim operator-only enrollment approach.
+Business-wide settings permission, revision/lock and explicit listing consent are
+required; an owner's pause overrides the legacy slug allowlist. Reuse the canonical
+salon gallery rather than invent a second conflicting media store. Ranking uses
+explicit name/rating choices, no paid placement or commission inference.
+
+Use saved owner entrance pins and session-only approximate coordinates for nearby
+search. No new Places storage/geocoding service is introduced. Date/price discovery
+uses canonical availability/catalogue and needs broad-search load measurement
+before large enrollment. Messaging is in-app/booking-linked with explicit refresh,
+read status, encrypted storage, per-command replay safety and customer pause/report
+controls. No external chat notifications/marketing consent are inferred.
+
+Manual booking payments preserve existing required-deposit restrictions. This
+approval is not permission to pretend a required deposit was paid. SaaS payments
+remain independent. Marketplace terms/privacy wording, communication retention,
+moderation-removal/appeals policy, large-directory performance and public host/mail/
+map certification remain launch review items. No production rollout or real salon
+enrollment was performed. Existing phase-one release gates are not waived.
+
+### Marketplace customer refinement and entry decision — 2026-11-08
+
+Accepted from the owner's reported session/search issues and requested competitor
+review. This supersedes the default-hidden listing and private-link-only claim
+rules above: active, published online-booking salons are discoverable by default;
+an owner's explicit pause remains authoritative. Verified customer email links
+previously unclaimed appointment projections automatically; existing ownership
+is immutable and no cross-tenant CRM merge/access is introduced. Profile saves have
+an explicit destination; authenticated confirmation URLs cannot show expired-link
+errors. Email/Google login remembers the customer separately from Business.
+Google uses OAuth state, verified email, a unique subject and the existing shared
+callback with explicit saved audience. New accounts still accept current terms.
+
+Retain the existing Business acquisition homepage and stable indexed URLs at this
+stage; `/business` permanently redirects there. Promote Marketplace prominently on
+that homepage and in shared navigation, with discovery at `/marketplace`. Changing
+the root alone does not establish better SEO, and would replace established intent
+before directory launch certification. Marketplace stays noindex pending its
+existing launch gates; a future indexable directory/root migration needs its own
+content, canonical/redirect and rollout review. Customer/account pages remain
+private/noindex. This resolves the current entry/navigation choice, not public
+host/legal/map/load certification. No new booking payment gateway is authorized.
+
+Browser review of logged-in Fresha and Salonist confirmed unified service/location/
+date search, compact avatar/logout, dedicated profile and account navigation.
+Use those interaction patterns with Clipperdesk's own imagery/palette and shared
+email/notification shell. Do not infer wallet, native app or unrelated profile
+fields as new approved scope.
+
+### Unified booking and Google Marketplace search — 2026-11-08
+
+Owner-approved follow-up: remove the duplicate Marketplace service/time screen and
+render the established booking page at the Marketplace salon URL. Preserve old
+`/book` entry links as redirects with their choices; direct salon links still use
+the same component and do not inherit Marketplace pause restrictions. Canonical
+holds, commit, tenant authorization and manual payment/deposit rules are unchanged.
+Keep favourite/account affordances alongside the established booking presentation.
+
+Service suggestions come from real publicly eligible Services/catalogue records.
+The three editorial category cards use business type or public service/category
+terms and reveal the result area. No new global service taxonomy/editor is added.
+
+The owner explicitly requests configured Google Places/map search and precise
+current location. This supersedes rounded Marketplace centres only: request browser
+high-accuracy location on action, or selected Places geometry. Keep the search centre
+in the existing server session with a 30-minute use expiry and remove on expiry
+check/clear; never put coordinates in URLs, customer or booking records. No Google
+business content catalogue or persistent geocoding database is introduced. Existing
+booking branch-only distance sorting remains browser-only. Update the public privacy
+disclosure to distinguish the two journeys; legal launch review is still required.
+Use the existing Google key/loader/widget and owner-saved entrance pins. Accountable
+review of regional provider terms remains a launch gate, not a reason to add a new
+provider or silently change Google Cloud settings. Technical references:
+[Places widget](https://developers.google.com/maps/documentation/javascript/reference/places-widget),
+[Maps service-specific terms](https://cloud.google.com/maps-platform/terms/maps-service-terms).
+
+### Account workspace and Business header refinement — 2026-11-08
+
+Accepted from the owner's attached header screenshot and request to rebuild the
+logged-in customer pages. Use a shared Marketplace account workspace for bookings,
+inbox, profile and conversations, with common navigation/type/form/card alignment.
+Keep all existing ownership, booking management, messaging replay/pause/report and
+profile persistence behavior. The Business conversation reuses the refined thread
+presentation inside its existing application shell; this does not redesign unrelated
+Business operational workspaces or add messaging providers.
+
+The compact Business brand lockup and Find a salon navigation supersede the detached
+Business label and large Home customer-prompt banner. The latter is removed; root
+Business acquisition and the Marketplace URL/indexation decision remain. Preserve
+the real brand mark, trial CTA and existing destinations. Responsive navigation
+switches to its existing drawer below1280px. No new product scope, auth/payment
+policy, database migration or production deployment is inferred.
+
+### Marketplace identity in customer communications — 2026-11-08
+
+Accepted from the owner's instruction to carry the Marketplace logo into email and
+treat appointment/reminder/related messages to salons' clients as Marketplace.
+Apply the same CD geometry, forest/lime badge/sparkle, capital-C Clipperdesk wordmark
+and Marketplace descriptor to account and all client email purposes. Keep the salon
+name/service facts prominent and account/security/billing/team operator email on
+Business branding. This promotes presentation only, not new sends/providers.
+
+Use a shared Blade brand partial and email-safe PNG export. Client SES retains its
+verified address and gains Marketplace display name; new email plain-text content
+gets a new immutable platform revision. Old queued text remains intact and both
+platform revisions retain structured rendering. SMS sender/body revisions/credits,
+consent, delivery idempotency, attachments and payment rules are unchanged. No live
+provider send or inbox-render certification follows from local tests.
+
+## Marketplace local growth implementation contract — 2026-11-08
+
+Accepted by the owner's execution request: MPG-01–10 promote only strategy stages
+A–D locally. Supersedes the earlier three-card/no-taxonomy restriction for this
+slice. Preserve Business root, Solutions and `/marketplace/salons/{slug}` canonical
+booking. Keep the direct booking origins as noindex aliases of the same public
+entity; do not redirect a working owner link through a new selection screen.
+
+Use versioned reviewed PHP taxonomy definitions and relational tenant service
+assignments, branch offers and geography bindings in the existing database.
+`nail_salon` aliases `nail_studio` for interpretation only; no operational rewrite.
+Ambiguous operational types (other, independent_professional, multi_service) never
+imply a specialty. Health/aesthetics matching is factual named appointment intent,
+without medical credentials/schema endorsements. Generic LocalBusiness is safe
+where a subtype cannot be established. Do not emit review rich-result markup in
+this release; actual consented reviews remain visible and contribute equally.
+
+Use the existing afterCommit/retry/scheduled-sweep pattern with a dedicated durable
+projection work row per business. Rebuild from current source under the business
+lock, never replay stale event payloads. Dirty/expired projection and current
+eligibility gates prevent stale delivery. Reconcile source changes, effective-date
+transitions and missed pivot updates. Public projection caches carry no sessions,
+accounts, contacts, tokens or search centres; HTTP responses retain private no-store
+where authentication/booking/session data exists. No shared whole-response cache.
+
+Geography comes from reviewed operator records, never city-name parsing, IP or
+stored Places geometry. Owner chooses an approved area and confirms an address may
+be public within the existing Locations workflow. Address changes invalidate the
+binding. Profiles require a public eligible path, accurate name/address/services,
+public contact route and owner review request; no photo/review quota. Operator
+approval is separate, revocable and content-revision bound. Hub minimum starts at
+3 distinct businesses (editorial choice); registry never generates permutations.
+No inventory is pre-enrolled, approved, or indexed by migration/backfill.
+
+Attribution policy `mpg-v1`: optional first-party acquisition observation requires
+explicit analytics consent and no privacy opt-out signal, expires after 30 days,
+retains only allowlisted source classes, public page key and timestamps. Never store
+raw referrers, UTM text or search phrases. Necessary booking-entry provenance remains
+separate and never proves acquisition. Attribution evidence on a confirmed booking
+is immutable; rescheduled replacements inherit its root without duplicating a
+confirmation. Analytics retention is 60 days after observation; prune optional
+evidence to unknown, retaining appointment/payment facts under existing retention.
+No network tracker is enabled on private pages. Broader legal/production activation
+remains OPEN-12. Search Console imports are aggregate page/day data, no queries or
+customer identity, idempotent replacement by property/day/page with reviewer/source.
+
+Nonblocking local assumptions: no production pilot market/cohort chosen, no Google
+read credentials, no geography authority imported, and no external/legal sign-off.
+These are explicit stage-E actions, not fabricated defaults. Quality thresholds and
+ranking v1 are testable starting policies, not Google rules or proven optimal order.
+See [implementation audit](audits/2026-11-08-marketplace-local-growth/README.md).
+
+### Customer-owned photo and cookie language — 2026-11-09
+
+Accepted by the owner’s screenshot request (MP-05): customer photo changes reuse
+the existing verified Marketplace session/profile, private raster normalization
+and shared avatar locations. No public customer directory or imported Google
+photo is introduced. Photo storage is separate from Business media. “Accept
+optional cookies” and “Reject optional cookies” describe consent choices; necessary
+sign-in/booking cookies remain available. The optional acquisition observation
+still requires its explicit purpose-specific choice and existing privacy controls.
+
+The owner’s subsequent screenshot refinement keeps photo controls inside the
+identity header: avatar picker and draft-only Save/Cancel. The owner’s final
+refinement replaces the saved-photo text action with a small corner ×, hover/focus
+tooltip and shared confirmation dialog (Keep photo / Remove photo). Touch users
+can reach it without hover. No dedicated photo section or repeated explanatory paragraph.
+Apply the same restrained hierarchy to all signed-in customer Marketplace pages,
+removing repeated promotional/advice cards while retaining useful booking/message
+controls, errors and mobile touch targets.
+
+Local regression inspection found two existing receipt-event producers. ReceiptService
+is the single producer with its established receipt idempotency key; checkout
+delegates to it and retains the event’s amount/currency/sale metadata. No new
+financial entry, collection method or historical event rewrite is introduced.
+
+The subsequent density refinement sets customer account buttons to 36px and fields
+to 40px on desktop, with less padding. Mobile keeps 44px touch targets and 16px
+input text. This is scoped to Marketplace accounts, not a global control reduction.
+
+### Marketplace booking shell continuity — 2026-11-09
+
+Accepted from the owner’s discovery-to-business screenshots: reuse MarketplaceLayout
+for Marketplace provider booking routes throughout the existing booking steps.
+The previous ProductMark plus Marketplace text inside PublicBookingLayout is
+superseded for this entry surface. Scope business accent variables to the inner
+booking content, preserving the shared Marketplace header/footer and canvas.
+Business identity/media, catalogue, availability, holds, confirmation, privacy and
+manual collection rules remain canonical. Direct booking/private preview continue
+using their existing public-booking shell. Use one shared status/recovery notice,
+not another copy in Booking/Welcome. No indexing or production gate is changed.
+
+### Marketplace email images and secure customer shell — 2026-11-09
+
+Accepted from the owner’s broken-logo/background and Manage booking screenshots.
+Embed the existing Marketplace PNG as a CID MIME image for account and SES client
+mail; do not depend on inbox proxies reaching a development/private hostname.
+Keep text branding usable when the packaged asset is unavailable. Correct the
+Marketplace theme's remaining inherited blue body/panel/footer colours; Business
+operator emails retain their existing theme. Preserve text alternatives, PDF
+attachments, sender/configuration tags and uncertain-send retry policy.
+All PublicBookingLayout self-service surfaces use the Marketplace shell, including
+management/actions, waitlist offers and existing client forms/completion. Keep
+focused content widths, secure token rules, private no-store/noindex, and guest
+access; do not turn public account navigation into a required login step.
+
+### Business Messages focus and email alerts — 2026-11-09
+
+Accepted from the owner’s Messages request. Keep the existing marketplace feature
+key/permissions, label it Messages, and make the default route a standard Business
+inbox. Move existing listing/publication/activity controls to an authorized listing
+settings route linked from Business setup. Share an inbox/conversation shell with
+normal Business surfaces; keep customer-side Marketplace styling separate.
+For now, notify the lowest-ID active verified owner account for customer messages;
+never fall back to an unverified public business contact. Notify the currently
+verified booking customer for business replies. Recheck ownership, active business,
+pause/read state and recipient eligibility before delivery. Use the existing email
+notification delivery ledger as a durable after-commit outbox, with one alert UUID
+per new message, no historical backfill and no chat body/CRM details in email.
+Reuse the configured framework mailer/notification channel and its tracking. A
+failed/unknown email must not roll back a saved message or trigger a blind resend.
+
+Message alert operations: `MARKETPLACE_MESSAGE_EMAIL_ENABLED=false` stops creation
+and processing without removing conversation/delivery history. Recovery dispatches
+only queued new alerts; stale sending becomes unknown after 15 minutes. No blind
+replay of uncertain/accepted/failed mail or backfill of old conversations. Use the
+existing queue/mailer and operational delivery records; do not interpret transport
+acceptance as customer receipt. The customer-facing signed receipt may adopt
+Marketplace presentation without changing its immutable issued snapshot or the
+Business/PDF document. These are presentation/notification refinements, not financial
+or indexation changes.
+
+### Automatic store discovery and profile publication — 2026-11-11
+
+Accepted from the owner’s request to remove per-store deployment maintenance.
+Discovery defaults enabled and uses published qualified booking supply. On booking
+publication/resume, refresh supply after commit before returning when available,
+with durable retry on failure. Individual profile records and content hashes update
+automatically from public facts. Paused/withdrawn and demo/private inventory guards
+remain authoritative. Existing public booking addresses qualify for profiles without
+a separate curated geography binding. Curated hubs retain editorial review.
+
+MARKETPLACE_GROWTH_ORIGIN and MARKETPLACE_GROWTH_PILOT_IDS are retired. Canonical
+origin checks use BRAND_WEBSITE_URL. MARKETPLACE_GROWTH_INDEXATION remains the sole
+normal SEO rollout setting, default false. The existing enabled config key remains true for normal operation. The retired
+MARKETPLACE_GROWTH_ENABLED environment variable has no effect. The old slug list is unused and removed. This refines
+MPG-05/07’s manual profile/pilot controls. Production indexing is still an explicit
+platform deployment choice.

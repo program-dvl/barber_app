@@ -145,6 +145,9 @@ $platformModules = [
 |
 */
 
+require __DIR__.'/marketplace.php';
+
+Route::get('/business', fn () => redirect()->route('marketing.home', [], 301))->name('marketing.business-entry');
 Route::get('/', [HomeController::class, 'index'])->name('marketing.home');
 Route::get('/features', [FeatureController::class, 'index'])->name('marketing.features');
 Route::get('/features/product-walkthrough', ProductTourController::class)->name('marketing.product-tour');
@@ -154,9 +157,9 @@ Route::get('/security', [TrustController::class, 'security'])->name('marketing.s
 Route::get('/terms-of-service', [LegalDocumentController::class, 'terms'])->name('terms.show');
 Route::get('/privacy-policy', [LegalDocumentController::class, 'privacy'])->name('policy.show');
 Route::get('/refund-policy', [LegalDocumentController::class, 'refund'])->name('refund.show');
+Route::get('/auth/callback/google', [SocialiteController::class, 'callback'])->middleware('throttle:10,1')->name('auth.google.callback');
 Route::middleware(['guest', 'throttle:10,1'])->group(function (): void {
     Route::get('/auth/google/redirect', [SocialiteController::class, 'redirect'])->name('auth.google.redirect');
-    Route::get('/auth/callback/google', [SocialiteController::class, 'callback'])->name('auth.google.callback');
     Route::post('/auth/google/register', [SocialiteController::class, 'completeRegistration'])->name('auth.google.register');
 });
 Route::prefix('help')->name('help.')->group(function (): void {
@@ -271,6 +274,15 @@ Route::middleware([
         ->scopeBindings()
         ->group(function () use ($shopModules): void {
             Route::get('/dashboard', DashboardController::class)->name('business.dashboard');
+
+            Route::get('/app/marketplace', [\App\Http\Controllers\Marketplace\BusinessMarketplaceController::class, 'index'])->middleware('workspace.feature:marketplace')->name('business.marketplace.index');
+            Route::get('/app/marketplace/settings', [\App\Http\Controllers\Marketplace\BusinessMarketplaceController::class, 'settings'])->name('business.marketplace.settings');
+            Route::get('/app/marketplace/outcomes', \App\Http\Controllers\Marketplace\GrowthReportController::class)->name('business.marketplace.outcomes');
+            Route::post('/app/marketplace/publication', [\App\Http\Controllers\Marketplace\BusinessMarketplaceController::class, 'publication'])->name('business.marketplace.publication');
+            Route::patch('/app/marketplace/listing', [\App\Http\Controllers\Marketplace\BusinessMarketplaceController::class, 'listing'])->name('business.marketplace.listing');
+            Route::get('/app/marketplace/preview', [\App\Http\Controllers\Marketplace\BusinessMarketplaceController::class, 'preview'])->name('business.marketplace.preview');
+            Route::get('/app/marketplace/messages/{appointment}', [\App\Http\Controllers\Marketplace\BusinessMarketplaceController::class, 'thread'])->name('business.marketplace.thread');
+            Route::post('/app/marketplace/messages/{appointment}', [\App\Http\Controllers\Marketplace\BusinessMarketplaceController::class, 'message'])->middleware('throttle:10,1')->name('business.marketplace.message');
 
             Route::get('/app/calendar', CalendarController::class)->middleware('workspace.feature:calendar')->name('business.calendar');
             Route::get('/app/calendar/clients', [CalendarController::class, 'clients'])->name('business.calendar.clients');
@@ -488,6 +500,8 @@ Route::middleware([
         Route::post('/feature-flags', [PlatformOperationsController::class, 'setFlag'])->name('feature-flags.store');
         Route::post('/notices', [PlatformOperationsController::class, 'publishNotice'])->name('notices.store');
         Route::get('/alerts', [PlatformOperationsController::class, 'alerts'])->name('alerts.index');
+        Route::get('/marketplace/reports', [\App\Http\Controllers\Marketplace\ModerationController::class, 'index'])->name('marketplace.reports');
+        Route::patch('/marketplace/reports/{reference}', [\App\Http\Controllers\Marketplace\ModerationController::class, 'update'])->name('marketplace.reports.update');
         Route::get('/audit-events', [PlatformOperationsController::class, 'auditEvents'])->name('audit-events.index');
 
         Route::get('/support-access', [SupportAccessController::class, 'index'])->name('support-access.index');

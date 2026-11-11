@@ -17,6 +17,7 @@ use App\Support\Seo\PublicAnalytics;
 use App\Support\Seo\PublicIndexation;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -50,6 +51,11 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'appName' => config('brand.product_name'),
+            'marketplaceCustomer' => fn () => $request->is('marketplace', 'marketplace/*') ? (($customer = Auth::guard('marketplace')->user()) ? [...$customer->only(['name', 'email', 'public_id', 'phone']), 'photo_url' => $customer->photoUrl()] : null) : null,
+            'marketplaceRetryAt' => fn () => $request->session()->get('marketplace_retry_after') ? now()->addSeconds((int) $request->session()->get('marketplace_retry_after'))->getTimestampMs() : null,
+            'marketplaceRetryAfter' => fn () => $request->session()->get('marketplace_retry_after'),
+            'marketplaceBlocked' => fn () => $request->session()->get('marketplace_blocked', false),
+            'marketplaceStatus' => fn () => $request->session()->get('marketplace_status'),
             'publicAnalytics' => fn () => app(PublicAnalytics::class)->for($request),
             'help' => fn () => app(HelpContext::class)->for($request),
             'seoDefaults' => fn () => [
@@ -174,8 +180,8 @@ class HandleInertiaRequests extends Middleware
                     ] : null,
                 ];
             },
-            'platform' => fn () => $request->user()?->hasAnyActivePlatformRole() ? [
-                'roles' => $request->user()->activePlatformRoles()->get()->map(fn ($assignment) => $assignment->role->value)->values()->all(),
+            'platform' => fn () => $request->user('web')?->hasAnyActivePlatformRole() ? [
+                'roles' => $request->user('web')->activePlatformRoles()->get()->map(fn ($assignment) => $assignment->role->value)->values()->all(),
             ] : null,
             'supportAccessBanner' => fn () => $context->hasBusiness() && Schema::hasTable('support_access_sessions')
                 ? SupportAccessSession::query()->where('business_id', $context->business()->id)->whereNull('ended_at')
@@ -192,7 +198,7 @@ class HandleInertiaRequests extends Middleware
                     ->get()->map->only(['public_id', 'title', 'message', 'severity'])->all()
                 : [],
             'account' => fn () => [
-                'workspaces' => $request->user()?->memberships()
+                'workspaces' => $request->user('web')?->memberships()
                     ->active()
                     ->with('business:id,public_id,name,status')
                     ->oldest('id')

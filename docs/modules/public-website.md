@@ -245,3 +245,43 @@ relevant walkthrough anchors and industry pages. Templates collect no input.
 Reuse shared typography, cards, focus styles and wrapping 44px actions. Print
 shows the worksheet alone. Preserve stable article URLs, metadata and dates;
 no database publication, fabricated review or ranking guarantee is introduced.
+
+## Marketplace navigation — 2026-11-08
+
+The existing acquisition site remains Business at `/`, with a Business brand
+qualifier and explicit Marketplace navigation/footer link. The approved separate
+customer identity lives at `/marketplace`; it is not a replacement for acquisition
+URLs or signup/subscription flows. Marketplace and customer/private pages remain
+noindex pending launch review. See [Marketplace](marketplace.md) for the connected
+implementation and deployment limitations.
+
+The 2026-11-08 entry refinement retains the established Business root/acquisition
+URLs and adds a prominent customer discovery band on Home. `/business` permanently
+redirects to the existing root. Both headers/footer distinguish the two audiences.
+A later marketplace-first root migration requires separate indexable directory and
+canonical/redirect review; no ranking benefit or public launch is claimed here.
+
+The later owner screenshot refinement supersedes the Home discovery band described
+above: remove that oversized repeated prompt. A compact mark/name/Business lockup
+and sage Find a salon navigation entry now distinguish the audiences without
+competing with the Business hero. Root URLs, trial economics and Marketplace
+noindex/launch gates remain. The existing navigation drawer is used below1280px.
+
+## Inventory-backed Marketplace SEO (MPG-05–07)
+
+Business root and Solutions remain acquisition pages. The additional reviewed
+registry serves clean country/city/audience/service hubs and eligible substantive
+profiles at the existing Marketplace booking URL. `MarketplacePublicPage` supplies
+metadata/schema and shared projection facts; app.blade renders those facts when
+SSR is unavailable. No page matrix, credential claims or fabricated supply is seeded.
+The existing Business sitemap is retained; Marketplace adds its own sitemap index
+and stable ID-bucket shards, advertised after global indexing and canonical-origin
+gates pass. Private pages remain noindex/no-store even during rollback.
+See [release package](../release/2026-11-08-marketplace-local-growth/README.md).
+
+
+2026-11-11 policy refinement under MPG-05/07. Individual Marketplace profiles are
+prepared automatically from eligible published booking data. Canonical-origin checks
+reuse BRAND_WEBSITE_URL. The separate growth origin and business pilot allowlist are
+retired. One platform indexing switch defaults off. Public website acquisition URLs
+and private-page noindex/no-store contracts retain their existing behavior.

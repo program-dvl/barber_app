@@ -194,7 +194,7 @@ class CommunicationDeliveryService
                 $message->channel, $message->business_id, $message->communication_sender_profile_id,
                 $message->intent->intent_type === 'conversation_reply',
                 $message->channel === 'email' ? app(ClientNotificationEmail::class)->render(
-                    data_get($message->template->fallbacks, '__platform_revision') === CommunicationTemplateService::PLATFORM_REVISION ? $message->intent->intent_type : null,
+                    in_array(data_get($message->template->fallbacks, '__platform_revision'), [CommunicationTemplateService::PLATFORM_REVISION, CommunicationTemplateService::EMAIL_PLATFORM_REVISION], true) ? $message->intent->intent_type : null,
                     [...$variables, ...$rendered['variables']], $rendered['body'], $rendered['subject'],
                 ) : null,
                 $message->channel === 'email' && $message->intent->intent_type === 'payment_receipt' ? app(ReceiptPdfService::class)->attachments($message) : [],

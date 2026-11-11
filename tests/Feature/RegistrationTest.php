@@ -158,7 +158,7 @@ class RegistrationTest extends TestCase
         $this->assertSame(StarterRole::Owner->value, $roleName);
         $this->assertSame(SubscriptionStatus::Trialing, $subscription->status);
         $this->assertNotNull($subscription->trial_started_at);
-        $this->assertTrue($subscription->trial_ends_at->greaterThan($subscription->trial_started_at));
+        $this->assertTrue($subscription->trial_ends_at->equalTo($subscription->trial_started_at->copy()->addMonthsNoOverflow(3)));
         $this->assertDatabaseCount('businesses', 1);
         $this->assertDatabaseCount('memberships', 1);
         $this->assertDatabaseCount('business_subscriptions', 1);

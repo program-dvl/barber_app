@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-09 Asia/Kolkata",
+  "environment": "isolated local synthetic tests",
+  "backend": {
+    "passed": 174,
+    "skipped": 1,
+    "assertions": 1622
+  },
+  "live_ssr": {
+    "passed": 28,
+    "assertions": 383
+  },
+  "frontend": {
+    "passed": 243
+  },
+  "inbox_fixture": {
+    "bookings": 100,
+    "page_rows": 25,
+    "message_select_budget": 3
+  },
+  "build": "passed Node24.19.0 client+SSR",
+  "frontsite_route_entries": 25,
+  "local_mysql_migration": "2026_11_09_000002 applied",
+  "visual_verification": "blocked: Local browser use is disabled in Work settings",
+  "external_email_sent": false,
+  "deployment": false,
+  "production_indexation_enabled": false
+}

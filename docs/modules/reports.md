@@ -40,3 +40,23 @@ retention, cohort conversion or completed appointments without a sale.
 
 Verification and remaining limits belong in the dated review, and only verified
 facts are recorded in project-status.md.
+
+## Discovery & booking outcomes (MPG-08–10)
+
+An owner with revenue permission can report a selected authorized branch, strict
+local date range (up to 367 days) and recorded currency. Cohort is first confirmed
+public booking flow in that interval; each logical appointment is counted once
+after replacement. Latest visit status/value and all linked recorded collections,
+refunds/voids and allocation movements are separate. These are booking-cohort
+collections, not transaction-date revenue. Unknown acquisition stays unknown.
+New-to-business clients are distinct clients completing their first recorded
+appointment in that business, with timestamp and ID tie-breaks. No contact details
+or cross-business identities are selected. Required-deposit protections and manual
+collection commands remain unchanged.
+
+Acquisition observation needs separate explicit optional consent, browser/header
+privacy permission and a retained session; 30-day maximum window, 60-day optional
+evidence retention. Necessary booking entry is independent. Search Console import
+is authorized page/day aggregate JSON only; no query/customer fields or live
+connection is implied. Counts below three are withheld. Profile aggregates cover
+the whole business profile, not an individual branch.

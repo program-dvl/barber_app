@@ -21,7 +21,9 @@ class SitemapController extends Controller
 
     public function robots(): Response
     {
-        return response("User-agent: OAI-SearchBot\nAllow: /\n\nUser-agent: ChatGPT-User\nAllow: /\n\nUser-agent: *\nAllow: /\n\nSitemap: ".PublicUrl::canonical(route('sitemap.xml'))."\n")
+        $growth = config('marketplace-growth.enabled') && config('marketplace-growth.indexation_enabled') && app(\App\Domain\Marketplace\LocalGrowth\Services\GrowthSitemap::class)->pages()->isNotEmpty()
+            ? 'Sitemap: '.PublicUrl::canonical(url('/marketplace/sitemap.xml'))."\n" : '';
+        return response("User-agent: OAI-SearchBot\nAllow: /\n\nUser-agent: ChatGPT-User\nAllow: /\n\nUser-agent: *\nAllow: /\n\nSitemap: ".PublicUrl::canonical(route('sitemap.xml'))."\n".$growth)
             ->header('Content-Type', 'text/plain; charset=UTF-8');
     }
 }

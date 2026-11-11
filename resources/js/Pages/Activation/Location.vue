@@ -2,6 +2,7 @@
 import LocationEditor from '@/Components/Locations/LocationEditor.vue';
 import LocationCard from '@/Components/Locations/LocationCard.vue';
 import { locationDefaults } from '@/Support/locationIntelligence';
+import AppNotice from '@/Components/Product/AppNotice.vue';
 import FieldError from '@/Components/Product/FieldError.vue';
 import AppSelect from '@/Components/Product/AppSelect.vue';
 import { computed } from 'vue';
@@ -13,12 +14,13 @@ import PhoneInput from '@/Components/Product/PhoneInput.vue';
 import SurfaceCard from '@/Components/Product/SurfaceCard.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
-const props = defineProps({ business: Object, locations: Array, readiness: Object, timeZones: Array, locationAllowance: Object, countries: Object });
+const props = defineProps({ business: Object, locations: Array, readiness: Object, timeZones: Array, locationAllowance: Object, countries: Object, discoveryEnabled: Boolean, discoveryGeographies: Array });
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const first = props.locations[0];
 const firstHours = first?.hours || [];
 const form = useForm({
     ...locationDefaults(first),
+    discovery_geography: first?.discovery?.public_id || '', discovery_address_public: !!first?.discovery,
     location_revision: first?.location_revision || null,
     keep_hours: !!firstHours.length,
     location: first?.public_id || null,
@@ -40,6 +42,7 @@ const resetLocation = (location = null) => {
     form.clearErrors();
     Object.assign(form, {
         ...locationDefaults(location || {}),
+        discovery_geography: location?.discovery?.public_id || '', discovery_address_public: !!location?.discovery,
         location_revision: location?.location_revision || null,
         keep_hours: !!hours.length,
         location: location?.public_id || null,
@@ -78,6 +81,8 @@ const save = () => form.post(route('business.locations.activation.store', props.
                     <label class="text-sm font-semibold">Location name<span aria-hidden="true" class="text-[var(--status-danger)]"> *</span><span class="ds-sr-only"> required</span><input v-model="form.name" required :class="['cd-input mt-2', form.errors.name ? 'border-[var(--status-danger)]' : '']"  id="field-location-form-name" :aria-invalid="form.errors.name ? true : undefined" :aria-describedby="form.errors.name ? 'field-location-form-name-error' : undefined"/><FieldError id="field-location-form-name-error" :message="form.errors.name" /></label>
                     <label class="text-sm font-semibold">Time zone<span aria-hidden="true" class="text-[var(--status-danger)]"> *</span><span class="ds-sr-only"> required</span><AppSelect v-model="form.time_zone" required class="cd-input mt-2" id="field-location-form-time-zone" :aria-invalid="form.errors.time_zone ? true : undefined" :aria-describedby="form.errors.time_zone ? 'field-location-form-time-zone-error' : undefined"><option value="" disabled>Choose a time zone</option><option v-for="zone in timeZones" :key="zone" :value="zone">{{ zone.replaceAll('_', ' ') }}</option></AppSelect><FieldError id="field-location-form-time-zone-error" :message="form.errors.time_zone" /></label>
                     <LocationEditor :key="form.location || 'new'" class="sm:col-span-2" :id="`branch-${form.location || 'new'}`" :model-value="form" :errors="form.errors" :countries="countries" @update:model-value="Object.assign(form, $event)" />
+                    <AppNotice v-if="discoveryEnabled && !discoveryGeographies?.length" class="sm:col-span-2" title="Local search areas are being prepared" description="You can save your location now. Contact us to ask about local discovery in your area."><template #actions><a class="cd-button cd-button-secondary" :href="`mailto:${$page.props.brand.support_email}?subject=Local%20discovery%20area`">Contact support</a></template></AppNotice>
+                    <fieldset v-if="discoveryGeographies?.length" class="sm:col-span-2"><legend class="text-sm font-semibold">Local discovery</legend><label for="discovery-area" class="mt-2 block text-sm">Reviewed city or area</label><AppSelect id="discovery-area" v-model="form.discovery_geography" class="cd-input mt-2"><option value="">Choose an area</option><option v-for="area in discoveryGeographies" :key="area.public_id" :value="area.public_id">{{ area.name }} · {{ area.region.toUpperCase() }}, {{ area.country.toUpperCase() }}</option></AppSelect><label class="mt-3 flex min-h-11 items-center gap-3 text-sm"><input type="checkbox" v-model="form.discovery_address_public" />This is a customer-facing address and may appear on local discovery pages.</label><p class="mt-2 text-sm text-[var(--text-muted)]">Choose only the area this address is in. Leave public display off for a private address.</p><FieldError :message="form.errors.discovery_geography || form.errors.discovery_address_public" /></fieldset>
                     <label v-if="locations.length > 1 || editingNew" class="flex min-h-11 items-center gap-2 text-sm sm:col-span-2"><input v-model="form.is_primary" type="checkbox" />Primary location · shown first in booking</label>
                     <label class="text-sm font-semibold" for="location-phone">Public phone<PhoneInput id="location-phone" v-model="form.phone" class="mt-2" :country="business.country_code || 'IN'"  :aria-invalid="form.errors.phone ? true : undefined" :aria-describedby="form.errors.phone ? 'location-phone-error' : undefined"/><FieldError id="location-phone-error" :message="form.errors.phone" /></label>
                     <label class="text-sm font-semibold">Public email<input v-model="form.email" type="email" class="cd-input mt-2"  id="field-location-form-email" :aria-invalid="form.errors.email ? true : undefined" :aria-describedby="form.errors.email ? 'field-location-form-email-error' : undefined"/><FieldError id="field-location-form-email-error" :message="form.errors.email" /></label>

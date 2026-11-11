@@ -96,3 +96,11 @@ applicable. Provider attempts/callbacks and uncertain-result recovery retain the
 existing pipeline. One request per visit is deliberate; manual repeated clicks
 show its existing delivery outcome rather than resending. See the dated
 [verification and deployment notes](../audits/2026-11-05-visit-emails/README.md).
+
+## Discovery projection (MPG-03/06)
+
+Public-consent changes enqueue the same after-commit supply refresh used by listing
+changes. A dirty projection is hidden until refreshed; current public review facts
+come from this service’s all-rating summary only. No review rich-result markup is
+emitted in the local growth release. Withdrawal never rewrites appointment or
+financial history and is not a rating-based suppression mechanism.

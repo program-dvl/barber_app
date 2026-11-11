@@ -10,7 +10,7 @@ const core = manifest['resources/js/app.js'];
 if (await size(core.file) > limits.coreJs) failures.push(`Core JS exceeds ${limits.coreJs} bytes`);
 for (const css of core.css ?? []) if (await size(css) > limits.css) failures.push(`${css} exceeds the public CSS budget`);
 
-const publicEntries = Object.entries(manifest).filter(([key]) => /resources\/js\/Pages\/(Home|Blog|Article|Error|TermsOfService|PrivacyPolicy|Marketing\/|Help\/)/.test(key));
+const publicEntries = Object.entries(manifest).filter(([key]) => /resources\/js\/Pages\/(Home|Blog|Article|Error|TermsOfService|PrivacyPolicy|Marketing\/|Help\/|Marketplace\/(?:Discover|Local)|Booking\/Welcome)/.test(key));
 for (const [key, entry] of publicEntries) if (entry.file && await size(entry.file) > limits.routeJs) failures.push(`${key} exceeds the route JS budget`);
 
 for (const file of await readdir(join(root, 'public/fonts/clipperdesk'))) {

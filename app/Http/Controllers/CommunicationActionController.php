@@ -50,7 +50,7 @@ class CommunicationActionController extends Controller
             $sale = Sale::query()->where('business_id', $link->business_id)->with('appointment')->findOrFail($receipt->sale_id);
             $business = Business::query()->findOrFail($link->business_id);
 
-            return response()->view('receipts.sale', ['receipt' => $receipt, 'receiptTimeZone' => $sale->appointment?->time_zone ?: $business->time_zone ?: 'UTC', 'receiptLocale' => $business->locale ?: 'en'], 200, [
+            return response()->view('receipts.sale', ['receipt' => $receipt, 'marketplace' => true, 'receiptTimeZone' => $sale->appointment?->time_zone ?: $business->time_zone ?: 'UTC', 'receiptLocale' => $business->locale ?: 'en'], 200, [
                 'Cache-Control' => 'private, no-store', 'X-Robots-Tag' => 'noindex, nofollow', 'Referrer-Policy' => 'no-referrer',
             ]);
         }

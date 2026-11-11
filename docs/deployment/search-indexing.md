@@ -143,3 +143,31 @@ private links, APIs and mutations must not receive marketing redirects.
 With only four live posts the archive correctly has no pagination controls;
 25 eligible isolated articles verify pages1–3, forward/back links, accurate
 canonical identity and44px phone actions without production test content.
+
+## Marketplace local growth candidate (MPG-05–10)
+
+The [stage-E package](../release/2026-11-08-marketplace-local-growth/README.md)
+contains canonical-origin checks, curated-hub commands, raw local crawl evidence,
+rollback and weekly operations. Individual profiles follow published booking data
+automatically under the 2026-11-11 policy. A separate origin setting and per-store
+pilot allowlist are retired. Its indexation flag defaults off. Do not add
+Marketplace URLs to Search Console, submit profiles, alter production robots or
+enable indexing from local tests alone. `/sitemap.xml` remains compatible; the
+optional `/marketplace/sitemap.xml` index and profile/hub shards are separate.
+
+
+## Marketplace environment simplification — 2026-11-11
+
+Marketplace discovery and profile preparation run automatically from completed,
+published online booking. The normal deployment example contains only
+MARKETPLACE_GROWTH_INDEXATION=false and MARKETPLACE_MESSAGE_EMAIL_ENABLED=true.
+The retired LISTED_SLUGS, GROWTH_ENABLED, GROWTH_ORIGIN and GROWTH_PILOT_IDS variables
+have no effect. BRAND_WEBSITE_URL supplies the existing canonical HTTPS origin.
+The scheduler refreshes existing supply and recovers missed work automatically.
+A deployment may run `php artisan marketplace:growth-reconcile --all` once to avoid
+waiting for that sweep. It uses actual eligible records.
+
+After the authorized production crawl/indexing checks pass, set the one global
+MARKETPLACE_GROWTH_INDEXATION=true. Individual eligible profiles are then included
+automatically. Google controls its crawl/index timing. Filter, account, secure-link,
+preview and API pages keep their private/noindex rules on both enable and rollback.

@@ -34,7 +34,7 @@ class ApplyHttpSecurity
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-Frame-Options', $response->getStatusCode() === 200 && $request->routeIs('business.configuration.booking-preview') ? 'SAMEORIGIN' : 'DENY');
         $response->headers->set('Referrer-Policy', $this->isTokenProtectedPath($request) || $response->headers->get('Referrer-Policy') === 'no-referrer' ? 'no-referrer' : 'strict-origin-when-cross-origin');
-        $geolocation = $response->getStatusCode() === 200 && $request->routeIs('booking.business', 'booking.business.fallback') ? '(self)' : '()';
+        $geolocation = $response->getStatusCode() === 200 && $request->routeIs('booking.business', 'booking.business.fallback', 'marketplace.discover', 'marketplace.salon') ? '(self)' : '()';
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation='.$geolocation.', payment=(self)');
         $response->headers->set('X-Robots-Tag', $this->indexation->directive($request, $response));
 
@@ -42,7 +42,7 @@ class ApplyHttpSecurity
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
 
-        if ($request->user() || $this->isTokenProtectedPath($request) || $request->is('book', 'book/*') || $request->routeIs('booking.business')) {
+        if ($request->is('marketplace', 'marketplace/*') || $request->user() || $this->isTokenProtectedPath($request) || $request->is('book', 'book/*') || $request->routeIs('booking.business')) {
             $response->headers->set('Cache-Control', 'private, no-store');
             $response->headers->set('Pragma', 'no-cache');
         }
@@ -54,6 +54,7 @@ class ApplyHttpSecurity
     {
         return $request->is(
             'appointments/secure/*',
+            'marketplace/sign-in/*',
             'waitlist-offers/*',
             'client-forms/secure/*',
             'client-files/*',

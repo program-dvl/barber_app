@@ -27,6 +27,7 @@ class WorkspaceAccessService
             'requires_location' => true,
         ],
         'staff' => ['permissions' => [PermissionName::StaffManage, PermissionName::CalendarViewAll, PermissionName::CalendarViewOwn]],
+        'marketplace' => ['permissions' => [PermissionName::SettingsManage, PermissionName::CalendarViewAll, PermissionName::CalendarViewOwn]],
         'activity' => ['permissions' => [PermissionName::AuditView]],
         'services' => ['permissions' => [PermissionName::SettingsManage]],
         'inventory' => [

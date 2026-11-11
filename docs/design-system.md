@@ -1277,3 +1277,185 @@ configuration rather than introduction prompts or claims that no client activity
 exists. The Canadian demo was checked at desktop1440 and phone390×844; see
 [the evidence](audits/2026-11-07-canadian-demo/README.md). No shared layout, notice
 component or ordinary customer onboarding branch changed.
+
+## Marketplace foundation — 2026-11-08
+
+The customer marketplace uses a scoped ivory/forest/sage palette, editorial serif
+accents, real inspirational salon imagery and separate customer navigation. Keep
+Business links explicit and preserve public salon media/consent gates. Scope class
+names to avoid framework hero-layout collisions. Empty/no-match feedback reuses
+AppNotice with useful direct-booking management and broader-search actions.
+Customer accounts and messaging must not be advertised until implemented. Manual
+payment copy must not promise pay-later booking when a salon requires a deposit.
+
+### Connected marketplace journeys — 2026-11-08
+
+Shared MarketplaceLayout extends the approved discovery identity through salon,
+customer sign-in, bookings, favourites and conversation pages. Business retains
+its existing workspace shell and adds explicit Business identity/acquisition links.
+Use canonical SalonShowcase, ProfessionalCards, LocationCard and consented review
+presentation inside the customer theme. Never substitute stock imagery for a
+real salon's missing photos. The discovery hero/category imagery remains labelled
+inspiration; no fictional listings are inserted into the ordinary database.
+
+Keep the monogram/wordmark from shrinking or wrapping at phone widths. Customer
+navigation wraps with at least 44px touch targets; action groups wrap with gaps.
+Use restrained AppNotice for saved/failed/paused states. A blocked map offers Show
+salon list; expired sign-in offers Get a new sign-in link; a stale listing offers
+Refresh listing details. Cooldowns count down before mutations re-enable; persistent
+failures preserve entered text and expose support, not repeated retries. The final
+filter/map/navigation refinements still need visual recheck after browser access
+was disabled; earlier local booking/messaging observations do not certify those.
+
+### Marketplace search and account refinement — 2026-11-08
+
+Use one aligned service/location/date search bar, contextual panels and a single
+Search action. Optional Today/Top rated choices use compact pills; no currency
+selector appears in customer discovery. Panels close on outside click/Escape,
+remain keyboard reachable and stack within the phone viewport. Suggestions label
+their actual scope (current result page); never invent recent searches or ratings.
+Profile has dedicated account navigation, clear verified email, name/mobile edit
+and logout. Successful saves return to profile with the shared restrained notice.
+Marketplace email uses the standard transactional message/header/footer structure
+with forest/sage overrides, not an independently maintained HTML layout.
+
+### Unified Marketplace booking and map — 2026-11-08
+
+Reuse the established booking page instead of adding a second service/time selector
+before it. Retain salon photos/accent, canonical booking steps and customer account/
+favourite actions. Discovery suggestions show real named services and categories,
+not broad editorial chips masquerading as services. Category cards have selected
+feedback and bring results into view, respecting reduced-motion preference.
+
+Google location suggestions use the supported attributed widget without shadow-DOM
+patches. Map view pairs numbered pins with selectable salon cards and a clear
+Explore & book action. Selection highlights a card without immediately navigating
+away. Show all pins resets the view. Keep explicit page scope, no-pin cards, Google
+attribution and a working list fallback on provider failure. At phone widths stack
+the map and list; controls retain44px targets. Final visual/provider confirmation
+is pending because browser control was disabled during this continuation.
+
+### Business brand and customer account workspace — 2026-11-08
+
+The owner's follow-up replaces the detached Business qualifier with a compact,
+vertically aligned mark/name/Business lockup. The shared Business header offers
+Find a salon as a quiet sage Marketplace entry within navigation. Remove the large
+appointment-prompt strip above the Home hero; it repeats that action and competes
+with the acquisition message. Use the navigation drawer below1280px rather than
+squeezing the full navigation, brand and trial controls into a narrow row. The
+existing trial badge, primary CTA and Business root/acquisition intent remain.
+
+Customer bookings, inbox, profile and conversation share MarketplaceAccountLayout:
+1440px outer alignment,210px identity/navigation rail, restrained40px page headings,
+consistent48px controls,14px card radii and24px section rhythm. At850px the rail
+becomes a four-item horizontal account navigation; secondary columns stack before
+form fields become cramped. Sidebar groups use a shared20px gap. The optional phone
+control and name/email inputs share a48px baseline. Long names/addresses must wrap.
+Persistent confirmations/errors continue to use AppNotice; validation stays by its
+field. Global notices align to the same outer width as the customer header.
+
+Booking cards separate the local-date tile, salon/services, full zoned time/address,
+status, booking reference and wrapping action footer. Do not replace an awaiting-
+approval status with a confirmed claim. Favourites retain real saved salon links.
+The inbox uses a single list surface and consistent rows; it does not invent last-
+message previews or presence. Refresh is explicit and disabled while loading.
+Conversations use a labelled scrollable message history, distinct sender/own bubbles,
+explicit timestamps/read state, a dedicated composer, and adjacent booking/control
+cards. Pause/report, replay keys, saved drafts and tenant authorization remain.
+The mobile icon-only refresh retains its accessible name. No realtime status or
+chat-delivery promise is introduced. Business-side conversation wording reflects
+the customer recipient and remains inside the existing Business shell.
+
+Current source/build/mounted-test evidence is in
+[the refinement audit](audits/2026-11-08-marketplace-account-design/README.md).
+Browser access was disabled; this is not desktop/mobile visual certification.
+
+Profile refinement: omit the redundant right-hand email/sign-in information cards.
+Use a single profile surface across the account content width; keep logout in the
+shared navigation instead of repeating it inside an informational card.
+
+Marketplace identity refinement: reuse the Business interlocking CD path geometry
+in the forest/lime rounded badge, retaining the small lime sparkle. The customer
+wordmark reads “Clipperdesk” with a capital C in header/footer. Reuse the canonical
+vector geometry; do not substitute a typed letter for the monogram.
+
+Marketplace email identity: reuse `emails/partials/marketplace-brand.blade.php` in the
+Marketplace account mail shell and client appointment/service renderer. Use the
+192px PNG CD/sparkle export at44px, capital-C Clipperdesk, letter-spaced Marketplace
+and the forest/sage/ivory palette. Keep existing table/inline-style email structure
+and salon details; Business operator streams retain their existing identity. Local
+PNG was inspected, and rendered HTML/SES mocks checked; no real inbox rendering or
+external message was observed in this refinement.
+
+### Marketplace customer picture and cookie choices — 2026-11-09
+
+The profile avatar is a real keyboard-accessible picture-picker button with a
+small camera badge; the native file input is hidden. Keep its 56px target, visible
+focus and Add/Change profile picture accessible label. Preview locally, then offer
+explicit Save photo / Cancel inside the identity header only while a draft exists.
+A saved picture offers a small corner × with a Remove photo tooltip. Reveal it on
+hover/focus and keep it available on touch. Use a 44px hit target around the small
+visible icon. Open AppDialog before removal, focus Keep photo first and preserve
+the saved photo on cancellation/failure. There is no
+separate photo section or always-visible format/privacy paragraph. Put format/size
+help in the accessible avatar description. Failures
+retain the draft/current image and use AppNotice. Header and account rail reuse
+the saved private image; initials remain the fallback. The account chevron is a
+centred 14px SVG, not a baseline-sensitive text glyph. Cookie notices distinguish
+essential cookies from optional measurement and use equal-weight Accept optional
+cookies / Reject optional cookies controls, 44px targets and wrapping gaps.
+
+Signed-in Marketplace pages share the compact account shell, action hierarchy and
+44px targets. Remove decorative overlines, the repeated discovery promotion and
+sidebar cards that repeat navigation/help already on the page. Desktop buttons
+use 36px height and restrained 7px/12px padding; fields use 40px. Mobile buttons
+and fields retain 44px targets, 16px input text and visible focus. Keep functional
+saved businesses, visit details, conversation controls and actionable errors.
+Use appointment/business wording so every supported audience feels included.
+
+### Marketplace discovery → business booking continuity — 2026-11-09
+
+Use MarketplaceLayout itself for Marketplace booking, rather than adding a
+Marketplace label beside ProductMark in the operational/public-booking shell.
+Keep the same header/logo, customer navigation, ivory canvas, forest/sage surfaces
+and footer at every booking step. Place the existing progress indicator and
+business catalogue within this shell. Business logo/photos/name and configured
+accent remain local to the inner booking content. Provide one shared success/
+recovery notice and one account navigation, with existing booking-specific errors
+remaining beside their workflow. Keep direct booking/private preview unchanged.
+
+### Business Messages workspace — 2026-11-09
+
+Messages is an operational Business workspace. Reuse AppLayout/PageHeader and
+Business tokens for white raised surfaces, slate dividers, compact text and primary
+actions. Keep listing/publication/report cards in Business setup, outside the inbox.
+Use a two-pane inbox and conversation on desktop, a single selected pane with an
+All conversations return on mobile. Provide name/reference search, All/Unread,
+explicit disabled-while-loading Refresh, short plain previews and unread counts.
+Do not invent presence, delivery immediacy or message content. Use a compact recipient
+header, collapsed booking details, readable escaped bubbles, timestamps and one
+labelled composer. Preserve drafts/replay keys across refresh, navigation and failed
+sends. Paused/read-only/recovery states retain useful history and AppNotice controls.
+Mobile controls keep 44px targets and inputs use 16px text. Keep keyboard focus visible.
+
+Private customer Manage booking/actions, waitlist and existing forms/completion
+reuse the Marketplace header/logo/canvas/footer with focused inner content widths.
+The optional account navigation never makes a secure link require customer login.
+Customer receipt HTML uses the same palette and raster mark while remaining a
+printable issued document. Business print/PDF identity stays unchanged.
+
+Marketplace mail uses a packaged CID raster logo with adjacent real text, one ivory
+surround, restrained white content and forest/sage controls. Remove the redundant
+account pill and repeated brand kicker. Use table/inline styles and useful text
+alternatives. Synthetic HTML/MIME checks are not inbox-client or visual certification.
+
+
+### Automatic listing visibility — 2026-11-11
+
+The Business Marketplace listing page explains that published booking setup makes
+the business searchable. Use the existing setup editors and one optional visibility
+checkbox with Save visibility. The individual SEO request form, repeated consent
+checkbox and approval/pilot notices are removed. Show a compact update/failure notice
+only when it explains an actual saved change or recovery action. Booking activity
+and its outcome report retain operational definitions. This refines MP-04’s owner
+workflow without introducing another setup form.

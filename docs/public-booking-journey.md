@@ -158,3 +158,53 @@ and business-primary selection remain. Actual address/entrance/arrival changes
 and policy-version changes still block confirmation; contacts, deposits, capacity,
 expiry and idempotency are revalidated. The regression reviews client details,
 confirms a reordered snapshot and repeats the same request to prove one appointment.
+
+## Marketplace entry and customer ownership — 2026-11-08
+
+Marketplace salon profiles hand services/location/date into the same Welcome
+component and canonical availability/hold/commit engine via scoped marketplace
+routes. Customer sign-in is optional; a signed-in flow records its customer and
+links successful matching-email appointments transactionally. Duplicate confirms
+remain one appointment; replacement lifecycle writes preserve account linkage.
+Direct booking paths and guest secure-link management remain available. Manual
+payments do not bypass required-deposit policy. See [Marketplace](modules/marketplace.md).
+
+### Single Marketplace booking page — 2026-11-08
+
+Marketplace salon URLs now render this existing `Booking/Welcome` journey directly;
+the separate service/time preview screen is removed. Legacy Marketplace `/book`
+entries redirect with validated service/location/date. The same location, services,
+professional/time, hold, review and confirmation steps remain authoritative. Account
+prefill/favourite and Marketplace source/linkage stay scoped to Marketplace routes;
+ordinary direct links remain available independently of Marketplace listing pause.
+
+## Discovery provenance (MPG-08/09)
+
+Entry route, owner shared-link label and first/last discovery observation are
+separate. Entry remains operational; optional acquisition needs explicit consent.
+Flow evidence is frozen at start, preserved across ordinary login/redirect/resume
+and exact confirmation replay, and linked inside confirmation’s transaction.
+Rescheduling copies its root lineage, so it cannot manufacture another acquisition.
+Withdrawal/retention may remove optional evidence without deleting visits or ledger
+facts. A missing/expired browsing session remains unknown; no cross-device identity
+or guaranteed 30-day browser persistence is inferred.
+
+
+Marketplace visual continuity: all existing Marketplace booking steps now share
+the real MarketplaceLayout header, logo, navigation/account menu, ivory background
+and footer. PublicBookingLayout keeps its canonical progress/main content within
+that shell, with business accents scoped to the booking body. Business identity,
+media, catalogue, rules and hold/confirm/resume behavior remain intact. Direct
+owner booking/private preview retain the existing public-booking presentation.
+
+### Private customer branding continuity — 2026-11-09
+
+Secure Manage booking and existing reschedule, cancel, rebook, contact, waitlist,
+payment-status and review views now use the Marketplace shell in self-service mode.
+Existing waitlist offers and client forms/completion use it too. Invalid/expired
+customer links show Marketplace recovery with their real error status and a support
+reference. The customer receipt's HTML branding is Marketplace; its issued financial
+snapshot and owner/PDF rendering remain unchanged. Guest secure-link access,
+ownership, expiry, action purpose, timezone, hold/commit, manual payment and
+no-store/noindex rules are unchanged. No extra selection or login step is introduced.
+See [follow-up evidence](audits/2026-11-09-marketplace-messages-email/README.md).

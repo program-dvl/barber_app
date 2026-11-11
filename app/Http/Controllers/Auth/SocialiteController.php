@@ -7,6 +7,7 @@ use App\Domain\Billing\Models\OwnerRegistrationIntent;
 use App\Domain\Billing\Services\OwnerOnboardingService;
 use App\Domain\Billing\Services\PublicPricingCatalog;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Marketplace\CustomerGoogleController;
 use App\Models\SocialAccount;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -64,6 +65,12 @@ class SocialiteController extends Controller
 
     public function callback(Request $request, OwnerOnboardingService $onboarding): RedirectResponse
     {
+        if (data_get($request->session()->get(self::CONTEXT_SESSION_KEY), 'audience') === 'marketplace') {
+            return app(CustomerGoogleController::class)->callback($request);
+        }
+        if (Auth::guard('web')->check()) {
+            return redirect()->intended(RouteServiceProvider::HOME);
+        }
         try {
             $googleUser = Socialite::driver('google')->user();
         } catch (InvalidStateException) {

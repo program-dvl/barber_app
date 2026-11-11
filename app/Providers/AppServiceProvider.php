@@ -70,6 +70,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Sensitive models use explicit fillable attributes. Global unguarding is intentionally disabled.
+        // Source writes create durable work inside the source transaction; jobs run after commit.
+        foreach ([
+            \App\Domain\PlatformAccess\Models\Business::class,
+            \App\Domain\PlatformAccess\Models\Location::class,
+            \App\Domain\PlatformAccess\Models\StaffProfile::class,
+            \App\Domain\BusinessConfiguration\Models\Service::class,
+            \App\Domain\BusinessConfiguration\Models\StaffServiceAssignment::class,
+            \App\Domain\BusinessConfiguration\Models\LocationHour::class,
+            \App\Domain\ClientReviews\Models\ClientReview::class,
+        ] as $source) {
+            $source::saved(fn ($model) => app(\App\Domain\Marketplace\LocalGrowth\Services\ProjectionWork::class)->changed($model));
+            $source::deleted(fn ($model) => app(\App\Domain\Marketplace\LocalGrowth\Services\ProjectionWork::class)->changed($model));
+        }
+        // Canonical commands also audit pivot/bulk changes after their last mutation.
+        \App\Domain\PlatformAccess\Models\AuditEvent::created(function ($event) {
+            if ($event->business_id && preg_match('/^(configuration\.|activation\.|service\.|staff\.|client_review\.|marketplace\.listing)/', $event->action)) {
+                app(\App\Domain\Marketplace\LocalGrowth\Services\ProjectionWork::class)->mark((int) $event->business_id);
+            }
+        });
     }
 }

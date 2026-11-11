@@ -40,10 +40,13 @@ class LocationSetupController extends Controller
             'locations' => $business->locations()->with('hours')->orderBy('name')->get()->map(fn ($location): array => [
                 ...$location->only(['public_id', 'name', 'address', 'phone', 'email', 'time_zone', 'status', 'is_active', ...LocationData::FIELDS]),
                 'location_revision' => LocationData::revision($location),
+                'discovery' => config('marketplace-growth.enabled') ? \Illuminate\Support\Facades\DB::table('marketplace_location_geographies as lg')->join('marketplace_geographies as g', 'g.id', '=', 'lg.geography_id')->where('lg.business_id', $business->id)->where('lg.location_id', $location->id)->first(['g.public_id', 'lg.address_hash']) : null,
                 'hours' => $location->hours->map->only(['day_of_week', 'opens_at', 'closes_at', 'sequence'])->values(),
             ]),
             'readiness' => $this->readiness->evaluate($business)->toArray(),
             'countries' => app(CountryCatalog::class)->countries(),
+            'discoveryEnabled' => (bool) config('marketplace-growth.enabled'),
+            'discoveryGeographies' => app(\App\Domain\Marketplace\LocalGrowth\Services\OwnerDiscoverySettings::class)->locationChoices($business),
             'timeZones' => config('reference-data.time_zones', []),
             'locationAllowance' => [
                 'can_add' => $locationDecision->allowed,
@@ -59,6 +62,7 @@ class LocationSetupController extends Controller
         $this->authorizeManage();
         $data = $request->validate([
             ...LocationData::rules(),
+            'discovery_geography' => ['sometimes', 'nullable', 'ulid'], 'discovery_address_public' => ['sometimes', 'boolean'],
             'location' => ['nullable', 'string'],
             'create_new' => ['nullable', 'boolean'],
             'keep_hours' => ['sometimes', 'boolean'],

@@ -1,3 +1,4 @@
+import AcquisitionConsent from './Components/Marketplace/AcquisitionConsent.vue';
 import './bootstrap';
 import '../css/app.css';
 
@@ -21,7 +22,7 @@ createInertiaApp({
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
         installMarketingAnalytics(router, props.initialPage);
-        return createApp({ render: () => renderPublicApp(App, props) })
+        return createApp({ render: () => [...renderPublicApp(App, props), h(AcquisitionConsent)] })
             .use(plugin)
             .use(ZiggyVue)
             .use(i18nVue, {

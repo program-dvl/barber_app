@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-IN" data-theme="clipperdesk" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', $page['props']['seo']['locale'] ?? 'en-IN') }}" data-theme="clipperdesk" class="scroll-smooth">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,7 +25,18 @@
 
     </head>
     <body class="antialiased">
-        @inertia
+        @if(!empty($page['props']['publicContent']) && !$__inertiaSsrResponse)
+            @if(config('inertia.use_script_element_for_initial_page'))
+                <script data-page="app" type="application/json">{!! json_encode($page, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+                <div id="app">
+            @else
+                <div id="app" data-page="{{ json_encode($page) }}">
+            @endif
+                @include('marketplace.public-content', ['content' => $page['props']['publicContent']])
+            </div>
+        @else
+            @inertia
+        @endif
 
     </body>
 </html>

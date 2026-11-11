@@ -209,3 +209,54 @@ checks, branch/tenant isolation, contact/note permissions and bounded query grow
 The 26 frontend helper tests pass. Client/SSR builds and scoped formatting pass.
 Existing intentional integration/disabled-feature skips and independent
 accessibility/browser/production-concurrency gates remain unchanged.
+
+## Marketplace local growth validation (MPG-01–10 / MP-05)
+
+Use `python3 scripts/verify-marketplace-growth.py` for the focused classes and
+`--all` for serial repository classes. The full suite definitions are loaded for
+legacy shared test helpers, but each class runs in a fresh PHP process to bound
+memory and avoid overlapping fake filesystem stores. Do not run filesystem-backed
+PHP suites concurrently. Node tests, client/SSR build and extended frontsite budgets
+include discovery, local pages and canonical booking. Real-renderer checks require
+`MPG_TEST_LIVE_SSR=1`; absent renderer is an explicit skip, not success evidence.
+Browser screenshots/crawl/load facts and remaining production controls belong in
+[the audit](audits/2026-11-08-marketplace-local-growth/README.md).
+
+
+Marketplace final account refinement: the actual compiled Profile and shared
+AppDialog are mounted in frontend tests, covering cancel/confirm/failure, safe
+initial focus, no delete on opening/cancel and preserved personal-detail drafts.
+This does not verify CSS hover, touch hit areas, native browser dialogs or final
+visual density. Those browser checks remain explicitly pending under the recorded
+Work-settings access gap; do not treat component tests as screenshots.
+
+### Messages/email/private-page follow-up — 2026-11-09
+
+[Audit](audits/2026-11-09-marketplace-messages-email/README.md):174 targeted PHP tests
+passed/1 skipped (1,622 assertions), separately28/383 with rebuilt live SSR;
+243 frontend tests, Node24 client+SSR build,25-entry frontsite budgets and whitespace
+pass. Synthetic100-booking inbox verifies25-row pagination and at most3 message-bearing
+SELECTs. Tests cover transactional outbox/replay/rollback, real array PNG MIME,
+SES/PDF/text, uncertain mail, auth resume, tenant/branch/owner scope and private-page
+raw HTML/header continuity. Final browser/mobile and Gmail/Outlook visual checks
+remain blocked by Work browser settings. No external mail or deployment evidence.
+
+### Automatic publication and native MySQL recovery — 2026-11-11
+
+The reported1059 restriction was reproduced on native MySQL in an isolated schema.
+Fresh installation, recovery from partial DDL with a retained row, restored tenant
+FK/uniqueness/indexes, and repeated up passed. Repeat with
+`php scripts/verify-marketplace-mysql-migration.php` in the local environment.
+The script asserts its selected synthetic database before running migrations.
+
+The normal publish-to-search test runs with background delivery faked, verifies
+immediate discovery/profile preparation and requires no geography or SEO request.
+Coverage includes rollback, private/unqualified/demo guards, owner pause/resume,
+automatic content updates, one indexing switch, canonical host, sitemap and private
+headers. Compatibility directory tests explicitly select their legacy path.
+
+221 backend tests passed with2 live-renderer skips,2,066 assertions. The separate
+built SSR run passed35/510 including both cases.244 frontend tests, build and25-entry
+frontsite budgets pass. Four-query/1,000-offer retrieval remains within budget.
+Desktop/mobile visual inspection is still blocked by Work browser settings.
+[Audit and logs](audits/2026-11-11-marketplace-automatic-publication/README.md).

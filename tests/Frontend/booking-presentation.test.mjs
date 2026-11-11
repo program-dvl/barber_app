@@ -17,6 +17,7 @@ async function load(path, welcome = false) {
     const { descriptor } = parse(await readFile(resolve(path), 'utf8'));
     let source = compileScript(descriptor, { id: path, inlineTemplate: true }).content.replace(/from (['"])vue\1/g, `from '${vue}'`)
         .replace(/import \{ ([^}]+) \} from '@heroicons\/vue\/24\/outline';/g, (_, names) => names.split(',').map(name => `const ${name.trim()} = {render(){return null}};`).join('\n'))
+        .replace("import { usePage, useForm } from '@inertiajs/vue3';", 'const usePage = () => ({props:{marketplaceCustomer:null}}); const useForm = data => ({...data,processing:false,post(){}});')
         .replace("import axios from 'axios';", 'const axios = { post: (...args) => globalThis.bookingPresentationTest.post(...args) };')
         .replace(/from '@\/Support\/([^']+)';/g, (_, name) => `from '${pathToFileURL(resolve(`resources/js/Support/${name}.js`)).href}';`)
         .replace(/import (\w+) from '@\/[^']+';/g, (_, name) => `const ${name} = globalThis.bookingPresentationTest.components.${name} || {render(){return null}};`);

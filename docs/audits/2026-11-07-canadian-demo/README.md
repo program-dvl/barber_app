@@ -77,3 +77,38 @@ execution, MySQL race/load guarantees, payment delivery or regional tax complian
 No live database or external provider was changed. The temporary preview used
 its own database, storage and sessions under /tmp; application environment files
 and the normal local database were not edited.
+
+
+## Production verification after Forge command errors — 2026-11-07
+
+The owner deployed source `8de93f1` (Forge deployment `82379805`) and invoked the
+seeder. Forge records `14014800` and `14014850` as failed, with only the initial
+“Seeding database” output and a tunnel exit of -1. That output alone does not
+establish that the transaction rolled back.
+
+A separate read-only Forge diagnostic (`14015006`) confirms PHP 8.5.12, a 512M CLI
+memory limit, max_execution_time=0 and the saved `pitch-demo` business (id 4), CAD,
+a `demo.pitch.seeded` completion record and **1,640 appointments**. No seeder
+rerun was performed during diagnosis. The exact reason for Forge's session error
+was not established; do not describe an application exception or a memory limit
+as the proven cause. The Commands UI advertises a short execution limit (two
+minutes in the inspected panel); current public
+[Forge Commands documentation](https://laravel.com/forge/docs/sites/commands)
+states five minutes. Either is separate from PHP's CLI execution limit.
+
+The existing owner account was then tested on the deployed application in an
+isolated browser session, preserving the user's Chrome sign-in. Normal login
+with pitch.owner@example.test / the owner-selected demo password succeeds. The
+live dashboard shows Atelier Studio · Demo, Queen Street Studio and today's
+seeded appointments. Business setup shows **6 of 6 essentials ready**,
+**CA CAD America/Toronto**, two locations, eight services, ten team members and
+**Your current setup**, with no introduction screen.
+
+- [Verified live setup screenshot](live-setup.jpg)
+- [Live demo dashboard](https://clipperdesk.com/businesses/01M6VGGD3E12JWM53Y54N76VC3/dashboard)
+- [Read-only Forge diagnostic](https://forge.laravel.com/dhaval-prajapati/salon-kga/3340514/commands/14015006)
+
+The demo is ready to use; another seed run is unnecessary. No SSH-key changes,
+server configuration changes, tenant resets, deployments or financial commands
+were performed during this diagnosis. This establishes deployed owner login and
+setup readiness, not every module's full production journey or provider delivery.

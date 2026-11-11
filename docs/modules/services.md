@@ -169,3 +169,14 @@ Evidence: [dated Services review](../audits/2026-10-03-services/README.md),
 frontend service-catalog helper tests. Local browser evidence does not certify
 production concurrency, target-region taxes, WCAG or all browser engines. Existing
 release/payment/legal gates are unchanged.
+
+## Reviewed discovery concepts (MPG-01/03/04)
+
+When local growth is enabled, Overview offers optional factual discovery concepts
+inside the same Services save/revision/replay/branch authorization command. A
+service may have several concepts/families. Names, categories, operational types,
+prices and historical appointments stay tenant-owned. English exact aliases have
+reviewed context; non-English or ambiguous names remain exact-name searchable
+until owner review. Clearing mappings explicitly records unmapped preference.
+The source relation is eager-loaded; public offers still require an active branch
+and current qualified online professional at that same branch.
