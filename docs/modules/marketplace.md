@@ -341,3 +341,44 @@ suffix. Cookie settings is a compact, right-aligned control in the existing foot
 on the same canvas; direct booking retains its own footer control. Both reopen the
 existing consent panel, with acceptance/rejection and privacy signals preserved.
 [Local checks and browser limitation](../audits/2026-11-11-marketplace-card-footer/README.md).
+
+## Launch-stage editorial experience — 2026-11-14
+
+Scope: MP-01/04/05, MPG-05/07; [accepted launch decision](../decisions.md#honest-marketplace-launch-homepage--2026-11-14).
+`DiscoveryController` checks global `PublicOfferQuery` eligibility independently of
+search filters. `LaunchHome` renders only when it is empty. Otherwise the existing
+list/map/search/book flow remains, with an area-updates form and useful empty-search
+recovery. Demo, owner pause, qualification and projection validity gates are retained.
+
+`marketplace-editorial.php` contains six editorial groups covering every Solutions
+audience, category preparation tips and three guides. `/marketplace/explore/{slug}`
+and `/marketplace/guides[/{slug}]` are real destinations; category pages offer a
+filtered search link only for audiences with actual eligible supply. Imagery is
+labelled editorial inspiration. The non-SSR directory fallback includes the launch
+explanation and editorial links. Editorial routes remain noindex, outside hub/profile
+sitemaps, pending any separately reviewed SEO expansion.
+
+`LaunchUpdates` is a compact newsletter-style form with city, email and an
+unselected consent checkbox. Explicit owner refinement removes the email-confirmation
+gate: `subscribed_at`/`subscription_method=direct-opt-in` activates the area request,
+while `confirmed_at` remains null for unverified email. Existing verified requests
+are migrated; unconfirmed legacy records stay pending until explicit signup or a
+still-valid old confirmation link. Existing private token pages remain noindex,
+no-store and no-referrer, with POST-only confirm/cancel and idempotent outcomes.
+
+Signup success immediately shows “You’re on the list”; repeated successful requests
+produce the same outcome without a resend warning. Address encryption, unique normalized
+email/area keys, enrollment cache lock, IP/recipient throttles and consent version/time
+are retained. A separate informational welcome email has a daily recipient limit; its
+failure leaves signup successful, with a safe operator reference and no automatic resend.
+Storage failure preserves entries, shows AppNotice with a timed retry and support action,
+and never claims a subscription exists. No account or booking consent is created.
+Welcome and area messages use standard CD Marketplace mail branding with area-specific
+footer copy, rather than incorrect sign-in/security instructions.
+
+The launch sender selects active subscribed requests, including direct opt-ins,
+and still requires a real eligible business plus operator location review. Retention
+uses subscription state: pending legacy requests age out after seven days, and active
+requests remain for up to a year (cancelled/delivered requests: 30 days).
+
+Operational sending and retention: [launch updates runbook](../support/marketplace-launch-updates.md).

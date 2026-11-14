@@ -1,4 +1,4 @@
-@props(['stream' => 'account', 'subject' => null, 'logoSrc' => null])
+@props(['stream' => 'account', 'subject' => null, 'logoSrc' => null, 'purpose' => null])
 @php
     $streamLabel = match ($stream) {
         'security' => 'Security',
@@ -35,7 +35,7 @@
 @endisset
 
 <x-slot:footer>
-<x-mail::footer :stream="$stream">
+<x-mail::footer :stream="$stream" :purpose="$purpose">
 {{ $stream === 'marketplace' ? config('brand.marketplace_product_name') : config('brand.product_name') }}
 </x-mail::footer>
 </x-slot:footer>

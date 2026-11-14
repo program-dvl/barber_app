@@ -24,3 +24,6 @@
 .mp-booking-flow{--brand-primary:#304c3c}.mp-self-service-main{max-width:920px;padding-top:28px}.mp-self-service-main .cd-input{background:var(--surface-raised)}
 
 .mp-footer .mp-cookie-settings{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0;background:transparent;border:0;color:inherit;font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer;margin-left:auto;white-space:nowrap}
+
+/* Shared action icons must not stretch or compress their labels. */
+.market .mp-button>svg{width:18px;height:18px;flex:0 0 18px}

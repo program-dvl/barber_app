@@ -297,3 +297,23 @@ Guide limitations use AppNotice. Printable guides retain the title and written
 checklist while hiding navigation, action buttons and editorial illustrations.
 The read-only walkthrough links each step to the actual feature and public Help;
 it does not write example appointments into a visitor's business.
+
+### Marketplace launch experience — 2026-11-14
+
+MP-01/04/05: the empty global directory now uses the approved editorial launch
+presentation, with useful category/guide destinations and an optional, confirmed
+area-update request. A zero-result filter retains normal discovery recovery when
+real supply exists elsewhere. Existing shared CD branding, AppNotice, action spacing,
+mobile target sizes and restrained email presentation apply. Fixed shared action-icon
+sizing prevents SVG expansion from compressing button labels. See the
+[Marketplace module](marketplace.md#launch-stage-editorial-experience--2026-11-14)
+and [local UI evidence](../audits/2026-11-14-marketplace-launch/README.md).
+
+### Area signup refinement after owner review — 2026-11-14
+
+MP-05 now subscribes immediately with explicit consent in a compact newsletter-style
+form. Replace “Check your inbox”/confirmation gating with “You’re on the list” after
+saving. Welcome email is informational. Duplicate signup is idempotent; mail failure
+cannot turn saved signup into failure. The area-email footer must explain the real
+purpose, without inherited account/sign-in instructions. Preserve entered work,
+keyboard focus, mobile stacking and shared AppNotice recovery for storage failures.

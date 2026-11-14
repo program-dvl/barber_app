@@ -3609,3 +3609,44 @@ an accessible label. Put the existing discovery-cookie opener in the shared foot
 using a browser event to open the existing global consent panel. Direct owner-booking
 pages expose the same opener in their footer when discovery consent is available.
 Consent storage, expiry and privacy controls retain their existing semantics.
+
+### Honest Marketplace launch homepage — 2026-11-14
+
+Accepted from the owner's approval of the generated launch-stage design; scope
+MP-01/04/05 and MPG-05/07. Global eligible supply is checked through the same live
+PublicOfferQuery gates used for discovery. Zero global supply renders the new
+editorial launch homepage; the first real eligible offer restores the real directory.
+Zero filtered results alone never hide existing supply. Demo inventory remains excluded.
+
+Reuse existing CD Marketplace branding and owned industry photography. Six editorial
+groups cover all 13 Solutions audiences without adding provider inventory or taxonomy
+aliases. Three preparation guides and category pages are initially noindex; there are
+no generated empty city/service SEO pages or fabricated review/availability claims.
+
+Area-launch requests use explicit, unselected consent and a second email confirmation.
+GET previews do not activate/cancel a request. One requested area-launch message is
+separate from accounts, bookings and ongoing marketing. An operator-reviewed command
+previews recipients, verifies live public supply and requires an explicit location
+attestation to send. Free-text cities are not silently mapped to geography or inferred
+from precise location. Transport uncertainty is not automatically retried. Encrypted
+recipient addresses, hashed private tokens, private no-store confirmation pages,
+per-address/IP throttles and bounded retention apply. Normal send/receive testing and
+deployment remain separate from local functional evidence.
+
+### Immediate area signup replaces double opt-in — 2026-11-14
+
+Accepted from the owner's explicit “Yes—subscribe immediately” clarification during
+signup review. Supersedes the confirmation gate in “Honest Marketplace launch
+homepage”; scope MP-05. A checked, explicit area-update consent is enough to save an
+active subscription. `subscribed_at` and `subscription_method` record that state;
+`confirmed_at` continues to mean actual email verification, never direct signup.
+Migrate previously verified records to subscribed, without automatically activating
+unconfirmed pending requests. Old private links retain original expiry and POST-only
+activation/cancellation. The one-time area-update sender uses subscribed consent.
+
+An informational welcome uses Marketplace branding and an unsubscribe link, with
+recipient-level daily throttling and no automatic retry. A failed welcome leaves
+the subscription active and records a safe support reference. Storage failures never
+claim signup success. Duplicate submissions are idempotent and ordinary waits do not
+become large warnings. The newsletter-style form is compact, stacks on phones and
+uses the shared success notice. No ongoing promotional campaign is approved here.

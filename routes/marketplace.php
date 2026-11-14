@@ -1,9 +1,14 @@
 <?php
 
+use App\Http\Controllers\Marketplace\AcquisitionController;
 use App\Http\Controllers\Marketplace\CustomerAccountController;
 use App\Http\Controllers\Marketplace\CustomerAuthController;
 use App\Http\Controllers\Marketplace\CustomerGoogleController;
 use App\Http\Controllers\Marketplace\DiscoveryController;
+use App\Http\Controllers\Marketplace\EditorialController;
+use App\Http\Controllers\Marketplace\GrowthSitemapController;
+use App\Http\Controllers\Marketplace\LaunchUpdatesController;
+use App\Http\Controllers\Marketplace\LocalPageController;
 use App\Http\Controllers\Marketplace\SalonController;
 use App\Http\Controllers\PublicBooking\PublicBookingFlowController;
 use App\Http\Middleware\MarketplaceSession;
@@ -14,8 +19,16 @@ Route::prefix('marketplace')->name('marketplace.')->group(function () {
     Route::get('/', DiscoveryController::class)->middleware('throttle:60,1')->name('discover');
     Route::post('/nearby', [DiscoveryController::class, 'nearby'])->middleware('throttle:10,1')->name('nearby');
     Route::delete('/nearby', [DiscoveryController::class, 'clearNearby'])->name('nearby.clear');
-    Route::post('/acquisition/observe', [\App\Http\Controllers\Marketplace\AcquisitionController::class, 'observe'])->middleware('throttle:20,1')->name('acquisition.observe');
-    Route::delete('/acquisition', [\App\Http\Controllers\Marketplace\AcquisitionController::class, 'forget'])->name('acquisition.forget');
+    Route::post('/acquisition/observe', [AcquisitionController::class, 'observe'])->middleware('throttle:20,1')->name('acquisition.observe');
+    Route::delete('/acquisition', [AcquisitionController::class, 'forget'])->name('acquisition.forget');
+    Route::post('/launch-updates', [LaunchUpdatesController::class, 'store'])->middleware('throttle:20,1')->name('launch.store');
+    Route::get('/launch-updates/confirm/{token}', [LaunchUpdatesController::class, 'show'])->where('token', '[a-f0-9]{64}')->name('launch.confirm');
+    Route::post('/launch-updates/confirm/{token}', [LaunchUpdatesController::class, 'confirm'])->middleware('throttle:10,1')->where('token', '[a-f0-9]{64}');
+    Route::get('/launch-updates/unsubscribe/{token}', [LaunchUpdatesController::class, 'show'])->where('token', '[a-f0-9]{64}')->name('launch.unsubscribe');
+    Route::post('/launch-updates/unsubscribe/{token}', [LaunchUpdatesController::class, 'unsubscribe'])->middleware('throttle:10,1')->where('token', '[a-f0-9]{64}');
+    Route::get('/guides', [EditorialController::class, 'index'])->name('guides');
+    Route::get('/guides/{slug}', [EditorialController::class, 'guide'])->name('guide');
+    Route::get('/explore/{slug}', [EditorialController::class, 'category'])->name('explore');
     Route::get('/services', [DiscoveryController::class, 'services'])->middleware('throttle:30,1')->name('services');
     Route::get('/terms', fn () => Inertia::render('Marketplace/Terms'))->name('terms');
     Route::get('/auth/google', [CustomerGoogleController::class, 'redirect'])->middleware('throttle:10,1')->name('google');
@@ -50,10 +63,10 @@ Route::prefix('marketplace')->name('marketplace.')->group(function () {
         Route::post('/account/bookings/{appointment}/report', [CustomerAccountController::class, 'report'])->middleware('throttle:3,1')->name('report');
         Route::post('/salons/{slug}/favourite', [CustomerAccountController::class, 'favourite'])->middleware('throttle:20,1')->name('favourite');
     });
-    Route::get('/sitemap.xml', [\App\Http\Controllers\Marketplace\GrowthSitemapController::class, 'index'])->name('growth.sitemap');
-    Route::get('/sitemaps/{kind}/{shard}.xml', [\App\Http\Controllers\Marketplace\GrowthSitemapController::class, 'shard'])->where('kind', 'profiles|hubs')->whereNumber('shard')->name('growth.sitemap.shard');
-    Route::get('/{country}', \App\Http\Controllers\Marketplace\LocalPageController::class)->where('country', '[a-z]{2}')->name('local.country');
-    Route::get('/{country}/{region}/{city}/{audience?}', \App\Http\Controllers\Marketplace\LocalPageController::class)->where(['country' => '[a-z]{2}', 'region' => '[a-z0-9-]+', 'city' => '[a-z0-9-]+', 'audience' => '[a-z0-9-]+'])->name('local');
-    Route::get('/{country}/{region}/{city}/services/{concept}', \App\Http\Controllers\Marketplace\LocalPageController::class)->where(['country' => '[a-z]{2}', 'region' => '[a-z0-9-]+', 'city' => '[a-z0-9-]+', 'concept' => '[a-z0-9-]+'])->name('local.service');
+    Route::get('/sitemap.xml', [GrowthSitemapController::class, 'index'])->name('growth.sitemap');
+    Route::get('/sitemaps/{kind}/{shard}.xml', [GrowthSitemapController::class, 'shard'])->where('kind', 'profiles|hubs')->whereNumber('shard')->name('growth.sitemap.shard');
+    Route::get('/{country}', LocalPageController::class)->where('country', '[a-z]{2}')->name('local.country');
+    Route::get('/{country}/{region}/{city}/{audience?}', LocalPageController::class)->where(['country' => '[a-z]{2}', 'region' => '[a-z0-9-]+', 'city' => '[a-z0-9-]+', 'audience' => '[a-z0-9-]+'])->name('local');
+    Route::get('/{country}/{region}/{city}/services/{concept}', LocalPageController::class)->where(['country' => '[a-z]{2}', 'region' => '[a-z0-9-]+', 'city' => '[a-z0-9-]+', 'concept' => '[a-z0-9-]+'])->name('local.service');
 
 });

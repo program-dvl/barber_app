@@ -3891,3 +3891,69 @@ SSR renderer, including actual footer HTML; client+SSR build;25 frontsite budget
 scoped Pint and whitespace checks. Desktop/mobile browser checks remain blocked by
 “Local browser use is disabled in Work settings”. No deployed visual success claimed.
 [Evidence](audits/2026-11-11-marketplace-card-footer/README.md).
+
+### 2026-11-11 Read-only production Marketplace SEO check
+
+13 bounded public production GETs verified robots200/Allow with both sitemap
+advertisements,136 Business sitemap URLs, one Marketplace shard with3 profiles,
+and200/index-follow/self-canonical responses for all3 clean profiles. BeRich's
+service/address/price content is present in initial HTML; the mobile Googlebot
+user-agent response has the same visible content. Filter/sign-in/missing-route
+exclusions retain noindex and the checked routes retain private/no-store.
+
+Unresolved: BeRich's USA address conflicts with saved country CA/CAD/Atikokan;
+owner confirmation of real-versus-test supply is pending. LocalBusiness currently
+nests address under Place rather than providing its required direct address for
+Google's LocalBusiness markup. Schema correction/Google validation and actual
+Search Console index verdict remain pending. Browser access is disabled in Work
+settings. No production changes, submissions, Google-origin crawl/indexing/ranking
+or customer outcomes were performed or established.
+[Production HTTP evidence](audits/2026-11-11-marketplace-production-seo/README.md).
+
+Production audit clarification: the owner confirmed BeRich is a test/demo store.
+Its production directory/sitemap inclusion requires withdrawal through existing
+listing visibility. No production change/removal was performed or verified here.
+Do not submit this fixture to Google or use its search appearance as real-business
+acquisition evidence. Real/demo status of the other two observed profiles is unknown.
+
+## Marketplace launch-stage homepage — 2026-11-14 (local)
+
+Implemented the owner-approved editorial launch design for globally empty eligible
+supply: photo collage, six groups covering 13 Solutions audiences, three real guides,
+category pages, business invitation and an opt-in area-updates form. Eligible real
+listings take over automatically; filtered zero results retain the existing directory.
+No demo listings, invented reviews, availability claims or empty city SEO hubs added.
+
+Area-update confirmation/unsubscribe, encrypted recipient storage, consent records,
+per-address/IP throttles, safe mail-failure recovery, one-time operator-reviewed
+notification command and scheduled retention pruning are implemented. Email reuses
+the Marketplace CD branding and standard mail format. These changes are local,
+with isolated SQLite/fake or logged mail evidence; production deployment, migration,
+mail delivery and operator review are not claimed. See
+[audit evidence](audits/2026-11-14-marketplace-launch/README.md).
+
+Verification: 28 targeted tests / 601 assertions passed, client and SSR builds passed,
+and desktop/mobile in-app browser checks covered guide navigation, area context,
+confirmation, cancellation and the real local mail-failure notice with retained
+entries, timed retry and support action.
+
+## Marketplace newsletter signup review — 2026-11-14 (local)
+
+Owner clarified immediate subscription, replacing the earlier double-opt-in requirement.
+The compact area/email/Subscribe form saves explicit consent immediately, keeps email
+verification separate and shows “You’re on the list.” Informational welcome email
+failure does not block signup. Duplicate welcome prevention, safe storage recovery,
+legacy links, unsubscribe and subscription-aware retention/sending are implemented.
+The shared email footer now has correct area-update purpose copy.
+
+The normal local MySQL database lacked the signup table; the three narrowly scoped
+launch migrations were applied locally. SES accepted one authorized confirmation
+test to the owner-selected sales inbox, and the owner confirmed inbox arrival.
+That live delivery test preceded the immediate-signup refinement; final welcome
+content has local render/test evidence, not a separate live send. Targeted launch,
+email presentation, discovery and automatic-publication suites: 32 tests / 648
+assertions passed. Client and SSR builds passed. No production deployment is claimed.
+
+Final browser review verified immediate success, another-area signup with fresh
+consent, compact desktop/mobile layout and successful subscription during a local
+welcome-email transport outage. The preview browser console reported no errors.

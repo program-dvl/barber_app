@@ -171,3 +171,23 @@ After the authorized production crawl/indexing checks pass, set the one global
 MARKETPLACE_GROWTH_INDEXATION=true. Individual eligible profiles are then included
 automatically. Google controls its crawl/index timing. Filter, account, secure-link,
 preview and API pages keep their private/noindex rules on both enable and rollback.
+
+## Production Marketplace HTTP observation — 2026-11-11
+
+The live Business sitemap still has136 URLs by design. Live robots.txt also
+advertises `/marketplace/sitemap.xml`, which points to a profile shard containing
+BeRich, Wells Studio and Rock Studio. All three clean profiles returned200 with
+index/follow headers/meta and self canonicals. BeRich contains substantive initial
+HTML. Do not replace the Business sitemap or manually add stores to its XML.
+
+Before requesting BeRich indexing, confirm its country/currency/time-zone conflict
+and whether it is real supply. LocalBusiness address modeling also needs a correction
+and Google validation. No Search Console index status was obtained. Submit the
+separate Marketplace index once if not already submitted, and inspect clean provider
+URLs through the authorized property. Do not change live flags merely because the
+original sitemap count is unchanged. [Detailed production evidence and follow-through](../audits/2026-11-11-marketplace-production-seo/README.md).
+
+Owner clarification: BeRich is confirmed test/demo inventory. Pause its Marketplace
+visibility and verify removal from the live profile shard before using that sitemap
+for launch validation. Do not request indexing for BeRich. Other listed businesses
+need confirmation as genuine supply; keep real-business indexing independent.

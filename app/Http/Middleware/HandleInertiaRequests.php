@@ -214,6 +214,7 @@ class HandleInertiaRequests extends Middleware
                     ->all() ?? [],
             ],
             'flash' => fn () => [
+                'launchUpdate' => $request->session()->get('launchUpdate'),
                 'status' => $request->session()->get('status'),
                 'secure_url' => $request->session()->get('form_url')
                     ?? $request->session()->get('attachment_url')

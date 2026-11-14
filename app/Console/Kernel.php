@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('marketplace:growth-prune')->daily()->withoutOverlapping();
         $schedule->command('marketplace:message-email-sweep')->everyMinute()->withoutOverlapping();
         $schedule->command('marketplace:prune-login-links')->daily()->withoutOverlapping();
+        $schedule->command('marketplace:prune-launch-updates')->daily()->withoutOverlapping();
         $schedule->command('account-email:prune-login-activity')->daily()->withoutOverlapping();
     }
 

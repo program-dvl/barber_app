@@ -1468,3 +1468,23 @@ one compact row with a complete accessible label. Place Cookie settings beside t
 existing footer links, aligned right, transparent, matching footer text, with visible
 focus and a 44px target. Do not add a separate padded strip beneath the public canvas.
 Consent choices continue to use the shared notice and existing action spacing.
+
+### Marketplace launch editorial presentation — 2026-11-14
+
+The approved launch homepage uses the existing forest/ivory/sage/lime identity,
+responsive photo collage, serif emphasis, six grouped image cards, preparation guides
+and a contained area-updates form. All 13 audiences remain accessible. Editorial
+photos must not masquerade as listed venues. Use real destinations and useful
+empty-search recovery. Area opt-in starts unselected; errors preserve inputs and
+show AppNotice with a reachable support action and timed retry. Shared Marketplace
+button icons have a fixed 18px box so labels cannot collapse beside a stretching SVG.
+Local evidence: [launch audit](audits/2026-11-14-marketplace-launch/README.md).
+
+### Newsletter-style Marketplace signup refinement — 2026-11-14
+
+MP-05: prefer a compact area/email/Subscribe row over a second boxed form or large
+inbox instructions panel. Stack controls at mobile sizes; keep visible labels, 48px
+inputs, focus rings and the explicit unselected consent line. Saving immediately shows
+one shared success notice with the area and email; another-area action resets city
+and consent. Treat ordinary throttling as information, and show a recoverable warning
+only if the subscription cannot be saved. Email delivery does not gate signup.

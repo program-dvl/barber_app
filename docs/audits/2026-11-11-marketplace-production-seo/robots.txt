@@ -1,0 +1,11 @@
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: *
+Allow: /
+
+Sitemap: https://clipperdesk.com/sitemap.xml
+Sitemap: https://clipperdesk.com/marketplace/sitemap.xml

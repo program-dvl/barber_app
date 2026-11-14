@@ -1,0 +1,587 @@
+{
+  "scope": "Read-only public production GET audit; no Search Console access, submissions, bookings, mutations or production changes.",
+  "observed_date": "2026-11-11",
+  "responses": [
+    {
+      "name": "robots",
+      "url": "https://clipperdesk.com/robots.txt",
+      "status": 200,
+      "headers": {
+        "content-type": "text/plain; charset=UTF-8",
+        "cache-control": "no-cache, private",
+        "date": "Wed, 11 Nov 2026 10:13:53 GMT",
+        "x-robots-tag": "noindex, nofollow, noarchive"
+      },
+      "body_sha256": "fa5099040f4cfaf45bb7ca66cd250977a8040d740ec3c4efeaf1340813ec81e3",
+      "body": "User-agent: OAI-SearchBot\nAllow: /\n\nUser-agent: ChatGPT-User\nAllow: /\n\nUser-agent: *\nAllow: /\n\nSitemap: https://clipperdesk.com/sitemap.xml\nSitemap: https://clipperdesk.com/marketplace/sitemap.xml\n"
+    },
+    {
+      "name": "business-sitemap",
+      "url": "https://clipperdesk.com/sitemap.xml",
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=UTF-8",
+        "cache-control": "no-cache, private",
+        "date": "Wed, 11 Nov 2026 10:14:05 GMT",
+        "x-robots-tag": "noindex, nofollow, noarchive"
+      },
+      "body_sha256": "ad94fba78c33ff3766d6905b675977bbb6796afc93d97bd8266f3e589a18290c",
+      "xml_root": "{http://www.sitemaps.org/schemas/sitemap/0.9}urlset",
+      "locations": [
+        "https://clipperdesk.com/",
+        "https://clipperdesk.com/blog",
+        "https://clipperdesk.com/blog/best-salon-management-software-in-2027-features-pricing-buying-guide",
+        "https://clipperdesk.com/blog/how-to-increase-salon-rebooking-scripts-and-a-30-day-plan",
+        "https://clipperdesk.com/blog/how-to-manage-barbershop-walk-ins-without-delaying-bookings",
+        "https://clipperdesk.com/blog/how-to-reduce-salon-no-shows-10-practical-strategies-that-work",
+        "https://clipperdesk.com/blog/how-to-run-a-successful-salon-or-barbershop-in-2027-a-complete-guide",
+        "https://clipperdesk.com/blog/how-to-start-a-hair-salon-in-2027-costs-checklist-business-plan",
+        "https://clipperdesk.com/blog/salon-consultation-notes-a-practical-template-and-example",
+        "https://clipperdesk.com/company",
+        "https://clipperdesk.com/features",
+        "https://clipperdesk.com/features/calendar-and-walk-ins",
+        "https://clipperdesk.com/features/checkout-and-reporting",
+        "https://clipperdesk.com/features/client-management",
+        "https://clipperdesk.com/features/online-booking",
+        "https://clipperdesk.com/features/product-walkthrough",
+        "https://clipperdesk.com/guides/booking-policy-basics",
+        "https://clipperdesk.com/guides/daily-operations-checklist",
+        "https://clipperdesk.com/guides/salon-opening-checklist",
+        "https://clipperdesk.com/help",
+        "https://clipperdesk.com/help/articles/account-delete",
+        "https://clipperdesk.com/help/articles/account-profile",
+        "https://clipperdesk.com/help/articles/account-recovery",
+        "https://clipperdesk.com/help/articles/account-security",
+        "https://clipperdesk.com/help/articles/account-sign-in",
+        "https://clipperdesk.com/help/articles/appointments-add",
+        "https://clipperdesk.com/help/articles/appointments-change",
+        "https://clipperdesk.com/help/articles/appointments-no-slots",
+        "https://clipperdesk.com/help/articles/appointments-public-booking",
+        "https://clipperdesk.com/help/articles/appointments-self-service",
+        "https://clipperdesk.com/help/articles/appointments-status-cancel",
+        "https://clipperdesk.com/help/articles/appointments-waitlist",
+        "https://clipperdesk.com/help/articles/billing-access",
+        "https://clipperdesk.com/help/articles/billing-cancel",
+        "https://clipperdesk.com/help/articles/billing-capacity",
+        "https://clipperdesk.com/help/articles/billing-change-capacity",
+        "https://clipperdesk.com/help/articles/billing-invoices",
+        "https://clipperdesk.com/help/articles/billing-recovery",
+        "https://clipperdesk.com/help/articles/billing-start-subscription",
+        "https://clipperdesk.com/help/articles/billing-text-credits",
+        "https://clipperdesk.com/help/articles/business-booking-link",
+        "https://clipperdesk.com/help/articles/business-booking-preferences",
+        "https://clipperdesk.com/help/articles/business-branding",
+        "https://clipperdesk.com/help/articles/business-hours",
+        "https://clipperdesk.com/help/articles/business-location",
+        "https://clipperdesk.com/help/articles/business-profile",
+        "https://clipperdesk.com/help/articles/business-publish",
+        "https://clipperdesk.com/help/articles/calendar-availability",
+        "https://clipperdesk.com/help/articles/calendar-blocks-closures",
+        "https://clipperdesk.com/help/articles/calendar-views",
+        "https://clipperdesk.com/help/articles/checkout-deposits-taxes-tips",
+        "https://clipperdesk.com/help/articles/checkout-payment-recovery",
+        "https://clipperdesk.com/help/articles/checkout-receipts-history",
+        "https://clipperdesk.com/help/articles/checkout-record-payments",
+        "https://clipperdesk.com/help/articles/checkout-refund",
+        "https://clipperdesk.com/help/articles/checkout-review",
+        "https://clipperdesk.com/help/articles/clients-add-find",
+        "https://clipperdesk.com/help/articles/clients-duplicates",
+        "https://clipperdesk.com/help/articles/clients-edit-preferences",
+        "https://clipperdesk.com/help/articles/clients-forms",
+        "https://clipperdesk.com/help/articles/clients-notes",
+        "https://clipperdesk.com/help/articles/clients-payments",
+        "https://clipperdesk.com/help/articles/clients-privacy",
+        "https://clipperdesk.com/help/articles/clients-private-files",
+        "https://clipperdesk.com/help/articles/clients-visits-rebook",
+        "https://clipperdesk.com/help/articles/inventory-availability",
+        "https://clipperdesk.com/help/articles/notifications-consent",
+        "https://clipperdesk.com/help/articles/notifications-delivery",
+        "https://clipperdesk.com/help/articles/notifications-preferences",
+        "https://clipperdesk.com/help/articles/ops-dashboard",
+        "https://clipperdesk.com/help/articles/reports-bookings-clients",
+        "https://clipperdesk.com/help/articles/reports-capacity-commission",
+        "https://clipperdesk.com/help/articles/reports-export",
+        "https://clipperdesk.com/help/articles/reports-money",
+        "https://clipperdesk.com/help/articles/reports-run",
+        "https://clipperdesk.com/help/articles/services-addons",
+        "https://clipperdesk.com/help/articles/services-assignments",
+        "https://clipperdesk.com/help/articles/services-categories",
+        "https://clipperdesk.com/help/articles/services-create",
+        "https://clipperdesk.com/help/articles/services-online-availability",
+        "https://clipperdesk.com/help/articles/services-prices-duration",
+        "https://clipperdesk.com/help/articles/services-update-retire",
+        "https://clipperdesk.com/help/articles/setup-create-account",
+        "https://clipperdesk.com/help/articles/setup-first-workspace",
+        "https://clipperdesk.com/help/articles/setup-import-records",
+        "https://clipperdesk.com/help/articles/setup-readiness",
+        "https://clipperdesk.com/help/articles/team-accept-invitation",
+        "https://clipperdesk.com/help/articles/team-activity",
+        "https://clipperdesk.com/help/articles/team-add-member",
+        "https://clipperdesk.com/help/articles/team-coverage",
+        "https://clipperdesk.com/help/articles/team-disable-restore-login",
+        "https://clipperdesk.com/help/articles/team-edit-profile",
+        "https://clipperdesk.com/help/articles/team-invite-login",
+        "https://clipperdesk.com/help/articles/team-roles-permissions",
+        "https://clipperdesk.com/help/articles/team-service-assignments",
+        "https://clipperdesk.com/help/articles/team-time-off",
+        "https://clipperdesk.com/help/articles/team-weekly-hours",
+        "https://clipperdesk.com/help/articles/walk-ins-add",
+        "https://clipperdesk.com/help/articles/walk-ins-order-alerts",
+        "https://clipperdesk.com/help/articles/walk-ins-serve",
+        "https://clipperdesk.com/help/category/account",
+        "https://clipperdesk.com/help/category/appointments",
+        "https://clipperdesk.com/help/category/billing",
+        "https://clipperdesk.com/help/category/business",
+        "https://clipperdesk.com/help/category/calendar",
+        "https://clipperdesk.com/help/category/checkout",
+        "https://clipperdesk.com/help/category/clients",
+        "https://clipperdesk.com/help/category/getting-started",
+        "https://clipperdesk.com/help/category/inventory",
+        "https://clipperdesk.com/help/category/notifications",
+        "https://clipperdesk.com/help/category/reports",
+        "https://clipperdesk.com/help/category/services",
+        "https://clipperdesk.com/help/category/team",
+        "https://clipperdesk.com/help/category/walk-ins",
+        "https://clipperdesk.com/pricing",
+        "https://clipperdesk.com/resources",
+        "https://clipperdesk.com/security",
+        "https://clipperdesk.com/solutions",
+        "https://clipperdesk.com/solutions/barbershops",
+        "https://clipperdesk.com/solutions/fitness-recovery",
+        "https://clipperdesk.com/solutions/health-practices",
+        "https://clipperdesk.com/solutions/independent-stylists",
+        "https://clipperdesk.com/solutions/massage",
+        "https://clipperdesk.com/solutions/medspas",
+        "https://clipperdesk.com/solutions/nail-salons",
+        "https://clipperdesk.com/solutions/pet-grooming",
+        "https://clipperdesk.com/solutions/physical-therapy",
+        "https://clipperdesk.com/solutions/salons",
+        "https://clipperdesk.com/solutions/spas",
+        "https://clipperdesk.com/solutions/tanning-studios",
+        "https://clipperdesk.com/solutions/tattoo-piercing",
+        "https://clipperdesk.com/use-cases",
+        "https://clipperdesk.com/use-cases/keep-client-history-together",
+        "https://clipperdesk.com/use-cases/manage-walk-ins-and-appointments",
+        "https://clipperdesk.com/use-cases/protect-time-with-deposits",
+        "https://clipperdesk.com/use-cases/reduce-scheduling-conflicts"
+      ],
+      "lastmods": []
+    },
+    {
+      "name": "marketplace-index",
+      "url": "https://clipperdesk.com/marketplace/sitemap.xml",
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=UTF-8",
+        "cache-control": "no-store, private",
+        "date": "Wed, 11 Nov 2026 10:14:05 GMT",
+        "x-robots-tag": "noindex, nofollow, noarchive"
+      },
+      "body_sha256": "6f6ef37993d71f14bcc6bfdf48cc94c694e1ce8f95920c6042455a4b8facdbb5",
+      "xml_root": "{http://www.sitemaps.org/schemas/sitemap/0.9}sitemapindex",
+      "locations": [
+        "https://clipperdesk.com/marketplace/sitemaps/profiles/0.xml"
+      ],
+      "lastmods": []
+    },
+    {
+      "name": "marketplace",
+      "url": "https://clipperdesk.com/marketplace",
+      "status": 200,
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-store, private",
+        "date": "Wed, 11 Nov 2026 10:14:06 GMT",
+        "x-robots-tag": "noindex, follow, noarchive"
+      },
+      "body_sha256": "704aa11ee6ba1865a818eb529b2a8a011623ae0007772f1b5faaafd6355be6c6",
+      "robots_meta": [
+        "noindex, follow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/marketplace"
+      ],
+      "h1_count": 1,
+      "main_count": 1,
+      "title_count": 1,
+      "ssr_fallback_present": false
+    },
+    {
+      "name": "profile-shard",
+      "url": "https://clipperdesk.com/marketplace/sitemaps/profiles/0.xml",
+      "status": 200,
+      "headers": {
+        "content-type": "application/xml; charset=UTF-8",
+        "cache-control": "no-store, private",
+        "date": "Wed, 11 Nov 2026 10:14:34 GMT",
+        "x-robots-tag": "noindex, nofollow, noarchive"
+      },
+      "body_sha256": "bdcfae4413e57203eacbd9f16fd876af1ab563ff7e034f23151ff7bff3bfe07a",
+      "xml_root": "{http://www.sitemaps.org/schemas/sitemap/0.9}urlset",
+      "locations": [
+        "https://clipperdesk.com/marketplace/salons/berich",
+        "https://clipperdesk.com/marketplace/salons/wells-studio",
+        "https://clipperdesk.com/marketplace/salons/rock-studio"
+      ],
+      "lastmods": [
+        "2026-11-11T03:44:06+00:00",
+        "2026-11-11T03:44:06+00:00",
+        "2026-11-11T03:44:06+00:00"
+      ]
+    },
+    {
+      "name": "berich",
+      "url": "https://clipperdesk.com/marketplace/salons/berich",
+      "status": 200,
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-store, private",
+        "date": "Wed, 11 Nov 2026 10:14:35 GMT",
+        "x-robots-tag": "index, follow, max-image-preview:large"
+      },
+      "body_sha256": "cbf440ea2a3089e274d3a8fa2b24e147e10a4ec8e3084d84153d663a91e380e1",
+      "robots_meta": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/marketplace/salons/berich"
+      ],
+      "h1_count": 1,
+      "main_count": 1,
+      "title_count": 1,
+      "ssr_fallback_present": false,
+      "initial_html_contains": {
+        "BeRich": true,
+        "Cut & finish": true,
+        "1 Mills Cir, Ontario, CA 91764, USA": true,
+        "CA$60.00": true
+      }
+    },
+    {
+      "name": "wells",
+      "url": "https://clipperdesk.com/marketplace/salons/wells-studio",
+      "status": 200,
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-store, private",
+        "date": "Wed, 11 Nov 2026 10:15:15 GMT",
+        "x-robots-tag": "index, follow, max-image-preview:large"
+      },
+      "body_sha256": "02a76eefb8308210392b40179c02e6db61a2caba52d59f0b922a4ef9c3cec995",
+      "robots_meta": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/marketplace/salons/wells-studio"
+      ],
+      "h1_count": 1,
+      "main_count": 1,
+      "title_count": 1,
+      "ssr_fallback_present": false
+    },
+    {
+      "name": "rock",
+      "url": "https://clipperdesk.com/marketplace/salons/rock-studio",
+      "status": 200,
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-store, private",
+        "date": "Wed, 11 Nov 2026 10:15:15 GMT",
+        "x-robots-tag": "index, follow, max-image-preview:large"
+      },
+      "body_sha256": "ea30e70ed13b24e632649698fbdbfbe30e9aebfba71354224a94af60ad3cdea2",
+      "robots_meta": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/marketplace/salons/rock-studio"
+      ],
+      "h1_count": 1,
+      "main_count": 1,
+      "title_count": 1,
+      "ssr_fallback_present": false
+    },
+    {
+      "name": "berich-filter",
+      "url": "https://clipperdesk.com/marketplace/salons/berich?location=01M4W1508JW8XFYQJWHJND88YS",
+      "status": 200,
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-store, private",
+        "date": "Wed, 11 Nov 2026 10:15:16 GMT",
+        "x-robots-tag": "noindex, follow, noarchive"
+      },
+      "body_sha256": "c319a2c357eb4659ecf90a99e64e1deb117d2caf934371e58b26b6407bd8cfdd",
+      "robots_meta": [
+        "noindex, follow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/marketplace/salons/berich"
+      ],
+      "h1_count": 1,
+      "main_count": 1,
+      "title_count": 1,
+      "ssr_fallback_present": false,
+      "initial_html_contains": {
+        "BeRich": true,
+        "Cut & finish": true,
+        "1 Mills Cir, Ontario, CA 91764, USA": true,
+        "CA$60.00": true
+      }
+    },
+    {
+      "name": "signin",
+      "url": "https://clipperdesk.com/marketplace/sign-in",
+      "status": 200,
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-store, private",
+        "date": "Wed, 11 Nov 2026 10:15:22 GMT",
+        "x-robots-tag": "noindex, nofollow, noarchive"
+      },
+      "body_sha256": "3738c364e340db3e988921ac39d132b0d92d29bbad329bdd9c11a3ce844f7edf",
+      "robots_meta": [
+        "noindex, nofollow, noarchive"
+      ],
+      "canonical": [],
+      "h1_count": 1,
+      "main_count": 1,
+      "title_count": 1,
+      "ssr_fallback_present": false
+    },
+    {
+      "name": "missing",
+      "url": "https://clipperdesk.com/marketplace/salons/seo-check-nonexistent",
+      "status": 404,
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-store, private",
+        "date": "Wed, 11 Nov 2026 10:15:21 GMT",
+        "x-robots-tag": "noindex, nofollow, noarchive"
+      },
+      "body_sha256": "bbcad26d95bef2e6a7826c16168f76a102a9d5a43729dd47070a4546bc9dcd8d",
+      "robots_meta": [
+        "noindex, follow, noarchive"
+      ],
+      "canonical": [],
+      "h1_count": 1,
+      "main_count": 1,
+      "title_count": 1,
+      "ssr_fallback_present": false
+    },
+    {
+      "name": "filtered",
+      "url": "https://clipperdesk.com/marketplace?q=BeRich",
+      "status": 200,
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-store, private",
+        "date": "Wed, 11 Nov 2026 10:15:22 GMT",
+        "x-robots-tag": "noindex, follow, noarchive"
+      },
+      "body_sha256": "b503ee0b6a22eccc10e4b257ac74a1288a3737d4b391107028bfbdedadca2f38",
+      "robots_meta": [
+        "noindex, follow, noarchive"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/marketplace"
+      ],
+      "h1_count": 1,
+      "main_count": 1,
+      "title_count": 1,
+      "ssr_fallback_present": false
+    },
+    {
+      "name": "berich-mobile-googlebot-user-agent",
+      "url": "https://clipperdesk.com/marketplace/salons/berich",
+      "status": 200,
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-store, private",
+        "date": "Wed, 11 Nov 2026 10:15:50 GMT",
+        "x-robots-tag": "index, follow, max-image-preview:large"
+      },
+      "body_sha256": "62cd1b88816ce7efd1cdfc84d4a628d6943d95e71126348e6c1d019b1352a176",
+      "robots_meta": [
+        "index, follow, max-image-preview:large"
+      ],
+      "canonical": [
+        "https://clipperdesk.com/marketplace/salons/berich"
+      ],
+      "h1_count": 1,
+      "main_count": 1,
+      "title_count": 1,
+      "ssr_fallback_present": false,
+      "initial_html_contains": {
+        "BeRich": true,
+        "Cut & finish": true,
+        "1 Mills Cir, Ontario, CA 91764, USA": true,
+        "CA$60.00": true
+      }
+    }
+  ],
+  "berich_visible_text_same_for_mobile_googlebot_user_agent": true,
+  "googlebot_network_access_verified": false,
+  "google_index_status_verified": false,
+  "berich_public_business_configuration": {
+    "name": "BeRich",
+    "country_code": "CA",
+    "currency_code": "CAD",
+    "address": "1 Mills Cir, Ontario, CA 91764, USA",
+    "locations": [
+      {
+        "name": "BeRich",
+        "address": "1 Mills Cir, Ontario, CA 91764, USA",
+        "time_zone": "America/Atikokan"
+      }
+    ]
+  },
+  "berich_json_ld": [
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          "@id": "https://clipperdesk.com/marketplace/salons/berich#webpage",
+          "url": "https://clipperdesk.com/marketplace/salons/berich",
+          "name": "BeRich \u2014 services & appointments",
+          "description": "Cuts, colour, styling and treatments for individuals or a full team."
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Marketplace",
+              "item": "https://clipperdesk.com/marketplace"
+            }
+          ]
+        },
+        {
+          "@type": "LocalBusiness",
+          "@id": "https://clipperdesk.com/marketplace#business-01M4W14ZTFHSDV28XGATK1TSCG",
+          "name": "BeRich",
+          "url": "https://clipperdesk.com/marketplace/salons/berich",
+          "description": "Cuts, colour, styling and treatments for individuals or a full team.",
+          "location": [
+            {
+              "@type": "Place",
+              "@id": "https://clipperdesk.com/marketplace#business-01M4W14ZTFHSDV28XGATK1TSCG-branch-01M4W1508JW8XFYQJWHJND88YS",
+              "name": "BeRich",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "1 Mills Cir, Ontario, CA 91764, USA"
+              },
+              "openingHoursSpecification": [
+                {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": "Monday",
+                  "opens": "09:00",
+                  "closes": "18:00"
+                },
+                {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": "Tuesday",
+                  "opens": "09:00",
+                  "closes": "18:00"
+                },
+                {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": "Wednesday",
+                  "opens": "09:00",
+                  "closes": "18:00"
+                },
+                {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": "Thursday",
+                  "opens": "09:00",
+                  "closes": "18:00"
+                },
+                {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": "Friday",
+                  "opens": "09:00",
+                  "closes": "18:00"
+                },
+                {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": "Saturday",
+                  "opens": "09:00",
+                  "closes": "18:00"
+                },
+                {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": "Sunday",
+                  "opens": "09:00",
+                  "closes": "18:00"
+                }
+              ]
+            }
+          ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Appointments",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "price": "60.00",
+                "priceCurrency": "CAD",
+                "description": "Starting price; confirm your selection before booking.",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Cut & finish"
+                }
+              },
+              {
+                "@type": "Offer",
+                "price": "40.00",
+                "priceCurrency": "CAD",
+                "description": "Starting price; confirm your selection before booking.",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Blow-dry & style"
+                }
+              },
+              {
+                "@type": "Offer",
+                "price": "100.00",
+                "priceCurrency": "CAD",
+                "description": "Starting price; confirm your selection before booking.",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Colour refresh"
+                }
+              },
+              {
+                "@type": "Offer",
+                "price": "48.00",
+                "priceCurrency": "CAD",
+                "description": "Starting price; confirm your selection before booking.",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Repair treatment"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Googlebot user-agent is a spoof comparison, not Google-origin traffic.",
+    "No URL Inspection, Rich Results Test, server logs, field performance or browser visual verification.",
+    "Browser tool returned: Local browser use is disabled in Work settings.",
+    "Only the three Marketplace sitemap profiles and listed representative routes were fetched, not all 136 Business pages."
+  ],
+  "owner_clarification": {
+    "date": "2026-11-11",
+    "business": "BeRich",
+    "classification": "test/demo store",
+    "source": "Explicit user reply after HTTP audit",
+    "production_visibility_changed": false,
+    "withdrawal_verified": false,
+    "other_profile_classifications": "unconfirmed"
+  }
+}

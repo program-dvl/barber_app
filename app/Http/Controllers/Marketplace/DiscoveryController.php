@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\Marketplace;
 
+use App\Domain\Marketplace\LocalGrowth\Services\MarketplacePublicPage;
+use App\Domain\Marketplace\LocalGrowth\Services\PublicOfferQuery;
+use App\Domain\Marketplace\LocalGrowth\Services\SeoPageRegistry;
+use App\Domain\Marketplace\LocalGrowth\Services\SupplyDiscovery;
 use App\Domain\Marketplace\Services\DiscoveryCatalogue;
 use App\Domain\Marketplace\Services\DiscoveryFilters;
 use App\Domain\Marketplace\Services\MarketplaceListings;
@@ -11,6 +15,7 @@ use App\Support\BookingPageData;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,7 +25,7 @@ class DiscoveryController extends Controller
     {
         $data = $request->validate([
             'latitude' => ['required', 'numeric', 'between:-90,90'], 'longitude' => ['required', 'numeric', 'between:-180,180'],
-            'q' => ['nullable', 'string', 'max:100'], 'category' => ['nullable', \Illuminate\Validation\Rule::in(['hair', 'barber', 'nails', ...array_keys(config('marketplace-taxonomy.audiences'))])],
+            'q' => ['nullable', 'string', 'max:100'], 'category' => ['nullable', Rule::in(['hair', 'barber', 'nails', ...array_keys(config('marketplace-taxonomy.audiences'))])],
             'date' => ['nullable', 'date_format:Y-m-d'],
             'rating' => ['nullable', 'numeric', 'between:0,5'], 'sort' => ['nullable', 'in:name,rating,recommended'],
         ]);
@@ -33,7 +38,7 @@ class DiscoveryController extends Controller
 
     public function services()
     {
-        return response()->json(['services' => config('marketplace-growth.enabled') ? app(\App\Domain\Marketplace\LocalGrowth\Services\SupplyDiscovery::class)->suggestions() : app(DiscoveryCatalogue::class)->suggestions()]);
+        return response()->json(['services' => config('marketplace-growth.enabled') ? app(SupplyDiscovery::class)->suggestions() : app(DiscoveryCatalogue::class)->suggestions()]);
     }
 
     public function clearNearby(Request $request)
@@ -47,7 +52,7 @@ class DiscoveryController extends Controller
     {
         $data = $request->validate([
             'q' => ['nullable', 'string', 'max:100'], 'location' => ['nullable', 'string', 'max:150'],
-            'category' => ['nullable', \Illuminate\Validation\Rule::in(['hair', 'barber', 'nails', ...array_keys(config('marketplace-taxonomy.audiences'))])],
+            'category' => ['nullable', Rule::in(['hair', 'barber', 'nails', ...array_keys(config('marketplace-taxonomy.audiences'))])],
             'page' => ['nullable', 'integer', 'min:1', 'max:10000'],
             'rating' => ['nullable', 'numeric', 'between:0,5'], 'sort' => ['nullable', 'in:name,rating,recommended'],
             'nearby' => ['nullable', 'in:1'],
@@ -66,15 +71,19 @@ class DiscoveryController extends Controller
         }
         $point = $request->boolean('nearby') ? $request->session()->get('marketplace_nearby') : null;
         if (config('marketplace-growth.enabled')) {
-            $result = app(\App\Domain\Marketplace\LocalGrowth\Services\SupplyDiscovery::class)->search($data, $point);
-            $alternatives = $point && $result['results']->total() === 0 ? app(\App\Domain\Marketplace\LocalGrowth\Services\SupplyDiscovery::class)->search($data, $point, radius: 50)['results']->getCollection()->filter(fn ($c) => $c['distance'] > 25)->take(3)->values()->all() : [];
-            $registry = app(\App\Domain\Marketplace\LocalGrowth\Services\SeoPageRegistry::class);
+            $result = app(SupplyDiscovery::class)->search($data, $point);
+            $alternatives = $point && $result['results']->total() === 0 ? app(SupplyDiscovery::class)->search($data, $point, radius: 50)['results']->getCollection()->filter(fn ($c) => $c['distance'] > 25)->take(3)->values()->all() : [];
+            $launchMode = ! app(PublicOfferQuery::class)->query()->exists();
+            $registry = app(SeoPageRegistry::class);
             $entry = DB::table('marketplace_seo_pages')->where('path', '/marketplace')->where('status', 'approved')->first();
-            return app(\App\Domain\Marketplace\LocalGrowth\Services\MarketplacePublicPage::class)->render('Marketplace/Discover', [
+
+            return app(MarketplacePublicPage::class)->render('Marketplace/Discover', [
                 ...$result, 'alternatives' => $alternatives,
+                'launchMode' => $launchMode,
+                'editorial' => config('marketplace-editorial'),
                 'audiences' => collect(config('frontsite.solutions'))->map(fn ($v, $k) => ['name' => $v['label'], 'query' => $k, 'image' => $v['image'] ?? null])->values()->all(),
                 'filters' => ['q' => $term, 'location' => $location, 'rating' => $data['rating'] ?? '', 'sort' => $data['sort'] ?? 'recommended', 'nearby' => (bool) $point, 'date' => $data['date'] ?? '', 'max_price' => $data['max_price'] ?? '', 'currency' => $data['currency'] ?? 'USD', 'category' => $data['category'] ?? ''],
-            ], ['kind' => 'entry', 'title' => 'Find local appointments', 'description' => 'Explore real services, locations and starting prices from participating appointment businesses. Choose a business to see its current booking choices.', 'cards' => $result['results']->items(), 'alternatives' => $alternatives, 'links' => $registry->publicLinks(), 'pagination' => ['page' => $result['results']->currentPage(), 'previous' => $result['results']->previousPageUrl(), 'next' => $result['results']->nextPageUrl()]], $entry);
+            ], ['launch' => $launchMode, 'editorial' => $launchMode ? config('marketplace-editorial') : null, 'kind' => 'entry', 'title' => 'Find local appointments', 'description' => 'Explore real services, locations and starting prices from participating appointment businesses. Choose a business to see its current booking choices.', 'cards' => $result['results']->items(), 'alternatives' => $alternatives, 'links' => $registry->publicLinks(), 'pagination' => ['page' => $result['results']->currentPage(), 'previous' => $result['results']->previousPageUrl(), 'next' => $result['results']->nextPageUrl()]], $entry);
         }
         $literal = fn (string $value) => '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $value).'%';
         $rating = DB::table('client_reviews')->selectRaw('AVG(rating)')->whereColumn('business_id', 'businesses.id')->where('public_consent', true);

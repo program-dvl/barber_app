@@ -1237,3 +1237,30 @@ MP-01/MPG-06/08. Remove the cramped verified-visits wording from directory cards
 Keep the real average/count readable with styles scoped to the card. Cookie settings
 belongs at the right end of the existing footer navigation, using its background
 and compact spacing. Preserve accessible touch targets and working consent choices.
+
+### Owner-approved Marketplace launch experience — 2026-11-14
+
+MP-01/04/05 and MPG-05/07: implement the approved launch-stage Marketplace
+mockup while no real eligible supply exists. Use clearly editorial photography,
+six service groups covering all 13 Solutions audiences, useful preparation guides,
+an invitation for businesses and optional area-launch updates. Never invent listings,
+reviews, booking totals, availability or location coverage. Existing real supply,
+publication gates, demo exclusion, manual payments and the canonical booking flow
+remain authoritative. A filtered zero-result search does not imply a global launch.
+Area updates require an unchecked opt-in, email confirmation, unsubscribe and
+limited retention; they do not create an account or consent to ongoing promotions.
+Sending the one-time area update requires an operator to review the requested
+city/region/country against an actually eligible business. This approval does not
+change indexation rollout, authorize production campaigns or claim production QA.
+
+### Immediate Marketplace newsletter signup — 2026-11-14
+
+Owner refinement to MP-05: use a compact newsletter-style area signup. The explicit
+unchecked opt-in subscribes immediately; email confirmation is not required. Show
+“You’re on the list” after saving. An informational welcome email must not gate the
+subscription or ask the recipient to confirm. This supersedes the earlier launch
+requirement for double opt-in. Keep the same limited area-launch purpose, unsubscribe,
+retention and separate booking/account consent. Do not mark an unverified address as
+email-verified. Existing emailed confirmation links remain valid under their original
+expiry, without becoming mandatory for new signups. Ongoing newsletters/campaigns
+remain a separate scope decision; newsletter here describes the signup experience.

@@ -32,7 +32,14 @@
             @if(!empty($card['new_on_marketplace']))<p>New on Marketplace</p>@endif
             <a href="{{ $card['url'] }}">Explore & book</a></article>
         @empty
+            @if(!empty($content['launch']))
+            <section><h2>Your next good day starts here.</h2><p>We’re welcoming our first businesses. Explore services and guides while businesses join your area. Images are editorial inspiration, not listed businesses.</p>
+            <h3>Explore services</h3>@foreach($content['editorial']['categories'] as $category)<p><a href="/marketplace/explore/{{ $category['slug'] }}">{{ $category['name'] }}</a></p>@endforeach
+            <h3>A little know-how before you go</h3>@foreach($content['editorial']['guides'] as $guide)<p><a href="/marketplace/guides/{{ $guide['slug'] }}">{{ $guide['title'] }}</a></p><p>{{ $guide['description'] }}</p>@endforeach
+            <p>Enable JavaScript to request an email when businesses join your area.</p></section>
+            @else
             <section><h2>No appointments to show in this area yet</h2><p>Try another area or contact a business you know.</p><a href="/marketplace">Search another area</a></section>
+            @endif
         @endforelse
     @endif
     @if(!empty($content['links']))<nav aria-label="Explore local appointments"><h2>Explore local appointments</h2>@foreach($content['links'] as $link)<p><a href="{{ $link['url'] }}">{{ $link['name'] }}</a></p>@endforeach</nav>@endif
