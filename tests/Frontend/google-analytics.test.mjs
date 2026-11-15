@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createMarketingAnalytics, ANALYTICS_CONSENT_KEY } from '../../resources/js/Support/googleAnalytics.js';
+import { createMarketingAnalytics, ANALYTICS_CONSENT_KEY, publicEntrySource } from '../../resources/js/Support/googleAnalytics.js';
 
 const id = 'G-TEST123456';
 const origin = 'https://clipperdesk.com';
@@ -48,9 +48,9 @@ function fixture({ stored = null, privacy = {}, storageFailure = false, liveGoog
         }
         scripts[index].onload();
     }
-    return { analytics, scripts, commands, browser, storage, cookies, assignments, timers, ready, get reloads() { return reloads; }, advance(ms) { clock += ms; }, runDue() { for (const [key, timer] of [...timers]) { if (timer.at <= clock) { timers.delete(key); timer.callback(); } } } };
+    return { analytics, scripts, commands, browser, doc, storage, cookies, assignments, timers, ready, get reloads() { return reloads; }, advance(ms) { clock += ms; }, runDue() { for (const [key, timer] of [...timers]) { if (timer.at <= clock) { timers.delete(key); timer.callback(); } } } };
 }
-const accepted = JSON.stringify({ version: 1, choice: 'accepted', expires_at: 100000 + 1000000 });
+const accepted = JSON.stringify({ version: 2, choice: 'accepted', expires_at: 100000 + 1000000 });
 
 test('loads no Google resource or command before opt-in, and rejection preserves essential cookies', () => {
     const f = fixture(); f.analytics.updatePage(page());
@@ -139,7 +139,7 @@ test('browser privacy signals override even previously accepted consent', () => 
 });
 
 test('expired, malformed, wrong-version and implausibly long consent records never activate Google', () => {
-    for (const stored of ['broken', 'null', JSON.stringify({ version: 2, choice: 'accepted', expires_at: 1000000 }), JSON.stringify({ version: 1, choice: 'accepted', expires_at: 99999 }), JSON.stringify({ version: 1, choice: 'accepted', expires_at: 1e20 })]) {
+    for (const stored of ['broken', 'null', JSON.stringify({ version: 99, choice: 'accepted', expires_at: 1000000 }), JSON.stringify({ version: 2, choice: 'accepted', expires_at: 99999 }), JSON.stringify({ version: 2, choice: 'accepted', expires_at: 1e20 })]) {
         const f = fixture({ stored }); f.analytics.updatePage(page()); assert.equal(f.scripts.length, 0); assert.equal(f.analytics.state().visible, true);
     }
     const f = fixture({ stored: accepted }); f.analytics.updatePage(page()); f.ready(); f.advance(2000000);
@@ -178,7 +178,7 @@ test('script network failure and timeout stop automatic retries and ignore late 
 
 test('cross-tab withdrawal disables a loaded tag immediately', () => {
     const f = fixture({ stored: accepted }); f.analytics.updatePage(page()); f.ready();
-    f.storage.set(ANALYTICS_CONSENT_KEY, JSON.stringify({ version: 1, choice: 'rejected', expires_at: 1000000 }));
+    f.storage.set(ANALYTICS_CONSENT_KEY, JSON.stringify({ version: 2, choice: 'rejected', expires_at: 1000000 }));
     f.analytics.storageChanged({ key: ANALYTICS_CONSENT_KEY });
     assert.equal(f.browser[`ga-disable-${id}`], true); assert.equal(f.reloads, 1);
 });
@@ -214,7 +214,7 @@ test('a still-open loaded document disables collection and reloads when accepted
 
 test('consent expiry checks use bounded timers and keep a renewed choice active', () => {
     const f = fixture({ stored: accepted }); f.analytics.updatePage(page()); f.ready();
-    const renewed = { version: 1, choice: 'accepted', expires_at: 100000 + 2 * 86400000 };
+    const renewed = { version: 2, choice: 'accepted', expires_at: 100000 + 2 * 86400000 };
     f.storage.set(ANALYTICS_CONSENT_KEY, JSON.stringify(renewed));
     f.advance(1000001); f.runDue();
     assert.equal(f.reloads, 0); assert.equal(f.analytics.state().choice, 'accepted');
@@ -270,7 +270,7 @@ test('modified, new-tab, download and unrecognized trial links retain native nav
         assert.equal(trialClick(f, options), false); assert.equal(f.assignments.length, 0);
         assert.ok(!f.commands.some(row => row[1] === 'marketing_cta_clicked' && row[2].event_callback));
     }
-    for (const stored of [null, JSON.stringify({ version: 1, choice: 'rejected', expires_at: 1000000 })]) {
+    for (const stored of [null, JSON.stringify({ version: 2, choice: 'rejected', expires_at: 1000000 })]) {
         const f = fixture({ stored }); f.analytics.updatePage(page());
         assert.equal(trialClick(f), false); assert.equal(f.assignments.length, 0); assert.equal(f.commands.length, 0);
     }
@@ -302,4 +302,84 @@ test('withdrawal preserves Googles owned queue while disabling collection and re
     f.analytics.choose('rejected');
     assert.equal(f.browser.clipperDeskAnalyticsLayer.length, length);
     assert.equal(f.browser[`ga-disable-${id}`], true); assert.equal(f.reloads, 1);
+});
+
+test('scope renewal keeps legacy rejection but requires a new choice for legacy acceptance', () => {
+    for (const choice of ['accepted', 'rejected']) {
+        const f = fixture({ stored: JSON.stringify({ version: 1, choice, expires_at: 1000000 }) });
+        f.analytics.updatePage(page());
+        assert.equal(f.scripts.length, 0);
+        assert.equal(f.analytics.state().choice, choice === 'rejected' ? 'rejected' : null);
+        assert.equal(f.analytics.state().visible, choice === 'accepted');
+    }
+});
+
+test('entry sources are finite labels with exact hosts and no referrer or query transmission', () => {
+    const examples = [
+        ['', 'direct_or_unknown'], ['not a URL', 'direct_or_unknown'],
+        [origin + '/login?token=private', 'internal_or_unknown'],
+        ['https://www.google.com/search?q=private', 'google'],
+        ['https://www.google.co.uk/search?q=private', 'google'],
+        ['https://www.bing.com/search?q=private', 'bing'],
+        ['https://duckduckgo.com/?q=private', 'other_search'],
+        ['https://www.google.com.attacker.test/?email=private', 'other_referral'],
+        ['https://google.com@attacker.test/private', 'other_referral'],
+        ['https://partner.example/private?secret=private', 'other_referral'],
+        ['javascript:alert(1)', 'direct_or_unknown'],
+    ];
+    for (const [referrer, label] of examples) assert.equal(publicEntrySource(referrer, origin), label);
+    const f = fixture({ stored: accepted });
+    f.doc.referrer = 'https://www.google.com/search?q=private';
+    f.analytics.updatePage(page()); f.ready();
+    const event = f.commands.find(row => row[1] === 'page_view')[2];
+    assert.equal(event.entry_source, 'google');
+    assert.equal(event.page_referrer, '');
+    assert.ok(!JSON.stringify(f.commands).includes('q=private'));
+    f.doc.referrer = 'https://evil.example/changed';
+    f.analytics.updatePage(page('/pricing'));
+    assert.equal(f.commands.filter(row => row[1] === 'page_view').at(-1)[2].entry_source, 'google');
+});
+
+test('only server-approved article paths are measured and article trial navigation stays bounded', () => {
+    const path = '/blog/a-reviewed-salon-guide';
+    const blocked = fixture({ stored: accepted });
+    blocked.analytics.updatePage(page(path));
+    assert.equal(blocked.scripts.length, 0);
+    const f = fixture({ stored: accepted });
+    f.analytics.updatePage(page(path, { paths: [...paths, path] })); f.ready();
+    assert.equal(f.commands.filter(row => row[1] === 'page_view').length, 1);
+    assert.equal(f.commands.find(row => row[1] === 'page_view')[2].page_location, origin + path);
+    trialClick(f, { context: 'article_next_step' });
+    assert.equal(f.commands.filter(row => row[1] === 'marketing_cta_clicked').length, 1);
+    f.advance(201); f.runDue();
+    assert.equal(f.assignments.length, 1);
+});
+
+
+test('source inspection happens only after consent and never for a private or rejected page', () => {
+    for (const stored of [null, JSON.stringify({ version: 1, choice: 'rejected', expires_at: 1000000 })]) {
+        const f = fixture({ stored });
+        Object.defineProperty(f.doc, 'referrer', { get() { assert.fail('Referrer must not be inspected without consent'); } });
+        f.analytics.updatePage(page());
+        f.analytics.updatePage({ url: '/register', props: { publicAnalytics: null } });
+        assert.equal(f.scripts.length, 0);
+    }
+});
+
+test('actual feature hero and evidence trial labels are measured without accepting arbitrary labels', () => {
+    for (const context of ['feature_online-booking_hero', 'feature_online-booking_evidence', 'solution_salons_evidence', 'private@example.test']) {
+        const f = fixture({ stored: accepted });
+        f.analytics.updatePage(page('/', { paths: [...paths, '/features/online-booking'] })); f.ready();
+        trialClick(f, { context });
+        assert.equal(f.commands.filter(row => row[1] === 'marketing_cta_clicked').length, context.includes('@') ? 0 : 1);
+    }
+});
+
+test('new rejection remains compatible with the prior release during rollback', () => {
+    const f = fixture(); f.analytics.updatePage(page());
+    assert.equal(f.analytics.choose('rejected'), true);
+    const saved = JSON.parse(f.storage.get(ANALYTICS_CONSENT_KEY));
+    assert.equal(saved.version, 1);
+    assert.equal(saved.choice, 'rejected');
+    assert.equal(f.scripts.length, 0);
 });

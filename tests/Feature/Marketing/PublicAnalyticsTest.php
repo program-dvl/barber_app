@@ -22,7 +22,7 @@ afterEach(function () {
 function publicAnalyticsRequest(string $url, string $name = 'marketing.home'): Request
 {
     $request = Request::create($url);
-    $route = (new Route('GET', '/', fn () => null))->name($name);
+    $route = (new Route('GET', '/', fn () => null))->name($name)->bind($request);
     $request->setRouteResolver(fn () => $route);
 
     return $request;

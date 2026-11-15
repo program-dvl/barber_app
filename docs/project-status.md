@@ -1,5 +1,53 @@
 # Project status
 
+## 2026-11-15 SEO follow-up implementation (local)
+
+- Implemented owner-approved published-article GA4 eligibility, version 2 consent
+  renewal with retained rejection, finite source-family parameters and actual
+  feature/evidence/article trial CTA coverage. Raw referrers, queries and private
+  routes remain excluded; source labels are not organic signup attribution.
+- Added read-only aggregate owner registration/verified trial/setup-state command
+  using existing data, local-date UTC boundaries and explicit demo/coverage limits.
+  No outbound Google conversion, identifier bridge, migration or account mutation.
+- Corrected outdated Marketplace claims, improved client-record journeys and
+  publication-filtered reading links. Added two printable timing/changeover guides;
+  kept all existing blog URLs. Article markup includes its actual image and omits
+  misleading pre-publication/future update labels without rewriting saved dates.
+  Privacy 1.3 and consent copy describe the bounded scope; legal flags unchanged.
+- Marketing + Registration 302 passed /4,662 assertions, one existing conditional
+  skip; focused 38 passed /190 assertions. Frontend 253 passed. Client/SSR build and
+  25 public bundle budgets pass; 132 isolated local sitemap URLs pass original-HTML
+  checks with actual SSR. Supported Node 24 used; no dependency changes.
+- Local client/guide phone checks at 390×844 showed no overflow, readable long notice
+  and 44px controls. Browser access then became unavailable; remaining desktop/
+  notice/private-return/print visual checks, lab speed, Google receipt/custom
+  dimension, URL Inspection and deployment remain pending. No production change,
+  indexing/traffic/actual signup result or full visual certification claimed.
+- [Implementation, evidence and release checklist](audits/2026-11-15-seo-followup/README.md).
+
+## 2026-11-14 Search Console, GA4 and public SEO review
+
+- Read-only authenticated Google review: Search Console's displayed data through
+  10 November shows 293 impressions,1 click,0.3% CTR and 67.9 average position.
+  Complete seven-day impressions increase 56→227; the single click is to Help.
+  Multiple releases and the small sample prevent a causal acquisition claim.
+- Pages report dated 9 November shows 136 indexed examples and 160 exclusions;
+  most exclusions are redirects/noindex/alternates. Three discovered-not-indexed
+  examples remain: salon-opening article, Security and account-profile Help.
+  Indexed examples include six of seven blogs and three historical booking-host
+  aliases, so the 136 count does not establish all current sitemap URLs indexed.
+- GA4,17 October–13 November:8 active users,20 sessions,47 pageviews and 3 key
+  events;6 trial-button events are not verified signups. Blog details are excluded
+  and referrers are deliberately removed, limiting content/channel analysis.
+- Live136/136 Business sitemap technical checks pass; robots 200 and five sampled
+  marketing aliases 301. All seven blogs are present. Current Marketplace sitemap
+  has no shards; known demo BeRich returns 404. No product/Google/hosting setting,
+  article, visibility, indexing request or deployment changed.
+- Saved every sitemap URL with available metrics/coverage and proposed treatment,
+  plus a prioritized measurement/content/technical/new-page plan. No new mobile
+  visual, lab-speed, fresh URL Inspection census or actual signup/revenue audit.
+  [Evidence and plan](audits/2026-11-14-seo-performance/README.md).
+
 ## 2026-11-08 Multi-industry Marketplace growth planning
 
 - Created a concrete strategy and separate-thread implementation prompt for local
@@ -316,7 +364,7 @@
   21 route budgets and scoped formatting passed. Isolated 25-post browser
   navigation and 390px/44px controls passed. Source **3122f24** deployed through
   Forge **82111204**. Live alias301 redirects and preserved booking entry200
-  responses verified; primary blog/sitemap/image remain200. All131 sitemap
+  responses verified; primary blog/sitemap/image remain200. All 131 sitemap
   pages pass the post-robots crawl. Only four live posts exist, so later archive
   pages are verified with synthetic local content rather than production inserts.
   [Evidence](audits/2026-11-04-search-discovery/README.md).
@@ -3766,7 +3814,7 @@ on hover/focus (available on touch), with a tooltip and shared Keep photo / Remo
 photo confirmation. Cancel/failure preserves the saved picture and other profile
 drafts. Header/rail use the saved photo or initials; the account chevron is centred.
 My bookings, Inbox, Profile and Conversation use the compact shared customer shell:
-less padding,36px desktop buttons/40px fields and44px mobile targets. Repeated
+less padding,36px desktop buttons/40px fields and 44px mobile targets. Repeated
 promotional/advice cards and the separate photo-settings block were removed.
 Cookie choices use Accept optional cookies / Reject optional cookies with existing
 purpose, opt-out and privacy boundaries intact.
@@ -3775,7 +3823,7 @@ Verified locally:109 serial exact PHP class selections with latest rechecks yiel
 **1,310 passed /31 skipped /14,166 assertions**. The separate built live SSR SEO
 run passes9/141.31 skips include14 production-MySQL concurrency cases and optional
 configuration; SQLite does not certify concurrency. **237 frontend tests pass**;
-final account backend recheck36/535. Client+SSR Node24 build and25-entry frontsite
+final account backend recheck36/535. Client+SSR Node 24 build and25-entry frontsite
 budgets pass. Synthetic100-business/1,000-offer retrieval+suggestions uses4 SQL
 queries and no live availability matching.12-path local raw HTML crawl passes;
 all synthetic pages remain noindex. Scoped formatting and whitespace checks pass.

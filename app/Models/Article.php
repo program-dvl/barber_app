@@ -50,6 +50,16 @@ class Article extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function publicUpdatedAt(): ?string
+    {
+        // Draft edits before first publication are not subsequent public updates.
+        // Preserve the stored editorial history; only project a valid public update.
+        return $this->materially_updated_at && $this->published_at
+            && $this->materially_updated_at->greaterThanOrEqualTo($this->published_at)
+            && ! $this->materially_updated_at->isFuture()
+                ? $this->materially_updated_at->toIso8601String() : null;
+    }
+
     public function getIconAttribute(): string
     {
         $path = $this->attributes['thumbnail'] ?? '';

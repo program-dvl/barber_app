@@ -1,0 +1,3325 @@
+{
+  "checkedAt": "2026-11-15T15:14:58.890Z",
+  "origin": "http://127.0.0.1:8055",
+  "scope": "Original HTTP HTML only. Does not establish Google crawling, indexing or rankings.",
+  "sitemap": {
+    "url": "http://127.0.0.1:8055/sitemap.xml",
+    "status": 200,
+    "seconds": 0.28,
+    "problems": []
+  },
+  "robots": {
+    "url": "http://127.0.0.1:8055/robots.txt",
+    "status": 200,
+    "seconds": 0.015,
+    "problems": []
+  },
+  "pages": [
+    {
+      "url": "http://127.0.0.1:8055",
+      "status": 200,
+      "seconds": 0.119,
+      "titles": [
+        "Appointment scheduling & service business software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Run booking, staff calendars, client records, walk-ins, checkout and reporting in one workspace for beauty, wellness, fitness, health and pet-care businesses."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Your whole day, beautifully run."
+      ],
+      "mainWords": 768,
+      "anchorCount": 41,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/blog",
+      "status": 200,
+      "seconds": 0.166,
+      "titles": [
+        "Service business operations blog | ClipperDesk"
+      ],
+      "descriptions": [
+        "Reviewed articles about booking, scheduling, client service and day-to-day operations for appointment-led service businesses."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/blog"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Articles"
+      ],
+      "mainWords": 40,
+      "anchorCount": 27,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/blog/salon-consultation-notes-a-practical-template-and-example",
+      "status": 200,
+      "seconds": 0.215,
+      "titles": [
+        "Prepare salon consultation notes | ClipperDesk"
+      ],
+      "descriptions": [
+        "Prepare a useful salon consultation handoff with a reviewed example and a clear next step for your team."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/blog/salon-consultation-notes-a-practical-template-and-example"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Prepare salon consultation notes"
+      ],
+      "mainWords": 233,
+      "anchorCount": 32,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/company",
+      "status": 200,
+      "seconds": 0.125,
+      "titles": [
+        "About ClipperDesk | Service business management software"
+      ],
+      "descriptions": [
+        "Learn how ClipperDesk connects appointments, client records, team schedules and recorded sales for independent professionals and growing service businesses."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/company"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "About ClipperDesk"
+      ],
+      "mainWords": 155,
+      "anchorCount": 29,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/features",
+      "status": 200,
+      "seconds": 0.11,
+      "titles": [
+        "Service business management software features | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore online booking, staff calendars, walk-ins, client management, checkout and reporting for appointment-led service businesses."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/features"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage the work around every appointment."
+      ],
+      "mainWords": 174,
+      "anchorCount": 29,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/features/calendar-and-walk-ins",
+      "status": 200,
+      "seconds": 0.096,
+      "titles": [
+        "Calendar and walk-in software for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate staff schedules, chairs and rooms, appointment changes and waiting clients."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/features/calendar-and-walk-ins"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage appointments and walk-ins together"
+      ],
+      "mainWords": 584,
+      "anchorCount": 35,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/features/checkout-and-reporting",
+      "status": 200,
+      "seconds": 0.098,
+      "titles": [
+        "Checkout and reporting for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Record service payments, create receipts and trace report totals to the original sale."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/features/checkout-and-reporting"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Complete checkout and understand your reports"
+      ],
+      "mainWords": 562,
+      "anchorCount": 34,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/features/client-management",
+      "status": 200,
+      "seconds": 0.099,
+      "titles": [
+        "Client management software for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Find past visits, preferences, notes, forms and files in one client profile, with access controlled by role."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/features/client-management"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Keep client records, notes and visit history together"
+      ],
+      "mainWords": 614,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/features/online-booking",
+      "status": 200,
+      "seconds": 0.098,
+      "titles": [
+        "Online booking software for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Let clients book appointments on their phone, choosing services, staff and available times."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/features/online-booking"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Book appointments online"
+      ],
+      "mainWords": 659,
+      "anchorCount": 35,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/features/product-walkthrough",
+      "status": 200,
+      "seconds": 0.099,
+      "titles": [
+        "Product walkthrough: booking to checkout | ClipperDesk"
+      ],
+      "descriptions": [
+        "See real ClipperDesk screens for online booking, calendars, walk-ins, client history and recorded checkout. Explore the workflow before starting a trial."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/features/product-walkthrough"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Follow a visit from booking to checkout."
+      ],
+      "mainWords": 783,
+      "anchorCount": 46,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/guides/booking-policy-basics",
+      "status": 200,
+      "seconds": 0.097,
+      "titles": [
+        "Booking policy guide for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Set booking, deposit and cancellation terms your clients can understand and your team can apply consistently."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/guides/booking-policy-basics"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Set a clear booking policy"
+      ],
+      "mainWords": 313,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/guides/daily-operations-checklist",
+      "status": 200,
+      "seconds": 0.092,
+      "titles": [
+        "Daily opening and closing checklist | ClipperDesk"
+      ],
+      "descriptions": [
+        "A free printable daily checklist for appointment-led teams: staff hours, bookings, walk-ins, client handoffs, received payments and closing checks."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/guides/daily-operations-checklist"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Daily opening and closing checklist"
+      ],
+      "mainWords": 396,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/guides/salon-opening-checklist",
+      "status": 200,
+      "seconds": 0.086,
+      "titles": [
+        "Service business opening checklist | ClipperDesk"
+      ],
+      "descriptions": [
+        "Prepare the minimum business, location, service, staff and booking rules needed before sharing an online booking link."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/guides/salon-opening-checklist"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Prepare your business for online booking"
+      ],
+      "mainWords": 298,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/guides/service-timing-and-buffers",
+      "status": 200,
+      "seconds": 0.084,
+      "titles": [
+        "Salon service timing and buffers guide | ClipperDesk"
+      ],
+      "descriptions": [
+        "Plan salon service lengths, processing and cleanup time, staff availability and breaks with a worked example and a printable booking checklist."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/guides/service-timing-and-buffers"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Set salon service times that work in a real day"
+      ],
+      "mainWords": 741,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/guides/switch-from-paper-bookings",
+      "status": 200,
+      "seconds": 0.083,
+      "titles": [
+        "Move salon bookings from paper to software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Prepare client records, future appointments and a clear handover when moving salon bookings from paper or spreadsheets, with a printable changeover checklist."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/guides/switch-from-paper-bookings"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Move from a paper salon diary without losing bookings"
+      ],
+      "mainWords": 738,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help",
+      "status": 200,
+      "seconds": 0.091,
+      "titles": [
+        "Help Center | ClipperDesk"
+      ],
+      "descriptions": [
+        "Find step-by-step ClipperDesk guides for business setup, bookings, team, clients, sales and billing."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Good answers. A smoother working day."
+      ],
+      "mainWords": 335,
+      "anchorCount": 47,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/account-delete",
+      "status": 200,
+      "seconds": 0.102,
+      "titles": [
+        "Understand account deletion and business closure | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Review the consequences before permanently removing your personal sign-in account."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/account-delete"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand account deletion and business closure"
+      ],
+      "mainWords": 391,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/account-profile",
+      "status": 200,
+      "seconds": 0.107,
+      "titles": [
+        "Update your name, email, photo or password | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Manage personal sign-in information separately from the business profile. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/account-profile"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Update your name, email, photo or password"
+      ],
+      "mainWords": 388,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/account-recovery",
+      "status": 200,
+      "seconds": 0.104,
+      "titles": [
+        "Recover a forgotten password or lost authenticator | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Use the correct recovery route while keeping business access and private credentials safe."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/account-recovery"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Recover a forgotten password or lost authenticator"
+      ],
+      "mainWords": 399,
+      "anchorCount": 39,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/account-security",
+      "status": 200,
+      "seconds": 0.098,
+      "titles": [
+        "Set up two-factor authentication and review devices | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Protect sign-in with an authenticator app and remove other browser sessions. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/account-security"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Set up two-factor authentication and review devices"
+      ],
+      "mainWords": 408,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/account-sign-in",
+      "status": 200,
+      "seconds": 0.098,
+      "titles": [
+        "Sign in to the correct workspace | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Use your own account and enter the business your role can access. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/account-sign-in"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Sign in to the correct workspace"
+      ],
+      "mainWords": 344,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/appointments-add",
+      "status": 200,
+      "seconds": 0.098,
+      "titles": [
+        "Add an appointment at reception | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Create a visit with the correct client, services, staff and local start time. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/appointments-add"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add an appointment at reception"
+      ],
+      "mainWords": 501,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/appointments-change",
+      "status": 200,
+      "seconds": 0.098,
+      "titles": [
+        "Reschedule, reassign or change an appointment | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Review changes to a visit while preserving its previous details and history. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/appointments-change"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Reschedule, reassign or change an appointment"
+      ],
+      "mainWords": 435,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/appointments-no-slots",
+      "status": 200,
+      "seconds": 0.097,
+      "titles": [
+        "Troubleshoot missing services or online time slots | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Check publication, location, service, staff and scheduling settings in a useful order."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/appointments-no-slots"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Troubleshoot missing services or online time slots"
+      ],
+      "mainWords": 485,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/appointments-public-booking",
+      "status": 200,
+      "seconds": 0.097,
+      "titles": [
+        "Understand the customer’s online booking journey | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Learn what customers choose and what makes a booking confirmed. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/appointments-public-booking"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand the customer’s online booking journey"
+      ],
+      "mainWords": 571,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/appointments-self-service",
+      "status": 200,
+      "seconds": 0.097,
+      "titles": [
+        "Help customers manage an appointment securely | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Use private confirmation links for permitted changes without exposing a customer’s booking."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/appointments-self-service"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Help customers manage an appointment securely"
+      ],
+      "mainWords": 448,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/appointments-status-cancel",
+      "status": 200,
+      "seconds": 0.096,
+      "titles": [
+        "Record visit progress, cancellation and no-shows | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Keep arrivals, service progress and appointment history accurate. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/appointments-status-cancel"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Record visit progress, cancellation and no-shows"
+      ],
+      "mainWords": 432,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/appointments-waitlist",
+      "status": 200,
+      "seconds": 0.096,
+      "titles": [
+        "Understand waitlists and opening offers | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Help customers request a suitable opening and respond to a private offer. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/appointments-waitlist"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand waitlists and opening offers"
+      ],
+      "mainWords": 420,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/billing-access",
+      "status": 200,
+      "seconds": 0.097,
+      "titles": [
+        "Why is a feature missing or the workspace read-only? | ClipperDesk He…"
+      ],
+      "descriptions": [
+        "Distinguish permissions, branch scope, setup requirements and subscription restrictions."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/billing-access"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Why is a feature missing or the workspace read-only?"
+      ],
+      "mainWords": 448,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/billing-cancel",
+      "status": 200,
+      "seconds": 0.097,
+      "titles": [
+        "Cancel renewal or keep your subscription | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Schedule cancellation for the end of the paid term, or reverse it before that date."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/billing-cancel"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Cancel renewal or keep your subscription"
+      ],
+      "mainWords": 386,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/billing-capacity",
+      "status": 200,
+      "seconds": 0.096,
+      "titles": [
+        "Understand locations, bookable staff and pricing | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Know what counts toward capacity and how the subscription estimate is calculated."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/billing-capacity"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand locations, bookable staff and pricing"
+      ],
+      "mainWords": 443,
+      "anchorCount": 41,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/billing-change-capacity",
+      "status": 200,
+      "seconds": 0.096,
+      "titles": [
+        "Change capacity or switch monthly and yearly billing | ClipperDesk He…"
+      ],
+      "descriptions": [
+        "Review when a change takes effect and what is due before confirming it. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/billing-change-capacity"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Change capacity or switch monthly and yearly billing"
+      ],
+      "mainWords": 408,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/billing-invoices",
+      "status": 200,
+      "seconds": 0.096,
+      "titles": [
+        "View subscription invoices and manage your payment method | ClipperDe… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Read invoice history and open the secure billing portal for account payment details."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/billing-invoices"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "View subscription invoices and manage your payment method"
+      ],
+      "mainWords": 415,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/billing-recovery",
+      "status": 200,
+      "seconds": 0.098,
+      "titles": [
+        "Recover an unfinished checkout or delayed billing update | ClipperDes… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Continue the saved payment safely, or close it before reviewing another selection."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/billing-recovery"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Recover an unfinished checkout or delayed billing update"
+      ],
+      "mainWords": 537,
+      "anchorCount": 42,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/billing-start-subscription",
+      "status": 200,
+      "seconds": 0.099,
+      "titles": [
+        "Review and start a paid subscription | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Choose capacity and billing cycle, review the complete price, then continue to secure checkout."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/billing-start-subscription"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Review and start a paid subscription"
+      ],
+      "mainWords": 464,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/billing-text-credits",
+      "status": 200,
+      "seconds": 0.099,
+      "titles": [
+        "Understand monthly text credits and optional credit packs | ClipperDe… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Track included usage, prepaid balances and credit purchases shown for your account."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/billing-text-credits"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand monthly text credits and optional credit packs"
+      ],
+      "mainWords": 423,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/business-booking-link",
+      "status": 200,
+      "seconds": 0.096,
+      "titles": [
+        "Change and share your booking link | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Choose a readable unique link while preserving previously used business links. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/business-booking-link"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Change and share your booking link"
+      ],
+      "mainWords": 361,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/business-booking-preferences",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Configure online booking preferences | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Choose booking intervals, staff choice, new-client rules, cancellation cutoffs and link expiry."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/business-booking-preferences"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Configure online booking preferences"
+      ],
+      "mainWords": 459,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/business-branding",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Add your logo, cover image and accent colour | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Personalize the booking experience without delaying internal setup. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/business-branding"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add your logo, cover image and accent colour"
+      ],
+      "mainWords": 345,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/business-hours",
+      "status": 200,
+      "seconds": 0.096,
+      "titles": [
+        "Set opening hours and split opening periods | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Review the opening week and check affected appointments before saving. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/business-hours"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Set opening hours and split opening periods"
+      ],
+      "mainWords": 438,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/business-location",
+      "status": 200,
+      "seconds": 0.097,
+      "titles": [
+        "Add or edit a location | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Set the branch address, time zone, public contacts and initial opening hours. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/business-location"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add or edit a location"
+      ],
+      "mainWords": 482,
+      "anchorCount": 41,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/business-profile",
+      "status": 200,
+      "seconds": 0.097,
+      "titles": [
+        "Edit your business profile and regional settings | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Update public identity, contact details, booking policies and local formats. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/business-profile"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Edit your business profile and regional settings"
+      ],
+      "mainWords": 414,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/business-publish",
+      "status": 200,
+      "seconds": 0.098,
+      "titles": [
+        "Preview, publish or resume your booking page | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Review the real saved page and explicitly choose when clients can book online. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/business-publish"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Preview, publish or resume your booking page"
+      ],
+      "mainWords": 449,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/calendar-availability",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Understand staff availability and booking conflicts | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Find out why visible space on the calendar may not be bookable. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/calendar-availability"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand staff availability and booking conflicts"
+      ],
+      "mainWords": 450,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/calendar-blocks-closures",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Block staff time and record operational disruption | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Keep non-bookable time visible and review appointments affected by disruption. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/calendar-blocks-closures"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Block staff time and record operational disruption"
+      ],
+      "mainWords": 421,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/calendar-views",
+      "status": 200,
+      "seconds": 0.093,
+      "titles": [
+        "Find appointments and choose a Calendar view | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Use Team, Day, Week and Agenda views, date controls, filters and printed schedules."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/calendar-views"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Find appointments and choose a Calendar view"
+      ],
+      "mainWords": 445,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/checkout-deposits-taxes-tips",
+      "status": 200,
+      "seconds": 0.093,
+      "titles": [
+        "Review deposits, tax and staff tips at checkout | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Understand how existing deposits, configured tax and explicit tips affect the amount due."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/checkout-deposits-taxes-tips"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Review deposits, tax and staff tips at checkout"
+      ],
+      "mainWords": 449,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/checkout-payment-recovery",
+      "status": 200,
+      "seconds": 0.092,
+      "titles": [
+        "Recover an interrupted payment record safely | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Check the same saved request and history before recording or collecting anything again."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/checkout-payment-recovery"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Recover an interrupted payment record safely"
+      ],
+      "mainWords": 451,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/checkout-receipts-history",
+      "status": 200,
+      "seconds": 0.093,
+      "titles": [
+        "Find sales, outstanding balances and receipts | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Search saved sales, inspect payment history and print the original issued receipt."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/checkout-receipts-history"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Find sales, outstanding balances and receipts"
+      ],
+      "mainWords": 424,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/checkout-record-payments",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Record received, split or partial payments | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Save money you have actually received and keep unpaid balances visible. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/checkout-record-payments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Record received, split or partial payments"
+      ],
+      "mainWords": 473,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/checkout-refund",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Record money returned through the original payment method | ClipperDe… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Review refund or void amounts, reasons and product disposition without rewriting the original sale."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/checkout-refund"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Record money returned through the original payment method"
+      ],
+      "mainWords": 462,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/checkout-review",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Review and save a sale after a visit | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Check performed services, adjustments and totals before recording payment. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/checkout-review"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Review and save a sale after a visit"
+      ],
+      "mainWords": 476,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/clients-add-find",
+      "status": 200,
+      "seconds": 0.094,
+      "titles": [
+        "Find or add a client | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Keep one useful client record and avoid accidental duplicates. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/clients-add-find"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Find or add a client"
+      ],
+      "mainWords": 447,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/clients-duplicates",
+      "status": 200,
+      "seconds": 0.108,
+      "titles": [
+        "Review and merge duplicate client profiles | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Keep the right profile and preserve connected history after a careful comparison."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/clients-duplicates"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Review and merge duplicate client profiles"
+      ],
+      "mainWords": 407,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/clients-edit-preferences",
+      "status": 200,
+      "seconds": 0.111,
+      "titles": [
+        "Update a client’s details and preferences | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Correct contacts, record preferences and tags, and save a reason for the change."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/clients-edit-preferences"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Update a client’s details and preferences"
+      ],
+      "mainWords": 465,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/clients-forms",
+      "status": 200,
+      "seconds": 0.111,
+      "titles": [
+        "Create form templates and request a client form | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Publish clear questions and keep completed forms tied to the wording the client saw."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/clients-forms"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Create form templates and request a client form"
+      ],
+      "mainWords": 469,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/clients-notes",
+      "status": 200,
+      "seconds": 0.097,
+      "titles": [
+        "Add useful client notes and control visibility | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Save service context with a clear type, importance and appropriate visibility. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/clients-notes"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add useful client notes and control visibility"
+      ],
+      "mainWords": 421,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/clients-payments",
+      "status": 200,
+      "seconds": 0.093,
+      "titles": [
+        "Understand a client’s payments and outstanding balance | ClipperDesk…"
+      ],
+      "descriptions": [
+        "Read recorded spending, payments and unfinished checkouts without confusing them with visit prices."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/clients-payments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand a client’s payments and outstanding balance"
+      ],
+      "mainWords": 400,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/clients-privacy",
+      "status": 200,
+      "seconds": 0.091,
+      "titles": [
+        "Record and process a client privacy request | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Track exports, corrections, withdrawals and deletion reviews without silently erasing history."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/clients-privacy"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Record and process a client privacy request"
+      ],
+      "mainWords": 434,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/clients-private-files",
+      "status": 200,
+      "seconds": 0.093,
+      "titles": [
+        "Store and access private client files | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Upload supported visit images and documents with appropriate visibility and expiring links."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/clients-private-files"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Store and access private client files"
+      ],
+      "mainWords": 426,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/clients-visits-rebook",
+      "status": 200,
+      "seconds": 0.094,
+      "titles": [
+        "Review a client’s visits and book their next appointment | ClipperDes… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Follow past and upcoming visits, then rebook using today’s eligible services. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/clients-visits-rebook"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Review a client’s visits and book their next appointment"
+      ],
+      "mainWords": 421,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/inventory-availability",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Understand retail inventory availability | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Know which retail tools are currently visible and how saved retail sales affect stock."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/inventory-availability"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand retail inventory availability"
+      ],
+      "mainWords": 449,
+      "anchorCount": 39,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/notifications-consent",
+      "status": 200,
+      "seconds": 0.1,
+      "titles": [
+        "Understand SMS consent, opt-outs and text allowances | ClipperDesk He…"
+      ],
+      "descriptions": [
+        "Know why a notification may be stopped even when SMS is enabled. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/notifications-consent"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand SMS consent, opt-outs and text allowances"
+      ],
+      "mainWords": 454,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/notifications-delivery",
+      "status": 200,
+      "seconds": 0.099,
+      "titles": [
+        "Check whether a client notification was delivered | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Read delivery history, understand status and investigate a missing update. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/notifications-delivery"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Check whether a client notification was delivered"
+      ],
+      "mainWords": 452,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/notifications-preferences",
+      "status": 200,
+      "seconds": 0.099,
+      "titles": [
+        "Choose client notification channels and quiet hours | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Manage email and SMS preferences while ClipperDesk handles message wording and sending."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/notifications-preferences"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Choose client notification channels and quiet hours"
+      ],
+      "mainWords": 462,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/ops-dashboard",
+      "status": 200,
+      "seconds": 0.094,
+      "titles": [
+        "Use your daily workspace | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Follow today’s appointments, arrivals, waiting clients and payment follow-up from one place."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/ops-dashboard"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Use your daily workspace"
+      ],
+      "mainWords": 489,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/reports-bookings-clients",
+      "status": 200,
+      "seconds": 0.093,
+      "titles": [
+        "Understand appointment, walk-in and client reports | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Use recorded outcomes and paying-client definitions without reading them as forecasts."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/reports-bookings-clients"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand appointment, walk-in and client reports"
+      ],
+      "mainWords": 420,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/reports-capacity-commission",
+      "status": 200,
+      "seconds": 0.093,
+      "titles": [
+        "Read team capacity, tips and commission reports | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Separate configured working time from attendance and compensation records from payroll."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/reports-capacity-commission"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Read team capacity, tips and commission reports"
+      ],
+      "mainWords": 436,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/reports-export",
+      "status": 200,
+      "seconds": 0.093,
+      "titles": [
+        "Export or print a report | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Create a CSV with the report’s actual filters and download it when ready. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/reports-export"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Export or print a report"
+      ],
+      "mainWords": 415,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/reports-money",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Understand sales, receipts, taxes and refunds in Reports | ClipperDes… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Choose the correct date basis so payment activity and sale-period totals make sense."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/reports-money"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand sales, receipts, taxes and refunds in Reports"
+      ],
+      "mainWords": 513,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/reports-run",
+      "status": 200,
+      "seconds": 0.096,
+      "titles": [
+        "Run and compare a report | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Choose a report, date range, location and permitted filters, then inspect the details."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/reports-run"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Run and compare a report"
+      ],
+      "mainWords": 467,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/services-addons",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Create and attach an optional add-on | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Offer extras only with eligible parent services and account for their extra time and price."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/services-addons"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Create and attach an optional add-on"
+      ],
+      "mainWords": 361,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/services-assignments",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Choose service locations and qualified staff | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Configure eligibility and price or timing exceptions without changing existing appointments."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/services-assignments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Choose service locations and qualified staff"
+      ],
+      "mainWords": 445,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/services-categories",
+      "status": 200,
+      "seconds": 0.093,
+      "titles": [
+        "Organize, reorder or archive service categories | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Keep the catalogue and online selection easy to browse. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/services-categories"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Organize, reorder or archive service categories"
+      ],
+      "mainWords": 352,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/services-create",
+      "status": 200,
+      "seconds": 0.096,
+      "titles": [
+        "Create a service | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Add a clear service name, price and timing, then choose where and by whom it can be delivered."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/services-create"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Create a service"
+      ],
+      "mainWords": 484,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/services-online-availability",
+      "status": 200,
+      "seconds": 0.1,
+      "titles": [
+        "Why is a service missing online or showing no times? | ClipperDesk He…"
+      ],
+      "descriptions": [
+        "Check publication, visibility, eligibility, assignments, hours and booking rules in order."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/services-online-availability"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Why is a service missing online or showing no times?"
+      ],
+      "mainWords": 538,
+      "anchorCount": 41,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/services-prices-duration",
+      "status": 200,
+      "seconds": 0.103,
+      "titles": [
+        "Understand service prices and appointment timing | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Learn base and override prices, active time, processing and cleanup. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/services-prices-duration"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand service prices and appointment timing"
+      ],
+      "mainWords": 434,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/services-update-retire",
+      "status": 200,
+      "seconds": 0.102,
+      "titles": [
+        "Update, duplicate, activate or deactivate a service | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Manage catalogue changes while preserving booked visits and financial history. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/services-update-retire"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Update, duplicate, activate or deactivate a service"
+      ],
+      "mainWords": 413,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/setup-create-account",
+      "status": 200,
+      "seconds": 0.101,
+      "titles": [
+        "Create your owner account | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Start a trial with email or Google, then enter your private business setup. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/setup-create-account"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Create your owner account"
+      ],
+      "mainWords": 389,
+      "anchorCount": 39,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/setup-first-workspace",
+      "status": 200,
+      "seconds": 0.101,
+      "titles": [
+        "Prepare your first workspace | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Choose your business type, owner working profile, region and starter services. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/setup-first-workspace"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Prepare your first workspace"
+      ],
+      "mainWords": 481,
+      "anchorCount": 41,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/setup-import-records",
+      "status": 200,
+      "seconds": 0.102,
+      "titles": [
+        "Import clients, staff, services or products | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Use a CSV template, review the preview and choose how duplicate rows should be handled."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/setup-import-records"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Import clients, staff, services or products"
+      ],
+      "mainWords": 546,
+      "anchorCount": 42,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/setup-readiness",
+      "status": 200,
+      "seconds": 0.105,
+      "titles": [
+        "Finish setup and understand readiness | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Separate the essentials for daily work from the steps for accepting online bookings."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/setup-readiness"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Finish setup and understand readiness"
+      ],
+      "mainWords": 434,
+      "anchorCount": 41,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/team-accept-invitation",
+      "status": 200,
+      "seconds": 0.103,
+      "titles": [
+        "Accept a team invitation | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Join the correct business using the email address named in your invitation. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/team-accept-invitation"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Accept a team invitation"
+      ],
+      "mainWords": 381,
+      "anchorCount": 39,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/team-activity",
+      "status": 200,
+      "seconds": 0.101,
+      "titles": [
+        "Review the business activity log | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Find who changed access, appointments, clients, payments or configuration. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/team-activity"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Review the business activity log"
+      ],
+      "mainWords": 314,
+      "anchorCount": 37,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/team-add-member",
+      "status": 200,
+      "seconds": 0.1,
+      "titles": [
+        "Add a team member | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Create a working profile, assign initial services and hours, and optionally invite the person to sign in."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/team-add-member"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add a team member"
+      ],
+      "mainWords": 533,
+      "anchorCount": 41,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/team-coverage",
+      "status": 200,
+      "seconds": 0.101,
+      "titles": [
+        "Read live availability and weekly coverage | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Understand free staff time, booked time, breaks, time off and running visits. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/team-coverage"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Read live availability and weekly coverage"
+      ],
+      "mainWords": 446,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/team-disable-restore-login",
+      "status": 200,
+      "seconds": 0.103,
+      "titles": [
+        "Disable or restore a team login | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "End workspace access while preserving the person’s working profile and history. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/team-disable-restore-login"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Disable or restore a team login"
+      ],
+      "mainWords": 328,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/team-edit-profile",
+      "status": 200,
+      "seconds": 0.1,
+      "titles": [
+        "Edit a working profile or make a person inactive | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Update contact details, working branches, biography and future bookability. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/team-edit-profile"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Edit a working profile or make a person inactive"
+      ],
+      "mainWords": 386,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/team-invite-login",
+      "status": 200,
+      "seconds": 0.1,
+      "titles": [
+        "Invite an existing team member to sign in | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Choose the person’s workspace role and accessible locations, then send a secure invitation."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/team-invite-login"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Invite an existing team member to sign in"
+      ],
+      "mainWords": 423,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/team-roles-permissions",
+      "status": 200,
+      "seconds": 0.099,
+      "titles": [
+        "Understand roles, capabilities and location access | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Give people the tools they need without confusing professional titles with permissions."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/team-roles-permissions"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Understand roles, capabilities and location access"
+      ],
+      "mainWords": 446,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/team-service-assignments",
+      "status": 200,
+      "seconds": 0.099,
+      "titles": [
+        "Assign services and staff-specific prices or durations | ClipperDesk…"
+      ],
+      "descriptions": [
+        "Choose what a person can perform and whether that assignment is available online."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/team-service-assignments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Assign services and staff-specific prices or durations"
+      ],
+      "mainWords": 399,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/team-time-off",
+      "status": 200,
+      "seconds": 0.098,
+      "titles": [
+        "Add time off, breaks or temporary hours | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Set dated absences or working exceptions and review their appointment impact. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/team-time-off"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add time off, breaks or temporary hours"
+      ],
+      "mainWords": 406,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/team-weekly-hours",
+      "status": 200,
+      "seconds": 0.104,
+      "titles": [
+        "Set a person’s weekly hours and split shifts | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Review schedule changes and handle affected appointments before saving. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/team-weekly-hours"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Set a person’s weekly hours and split shifts"
+      ],
+      "mainWords": 477,
+      "anchorCount": 40,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/walk-ins-add",
+      "status": 200,
+      "seconds": 0.108,
+      "titles": [
+        "Add a walk-in to the queue | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Check in a new or existing client with their requested service and preferred staff."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/walk-ins-add"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Add a walk-in to the queue"
+      ],
+      "mainWords": 438,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/walk-ins-order-alerts",
+      "status": 200,
+      "seconds": 0.108,
+      "titles": [
+        "Notify waiting clients, reorder the queue or mark a client as left |… | ClipperDesk"
+      ],
+      "descriptions": [
+        "Use explicit front-desk actions while preserving the queue’s real order. Follow the steps in your ClipperDesk workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/walk-ins-order-alerts"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Notify waiting clients, reorder the queue or mark a client as left"
+      ],
+      "mainWords": 413,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/articles/walk-ins-serve",
+      "status": 200,
+      "seconds": 0.103,
+      "titles": [
+        "Assign staff and start a walk-in service | ClipperDesk Help"
+      ],
+      "descriptions": [
+        "Check staff readiness, start the visit and complete checkout without losing queue history."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/articles/walk-ins-serve"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Assign staff and start a walk-in service"
+      ],
+      "mainWords": 458,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/account",
+      "status": 200,
+      "seconds": 0.099,
+      "titles": [
+        "Account, access & security help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for account, access & security. Sign-in, profile, security and help with restricted access."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/account"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Account, access & security"
+      ],
+      "mainWords": 115,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/appointments",
+      "status": 200,
+      "seconds": 0.1,
+      "titles": [
+        "Online booking & appointments help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for online booking & appointments. Publish your booking page and help clients manage their visits."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/appointments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Online booking & appointments"
+      ],
+      "mainWords": 149,
+      "anchorCount": 32,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/billing",
+      "status": 200,
+      "seconds": 0.098,
+      "titles": [
+        "Subscriptions & billing help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for subscriptions & billing. Trials, purchased capacity, invoices and subscription recovery."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/billing"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Subscriptions & billing"
+      ],
+      "mainWords": 183,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/business",
+      "status": 200,
+      "seconds": 0.098,
+      "titles": [
+        "Business & locations help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for business & locations. Business details, opening hours, branding and booking settings."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/business"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Business & locations"
+      ],
+      "mainWords": 145,
+      "anchorCount": 32,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/calendar",
+      "status": 200,
+      "seconds": 0.096,
+      "titles": [
+        "Calendar & daily workspace help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for calendar & daily workspace. Plan the day, manage visits and protect available time."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/calendar"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Calendar & daily workspace"
+      ],
+      "mainWords": 83,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/checkout",
+      "status": 200,
+      "seconds": 0.096,
+      "titles": [
+        "Checkout & sales help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for checkout & sales. Review baskets, record received payments, refunds and receipts."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/checkout"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Checkout & sales"
+      ],
+      "mainWords": 139,
+      "anchorCount": 31,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/clients",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Clients & records help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for clients & records. Client profiles, notes, forms, consent and privacy requests."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/clients"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Clients & records"
+      ],
+      "mainWords": 192,
+      "anchorCount": 34,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/getting-started",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Getting started help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for getting started. Prepare your business and get ready for your first client."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/getting-started"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Getting started"
+      ],
+      "mainWords": 112,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/inventory",
+      "status": 200,
+      "seconds": 0.096,
+      "titles": [
+        "Retail availability help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for retail availability. Understand current retail and stock-management availability."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/inventory"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Retail availability"
+      ],
+      "mainWords": 39,
+      "anchorCount": 26,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/notifications",
+      "status": 200,
+      "seconds": 0.097,
+      "titles": [
+        "Client notifications help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for client notifications. Email and text preferences, quiet hours and delivery history."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/notifications"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Client notifications"
+      ],
+      "mainWords": 79,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/reports",
+      "status": 200,
+      "seconds": 0.097,
+      "titles": [
+        "Reports help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for reports. Understand your numbers, scopes, comparisons and exports."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/reports"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Reports"
+      ],
+      "mainWords": 112,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/services",
+      "status": 200,
+      "seconds": 0.095,
+      "titles": [
+        "Services help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for services. Your catalogue, prices, durations and bookable team."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/services"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Services"
+      ],
+      "mainWords": 148,
+      "anchorCount": 32,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/team",
+      "status": 200,
+      "seconds": 0.093,
+      "titles": [
+        "Team & availability help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for team & availability. Team profiles, invitations, roles, working hours and time off."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/team"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Team & availability"
+      ],
+      "mainWords": 224,
+      "anchorCount": 36,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/help/category/walk-ins",
+      "status": 200,
+      "seconds": 0.092,
+      "titles": [
+        "Walk-in Queue help | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore step-by-step ClipperDesk guidance for walk-in queue. Welcome arrivals, manage waiting clients and start service."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/help/category/walk-ins"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Walk-in Queue"
+      ],
+      "mainWords": 85,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/pricing",
+      "status": 200,
+      "seconds": 0.1,
+      "titles": [
+        "Pricing for your locations and team | ClipperDesk"
+      ],
+      "descriptions": [
+        "One complete ClipperDesk subscription, with transparent location pricing and progressive staff rates. Explore monthly or yearly billing and start a free trial."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/pricing"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "One platform. A price that grows with you."
+      ],
+      "mainWords": 687,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/resources",
+      "status": 200,
+      "seconds": 0.104,
+      "titles": [
+        "Service business management guides | ClipperDesk"
+      ],
+      "descriptions": [
+        "Practical booking, scheduling and operations guides for appointment-led beauty, wellness, fitness, health and pet-service businesses."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/resources"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Practical guides for your business."
+      ],
+      "mainWords": 233,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/security",
+      "status": 200,
+      "seconds": 0.113,
+      "titles": [
+        "Account and data security | ClipperDesk"
+      ],
+      "descriptions": [
+        "Understand ClipperDesk business data separation, role-based team access, account protection, private appointment links and payment change history."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/security"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "How we protect your business data."
+      ],
+      "mainWords": 232,
+      "anchorCount": 28,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions",
+      "status": 200,
+      "seconds": 0.104,
+      "titles": [
+        "Software for appointment-led service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Explore ClipperDesk for beauty, wellness, personal care, fitness, recovery, health and pet-service businesses, from independents to larger teams."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Built around the way you work."
+      ],
+      "mainWords": 435,
+      "anchorCount": 38,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions/barbershops",
+      "status": 200,
+      "seconds": 0.104,
+      "titles": [
+        "Barbershop scheduling and walk-in software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Manage barber appointments, walk-in queues, staff availability, client preferences and checkout from one workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions/barbershops"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage barbershop appointments and walk-ins"
+      ],
+      "mainWords": 664,
+      "anchorCount": 35,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions/fitness-recovery",
+      "status": 200,
+      "seconds": 0.097,
+      "titles": [
+        "Fitness and recovery scheduling software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate coaches, rooms, recovery equipment, client bookings and payments across a busy studio day."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions/fitness-recovery"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Schedule fitness and recovery appointments"
+      ],
+      "mainWords": 375,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions/health-practices",
+      "status": 200,
+      "seconds": 0.098,
+      "titles": [
+        "Health practice scheduling software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Organise practitioner schedules, client booking, non-clinical business forms and payment records alongside your clinical systems."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions/health-practices"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage appointments for your health practice"
+      ],
+      "mainWords": 378,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions/independent-stylists",
+      "status": 200,
+      "seconds": 0.098,
+      "titles": [
+        "Independent stylist booking software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Move from guided setup to booking, the working calendar, client history and checkout without needing a separate admin team."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions/independent-stylists"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage your appointments as an independent stylist"
+      ],
+      "mainWords": 386,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions/massage",
+      "status": 200,
+      "seconds": 0.099,
+      "titles": [
+        "Massage studio booking software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Bring online booking, practitioner schedules, treatment rooms, client preferences and checkout into one calm flow."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions/massage"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage massage appointments and room availability"
+      ],
+      "mainWords": 377,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions/medspas",
+      "status": 200,
+      "seconds": 0.099,
+      "titles": [
+        "Medspa scheduling and business software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Manage non-clinical medspa scheduling, practitioner availability, business forms and payment records alongside your clinical systems."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions/medspas"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage medspa appointments and client records"
+      ],
+      "mainWords": 372,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions/nail-salons",
+      "status": 200,
+      "seconds": 0.099,
+      "titles": [
+        "Nail salon booking and scheduling software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Keep technicians, manicure stations, service timing, client preferences and checkout moving in one polished day."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions/nail-salons"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage nail salon appointments"
+      ],
+      "mainWords": 394,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions/pet-grooming",
+      "status": 200,
+      "seconds": 0.1,
+      "titles": [
+        "Pet grooming booking and scheduling software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate service timing, groomer availability, stations, client contact, pet context and checkout across the day."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions/pet-grooming"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage pet grooming appointments"
+      ],
+      "mainWords": 390,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions/physical-therapy",
+      "status": 200,
+      "seconds": 0.103,
+      "titles": [
+        "Physical therapy scheduling software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate appointment capacity, rooms, practitioners, reminders and payments while keeping clinical systems separate."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions/physical-therapy"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Schedule physical therapy appointments"
+      ],
+      "mainWords": 369,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions/salons",
+      "status": 200,
+      "seconds": 0.107,
+      "titles": [
+        "Salon booking and business management software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate service timing, staff handoffs, client preferences, booking policy and checkout without splitting the visit into disconnected records."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions/salons"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage salon appointments and services"
+      ],
+      "mainWords": 689,
+      "anchorCount": 37,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions/spas",
+      "status": 200,
+      "seconds": 0.108,
+      "titles": [
+        "Spa and sauna scheduling software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Manage non-medical spa bookings, practitioner schedules, client preferences and checkout in one workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions/spas"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage spa appointments, practitioners and rooms"
+      ],
+      "mainWords": 374,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions/tanning-studios",
+      "status": 200,
+      "seconds": 0.106,
+      "titles": [
+        "Tanning studio booking software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Coordinate room capacity, staff, client booking, operational forms and checkout with clear limits."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions/tanning-studios"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage tanning studio appointments"
+      ],
+      "mainWords": 374,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/solutions/tattoo-piercing",
+      "status": 200,
+      "seconds": 0.102,
+      "titles": [
+        "Tattoo and piercing studio software | ClipperDesk"
+      ],
+      "descriptions": [
+        "Manage artist schedules, consultation forms, client preferences, appointment changes and recorded payments in one studio workspace."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/solutions/tattoo-piercing"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage tattoo and piercing appointments"
+      ],
+      "mainWords": 385,
+      "anchorCount": 33,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/use-cases",
+      "status": 200,
+      "seconds": 0.101,
+      "titles": [
+        "Service business operations use cases | ClipperDesk"
+      ],
+      "descriptions": [
+        "Practical guidance for scheduling conflicts, walk-ins, deposits and connected client history across appointment-led service businesses."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/use-cases"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Make daily work easier."
+      ],
+      "mainWords": 202,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/use-cases/keep-client-history-together",
+      "status": 200,
+      "seconds": 0.102,
+      "titles": [
+        "Keep salon client records and history together | ClipperDesk"
+      ],
+      "descriptions": [
+        "Keep client visits, preferences, notes, forms, messages and purchases together, with sensitive information restricted to authorised team members."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/use-cases/keep-client-history-together"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Keep client history together"
+      ],
+      "mainWords": 403,
+      "anchorCount": 31,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/use-cases/manage-walk-ins-and-appointments",
+      "status": 200,
+      "seconds": 0.103,
+      "titles": [
+        "Manage walk-ins and appointments together | ClipperDesk"
+      ],
+      "descriptions": [
+        "Keep walk-ins visible, review estimated waits and check staff availability before starting service around existing appointments."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/use-cases/manage-walk-ins-and-appointments"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Manage walk-ins alongside appointments"
+      ],
+      "mainWords": 383,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/use-cases/protect-time-with-deposits",
+      "status": 200,
+      "seconds": 0.104,
+      "titles": [
+        "Booking deposits for service businesses | ClipperDesk"
+      ],
+      "descriptions": [
+        "Set deposit and cancellation rules, show clients the terms before confirmation and keep the agreed policy with their appointment."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/use-cases/protect-time-with-deposits"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Set clear deposit rules"
+      ],
+      "mainWords": 418,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    },
+    {
+      "url": "http://127.0.0.1:8055/use-cases/reduce-scheduling-conflicts",
+      "status": 200,
+      "seconds": 0.103,
+      "titles": [
+        "How to reduce scheduling conflicts | ClipperDesk"
+      ],
+      "descriptions": [
+        "Keep online and front-desk bookings aligned with current staff hours, service durations and availability, with a final check before confirmation."
+      ],
+      "canonicals": [
+        "http://127.0.0.1:8055/use-cases/reduce-scheduling-conflicts"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "robotsHeader": "index, follow, max-image-preview:large",
+      "h1": [
+        "Avoid scheduling conflicts"
+      ],
+      "mainWords": 402,
+      "anchorCount": 30,
+      "schemaCount": 1,
+      "problems": []
+    }
+  ],
+  "summary": {
+    "sitemapUrls": 132,
+    "checkedPages": 132,
+    "failedPages": 0,
+    "passed": true
+  }
+}

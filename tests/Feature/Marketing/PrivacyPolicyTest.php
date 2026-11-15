@@ -56,7 +56,7 @@ it('keeps unapproved content out of indexing without showing internal review lan
     $this->get('/privacy-policy')->assertOk()
         ->assertHeader('X-Robots-Tag', 'noindex, follow, noarchive')
         ->assertDontSee('Review preview.')->assertSee('Effective date')
-        ->assertSee('November 2, 2026')
+        ->assertSee('November 15, 2026')
         ->assertDontSee('This privacy policy is under review and is not yet effective.')
         ->assertDontSee('Good Hours')
         ->assertDontSee('OPEN-')->assertDontSee('blocked_policy')
@@ -166,7 +166,7 @@ it('explains optional Google Analytics consent, exclusions and withdrawal withou
         ->assertSee('aggregated standard reports may remain longer')
         ->assertSee('https://policies.google.com/technologies/partner-sites', false)
         ->assertDontSee('does not load advertising pixels, third-party marketing analytics');
-    expect(config('privacy.version'))->toBe('1.2');
+    expect(config('privacy.version'))->toBe('1.3');
 });
 
 it('does not display an invalid or future public effective date', function (mixed $date) {
@@ -183,6 +183,6 @@ it('shows the owner publication date without satisfying a missing operational ef
     expect(app(PrivacyNotice::class)->isPublished())->toBeFalse();
     $this->get('/privacy-policy')->assertOk()
         ->assertHeader('X-Robots-Tag', 'noindex, follow, noarchive')
-        ->assertSee('Effective date')->assertSee('November 2, 2026');
+        ->assertSee('Effective date')->assertSee('November 15, 2026');
     $this->artisan('legal:check-privacy')->assertFailed();
 })->with([null, '']);

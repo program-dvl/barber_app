@@ -30,7 +30,7 @@ it('publishes unique substantive feature pages', function (string $slug, string 
 })->with([
     ['online-booking', 'Book appointments online'],
     ['calendar-and-walk-ins', 'Manage appointments and walk-ins together'],
-    ['client-management', 'Keep client history and preferences together'],
+    ['client-management', 'Keep client records, notes and visit history together'],
     ['checkout-and-reporting', 'Complete checkout and understand your reports'],
 ]);
 

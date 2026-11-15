@@ -1,4 +1,5 @@
 <script setup>
+import RelatedReading from '@/Components/Marketing/RelatedReading.vue';
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
 import ConversionBand from '@/Components/Marketing/ConversionBand.vue';
 import PublicContainer from '@/Components/Marketing/PublicContainer.vue';
@@ -8,7 +9,7 @@ import { featureVisuals, marketingFamilyVisuals, solutionVisuals, useCaseVisuals
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ useCase: Object, feature: Object, solution: Object, seo: Object });
+defineProps({ useCase: Object, feature: Object, solution: Object, reading: Array, seo: Object });
 </script>
 
 <template>
@@ -105,6 +106,7 @@ defineProps({ useCase: Object, feature: Object, solution: Object, seo: Object })
             </PublicContainer>
         </section>
 
+        <RelatedReading :items="reading" />
         <ConversionBand :title="`Make your next working day easier to manage.`" description="Try the workflow with your services, team and working hours." :context="`use_case_${useCase.slug}_final`" />
     </HomeLayout>
 </template>

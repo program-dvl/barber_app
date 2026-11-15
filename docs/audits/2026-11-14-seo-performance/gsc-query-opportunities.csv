@@ -1,0 +1,15 @@
+query,clicks,impressions,position,interpretation
+pt scheduling software,0,17,90.4,Peripheral scheduling intent; no clinical capability expansion
+pre-visit planning software,0,16,52.8,Inspect intent before investment
+salon client management,0,10,77.7,Relevant to existing client-management page
+physical therapy scheduling software,0,10,97.1,Peripheral scheduling intent; no clinical capability expansion
+spa scheduling software,0,9,91.3,Relevant supported industry but weak ranking
+hair salon waitlist management software,0,4,25.0,Small relevant opportunity; verify landing page before editing
+salon record keeping software,0,2,13.0,Small relevant opportunity; verify landing page before editing
+salon waitlist management software,0,2,30.0,Small relevant opportunity; verify landing page before editing
+salon database software,0,1,11.0,Too little data for standalone page
+barbershop management software,0,2,96.5,Core buyer intent; far from first page
+barbershop software,0,1,100.0,Core buyer intent; far from first page
+spa payroll software,0,5,87.0,Unsupported capability; do not pursue
+salon membership software,0,3,67.0,Unsupported capability; do not pursue
+how do i reduce no-shows and last-minute cancellations at my salon,0,1,77.0,Existing no-show guide; no duplicate article

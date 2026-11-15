@@ -1,5 +1,11 @@
 # Public website content and SEO
 
+Read-only performance review: [14 November SEO evidence and next-change plan](../audits/2026-11-14-seo-performance/README.md)
+covers all136 current Business sitemap URLs, seven blogs, authenticated Search
+Console/GA4 observations and measurement limitations. Its backlog is proposed;
+no tracking expansion, editorial publication or product behavior is approved by
+the audit. That historical audit predates the owner-approved 15 November refinement below.
+
 Updated: 2026-11-02. Scope: approved public acquisition under PRD sections 1–4,
 [FR-01 through FR-20](../product-requirements.md), ADR-024/026/033/061/063/065/080.
 This specification does not promote deferred product capabilities or waive launch gates.
@@ -285,3 +291,34 @@ prepared automatically from eligible published booking data. Canonical-origin ch
 reuse BRAND_WEBSITE_URL. The separate growth origin and business pilot allowlist are
 retired. One platform indexing switch defaults off. Public website acquisition URLs
 and private-page noindex/no-store contracts retain their existing behavior.
+
+
+## SEO follow-up — 2026-11-15
+
+FR-01/19/21; PRD sections 4/12/15 and the accepted measurement refinement:
+`PublicAnalytics` admits only a route-bound article passing `publishable()` on the
+primary production host. It adds only that clean article path to the approved
+path set. Drafts, future/review-missing/blocked content, errors and signed-in visits
+remain unmeasured. Articles gain an explicit product/pricing/trial next step and
+publisher disclosure. RelatedReading reuses the publication scope on existing
+feature/use-case pages; withdrawing an article withdraws these links too.
+
+Consent version 2 renews prior acceptance, retaining unexpired rejection. After
+acceptance, browser-only classification adds finite `entry_source` labels to
+manual pageviews/CTA events; raw referrers remain empty and query/title/customer
+input remains excluded. Source labels stay in that document, including its
+Inertia public navigations, not across full reloads or registration. They do not
+repair standard GA channel reports or identify organic signups. Actual feature
+hero/evidence and article trial contexts use the bounded click transport.
+
+Client-management copy names the records/handoff job; its client-history use-case
+links to salons and distinct consultation/migration guidance. Maintained guides
+`service-timing-and-buffers` and `switch-from-paper-bookings` use the existing
+Resources, print, sitemap and shared AppNotice presentation. No new specialist
+feature, dynamic local page or author biography is implied.
+
+Article schema includes the actual SEO image. `Article::publicUpdatedAt()` excludes
+pre-publication and future updates from the visible/schema projection, retaining
+stored values and first publication. An author URL remains absent until an actual
+substantive bio exists. Privacy 1.3 explains the approved scope; no provider or
+privacy operational setting is changed. [Evidence and release checks](../audits/2026-11-15-seo-followup/README.md).

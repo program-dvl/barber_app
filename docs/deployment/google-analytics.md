@@ -97,3 +97,75 @@ a mock callback alone did not catch the production processing failure.
 
 [Google event grouping](https://support.google.com/analytics/answer/9322688),
 [callback parameters](https://developers.google.com/tag-platform/gtagjs/reference/parameters).
+
+## Article/source measurement release — 2026-11-15
+
+Owner-approved scope refinement: eligible published articles, finite source
+families and an internal aggregate outcome report. Deploy the reviewed PHP/config/
+Vue sources with the matching client and SSR builds. Refresh normal application
+configuration so Privacy 1.3 is displayed. No new environment variable, API secret,
+database migration, Ads link or automatic event is needed.
+
+Consent payload 2 renews old acceptance while retaining unexpired rejection in
+`clipperdesk:analytics-consent:v1`. The key stays stable deliberately. New rejections keep payload version1 so the previous release also respects them during rollback; expanded acceptance uses version2. Staff and
+release testers should choose Reject optional cookies in their normal browser;
+use a separate controlled session for the acceptance test and label its date in
+report notes. This is not a verified server-wide internal-traffic filter.
+
+`entry_source` is a custom event parameter with six values: `google`, `bing`,
+`other_search`, `other_referral`, `direct_or_unknown`, `internal_or_unknown`.
+It is derived only after consent and lasts only in the current document, including
+Inertia public navigations. It contains no raw URL, query, campaign text or identity.
+Google/other-search families are referrer families, not proof of organic traffic;
+paid clicks, apps and privacy behavior can make source evidence ambiguous.
+
+After deploying and observing a controlled event in the dedicated property, use
+GA4 Admin → Data display → Custom definitions → Create custom dimension:
+**Public entry source**, Event scope, event parameter **entry_source**. First
+check for an existing matching definition; do not create duplicates. This enables
+custom reporting for future processed events, not a historical backfill or repair
+of GA4's standard channel grouping. Do not mark source labels, pageviews or trial
+activation as new key events or assign monetary values. Preserve the existing
+bounded `marketing_cta_clicked` key-event meaning: button click only. Normal
+processing/custom-definition reporting may lag; check actual receipt and the
+reported definition before treating the report as ready.
+
+Release verification must cover an existing published article, draft/unavailable
+article, home→article→product navigation, article trial click→fresh registration,
+renewed acceptance, retained rejection, withdrawal, GPC/DNT, blocked Google script,
+storage failure and duplicate-click handling. No Google request before consent or
+on registration/private routes. Confirm real Google receipt in addition to mocks.
+Use realistic mobile/desktop viewports and review the actual notice/actions.
+[Implementation evidence and pending checks](../audits/2026-11-15-seo-followup/README.md).
+
+The custom dimension and deployed receipt were not changed/verified in this
+implementation chat because browser access became unavailable. The new entry
+parameter cannot be analysed in normal GA custom reports until the definition and
+new data are available.
+
+### Aggregate registrations and verified trials
+
+Run through authorized operator CLI access on the desired deployed revision:
+
+```sh
+php artisan analytics:acquisition-report --from=2026-11-04 --to=2026-11-10 --timezone=Asia/Kolkata
+```
+
+The JSON has no account names, contacts or IDs. `owner_registrations` counts saved
+owner intents created in the local-date range; `verified_trial_activations` counts
+distinct completed verified-owner onboarding records with a saved trial subscription
+by completion date. Pending/unverified accounts are not trial activations. Explicit
+pitch-demo provenance is excluded; unmarked testing and missing/deleted historical
+records remain coverage limits. Never infer test status from names, country or OS.
+
+`trial_cohort_booking_setup_published` is the current published-setup state of
+that trial cohort. It is not a first-visit metric, a publication-within-24-hours
+metric or proof of a valid future booking slot. Registration and trial counts use
+different event dates, so dividing them is not a registration-cohort conversion
+rate. No Google visitor/account join or organic attribution is performed. Keep
+this internal aggregate report separate from CTA counts and revenue reports.
+
+Rollback: clearing only the existing measurement ID and rebuilding configuration
+stops new guest measurement as before. Reverting the code should preserve cookie
+rejections and stored account/article history. Do not delete data, change historical
+publication timestamps, remove the Google property or weaken private gates.

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Controller;
 use App\Support\Seo\PublicPage;
+use App\Support\Seo\RelatedReading;
 use Inertia\Response;
 
 class UseCaseController extends Controller
@@ -41,6 +42,7 @@ class UseCaseController extends Controller
 
         return PublicPage::render('Marketing/UseCases/Show', [
             'useCase' => [...collect($content)->except('requirements')->all(), 'slug' => $useCase],
+            'reading' => app(RelatedReading::class)->forFeature($content['feature']),
             'feature' => [
                 'slug' => $content['feature'],
                 'label' => $features[$content['feature']]['label'],

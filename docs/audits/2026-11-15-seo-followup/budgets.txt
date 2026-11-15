@@ -1,0 +1,5 @@
+
+> check:frontsite-budgets
+> node scripts/check-frontsite-budgets.mjs
+
+Frontsite budgets passed for 25 route entries.

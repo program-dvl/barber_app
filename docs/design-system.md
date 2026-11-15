@@ -1488,3 +1488,22 @@ inputs, focus rings and the explicit unselected consent line. Saving immediately
 one shared success notice with the area and email; another-area action resets city
 and consent. Treat ordinary throttling as information, and show a recoverable warning
 only if the subscription cannot be saved. Email delivery does not gate signup.
+
+
+### Public SEO journeys and consent renewal — 2026-11-15
+
+Existing feature and use-case pages use RelatedReading cards for relevant published
+articles and maintained guides; hide the region when no items qualify. Use normal
+public typography, descriptive link names and existing touch/focus styling.
+Articles offer one next-step section with a wrapping, spaced trial/walkthrough/
+pricing row and a concise publisher disclosure. No fabricated testimonials or
+expert credentials. New timing/changeover guides reuse the existing guide layout,
+print action and restrained Before you use this guide AppNotice.
+
+The shared cookie notice names public articles and broad visit-source measurement.
+Keep equal Accept optional cookies / Reject optional cookies controls, privacy link,
+footer reopening and useful storage-failure copy. Version2 renews prior acceptance;
+prior rejection remains effective. No new success toast or recovery action is
+introduced. Phone source/guide checks are recorded in the
+[follow-up evidence](audits/2026-11-15-seo-followup/README.md); remaining notice/desktop
+visual certification is explicitly pending after browser access became unavailable.

@@ -1264,3 +1264,25 @@ retention and separate booking/account consent. Do not mark an unverified addres
 email-verified. Existing emailed confirmation links remain valid under their original
 expiry, without becoming mandatory for new signups. Ongoing newsletters/campaigns
 remain a separate scope decision; newsletter here describes the signup experience.
+
+
+### Approved public SEO measurement and content refinement — 2026-11-15
+
+FR-01/19/21 and sections 4/12/15: the owner approved implementation of the
+14 November SEO plan. Extend prior-opt-in public measurement to eligible reviewed,
+published article routes and finite broad entry-source labels, derived after
+consent without raw referrers or queries. Renew prior acceptance for this expanded
+scope; preserve unexpired rejection, GPC/DNT and all private-page exclusions.
+No linked signup identity, server-to-Google conversion send or advertising is
+approved. Report verified trial activation separately using existing internal
+registration/subscription aggregates, with local-date boundaries and explicit
+coverage/test-data limits. Source families are diagnostic and do not establish
+organic attribution or a signup conversion rate.
+
+Improve factual Business/Marketplace copy, relevant existing client-record and
+booking journeys, Article image/date projection, and two distinct printable guides
+on service timing and moving from paper bookings. Preserve existing blog URLs,
+publication controls, payment limitations, public/private separation and inventory-
+backed Marketplace gates. Privacy disclosure becomes1.3 with 15 November 2026 as its
+owner-authorized public update/date; this is not counsel/operational certification.
+See the [accepted refinement](decisions.md#public-seo-measurement-and-content-refinement--2026-11-15).

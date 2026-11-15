@@ -1,4 +1,5 @@
 <script setup>
+import RelatedReading from '@/Components/Marketing/RelatedReading.vue';
 import SetupSupport from '@/Components/Marketing/SetupSupport.vue';
 import ProductEvidence from '@/Components/Marketing/ProductEvidence.vue';
 import PublicCta from '@/Components/Marketing/PublicCta.vue';
@@ -11,7 +12,7 @@ import { featureVisuals, marketingFamilyVisuals, visualFor } from '@/Support/mar
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({ feature: Object, related: Array, seo: Object });
+defineProps({ feature: Object, related: Array, reading: Array, seo: Object });
 </script>
 
 <template>
@@ -101,6 +102,7 @@ defineProps({ feature: Object, related: Array, seo: Object });
 
         <ProductEvidence v-if="feature.screenshots?.length || feature.faqs?.length" :screenshots="feature.screenshots" :scenario="feature.scenario" :faqs="feature.faqs" :context="`feature_${feature.slug}_evidence`" />
 
+        <RelatedReading :items="reading" />
         <SetupSupport />
         <ConversionBand :title="`Bring ${feature.label.toLowerCase()} into your working day.`" description="Set up your services and team, then preview your booking page before sharing it." :context="`feature_${feature.slug}_final`" />
     </HomeLayout>

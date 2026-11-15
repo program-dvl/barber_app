@@ -2,6 +2,7 @@
 
 namespace App\Support\Seo;
 
+use App\Models\Article;
 use Illuminate\Http\Request;
 
 class PublicAnalytics
@@ -31,6 +32,16 @@ class PublicAnalytics
         }
         $path = '/'.ltrim($request->path(), '/');
         $marketing = $request->routeIs('marketing.*', 'blog.index') && in_array($path, $paths, true);
+        // Only the controller's published, reviewed route-bound article qualifies.
+        // Never admit arbitrary slugs, previews or draft/error responses.
+        $article = $request->routeIs('blog.article') ? $request->route('article') : null;
+        if ($request->routeIs('blog.article') && $article instanceof Article
+            && preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $article->slug)
+            && $path === '/blog/'.$article->slug
+            && Article::query()->publishable()->whereKey($article->getKey())->exists()) {
+            $marketing = true;
+            $paths[] = $path;
+        }
         if (! $marketing && ! $request->routeIs('terms.show', 'policy.show', 'refund.show')) {
             return null;
         }

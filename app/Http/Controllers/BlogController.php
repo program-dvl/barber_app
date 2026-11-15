@@ -56,7 +56,7 @@ class BlogController extends Controller
 
         return PublicPage::render('Article', [
             'article' => [...$this->summary($article), 'html' => $renderer->render($article->content),
-                'materially_updated_at' => $article->materially_updated_at?->toIso8601String()],
+                'materially_updated_at' => $article->publicUpdatedAt()],
             'related' => $related,
             'seo' => [
                 'title' => $seoTitle,

@@ -1,0 +1,166 @@
+{
+  "observed_on": "2026-11-14",
+  "collection_method": "Authenticated Google UI read-only; tables manually transcribed, not API exports",
+  "gsc": {
+    "property": "sc-domain:clipperdesk.com",
+    "selected_range": "3 months",
+    "displayed_data_start": "2026-10-11",
+    "displayed_data_end": "2026-11-10",
+    "clicks": 1,
+    "impressions": 293,
+    "ctr_display": "0.3%",
+    "average_position": 67.9,
+    "reported_pages": 54,
+    "reported_queries": 89,
+    "index_report_date": "2026-11-09",
+    "indexed": 136,
+    "not_indexed": 160,
+    "exclusions": {
+      "redirect": 111,
+      "noindex": 34,
+      "alternative_canonical": 10,
+      "404": 1,
+      "discovered_not_indexed": 3,
+      "different_canonical": 1
+    },
+    "discovered_not_indexed": [
+      "/blog/how-to-start-a-hair-salon-in-2027-costs-checklist-business-plan",
+      "/security",
+      "/help/articles/account-profile"
+    ],
+    "indexed_examples": 136,
+    "indexed_help_examples": 94,
+    "indexed_booking_aliases": [
+      "https://book.clipperdesk.com/security",
+      "https://book.clipperdesk.com/resources",
+      "https://book.clipperdesk.com/features/checkout-and-reporting"
+    ],
+    "canonical_discrepancy_example": "https://www.clipperdesk.com/use-cases/keep-client-history-together",
+    "not_found_example": "https://book.clipperdesk.com/help",
+    "sitemap": {
+      "status": "Success",
+      "submitted": "2026-11-02",
+      "last_read": "2026-11-12",
+      "discovered": 136
+    },
+    "links": {
+      "reported_external": 0,
+      "reported_internal": 1158
+    },
+    "core_web_vitals": "Insufficient mobile and desktop field data",
+    "countries_top": [
+      [
+        "United States",
+        1,
+        199,
+        66.0
+      ],
+      [
+        "Australia",
+        0,
+        22,
+        89.0
+      ],
+      [
+        "United Kingdom",
+        0,
+        21,
+        72.8
+      ],
+      [
+        "Canada",
+        0,
+        16,
+        90.7
+      ],
+      [
+        "India",
+        0,
+        10,
+        44.8
+      ]
+    ],
+    "devices": [
+      [
+        "mobile",
+        1,
+        83,
+        68.6
+      ],
+      [
+        "desktop",
+        0,
+        209,
+        68.0
+      ],
+      [
+        "tablet",
+        0,
+        1,
+        2.0
+      ]
+    ],
+    "manual_actions": "No issues detected",
+    "security_issues": "No issues detected"
+  },
+  "ga4": {
+    "property": "561865152",
+    "range_start": "2026-10-17",
+    "range_end": "2026-11-13",
+    "collection_enabled_date_from_prior_evidence": "2026-11-02",
+    "active_users": 8,
+    "new_users": 8,
+    "sessions": 20,
+    "engaged_sessions": 9,
+    "engagement_rate_percent": 45,
+    "average_engagement_seconds_per_active_user": 26,
+    "average_engagement_seconds_per_session": 10,
+    "page_views": 47,
+    "events": 82,
+    "key_events": 3,
+    "cta_events": 6,
+    "cta_event_users": 3,
+    "pricing_interval_changes": 1,
+    "channels": {
+      "Direct": 20
+    },
+    "countries": {
+      "India": 7,
+      "United States": 1
+    },
+    "device": {
+      "desktop": 8
+    },
+    "os": {
+      "Macintosh": 8
+    },
+    "revenue_display_usd": 0,
+    "limitations": [
+      "Blog details, Help, private and signed-in routes excluded",
+      "Query and referrer removed; Direct is not reliable channel attribution",
+      "CTA is not completed signup; no revenue instrumentation",
+      "Consent and owner testing may affect sample; no verified internal-user exclusion"
+    ]
+  },
+  "scope": {
+    "business_sitemap_urls": 136,
+    "blog_articles": 7,
+    "help_urls": 95,
+    "nonhelp_urls": 41,
+    "public_content_requests": 50,
+    "marketplace_sitemap_shards": 0,
+    "known_demo_profile_status": 404
+  },
+  "period_comparison": {
+    "2026-10-28_to_2026-11-03": {
+      "impressions": 56,
+      "clicks": 0
+    },
+    "2026-11-04_to_2026-11-10": {
+      "impressions": 227,
+      "clicks": 1
+    },
+    "impressions_increase_percent": 305.4,
+    "caution": "Small sample, multiple releases, changing query mix; not causal evidence"
+  }
+}

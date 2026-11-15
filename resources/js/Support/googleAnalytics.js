@@ -4,16 +4,34 @@ const day = 24 * 60 * 60 * 1000;
 const layerName = 'clipperDeskAnalyticsLayer';
 const legalPaths = new Set(['/privacy-policy', '/terms-of-service', '/refund-policy']);
 const publicPath = /^(?:\/|\/(?:features|solutions|use-cases)(?:\/[a-z0-9-]+)?|\/guides\/[a-z0-9-]+|\/(?:pricing|company|security|resources|blog))$/;
+const articlePath = /^\/blog\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+// A source family, not a person, campaign or promise of organic attribution.
+// No URL, query or referrer is retained or sent; the label lives in this document only.
+export function publicEntrySource(referrer, origin) {
+    if (!referrer) return 'direct_or_unknown';
+    try {
+        const url = new URL(referrer);
+        if (!['http:', 'https:'].includes(url.protocol)) return 'direct_or_unknown';
+        if (url.origin === origin) return 'internal_or_unknown';
+        const host = url.hostname.toLowerCase();
+        if (/^(?:www\.)?google\.(?:com|ca|co\.uk|co\.in|com\.au|de|fr|ie|co\.nz)$/.test(host)) return 'google';
+        if (['bing.com', 'www.bing.com'].includes(host)) return 'bing';
+        if (['duckduckgo.com', 'www.duckduckgo.com', 'search.yahoo.com'].includes(host)) return 'other_search';
+        return 'other_referral';
+    } catch { return 'direct_or_unknown'; }
+}
 
 // The injectable browser boundary lets tests exercise privacy without contacting Google.
 export function createMarketingAnalytics({ window: browser, document: doc, now = Date.now } = {}) {
     let config = null, consent = null, opened = false, storageError = false;
     let suspended = false, attempted = false, loaded = false, initialized = false, failed = false, script = null, timer = null, lastPage = null;
-    let id = null, preferenceOpener = null, expiryTimer = null, pendingTrial = null;
+    let id = null, preferenceOpener = null, expiryTimer = null, pendingTrial = null, entrySource = null;
     const listeners = new Set();
     const privacySignal = () => browser.navigator?.globalPrivacyControl === true
         || ['1', 'yes'].includes(String(browser.navigator?.doNotTrack ?? browser.doNotTrack ?? '').toLowerCase());
-    const validConsent = record => record?.version === 1 && ['accepted', 'rejected'].includes(record.choice)
+    // Renew old acceptance for the expanded article/source scope; retain old rejection.
+    const validConsent = record => (record?.version === 2 || (record?.version === 1 && record.choice === 'rejected')) && ['accepted', 'rejected'].includes(record.choice)
         && Number.isFinite(record.expires_at) && record.expires_at > now()
         && record.expires_at <= now() + ANALYTICS_CONSENT_DAYS * day;
     function readConsent() {
@@ -84,7 +102,8 @@ export function createMarketingAnalytics({ window: browser, document: doc, now =
         command('event', 'page_view', pageParameters());
     }
     function pageParameters() {
-        return { send_to: id, ...currentPageFields() };
+        entrySource ??= publicEntrySource(doc.referrer, browser.location.origin);
+        return { send_to: id, ...currentPageFields(), entry_source: entrySource };
     }
     function currentPageFields() {
         return { page_location: config.page.location, page_referrer: '', page_title: 'ClipperDesk' };
@@ -136,7 +155,7 @@ export function createMarketingAnalytics({ window: browser, document: doc, now =
         const value = page?.props?.publicAnalytics;
         if (!value || page.props.auth?.user || !/^G-[A-Z0-9]{6,20}$/.test(value.measurement_id || '')
             || browser.location.protocol !== 'https:') return null;
-        const paths = Array.isArray(value.paths) ? value.paths.filter(path => publicPath.test(path)) : [];
+        const paths = Array.isArray(value.paths) ? value.paths.filter(path => publicPath.test(path) || articlePath.test(path)) : [];
         try {
             const actual = new URL(page.url, browser.location.origin);
             if (actual.origin !== browser.location.origin) return null;
@@ -162,7 +181,9 @@ export function createMarketingAnalytics({ window: browser, document: doc, now =
     function choose(choice) {
         if (!config || !['accepted', 'rejected'].includes(choice) || (choice === 'accepted' && privacySignal())) return false;
         disable();
-        const record = { version: 1, choice, expires_at: now() + ANALYTICS_CONSENT_DAYS * day };
+        // Rejection is scope-independent and remains understood by the prior release
+        // if deployment is rolled back. Only expanded acceptance needs version2.
+        const record = { version: choice === 'accepted' ? 2 : 1, choice, expires_at: now() + ANALYTICS_CONSENT_DAYS * day };
         try {
             browser.localStorage.setItem(ANALYTICS_CONSENT_KEY, JSON.stringify(record));
             if (browser.localStorage.getItem(ANALYTICS_CONSENT_KEY) !== JSON.stringify(record)) throw Error();
@@ -177,6 +198,7 @@ export function createMarketingAnalytics({ window: browser, document: doc, now =
             opened = true;
         }
         if (!accepted()) {
+            entrySource = null;
             clearCookies();
             script?.remove();
             armConsentExpiry();
@@ -226,9 +248,11 @@ export function createMarketingAnalytics({ window: browser, document: doc, now =
             if (slug && ['features', 'solutions', 'use-cases'].includes(group)) {
                 const prefix = { features: 'feature', solutions: 'solution', 'use-cases': 'use_case' }[group];
                 contexts.add(`${prefix}_${slug}_final`);
-                if (group === 'solutions') contexts.add(`${prefix}_${slug}_hero`);
+                contexts.add(`${prefix}_${slug}_hero`);
+                if (['features', 'solutions'].includes(group)) contexts.add(`${prefix}_${slug}_evidence`);
             }
         }
+        if (articlePath.test(config.page.path)) contexts.add('article_next_step');
         if (contexts.has(context) && link.dataset.ctaAction === 'trial' && loaded) {
             const parameters = { ...pageParameters(), cta_context: context, cta_action: 'trial' };
             if (leavesDocument && trialDestination) {

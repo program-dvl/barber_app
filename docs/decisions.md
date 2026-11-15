@@ -3159,7 +3159,7 @@ not waive this existing financial-operations launch gate.
 | OPEN-09 | Approve the Prompt 00 remove/replace inventory for Larafast marketing, roadmap, AI, content, and superseded provider surfaces | Reduces dead code and prevents confusing product ownership | Before cleanup is authorized | **Retained.** Legacy surfaces remain quarantined; no destructive cleanup was silently assumed. Medium launch risk owned by Product/Engineering; named owner and date unassigned. |
 | OPEN-10 | Final data retention and anonymisation schedule plus destructive executor authorization | Client privacy, attachments, audit events, financial records, and closure are safely bounded by ADR-018 but cannot complete destructive requests | Before destructive processing or paid public launch | **Retained; Critical blocker.** Requires jurisdiction-appropriate privacy counsel and Product approval; the Canadian operator/contact facts in ADR-062 do not authorize destruction. No waiver or expiry exists. |
 | OPEN-11 | Complete counsel-led ClipperDesk trademark clearance and acquire the approved production domains | ADR-027 selects the identity, but naming rights, domain ownership, sender authentication, and defensive domains are external launch controls | Before public launch, outbound production mail, or printed collateral | **Retained; Critical/High blocker.** Product/Operations and counsel must approve and acquire the final public, app, and booking domains; configuration defaults do not establish ownership. No waiver or expiry exists. |
-| OPEN-12 | Approve marketing attribution/analytics provider, consent class, retention, and accountable privacy owner | Phase 1.5 can implement a bounded first-party event contract, but cannot load a tracker, advertising pixel, fingerprinting, session replay, or claim consent/retention approval | Before enabling any third-party marketing measurement or paid acquisition | **Partially resolved by the owner-directed ADR-079.** GA4 is selected for prior-opt-in guest public-page/CTA/interval measurement, with bounded fields, short retention and the existing privacy intake. Broader attribution, advertising, cross-service identities and regional counsel/transfer review remain open; no privacy-owner appointment or legal approval is inferred. |
+| OPEN-12 | Approve marketing attribution/analytics provider, consent class, retention, and accountable privacy owner | Phase 1.5 can implement a bounded first-party event contract, but cannot load a tracker, advertising pixel, fingerprinting, session replay, or claim consent/retention approval | Before enabling any third-party marketing measurement or paid acquisition | **Partially resolved by the owner-directed ADR-079.** GA4 is selected for prior-opt-in guest public-page/CTA/interval measurement, with bounded fields, short retention and the existing privacy intake. Broader attribution, advertising, cross-service identities and regional counsel/transfer review remain open; no privacy-owner appointment or legal approval is inferred. The [2026-11-14 audit](audits/2026-11-14-seo-performance/README.md) identified excluded blog details and missing channel evidence. The owner subsequently approved the bounded article/source/aggregate-outcome implementation on 2026-11-15 (see the accepted refinement below). Raw referrer collection, advertising, cross-service identity and linked signup attribution remain unapproved; accountable privacy-owner and regional transfer review remain open. |
 | OPEN-13 | Approve the legal operator/contact suite and live refund responsibility for subscription and appointment payments | Stripe India website review expects public Terms, Privacy and Return/Refund/Cancellation URLs plus customer-service details and processing timelines; the current appointment adapter records internal refunds but has no certified provider refund executor or approved live merchant-of-record/connected-account allocation | Before legal documents become effective or any live payment is accepted | **Open; Critical/High blocker.** Legal/Product must approve operator, address, governing/dispute/liability terms and version acceptance; Finance/Operations must own direct support, request/decision/submission timelines, and the live Stripe subscription and appointment refund/reconciliation paths. Terms/refund remain non-effective review documents. ADR-062 supplies operator/contact facts and an approval-gated privacy notice; remaining contract, operations and refund approvals are retained. |
 | OPEN-14 | Restore the remaining module documentation referenced by AGENTS.md | Communications, dashboard, product experience and scheduling specifications are restored; other domain module documents remain absent or partial | Before the next affected domain scope change | **Partially resolved.** `docs/modules/communications.md`, `dashboard.md`, `product-experience.md` and `scheduling-operations.md` are restored; `client-records.md` now restores CRM, history, governed commands and operational linkage (ADR-046). `checkout-sales.md` now restores checkout, payments, receipt and refund boundaries (ADR-047). `team-availability.md` now restores workforce, reviewed schedule/service changes and read/access boundaries (ADR-048). `services.md` now restores the catalogue, reviewed commands and booking/commerce boundaries (ADR-049). `business-setup.md` now restores initialization, operational readiness, reviewed edits and explicit publication (ADR-053). Restore the remaining affected specifications before changing those domains. |
 | OPEN-15 | Approve the exact first-country launch order and complete regional legal, commerce and public-site profiles | The product owner selected the United States, Canada, the United Kingdom and selected Europe as target markets, while current commerce/public content still contains India/INR/`en-IN` assumptions; SMS registration, consent language, quiet hours, taxes, receipts, currency and privacy obligations differ by country | Before any paid regional launch or live mobile sending | **Open; Critical/High blocker bounded by ADR-039.** Product must choose the first exact countries and supported currencies. Named legal/privacy/finance owners must approve country-specific policies and provider registrations before live enablement. |
@@ -3650,3 +3650,47 @@ the subscription active and records a safe support reference. Storage failures n
 claim signup success. Duplicate submissions are idempotent and ordinary waits do not
 become large warnings. The newsletter-style form is compact, stacks on phones and
 uses the shared success notice. No ongoing promotional campaign is approved here.
+
+
+### Public SEO measurement and content refinement — 2026-11-15
+
+Accepted from the owner's “go ahead and work on it” approval of the
+[14 November audit and prioritized plan](audits/2026-11-14-seo-performance/README.md),
+followed by an instruction to continue unfinished work. Scope: FR-01/19/21,
+PRD sections 4/12/15, ADR-065/079 and MP-01/04. This is the product owner's
+bounded implementation approval, not a legal/privacy/provider certification.
+
+- Extend guest GA4 pageviews only to route-bound, actually publishable reviewed
+  articles, preserving exact production origin, consent and error/private gates.
+  Article slugs are server-approved; arbitrary content/preview paths remain out.
+- Add only the finite `entry_source` families `google`, `bing`, `other_search`,
+  `other_referral`, `direct_or_unknown` and `internal_or_unknown`. Derive the
+  label in the browser after consent; never send/store raw referrers, query
+  strings or campaign values. A Google family does not establish organic search.
+  Keep the label in the current document only; no session/account cross-service
+  bridge, new cookie, identifier, ad feature or server-side Google send.
+- Consent payload version 2 renews prior acceptance for the expanded scope.
+  Unexpired prior rejection remains effective in the same storage key. Preserve
+  GPC/DNT, equal acceptance/rejection, storage-failure recovery, withdrawal,
+  180-day choice expiry, 60-day cookies and existing private navigation unloading.
+- Clarify disclosure as Privacy Policy 1.3, updated/public date15 November 2026.
+  Existing operational/indexation gates are not newly certified by this approval.
+- Count owner registrations and verified trial activations separately through a
+  read-only operator CLI using existing registration/subscription records. Apply
+  local reporting dates with UTC half-open boundaries; exclude explicit pitch-demo
+  provenance only. No identifying output, Google send, data mutation, organic
+  signup claim or registration-cohort conversion rate. Setup publication is a
+  separate current cohort state, not a valid-slot/24-hour activation claim.
+- Correct obsolete Marketplace exclusions, preserve actual availability/no-booking-
+  guarantee limits, improve client-record intent and product-to-guide journeys,
+  and add two maintained practical guides for timing and paper-diary changeover.
+  Keep all seven blog URLs/content, existing industries, primary-host redirects,
+  price/payment boundaries and Marketplace supply/indexation gates.
+- Use the actual featured image on Article markup. Omit misleading pre-publication
+  or future “updated” timestamps from the public projection without changing
+  stored editorial history. Do not invent author credentials/URLs or customer proof.
+
+Implementation/evidence and outstanding deployment checks:
+[audit](audits/2026-11-15-seo-followup/README.md). Other weeks/supply-dependent work
+requires its stated real evidence; this approval does not manufacture customers,
+local listings, testimonials, expert biographies or an expansion into Phase 2.

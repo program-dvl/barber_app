@@ -76,7 +76,7 @@ class StructuredDataGraph
         $graph[] = $software;
         if ($request->routeIs('blog.article') && filled(data_get($props, 'article.title'))) {
             $article = data_get($props, 'article', []);
-            $graph[] = ['@type' => 'Article', '@id' => $canonical.'#article', 'headline' => $article['title'], 'description' => $article['excerpt'], 'datePublished' => $article['published_at'], 'dateModified' => $article['materially_updated_at'] ?? $article['published_at'], 'author' => ['@type' => 'Person', 'name' => $article['author']], 'publisher' => ['@id' => $organizationId], 'mainEntityOfPage' => ['@id' => $canonical.'#webpage']];
+            $graph[] = ['@type' => 'Article', '@id' => $canonical.'#article', 'headline' => $article['title'], 'description' => $article['excerpt'], 'datePublished' => $article['published_at'], 'dateModified' => $article['materially_updated_at'] ?? $article['published_at'], 'image' => data_get($props, 'seo.image'), 'author' => ['@type' => 'Person', 'name' => $article['author']], 'publisher' => ['@id' => $organizationId], 'mainEntityOfPage' => ['@id' => $canonical.'#webpage']];
         }
         if ($request->routeIs('marketing.guides.show') && filled(data_get($props, 'guide.title'))) {
             $guide = data_get($props, 'guide', []);

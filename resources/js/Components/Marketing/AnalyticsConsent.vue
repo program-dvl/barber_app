@@ -20,7 +20,7 @@ const choose = choice => getMarketingAnalytics()?.choose(choice);
         <AppNotice title="Your cookie choices">
             <p v-if="state.privacySignal">Your browser asks us to keep analytics off. We respect that choice.</p>
             <p v-else-if="state.storageError">Your browser couldn't save this choice. Analytics is off. You can keep browsing.</p>
-            <p v-else>We use essential cookies for sign-in and account security. With your permission, optional cookies from Google Analytics helps us understand visits and trial buttons on our public website. It stays off until you accept. Your bookings and workspace are excluded.</p>
+            <p v-else>We use essential cookies for sign-in and account security. With your permission, Google Analytics measures public pages and articles, broad visit sources and trial-button clicks. It stays off until you accept. Your bookings and workspace are excluded.</p>
             <p><a href="/privacy-policy#cookies-and-website-measurement" class="underline underline-offset-4">Read our privacy policy</a>. Change your choice anytime using Cookie settings in the footer.</p>
             <template #actions>
                 <template v-if="!state.privacySignal && !state.storageError">
