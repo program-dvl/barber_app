@@ -3694,3 +3694,26 @@ Implementation/evidence and outstanding deployment checks:
 [audit](audits/2026-11-15-seo-followup/README.md). Other weeks/supply-dependent work
 requires its stated real evidence; this approval does not manufacture customers,
 local listings, testimonials, expert biographies or an expansion into Phase 2.
+
+### Free no-show calculator with optional refinements — 2026-11-16
+
+Accepted from the owner's tool-build request and follow-up asking for more accurate
+value without lengthy input. Scope FR-01/19/21, public acquisition sections 4/12/15.
+The tool is a curated, indexable public route and sitemap entry linked from Resources
+and the Business footer, with existing canonical/alias and private-page protections.
+It uses the existing Business shell and shared notification components.
+
+The quick view needs average service value and monthly missed visits. Optional
+refinements subtract refilled slots first, then retained payments and costs actually
+avoided for remaining empty slots. Earnings at risk is floored at zero; fixed costs
+and tax are excluded. Yearly figures repeat the same monthly rate. The scenario
+assumes proportionally fewer empty slots and the same average retained payments,
+prices and avoidable costs. It does not treat a retained deposit as new revenue or
+subtract costs for an already-refilled visit a second time. A monthly scenario is
+rounded to the currency minor unit before its yearly equivalent.
+
+Calculations run in the browser using integer minor units; inputs never enter URLs,
+backend storage or analytics. Currency selection changes display currency without
+conversion. Copy/share uses explicit user action with a selectable fallback; no
+third-party calculator or export service is introduced. Existing public analytics
+allowlists are not expanded. Backlink outreach/deployment remain separate actions.

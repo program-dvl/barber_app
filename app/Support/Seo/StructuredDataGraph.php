@@ -74,6 +74,13 @@ class StructuredDataGraph
             ]))->values()->all();
         }
         $graph[] = $software;
+        if ($request->routeIs('marketing.tools.no-show')) {
+            $graph[] = ['@type' => 'BreadcrumbList', 'itemListElement' => [
+                ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => PublicUrl::canonical(route('marketing.home'))],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => 'Resources', 'item' => PublicUrl::canonical(route('marketing.resources'))],
+                ['@type' => 'ListItem', 'position' => 3, 'name' => 'No-show cost calculator', 'item' => $canonical],
+            ]];
+        }
         if ($request->routeIs('blog.article') && filled(data_get($props, 'article.title'))) {
             $article = data_get($props, 'article', []);
             $graph[] = ['@type' => 'Article', '@id' => $canonical.'#article', 'headline' => $article['title'], 'description' => $article['excerpt'], 'datePublished' => $article['published_at'], 'dateModified' => $article['materially_updated_at'] ?? $article['published_at'], 'image' => data_get($props, 'seo.image'), 'author' => ['@type' => 'Person', 'name' => $article['author']], 'publisher' => ['@id' => $organizationId], 'mainEntityOfPage' => ['@id' => $canonical.'#webpage']];

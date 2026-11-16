@@ -20,7 +20,7 @@ defineProps({ guides: Array, articleCount: Number, seo: Object });
                     <div class="cd-family-hero-copy">
                         <p class="cd-eyebrow">Resources</p>
                         <h1 class="mt-5 max-w-4xl font-display cd-public-title font-semibold leading-[0.98] tracking-[-0.055em] text-balance">Practical guides for your business.</h1>
-                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Free guides and printable checklists for salons, barbershops and other appointment-led businesses. Prepare booking, plan the day and leave a clear closing handoff.</p>
+                        <p class="mt-7 max-w-3xl text-lg leading-8 sm:text-xl">Free tools, guides and printable checklists for salons, barbershops and other appointment-led businesses. Prepare booking, plan the day and leave a clear closing handoff.</p>
                     </div>
                     <figure class="cd-family-hero-media">
                         <img class="cd-family-hero-image" :src="marketingFamilyVisuals.resources.src" :alt="marketingFamilyVisuals.resources.alt" width="1536" height="1024" fetchpriority="high" />
@@ -32,6 +32,10 @@ defineProps({ guides: Array, articleCount: Number, seo: Object });
 
         <section class="cd-public-section">
             <PublicContainer>
+                <div class="ns-resource-tool">
+                    <div><p class="cd-eyebrow">Free interactive tool</p><h2>What are missed appointments costing you?</h2><p>Estimate unpaid, unfilled appointment revenue and explore your own recovery scenario. No signup required.</p></div>
+                    <Link :href="route('marketing.tools.no-show')" class="cd-button cd-button-primary">Try the no-show calculator <ArrowRightIcon class="size-4" aria-hidden="true"/></Link>
+                </div>
                 <div class="mb-11 max-w-3xl">
                     <p class="cd-eyebrow">Working guides</p>
                     <h2 class="cd-public-section-title">Designed to be used, not simply read.</h2>
@@ -64,3 +68,7 @@ defineProps({ guides: Array, articleCount: Number, seo: Object });
         </section>
     </HomeLayout>
 </template>
+
+<style scoped>
+.ns-resource-tool{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:30px;background:#efedfa;border:1px solid #ddd7f3;border-radius:18px;margin-bottom:48px}.ns-resource-tool h2{font-size:27px;line-height:1.25;font-weight:650;letter-spacing:-.7px;margin:12px 0}.ns-resource-tool p:not(.cd-eyebrow){font-size:14px;line-height:1.8;color:#65708b;max-width:620px}.ns-resource-tool>a{flex-shrink:0;gap:12px}@media(max-width:850px){.ns-resource-tool{flex-direction:column;align-items:start;padding:25px}.ns-resource-tool h2{font-size:25px}}
+</style>

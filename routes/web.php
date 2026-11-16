@@ -17,6 +17,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Invoices\DownloadInvoiceController;
 use App\Http\Controllers\Marketing\FeatureController;
 use App\Http\Controllers\Marketing\LegalDocumentController;
+use App\Http\Controllers\Marketing\NoShowCalculatorController;
 use App\Http\Controllers\Marketing\PricingController;
 use App\Http\Controllers\Marketing\ProductTourController;
 use App\Http\Controllers\Marketing\ResourceController;
@@ -171,6 +172,7 @@ Route::prefix('help')->name('help.')->group(function (): void {
     Route::get('/open/{action}', [HelpCenterController::class, 'open'])->where('action', '[a-z0-9-]+')
         ->middleware(['auth:web', config('jetstream.auth_session'), 'verified'])->name('open');
 });
+Route::get('/tools/no-show-calculator', NoShowCalculatorController::class)->name('marketing.tools.no-show');
 Route::get('/resources', [ResourceController::class, 'index'])->name('marketing.resources');
 Route::get('/guides/{guide}', [ResourceController::class, 'guide'])->where('guide', '[a-z0-9-]+')->name('marketing.guides.show');
 Route::get('/features/{feature}', [FeatureController::class, 'show'])

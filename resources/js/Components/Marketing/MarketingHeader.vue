@@ -32,6 +32,7 @@ const navigation = computed(() => {
 
 const isCurrent = (item) => {
     const path = page.url.split('?')[0];
+    if (item.route === 'marketing.resources' && path === '/tools/no-show-calculator') return true;
     return item.route === 'marketing.home' ? path === '/' : path === item.prefix || path.startsWith(`${item.prefix}/`);
 };
 

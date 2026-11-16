@@ -1286,3 +1286,16 @@ publication controls, payment limitations, public/private separation and invento
 backed Marketplace gates. Privacy disclosure becomes1.3 with 15 November 2026 as its
 owner-authorized public update/date; this is not counsel/operational certification.
 See the [accepted refinement](decisions.md#public-seo-measurement-and-content-refinement--2026-11-15).
+
+### Owner-approved free no-show cost calculator — 2026-11-16
+
+FR-01/19/21 and public acquisition sections 4/12/15: provide a free, ungated public
+calculator at `/tools/no-show-calculator`, discoverable from Resources and the footer.
+Keep a quick two-field estimate, with optional refinements for refilled slots,
+retained payments for empty slots and per-visit costs avoided. Distinguish gross
+service value from estimated earnings at risk before fixed costs. Explain the
+formula, rounding, currency-display behavior and scenario assumptions. A scenario
+is user-selected, not a prediction or promised Clipperdesk result. Include six
+existing business currencies, copyable estimates, a clean share link and a useful
+product/guide next step. No account, database write, lead capture, payment, new
+analytics collection or guaranteed backlink/ranking outcome is implied.

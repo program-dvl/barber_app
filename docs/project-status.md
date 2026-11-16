@@ -4005,3 +4005,36 @@ assertions passed. Client and SSR builds passed. No production deployment is cla
 Final browser review verified immediate success, another-area signup with fresh
 consent, compact desktop/mobile layout and successful subscription during a local
 welcome-email transport outage. The preview browser console reported no errors.
+
+## Free no-show cost calculator — 2026-11-16 (local)
+
+Implemented `/tools/no-show-calculator` with the existing Business shell, a quick
+appointment-value/missed-visit estimate and optional refinements for refilled slots,
+kept payments and per-visit costs avoided. A transparent deduction breakdown and
+user-selected fewer-empty-slots scenario distinguish earnings at risk before fixed
+costs from gross service value. Six currencies, inline validation, copy/share and
+manual clipboard fallback are implemented without saving or measuring input values.
+Resources/footer links, canonical/alias policy, sitemap, breadcrumb schema and
+non-SSR readable formula/examples are included. No database migration or provider
+send is involved.
+
+Verified locally: 9 calculation tests; 41 frontend calculation/PublicHead/analytics
+checks; 300 Marketing backend tests passed with the live-renderer case skipped in
+that run (4,673 assertions); separate live built SSR run passed 5 tests / 54 assertions,
+including the actual calculator and Resources link. Client/SSR builds and 26-route
+frontsite budgets passed. CUA reports local browser access unavailable, so visual,
+keyboard and clipboard interaction checks at desktop/mobile remain unverified.
+No production deployment, backlink outreach or ranking improvement is claimed.
+[Evidence](audits/2026-11-16-no-show-calculator/README.md).
+
+### No-show calculator input wrapping repair — 2026-11-16 (local)
+
+Fixed the screenshot's split USD/visits labels across main and adjustment fields.
+Numeric controls now use remaining flex space; fixed affixes do not shrink or wrap.
+Matched leading currency/icon widths and stabilized refinement icons, scenario badges
+and monetary breakdown columns. Consolidated the page stylesheet without changing
+calculation behavior. Exact `http://127.0.0.1:8000/tools/no-show-calculator` read-only
+check returned the correct title and main/adjustment inputs. Built-renderer route
+checks passed: 5 tests / 76 assertions; math: 9 tests. Client/SSR builds, 26-route
+frontsite budgets and whitespace checks pass. Browser access is still unavailable;
+no pixel-perfect, desktop/mobile, keyboard or clipboard visual certification claimed.

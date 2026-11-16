@@ -322,3 +322,39 @@ pre-publication and future updates from the visible/schema projection, retaining
 stored values and first publication. An author URL remains absent until an actual
 substantive bio exists. Privacy 1.3 explains the approved scope; no provider or
 privacy operational setting is changed. [Evidence and release checks](../audits/2026-11-15-seo-followup/README.md).
+
+## Free no-show cost calculator — 2026-11-16
+
+Scope: FR-01/19/21, [approved calculator](../decisions.md#free-no-show-calculator-with-optional-refinements--2026-11-16).
+`marketing.tools.no-show` serves `/tools/no-show-calculator` in the Business marketing
+shell. Resources and the footer link to it; Resources remains the current header
+section. Central PublicPage/indexation/sitemap/canonical/alias and breadcrumb graph
+contracts apply. There is a human-readable formula/example fallback when SSR is
+unavailable and an explicit JavaScript requirement for interaction.
+
+The client-only model uses integer currency minor units. Average value ×
+(missed visits − refilled slots) gives the empty-slot service value. Subtract retained
+payments for those slots and their per-visit costs avoided, then floor at zero.
+The remaining number is estimated earnings at risk before fixed costs, not net
+profit. Optional refinements show the full deduction breakdown. A user-selected
+scenario models proportionally fewer empty slots with the same averages; annual
+values repeat the monthly rate. Six existing currencies are display choices, never
+exchange-rate conversion. Blank/invalid values clear results rather than silently
+becoming zero; zero visits and fully covered amounts are valid zero outcomes.
+
+Bounds: average/per-visit value up to 1,000,000, monthly visits up to 100,000, refilled
+visits no greater than missed visits, retained amounts up to the model's maximum
+gross service value. Currency inputs permit up to two decimals. Clipboard actions
+are explicit, use shared ToastRegion for brief confirmation, and provide AppNotice
+plus selectable text if unavailable. Inputs are neither stored nor measured, and
+no new analytics route/event eligibility is added. The CTA preserves authentication-
+aware trial/dashboard navigation and actual reminder/SMS capability limits.
+
+Evidence and browser limitation: [local calculator checks](../audits/2026-11-16-no-show-calculator/README.md).
+
+Calculator UI follow-up, 2026-11-16: repaired shared currency/unit flex layout in the
+main and optional fields, aligned leading prefixes, and stabilized adjustment/result
+labels. The exact port-8000 route responds and exposes main/adjustment controls.
+An isolated built-renderer check covers all five inputs, labels and helper references.
+Actual desktop/mobile rendering and interactions remain blocked by disabled browser
+access; these code/markup checks do not establish pixel-perfect visual conformance.

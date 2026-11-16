@@ -25,14 +25,18 @@
 
     </head>
     <body class="antialiased">
-        @if(!empty($page['props']['publicContent']) && !$__inertiaSsrResponse)
+        @if((!empty($page['props']['publicContent']) || !empty($page['props']['toolFallback'])) && !$__inertiaSsrResponse)
             @if(config('inertia.use_script_element_for_initial_page'))
                 <script data-page="app" type="application/json">{!! json_encode($page, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
                 <div id="app">
             @else
                 <div id="app" data-page="{{ json_encode($page) }}">
             @endif
-                @include('marketplace.public-content', ['content' => $page['props']['publicContent']])
+                @if(!empty($page['props']['toolFallback']))
+                    @include('marketing.no-show-fallback')
+                @else
+                    @include('marketplace.public-content', ['content' => $page['props']['publicContent']])
+                @endif
             </div>
         @else
             @inertia

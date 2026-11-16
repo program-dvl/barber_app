@@ -317,3 +317,22 @@ saving. Welcome email is informational. Duplicate signup is idempotent; mail fai
 cannot turn saved signup into failure. The area-email footer must explain the real
 purpose, without inherited account/sign-in instructions. Preserve entered work,
 keyboard focus, mobile stacking and shared AppNotice recovery for storage failures.
+
+### Free no-show calculator — 2026-11-16
+
+FR-01/19/21: a public, ungated calculator provides a quick estimate with optional
+refilled-slot, kept-payment and avoided-cost refinements. Clear earnings-at-risk
+labels, assumptions and a deduction breakdown prevent gross missed appointment value
+from being presented as guaranteed savings or profit. Local invalid/empty/zero states,
+keyboard controls, shared copy feedback, clean link sharing and a relevant guide/
+product handoff use the existing Business design contract. No entered figures enter
+analytics, URLs or business records. See public-website module and calculator audit.
+
+### Calculator wrapping repair — 2026-11-16
+
+The owner's screenshot showed USD and visits splitting across lines. The input
+previously claimed the whole flex row, squeezing adjacent text. Main and adjustment
+inputs now flex into remaining space; affixes never shrink or wrap. Leading currency
+and calendar boxes align, refinement-toggle icons retain their width, and breakdown
+amounts stay together. Builds/math/server markup are checked; browser access remains
+unavailable, so full visual certification is explicitly pending.

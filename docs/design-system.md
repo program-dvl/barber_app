@@ -1507,3 +1507,25 @@ prior rejection remains effective. No new success toast or recovery action is
 introduced. Phone source/guide checks are recorded in the
 [follow-up evidence](audits/2026-11-15-seo-followup/README.md); remaining notice/desktop
 visual certification is explicitly pending after browser access became unavailable.
+
+### Public calculator presentation — 2026-11-16
+
+Business free tools reuse the existing marketing shell, navy/indigo palette, type
+and shared notice components. The no-show tool pairs a quiet input surface with a
+navy result panel; mobile stacks inputs/results. Optional refinements preserve the
+quick entry path and disclose the adjustments in a readable breakdown. Maintain
+visible labels, numeric keyboards, large controls, focus rings and debounced polite
+result announcements. Invalid inputs must not display stale or misleading estimates.
+Copy confirmation uses ToastRegion; clipboard failure uses AppNotice and selectable
+text. Result and share copy distinguish scenarios from forecasts and preserve input
+privacy. Actual browser visual verification remains required before claiming polish
+was visually certified at any viewport.
+
+### Calculator input affixes — 2026-11-16
+
+Currency codes, input icons and trailing units are fixed-width/fixed-size flex items.
+The numeric input grows into remaining space using a zero flex basis and `min-width:0`;
+it must not claim `width:100%` beside affixes. Currency and unit text stays on one
+line, including inside optional adjustments. Match leading currency/icon widths for
+aligned values. Keep percentage badges, adjustment-toggle icons and breakdown amounts
+from shrinking into wrapped fragments; let descriptive labels wrap instead.
