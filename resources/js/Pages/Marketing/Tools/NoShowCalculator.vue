@@ -4,6 +4,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import { ArrowRightIcon, ArrowPathIcon, ClipboardDocumentIcon, LinkIcon, CheckIcon, CalendarDaysIcon, ShieldCheckIcon } from '@heroicons/vue/24/outline';
 import HomeLayout from '@/Layouts/HomeLayout.vue';
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
+import PublicContainer from '@/Components/Marketing/PublicContainer.vue';
 import PublicCta from '@/Components/Marketing/PublicCta.vue';
 import AppNotice from '@/Components/Product/AppNotice.vue';
 import ToastRegion from '@/Components/Product/ToastRegion.vue';
@@ -58,10 +59,10 @@ async function copy(kind) {
 <template>
 <HomeLayout>
     <Head :title="seo.title" />
-    <div class="no-show-page">
-        <div class="ns-wrap">
+    <div class="no-show-page cd-public-section">
+        <PublicContainer>
             <Breadcrumbs :items="[{label:'Home',href:route('marketing.home')},{label:'Resources',href:route('marketing.resources')},{label:'No-show calculator'}]" />
-            <header class="ns-intro"><div><p class="ns-eyebrow"><span></span>FREE BUSINESS TOOL</p><h1>Empty appointments.<br><em>A real cost.</em></h1><p>A few missed visits can add up. See what missed visits could mean for your month. Start with two figures, then account for refilled slots, kept payments and costs you avoided.</p></div><div class="ns-intro-note"><ShieldCheckIcon aria-hidden="true"/><span>No signup. No spreadsheet.<br><strong>Your figures stay in this calculator.</strong></span></div></header>
+            <header class="ns-intro"><div><p class="cd-eyebrow">Free business tool</p><h1 class="font-display cd-public-title font-semibold tracking-[-0.055em] text-balance">Empty appointments.<br><em>A real cost.</em></h1><p>A few missed visits can add up. See what missed visits could mean for your month. Start with two figures, then account for refilled slots, kept payments and costs you avoided.</p></div><div class="ns-intro-note"><ShieldCheckIcon aria-hidden="true"/><span>No signup. No spreadsheet.<br><strong>Your figures stay in this calculator.</strong></span></div></header>
             <section class="ns-calculator" aria-label="No-show cost calculator">
                 <div class="ns-inputs">
                     <div class="ns-card-heading"><span class="ns-step">01</span><div><h2>A picture of your month</h2><p>Use a typical month, or try the example.</p></div></div>
@@ -94,19 +95,20 @@ async function copy(kind) {
             <section id="how-it-works" class="ns-method"><div><p class="ns-eyebrow">THE MATH, MADE CLEAR</p><h2>A simple estimate.<br>A useful starting point.</h2><p>For salons, wellness studios, fitness professionals, pet groomers and other appointment-led businesses.</p></div><div class="ns-method-details"><div class="ns-formula"><span>Value of empty slots</span><b aria-label="minus">−</b><span>Kept payments & avoided costs</span><b aria-label="equals">=</b><strong>Earnings at risk</strong></div><p>We start with appointment value × (missed visits − refilled slots). Then we subtract payments kept for the remaining empty slots and per-visit costs you avoided. The result stops at zero. Multiply by 12 for a yearly estimate at the same rate.</p><p>The scenario models fewer empty slots, assuming the same average appointment value, retained payments and avoidable costs. It rounds to the nearest currency minor unit. Fixed costs, tax and any new cost of preventing a no-show are outside the estimate; subtract those costs when deciding what to spend.</p><p>Use before-tax amounts throughout. Changing currency changes the display currency; it doesn’t convert your figures.</p></div></section>
             <section class="ns-next"><div><p class="ns-eyebrow">MAKE THE NEXT MONTH EASIER TO MANAGE</p><h2>Give every appointment<br>a clearer path to arrival.</h2><p>Bring bookings, client details and your team’s calendar together. Confirmations, reminders and clear booking information can support the way you run your day.</p><p class="ns-next-note">Message delivery depends on your setup. SMS also needs client consent, supported numbers and available credits.</p></div><div class="ns-next-actions"><PublicCta context="no_show_calculator"/><Link :href="route('marketing.product-tour')" class="ns-tour">See how Clipperdesk works<ArrowRightIcon aria-hidden="true"/></Link></div></section>
             <section class="ns-related"><div><p class="ns-eyebrow">PUT YOUR ESTIMATE TO WORK</p><h2>A little preparation goes a long way.</h2></div><div><Link :href="route('marketing.guides.show','booking-policy-basics')"><span>Practical guide</span><strong>Make booking expectations clear.</strong><ArrowRightIcon aria-hidden="true"/></Link><Link :href="route('marketing.features.show','online-booking')"><span>Explore Clipperdesk</span><strong>One place to book and manage visits.</strong><ArrowRightIcon aria-hidden="true"/></Link></div></section>
-        </div>
+        </PublicContainer>
     </div>
     <ToastRegion :messages="toasts" @dismiss="toasts=[]"/>
 </HomeLayout>
 </template>
 
 <style scoped>
-.no-show-page{background:#f7f8fc;color:var(--text-strong,#172554);padding:26px 0 76px}
-.ns-wrap{max-width:1280px;width:90%;margin:auto}
-.ns-intro{display:flex;justify-content:space-between;align-items:end;gap:40px;padding:48px 0 38px}
+.no-show-page{background:var(--surface-canvas);color:var(--text-strong,#172554)}
+.ns-intro{display:flex;justify-content:space-between;align-items:end;gap:40px;padding:40px 0 32px}
+.ns-intro>div:first-child{min-width:0}
+.ns-intro .cd-eyebrow{margin-bottom:20px}
 .ns-eyebrow{font-size:10px;font-weight:750;letter-spacing:1.8px;color:#4c46c5;margin:0 0 18px;display:flex;gap:8px;align-items:center}
 .ns-eyebrow>span{width:6px;height:6px;border-radius:50%;background:#5b4de0}
-.ns-intro h1{font-size:clamp(42px,5.2vw,70px);font-weight:650;letter-spacing:-3px;line-height:1.06;margin:0 0 22px}
+.ns-intro h1{margin:0 0 22px}
 .ns-intro h1 em{font-style:normal;color:#5041ce}
 .ns-intro>div>p:last-child{max-width:600px;font-size:16px;line-height:1.85;color:#596780;margin:0}
 .ns-intro-note{display:flex;align-items:start;gap:12px;padding:16px 0 5px;flex-shrink:0}
@@ -202,10 +204,8 @@ button:focus-visible,a:focus-visible,select:focus-visible,input[type=range]:focu
 .ns-next{align-items:start;flex-direction:column}
 .ns-next-actions{flex-direction:row;align-items:center;flex-wrap:wrap;gap:14px}
 }
-@media(max-width:650px){.no-show-page{padding-top:16px;padding-bottom:45px}
-.ns-wrap{width:90%}
+@media(max-width:650px){
 .ns-intro{padding:30px 0 28px}
-.ns-intro h1{font-size:43px;letter-spacing:-2px}
 .ns-intro>div>p:last-child{font-size:14px;line-height:1.8}
 .ns-eyebrow{font-size:9px;letter-spacing:1.6px;margin-bottom:14px}
 .ns-calculator{grid-template-columns:1fr;border-radius:18px}

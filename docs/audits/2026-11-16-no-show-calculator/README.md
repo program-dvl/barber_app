@@ -64,3 +64,14 @@ CUA again returned “Local browser access is unavailable for this chat.” No r
 screenshots or complete visual review could be obtained. The above checks validate
 source/math/markup, not actual flex geometry, zoom, desktop/mobile pixels or clipboard
 interaction. Those browser checks remain pending until access is enabled.
+
+## Shared layout and SEO follow-up
+
+Reused PublicContainer/shared section spacing and opening heading/eyebrow styles,
+removing the independent 90% width and 70px headline. HomeLayout continues to provide
+the same MarketingHeader and MarketingFooter used by Resources and other marketing
+pages. Local HTTP output confirms title, description, clean canonical, index/follow,
+Open Graph title and Twitter summary_large_image; local sitemap includes the tool
+exactly once. Four route tests passed / 42 assertions (live SSR test skipped), nine
+math tests passed, client/SSR build and 26-route frontsite budgets passed. CUA still
+reports browser access unavailable. No new visual or production verification claimed.

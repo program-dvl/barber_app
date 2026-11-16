@@ -4038,3 +4038,14 @@ check returned the correct title and main/adjustment inputs. Built-renderer rout
 checks passed: 5 tests / 76 assertions; math: 9 tests. Client/SSR builds, 26-route
 frontsite budgets and whitespace checks pass. Browser access is still unavailable;
 no pixel-perfect, desktop/mobile, keyboard or clipboard visual certification claimed.
+
+### Calculator shared layout and SEO check — 2026-11-16 (local)
+
+Replaced the calculator's custom 90%/1280px wrapper with PublicContainer and shared
+section spacing; replaced its oversized headline with cd-public-title and the shared
+eyebrow. Header/footer continue to come from HomeLayout → MarketingLayout. Verified
+local port-8000 metadata: title, description, canonical, index/follow, Open Graph
+title, Twitter large-image card and exactly one sitemap entry. Four route tests
+passed (42 assertions); live SSR case skipped in this run. Nine math tests, client/
+SSR build and 26-route frontsite budgets passed. Browser access remains disabled;
+visual alignment and deployed SEO/sitemap were not certified in this follow-up.

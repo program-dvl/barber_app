@@ -358,3 +358,8 @@ labels. The exact port-8000 route responds and exposes main/adjustment controls.
 An isolated built-renderer check covers all five inputs, labels and helper references.
 Actual desktop/mobile rendering and interactions remain blocked by disabled browser
 access; these code/markup checks do not establish pixel-perfect visual conformance.
+
+Calculator shell follow-up, 2026-11-16: the page retains the shared HomeLayout →
+MarketingLayout header/footer, and now uses PublicContainer, cd-public-section,
+cd-public-title and cd-eyebrow for consistent width, spacing and headline scale.
+Local HTTP metadata and the sitemap's single calculator entry were verified.

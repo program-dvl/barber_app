@@ -1529,3 +1529,8 @@ it must not claim `width:100%` beside affixes. Currency and unit text stays on o
 line, including inside optional adjustments. Match leading currency/icon widths for
 aligned values. Keep percentage badges, adjustment-toggle icons and breakdown amounts
 from shrinking into wrapped fragments; let descriptive labels wrap instead.
+
+Calculator shell alignment: reuse HomeLayout/MarketingLayout and their single
+MarketingHeader/MarketingFooter. PublicContainer and cd-public-section govern page
+width and outer spacing; cd-public-title and cd-eyebrow govern the opening heading.
+Do not add a competing percentage-width wrapper or oversized custom hero title.
