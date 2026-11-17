@@ -1,5 +1,13 @@
 # Project status
 
+## 2026-11-17 · Five acquisition worksheets prepared for deployment
+
+The demo scorecard, client migration rehearsal, no-show planner, booking-slot exercise and walk-in observation sheet are available locally under Resources. Chrome checked all five at 360px and 1440px, original HTML, canonical, index directive, print PDF generation, the exercise reveal and each product handoff to a feature page with registration. Marketing suite 300 passed, one skipped (4,770 assertions). Client and SSR builds and 26 route budgets passed. Deployment and search indexing remain pending.
+
+## 2026-11-17 · Software demo scorecard (local)
+
+Resources and calendar feature reading now include a printable three-scenario evaluation guide. Verified canonical, index directive, original HTML, three sources and three score rows. Chrome at 390px and 1440px showed no horizontal overflow, generated a print PDF and followed the product link to a page with registration. Marketing suite 300 passed, one skipped (4,706 assertions). Client/SSR builds and 26 route budgets passed. Production publication, Google indexing and attributed acquisition remain unverified. [Strategy](strategy/salon-software-evaluation.md)
+
 ## 2026-11-15 SEO follow-up implementation (local)
 
 - Implemented owner-approved published-article GA4 eligibility, version 2 consent

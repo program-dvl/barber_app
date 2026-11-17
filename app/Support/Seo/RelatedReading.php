@@ -19,7 +19,8 @@ class RelatedReading
             ->all();
         $guides = match ($feature) {
             'client-management' => ['switch-from-paper-bookings'],
-            'calendar-and-walk-ins', 'online-booking' => ['service-timing-and-buffers'],
+            'calendar-and-walk-ins' => ['service-timing-and-buffers', 'salon-software-demo-scorecard', 'barber-walk-in-handover-sheet'],
+            'online-booking' => ['service-timing-and-buffers', 'salon-booking-slot-exercise', 'salon-no-show-response-planner'],
             default => [],
         };
         foreach ($guides as $slug) {

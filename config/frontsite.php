@@ -477,7 +477,314 @@ return [
         ],
     ],
     'guides' => [
+        'salon-software-demo-scorecard' => [
+            'seo_title' => 'Salon software demo checklist and printable scorecard | ClipperDesk',
+            'image' => '/images/marketing/editorial/resources-planning.webp',
+            'title' => 'Put salon booking software through a Saturday shift',
+            'description' => 'Take three booking tests into your next salon software demo. Print a scorecard to compare which tools protect breaks, find appointments and handle walk-ins.',
+            'topic' => 'Choosing salon software', 'published_at' => '2026-11-17', 'reviewed_by' => 'ClipperDesk editorial team', 'reviewed_at' => '2026-11-17',
+            'intro' => 'Bring your receptionist, a phone and one fictional Saturday diary. Give every shortlisted system the same three jobs. By the end you should know what a client can book, what the desk can promise and which questions still need a live demonstration.',
+            'sections' => [
+                ['title' => 'Protect a break on a busy day', 'body' => 'Give Alex a shift from 09:00 to 15:00, a 12:00–12:30 break and a 45-minute cut. From the client booking page, look for 11:30 with Alex. That visit would finish inside lunch. Check that it cannot be confirmed, then try 12:30 as a control. Use an otherwise empty diary and a start interval that permits both times. If neither appears, ask the demonstrator to explain which setting ruled each one out.'],
+                ['title' => 'Move a booking without losing it', 'body' => 'Book a fictional client at 10:00, then have the receptionist move the visit to an available 13:00 slot. Ask a colleague to find the visit without your help. Look for one current booking at 13:00, the original slot available again, and the same service and professional. Use a test inbox if you also want to check what the client hears. Record any manual follow-up the desk must do.'],
+                ['title' => 'Answer a walk-in while a regular is due', 'body' => 'At 13:45 a walk-in asks for a 30-minute cut. Alex has a regular booked at 14:00. Have the desk show the earliest honest offer without moving the regular. If another qualified barber is free, try that option. If you work solo, ask how to record a later offer. Watch what the next receptionist sees after the handover and write down any detail they would have to remember.'],
+            ],
+            'checklist' => ['Circle the tests your shop must pass before seeing a demo.', 'For each test mark Pass, Workaround or Unseen. Write what happened.', 'For a workaround, name the person who would do the extra work each shift.', 'Repeat every unseen must-have yourself before choosing a system.'],
+            'limitation' => 'Use fictional names and a test inbox. Ask for a practice workspace before creating appointments or sending reminders.',
+            'feature' => 'calendar-and-walk-ins',
+            'feature_label' => 'See the ClipperDesk calendar and walk-in queue',
+            'worksheet' => [
+                'title' => 'Your demo scorecard',
+                'instruction' => 'Print one copy per system. Record the system and date, then mark each must-have as Pass, Workaround or Unseen.',
+                'rows' => [
+                    ['title' => 'System and date', 'prompt' => 'System · date · person testing'],
+                    ['title' => 'Protect a break', 'prompt' => 'Must-have? · result · what the desk saw'],
+                    ['title' => 'Move a booking', 'prompt' => 'Must-have? · result · what the desk saw'],
+                    ['title' => 'Offer a walk-in a time', 'prompt' => 'Must-have? · result · what the desk saw'],
+                    ['title' => 'Before you decide', 'prompt' => 'Question · person responsible · next demo date'],
+                ],
+            ],
+            'sources_title' => 'Set up the lunch test in your shortlisted tools',
+            'sources' => [
+                ['label' => 'Square US guide to personal events', 'href' => 'https://squareup.com/help/us/en/article/5533-create-a-personal-event-on-your-square-appointments-calendar', 'detail' => 'In the Dashboard instructions, look for the Block time option when adding a personal event.'],
+                ['label' => 'Fresha guide to blocked time', 'href' => 'https://www.fresha.com/help-center/knowledge-base/calendar/18-set-up-and-manage-blocked-time', 'detail' => 'Use this to find the settings for break or personal-time labels before running the lunch test.'],
+                ['label' => 'Salonist guide to blocking staff time', 'href' => 'https://help.salonist.io/en/articles/9148659-can-we-add-blocked-time-for-staff-calendar', 'detail' => 'Follow the Staff Calendar example to block a named professional for a start and end time. Then check the client view yourself.'],
+            ],
+        ],
+        'salon-client-migration-rehearsal' => [
+            'title' => 'Rehearse your salon client-record move',
+            'seo_title' => 'Salon client migration rehearsal worksheet | ClipperDesk',
+            'description' => 'Test duplicate names, contact preferences and future visits on paper before moving salon client records. Includes a sample batch and a printable sign-off sheet.',
+            'image' => '/images/marketing/editorial/resources-planning.webp',
+            'topic' => 'Client records',
+            'published_at' => '2026-11-17',
+            'reviewed_at' => '2026-11-17',
+            'reviewed_by' => 'ClipperDesk editorial team',
+            'intro' => 'Give the receptionist a small fictional batch and ask them to find the right client and the right next visit. Run this rehearsal before choosing how to transfer live records.',
+            'sections' => [
+                [
+                    'title' => 'Start with three people and two bookings',
+                    'body' => 'Create three fictional profiles on paper: Rowan A and Rowan B share a display name but have different test contact details. Jules has a phone number and no recorded marketing preference. Give Rowan B a Friday 14:00 cut and Jules a Saturday 09:30 consultation. Record each visit’s location, local time zone and professional. Your expected totals are three people and two future visits.',
+                ],
+                [
+                    'title' => 'Check the exceptions first',
+                    'body' => 'In a practice workspace, review the available client import fields and preview your sample. Keep the two Rowans separate unless you have evidence they are one person. Keep Jules’s unknown preference unknown. A phone number alone does not establish permission to send marketing. If an expected field cannot be represented, write down who will resolve it before transferring that field.',
+                ],
+                [
+                    'title' => 'Find each visit from the desk',
+                    'body' => 'Ask a second person to find Rowan B and read back the correct visit. Repeat for Jules. Three client profiles alone do not prove that either appointment moved. Match time, service, location and professional separately. If a visit is missing, keep the original diary authoritative until the transfer owner checks it.',
+                ],
+                [
+                    'title' => 'Make a release decision',
+                    'body' => 'Approve this sample only when the receptionist can distinguish both Rowans, the unknown preference stays intact and both visits match. Record unresolved items individually. In ClipperDesk you can review possible duplicates and invalid client CSV rows. Confirm any assisted transfer of appointments separately before planning a live handover.',
+                ],
+            ],
+            'checklist' => [
+                'Keep the source copy under restricted access.',
+                'Identify each test person and appointment separately.',
+                'Have someone outside the preparation step read back the results.',
+            ],
+            'limitation' => 'Use fictional details in the rehearsal. Keep live exports and client identifiers out of the worksheet.',
+            'feature' => 'client-management',
+            'feature_label' => 'Explore ClipperDesk client records',
+            'worksheet' => [
+                'title' => 'Client move sign-off sheet',
+                'instruction' => 'Print one sheet per trial batch. Write the expected result first, then the result you observed.',
+                'rows' => [
+                    [
+                        'title' => 'Identity',
+                        'prompt' => 'People expected / found · similar names still separate?',
+                    ],
+                    [
+                        'title' => 'Preferences',
+                        'prompt' => 'Missing preference preserved? · fields needing review',
+                    ],
+                    [
+                        'title' => 'Appointments',
+                        'prompt' => 'Visits expected / found · details checked',
+                    ],
+                    [
+                        'title' => 'Decision',
+                        'prompt' => 'Proceed or hold · unresolved item · owner · next check',
+                    ],
+                ],
+            ],
+            'sources_title' => 'Official setup reference',
+            'sources' => [
+                [
+                    'label' => 'Export a client list from Fresha',
+                    'href' => 'https://www.fresha.com/help-center/knowledge-base/clients/58-export-your-client-list',
+                    'detail' => 'Fresha documents Excel and CSV client-list exports. Its guide also explains why card details cannot be transferred.',
+                ],
+            ],
+            'related_guide' => 'switch-from-paper-bookings',
+        ],
+        'salon-no-show-response-planner' => [
+            'title' => 'Test one change to your no-show routine',
+            'seo_title' => 'Salon no-show response planner and tracking sheet | ClipperDesk',
+            'description' => 'Compare two booking periods with a printable reminder experiment. Count missed visits, refilled slots and empty time before deciding what to change.',
+            'image' => '/images/marketing/editorial/resources-planning.webp',
+            'topic' => 'Appointment attendance',
+            'published_at' => '2026-11-17',
+            'reviewed_at' => '2026-11-17',
+            'reviewed_by' => 'ClipperDesk editorial team',
+            'intro' => 'A missed visit and an empty chair answer different questions. Use this two-period planner to see whether attendance changed and whether the desk managed to refill the time.',
+            'sections' => [
+                [
+                    'title' => 'Choose one change the desk can repeat',
+                    'body' => 'For example, add the shop’s correct entrance and change instructions to a reminder. Pick one service group, location and set of weekdays. Keep your normal sending permissions. Write down the change, start date and who will check delivery before counting results.',
+                ],
+                [
+                    'title' => 'Count original appointments consistently',
+                    'body' => 'For each period count completed visits and no-shows in the original eligible diary. Add those for the denominator. Keep cancellations, reschedules and replacement visits outside that count. Mark each no-show slot that a replacement actually occupied once. Empty slots equal missed visits minus refilled slots. Use the same cutoff for late arrivals in both periods.',
+                ],
+                [
+                    'title' => 'Compare rates alongside counts',
+                    'body' => 'Illustration: 4 misses in 40 eligible visits is 10%. Next period, 3 in 50 is 6%. The difference is 4 percentage points. If two slots were refilled in the first period and none in the second, empty slots actually rose from two to three. If no appointments were eligible, leave the rate unreported.',
+                ],
+                [
+                    'title' => 'Decide what to try next',
+                    'body' => 'If fewer clients missed but more chairs sat empty, review the refill process separately. If reminder delivery failed, fix delivery before judging the wording. Record holidays, staff changes or different service mixes. A short comparison can guide the next test without establishing what caused the difference.',
+                ],
+            ],
+            'checklist' => [
+                'Use comparable weekdays.',
+                'Count every original visit once.',
+                'Separate attendance from refilling.',
+                'Set a review date before changing the routine.',
+            ],
+            'limitation' => 'Keep only aggregate counts. Use existing client communication preferences when testing reminders.',
+            'feature' => 'online-booking',
+            'feature_label' => 'Explore online booking in ClipperDesk',
+            'worksheet' => [
+                'title' => 'Two-period attendance log',
+                'instruction' => 'Use one line per period. Missed rate = missed ÷ eligible × 100. Record counts even for a small sample.',
+                'rows' => [
+                    [
+                        'title' => 'Change being tested',
+                        'prompt' => 'Change · service group · dates · owner',
+                    ],
+                    [
+                        'title' => 'Before',
+                        'prompt' => 'Eligible ___   Missed ___   Refilled ___   Empty ___   Missed rate ___',
+                    ],
+                    [
+                        'title' => 'After',
+                        'prompt' => 'Eligible ___   Missed ___   Refilled ___   Empty ___   Missed rate ___',
+                    ],
+                    [
+                        'title' => 'Review',
+                        'prompt' => 'What else changed? · keep, revise or repeat · review date',
+                    ],
+                ],
+            ],
+            'sources_title' => 'Official setup reference',
+            'sources' => [
+                [
+                    'label' => 'Square US appointment settings',
+                    'href' => 'https://squareup.com/help/us/en/article/5351-manage-your-square-appointments-account-settings',
+                    'detail' => 'Use the communication settings section to locate your appointment confirmation and reminder preferences.',
+                ],
+            ],
+        ],
+        'salon-booking-slot-exercise' => [
+            'title' => 'Which appointment time can you offer?',
+            'seo_title' => 'Salon booking slot exercise with worked answers | ClipperDesk',
+            'description' => 'Practise fitting a salon service and cleanup around a break, an existing booking and closing time. Reveal the answers and print a desk worksheet.',
+            'image' => '/images/marketing/editorial/resources-planning.webp',
+            'topic' => 'Front desk practice',
+            'published_at' => '2026-11-17',
+            'reviewed_at' => '2026-11-17',
+            'reviewed_by' => 'ClipperDesk editorial team',
+            'intro' => 'One stylist, one chair, three possible start times. The service takes 35 minutes and cleanup takes 10. Choose the times you could offer before opening the answer.',
+            'sections' => [
+                [
+                    'title' => 'Read the diary',
+                    'body' => 'On this fictional shift the stylist works 12:00–15:00. Lunch is 12:45–13:15. An existing appointment occupies the chair from 14:00 to 14:30, including cleanup. Starts are offered every 15 minutes. Assume no other restrictions. A booking may finish exactly when the next commitment begins.',
+                ],
+                [
+                    'title' => 'Try three start times',
+                    'body' => 'A client asks about 12:15, 13:15 or 14:30. For each start, add the service and cleanup, then compare the full occupied interval with lunch, the next booking and closing. Write your choice on the sheet before revealing the answer.',
+                ],
+                [
+                    'title' => 'Repeat with your own diary',
+                    'body' => 'Ask a colleague to change just one constraint. For example, if cleanup becomes 15 minutes, the 13:15 start now occupies the chair until 14:05 and conflicts with the booked client. For a real offer, check the qualified professional and any required room or equipment in the live diary.',
+                ],
+            ],
+            'checklist' => [
+                'Check the whole visit plus cleanup.',
+                'Check the professional and chair.',
+                'Check closing and the next booking before promising a start.',
+            ],
+            'limitation' => 'This exercise uses a fictional diary. Confirm live availability before offering a client a time.',
+            'feature' => 'online-booking',
+            'feature_label' => 'See how ClipperDesk handles online booking',
+            'worksheet' => [
+                'title' => 'Available-slot practice sheet',
+                'instruction' => 'Write down the first conflict or mark the time available. Cover the worked answer when sharing the exercise.',
+                'rows' => [
+                    [
+                        'title' => '12:15 start',
+                        'prompt' => 'Service ends ___   Cleanup ends ___   Offer? ___   Reason',
+                    ],
+                    [
+                        'title' => '13:15 start',
+                        'prompt' => 'Service ends ___   Cleanup ends ___   Offer? ___   Reason',
+                    ],
+                    [
+                        'title' => '14:30 start',
+                        'prompt' => 'Service ends ___   Cleanup ends ___   Offer? ___   Reason',
+                    ],
+                ],
+            ],
+            'sources_title' => 'Official setup reference',
+            'sources' => [
+                [
+                    'label' => 'Square US personal events guide',
+                    'href' => 'https://squareup.com/help/us/en/article/5533-create-a-personal-event-on-your-square-appointments-calendar',
+                    'detail' => 'When recreating a break in Square, check the Block time option for the personal event.',
+                ],
+            ],
+            'related_guide' => 'service-timing-and-buffers',
+            'answer' => '12:15 ends at 12:50 and cleanup ends at 13:00, crossing lunch. 13:15 ends at 13:50 and cleanup ends at 14:00, exactly when the occupied slot begins: offer 13:15. At 14:30 the service ends at 15:05 and cleanup ends at 15:15, after closing.',
+        ],
+        'barber-walk-in-handover-sheet' => [
+            'title' => 'Track what happens after a walk-in handover',
+            'seo_title' => 'Barber walk-in handover observation sheet | ClipperDesk',
+            'description' => 'Print a shift observation sheet to track walk-in offers, handovers and changes to booked visits. Includes a repeatable method and a fictional example.',
+            'image' => '/images/marketing/editorial/resources-planning.webp',
+            'topic' => 'Walk-in queue',
+            'published_at' => '2026-11-17',
+            'reviewed_at' => '2026-11-17',
+            'reviewed_by' => 'ClipperDesk editorial team',
+            'intro' => 'When one receptionist quotes a wait and another takes over, can the next person keep the promise? Use this observation sheet for one agreed shift and review the gaps with your team.',
+            'sections' => [
+                [
+                    'title' => 'Agree what counts',
+                    'body' => 'Choose one desk, one observation window and a willing team. Include every new walk-in request during the window, even when the person leaves without an offer. Assign a sequence number. Record one row per request. A handover means responsibility passed to a different team member before the request was closed.',
+                ],
+                [
+                    'title' => 'Follow the promise across the handover',
+                    'body' => 'Record arrival, offered start, whether the offer was accepted and actual start if known. If a booked visit moved, mark yes only when the desk confirms it moved to accommodate this request. Use unknown when you cannot verify the reason. Example only: request 03 arrived 13:05, accepted 13:30, changed hands and started 13:40. The difference from the promised start was ten minutes.',
+                ],
+                [
+                    'title' => 'Close the shift with the team',
+                    'body' => 'Count total requests, requests handed over and accepted offers with both start times recorded. For that last group, subtract offered start from actual start; negative values mean early. Count unknown outcomes separately. If two of six handovers lack a recorded start, report the four observed outcomes and both gaps. Ask which single piece of information would have helped the next person.',
+                ],
+                [
+                    'title' => 'Compare another shift fairly',
+                    'body' => 'Repeat during comparable hours with the same definitions. Keep shop, staffing level and date range attached to any totals you share. A shift sheet describes that desk during that window. Broader findings require participating shops, permission to publish, sample sizes and an account of missing observations.',
+                ],
+            ],
+            'checklist' => [
+                'Agree on the window and who is observing.',
+                'Include declined offers and unknown outcomes.',
+                'Review a handover with the person receiving it.',
+            ],
+            'limitation' => 'Use sequence numbers only. Keep client names, contact details and staff performance notes off the sheet.',
+            'feature' => 'calendar-and-walk-ins',
+            'feature_label' => 'See the ClipperDesk walk-in queue',
+            'worksheet' => [
+                'title' => 'Walk-in observation sheet',
+                'instruction' => 'Print extra sheets for busy shifts. Enter local times. Use a dash for no offer and a question mark for an unknown result.',
+                'rows' => [
+                    [
+                        'title' => 'Shift',
+                        'prompt' => 'Date · location code · window · team size',
+                    ],
+                    [
+                        'title' => 'Request 1',
+                        'prompt' => 'Arrived ___   Offered ___   Accepted? ___   Handover? ___   Started ___   Booked visit moved? ___',
+                    ],
+                    [
+                        'title' => 'Request 2',
+                        'prompt' => 'Arrived ___   Offered ___   Accepted? ___   Handover? ___   Started ___   Booked visit moved? ___',
+                    ],
+                    [
+                        'title' => 'Request 3',
+                        'prompt' => 'Arrived ___   Offered ___   Accepted? ___   Handover? ___   Started ___   Booked visit moved? ___',
+                    ],
+                    [
+                        'title' => 'Request 4',
+                        'prompt' => 'Arrived ___   Offered ___   Accepted? ___   Handover? ___   Started ___   Booked visit moved? ___',
+                    ],
+                    [
+                        'title' => 'Shift review',
+                        'prompt' => 'Total requests ___   Handovers ___   Unknown outcomes ___   Next change',
+                    ],
+                ],
+            ],
+            'sources_title' => 'Official setup reference',
+            'sources' => [
+                [
+                    'label' => 'Fresha blocked time guide',
+                    'href' => 'https://www.fresha.com/help-center/knowledge-base/calendar/18-set-up-and-manage-blocked-time',
+                    'detail' => 'If a gap was unavailable, check how the desk records breaks and other blocked time before interpreting the wait.',
+                ],
+            ],
+        ],
         'service-timing-and-buffers' => [
+            'related_guide' => 'salon-booking-slot-exercise',
             'seo_title' => 'Salon service timing and buffers guide | ClipperDesk',
             'image' => '/images/marketing/editorial/product-workday.webp',
             'title' => 'Set salon service times that work in a real day',
@@ -498,6 +805,7 @@ return [
             'feature' => 'online-booking',
         ],
         'switch-from-paper-bookings' => [
+            'related_guide' => 'salon-client-migration-rehearsal',
             'seo_title' => 'Move salon bookings from paper to software | ClipperDesk',
             'image' => '/images/marketing/editorial/resources-planning.webp',
             'title' => 'Move from a paper salon diary without losing bookings',

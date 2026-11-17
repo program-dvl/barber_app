@@ -363,3 +363,21 @@ Calculator shell follow-up, 2026-11-16: the page retains the shared HomeLayout �
 MarketingLayout header/footer, and now uses PublicContainer, cd-public-section,
 cd-public-title and cd-eyebrow for consistent width, spacing and headline scale.
 Local HTTP metadata and the sitemap's single calculator entry were verified.
+
+## Software evaluation scorecard · 2026-11-17
+
+FR-01/05/06/21. Resources and the calendar feature link to the maintained
+salon software demo scorecard. It uses the shared guide, print action, inline
+practice-workspace notice and article metadata. The buyer records results on
+paper. Official setup links have an editorial check date. When SSR is unavailable,
+the initial HTML still exposes the scenarios, worksheet, citations and product link.
+[Audience, editorial policy and measurement](../strategy/salon-software-evaluation.md)
+
+### Printable operating worksheets · 2026-11-17
+
+Four companion pages use the same canonical guide routes, printable worksheet
+layout, official reference links and original-HTML fallback. The migration
+rehearsal and slot exercise cross-link with the general changeover and timing
+guides respectively. The calculator links to the attendance planner. The
+walk-in sheet provides a local observation method with fictional examples.
+No worksheet collects data or adds a form, tracking event or database table.

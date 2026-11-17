@@ -28,6 +28,10 @@ class ResourceController extends Controller
 
         return PublicPage::render('Marketing/Resources/Guide', [
             'guide' => [...$content, 'slug' => $guide],
+            'relatedGuide' => isset($content['related_guide']) ? [
+                'title' => $guides[$content['related_guide']]['title'],
+                'href' => route('marketing.guides.show', $content['related_guide']),
+            ] : null,
             'seo' => ['title' => $content['seo_title'], 'description' => $content['description'], 'canonical' => route('marketing.guides.show', $guide), 'image' => url($content['image'])],
         ]);
     }

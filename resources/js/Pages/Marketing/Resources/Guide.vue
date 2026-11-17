@@ -8,7 +8,7 @@ import { CheckIcon } from '@heroicons/vue/24/outline';
 import { computed } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 
-const props = defineProps({ guide: Object, seo: Object });
+const props = defineProps({ guide: Object, seo: Object, relatedGuide: Object });
 const example = computed(() => ({
     'booking-policy-basics': { title: 'Turn your decisions into clear wording', body: 'Use this outline after agreeing your own rules. Replace every bracketed field and review the finished policy before publishing.', lines: ['Your appointment reserves [service and duration] with [professional or team].', 'To change or cancel, use [working contact or appointment link] before [your deadline].', 'If you arrive late, [explain your actual options and who confirms any changes].', 'Any deposit, fee or refund follows [your reviewed terms]. Contact [business contact] if you need help.'] },
     'salon-opening-checklist': { title: 'Test one complete booking before sharing your link', body: 'Use fictional client details. This example is a test plan, not a suggested service duration or price.', lines: ['Add one service using your actual price, duration and qualified team member.', 'Set working hours and a break; confirm that the break cannot be booked.', 'Preview the page on a phone and complete an available appointment.', 'Check the confirmation, local time, location and instructions for changing the visit.', 'Reschedule the test appointment, then confirm the calendar and public availability agree.'] },
@@ -49,6 +49,23 @@ const printGuide = () => window.print();
                                 <p class="leading-8 text-[var(--text-muted)]">{{ section.body }}</p>
                             </li>
                         </ol>
+                        <details v-if="guide.answer" class="mt-8 rounded-xl border p-5">
+                            <summary class="cursor-pointer py-3 font-semibold">Reveal the worked answer</summary>
+                            <p class="mt-3 leading-8">{{ guide.answer }}</p>
+                        </details>
+                        <section v-if="guide.worksheet" class="demo-sheet mt-10 rounded-2xl border border-[var(--border-subtle)] p-6 sm:p-8" aria-labelledby="scorecard-title">
+                            <h2 id="scorecard-title" class="font-display text-2xl font-bold">{{ guide.worksheet.title }}</h2>
+                            <p class="my-4 leading-7">{{ guide.worksheet.instruction }}</p>
+                            <div v-for="row in guide.worksheet.rows" :key="row.title" class="score-row border-t py-3">
+                                <h3 class="font-bold">{{ row.title }}</h3>
+                                <p class="mt-1 border-b pb-5">{{ row.prompt }}</p>
+                            </div>
+                        </section>
+                        <section v-if="guide.sources" class="mt-10" aria-labelledby="demo-sources">
+                            <h2 id="demo-sources" class="font-display text-2xl font-bold">{{ guide.sources_title }}</h2>
+                            <p class="mt-3">Official instructions checked {{ guide.reviewed_at }}.</p>
+                            <ul class="mt-4 space-y-4"><li v-for="source in guide.sources" :key="source.href"><a class="cd-arrow-link inline-flex min-h-11 items-center underline" :href="source.href">{{ source.label }}</a><p class="leading-7">{{ source.detail }}</p></li></ul>
+                        </section>
                         <section v-if="example" class="mt-10 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-subtle)] p-6 sm:p-8" aria-labelledby="guide-example-title">
                             <h2 id="guide-example-title" class="font-display text-2xl font-bold text-[var(--text-strong)]">{{ example.title }}</h2>
                             <p class="mt-4 leading-8 text-[var(--text-muted)]">{{ example.body }}</p>
@@ -64,7 +81,8 @@ const printGuide = () => window.print();
                             </ul>
                         </div>
                         <AppNotice class="mt-5" title="Before you use this guide" :description="guide.limitation" />
-                        <Link :href="route('marketing.features.show', guide.feature)" class="cd-button cd-button-secondary mt-6">Explore the supporting feature</Link>
+                        <Link :href="route('marketing.features.show', guide.feature)" class="cd-button cd-button-secondary mt-6">{{ guide.feature_label ?? 'Explore the supporting feature' }}</Link>
+                        <p v-if="relatedGuide" class="mt-5"><Link :href="relatedGuide.href" class="cd-arrow-link inline-flex min-h-11 items-center underline">{{ relatedGuide.title }}</Link></p>
                     </aside>
                 </PublicContainer>
             </section>
@@ -74,6 +92,11 @@ const printGuide = () => window.print();
 
 <style scoped>
 @media print {
+    .cd-printable-guide button, .cd-printable-guide header a { display: none !important; }
+    .cd-printable-guide :deep(.grid) { display: block; }
+    .cd-printable-guide aside { position: static; }
+    .demo-sheet { break-before: page; }
+    .score-row { break-inside: avoid; }
     .cd-printable-guide > header { display: block !important; padding: 0 0 1rem; background: white; color: black; }
     .cd-printable-guide > header figure, .cd-printable-guide nav, .cd-printable-guide .cd-eyebrow { display: none !important; }
     .cd-printable-guide :deep(h1) { font-size: 26pt; color: black; }
