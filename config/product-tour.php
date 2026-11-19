@@ -2,6 +2,9 @@
 
 return [
     'screens' => [
+        'services' => ['key' => 'services-editor', 'alt' => 'Service editor with active, processing and cleanup time controls', 'caption' => 'Real service editor with demo data. Your configured times determine the appointment span; this is not a room-allocation screen.'],
+        'assignments' => ['key' => 'service-assignments', 'alt' => 'Service assignments showing eligible team members and service overrides', 'caption' => 'Real service setup with demo staff. Qualification and working hours both matter when booking.'],
+        'hours' => ['key' => 'business-hours', 'alt' => 'Business working-hours setup in ClipperDesk', 'caption' => 'Real setup screen with example hours. Preview your own booking availability before publishing.'],
         'booking' => ['key' => 'booking-services', 'alt' => 'Client booking page with service names, durations and prices', 'caption' => 'Example business and sample prices. Clients choose from the services you publish.'],
         'calendar' => ['key' => 'calendar', 'alt' => 'ClipperDesk calendar showing appointments across three staff schedules', 'caption' => 'Example business with sample appointments. Status labels keep changes visible to the front desk.'],
         'walk-ins' => ['key' => 'walk-in-queue', 'alt' => 'Walk-in queue with waiting clients and service estimates', 'caption' => 'Example business with sample clients. Waiting times are estimates, not guaranteed start times.'],

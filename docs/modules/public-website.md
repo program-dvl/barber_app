@@ -381,3 +381,29 @@ rehearsal and slot exercise cross-link with the general changeover and timing
 guides respectively. The calculator links to the attendance planner. The
 walk-in sheet provides a local observation method with fictional examples.
 No worksheet collects data or adds a form, tracking event or database table.
+
+### Combined interactive Business homepage — 2026-11-19
+
+FR-01/06/08/09/11/15/18: owner-approved architectural salon hero and sample walk-in
+demo replace the previous opening. Day buttons adjust illustrative scene labels,
+copy and image treatment; the demo selects one of two sample staff slots and can
+be replayed. No live booking or provider operation occurs. Preserve existing
+industry/feature destinations, FAQs, setup help, metadata and schema. Main content
+and conversion links have a Blade fallback when SSR is unavailable. Images use
+responsive WebP and reduced-motion behavior is provided. Full browser acceptance
+is pending: [implementation and evidence](../audits/2026-11-19-homepage/README.md).
+
+### Homepage search-content refinement — 2026-11-19
+
+FR-01/06/08/09/11/15/18: homepage targets appointment scheduling and service business management with
+natural descriptions and contextual links for conflicts, walk-ins and changeover.
+`config/homepage.php` owns lead, SEO copy, industry links, use cases and FAQs for
+both Vue/SSR and fallback HTML. Keep these in parity; do not add keyword lists or
+unsupported specialist claims. Existing canonical/schema/indexation rules remain.
+[SEO audit and intent map](../audits/2026-11-19-homepage/seo-review.md).
+
+Owner correction: the homepage must visibly represent all supported business
+categories, including in title, description, hero audience and FAQs. Do not reduce
+its category to salon/barbershop software. All 13 approved industry destinations
+are directly linked from shared homepage content; fit/limitations remain on their
+detail pages. The salon hero/demo is illustrative only.

@@ -22,7 +22,7 @@ it('publishes unique substantive feature pages', function (string $slug, string 
             ->component('Marketing/Features/Show')
             ->where('feature.slug', $slug)
             ->where('feature.title', $title)
-            ->has('feature.workflow', 4)
+            ->has('feature.workflow', $slug === 'calendar-and-walk-ins' ? 5 : 4)
             ->has('feature.proof', 3)
             ->has('feature.limitations', 2)
             ->has('related', 2)

@@ -3717,3 +3717,31 @@ backend storage or analytics. Currency selection changes display currency withou
 conversion. Copy/share uses explicit user action with a selectable fallback; no
 third-party calculator or export service is introduced. Existing public analytics
 allowlists are not expanded. Backlink outreach/deployment remain separate actions.
+
+### Owner-approved combined Business homepage direction — 2026-11-19
+
+Accepted visual direction: combine the architectural salon concept with a
+hands-on sample walk-in demonstration, approved in this chat. Keep existing
+public URLs, SEO metadata/schema, signup behavior, shared shell and supported
+product claims. Implement as lightweight semantic Vue/SSR with image transitions
+and a local-only sample schedule; no 3D engine dependency or operational API is
+required for this first implementation. This does not promote product scope.
+An SSR-unavailable Blade fallback preserves essential public content and links.
+Full visual acceptance and production performance remain open pending browser
+verification; the code/build checks do not waive those gates.
+
+Homepage SEO refinement — 2026-11-19: the owner authorized auditing and correcting
+homepage SEO. Refine its metadata around salon/barbershop booking software while
+retaining broad industry discovery through established pages. Share key editorial
+copy between Vue and fallback HTML. This explicitly updates the earlier direction's
+metadata-preservation constraint; no new product scope, locale or indexation policy.
+
+### Homepage category correction — 2026-11-19
+
+The owner clarified that ClipperDesk supports a wide range of businesses, not just
+salons and barbershops. This supersedes the narrow homepage keyword focus in the
+preceding SEO refinement. The homepage owns appointment scheduling and service
+business management across beauty, wellness, fitness, health and pet care. All
+13 approved industry pages are linked directly; industry-specific keywords belong
+on those pages. The approved salon scene remains an illustrative example, not the
+product boundary. Specialist limitations remain explicit; no new scope is implied.

@@ -1,102 +1,116 @@
 <script setup>
 import SetupSupport from '@/Components/Marketing/SetupSupport.vue';
-import ProductEvidence from '@/Components/Marketing/ProductEvidence.vue';
+import HelpScreenshot from '@/Components/Help/HelpScreenshot.vue';
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
 import ConversionBand from '@/Components/Marketing/ConversionBand.vue';
 import PublicCta from '@/Components/Marketing/PublicCta.vue';
-import MarketingCard from '@/Components/Marketing/MarketingCard.vue';
 import PublicContainer from '@/Components/Marketing/PublicContainer.vue';
-import SectionHeading from '@/Components/Marketing/SectionHeading.vue';
+import RelatedReading from '@/Components/Marketing/RelatedReading.vue';
+import AppNotice from '@/Components/Product/AppNotice.vue';
 import HomeLayout from '@/Layouts/HomeLayout.vue';
-import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
-import { Head, Link } from '@inertiajs/vue3';
+import { ArrowRightIcon, CheckCircleIcon } from '@heroicons/vue/24/outline';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import '../../../../css/help-center.css';
+import '../../../../css/solutions.css';
 
-defineProps({ solution: Object, features: Array, seo: Object, guides: { type: Array, default: () => [] } });
+defineProps({ solution: Object, features: Array, seo: Object, trialLabel: String, guides: { type: Array, default: () => [] } });
+const page = usePage();
 </script>
 
 <template>
     <HomeLayout>
         <Head :title="seo.title" />
-        <section class="cd-solution-hero" :data-accent="solution.accent">
-            <PublicContainer class="grid gap-10 py-12 sm:py-16 lg:grid-cols-[0.86fr_1.14fr] lg:items-center lg:gap-14 lg:py-20">
-                <div>
-                    <Breadcrumbs :items="[{ label: 'Home', href: route('marketing.home') }, { label: 'Solutions', href: route('marketing.solutions') }, { label: solution.label }]" />
-                    <p class="cd-hero-kicker mt-9"><span aria-hidden="true">✦</span> ClipperDesk for {{ solution.label }}</p>
-                    <h1 class="mt-6 font-display cd-public-title font-bold leading-[0.9] tracking-[-0.07em] text-white text-balance">{{ solution.title }}</h1>
-                    <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">{{ solution.description }}</p>
-                    <div class="mt-8 flex flex-wrap gap-3">
-                        <PublicCta :context="`solution_${solution.slug}_hero`" />
-                        <Link :href="route('marketing.pricing')" class="cd-button cd-button-hero-secondary">View pricing</Link>
+        <section class="solution-intro">
+            <PublicContainer>
+                <Breadcrumbs :items="[{ label: 'Home', href: route('marketing.home') }, { label: 'Solutions', href: route('marketing.solutions') }, { label: solution.label }]" />
+                <div class="solution-hero-grid">
+                    <div>
+                        <p class="cd-eyebrow">ClipperDesk for {{ solution.label }}</p>
+                        <h1 class="font-display cd-public-title solution-title">{{ solution.title }}</h1>
+                        <p class="solution-lead">{{ solution.description }}</p>
+                        <div class="solution-actions">
+                            <PublicCta :context="`solution_${solution.slug}_hero`" />
+                            <Link :href="route('marketing.product-tour')" class="cd-button cd-button-secondary">See the product walkthrough</Link>
+                        </div>
+                        <p class="solution-trial">{{ trialLabel }} free trial after email verification. No card required. No automatic charge.</p>
+                        <Link :href="route('marketing.pricing')" class="solution-text-link">Compare current pricing <ArrowRightIcon aria-hidden="true" /></Link>
+                    </div>
+                    <div v-if="solution.screenshots?.length" class="solution-hero-proof">
+                        <p class="solution-proof-label">The actual product · demo data</p>
+                        <HelpScreenshot :media="solution.screenshots[0]" eager />
+                        <p class="solution-proof-note">Shared ClipperDesk workspace, not a specialist {{ solution.label.toLowerCase() }} module. Enlarge to inspect the controls.</p>
                     </div>
                 </div>
-                <figure class="cd-solution-photo">
-                    <img :src="solution.image" :alt="solution.image_alt" width="1400" height="933" class="h-full w-full object-cover" fetchpriority="high">
-                </figure>
+                <div class="solution-fit"><strong>Is it a fit?</strong><p>{{ solution.fit }}</p><a href="#fit-check" class="solution-text-link">Check your workflow <ArrowRightIcon aria-hidden="true" /></a></div>
             </PublicContainer>
         </section>
-        <section class="border-b border-[var(--border-subtle)] bg-[#f7f8fc] py-8">
-            <PublicContainer><p class="mx-auto max-w-4xl text-center text-lg leading-8 text-[var(--text-default)]"><strong class="text-[var(--text-strong)]">Where it fits:</strong> {{ solution.fit }}</p></PublicContainer>
-        </section>
-        <section class="cd-public-section">
+
+        <section class="solution-section">
             <PublicContainer>
-                <SectionHeading eyebrow="Your working day" title="Keep the day running smoothly" />
-                <div class="mt-12 grid gap-5 lg:grid-cols-3">
-                    <MarketingCard v-for="(challenge, index) in solution.challenges" :key="challenge.title" class="cd-numbered-card">
-                        <span class="cd-card-number" aria-hidden="true">{{ String(index + 1).padStart(2, '0') }}</span>
-                        <h3 class="text-xl font-extrabold text-[var(--text-strong)]">{{ challenge.title }}</h3>
-                        <p class="mt-4 leading-7 text-[var(--text-muted)]">{{ challenge.body }}</p>
-                    </MarketingCard>
+                <p class="cd-eyebrow">Your working day</p>
+                <h2 class="solution-section-title font-display">{{ solution.heading }}</h2>
+                <div class="solution-capabilities">
+                    <article v-for="challenge in solution.challenges" :key="challenge.title">
+                        <h3>{{ challenge.title }}</h3><p>{{ challenge.body }}</p>
+                    </article>
                 </div>
             </PublicContainer>
         </section>
-        <section class="cd-public-section cd-dark-section text-white">
-            <PublicContainer class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+
+        <section class="solution-section solution-example" aria-labelledby="workflow-heading">
+            <PublicContainer>
+                <div class="solution-story-grid">
+                    <div>
+                        <p class="cd-eyebrow">A workflow to inspect</p>
+                        <h2 id="workflow-heading" class="solution-section-title font-display">{{ solution.scenario.title }}</h2>
+                        <p class="solution-body">{{ solution.scenario.body }}</p>
+                        <ol class="solution-journey">
+                            <li v-for="(step, index) in solution.day" :key="step"><span aria-hidden="true">{{ index + 1 }}</span><p>{{ step }}</p></li>
+                        </ol>
+                    </div>
+                    <div class="solution-story-proof">
+                        <HelpScreenshot v-if="solution.screenshots?.[1]" :media="solution.screenshots[1]" />
+                        <p class="solution-proof-note">Real product screens with sample clients, services and prices. The scenario is an evaluation exercise, not a customer result.</p>
+                        <div class="solution-actions"><Link :href="route('marketing.product-tour')" class="cd-button cd-button-secondary">Inspect the full visit walkthrough</Link></div>
+                    </div>
+                </div>
+            </PublicContainer>
+        </section>
+
+        <section id="fit-check" class="solution-section solution-check-section" aria-labelledby="fit-heading">
+            <PublicContainer class="solution-fit-grid">
                 <div>
-                    <p class="cd-dark-eyebrow">A connected shift</p>
-                    <h2 class="mt-4 font-display text-3xl font-semibold leading-tight sm:text-3xl">From the first booking to the final close.</h2>
-                    <ol class="mt-8 space-y-4">
-                        <li v-for="(step, index) in solution.day" :key="step" class="cd-dark-step"><span>{{ String(index + 1).padStart(2, '0') }}</span><p>{{ step }}</p></li>
-                    </ol>
+                    <p class="cd-eyebrow">Before you switch</p>
+                    <h2 id="fit-heading" class="solution-section-title font-display">Put your own working day to the test</h2>
+                    <p class="solution-body">Use fictional clients first. These checks help you decide whether the workflow fits before importing records or sharing your booking link.</p>
+                    <ul class="solution-checks"><li v-for="check in solution.checks" :key="check"><CheckCircleIcon aria-hidden="true" /><span>{{ check }}</span></li></ul>
                 </div>
-                <div class="cd-boundary-card">
-                    <p class="cd-dark-eyebrow">Before you choose</p>
-                    <h2 class="mt-4 font-display text-3xl font-semibold leading-tight">What to know.</h2>
-                    <ul class="mt-8 space-y-4">
-                        <li v-for="item in solution.limits" :key="item" class="flex gap-3 leading-7 text-white/80"><ExclamationTriangleIcon class="mt-1 size-5 shrink-0 text-yellow-300" aria-hidden="true" /><span>{{ item }}</span></li>
-                    </ul>
+                <div>
+                    <AppNotice tone="info" title="Know the limits before choosing">
+                        <ul class="solution-limits"><li v-for="limit in solution.limits" :key="limit">{{ limit }}</li></ul>
+                        <div v-if="page.props.brand?.support_email" class="solution-actions"><a :href="`mailto:${page.props.brand.support_email}?subject=${encodeURIComponent(`Product fit: ${solution.label}`)}`" class="cd-button cd-button-secondary">Ask about your workflow</a></div>
+                        <p class="mt-3 text-sm leading-6">Describe your business requirements only. Please do not include client or patient records.</p>
+                    </AppNotice>
+                </div>
+            </PublicContainer>
+        </section>
 
-                </div>
+        <section class="solution-section" aria-labelledby="questions-heading">
+            <PublicContainer class="solution-questions-grid">
+                <div><p class="cd-eyebrow">Buying questions</p><h2 id="questions-heading" class="solution-section-title font-display">Answers before you start</h2><p class="solution-body">The details that can change your decision.</p></div>
+                <dl class="solution-answers"><div v-for="faq in solution.faqs" :key="faq.question"><dt>{{ faq.question }}</dt><dd>{{ faq.answer }}</dd></div></dl>
             </PublicContainer>
         </section>
-        <section class="cd-public-section">
-            <PublicContainer>
-                <SectionHeading eyebrow="Related features" title="Explore the capabilities behind this workflow" />
-                <div class="mt-10 grid gap-4 md:grid-cols-3">
-                    <MarketingCard v-for="feature in features" :key="feature.slug">
-                        <CheckCircleIcon class="size-6 text-[var(--status-success)]" aria-hidden="true" />
-                        <h3 class="mt-4 text-lg font-extrabold text-[var(--text-strong)]">{{ feature.title }}</h3>
-                        <Link :href="route('marketing.features.show', feature.slug)" class="mt-5 inline-flex min-h-11 items-center rounded-lg text-sm font-extrabold text-[var(--brand-primary)] underline-offset-4 hover:underline">Explore {{ feature.label.toLowerCase() }}</Link>
-                    </MarketingCard>
-                </div>
-            </PublicContainer>
-        </section>
-        <ProductEvidence v-if="solution.screenshots?.length || solution.faqs?.length" :screenshots="solution.screenshots" :scenario="solution.scenario" :faqs="solution.faqs" :context="`solution_${solution.slug}_evidence`" />
 
-        <section v-if="guides.length" class="cd-public-section bg-[var(--surface-subtle)]" aria-labelledby="industry-guides-heading">
+        <section class="solution-section solution-related" aria-labelledby="related-heading">
             <PublicContainer>
-                <p class="cd-eyebrow">Put it into practice</p>
-                <h2 id="industry-guides-heading" class="mt-4 font-display text-3xl font-semibold text-[var(--text-strong)]">Practical guides for your team</h2>
-                <p class="mt-4 max-w-2xl leading-8 text-[var(--text-muted)]">Use these examples and checklists to plan the way your business works, then try the workflow in ClipperDesk.</p>
-                <div class="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                    <MarketingCard v-for="guide in guides" :key="guide.href" class="flex flex-col">
-                        <h3 class="text-xl font-bold text-[var(--text-strong)]"><Link :href="guide.href" class="rounded underline-offset-4 hover:underline">{{ guide.title }}</Link></h3>
-                        <p class="mt-4 leading-7 text-[var(--text-muted)]">{{ guide.excerpt }}</p>
-                        <Link :href="guide.href" class="cd-arrow-link mt-5" :aria-label="`Read ${guide.title}`">Read the guide</Link>
-                    </MarketingCard>
-                </div>
+                <h2 id="related-heading" class="font-display text-2xl font-semibold">Look closer at the tools you would use</h2>
+                <div class="solution-feature-links"><Link v-for="feature in features" :key="feature.slug" :href="route('marketing.features.show', feature.slug)"><span>{{ feature.label }}</span><ArrowRightIcon aria-hidden="true" /></Link></div>
+                <div v-if="['salons', 'barbershops', 'nail-salons'].includes(solution.slug)" class="solution-actions"><Link href="/help/articles/appointments-waitlist" class="solution-text-link">How cancellation waitlists differ from walk-ins</Link><Link href="/tools/no-show-calculator" class="solution-text-link">Estimate the cost of missed visits</Link></div>
             </PublicContainer>
         </section>
+        <RelatedReading v-if="guides.length" :items="guides.map(guide => ({ ...guide, description: guide.excerpt }))" />
         <SetupSupport />
-        <ConversionBand title="Bring your appointments and daily work together." description="Add your services and team, set working hours and preview your booking page." :context="`solution_${solution.slug}_final`" />
+        <ConversionBand :title="solution.final_title" description="Set up a sample service, inspect a booking and decide whether it works for your business. See Pricing for current location, staff and messaging terms." :context="`solution_${solution.slug}_final`" />
     </HomeLayout>
 </template>

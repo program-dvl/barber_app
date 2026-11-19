@@ -1,5 +1,38 @@
 # Project status
 
+## 2026-11-19 · Broad homepage positioning restored (local)
+
+Owner clarified that the homepage represents the full range of appointment-led
+businesses. Updated title, description, hero audience and FAQs; linked all 13
+approved industries. Shared Vue/fallback content retains specialist limitations.
+Seven focused homepage/SEO consistency tests pass (146 assertions), including
+industry-list completeness and destination checks; client/SSR build passes. No
+deployment or new mobile visual certification. This supersedes the narrow keyword
+focus recorded in the earlier SEO refinement below.
+
+## 2026-11-19 · Homepage SEO refinement (local)
+
+Sharpened salon/barbershop title and description; added descriptive feature headings,
+three contextual use-case links and expanded FAQs. Shared key copy and industry
+links between Vue/SSR and fallback HTML. Actual local full SSR and fallback HTML
+pass metadata, canonical, H1, link and schema checks. Marketing: 303 passed, two
+skipped (5,177 assertions); six focused frontend/SEO tests pass; client/SSR builds
+and 26 route budgets pass. No deployment, fresh Google indexing/ranking evidence
+or Core Web Vitals result. Visual acceptance remains pending.
+[Audit and intent map](audits/2026-11-19-homepage/seo-review.md).
+
+## 2026-11-19 · Combined Business homepage (local; visual acceptance pending)
+
+Implemented the approved salon hero, three day states and local-only sample walk-in
+selection/replay, preserving feature/industry links, FAQ and shared signup behavior.
+Added essential HTML fallback for unavailable SSR and responsive hero WebP assets.
+Marketing suite: 302 passed, 2 skipped (5,107 assertions); homepage 3 passed; mounted
+demo test, client/SSR builds and 26 public bundle budgets pass. Local original HTML
+contains heading, metadata, schema and conversion links. Browser loaded initial
+page, then access became unavailable; full desktop/mobile interaction, reduced-motion,
+visual comparison and performance acceptance remain pending. No deployment or SEO/
+conversion improvement claimed. [Evidence](audits/2026-11-19-homepage/README.md).
+
 ## 2026-11-17 · Five acquisition worksheets prepared for deployment
 
 The demo scorecard, client migration rehearsal, no-show planner, booking-slot exercise and walk-in observation sheet are available locally under Resources. Chrome checked all five at 360px and 1440px, original HTML, canonical, index directive, print PDF generation, the exercise reveal and each product handoff to a feature page with registration. Marketing suite 300 passed, one skipped (4,770 assertions). Client and SSR builds and 26 route budgets passed. Deployment and search indexing remain pending.

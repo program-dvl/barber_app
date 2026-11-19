@@ -25,14 +25,18 @@
 
     </head>
     <body class="antialiased">
-        @if((!empty($page['props']['publicContent']) || !empty($page['props']['toolFallback']) || !empty($page['props']['guide']['worksheet'])) && !$__inertiaSsrResponse)
+        @if(($page['component'] === 'Home' || in_array($page['component'], ['Marketing/Solutions/Index', 'Marketing/Solutions/Show']) || !empty($page['props']['publicContent']) || !empty($page['props']['toolFallback']) || !empty($page['props']['guide']['worksheet'])) && !$__inertiaSsrResponse)
             @if(config('inertia.use_script_element_for_initial_page'))
                 <script data-page="app" type="application/json">{!! json_encode($page, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
                 <div id="app">
             @else
                 <div id="app" data-page="{{ json_encode($page) }}">
             @endif
-                @if(!empty($page['props']['toolFallback']))
+                @if($page['component'] === 'Home')
+                    @include('marketing.home-fallback')
+                @elseif(in_array($page['component'], ['Marketing/Solutions/Index', 'Marketing/Solutions/Show']))
+                    @include('marketing.solutions-fallback')
+                @elseif(!empty($page['props']['toolFallback']))
                     @include('marketing.no-show-fallback')
                 @elseif(!empty($page['props']['guide']['worksheet']))
                     @include('marketing.guide-worksheet', ['guide' => $page['props']['guide']])

@@ -1,7 +1,7 @@
 <?php
 
 it('keeps the canonical ClipperDesk definition aligned in visible and machine-readable content', function () {
-    $home = file_get_contents(resource_path('js/Pages/Home.vue'));
+    $home = config('homepage.faqs.0.answer');
     $schema = file_get_contents(app_path('Support/Seo/StructuredDataGraph.php'));
     expect($home)->toContain('ClipperDesk is appointment scheduling and service business management software')
         ->and(config('brand.description'))->toContain('appointment scheduling and service business management software')

@@ -1534,3 +1534,29 @@ Calculator shell alignment: reuse HomeLayout/MarketingLayout and their single
 MarketingHeader/MarketingFooter. PublicContainer and cd-public-section govern page
 width and outer spacing; cd-public-title and cd-eyebrow govern the opening heading.
 Do not add a competing percentage-width wrapper or oversized custom hero title.
+
+### Business homepage interaction direction — 2026-11-19
+
+The owner-approved combined concept uses porcelain/navy/indigo and architectural
+editorial imagery with an oversized two-line acquisition heading. This heading
+may exceed the normal public title scale; other surfaces retain their scale.
+Keep all important text/actions in semantic HTML. Day exploration uses ordinary
+pressed-state buttons; the sample booking uses keyboard-operable slot buttons,
+explicit sample labels, one shared success AppNotice and Replay restoring focus.
+No real booking, simulated revenue proof, autoplay or scroll trapping. Maintain
+44px+ controls, wrapping actions and reduced-motion support. Retain the shared
+header/footer and useful industry, FAQ and setup content. Actual mobile/success
+visual verification is pending browser availability; see the homepage audit.
+
+Homepage SEO copy refinement (2026-11-19): preserve the approved visual headline;
+use a clear adjacent appointment/business-management category and descriptive
+feature headings. Three working-day use cases use simple separated rows/columns
+with descriptive links and stack on phones. FAQ and industry content are shared
+with fallback HTML. No hidden keyword blocks or text embedded in hero art.
+Visual acceptance remains pending; HTML/build checks do not certify mobile layout.
+
+Homepage category correction (2026-11-19): show the broad audience beside the hero
+lead, and use “independent professional” rather than “solo stylist” for general
+FAQs. Keep all 13 business links in the existing wrapping layout. The approved
+salon illustration is one example, not a statement that other businesses are
+secondary or unsupported. New text wrapping still needs browser visual review.

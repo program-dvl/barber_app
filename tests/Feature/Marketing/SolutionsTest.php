@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Article;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -18,12 +20,17 @@ it('publishes differentiated supported business pages', function (string $slug, 
         ->has('solution.day', 4)
         ->has('solution.limits', 2)
         ->has('features', 3)
+        ->has('solution.screenshots', 2)
+        ->has('solution.checks', 3)
+        ->has('solution.faqs', 3)
+        ->missing('solution.requirements')
+        ->where('trialLabel', config('billing.trial_label'))
         ->where('solution.title', fn (string $title) => str_contains(strtolower($title), $phrase)));
 })->with([
     ['barbershops', 'walk-ins'],
     ['salons', 'salon appointments'],
     ['independent-stylists', 'independent stylist'],
-    ['spas', 'practitioners and rooms'],
+    ['spas', 'spa treatment'],
     ['nail-salons', 'nail salon appointments'],
     ['medspas', 'medspa appointments'],
     ['massage', 'massage appointments'],
@@ -32,7 +39,7 @@ it('publishes differentiated supported business pages', function (string $slug, 
     ['health-practices', 'health practice'],
     ['tattoo-piercing', 'tattoo and piercing appointments'],
     ['pet-grooming', 'pet grooming appointments'],
-    ['tanning-studios', 'tanning studio appointments'],
+    ['tanning-studios', 'tanning studio visits'],
 ]);
 
 it('keeps unsupported keyword permutations out and regulated claims bounded', function () {
@@ -48,12 +55,11 @@ it('keeps unsupported keyword permutations out and regulated claims bounded', fu
         ->toContain('not an electronic medical record system');
 });
 
-
 it('links only eligible audience articles and keeps unrelated industries separate', function () {
-    $author = \App\Models\User::factory()->create();
+    $author = User::factory()->create();
     $slugs = ['salon-consultation-notes-a-practical-template-and-example', 'how-to-increase-salon-rebooking-scripts-and-a-30-day-plan', 'how-to-reduce-salon-no-shows-10-practical-strategies-that-work'];
     foreach ($slugs as $index => $slug) {
-        \App\Models\Article::create([
+        Article::create([
             'user_id' => $author->id, 'title' => 'Practical salon guide', 'slug' => $slug,
             'content' => 'A useful routine for your team.', 'excerpt' => 'A working salon guide.',
             'topic' => 'Operations', 'thumbnail' => 'articles/guide.webp',
@@ -69,4 +75,32 @@ it('links only eligible audience articles and keeps unrelated industries separat
     foreach (['barbershops', 'spas'] as $industry) {
         $this->get(route('marketing.solutions.show', $industry))->assertOk()->assertInertia(fn (Assert $page) => $page->has('guides', 0));
     }
+});
+
+it('keeps solution decisions and all hub destinations readable when SSR is unavailable', function () {
+    config(['inertia.ssr.enabled' => false]);
+    $hub = $this->get('/solutions')->assertOk();
+    foreach (config('frontsite.solutions') as $slug => $content) {
+        $hub->assertSee('href="'.route('marketing.solutions.show', $slug).'"', false);
+        $response = $this->get('/solutions/'.$slug)->assertOk();
+        $response->assertSee('<h1>'.e($content['title']).'</h1>', false)
+            ->assertSee(e($content['checks'][0]), false)
+            ->assertSee(e($content['limits'][0]), false)
+            ->assertSee('mailto:'.config('brand.support_email'), false);
+    }
+});
+
+it('renders every rebuilt solution through the actual built SSR renderer', function () {
+    if (! getenv('SOLUTIONS_LIVE_SSR')) {
+        $this->markTestSkipped('Requires the built local SSR renderer.');
+    }
+    config(['inertia.ssr.enabled' => true, 'inertia.ssr.url' => 'http://127.0.0.1:13714']);
+    foreach (array_keys(config('frontsite.solutions')) as $slug) {
+        $html = $this->get('/solutions/'.$slug)->assertOk()->getContent();
+        expect($html)->toContain('class="solution-intro"')->toContain('id="fit-check"')
+            ->toContain('fetchpriority="high"')->toContain('Enlarge screenshot:');
+        $visible = preg_replace('/<script\b[^>]*>.*?<\/script>/s', '', $html);
+        expect(preg_match_all('/<h1\b/', $visible))->toBe(1);
+    }
+    $this->get('/solutions')->assertOk()->assertSee('class="solution-hub-cards"', false);
 });

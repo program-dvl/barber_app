@@ -26,6 +26,7 @@ const page = usePage();
                     <div>
                         <h3 class="text-lg font-bold text-[var(--text-strong)]">Switching? Bring your business with you.</h3>
                         <p class="mt-2 leading-7 text-[var(--text-muted)]">We help migrate existing clients, upcoming appointments and bookings. Have other records to bring across? We’ll review them with you and confirm what can be transferred from your current software or spreadsheets.</p>
+                        <p class="mt-3 text-sm leading-6 text-[var(--text-muted)]">We agree the scope, timing and any cost before work starts. Review the transferred records before going live.</p>
                     </div>
                 </div>
             </div>

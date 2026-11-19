@@ -21,6 +21,8 @@ class SolutionController extends Controller
                 'image' => $solution['image'],
                 'image_alt' => $solution['image_alt'],
                 'accent' => $solution['accent'],
+                'group' => $solution['group'],
+                'fit' => $solution['fit'],
             ])->values();
 
         return PublicPage::render('Marketing/Solutions/Index', [
@@ -43,6 +45,7 @@ class SolutionController extends Controller
 
         return PublicPage::render('Marketing/Solutions/Show', [
             'solution' => [...collect($content)->except('requirements')->all(), 'slug' => $solution, 'screenshots' => app(ProductEvidence::class)->screenshots($content['screens'] ?? [])],
+            'trialLabel' => config('billing.trial_label'),
             'guides' => Article::query()->publishable()
                 ->whereIn('slug', match ($solution) {
                     'salons' => ['salon-consultation-notes-a-practical-template-and-example', 'how-to-increase-salon-rebooking-scripts-and-a-30-day-plan', 'how-to-reduce-salon-no-shows-10-practical-strategies-that-work'],

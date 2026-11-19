@@ -13,12 +13,13 @@ class HomeController extends Controller
     public function index(Request $request): Response
     {
         return PublicPage::render('Home', [
+            'homepage' => config('homepage'),
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
             'screenshots' => app(ProductEvidence::class)->screenshots(['calendar']),
             'seo' => [
-                'title' => 'Appointment scheduling & service business software | ClipperDesk',
-                'description' => 'Run booking, staff calendars, client records, walk-ins, checkout and reporting in one workspace for beauty, wellness, fitness, health and pet-care businesses.',
+                'title' => config('homepage.title'),
+                'description' => config('homepage.description'),
                 'canonical' => route('marketing.home'),
             ],
         ]);

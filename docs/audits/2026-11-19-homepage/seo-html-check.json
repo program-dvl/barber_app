@@ -1,0 +1,24 @@
+{
+  "url": "http://127.0.0.1:8019",
+  "status": 200,
+  "titles": [
+    "Salon & Barbershop Booking Software | ClipperDesk"
+  ],
+  "descriptions": [
+    "Manage online bookings, walk-ins, staff schedules and client records with ClipperDesk salon and barbershop software. Explore features, pricing and setup help."
+  ],
+  "canonicals": [
+    "http://127.0.0.1:8019"
+  ],
+  "robots": [
+    "index, follow, max-image-preview:large"
+  ],
+  "robotsHeader": "",
+  "h1": [
+    "A good day. By design."
+  ],
+  "mainWords": 555,
+  "anchorCount": 19,
+  "schemaCount": 1,
+  "problems": []
+}

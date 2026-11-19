@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { ArrowsPointingOutIcon, XMarkIcon } from '@heroicons/vue/24/outline';
-defineProps({ media: Object });
+defineProps({ media: Object, eager: { type: Boolean, default: false } });
 const dialog = ref(null);
 const trigger = ref(null);
 const close = () => { dialog.value?.close(); trigger.value?.focus(); };
@@ -9,7 +9,7 @@ const close = () => { dialog.value?.close(); trigger.value?.focus(); };
 <template>
     <figure class="help-screenshot">
         <button ref="trigger" type="button" :aria-label="`Enlarge screenshot: ${media.alt}`" @click="dialog.showModal()">
-            <img :src="media.url || media.path" :alt="media.alt" :width="media.width" :height="media.height" loading="lazy" decoding="async" />
+            <img :src="media.url || media.path" :alt="media.alt" :width="media.width" :height="media.height" :loading="eager ? 'eager' : 'lazy'" :fetchpriority="eager ? 'high' : 'auto'" decoding="async" />
             <span class="help-enlarge"><ArrowsPointingOutIcon class="size-4" aria-hidden="true" />Enlarge screenshot</span>
         </button>
         <figcaption>{{ media.caption }}</figcaption>

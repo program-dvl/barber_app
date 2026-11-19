@@ -1,0 +1,308 @@
+{
+  "routes": [
+    {
+      "path": "/solutions",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Software for appointment-led service businesses | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 195506
+    },
+    {
+      "path": "/solutions/barbershops",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Barbershop scheduling and walk-in software | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions/barbershops"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 195781
+    },
+    {
+      "path": "/solutions/salons",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Salon booking and business management software | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions/salons"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 196637
+    },
+    {
+      "path": "/solutions/independent-stylists",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Independent stylist booking software | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions/independent-stylists"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 195225
+    },
+    {
+      "path": "/solutions/spas",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Spa scheduling software: treatments and turnaround | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions/spas"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 196550
+    },
+    {
+      "path": "/solutions/nail-salons",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Nail salon booking and scheduling software | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions/nail-salons"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 195846
+    },
+    {
+      "path": "/solutions/medspas",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Medspa appointment scheduling: scope and limits | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions/medspas"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 196198
+    },
+    {
+      "path": "/solutions/massage",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Massage scheduling software for individual sessions | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions/massage"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 195586
+    },
+    {
+      "path": "/solutions/fitness-recovery",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Fitness and recovery scheduling software | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions/fitness-recovery"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 195444
+    },
+    {
+      "path": "/solutions/physical-therapy",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Physical therapy scheduling: assess product fit | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions/physical-therapy"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 195830
+    },
+    {
+      "path": "/solutions/health-practices",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Health practice appointments: assess suitability | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions/health-practices"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 195972
+    },
+    {
+      "path": "/solutions/tattoo-piercing",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Tattoo and piercing studio software | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions/tattoo-piercing"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 196290
+    },
+    {
+      "path": "/solutions/pet-grooming",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Pet grooming booking and scheduling software | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions/pet-grooming"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 196025
+    },
+    {
+      "path": "/solutions/tanning-studios",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Tanning studio booking software | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/solutions/tanning-studios"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 195711
+    },
+    {
+      "path": "/features/client-management",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Client management software for service businesses | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/features/client-management"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 195262
+    },
+    {
+      "path": "/features/calendar-and-walk-ins",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Calendar and walk-in software for service businesses | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/features/calendar-and-walk-ins"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 197712
+    },
+    {
+      "path": "/features/product-walkthrough",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Product walkthrough: booking to checkout | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/features/product-walkthrough"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 198510
+    },
+    {
+      "path": "/pricing",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Pricing for your locations and team | ClipperDesk"
+      ],
+      "canonical": [
+        "http://127.0.0.1:8000/pricing"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "schema": 1,
+      "bytes": 200774
+    },
+    {
+      "path": "/register",
+      "status": 200,
+      "h1": 1,
+      "title": [
+        "Create your workspace | ClipperDesk"
+      ],
+      "canonical": [],
+      "robots": [
+        "noindex, follow, noarchive"
+      ],
+      "schema": 0,
+      "bytes": 171811
+    }
+  ],
+  "links_checked": 47,
+  "broken_links": []
+}

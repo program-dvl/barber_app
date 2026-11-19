@@ -34,14 +34,14 @@ it('fails closed when a reviewed screenshot cannot be verified', function () {
     $this->get(route('marketing.product-tour'))->assertOk()->assertInertia(fn (Assert $page) => $page->has('steps.0.screenshots', 0));
 });
 
-it('keeps all thirteen industry choices and adds evidence only to reviewed industry pages', function () {
+it('keeps all thirteen industry choices and adds reviewed product evidence to every industry page', function () {
     $this->get(route('marketing.solutions'))->assertOk()->assertInertia(fn (Assert $page) => $page->has('solutions', 13));
-    foreach (['salons', 'barbershops'] as $slug) {
+    foreach (array_keys(config('frontsite.solutions')) as $slug) {
         $this->get(route('marketing.solutions.show', $slug))->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->has('solution.screenshots', 2)->has('solution.faqs', 4));
+            ->assertInertia(fn (Assert $page) => $page->has('solution.screenshots', 2)->has('solution.faqs', 3));
     }
     $this->get(route('marketing.solutions.show', 'pet-grooming'))->assertOk()
-        ->assertInertia(fn (Assert $page) => $page->has('solution.screenshots', 0)->where('solution.slug', 'pet-grooming'));
+        ->assertInertia(fn (Assert $page) => $page->has('solution.screenshots', 2)->where('solution.slug', 'pet-grooming'));
 });
 
 it('publishes a distinct daily checklist with truthful attribution and Article dates', function () {
