@@ -54,3 +54,7 @@ These choices are documented, not proof of pixel-level fidelity.
 
 Mounted interaction test, marketing suite and production builds pass; they do not
 substitute for browser QA. No deployment performed.
+
+## 2026-11-20 follow-up
+
+Addressed the owner screenshot’s CTA/appointment-label collision by replacing absolute percentage positioning with a separate normal-flow label row. Added the requested option-2 editorial portrait section after the demo, with responsive stacking and shared searchable copy. Portrait visually inspected; encoded at 900×1100 (74,748 bytes). Browser inventory again reports local browser access unavailable; desktop/mobile rendered comparison remains blocked. Client/SSR build and focused tests pass; no deployed verification.

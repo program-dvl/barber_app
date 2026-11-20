@@ -1,5 +1,14 @@
 # Project status
 
+## 2026-11-20 · Homepage overlap and editorial section (local)
+
+Replaced absolute hero label positions with a wrapping row below conversion actions.
+Added the requested option-2 portrait/benefits section after the interactive demo;
+its copy is shared with fallback HTML. Client/SSR production build, all 26 public
+bundle budgets and seven focused homepage/SEO tests pass (152 assertions).
+Browser access is unavailable; rendered desktop/mobile acceptance and deployed
+verification remain pending.
+
 ## 2026-11-19 · Broad homepage positioning restored (local)
 
 Owner clarified that the homepage represents the full range of appointment-led

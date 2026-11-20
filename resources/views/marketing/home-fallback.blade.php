@@ -6,6 +6,10 @@
         <p>{{ $page['props']['homepage']['lead'] }}</p>
         <p>{{ $page['props']['homepage']['audience'] }}</p>
         <div class="salon-actions"><a class="cd-button cd-button-primary" href="{{ route('register') }}">Start your trial</a><a class="cd-button cd-button-secondary" href="{{ route('marketing.pricing') }}">See pricing</a></div>
+        <h2>Stay in the moment. Keep the day together.</h2>
+        @foreach($page['props']['homepage']['moment_benefits'] as $item)
+            <article><h3>{{ $item['title'] }}</h3><p>{{ $item['body'] }}</p></article>
+        @endforeach
         <h2>From first booking to next visit.</h2>
         <p>Manage appointments, welcome walk-ins and keep client history and team schedules together.</p>
         <ul><li><a href="{{ route('marketing.features.show', 'calendar-and-walk-ins') }}">Explore booking and walk-ins</a></li><li><a href="{{ route('marketing.features.show', 'client-management') }}">Remember your clients</a></li><li><a href="{{ route('marketing.features.show', 'checkout-and-reporting') }}">Record payments and review sales</a></li></ul>

@@ -37,8 +37,10 @@ const moments = [
                         <a href="#sample-day" class="cd-button cd-button-secondary">Try a sample day <ArrowRightIcon aria-hidden="true" /></a>
                     </div>
                 </PublicContainer>
+                <PublicContainer class="salon-scene-labels">
                 <div class="salon-scene-label salon-scene-appointment" aria-hidden="true"><CalendarDaysIcon />{{ moments[moment].appointment }}</div>
                 <div class="salon-scene-label salon-scene-client" aria-hidden="true"><UserIcon />{{ moments[moment].client }}</div>
+                </PublicContainer>
             </section>
             <section class="salon-day-selector" aria-label="Explore a sample salon day">
                 <PublicContainer>
@@ -50,6 +52,20 @@ const moments = [
                 </PublicContainer>
             </section>
             <SalonDayDemo />
+            <section class="salon-editorial" aria-labelledby="home-moment-title">
+                <PublicContainer>
+                    <h2 id="home-moment-title">Stay in the moment.<br>Keep the day together.</h2>
+                    <div class="salon-editorial-grid">
+                        <figure>
+                            <img src="/images/marketing/homepage/in-the-moment.webp" alt="An illustrative portrait of a professional in a work apron" width="900" height="1100" loading="lazy" decoding="async">
+                            <figcaption>Illustrative portrait</figcaption>
+                        </figure>
+                        <div class="salon-editorial-benefits">
+                            <article v-for="item in homepage.moment_benefits" :key="item.title"><h3>{{ item.title }}</h3><p>{{ item.body }}</p></article>
+                        </div>
+                    </div>
+                </PublicContainer>
+            </section>
             <section id="workflow" class="salon-journey">
                 <PublicContainer>
                     <p class="salon-eyebrow">The whole visit, connected</p>

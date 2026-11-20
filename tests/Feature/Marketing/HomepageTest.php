@@ -68,6 +68,9 @@ it('shares meaningful intent coverage with the original HTML and resolves every 
     foreach (config('homepage.faqs') as $faq) {
         expect($main->textContent)->toContain($faq['question'])->toContain($faq['answer']);
     }
+    foreach (config('homepage.moment_benefits') as $benefit) {
+        expect($main->textContent)->toContain($benefit['title'])->toContain($benefit['body']);
+    }
     expect($main->textContent)->toContain(config('homepage.audience'));
     expect(array_column(config('homepage.businesses'), 'slug'))->toEqualCanonicalizing(array_keys(config('frontsite.solutions')));
     foreach (config('homepage.businesses') as $business) {

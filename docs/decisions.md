@@ -3745,3 +3745,7 @@ business management across beauty, wellness, fitness, health and pet care. All
 13 approved industry pages are linked directly; industry-specific keywords belong
 on those pages. The approved salon scene remains an illustrative example, not the
 product boundary. Specialist limitations remain explicit; no new scope is implied.
+
+### Homepage editorial reference — 2026-11-20
+
+Accepted owner request: incorporate option 2’s “Stay in the moment. Keep the day together.” portrait section into the selected combined homepage. Place it after the interactive demo, before detailed features. Retain broad business positioning and real HTML text; no product-scope change.

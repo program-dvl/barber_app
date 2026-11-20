@@ -407,3 +407,7 @@ categories, including in title, description, hero audience and FAQs. Do not redu
 its category to salon/barbershop software. All 13 approved industry destinations
 are directly linked from shared homepage content; fit/limitations remain on their
 detail pages. The salon hero/demo is illustrative only.
+
+### Homepage editorial section — 2026-11-20
+
+FR-01/06/08/09: the owner-requested “Stay in the moment” section follows the sample demo. Shared `homepage.moment_benefits` feeds Vue/SSR and fallback HTML. A lazy-loaded 74,748-byte WebP portrait is illustrative, not a customer endorsement. Hero scene labels now follow actions in document flow to avoid the reported overlap. Browser visual verification remains pending.

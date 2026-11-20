@@ -20,10 +20,11 @@
 .salon-hero-content a{pointer-events:auto}
 .salon-hero h1{font-size:clamp(64px,7.8vw,112px);line-height:.98;letter-spacing:-.065em;margin:0 0 24px}
 .salon-lead{font-size:clamp(18px,1.7vw,24px);max-width:520px}
-.salon-scene-label{position:absolute;display:flex;align-items:center;gap:10px;padding:12px 18px;background:#fff;border:1px solid #e8e8f2;border-radius:99px;font-size:14px;font-weight:700;box-shadow:0 8px 35px #11143d12}
+.salon-scene-labels{position:relative;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:24px;margin-top:48px;padding-bottom:100px;pointer-events:none}
+.salon-scene-label{display:flex;align-items:center;gap:10px;padding:12px 18px;background:#fff;border:1px solid #e8e8f2;border-radius:99px;font-size:14px;font-weight:700;box-shadow:0 8px 35px #11143d12}
 .salon-scene-label svg{color:var(--home-indigo)}
-.salon-scene-appointment{left:29%;top:60%}
-.salon-scene-client{right:7%;top:68%}
+.salon-scene-appointment{margin-left:24%}
+.salon-scene-client{margin-top:60px}
 .salon-day-selector{padding:24px 0 30px;background:#fbfbfd}
 .salon-times{display:flex;justify-content:space-between;position:relative;max-width:1000px;margin:auto}
 .salon-times:before{content:'';position:absolute;top:10px;left:10%;right:10%;height:3px;background:#d9d9ee}
@@ -110,7 +111,7 @@ to{transform:translateY(0);opacity:1}
 .salon-faq-layout{gap:36px}
 }
 
-@media(max-width:700px){.salon-hero{min-height:0;padding-bottom:66vw}
+@media(max-width:700px){.salon-hero{min-height:0}
 .salon-hero-art{top:auto;height:74vw;bottom:0}
 .salon-hero-art img{object-fit:cover;object-position:center bottom}
 .salon-hero-content{padding-top:34px;padding-bottom:55px;background:#fbfbfd}
@@ -121,8 +122,9 @@ to{transform:translateY(0);opacity:1}
 .salon-home .cd-button{padding:12px 19px;font-size:14px;min-height:48px}
 .salon-scene-label{font-size:10px;padding:8px 10px;gap:6px;max-width:65%}
 .salon-scene-label svg{width:15px;height:15px}
-.salon-scene-appointment{top:auto;bottom:34vw;left:5%}
-.salon-scene-client{top:auto;bottom:12vw;right:4%}
+.salon-scene-labels{margin-top:0;min-height:66vw;padding-top:16vw;padding-bottom:12vw;flex-direction:column;gap:20px}
+.salon-scene-appointment{margin-left:0}
+.salon-scene-client{margin-top:0;align-self:flex-end}
 .salon-times button{min-width:0;width:33.33%;font-size:12px}
 .salon-times strong{font-size:18px}
 .salon-moment-copy{min-height:100px;margin-top:20px;text-align:left}
@@ -166,3 +168,17 @@ to{transform:translateY(0);opacity:1}
 @media(max-width:700px){.salon-use-cases{padding:45px 0}.salon-use-case-list{grid-template-columns:1fr;gap:24px}}
 .salon-hero-audience{max-width:465px;margin-top:14px;font-size:14px;color:#50536f}
 @media(max-width:700px){.salon-hero-audience{font-size:13px;max-width:340px}}
+
+/* Editorial pause: real HTML copy beside the reference-inspired portrait. */
+.salon-editorial{background:#f1e7d9;padding:68px 0 0;overflow:hidden}
+.salon-editorial h2{max-width:1000px;font-size:clamp(36px,4.7vw,68px);position:relative;z-index:1}
+.salon-editorial-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center;margin-top:35px}
+.salon-editorial figure{position:relative;margin:0;align-self:end}
+.salon-editorial img{display:block;width:100%;height:auto;max-height:570px;object-fit:cover;object-position:center 28%;mix-blend-mode:multiply}
+.salon-editorial figcaption{position:absolute;bottom:16px;right:16px;color:#fff;background:#11143d9e;padding:4px 8px;font-size:10px;border-radius:4px}
+.salon-editorial-benefits{padding-bottom:40px}
+.salon-editorial-benefits article{padding:28px 0;border-bottom:1px solid #11143d24}
+.salon-editorial-benefits article:last-child{border-bottom:0}
+.salon-editorial-benefits h3{font-size:clamp(23px,2.3vw,32px)}
+.salon-editorial-benefits p{max-width:440px;margin-top:10px;color:#454451;font-size:17px}
+@media(max-width:700px){.salon-editorial{padding-top:42px}.salon-editorial-grid{grid-template-columns:1fr;gap:0;margin-top:26px}.salon-editorial figure{max-width:440px;width:100%;justify-self:center}.salon-editorial img{max-height:390px;object-position:center 30%}.salon-editorial-benefits{padding:10px 0 24px}.salon-editorial-benefits article{padding:22px 0}.salon-editorial-benefits p{font-size:15px}}

@@ -6,6 +6,11 @@ return [
     'description' => 'Online booking, staff schedules, client records and business management for beauty, wellness, fitness, health and pet-care teams. Explore ClipperDesk.',
     'lead' => 'Online bookings, client records and your team. One connected working day.',
     'audience' => 'For appointment-led businesses across beauty, wellness, fitness, health and pet care.',
+    'moment_benefits' => [
+        ['title' => 'Appointments, in place.', 'body' => 'Online bookings and walk-ins, together in one calendar. See what is next without the back-and-forth.'],
+        ['title' => 'Client details, remembered.', 'body' => 'The right notes, preferences and visit history at your fingertips, ready for a more personal welcome.'],
+        ['title' => 'Your team, in step.', 'body' => 'Schedules, availability and changes in one place, for a smoother working day together.'],
+    ],
     'businesses' => [
         ['label' => 'Barbershops', 'slug' => 'barbershops'],
         ['label' => 'Salons', 'slug' => 'salons'],

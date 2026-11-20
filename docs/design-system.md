@@ -1560,3 +1560,5 @@ lead, and use “independent professional” rather than “solo stylist” for 
 FAQs. Keep all 13 business links in the existing wrapping layout. The approved
 salon illustration is one example, not a statement that other businesses are
 secondary or unsupported. New text wrapping still needs browser visual review.
+
+Homepage editorial addition (2026-11-20): scene labels occupy a wrapping normal-flow row below the hero actions, with 48px separation on desktop; never anchor them over conversion controls. Phones place the label row within the separate scene area. After the sample demo, a warm ivory section pairs an illustrative monochrome portrait with semantic benefit headings and copy. Stack portrait and benefits on phones; preserve the broad business audience.
