@@ -1,0 +1,56 @@
+{
+  "source": "/Users/dhavalprajapati/Desktop/clipperdesk_demo.mp4",
+  "sample_data": true,
+  "audio": "intentionally silent; caption-led product walkthrough",
+  "shots": [
+    [
+      10,
+      16,
+      1,
+      "Start with your working day"
+    ],
+    [
+      26,
+      34,
+      1,
+      "See appointments alongside staff availability"
+    ],
+    [
+      35,
+      53,
+      2,
+      "Review a new time before saving a change"
+    ],
+    [
+      83,
+      89,
+      1,
+      "Welcome walk-ins with saved client details"
+    ],
+    [
+      98,
+      105,
+      1,
+      "Keep client history ready for the next visit"
+    ],
+    [
+      110,
+      117,
+      1,
+      "Record payments received elsewhere \u2014 no card is charged"
+    ],
+    [
+      124,
+      129,
+      1,
+      "Coordinate your team and working hours"
+    ],
+    [
+      154,
+      161,
+      1,
+      "Review sales and understand the day"
+    ]
+  ],
+  "output": "/Applications/AMPPS/www/barber_app/videos/clipperdesk-producthunt/exports/clipperdesk-producthunt-demo.mp4"
+}

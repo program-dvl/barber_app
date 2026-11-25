@@ -1,5 +1,17 @@
 # Decision log
 
+### Product Hunt launch presentation — 2026-11-25 — Accepted
+
+Owner authorized a 30 November Product Hunt launch, a short real-product demo,
+and a website launch badge. Use the scheduled ClipperDesk listing as the footer
+destination; serve the platform-provided “Find us on” artwork locally without
+new tracking or an award/ranking claim. Apply the same link to the Blade legal
+footer. Scope FR-01/19 and PRD sections 4/12/15. This does not expand analytics,
+authorize paid campaigns, or certify production registration/payment readiness.
+The owner subsequently specified macOS's native recorder and the already-signed-in
+demo account. Forge is the production deployment service; deployment verification
+must be reported separately from local checks.
+
 Use this file for durable product and architecture decisions. A decision is not
 accepted until its status says `Accepted`. Pending entries are questions, not
 permission to assume an answer.

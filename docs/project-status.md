@@ -1,5 +1,18 @@
 # Project status
 
+## 2026-11-25 · Product Hunt launch and website badge
+
+Signed-in Product Hunt confirmed ClipperDesk scheduled for 2026-11-30 at
+00:01 America/Los_Angeles (13:31 Asia/Kolkata), with logo, three public sample-data
+screens, launch tags, free-trial classification and the maker comment. No ranking
+or editorial featuring is established. Website footer badge is implemented locally
+in Vue and the legal Blade fallback. Chrome verified the loaded badge at 1440px
+and 390px, a 210×54px link and no mobile horizontal overflow. Seven focused
+marketing tests pass (177 assertions); client/SSR build and 27 route budgets pass.
+Forge is signed in; push-to-deploy from master is confirmed. No production badge verified.
+Native demo recording, hosted video attachment and community posting remain
+unfinished. [Launch kit](../output/producthunt-launch-2026-11-30.txt).
+
 ## 2026-11-25 · All solution industries extended (local; visual review incomplete)
 
 All 13 solution pages now use tailored editorial copy, industry colours/framing,

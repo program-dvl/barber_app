@@ -55,7 +55,12 @@ const groups = computed(() => [
                     <p class="mt-6 max-w-md text-sm leading-7 text-slate-400">
                         Booking, client records, team schedules and checkout for appointment-led service businesses.
                     </p>
-
+                    <a href="https://www.producthunt.com/products/clipperdesk?launch=clipperdesk"
+                       target="_blank" rel="noopener noreferrer"
+                       class="mt-5 inline-flex min-h-11 max-w-full rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                       aria-label="Explore ClipperDesk on Product Hunt (opens in a new tab)">
+                        <img src="/images/producthunt/clipperdesk.svg" alt="Find us on Product Hunt" width="210" height="54" loading="lazy" class="h-auto max-w-full" />
+                    </a>
                 </div>
 
                 <div class="grid gap-9 sm:grid-cols-3">

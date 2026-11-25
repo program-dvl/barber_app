@@ -12,6 +12,16 @@ This specification does not promote deferred product capabilities or waive launc
 
 ## Customer content boundary
 
+### Product Hunt launch badge (2026-11-25)
+
+The public MarketingFooter and its Blade legal fallback link to the scheduled
+ClipperDesk Product Hunt launch using a local copy of the platform's
+“Find us on” artwork, omitting the snapshot vote count. The image is served locally, with reserved dimensions, lazy
+loading, a 54px-high link and visible keyboard focus. New-tab behavior is announced;
+no third-party script, analytics event, ranking claim or award is introduced.
+This is acquisition presentation under FR-01/19 and PRD sections 4/12/15.
+Production deployment is separate from local implementation and validation.
+
 `config/frontsite.php` holds customer copy and internal requirement traceability.
 Feature, solution and use-case controllers remove `requirements` before returning
 page props. Requirement IDs and delivery evidence belong in documentation and

@@ -372,6 +372,12 @@ result.
 
 ### Notifications
 
+Public launch/discovery badges are ordinary navigation, not workflow notices or
+toasts. Keep them in the marketing footer with reserved image dimensions, an
+accessible destination, visible focus and at least a 44px touch target. An outbound
+badge must not claim an unearned award or request an upvote. Serve static brand
+art locally rather than introducing a third-party script or tracking request.
+
 Use inline feedback for input and workflow errors, banners for persistent or
 page-wide conditions, toasts for brief confirmations that do not require a
 decision, and dialogs only when the user's attention must block the current

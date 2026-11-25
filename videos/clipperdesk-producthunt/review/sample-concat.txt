@@ -1,0 +1,2 @@
+file '/Applications/AMPPS/www/barber_app/videos/clipperdesk-producthunt/exports/shot-00.mp4'
+file '/Applications/AMPPS/www/barber_app/videos/clipperdesk-producthunt/exports/shot-01.mp4'
