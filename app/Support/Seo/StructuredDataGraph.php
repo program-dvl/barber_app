@@ -18,7 +18,7 @@ class StructuredDataGraph
         $websiteId = $root.'/#website';
         $softwareId = $root.'/#software';
         $webPage = [
-            '@type' => 'WebPage',
+            '@type' => $request->routeIs('marketing.contact') ? 'ContactPage' : 'WebPage',
             '@id' => $canonical.'#webpage',
             'url' => $canonical,
             'name' => data_get($props, 'seo.title', config('brand.product_name')),

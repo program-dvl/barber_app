@@ -1,8 +1,7 @@
 <script setup>
-import { usePage } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import PublicContainer from '@/Components/Marketing/PublicContainer.vue';
 
-const page = usePage();
 </script>
 
 <template>
@@ -13,10 +12,10 @@ const page = usePage();
                     <p class="text-sm font-bold text-[var(--brand-primary)]">Personal setup &amp; migration help</p>
                     <h2 class="mt-4 font-display text-3xl font-semibold leading-tight text-[var(--text-strong)] sm:text-4xl">Your business. Ready for bookings.</h2>
                     <p class="mt-5 max-w-xl leading-8 text-[var(--text-muted)]">Opening a new business or moving from another system? Let our team help with the setup, so you can focus on your clients.</p>
-                    <div v-if="page.props.brand?.support_email" class="mt-6 flex flex-wrap items-center gap-3">
-                        <a :href="`mailto:${page.props.brand.support_email}?subject=Setup%20and%20migration%20help`" class="cd-button cd-button-primary min-h-11">Email us for setup help</a>
+                    <div class="mt-6 flex flex-wrap items-center gap-3">
+                        <Link :href="route('marketing.contact')" class="cd-button cd-button-primary min-h-11">Get setup help</Link>
                     </div>
-                    <p class="mt-4 text-sm leading-6 text-[var(--text-muted)]">Tell us about your business and what you use today. No client files needed in your first email.</p>
+                    <p class="mt-4 text-sm leading-6 text-[var(--text-muted)]">Tell us about your business and what you use today. No client files needed in your enquiry.</p>
                 </div>
                 <div class="space-y-6">
                     <div>

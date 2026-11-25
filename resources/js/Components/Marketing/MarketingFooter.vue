@@ -32,6 +32,7 @@ const groups = computed(() => [
         label: 'Company',
         links: [
             [`About ${page.props.brand?.product_name || 'ClipperDesk'}`, 'marketing.company'],
+            ['Contact us', 'marketing.contact'],
             ['Privacy policy', 'policy.show'],
             ['Terms of service', 'terms.show'],
             ['Refund policy', 'refund.show'],

@@ -44,6 +44,7 @@ class SolutionController extends Controller
         $features = config('frontsite.features');
 
         return PublicPage::render('Marketing/Solutions/Show', [
+            'experience' => config('solution-experiences.'.$solution),
             'solution' => [...collect($content)->except('requirements')->all(), 'slug' => $solution, 'screenshots' => app(ProductEvidence::class)->screenshots($content['screens'] ?? [])],
             'trialLabel' => config('billing.trial_label'),
             'guides' => Article::query()->publishable()
@@ -60,7 +61,7 @@ class SolutionController extends Controller
             ])->values(),
             'seo' => [
                 'title' => $content['seo_title'],
-                'description' => $content['description'],
+                'description' => $content['seo_description'] ?? $content['description'],
                 'canonical' => route('marketing.solutions.show', $solution),
                 'image' => url($content['image']),
             ],

@@ -411,3 +411,49 @@ detail pages. The salon hero/demo is illustrative only.
 ### Homepage editorial section — 2026-11-20
 
 FR-01/06/08/09: the owner-requested “Stay in the moment” section follows the sample demo. Shared `homepage.moment_benefits` feeds Vue/SSR and fallback HTML. A lazy-loaded 74,748-byte WebP portrait is illustrative, not a customer endorsement. Hero scene labels now follow actions in document flow to avoid the reported overlap. Browser visual verification remains pending.
+
+### Solutions editorial refresh — 2026-11-25
+
+FR-01/06/08/09/11: the hub and four owner-selected pages (barbershops, nail-salons,
+spas, massage) extend the homepage visual direction. `solution-experiences.php`
+owns illustrative headlines, treatment lengths and turnaround for these pages;
+other industries retain their existing presentation. The hub retains all 13
+crawlable destinations. Timing choices calculate occupied time against a fictional
+11:00 booking, with a useful shorter-service recovery; they do not reserve time,
+check live resources or call operational APIs. Existing screenshots, industry
+limitations, FAQs, pricing and signup remain. Titles, canonicals and schema retain
+the existing server contract. Fallback HTML includes the new headlines and sample
+service facts. Browser visual verification is pending; see the dated audit.
+
+All-industry follow-up (2026-11-25): `solution-experiences.php` now covers all 13
+canonical industry slugs. Each has its own acquisition headline, editorial story,
+service choices and timing context. General scheduling examples for regulated
+industries explicitly retain evaluation-only boundaries. Product screenshots are
+optional details disclosures; the actual product walkthrough stays linked.
+The tanning image is replaced to match staff-led spray-tan appointments
+rather than the unsupported bed-control workflow. Full visual evidence is recorded
+in the dated audit separately from automated tests.
+
+## Owner-approved sales contact — 25 November 2026
+
+PRD: public sales enquiry addition under FR-01. `/contact` is canonical/indexable
+with ContactPage schema and sitemap inclusion. Workflow/setup CTAs use this route;
+industry links carry the optional industry selection. Private Gmail BCC is server
+configuration only. Session-specific responses are private/no-store.
+
+Name/email/business/message are encrypted in `sales_enquiries`. CSRF, UUID bound to
+the session, honeypot and five-new-enquiries-per-ten-minute IP limit protect submission.
+Validation preserves entered fields and a timed retry button honours the cooldown.
+One atomic claim precedes mail delivery; browser retries do not send twice.
+A saved-but-delayed outcome must not announce delivery. “Send another enquiry”
+explicitly renews the token after completion. No client records should be submitted.
+
+Deployment requires the new sales-enquiries migration and working standard Laravel
+mail transport. The mailer's acceptance is not proof of inbox delivery. Monitor
+`Sales enquiry email requires operator attention` logs and run `php artisan
+sales:enquiries` for unresolved references (no message contents printed). Correct the
+transport, check provider records for non-delivery, wait at least ten minutes, then
+run `php artisan sales:enquiries REFERENCE --retry --delivery-checked`. Never retry an
+ambiguous accepted delivery; check both destination mailboxes/provider first. Sent
+records cannot be resent by this command. Preserve APP_KEY to decrypt stored enquiries.
+Retention duration and any future operator UI remain an explicit open decision.

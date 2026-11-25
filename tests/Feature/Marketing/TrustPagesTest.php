@@ -61,10 +61,10 @@ it('links the refund policy from evaluation checkout and the public footer', fun
         ->toContain("route('refund.show')");
 });
 
-it('does not claim certifications or publish an unowned contact or status route', function () {
+it('does not claim certifications or publish an unowned status route', function () {
     $copy = file_get_contents(resource_path('js/Pages/Marketing/Security.vue'));
     expect($copy)->not->toContain('SOC 2 certified')->not->toContain('ISO 27001 certified')->not->toContain('HIPAA compliant')->not->toContain('99.9% uptime');
-    $this->get('/contact')->assertNotFound();
+    $this->get('/contact')->assertOk();
     $this->get('/status')->assertNotFound();
 
     foreach (['terms.md', 'policy.md', 'refund.md'] as $document) {

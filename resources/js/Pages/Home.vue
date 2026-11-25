@@ -116,7 +116,7 @@ const moments = [
             </section>
             <SetupSupport />
             <section class="salon-final">
-                <PublicContainer><h2>Make room for<br>your best work.</h2><div><div class="salon-actions"><PublicCta context="homepage_final" /><Link :href="route('marketing.pricing')" class="cd-button cd-button-secondary">See pricing</Link></div><a :href="`mailto:${$page.props.brand?.support_email || 'support@clipperdesk.com'}`">Need help switching? Talk to us.</a></div></PublicContainer>
+                <PublicContainer><h2>Make room for<br>your best work.</h2><div><div class="salon-actions"><PublicCta context="homepage_final" /><Link :href="route('marketing.pricing')" class="cd-button cd-button-secondary">See pricing</Link></div><Link :href="route('marketing.contact')">Need help switching? Talk to us.</Link></div></PublicContainer>
             </section>
         </div>
     </HomeLayout>

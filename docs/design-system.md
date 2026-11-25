@@ -1562,3 +1562,33 @@ salon illustration is one example, not a statement that other businesses are
 secondary or unsupported. New text wrapping still needs browser visual review.
 
 Homepage editorial addition (2026-11-20): scene labels occupy a wrapping normal-flow row below the hero actions, with 48px separation on desktop; never anchor them over conversion controls. Phones place the label row within the separate scene area. After the sample demo, a warm ivory section pairs an illustrative monochrome portrait with semantic benefit headings and copy. Stack portrait and benefits on phones; preserve the broad business audience.
+
+### Solutions editorial family — 2026-11-25
+
+Extend the approved homepage direction to the Solutions hub and barbershop, nail,
+spa and massage pages only. Use generous typography, an arched industry image,
+indigo/rose/sand/sage surfaces and normal-flow actions; never overlay controls on
+labels. Preserve shared navigation, PublicCta, SetupSupport and AppNotice.
+The hub uses pressed-state preview buttons while all 13 industry links remain in
+HTML. Timing exercises use ordinary service buttons, a labelled timeline and one
+live result notice; no autoplay, booking calls or saved input. Respect reduced
+motion, 44px targets and one-column phone layouts. Images remain illustrative.
+
+All-industry extension (2026-11-25): the editorial family now covers all 13 solutions.
+Use arch, portrait, wide and editorial frames with industry-specific colour and
+copy. Keep faces within the crop; fit labels and actions stay in normal flow.
+Product proof is an accessible details/summary disclosure below the workflow story.
+Use a labelled timing bar with the next-client marker accurately positioned; keep
+small-screen labels separate. No customer testimonials or suitability claims are
+implied by illustrative scenes.
+
+### Sales contact and industry colour refinement — 25 November 2026
+
+Solutions rose treatment now uses a cool blue-grey surface; tanning uses warm stone.
+Keep navy typography and indigo actions consistent with the homepage. The contact
+page uses the same restrained palette, a two-column editorial/form composition and
+one-column mobile layout. Number labels must not shrink or wrap. Form fields have
+visible labels, 48px controls, 16px mobile input text and focused validation errors.
+Use AppNotice for saved/sent outcomes, focus the receipt after submission, wrap long
+references, and retain at least 12px gaps between actions. Cooldown disables repeated
+submission while preserving text; an explicit new-enquiry action follows completion.

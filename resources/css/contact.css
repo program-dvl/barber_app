@@ -1,0 +1,33 @@
+.contact-page{padding:64px 0 88px;background:linear-gradient(135deg,#f5f6fc,#edf0f5);color:#171b42;font-family:var(--font-display)}
+.contact-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:72px;align-items:start}
+.contact-intro h1{font-size:clamp(42px,4.6vw,68px);line-height:1.05;letter-spacing:-.055em;font-weight:700;margin:26px 0;text-wrap:balance}
+.contact-lead{font-size:18px;line-height:1.8;max-width:480px;color:#565e75}
+.contact-topics{margin:40px 0 24px;max-width:480px}
+.contact-topics article{display:flex;gap:20px;padding:24px 0;border-top:1px solid #d9deea}
+.contact-topics article>span{flex:0 0 20px;white-space:nowrap;color:#5044c8;font-weight:700;font-size:12px;padding-top:5px}
+.contact-topics h2{font-size:22px;font-weight:700;letter-spacing:-.025em}
+.contact-topics p{font-size:15px;line-height:1.8;color:#565e75;margin-top:7px}
+.contact-quiet-link{display:inline-flex;align-items:center;min-height:44px;color:#4739bb;font-weight:650}
+.contact-card{min-width:0;background:#fff;border:1px solid #e1e5ef;border-radius:28px;padding:36px;box-shadow:0 20px 60px #17255408}
+.contact-card h2{font-size:28px;line-height:1.2;letter-spacing:-.04em;font-weight:700}
+.contact-form-note{font-size:13px;line-height:1.8;color:#626b80;margin:12px 0}
+.contact-form-note a{text-decoration:underline;text-underline-offset:3px}
+.contact-fields{display:grid;grid-template-columns:1fr 1fr;gap:22px 18px;margin:26px 0}
+.contact-fields>div{min-width:0}
+.contact-fields label{display:block;font-size:14px;font-weight:650;line-height:1.6;margin-bottom:8px}
+.contact-fields label span{font-size:11px;color:#697087;font-weight:400}
+.contact-fields :is(input,select,textarea){width:100%;min-height:48px;border:1px solid #cbd1df;border-radius:10px;padding:12px;background:#fbfcff;color:#171b42;font-size:16px}
+.contact-fields textarea{resize:vertical;min-height:150px}
+.contact-fields [aria-invalid=true]{border-color:#b45364}
+.contact-fields :is(input,select,textarea):focus-visible,.contact-page :is(a,button):focus-visible{outline:3px solid #7773df;outline-offset:3px}
+.contact-message{grid-column:1/-1}
+.contact-error{font-size:13px;line-height:1.6;color:#a52e44;margin-top:8px}
+.contact-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.contact-actions .cd-button{border-radius:99px;min-height:48px;white-space:normal;text-align:center}
+.contact-actions button:disabled{opacity:.65;cursor:wait}
+.contact-trap{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.contact-reference{overflow-wrap:anywhere;margin-top:12px;font-size:12px}
+@media(max-width:1023px){.contact-grid{gap:36px;grid-template-columns:1fr 1.1fr}.contact-card{padding:26px}.contact-fields{grid-template-columns:1fr}}
+@media(max-width:767px){.contact-page{padding:32px 0 48px}.contact-grid{grid-template-columns:1fr;gap:30px}.contact-intro h1{font-size:44px}.contact-topics{margin-top:24px}.contact-topics article{padding:16px 0}.contact-card{padding:24px 20px;border-radius:20px}}
+
+#contact-result{scroll-margin-top:110px}

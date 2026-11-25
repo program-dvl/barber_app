@@ -1,5 +1,26 @@
 # Project status
 
+## 2026-11-25 · All solution industries extended (local; visual review incomplete)
+
+All 13 solution pages now use tailored editorial copy, industry colours/framing,
+and sample service timing. Product screenshots remain optional; a new spray-tan
+welcome image replaces misleading bed imagery. Marketing: 304 passed, two skipped
+(5,281 assertions); 13 mounted demo tests pass. Native Chrome confirmed the salon
+page renders, and its desktop hero crop was adjusted. The user was actively using
+Chrome; uninterrupted access was requested before further native review. Full
+all-page desktop/mobile acceptance remains pending. No deployment.
+
+## 2026-11-25 · Five Solutions pages refreshed (local)
+
+Implemented an interactive industry preview on the hub and editorial openings,
+industry colour treatments and sample timing exercises for barbershops, nails,
+spas and massage. Existing imagery, SEO metadata, all 13 destinations, real product
+screens and capability limits are retained. Marketing suite: 304 passed, two
+skipped (5,227 assertions); four mounted demo interaction tests pass. Client/SSR
+builds and 26 public bundle budgets pass. IAB and Chrome automation report browser
+access unavailable: no desktop/mobile visual acceptance or deployment verified.
+[Evidence](audits/2026-11-25-solutions/README.md).
+
 ## 2026-11-20 · Homepage overlap and editorial section (local)
 
 Replaced absolute hero label positions with a wrapping row below conversion actions.
@@ -4099,3 +4120,23 @@ title, Twitter large-image card and exactly one sitemap entry. Four route tests
 passed (42 assertions); live SSR case skipped in this run. Nine math tests, client/
 SSR build and 26-route frontsite budgets passed. Browser access remains disabled;
 visual alignment and deployed SEO/sitemap were not certified in this follow-up.
+
+### 2026-11-25 — Neutral solutions palette, SEO and public contact
+
+- Replaced pink solutions treatments with cool neutrals and warm stone. All 13
+  industry hero layouts visually reviewed in native Chrome at 390px and 1440px;
+  hub and representative shared interactive/lower sections reviewed. Full-scroll
+  review of every individual page and real-device testing are not established.
+- Added distinct industry search titles/descriptions; rendered metadata and
+  canonical assertions cover all 13 pages. No search-performance gain is claimed.
+- Added `/contact` with private/no-store session content, encrypted enquiry storage,
+  fixed sales recipient/private owner BCC, validation, cooldown, duplicate-send
+  protection, saved-on-mail-failure outcome and checked operator retry command.
+  Workflow/setup and homepage switching CTAs now use the page. Contact errors and
+  local submission/confirmation/new-enquiry journey checked on desktop/mobile.
+- Full Marketing suite: 311 passed, two skipped (5,342 assertions). Final focused
+  Contact/Solutions run after last copy/CTA/SEO-test edits: 26 passed, one skipped
+  (719 assertions). Client/SSR builds, 27 route budgets and 13 mounted timing tests
+  pass. Skips are live SSR checks. No deployed verification or actual inbox delivery.
+- Deployment needs the sales-enquiries migration and configured mail transport;
+  recovery steps are in the public-website module. Local preview uses array mail.

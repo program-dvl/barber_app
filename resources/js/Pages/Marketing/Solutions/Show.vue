@@ -1,4 +1,5 @@
 <script setup>
+import SolutionTimingDemo from '@/Components/Marketing/SolutionTimingDemo.vue';
 import SetupSupport from '@/Components/Marketing/SetupSupport.vue';
 import HelpScreenshot from '@/Components/Help/HelpScreenshot.vue';
 import Breadcrumbs from '@/Components/Marketing/Breadcrumbs.vue';
@@ -13,14 +14,33 @@ import { Head, Link, usePage } from '@inertiajs/vue3';
 import '../../../../css/help-center.css';
 import '../../../../css/solutions.css';
 
-defineProps({ solution: Object, features: Array, seo: Object, trialLabel: String, guides: { type: Array, default: () => [] } });
+defineProps({ experience: Object, solution: Object, features: Array, seo: Object, trialLabel: String, guides: { type: Array, default: () => [] } });
 const page = usePage();
 </script>
 
 <template>
     <HomeLayout>
         <Head :title="seo.title" />
-        <section class="solution-intro">
+        <div :data-industry="solution.slug" :class="experience ? ['solution-experience', `experience-${experience.theme}`, `experience-layout-${experience.layout || 'arch'}`] : ''">
+        <section v-if="experience" class="experience-hero">
+            <PublicContainer>
+                <Breadcrumbs :items="[{ label: 'Home', href: route('marketing.home') }, { label: 'Solutions', href: route('marketing.solutions') }, { label: solution.label }]" />
+                <div class="experience-hero-grid">
+                    <div class="experience-hero-copy">
+                        <p class="cd-eyebrow">{{ experience.eyebrow }}</p>
+                        <h1>{{ experience.headline.replaceAll('\\n', '\n') }}</h1>
+                        <p class="solution-lead">{{ solution.description }}</p>
+                        <div class="solution-actions"><PublicCta :context="`solution_${solution.slug}_hero`" /><a href="#sample-timing" class="cd-button cd-button-secondary">Try a sample day <ArrowRightIcon aria-hidden="true" /></a></div>
+                        <p class="solution-trial">{{ trialLabel }} free trial after email verification. No card required.</p>
+                        <Link :href="route('marketing.pricing')" class="solution-text-link">See pricing <ArrowRightIcon aria-hidden="true" /></Link>
+                    </div>
+                    <figure class="experience-hero-image"><img :src="solution.image" :alt="solution.image_alt" width="1400" height="933" fetchpriority="high"><figcaption>Illustrative {{ solution.label.toLowerCase() }} scene</figcaption></figure>
+                </div>
+                <p class="experience-fit-summary">{{ solution.fit }}</p>
+                <div class="experience-hero-bottom"><span>01 / Your craft</span><span>02 / Your clients</span><a href="#sample-timing">03 / Your connected day ↓</a></div>
+            </PublicContainer>
+        </section>
+        <section v-else class="solution-intro">
             <PublicContainer>
                 <Breadcrumbs :items="[{ label: 'Home', href: route('marketing.home') }, { label: 'Solutions', href: route('marketing.solutions') }, { label: solution.label }]" />
                 <div class="solution-hero-grid">
@@ -45,10 +65,11 @@ const page = usePage();
             </PublicContainer>
         </section>
 
-        <section class="solution-section">
+        <SolutionTimingDemo v-if="experience" :key="solution.slug" :experience="experience" />
+        <section class="solution-section" :class="{ 'experience-editorial': experience }">
             <PublicContainer>
                 <p class="cd-eyebrow">Your working day</p>
-                <h2 class="solution-section-title font-display">{{ solution.heading }}</h2>
+                <h2 class="solution-section-title font-display">{{ experience ? experience.editorial.replaceAll('\\n', '\n') : solution.heading }}</h2>
                 <div class="solution-capabilities">
                     <article v-for="challenge in solution.challenges" :key="challenge.title">
                         <h3>{{ challenge.title }}</h3><p>{{ challenge.body }}</p>
@@ -69,9 +90,19 @@ const page = usePage();
                         </ol>
                     </div>
                     <div class="solution-story-proof">
-                        <HelpScreenshot v-if="solution.screenshots?.[1]" :media="solution.screenshots[1]" />
-                        <p class="solution-proof-note">Real product screens with sample clients, services and prices. The scenario is an evaluation exercise, not a customer result.</p>
-                        <div class="solution-actions"><Link :href="route('marketing.product-tour')" class="cd-button cd-button-secondary">Inspect the full visit walkthrough</Link></div>
+                        <div class="experience-visit-card">
+                            <p class="cd-eyebrow">From arrival to next time</p>
+                            <h3>One visit.<br>Everything connected.</h3>
+                            <div><span>01</span><p>Choose a service &amp; time</p></div>
+                            <div><span>02</span><p>Keep useful client details nearby</p></div>
+                            <div><span>03</span><p>Record the visit &amp; payment received</p></div>
+                            <Link :href="route('marketing.product-tour')" class="solution-text-link">See how it works <ArrowRightIcon aria-hidden="true" /></Link>
+                        </div>
+                        <details v-if="solution.screenshots?.length" class="experience-product-detail">
+                            <summary>Take a closer look at the actual product</summary>
+                            <HelpScreenshot :media="solution.screenshots[0]" />
+                            <p class="solution-proof-note">Actual ClipperDesk workspace with demo data. Industry-specific suitability limits apply.</p>
+                        </details>
                     </div>
                 </div>
             </PublicContainer>
@@ -88,7 +119,7 @@ const page = usePage();
                 <div>
                     <AppNotice tone="info" title="Know the limits before choosing">
                         <ul class="solution-limits"><li v-for="limit in solution.limits" :key="limit">{{ limit }}</li></ul>
-                        <div v-if="page.props.brand?.support_email" class="solution-actions"><a :href="`mailto:${page.props.brand.support_email}?subject=${encodeURIComponent(`Product fit: ${solution.label}`)}`" class="cd-button cd-button-secondary">Ask about your workflow</a></div>
+                        <div class="solution-actions"><Link :href="route('marketing.contact', { industry: solution.slug })" class="cd-button cd-button-secondary">Ask about your workflow</Link></div>
                         <p class="mt-3 text-sm leading-6">Describe your business requirements only. Please do not include client or patient records.</p>
                     </AppNotice>
                 </div>
@@ -112,5 +143,6 @@ const page = usePage();
         <RelatedReading v-if="guides.length" :items="guides.map(guide => ({ ...guide, description: guide.excerpt }))" />
         <SetupSupport />
         <ConversionBand :title="solution.final_title" description="Set up a sample service, inspect a booking and decide whether it works for your business. See Pricing for current location, staff and messaging terms." :context="`solution_${solution.slug}_final`" />
+        </div>
     </HomeLayout>
 </template>

@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import ConversionBand from '@/Components/Marketing/ConversionBand.vue';
 import PublicContainer from '@/Components/Marketing/PublicContainer.vue';
 import HomeLayout from '@/Layouts/HomeLayout.vue';
@@ -8,6 +8,9 @@ import { Head, Link, usePage } from '@inertiajs/vue3';
 import '../../../../css/solutions.css';
 const props = defineProps({ solutions: Array, seo: Object });
 const page = usePage();
+const selectedIndustry = ref('barbershops');
+const featured = computed(() => props.solutions.filter(item => ['barbershops', 'nail-salons', 'spas', 'massage'].includes(item.slug)));
+const selected = computed(() => featured.value.find(item => item.slug === selectedIndustry.value) || featured.value[0]);
 const descriptions = {
     'Hair, beauty & studio services': 'Start with everyday bookings, staff eligibility, client history and recorded checkout. Each page explains the details for your working day.',
     'Treatments & individual sessions': 'Explore individual appointment workflows. Shared rooms and equipment need setup review; classes and memberships are not included.',
@@ -19,13 +22,18 @@ const groups = computed(() => Object.entries(descriptions).map(([title, descript
 <template>
     <HomeLayout>
         <Head :title="seo.title" />
-        <section class="solution-intro">
-            <PublicContainer class="pb-10 pt-5 sm:pb-14">
-                <p class="cd-eyebrow">Find your fit</p>
-                <h1 class="solution-title cd-public-title font-display max-w-4xl">Find the workflow that fits your business</h1>
-                <p class="solution-lead max-w-3xl">Explore what ClipperDesk can do for your working day—with real product screens, a practical trial checklist and the limits to know before you switch.</p>
+        <div class="solution-experience experience-hub">
+        <section class="experience-hub-intro">
+            <PublicContainer>
+                <p class="cd-eyebrow">One connected day. Your way.</p>
+                <h1>Different crafts.<br>The same care.</h1>
+                <p class="solution-lead">Appointment scheduling and business management for people who look after people. Find the workflow that fits your business.</p>
+                <div class="experience-industry-tabs" role="group" aria-label="Preview a business type"><button v-for="item in featured" :key="item.slug" type="button" :aria-pressed="selectedIndustry === item.slug" @click="selectedIndustry = item.slug">{{ item.label }}</button></div>
+                <div v-if="selected" class="experience-industry-preview">
+                    <img :key="selected.image" :src="selected.image" :alt="selected.image_alt" width="1400" height="933" fetchpriority="high">
+                    <div aria-live="polite" aria-atomic="true"><p class="cd-eyebrow">ClipperDesk for {{ selected.label }}</p><h2>{{ selected.title }}</h2><p>{{ selected.description }}</p><Link :href="route('marketing.solutions.show', selected.slug)" class="cd-button cd-button-primary">Explore {{ selected.label.toLowerCase() }} <ArrowRightIcon aria-hidden="true" /></Link><span class="solution-proof-note">Illustrative scene</span></div>
+                </div>
                 <nav class="solution-hub-groups" aria-label="Business groups"><a v-for="group in groups" :key="group.id" :href="`#${group.id}`" class="cd-button cd-button-secondary">{{ group.title }}</a></nav>
-                <div class="solution-actions"><Link :href="route('marketing.product-tour')" class="solution-text-link">Walk through the product <ArrowRightIcon aria-hidden="true" /></Link><Link :href="route('marketing.pricing')" class="solution-text-link">Compare current pricing <ArrowRightIcon aria-hidden="true" /></Link></div>
             </PublicContainer>
         </section>
         <PublicContainer>
@@ -46,10 +54,11 @@ const groups = computed(() => Object.entries(descriptions).map(([title, descript
             <section class="solution-section">
                 <h2 class="solution-section-title font-display">Not sure where your business fits?</h2>
                 <p class="solution-body max-w-3xl">Tell us how a typical appointment works, what your team needs and which specialist tools you rely on. We can discuss the gaps before you move records or publish a booking link.</p>
-                <div v-if="page.props.brand?.support_email" class="solution-actions"><a :href="`mailto:${page.props.brand.support_email}?subject=Help%20assessing%20ClipperDesk%20fit`" class="cd-button cd-button-secondary">Email us about your workflow</a></div>
+                <div class="solution-actions"><Link :href="route('marketing.contact')" class="cd-button cd-button-secondary">Ask about your workflow</Link></div>
                 <p class="solution-proof-note">Business requirements only—no client or patient records needed.</p>
             </section>
         </PublicContainer>
         <ConversionBand title="Try a real working-day scenario." description="Start with fictional clients, inspect the workflow and compare the current plan terms before you switch." context="solutions_hub_final" />
+        </div>
     </HomeLayout>
 </template>

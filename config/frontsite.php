@@ -279,7 +279,8 @@ return [
     'solutions' => [
         'barbershops' => [
             'label' => 'Barbershops',
-            'seo_title' => 'Barbershop scheduling and walk-in software | ClipperDesk',
+            'seo_title' => 'Barbershop Software for Bookings & Walk-ins | ClipperDesk',
+            'seo_description' => 'Manage barbershop bookings, walk-in queues and client history in one place. Explore the workflow, check pricing and start your ClipperDesk trial.',
             'title' => 'Fit walk-ins around the appointments you promised',
             'description' => 'See the booked day, keep arrivals in order and choose an eligible barber when the full service fits. Keep the haircut and checkout on the same visit.',
             'image' => '/images/marketing/industries/barbershop.webp',
@@ -357,7 +358,8 @@ return [
         ],
         'salons' => [
             'label' => 'Salons',
-            'seo_title' => 'Salon booking and business management software | ClipperDesk',
+            'seo_title' => 'Salon Booking & Business Management Software | ClipperDesk',
+            'seo_description' => 'Manage salon appointments, stylist schedules and client preferences. Explore multi-service visits, setup help and your ClipperDesk trial.',
             'title' => 'Keep salon appointments connected from colour to checkout',
             'description' => 'Plan different service lengths, assign each service to the right stylist and find returning-client preferences before the consultation starts.',
             'image' => '/images/marketing/industries/home-salon-hero.webp',
@@ -436,7 +438,8 @@ return [
         ],
         'independent-stylists' => [
             'label' => 'Independent stylists',
-            'seo_title' => 'Independent stylist booking software | ClipperDesk',
+            'seo_title' => 'Booking Software for Independent Stylists | ClipperDesk',
+            'seo_description' => 'Give clients a booking link, protect your working hours and keep visit notes together. Explore ClipperDesk for independent stylists and compare pricing.',
             'title' => 'Run your independent stylist diary between clients',
             'description' => 'Share one booking link, protect your working hours and keep the notes you need for the next visit—all in your web browser.',
             'image' => '/images/marketing/industries/independent-stylist.webp',
@@ -515,7 +518,8 @@ return [
         ],
         'spas' => [
             'label' => 'Spas',
-            'seo_title' => 'Spa scheduling software: treatments and turnaround | ClipperDesk',
+            'seo_title' => 'Spa Scheduling & Appointment Software | ClipperDesk',
+            'seo_description' => 'Plan spa treatments, practitioner schedules and turnaround time. Explore guest preferences, room setup considerations and ClipperDesk pricing.',
             'title' => 'Give every spa treatment the time it needs',
             'description' => 'Plan treatments around practitioner hours, leave time to reset, and find guest preferences before the next appointment. Check room requirements before you go live.',
             'image' => '/images/marketing/industries/spa-sauna.webp',
@@ -593,7 +597,8 @@ return [
         ],
         'nail-salons' => [
             'label' => 'Nail salons',
-            'seo_title' => 'Nail salon booking and scheduling software | ClipperDesk',
+            'seo_title' => 'Nail Salon Booking & Scheduling Software | ClipperDesk',
+            'seo_description' => 'Plan nail appointments with time for removal and nail art. Match services to technicians, remember client preferences and explore your ClipperDesk trial.',
             'title' => 'Give nail salon appointments enough time for the full service',
             'description' => 'Plan removal, a fresh set and add-ons with realistic lengths. Match services to eligible technicians and keep returning-client preferences easy to find.',
             'image' => '/images/marketing/industries/nail-salon.webp',
@@ -671,7 +676,8 @@ return [
         ],
         'medspas' => [
             'label' => 'Medspas',
-            'seo_title' => 'Medspa appointment scheduling: scope and limits | ClipperDesk',
+            'seo_title' => 'Medspa Appointment Software: Evaluate Fit | ClipperDesk',
+            'seo_description' => 'Explore general appointment scheduling for medspa evaluation. Review workflow examples and clinical, privacy and suitability limits before choosing.',
             'title' => 'Evaluate medspa appointments before choosing your system',
             'description' => 'See the general booking and front-desk tools, then assess their limits. ClipperDesk is not a clinical medspa platform or a verified healthcare-compliant system.',
             'image' => '/images/marketing/industries/medspa.webp',
@@ -750,7 +756,8 @@ return [
         ],
         'massage' => [
             'label' => 'Massage',
-            'seo_title' => 'Massage scheduling software for individual sessions | ClipperDesk',
+            'seo_title' => 'Massage Scheduling & Booking Software | ClipperDesk',
+            'seo_description' => 'Schedule individual massage sessions with time between clients. Explore practitioner availability, booking and suitability limits with ClipperDesk.',
             'title' => 'Plan massage appointments with time to turn the room around',
             'description' => 'Offer clear session lengths, show practitioner availability and keep useful preferences for returning clients. Review shared-room fit before publishing.',
             'image' => '/images/marketing/industries/massage.webp',
@@ -829,7 +836,8 @@ return [
         ],
         'fitness-recovery' => [
             'label' => 'Fitness & recovery',
-            'seo_title' => 'Fitness and recovery scheduling software | ClipperDesk',
+            'seo_title' => 'Personal Training & Recovery Scheduling | ClipperDesk',
+            'seo_description' => 'Organise one-to-one fitness and recovery appointments. Explore coach availability, equipment setup considerations and booking with ClipperDesk.',
             'title' => 'Organise one-to-one fitness and recovery appointments',
             'description' => 'Give individual sessions a clear time and coach, keep changes visible and record payments received. Check equipment requirements before taking bookings.',
             'image' => '/images/marketing/industries/fitness-recovery.webp',
@@ -908,7 +916,8 @@ return [
         ],
         'physical-therapy' => [
             'label' => 'Physical therapy',
-            'seo_title' => 'Physical therapy scheduling: assess product fit | ClipperDesk',
+            'seo_title' => 'Physical Therapy Scheduling: Evaluate Fit | ClipperDesk',
+            'seo_description' => 'Evaluate general scheduling for physical therapy appointments with fictional visit examples. Review clinical, insurance and privacy limitations first.',
             'title' => 'Review physical therapy appointments against your practice needs',
             'description' => 'Inspect general scheduling with clear boundaries: no EHR, clinical planning, insurance billing or verified healthcare suitability.',
             'image' => '/images/marketing/industries/physical-therapy.webp',
@@ -987,7 +996,8 @@ return [
         ],
         'health-practices' => [
             'label' => 'Health practices',
-            'seo_title' => 'Health practice appointments: assess suitability | ClipperDesk',
+            'seo_title' => 'Wellness Practice Scheduling: Evaluate Fit | ClipperDesk',
+            'seo_description' => 'Explore general scheduling for non-clinical wellness appointments. Review privacy, specialist requirements and suitability before choosing ClipperDesk.',
             'title' => 'Check whether your health practice needs a specialist system',
             'description' => 'Explore the appointment tools with fictional data. General scheduling and business forms do not establish suitability for healthcare or regulated client information.',
             'image' => '/images/marketing/industries/health-practice.webp',
@@ -1066,7 +1076,8 @@ return [
         ],
         'tattoo-piercing' => [
             'label' => 'Tattooing & piercing',
-            'seo_title' => 'Tattoo and piercing studio software | ClipperDesk',
+            'seo_title' => 'Tattoo & Piercing Appointment Software | ClipperDesk',
+            'seo_description' => 'Organise studio consultations, artist schedules and client visits. Explore ClipperDesk booking and the consent and age-verification limits to review.',
             'title' => 'Keep tattoo and piercing appointments clear from consultation onward',
             'description' => 'Give consultations and studio sessions their own time, choose eligible artists and keep business forms and received-payment records with the visit.',
             'image' => '/images/marketing/industries/tattoo-piercing.webp',
@@ -1145,7 +1156,8 @@ return [
         ],
         'pet-grooming' => [
             'label' => 'Pet grooming',
-            'seo_title' => 'Pet grooming booking and scheduling software | ClipperDesk',
+            'seo_title' => 'Pet Grooming Appointment Software | ClipperDesk',
+            'seo_description' => 'Explore simple grooming appointments, owner records and visit notes. Check the limits of pet profiles and multi-pet workflows before choosing ClipperDesk.',
             'title' => 'Plan pet grooming appointments around realistic service times',
             'description' => 'Organise groomer availability and owner contact details, with manually written pet context. Check the limits of owner-based records before moving your diary.',
             'image' => '/images/marketing/industries/pet-grooming.webp',
@@ -1224,11 +1236,12 @@ return [
         ],
         'tanning-studios' => [
             'label' => 'Tanning studios',
-            'seo_title' => 'Tanning studio booking software | ClipperDesk',
+            'seo_title' => 'Spray Tan Booking & Studio Scheduling | ClipperDesk',
+            'seo_description' => 'Schedule staff-led spray-tan visits with time to prepare between clients. Explore booking and recorded checkout; bed controls and memberships are excluded.',
             'title' => 'Keep appointment-led tanning studio visits organised',
             'description' => 'Schedule staff-led services with clear durations and recorded payments. Review room needs and device limitations before replacing a specialist tanning system.',
-            'image' => '/images/marketing/industries/tanning-studio.webp',
-            'image_alt' => 'A staff member welcoming a client into a modern tanning studio',
+            'image' => '/images/marketing/industries/spray-tan-welcome.webp',
+            'image_alt' => 'A studio professional welcoming a fully clothed client beside a spray-tan booth',
             'accent' => 'amber',
             'fit' => 'For individual, staff-led appointment administration such as spray-tan services. Not a bed-control, exposure-management or membership platform.',
             'requirements' => [

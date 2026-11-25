@@ -18,7 +18,7 @@ it('keeps public font and marketing-image files within component budgets', funct
     $images = glob(public_path('images/marketing/industries/*.webp'));
     $editorialImages = glob(public_path('images/marketing/editorial/*.webp'));
 
-    expect($images)->toHaveCount(13);
+    expect($images)->toHaveCount(14);
     expect($editorialImages)->toHaveCount(6);
 
     foreach ([...$images, ...$editorialImages] as $image) {

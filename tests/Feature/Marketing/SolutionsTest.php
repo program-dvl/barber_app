@@ -83,10 +83,11 @@ it('keeps solution decisions and all hub destinations readable when SSR is unava
     foreach (config('frontsite.solutions') as $slug => $content) {
         $hub->assertSee('href="'.route('marketing.solutions.show', $slug).'"', false);
         $response = $this->get('/solutions/'.$slug)->assertOk();
-        $response->assertSee('<h1>'.e($content['title']).'</h1>', false)
+        $headline = config('solution-experiences.'.$slug.'.headline');
+        $response->assertSee('<h1>'.e($headline ? str_replace('\n', ' ', $headline) : $content['title']).'</h1>', false)
             ->assertSee(e($content['checks'][0]), false)
             ->assertSee(e($content['limits'][0]), false)
-            ->assertSee('mailto:'.config('brand.support_email'), false);
+            ->assertSee(route('marketing.contact'), false);
     }
 });
 
@@ -97,10 +98,37 @@ it('renders every rebuilt solution through the actual built SSR renderer', funct
     config(['inertia.ssr.enabled' => true, 'inertia.ssr.url' => 'http://127.0.0.1:13714']);
     foreach (array_keys(config('frontsite.solutions')) as $slug) {
         $html = $this->get('/solutions/'.$slug)->assertOk()->getContent();
-        expect($html)->toContain('class="solution-intro"')->toContain('id="fit-check"')
+        expect($html)->toContain(config('solution-experiences.'.$slug) ? 'class="experience-hero"' : 'class="solution-intro"')->toContain('id="fit-check"')
             ->toContain('fetchpriority="high"')->toContain('Enlarge screenshot:');
         $visible = preg_replace('/<script\b[^>]*>.*?<\/script>/s', '', $html);
         expect(preg_match_all('/<h1\b/', $visible))->toBe(1);
     }
     $this->get('/solutions')->assertOk()->assertSee('class="solution-hub-cards"', false);
+});
+
+it('covers every supported industry with editorial experiences and preserves sample content without JavaScript', function () {
+    config(['inertia.ssr.enabled' => false]);
+    expect(array_keys(config('solution-experiences')))->toEqualCanonicalizing(array_keys(config('frontsite.solutions')));
+    foreach (config('solution-experiences') as $slug => $experience) {
+        $response = $this->get('/solutions/'.$slug)->assertOk();
+        $dom = new DOMDocument;
+        @$dom->loadHTML($response->getContent());
+        $main = (new DOMXPath($dom))->query('//main')->item(0)->textContent;
+        expect($main)->toContain($experience['demo_title'])->toContain($experience['demo_body']);
+        foreach ($experience['options'] as $option) {
+            expect($main)->toContain($option['label']);
+        }
+    }
+});
+
+it('gives every industry a distinct rendered search title and description', function () {
+    $solutions = collect(config('frontsite.solutions'));
+    expect($solutions->pluck('seo_title')->unique())->toHaveCount(13);
+    expect($solutions->pluck('seo_description')->unique())->toHaveCount(13);
+    foreach ($solutions as $slug => $solution) {
+        $this->get(route('marketing.solutions.show', $slug))->assertOk()
+            ->assertSee(e($solution['seo_title']), false)
+            ->assertSee('<meta name="description" content="'.e($solution['seo_description']).'"', false)
+            ->assertSee('<link rel="canonical" href="'.route('marketing.solutions.show', $slug).'"', false);
+    }
 });

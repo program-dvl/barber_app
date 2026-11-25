@@ -3749,3 +3749,33 @@ product boundary. Specialist limitations remain explicit; no new scope is implie
 ### Homepage editorial reference — 2026-11-20
 
 Accepted owner request: incorporate option 2’s “Stay in the moment. Keep the day together.” portrait section into the selected combined homepage. Place it after the interactive demo, before detailed features. Retain broad business positioning and real HTML text; no product-scope change.
+
+### Solutions homepage-family extension — 2026-11-25
+
+Owner approved applying the homepage approach to /solutions and the barbershop,
+nail-salon, spa and massage pages. Use existing illustrative industry assets,
+editorial openings, an interactive hub preview and clearly labelled local timing
+exercises; retain the rest of the industries and all product-fit boundaries.
+No new operational capability, analytics scope or production deployment is implied.
+
+### All-industry editorial extension — 2026-11-25
+
+The owner extended the approved direction to all remaining solution pages and
+authorized new imagery where appropriate, with desktop/mobile checks. Each page
+uses industry-specific editorial copy, imagery, framing and sample service choices.
+Actual product proof remains available in an optional disclosure and the linked
+walkthrough rather than dominating the acquisition story. This does not widen
+specialist suitability or operational scope; regulated-industry limits remain visible.
+
+### Neutral solutions palette and sales contact — 2026-11-25
+
+Accepted owner request: replace pink surfaces with cool neutral backgrounds while
+retaining restrained industry colour differences. Improve distinct industry search
+summaries without unsupported claims. Replace workflow mailto links with `/contact`,
+emailing sales@clipperdesk.com and BCCing the owner-specified Gmail address. Save
+sensitive enquiry content encrypted before delivery; use an atomic send claim and
+operator-checked retries after uncertain transport outcomes. No email marketing
+consent, tracking expansion or deployment authorization is inferred.
+
+Open decision: sales-enquiry retention duration and an eventual operator inbox UI.
+The current CLI lists unresolved references and supports explicitly checked recovery.

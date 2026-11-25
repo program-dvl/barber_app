@@ -3,7 +3,14 @@
     <nav aria-label="Breadcrumb"><a href="{{ route('marketing.home') }}">Home</a> / <a href="{{ route('marketing.solutions') }}">Solutions</a></nav>
     @if(!empty($page['props']['solution']))
         @php($solution = $page['props']['solution'])
-        <h1>{{ $solution['title'] }}</h1>
+        @php($experience = $page['props']['experience'] ?? null)
+        <h1>{{ $experience ? str_replace('\n', ' ', $experience['headline']) : $solution['title'] }}</h1>
+        @if($experience)
+            <p>{{ $experience['eyebrow'] }}</p>
+            <h2>{{ $experience['demo_title'] }}</h2><p>{{ $experience['demo_body'] }}</p>
+            <ul>@foreach($experience['options'] as $option)<li>{{ $option['label'] }}: {{ $option['minutes'] }} minutes</li>@endforeach</ul>
+            <p>{{ $experience['buffer_label'] }}. The interactive timing exercise needs JavaScript; no appointment is created.</p>
+        @endif
         <p>{{ $solution['description'] }}</p>
         <p>{{ $solution['fit'] }}</p>
         <p>{{ $page['props']['trialLabel'] }} free trial after email verification. No card required. No automatic charge.</p>
@@ -22,10 +29,10 @@
         <h2>Look closer at the tools you would use</h2><ul>@foreach($page['props']['features'] as $feature)<li><a href="{{ route('marketing.features.show', $feature['slug']) }}">{{ $feature['label'] }}</a></li>@endforeach</ul>
         <h2>Setup and migration help</h2><p>Ask about transferring clients and upcoming bookings. Agree scope, timing and any cost before work starts. No client or patient records needed in your first email.</p>
     @else
-        <h1>Find the workflow that fits your business</h1><p>Explore product workflows and limits before you switch. Specialist industry pages do not certify suitability.</p>
+        <h1>Different crafts. The same care.</h1><p>Explore product workflows and limits before you switch. Specialist industry pages do not certify suitability.</p>
         @foreach(collect($page['props']['solutions'])->groupBy('group') as $group => $items)
             <h2>{{ $group }}</h2><ul>@foreach($items as $solution)<li><h3><a href="{{ route('marketing.solutions.show', $solution['slug']) }}">{{ $solution['label'] }}</a></h3><p>{{ $solution['description'] }}</p></li>@endforeach</ul>
         @endforeach
     @endif
-    <p><a href="mailto:{{ config('brand.support_email') }}">Ask about your workflow</a> · <a href="{{ route('marketing.pricing') }}">View pricing</a></p>
+    <p><a href="{{ route('marketing.contact') }}">Ask about your workflow</a> · <a href="{{ route('marketing.pricing') }}">View pricing</a></p>
 </main>

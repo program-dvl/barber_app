@@ -1299,3 +1299,13 @@ is user-selected, not a prediction or promised Clipperdesk result. Include six
 existing business currencies, copyable estimates, a clean share link and a useful
 product/guide next step. No account, database write, lead capture, payment, new
 analytics collection or guaranteed backlink/ranking outcome is implied.
+
+### Public sales enquiry addition — owner approved 2026-11-25
+
+Public acquisition under FR-01 includes a branded `/contact` page for business-fit,
+setup and pricing enquiries. Collect name, email, optional business/industry and a
+bounded message. Deliver to sales@clipperdesk.com and privately copy the owner's
+specified secondary mailbox. Preserve an encrypted enquiry before email delivery,
+prevent duplicate sends, show an honest outcome/reference, and provide operator
+recovery for delivery failures. No newsletter subscription or tenant access is
+implied by contacting sales; this is separate from tenant client communications.
