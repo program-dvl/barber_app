@@ -10,7 +10,11 @@ client history, role-aware record keeping and cancellation waitlist evaluation,
 with an actual customer Help link. No extra keyword-variant pages were created.
 
 316 Marketing tests pass, two skipped (5,453 assertions); client/SSR build and
-all 27 route budgets pass. New batch release verification is recorded in the
+all 27 route budgets pass. Commit `ab3f2c0` was pushed and Forge marked deployment `84113013` Deployed.
+All three updated pages were verified live in initial HTML and at mobile width
+390px. Google accepted all four salon/barber/feature recrawl requests. GA Admin
+confirmed the existing CTA key event; completed trials remain a separate measure.
+Detailed release verification is recorded in the
 [evidence record](audits/2026-11-26-search-follow-through/README.md). Existing
 GA consent and private-route boundaries remain unchanged.
 
@@ -4193,3 +4197,7 @@ visual alignment and deployed SEO/sitemap were not certified in this follow-up.
   pass. Skips are live SSR checks. No deployed verification or actual inbox delivery.
 - Deployment needs the sales-enquiries migration and configured mail transport;
   recovery steps are in the public-website module. Local preview uses array mail.
+
+### Search content follow-through — 26 November 2026
+
+Implemented fictional client-record handoff examples on the existing client-management and salon pages, a future-opening/offer rehearsal on calendar-and-walk-ins, and a linked printable salon-client-record-template resource with six prompts and source references. All 318 Marketing tests pass (two optional checks skipped; 5,533 assertions) on isolated in-memory SQLite. Client/SSR build and 27 route budgets pass. Local browser checked resource and feature content, salon links, desktop resource layout and 390px mobile resource/waitlist widths without overflow. Existing build font/CSS warnings remain. Competitor review and a researched distribution shortlist are in the search-follow-through audit. No external listing, purchase or outreach sent; ranking change not established.

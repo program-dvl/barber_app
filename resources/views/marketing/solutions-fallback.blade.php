@@ -22,6 +22,9 @@
         @foreach($solution['screenshots'] as $screen)
             <figure><img src="{{ $screen['path'] }}" alt="{{ $screen['alt'] }}" width="{{ $screen['width'] }}" height="{{ $screen['height'] }}" loading="lazy" style="max-width:100%;height:auto"><figcaption>{{ $screen['caption'] }}</figcaption></figure>
         @endforeach
+        @if(!empty($solution['walkthrough']))
+            <h2>Try the complete workflow with fictional details</h2><ol>@foreach($solution['walkthrough'] as $step)<li><h3>{{ $step['title'] }}</h3><p>{{ $step['body'] }}</p></li>@endforeach</ol>
+        @endif
         <h2>Put your own working day to the test</h2><p>Use fictional clients first.</p>
         <ul>@foreach($solution['checks'] as $check)<li>{{ $check }}</li>@endforeach</ul>
         <h2>Know the limits before choosing</h2><ul>@foreach($solution['limits'] as $limit)<li>{{ $limit }}</li>@endforeach</ul>

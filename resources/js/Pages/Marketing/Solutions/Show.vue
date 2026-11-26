@@ -108,6 +108,15 @@ const page = usePage();
             </PublicContainer>
         </section>
 
+        <section v-if="solution.walkthrough?.length" class="solution-section" aria-labelledby="salon-walkthrough-heading">
+            <PublicContainer>
+                <h2 id="salon-walkthrough-heading" class="solution-section-title font-display">Try a returning-client handoff</h2>
+                <ol class="solution-capabilities">
+                    <li v-for="step in solution.walkthrough" :key="step.title"><h3>{{ step.title }}</h3><p class="solution-body">{{ step.body }}</p></li>
+                </ol>
+            </PublicContainer>
+        </section>
+
         <section id="fit-check" class="solution-section solution-check-section" aria-labelledby="fit-heading">
             <PublicContainer class="solution-fit-grid">
                 <div>

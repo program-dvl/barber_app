@@ -100,7 +100,7 @@ defineProps({ feature: Object, related: Array, reading: Array, seo: Object });
             </PublicContainer>
         </section>
 
-        <ProductEvidence v-if="feature.screenshots?.length || feature.faqs?.length" :screenshots="feature.screenshots" :scenario="feature.scenario" :faqs="feature.faqs" :context="`feature_${feature.slug}_evidence`" />
+        <ProductEvidence v-if="feature.screenshots?.length || feature.faqs?.length" :screenshots="feature.screenshots" :scenario="feature.scenario" :walkthrough="feature.walkthrough" :faqs="feature.faqs" :context="`feature_${feature.slug}_evidence`" />
 
         <RelatedReading :items="reading" />
         <SetupSupport />

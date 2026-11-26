@@ -70,7 +70,7 @@ it('links only eligible audience articles and keeps unrelated industries separat
         ]);
     }
     $this->get(route('marketing.solutions.show', 'salons'))->assertOk()->assertInertia(fn (Assert $page) => $page
-        ->has('guides', 2)->where('guides.0.title', 'Practical salon guide')
+        ->has('guides', 3)->where('guides.0.title', 'Practical salon guide')
         ->where('guides.0.href', route('blog.article', $slugs[0])));
     foreach (['barbershops', 'spas'] as $industry) {
         $this->get(route('marketing.solutions.show', $industry))->assertOk()->assertInertia(fn (Assert $page) => $page->has('guides', 0));

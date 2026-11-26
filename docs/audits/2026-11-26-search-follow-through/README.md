@@ -39,3 +39,16 @@ These support existing acquisition pages without adding doorway URLs. No clinica
 316 Marketing tests passed, two skipped (5,453 assertions), on the configured in-memory SQLite test database. The skips are optional renderer checks; automated route tests alone are not production SSR evidence. Client and SSR production builds pass; all 27 route bundle budgets pass. The build retains existing CSS/font-resolution warnings; no new runtime font certification is claimed. No production migration or customer-data change is needed.
 
 For follow-up, compare matched 28-day periods by country, query, page and device, with brand queries separated. Keep CTA intent separate from verified trials; consent-based GA is not a full visitor census. Use the baseline above as historical context, not a conversion attribution claim. No recurring automation is created. Update this record only with observed deployment and Google request outcomes.
+
+
+## Final production acceptance
+
+Source commit `ab3f2c03d9aa85a44c8eb84a2458fd0187c52d56` was pushed to master. Forge deployment `84113013` was observed **Deployed** through the existing push-to-deploy workflow. No duplicate manual deployment was triggered. The three new FAQ/definition markers were observed on the actual production salon, client-management and calendar/walk-in pages. Expanded client-record and waitlist answers and the salon answer were reviewed at actual 390×844 viewports; document width was 390px on all three. Temporary viewport overrides were reset. Desktop client-record content was also inspected.
+
+Independent live initial-HTML checks found each new content marker, exactly one H1, the expected primary-host self-canonical and `index, follow, max-image-preview:large` on all three pages. The public sitemap had 145 URLs including salon, barber, both feature pages and the demo scorecard. Robots advertised the primary sitemap. The sitemap was not resubmitted unnecessarily.
+
+Google accepted all four recrawl requests: salon solution, barber solution, client-management feature and calendar/walk-in feature. Each ended with **Indexing requested** and the priority-queue confirmation. No CAPTCHA was solved or access control bypassed. Acceptance does not prove a subsequent crawl or improved rank.
+
+GA Admin confirmed the dedicated ClipperDesk public-website property already has `marketing_cta_clicked` marked as a key event with an active stream in the last 28 days. The default purchase event showed no stream data. No fake purchase, trial-completion event, identity join or tracking-consent change was added. CTA interest must not be counted as completed trials.
+
+Release evidence was recorded after production verification locally; it is not a claim that later Google ranking or acquisition results were measured. No recurring report or reminder was scheduled. Use the recorded country/query baseline for the next matched 28-day comparison, retaining low-sample caveats.

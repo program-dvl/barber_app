@@ -1598,3 +1598,7 @@ visible labels, 48px controls, 16px mobile input text and focused validation err
 Use AppNotice for saved/sent outcomes, focus the receipt after submission, wrap long
 references, and retain at least 12px gaps between actions. Cooldown disables repeated
 submission while preserving text; an explicit new-enquiry action follows completion.
+
+### Acquisition workflow examples — 26 November 2026
+
+Optional numbered product-evaluation steps reuse PublicContainer, solution-section and existing typography tokens. Printable client-record resources reuse Guide worksheet/print styling; no new form or notification pattern. Fictional examples and capability limits remain visible alongside reviewed product evidence.

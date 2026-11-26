@@ -85,6 +85,20 @@ return [
             'screens' => [
                 'calendar',
             ],
+            'walkthrough' => [
+                [
+                    'title' => 'Start with a future-opening request',
+                    'body' => 'Illustrative test: a client wants a 45-minute visit on Friday afternoon, but no suitable appointment is available. Review the customer waitlist request through the documented public journey. This is different from joining the queue after arriving at reception.',
+                ],
+                [
+                    'title' => 'Check the offer, not just the notification',
+                    'body' => 'When a suitable opening is matched, review the private time-limited offer with a fictional customer and test inbox. An offer is not a booking. On acceptance, check that service duration, staff and current availability are revalidated before confirmation.',
+                ],
+                [
+                    'title' => 'Rehearse the opening no longer being available',
+                    'body' => 'Try an expired offer or an opening that another appointment has taken. Confirm that the old offer cannot create a conflicting booking. A cancellation waitlist does not guarantee a filled slot. Broadcast campaigns and a general owner waitlist dashboard are unavailable.',
+                ],
+            ],
             'scenario' => [
                 'title' => 'The next walk-in cannot delay a booked visit',
                 'body' => 'Check the whole service window before assigning the next waiting client. A professional who is free now may have a booking before that service would finish. Keep staff hours, breaks and appointment changes in the same calendar.',
@@ -159,6 +173,20 @@ return [
             'definition' => 'Client management software gives your team one place to find a returning client’s visits, consultation notes, preferences and recorded purchases. Salons and barbershops can keep useful handoff details together while restricting sensitive notes to authorised people.',
             'screens' => [
                 'clients',
+            ],
+            'walkthrough' => [
+                [
+                    'title' => 'Before the visit: find the right person',
+                    'body' => 'Use a fictional returning client, Alex Example. Search the existing profile rather than creating another Alex. Compare the previous visit and a general preference, then review any restricted consultation note using an authorised role.',
+                ],
+                [
+                    'title' => 'During the visit: keep the handoff useful',
+                    'body' => 'Record what was agreed, the service context and the author. Keep a factual preference such as a shorter finish separate from sensitive notes. The reviewed product image shows how a client profile connects history and preferences; it is sample data, not a customer testimonial.',
+                ],
+                [
+                    'title' => 'After the visit: check continuity and access',
+                    'body' => 'Open the profile as the next permitted professional. Verify the visit is findable and useful notes are available. Repeat as reception and confirm restricted material stays restricted. Use the printable record template to decide which information your team actually needs.',
+                ],
             ],
             'scenario' => [
                 'title' => 'A returning salon client sees a different stylist',
@@ -381,6 +409,20 @@ return [
             'screens' => [
                 'services',
                 'clients',
+            ],
+            'walkthrough' => [
+                [
+                    'title' => 'Prepare the next consultation',
+                    'body' => 'Find a fictional returning client and inspect the prior visit, a permitted formula note and a general styling preference. Ask the next stylist to find the same context without a personal notebook.',
+                ],
+                [
+                    'title' => 'Connect the service to the record',
+                    'body' => 'Build the sample visit with its service lines and qualified stylists. After reviewing the visit, record useful changes with authorship and inspect the client history. Review the payments received outside ClipperDesk; checkout records these receipts without charging a card.',
+                ],
+                [
+                    'title' => 'Decide what belongs in the profile',
+                    'body' => 'Use the client-record template to list useful fields, who needs access and what can be omitted. Review the same fictional record as reception and a professional before importing real client information.',
+                ],
             ],
             'scenario' => [
                 'title' => 'Colour, a wash and a finish—with a clear handoff',
@@ -1422,6 +1464,87 @@ return [
         ],
     ],
     'guides' => [
+        'salon-client-record-template' => [
+            'seo_title' => 'Salon client record template and handoff checklist | ClipperDesk',
+            'image' => '/images/marketing/editorial/resources-planning.webp',
+            'title' => 'Build a client record the next stylist can use',
+            'description' => 'Print a salon client record template with a fictional example, field-by-field prompts and a role-access check. Plan useful visit notes before moving records.',
+            'topic' => 'Client records and team handoffs',
+            'published_at' => '2026-11-26',
+            'reviewed_by' => 'ClipperDesk editorial team',
+            'reviewed_at' => '2026-11-26',
+            'intro' => 'A useful client record helps the next authorised person understand the visit without collecting everything about the client. Print this template to plan your fields and handoffs. It is a working worksheet, not a ClipperDesk CSV import schema or a place to submit client information.',
+            'sections' => [
+                [
+                    'title' => 'Begin with a fictional returning client',
+                    'body' => 'Worked example: Alex Example returns for a cut and finish on 3 December. General preference: discuss length before cutting and use a low-fragrance finishing product if available. The last visit note says the agreed finish was shorter at the sides. These are invented planning details, not a real person or clinical guidance.',
+                ],
+                [
+                    'title' => 'Separate identity, visit facts and preferences',
+                    'body' => 'Use your existing client reference to distinguish people with similar names. Record the visit date, service and professional with the visit. Keep a changeable preference separate from an agreed service detail. Do not treat a shared name as permission to combine records or copy sensitive notes into a general preference.',
+                ],
+                [
+                    'title' => 'Write a note someone else can act on',
+                    'body' => 'Weak example: likes it short. Better fictional example: discussed keeping enough length on top to style to the side; confirm the length again before starting the next cut. Add the author and date. Record what was discussed or observed rather than diagnosing a condition or guessing what a client wants.',
+                ],
+                [
+                    'title' => 'Decide access before collecting more detail',
+                    'body' => 'For each field, name the purpose and the team roles that need it. A receptionist may need an appointment instruction without access to the underlying sensitive consultation record. Review your actual permissions and retention responsibilities. This worksheet does not establish legal consent or healthcare compliance.',
+                ],
+                [
+                    'title' => 'Check the next-person handoff',
+                    'body' => 'Give a colleague the fictional client reference and ask them to find the previous visit, explain the next consultation question and identify anything they cannot access. Record gaps before importing real client data. For migration, use the separate client-move rehearsal; this sheet does not transfer appointments, card details or financial history.',
+                ],
+            ],
+            'checklist' => [
+                'Use fictional records in the rehearsal; keep live client information out of public worksheets and support emails.',
+                'Give each proposed field a purpose and an access role.',
+                'Keep author, date and service context with visit notes.',
+                'Resolve duplicate identities and access failures before moving real records.',
+            ],
+            'limitation' => 'This planning template is not an import file, clinical record, legal consent form or retention policy. Printed live records need your own secure handling and disposal arrangements.',
+            'feature' => 'client-management',
+            'feature_label' => 'See ClipperDesk client records and the reviewed product screen',
+            'worksheet' => [
+                'title' => 'Printable client record and handoff template',
+                'instruction' => 'Print a blank copy for your team discussion. Use fictional details first. Decide the purpose and permitted access before filling each field.',
+                'rows' => [
+                    [
+                        'title' => 'Client reference',
+                        'prompt' => 'Fictional reference · duplicate identity checked · no real contact details',
+                    ],
+                    [
+                        'title' => 'Visit context',
+                        'prompt' => 'Date · service · professional · next appointment question',
+                    ],
+                    [
+                        'title' => 'General preferences',
+                        'prompt' => 'Preference · confirmed with client when · purpose',
+                    ],
+                    [
+                        'title' => 'Visit note',
+                        'prompt' => 'Agreed or observed detail · author · date · permitted roles',
+                    ],
+                    [
+                        'title' => 'Restricted context',
+                        'prompt' => 'Record only that a permitted note exists here; review access in the actual system',
+                    ],
+                    [
+                        'title' => 'Handoff check',
+                        'prompt' => 'Next colleague found visit? · restricted access correct? · gap and action owner',
+                    ],
+                ],
+            ],
+            'sources_title' => 'Product workflow and preparation references',
+            'sources' => [
+                [
+                    'label' => 'Client visits and rebooking',
+                    'href' => '/help/articles/clients-visits-rebook',
+                    'detail' => 'Use the maintained Help Center to inspect the documented client-history journey.',
+                ],
+            ],
+            'related_guide' => 'salon-client-migration-rehearsal',
+        ],
         'salon-software-demo-scorecard' => [
             'seo_title' => 'Salon software demo checklist and printable scorecard | ClipperDesk',
             'image' => '/images/marketing/editorial/resources-planning.webp',

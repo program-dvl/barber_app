@@ -54,11 +54,11 @@ class SolutionController extends Controller
                     default => [],
                 })->latest('published_at')->get(['title', 'slug', 'excerpt'])
                 ->map(fn (Article $article): array => ['title' => $article->title, 'excerpt' => $article->excerpt, 'href' => route('blog.article', $article->slug)])
-                ->concat($solution === 'salons' ? [[
-                    'title' => config('frontsite.guides.salon-software-demo-scorecard.title'),
-                    'excerpt' => config('frontsite.guides.salon-software-demo-scorecard.description'),
-                    'href' => route('marketing.guides.show', 'salon-software-demo-scorecard'),
-                ]] : []),
+                ->concat($solution === 'salons' ? collect(['salon-software-demo-scorecard', 'salon-client-record-template'])->map(fn (string $slug): array => [
+                    'title' => config('frontsite.guides.'.$slug.'.title'),
+                    'excerpt' => config('frontsite.guides.'.$slug.'.description'),
+                    'href' => route('marketing.guides.show', $slug),
+                ])->all() : []),
             'features' => collect($content['features'])->map(fn (string $slug): array => [
                 'slug' => $slug,
                 'label' => $features[$slug]['label'],

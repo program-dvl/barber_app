@@ -70,13 +70,13 @@ it('projects truthful article images and dates without rewriting stored publicat
 it('links relevant guides from the product journey and withdraws draft articles automatically', function () {
     $article = seoReviewedArticle();
     $this->get(route('marketing.features.show', 'client-management'))->assertOk()
-        ->assertInertia(fn (Assert $page) => $page->has('reading', 2)
+        ->assertInertia(fn (Assert $page) => $page->has('reading', 3)
             ->where('reading.0.href', route('blog.article', $article)));
     $this->get(route('marketing.use-cases.show', 'keep-client-history-together'))->assertOk()
-        ->assertInertia(fn (Assert $page) => $page->has('reading', 2)->where('solution.slug', 'salons'));
+        ->assertInertia(fn (Assert $page) => $page->has('reading', 3)->where('solution.slug', 'salons'));
     $article->update(['status' => 'draft']);
     $this->get(route('marketing.features.show', 'client-management'))->assertOk()
-        ->assertInertia(fn (Assert $page) => $page->has('reading', 1)
+        ->assertInertia(fn (Assert $page) => $page->has('reading', 2)
             ->where('reading.0.href', route('marketing.guides.show', 'switch-from-paper-bookings')));
 });
 

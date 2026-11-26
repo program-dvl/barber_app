@@ -477,3 +477,7 @@ FR-01/06/09/11/15: salon and barber solution FAQs now explain concrete purchase-
 ### Query-led follow-through — 2026-11-26
 
 FR-06/08/11: US Search Console query/page inspection informed three existing-page improvements: salon client history, role-aware record keeping and future-opening waitlist evaluation. The calendar page links the actual customer waitlist help journey. No new keyword-variant URLs or specialist feature claims were added. Historical US query samples are sparse and not evidence of stable rankings. The first content batch was observed live with mobile width 390 and no horizontal overflow; salon recrawl request was accepted. See the execution evidence for later release state.
+
+### Client-record resource and workflow evidence — 26 November 2026
+
+Existing client-management, calendar/walk-in and salon pages expose optional configured walkthrough steps. The generic ProductEvidence and salon editorial layout reuse established tokens. The new salon-client-record-template guide reuses printable worksheet rendering, source references and resource/sitemap integration. It contains fictional planning details, no client-data submission, no import schema and no scope expansion. See the competitor/distribution audit for rationale and primary sources.

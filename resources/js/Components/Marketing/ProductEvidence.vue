@@ -6,7 +6,7 @@ import PublicCta from '@/Components/Marketing/PublicCta.vue';
 import { Link } from '@inertiajs/vue3';
 import '../../../css/help-center.css';
 
-defineProps({ screenshots: { type: Array, default: () => [] }, scenario: Object, faqs: { type: Array, default: () => [] }, context: String });
+defineProps({ screenshots: { type: Array, default: () => [] }, scenario: Object, walkthrough: { type: Array, default: () => [] }, faqs: { type: Array, default: () => [] }, context: String });
 </script>
 
 <template>
@@ -30,6 +30,12 @@ defineProps({ screenshots: { type: Array, default: () => [] }, scenario: Object,
                     <HelpScreenshot v-for="media in screenshots" :key="media.key" :media="media" />
                 </div>
             </div>
+            <section v-if="walkthrough.length" class="mx-auto mt-12 max-w-4xl" aria-labelledby="evidence-walkthrough-title">
+                <h2 id="evidence-walkthrough-title" class="font-display text-2xl font-bold text-[var(--text-strong)]">Try the complete workflow with fictional details</h2>
+                <ol class="mt-6 list-decimal space-y-6 pl-6">
+                    <li v-for="step in walkthrough" :key="step.title"><h3 class="font-bold text-[var(--text-strong)]">{{ step.title }}</h3><p class="mt-2 leading-8 text-[var(--text-muted)]">{{ step.body }}</p></li>
+                </ol>
+            </section>
             <div v-if="faqs.length" class="mx-auto mt-14 max-w-4xl">
                 <h2 class="mb-7 font-display text-3xl font-semibold text-[var(--text-strong)]">Questions before you start</h2>
                 <FaqList :items="faqs" />

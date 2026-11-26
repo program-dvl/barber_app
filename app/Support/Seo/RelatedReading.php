@@ -18,7 +18,7 @@ class RelatedReading
             ->map(fn (Article $article) => ['title' => $article->title, 'description' => $article->excerpt, 'href' => route('blog.article', $article->slug)])
             ->all();
         $guides = match ($feature) {
-            'client-management' => ['switch-from-paper-bookings'],
+            'client-management' => ['switch-from-paper-bookings', 'salon-client-record-template'],
             'calendar-and-walk-ins' => ['service-timing-and-buffers', 'salon-software-demo-scorecard', 'barber-walk-in-handover-sheet'],
             'online-booking' => ['service-timing-and-buffers', 'salon-booking-slot-exercise', 'salon-no-show-response-planner'],
             default => [],
