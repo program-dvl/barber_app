@@ -38,7 +38,7 @@ it('keeps all thirteen industry choices and adds reviewed product evidence to ev
     $this->get(route('marketing.solutions'))->assertOk()->assertInertia(fn (Assert $page) => $page->has('solutions', 13));
     foreach (array_keys(config('frontsite.solutions')) as $slug) {
         $this->get(route('marketing.solutions.show', $slug))->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->has('solution.screenshots', 2)->has('solution.faqs', 3));
+            ->assertInertia(fn (Assert $page) => $page->has('solution.screenshots', 2)->where('solution.faqs', fn ($faqs) => count($faqs) >= 3));
     }
     $this->get(route('marketing.solutions.show', 'pet-grooming'))->assertOk()
         ->assertInertia(fn (Assert $page) => $page->has('solution.screenshots', 2)->where('solution.slug', 'pet-grooming'));

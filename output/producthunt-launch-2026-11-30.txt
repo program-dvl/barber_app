@@ -91,7 +91,7 @@ walk-ins and client records together for service businesses. Given your experien
 with [relevant context], I’d value your honest feedback on the workflow. Here’s
 the page if you’d like to take a look: [launch link].
 
-FORUM DRAFT (not posted)
+FORUM POST (published 25 November 2026)
 Title: How do you fit walk-ins around a fully booked appointment day?
 Body: I’m building ClipperDesk and launching on November 30. One workflow we focus
 on is keeping online bookings and walk-ins together without losing sight of staff
@@ -162,3 +162,23 @@ owners and front-desk teams: what is hardest to coordinate when a walk-in arrive
 during a busy booked day? Try our sample day at https://clipperdesk.com/ or see
 the launch: https://www.producthunt.com/products/clipperdesk?launch=clipperdesk
 No forum announcement, direct message or comment was sent in this follow-up.
+
+FINAL FOLLOW-UP — 25 NOVEMBER 2026
+Completed: 60-second 1080p caption-led demo, using owner-supplied native recording.
+Hosted unlisted: https://youtu.be/yMZHGiVnx48
+YouTube processing completed; Unlisted verified in Studio. Product Hunt video
+preview accepted, Changes saved confirmed, and actual embedded playback observed.
+Scheduling software and CRM software product categories also saved.
+The owner pushed badge commit 34dad2b. Existing auto-deploy published the badge;
+production Chrome checks passed at desktop and actual 390x844 phone viewport,
+with loaded 210x54 local badge, correct launch link and no horizontal overflow.
+No manual Forge deploy was triggered. Community forum draft remains unposted.
+These completed facts supersede the earlier pending notes in this launch kit.
+No traffic improvement, editorial featuring or leaderboard rank is established.
+
+COMMUNITY POST PUBLISHED — 25 NOVEMBER 2026
+Owner explicitly authorized publication of the prepared feedback post.
+Published as Dhaval Prajapati in p/clipperdesk; title and full body verified
+on the resulting thread. No duplicate cross-post, DM or ad was sent.
+https://www.producthunt.com/p/clipperdesk/how-do-you-fit-walk-ins-around-a-fully-booked-appointment-day
+This publication supersedes earlier unposted/draft notes in this kit.

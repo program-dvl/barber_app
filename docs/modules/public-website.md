@@ -467,3 +467,8 @@ run `php artisan sales:enquiries REFERENCE --retry --delivery-checked`. Never re
 ambiguous accepted delivery; check both destination mailboxes/provider first. Sent
 records cannot be resent by this command. Preserve APP_KEY to decrypt stored enquiries.
 Retention duration and any future operator UI remain an explicit open decision.
+
+
+### Search acquisition iteration — 2026-11-26
+
+FR-01/06/09/11/15: salon and barber solution FAQs now explain concrete purchase-evaluation scenarios rather than claim guaranteed results. Salon related reading includes the existing software-demo scorecard alongside publishable editorial articles. Shared configuration retains online deposit and membership limits and feeds existing public rendering. The homepage remains multi-industry. No ranking, deployment or Google indexing outcome is established by this local change.

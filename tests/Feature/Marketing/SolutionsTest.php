@@ -22,7 +22,7 @@ it('publishes differentiated supported business pages', function (string $slug, 
         ->has('features', 3)
         ->has('solution.screenshots', 2)
         ->has('solution.checks', 3)
-        ->has('solution.faqs', 3)
+        ->where('solution.faqs', fn ($faqs) => count($faqs) >= 3)
         ->missing('solution.requirements')
         ->where('trialLabel', config('billing.trial_label'))
         ->where('solution.title', fn (string $title) => str_contains(strtolower($title), $phrase)));
@@ -70,7 +70,7 @@ it('links only eligible audience articles and keeps unrelated industries separat
         ]);
     }
     $this->get(route('marketing.solutions.show', 'salons'))->assertOk()->assertInertia(fn (Assert $page) => $page
-        ->has('guides', 1)->where('guides.0.title', 'Practical salon guide')
+        ->has('guides', 2)->where('guides.0.title', 'Practical salon guide')
         ->where('guides.0.href', route('blog.article', $slugs[0])));
     foreach (['barbershops', 'spas'] as $industry) {
         $this->get(route('marketing.solutions.show', $industry))->assertOk()->assertInertia(fn (Assert $page) => $page->has('guides', 0));
@@ -131,4 +131,16 @@ it('gives every industry a distinct rendered search title and description', func
             ->assertSee('<meta name="description" content="'.e($solution['seo_description']).'"', false)
             ->assertSee('<link rel="canonical" href="'.route('marketing.solutions.show', $slug).'"', false);
     }
+});
+
+
+it('connects salon purchase evaluation to a real guide and preserves specialist limits', function () {
+    config(['inertia.ssr.enabled' => false]);
+    $this->get('/solutions/salons')->assertOk()->assertSee('href="'.route('marketing.guides.show', 'salon-software-demo-scorecard').'"', false)->assertInertia(fn (Assert $page) => $page
+        ->where('guides.0.href', route('marketing.guides.show', 'salon-software-demo-scorecard')));
+    $this->get('/guides/salon-software-demo-scorecard')->assertOk();
+    expect(collect(config('frontsite.solutions.salons.faqs'))->pluck('question')->all())
+        ->toContain('How should I test salon scheduling software before switching?');
+    expect(collect(config('frontsite.solutions.salons.faqs'))->pluck('answer')->implode(' '))
+        ->toContain('Online deposit collection, prepaid packages and memberships are unavailable');
 });

@@ -1,5 +1,22 @@
 # Project status
 
+## 2026-11-26 · Organic search first implementation batch (local)
+
+Observed the owner's Search Console baseline (717 impressions, two clicks, average
+position 68) and GA home reports. Live booking-host salon URL already redirects
+301 to the primary URL; historical alias impressions are not a confirmed current
+canonical defect. Added concrete salon/barber evaluation FAQs, retained specialist
+limits, and linked the existing salon software demo scorecard from solution
+related reading and initial fallback HTML. Homepage breadth is unchanged.
+
+Full Marketing suite: 313 passed, two skipped (5,411 assertions); client and SSR
+production builds and all 27 route bundle budgets pass. Chrome verified the local
+salon content and scorecard link journey. No new mobile certification, deployment,
+Search Console submission, directory registration or outreach was performed.
+Existing unrelated Product Hunt/video and status edits are preserved.
+[Execution sequence and acceptance criteria](strategy/organic-search-execution-2026-11-26.md).
+
+
 ## 2026-11-25 · Product Hunt launch and website badge
 
 Signed-in Product Hunt confirmed ClipperDesk scheduled for 2026-11-30 at
@@ -9,9 +26,17 @@ or editorial featuring is established. Website footer badge is implemented local
 in Vue and the legal Blade fallback. Chrome verified the loaded badge at 1440px
 and 390px, a 210×54px link and no mobile horizontal overflow. Seven focused
 marketing tests pass (177 assertions); client/SSR build and 27 route budgets pass.
-Forge is signed in; push-to-deploy from master is confirmed. No production badge verified.
-Native demo recording, hosted video attachment and community posting remain
-unfinished. [Launch kit](../output/producthunt-launch-2026-11-30.txt).
+Owner pushed commit `34dad2b` through the existing auto-deploy workflow. Chrome
+verified the badge on production at desktop and an actual 390×844 viewport, with
+loaded local artwork, 210×54px bounds and no horizontal overflow. No manual Forge
+deployment was triggered. A 60-second, 1920×1080/30fps silent caption-led edit of
+the owner's native demo recording is hosted unlisted on YouTube and saved on the
+Product Hunt listing; embedded playback was observed. Sign-in and personal browser
+autofill intervals are excluded. Scheduling software and CRM software product
+categories were also saved. Community options were reviewed and a forum draft
+prepared; no community post, DM or ad campaign was sent.
+[Video](https://youtu.be/yMZHGiVnx48) ·
+[Launch kit](../output/producthunt-launch-2026-11-30.txt).
 
 ## 2026-11-25 · All solution industries extended (local; visual review incomplete)
 

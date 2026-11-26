@@ -53,7 +53,12 @@ class SolutionController extends Controller
                     'barbershops' => ['how-to-manage-barbershop-walk-ins-without-delaying-bookings', 'how-to-run-a-successful-salon-or-barbershop-in-2027-a-complete-guide'],
                     default => [],
                 })->latest('published_at')->get(['title', 'slug', 'excerpt'])
-                ->map(fn (Article $article): array => ['title' => $article->title, 'excerpt' => $article->excerpt, 'href' => route('blog.article', $article->slug)]),
+                ->map(fn (Article $article): array => ['title' => $article->title, 'excerpt' => $article->excerpt, 'href' => route('blog.article', $article->slug)])
+                ->concat($solution === 'salons' ? [[
+                    'title' => config('frontsite.guides.salon-software-demo-scorecard.title'),
+                    'excerpt' => config('frontsite.guides.salon-software-demo-scorecard.description'),
+                    'href' => route('marketing.guides.show', 'salon-software-demo-scorecard'),
+                ]] : []),
             'features' => collect($content['features'])->map(fn (string $slug): array => [
                 'slug' => $slug,
                 'label' => $features[$slug]['label'],

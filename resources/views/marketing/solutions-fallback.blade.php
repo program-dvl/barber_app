@@ -27,6 +27,9 @@
         <h2>Know the limits before choosing</h2><ul>@foreach($solution['limits'] as $limit)<li>{{ $limit }}</li>@endforeach</ul>
         <h2>Answers before you start</h2><dl>@foreach($solution['faqs'] as $faq)<dt>{{ $faq['question'] }}</dt><dd>{{ $faq['answer'] }}</dd>@endforeach</dl>
         <h2>Look closer at the tools you would use</h2><ul>@foreach($page['props']['features'] as $feature)<li><a href="{{ route('marketing.features.show', $feature['slug']) }}">{{ $feature['label'] }}</a></li>@endforeach</ul>
+        @if(!empty($page['props']['guides']) && count($page['props']['guides']))
+            <h2>Practical guides before you choose</h2><ul>@foreach($page['props']['guides'] as $guide)<li><a href="{{ $guide['href'] }}">{{ $guide['title'] }}</a><p>{{ $guide['excerpt'] }}</p></li>@endforeach</ul>
+        @endif
         <h2>Setup and migration help</h2><p>Ask about transferring clients and upcoming bookings. Agree scope, timing and any cost before work starts. No client or patient records needed in your first email.</p>
     @else
         <h1>Different crafts. The same care.</h1><p>Explore product workflows and limits before you switch. Specialist industry pages do not certify suitability.</p>

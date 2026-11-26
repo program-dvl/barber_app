@@ -297,6 +297,10 @@ return [
             ],
             'faqs' => [
                 [
+                    'question' => 'How can I compare barbershop booking and walk-in software?',
+                    'answer' => 'Test a fictional walk-in shortly before a booked client arrives. Check the full service duration, barber availability and estimated wait, then try a staff absence or appointment change. ClipperDesk connects its calendar and walk-in queue, but wait times remain estimates and no system can guarantee every arrival a slot.',
+                ],
+                [
                     'question' => 'Can clients choose their barber online?',
                     'answer' => 'They can choose an available qualified professional or any available team member from your published services and staff.',
                 ],
@@ -375,6 +379,14 @@ return [
                 'body' => 'In your trial, build the sequence your salon actually sells. Add each service to one front-desk appointment and choose its stylist. Review processing and cleanup separately, then check the next booking. A processing period only frees the stylist when the configured service allows it.',
             ],
             'faqs' => [
+                [
+                    'question' => 'How should I test salon scheduling software before switching?',
+                    'answer' => 'Recreate one real service sequence with fictional clients: consultation, colour, processing, cleanup and a finish. Assign the stylists, try an overlapping booking, review the client notes and record a sample external payment. Use the product walkthrough and compare the current capacity-based price before importing customer data.',
+                ],
+                [
+                    'question' => 'Does ClipperDesk collect online deposits or sell salon memberships?',
+                    'answer' => 'No. Online deposit collection, prepaid packages and memberships are unavailable. Deposit-required online bookings direct the client to contact your salon. If these are essential to your workflow, evaluate that limitation before switching.',
+                ],
                 [
                     'question' => 'Can a client book several services?',
                     'answer' => 'Yes, published services can be selected together. The front desk also has a staff selector for each service line. Test your actual sequence: this is not a promise that clients can build every specialist handoff online.',

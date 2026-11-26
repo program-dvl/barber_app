@@ -11,7 +11,7 @@ SHOTS = [
     (10, 16, 1, 'Start with your working day'),
     (26, 34, 1, 'See appointments alongside staff availability'),
     (35, 53, 2, 'Review a new time before saving a change'),
-    (83, 89, 1, 'Welcome walk-ins with saved client details'),
+    (83, 84, 1, 'Add walk-ins alongside appointments'),
     (98, 105, 1, 'Keep client history ready for the next visit'),
     (110, 117, 1, 'Record payments received elsewhere — no card is charged'),
     (124, 129, 1, 'Coordinate your team and working hours'),
@@ -25,8 +25,10 @@ def render_shot(index, shot):
     start, end, speed, caption = shot
     label = PROJECT / 'review' / f'caption-{index}.txt'
     label.write_text(caption)
+    hold = 'tpad=stop_mode=clone:stop_duration=5,' if index == 3 else ''
     filters = (
         f'setpts=(PTS-STARTPTS)/{speed},fps=30,scale=1920:974,'
+        + hold +
         'pad=1920:1080:0:0:color=0x111a35,'
         f'drawtext=fontfile={FONT}:textfile={label}:fontsize=36:'
         'fontcolor=white:x=(w-tw)/2:y=991,'
