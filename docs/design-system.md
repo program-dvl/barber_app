@@ -1602,3 +1602,9 @@ submission while preserving text; an explicit new-enquiry action follows complet
 ### Acquisition workflow examples — 26 November 2026
 
 Optional numbered product-evaluation steps reuse PublicContainer, solution-section and existing typography tokens. Printable client-record resources reuse Guide worksheet/print styling; no new form or notification pattern. Fictional examples and capability limits remain visible alongside reviewed product evidence.
+
+### Homepage portrait — 26 November 2026
+
+The approved owner portrait uses neutral ivory, natural colour and a black knit top without tattoos or a visible identity label. Preserve image colour (no multiply blending). Desktop uses a face-safe crop; at 700px and below retain the complete 4:5 image, capped at 440px wide. Supply 600/900px WebP sources with dimensions and lazy loading.
+
+At 701–1050px, the editorial portrait is vertically centered beside the benefits with a 32px column gap and fully rounded corners. Keep 32px bottom section padding so the portrait reads as a contained image on tablet widths.

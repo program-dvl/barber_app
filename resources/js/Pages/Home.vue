@@ -57,8 +57,7 @@ const moments = [
                     <h2 id="home-moment-title">Stay in the moment.<br>Keep the day together.</h2>
                     <div class="salon-editorial-grid">
                         <figure>
-                            <img src="/images/marketing/homepage/in-the-moment.webp" alt="An illustrative portrait of a professional in a work apron" width="900" height="1100" loading="lazy" decoding="async">
-                            <figcaption>Illustrative portrait</figcaption>
+                            <img src="/images/marketing/homepage/in-the-moment-owner.webp" srcset="/images/marketing/homepage/in-the-moment-owner-small.webp 600w, /images/marketing/homepage/in-the-moment-owner.webp 900w" sizes="(max-width: 700px) min(440px, calc(100vw - 32px)), (max-width: 1280px) 45vw, 565px" alt="Portrait of a man in a black knit top in soft architectural light" width="900" height="1125" loading="lazy" decoding="async">
                         </figure>
                         <div class="salon-editorial-benefits">
                             <article v-for="item in homepage.moment_benefits" :key="item.title"><h3>{{ item.title }}</h3><p>{{ item.body }}</p></article>

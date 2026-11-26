@@ -170,15 +170,16 @@ to{transform:translateY(0);opacity:1}
 @media(max-width:700px){.salon-hero-audience{font-size:13px;max-width:340px}}
 
 /* Editorial pause: real HTML copy beside the reference-inspired portrait. */
-.salon-editorial{background:#f1e7d9;padding:68px 0 0;overflow:hidden}
+.salon-editorial{background:#f2ede5;padding:68px 0 0;overflow:hidden}
 .salon-editorial h2{max-width:1000px;font-size:clamp(36px,4.7vw,68px);position:relative;z-index:1}
 .salon-editorial-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center;margin-top:35px}
 .salon-editorial figure{position:relative;margin:0;align-self:end}
-.salon-editorial img{display:block;width:100%;height:auto;max-height:570px;object-fit:cover;object-position:center 28%;mix-blend-mode:multiply}
-.salon-editorial figcaption{position:absolute;bottom:16px;right:16px;color:#fff;background:#11143d9e;padding:4px 8px;font-size:10px;border-radius:4px}
+.salon-editorial img{display:block;width:100%;height:auto;max-height:570px;object-fit:cover;object-position:center 24%;border-radius:20px 20px 0 0}
 .salon-editorial-benefits{padding-bottom:40px}
 .salon-editorial-benefits article{padding:28px 0;border-bottom:1px solid #11143d24}
 .salon-editorial-benefits article:last-child{border-bottom:0}
 .salon-editorial-benefits h3{font-size:clamp(23px,2.3vw,32px)}
 .salon-editorial-benefits p{max-width:440px;margin-top:10px;color:#454451;font-size:17px}
-@media(max-width:700px){.salon-editorial{padding-top:42px}.salon-editorial-grid{grid-template-columns:1fr;gap:0;margin-top:26px}.salon-editorial figure{max-width:440px;width:100%;justify-self:center}.salon-editorial img{max-height:390px;object-position:center 30%}.salon-editorial-benefits{padding:10px 0 24px}.salon-editorial-benefits article{padding:22px 0}.salon-editorial-benefits p{font-size:15px}}
+@media(max-width:700px){.salon-editorial{padding-top:42px}.salon-editorial-grid{grid-template-columns:1fr;gap:0;margin-top:26px}.salon-editorial figure{max-width:440px;width:100%;justify-self:center}.salon-editorial img{max-height:none;object-position:center}.salon-editorial-benefits{padding:10px 0 24px}.salon-editorial-benefits article{padding:22px 0}.salon-editorial-benefits p{font-size:15px}}
+
+@media(min-width:701px) and (max-width:1050px){.salon-editorial{padding-bottom:32px}.salon-editorial-grid{gap:32px}.salon-editorial figure{align-self:center}.salon-editorial img{border-radius:20px}.salon-editorial-benefits{padding-bottom:0}}

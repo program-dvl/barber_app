@@ -481,3 +481,7 @@ FR-06/08/11: US Search Console query/page inspection informed three existing-pag
 ### Client-record resource and workflow evidence — 26 November 2026
 
 Existing client-management, calendar/walk-in and salon pages expose optional configured walkthrough steps. The generic ProductEvidence and salon editorial layout reuse established tokens. The new salon-client-record-template guide reuses printable worksheet rendering, source references and resource/sitemap integration. It contains fictional planning details, no client-data submission, no import schema and no scope expansion. See the competitor/distribution audit for rationale and primary sources.
+
+### Homepage editorial portrait — 26 November 2026
+
+FR-01: replaced the illustrative apron portrait in “Stay in the moment” with the user's approved refined likeness, without tattoos or a founder caption. Existing benefits and SEO copy remain HTML. Responsive assets and rendering evidence are recorded in `docs/audits/2026-11-26-homepage-portrait.md`.

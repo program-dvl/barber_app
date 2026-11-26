@@ -52,3 +52,11 @@ Google accepted all four recrawl requests: salon solution, barber solution, clie
 GA Admin confirmed the dedicated ClipperDesk public-website property already has `marketing_cta_clicked` marked as a key event with an active stream in the last 28 days. The default purchase event showed no stream data. No fake purchase, trial-completion event, identity join or tracking-consent change was added. CTA interest must not be counted as completed trials.
 
 Release evidence was recorded after production verification locally; it is not a claim that later Google ranking or acquisition results were measured. No recurring report or reminder was scheduled. Use the recorded country/query baseline for the next matched 28-day comparison, retaining low-sample caveats.
+
+## Second content release acceptance
+
+Commit `006410390e0df7fc75b80bd387871bdcc2ea288e` was pushed through the existing deployment workflow. Forge deployment `84118278` was observed **Deployed**. Production browser checks confirmed the returning-client steps on the salon/client-management pages and the future-opening/offer steps on calendar-and-walk-ins. The new `/guides/salon-client-record-template` resource rendered its fictional example, six worksheet prompts, limits and related links. Independent final initial-HTML inspection found exactly one H1, the correct self-canonical, `index, follow, max-image-preview:large`, and readable worksheet content. A pre-deployment fetch returned the old 404; the final post-deployment fetch supersedes it.
+
+318 Marketing tests passed, two optional checks skipped, with 5,533 assertions on in-memory SQLite. After the final copy adjustment, both targeted resource tests passed again (64 assertions). Production client/SSR build and all 27 bundle budgets passed. Local resource layout was inspected desktop and at 390×844; resource/waitlist document width matched 390px. Viewport overrides were reset. No new Search Console requests for the same four previously requested pages, listing submissions, purchases, reviews or outreach were made. No new ranking outcome was established.
+
+See [competitor evidence and distribution shortlist](competitors-and-distribution.md) for reviewed sources, the practical next actions and reusable truthful listing copy. This acceptance note was recorded locally after deployment.

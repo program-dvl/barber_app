@@ -1,184 +1,97 @@
-CLIPPERDESK — PRODUCT HUNT LAUNCH KIT
-Prepared 25 November 2026. All operating times below are Asia/Kolkata.
+CLIPPERDESK — PRODUCT HUNT LAUNCH READINESS
+Reviewed in production browser: 26 November 2026. Times: Asia/Kolkata.
 
-CONFIRMED ON PRODUCT HUNT
-Scheduled: Monday, 30 November 2026, 12:01 AM PST / 1:31 PM IST.
-Launch runs for 24 hours, ending Tuesday, 1 December at approximately 1:31 PM IST.
+VERIFIED PRODUCT HUNT SETUP
+Launch: Monday 30 November 2026, 12:01 AM PST / 1:31 PM IST.
 Listing: https://www.producthunt.com/products/clipperdesk?launch=clipperdesk
 Dashboard: https://www.producthunt.com/products/clipperdesk/clipperdesk/prelaunch
 Edit: https://www.producthunt.com/posts/clipperdesk/edit
-Badge: https://www.producthunt.com/posts/clipperdesk/embed
-Forum: https://www.producthunt.com/p/clipperdesk
-
-Configured and verified in the signed-in browser:
-- Name, 56-character tagline and product description.
-- ClipperDesk square brand mark.
-- Three real public sample-data screenshots: calendar, booking services, walk-in queue.
-- Calendar, CRM and SaaS launch tags.
-- Dhaval Prajapati as maker and hunter.
-- First maker comment, including specific feedback questions.
-- Free Options pricing, consistent with the live three-month trial.
-- Successful scheduling confirmation and Scheduled dashboard status.
-- Listing explicitly shows 30 November 2026, 12:01 AM PST.
-
-Not completed or claimed:
-- No trailer/video or hosted interactive demo uploaded. Existing homepage sample
-  day and public walkthrough are referenced in the maker comment.
-- No invented co-makers, tool reviews, customer testimonials or promo code.
-- No outreach, forum post, advertising purchase, website deployment or new tracking.
-- No end-to-end trial registration/payment test performed in this task.
-- Scheduled does not establish editorial featuring or a leaderboard position.
-
-POSITIONING
+Name: ClipperDesk
 Tagline: Bookings, walk-ins and client records in one working day
-Main audience: independent professionals and appointment-led service teams;
-use salons, barbershops and wellness studios as concrete examples.
-Show the working day, rather than a long feature list. Payments are recorded
-after being received elsewhere; do not claim integrated card charging.
-Live offer observed: three months free, no credit card required. Recheck before
-launch. Do not describe this as an exclusive Product Hunt offer.
+Categories: Scheduling software, CRM software.
+Tags: SaaS, Calendar, CRM.
+Maker and hunter: Dhaval Prajapati, @den_paul_dev.
+Pricing: Free Options. Product Hunt defines this as a paid product with a free trial
+or version; consistent with the live three-month trial, no card required.
+Pinned first maker comment saved and visible; explains audience, workflows,
+externally received payments and requests specific feedback.
+Brand logo and three authentic sample-data screenshots present.
+Gallery order saved and persisted after reload:
+1. Marketing video: https://youtu.be/vHvWtpMtdt8
+2. Product demo: https://youtu.be/yMZHGiVnx48
+3. Calendar screenshot
+4. Booking services screenshot
+5. Walk-in queue screenshot
+Both correct youtube-nocookie embed URLs observed on Product Hunt.
+Marketing video playback and Unlisted status verified on YouTube; title,
+description, website, full-demo and launch links saved. Copyright checks clear.
+Website destination on Product Hunt includes producthunt source parameters.
+No editorial featuring, traffic uplift or leaderboard position is established.
 
-BEFORE MONDAY
-Thursday–Friday:
-1. Record a concise product demo using sample data: publish booking link, book a
-   visit, see it on the calendar, fit a walk-in, open client history, record an
-   externally received payment. Explain the payment boundary. Aim for 60–90 sec.
-2. If available, upload a public Loom/YouTube link in Edit launch. Do not use
-   private customer records or expose admin credentials.
-3. Personally tell relevant existing contacts about Monday; invite trial and
-   feedback. Use consented audiences and communities where you already participate.
-4. Consider the forum draft below. It is prepared, not posted.
+COMMUNITY
+Self-Promotion introduction is visible without the earlier Pending Review label:
+https://www.producthunt.com/p/self-promotion/meet-clipperdesk-bookings-walk-ins-and-clients-in-one-workspace
+Observed 2 views, no replies at review time.
+Product feedback thread is visible:
+https://www.producthunt.com/p/clipperdesk/how-do-you-fit-walk-ins-around-a-fully-booked-appointment-day
+Observed 5 views, no replies at review time.
+Reply thoughtfully when real questions arrive; do not repeat announcements across
+unrelated forums. No unsolicited messages or extra promotional posts sent.
 
-Weekend:
-1. Test the real production signup, verification email, trial activation and first
-   booking on desktop and phone with a designated test account. Verify recovery
-   from abandonment/errors. Remove test business publication if applicable.
-2. Recheck live pricing, contact/support, screenshot readability and outbound links.
-3. Prepare a restrained website badge/banner linking to the exact listing above.
-   Badge installation and deployment are still pending; avoid an award badge.
-4. Arrange founder coverage for India afternoon/evening and the US-active overnight
-   hours. If no teammate is available, set realistic response windows.
-5. Note a baseline of actual registrations, verified trials and relevant website
-   traffic using existing permitted reports. Current analytics has limited source
-   attribution: do not claim aggregate signup changes are Product Hunt conversions.
+WEBSITE CHECK
+Homepage, pricing, registration entry and contact form loaded in production.
+Homepage still offers three months free; pricing agrees, with no card required.
+Product Hunt footer badge link points to the exact scheduled launch.
+Prior deployed desktop and 390x844 mobile badge checks passed; not repeated in
+this review. User's existing automatic deployment published badge commit 34dad2b.
+No manual Forge deployment required.
+Registration form and Google option visible; contact form has clear required
+fields. No test enquiry was sent.
+NOT VERIFIED: fresh production signup, verification-email delivery, trial
+activation and first booking end to end. Do not claim those journeys passed.
+No payment or live customer booking was created in this review.
+
+REMAINING BEFORE LAUNCH
+Use a designated test business and an inbox the owner controls to test a fresh
+signup, verification email, trial activation and first booking on desktop and
+phone. Include abandonment and retry; do not publish a real test service listing.
+Confirm who will cover comments and the support inbox during launch day.
+Share with relevant existing contacts or consented audiences personally; invite
+trials and honest feedback. Do not ask for upvotes or use mass cold messages.
+Optional shoutouts need truthful firsthand experience; no invented endorsements.
+No extra maker, exclusive discount or paid campaign is needed for completeness.
+No advertising spend authorized or purchased.
 
 MONDAY RUN OF SHOW
-1:00 PM: Check production site, signup email, support inbox and launch listing.
-1:31 PM: Confirm listing is live and upvoting has enabled. Share only after checking.
-1:45 PM: Publish the launch announcement on your own social channels.
-2:00–5:00 PM: Answer questions, offer short sample-data demos and log friction.
-5:30 PM: Share one useful workflow example with your existing relevant audience.
-8:00 PM–midnight: Be available for Europe/US comments; explain product fit clearly.
-Overnight through Tuesday 1:31 PM: Provide planned coverage; no automated replies
-pretending to be personal engagement. Check periodically, not constant rank chasing.
-Tuesday: Thank people, summarize feedback and follow up only where welcome.
+1:00 PM IST: Open site, signup, support inbox and launch listing.
+1:31 PM IST: Verify launch is live before sharing. Upvoting is disabled beforehand.
+1:45 PM IST: Share announcement on own channels and with relevant existing contacts.
+2–5 PM IST: Answer questions and offer short sample-data walkthroughs.
+5:30 PM IST: Share one useful workflow example with an existing relevant audience.
+8 PM–midnight IST: Cover Europe/US questions where feasible; arrange any overnight
+coverage explicitly. Do not automate replies pretending to be personal.
+Tuesday: Thank participants, summarize feedback and follow up where welcomed.
+Watch qualified visits, trial activations and useful conversations alongside rank.
+The launch is a Product Hunt calendar day; its displayed start is 12:01 AM PST.
+Use the dashboard for the actual leaderboard cutoff rather than assuming an exact
+24-hour duration from that displayed start.
 
-READY-TO-USE LAUNCH ANNOUNCEMENT (not sent)
-ClipperDesk is launching on Product Hunt today.
-
-We’re bringing online bookings, walk-ins, staff schedules and client history into
-one working day for appointment-led businesses.
-
-If you run a salon, barbershop, wellness studio or another service business, I’d
-love your feedback. Try the sample day, explore the real screens, and tell me:
-what is hardest to coordinate when a walk-in arrives during a fully booked day?
-
+READY-TO-USE LAUNCH ANNOUNCEMENT — NOT SENT
+ClipperDesk is live on Product Hunt today.
+We bring online bookings, walk-ins, staff schedules and client history into one
+workspace for appointment-led businesses.
+If you run a salon, barbershop, wellness studio or another service business,
+try the sample day or watch the short demo. I'd love your honest feedback:
+what would make your working day easier?
 https://www.producthunt.com/products/clipperdesk?launch=clipperdesk
 
-SHORT PERSONAL INVITATION (not sent)
-Hi [name], I’m launching ClipperDesk on Monday, November 30. It brings bookings,
-walk-ins and client records together for service businesses. Given your experience
-with [relevant context], I’d value your honest feedback on the workflow. Here’s
-the page if you’d like to take a look: [launch link].
+SHORT PERSONAL INVITATION — NOT SENT
+Hi [name], I'm launching ClipperDesk on Monday, November 30. Given your experience
+with [relevant context], I'd value your feedback on how we bring bookings,
+walk-ins and client records together. Here's the page if you'd like a look:
+https://www.producthunt.com/products/clipperdesk?launch=clipperdesk
 
-FORUM POST (published 25 November 2026)
-Title: How do you fit walk-ins around a fully booked appointment day?
-Body: I’m building ClipperDesk and launching on November 30. One workflow we focus
-on is keeping online bookings and walk-ins together without losing sight of staff
-availability or the next reserved visit. I’d love to learn from service-business
-owners and front-desk teams: when someone arrives without an appointment, what do
-you check first, and where does your current process break down? Our homepage has
-a small sample-day exercise if you’d like to explore the idea: https://clipperdesk.com/
-
-PRODUCT HUNT TOOLS WORTH USING
-- Pre-launch dashboard: share link, badge and forum entry; already available.
-- Product forum: ask a useful domain question and respond thoughtfully.
-- Launch-day dashboard: monitor questions and launch performance once live.
-- Permanent Product Page: maintain accurate links, updates and genuine user reviews.
-- Video/demos: optional hosted walkthrough; still a useful improvement before Monday.
-- Shoutouts: only specific, truthful firsthand tool experiences; no fabricated reviews.
-- Ads: platform advertises entry campaigns from $250, but ads do not determine
-  organic leaderboard placement. No spend authorized or campaign created.
-- MCP integration: offered by Product Hunt, but not connected in this task. Browser
-  setup completed without adding account access or installing software.
-
-SUCCESS AND SAFETY
-Top 10 is an aspiration, never a promised outcome. No vote quota guarantees it.
-Measure qualified visitors, real trial activations, useful feedback, setup progress
-and customer conversations alongside rank. Start with the actual baseline before
-choosing numerical targets; no traffic forecast is established here.
-Never ask for upvotes, buy votes/comments, exchange votes, use extra accounts,
-join vote rings, scrape contacts or send mass cold messages. Ask people to try the
-product and share honest feedback. Product Hunt can remove manipulated launches.
-The short preparation window makes audience readiness the largest remaining risk.
-
-SOURCES REVIEWED
-https://help.producthunt.com/en/articles/17834537-4-build-your-product-page
-https://help.producthunt.com/en/articles/17734384-5-how-to-promote-your-launch-and-what-to-avoid
-https://help.producthunt.com/en/articles/17734397-6-what-to-do-during-and-after-your-launch
-https://clipperdesk.com/
-https://clipperdesk.com/pricing
-https://clipperdesk.com/features/product-walkthrough
-
-25 NOVEMBER FOLLOW-UP — VERIFIED LOCAL BADGE / REMAINING HANDOFF
-Website badge implemented in shared Vue marketing footer and Blade legal footer,
-using official locally-served artwork from the Product Hunt embed page.
-Desktop 1440px and phone 390px checked in Chrome; loaded 250x54px badge, correct
-destination, no horizontal overflow. Client/SSR build, 27 route budgets and seven
-focused marketing tests (177 assertions) pass. Not deployed.
-Forge was opened and displays a sign-in form; manual sign-in required.
-Native QuickTime/Screenshot recording was selected per owner's instruction;
-the system recorder toolbar is not exposed to the control tools. No demo video
-has been recorded or uploaded yet. Loom is signed in for eventual hosting.
-Renderer download was declined; no additional renderer was installed. CapCut
-tracking initialization requested account connection; preview helper is running
-untracked. No film generation/delivery event is claimed.
-
-COMMUNITY CHECK
-Reviewed https://www.producthunt.com/forums and
-https://www.producthunt.com/p/self-promotion on 25 November.
-Useful options: ClipperDesk's own product forum for focused workflow feedback;
-p/self-promotion for one transparent pre-launch introduction; p/introduce-yourself
-for a founder introduction that adds context. Product forum is the best first
-choice because answers stay attached to the product. Do not duplicate the same
-announcement across all categories or post in unrelated AI-product threads.
-The existing forum draft above is ready to review and has not been posted.
-Suggested Self-Promotion title: Launching ClipperDesk on November 30 — feedback
-on bookings and walk-ins?
-Suggested body: I'm Dhaval, maker of ClipperDesk. We bring online bookings,
-walk-ins, staff schedules and client history into one workspace for appointment-led
-service businesses. We're launching on November 30. I'd value feedback from
-owners and front-desk teams: what is hardest to coordinate when a walk-in arrives
-during a busy booked day? Try our sample day at https://clipperdesk.com/ or see
-the launch: https://www.producthunt.com/products/clipperdesk?launch=clipperdesk
-No forum announcement, direct message or comment was sent in this follow-up.
-
-FINAL FOLLOW-UP — 25 NOVEMBER 2026
-Completed: 60-second 1080p caption-led demo, using owner-supplied native recording.
-Hosted unlisted: https://youtu.be/yMZHGiVnx48
-YouTube processing completed; Unlisted verified in Studio. Product Hunt video
-preview accepted, Changes saved confirmed, and actual embedded playback observed.
-Scheduling software and CRM software product categories also saved.
-The owner pushed badge commit 34dad2b. Existing auto-deploy published the badge;
-production Chrome checks passed at desktop and actual 390x844 phone viewport,
-with loaded 210x54 local badge, correct launch link and no horizontal overflow.
-No manual Forge deploy was triggered. Community forum draft remains unposted.
-These completed facts supersede the earlier pending notes in this launch kit.
-No traffic improvement, editorial featuring or leaderboard rank is established.
-
-COMMUNITY POST PUBLISHED — 25 NOVEMBER 2026
-Owner explicitly authorized publication of the prepared feedback post.
-Published as Dhaval Prajapati in p/clipperdesk; title and full body verified
-on the resulting thread. No duplicate cross-post, DM or ad was sent.
-https://www.producthunt.com/p/clipperdesk/how-do-you-fit-walk-ins-around-a-fully-booked-appointment-day
-This publication supersedes earlier unposted/draft notes in this kit.
+EXPECTATIONS
+Top 10 is an aspiration, not a guaranteed outcome. Early community reach is still
+small. No votes/comments purchased, vote swaps, extra accounts or outreach bots.
+Do not present all registrations as Product Hunt conversions without attribution.

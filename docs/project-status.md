@@ -4201,3 +4201,9 @@ visual alignment and deployed SEO/sitemap were not certified in this follow-up.
 ### Search content follow-through — 26 November 2026
 
 Implemented fictional client-record handoff examples on the existing client-management and salon pages, a future-opening/offer rehearsal on calendar-and-walk-ins, and a linked printable salon-client-record-template resource with six prompts and source references. All 318 Marketing tests pass (two optional checks skipped; 5,533 assertions) on isolated in-memory SQLite. Client/SSR build and 27 route budgets pass. Local browser checked resource and feature content, salon links, desktop resource layout and 390px mobile resource/waitlist widths without overflow. Existing build font/CSS warnings remain. Competitor review and a researched distribution shortlist are in the search-follow-through audit. No external listing, purchase or outreach sent; ranking change not established.
+
+Production acceptance: content commit `0064103`, Forge deployment `84118278` observed Deployed; all four affected live pages checked. The new resource's initial HTML contains its worksheet, one H1, self-canonical and index/follow metadata. Search ranking changes remain unmeasured. Detailed evidence is recorded in the 26 November search-follow-through audit.
+
+### Homepage editorial portrait — 26 November 2026
+
+Added the approved refined owner portrait without tattoos or founder caption, neutral ivory styling and 600/900px responsive WebP assets. Client/SSR build, 27 route budgets and four Homepage tests (137 assertions) passed. Desktop composition inspected locally. Follow-up visual checks passed at 320/390/430px phone, 768px tablet and 1440px desktop widths. Phone/tablet checks showed no horizontal overflow. Refined tablet spacing and portrait alignment, then verified the updated composition; client/SSR build and 27 route budgets passed again. No deployment performed. See `docs/audits/2026-11-26-homepage-portrait.md`.
