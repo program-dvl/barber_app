@@ -81,7 +81,7 @@ return [
             'image' => '/images/marketing/industries/barbershop.webp',
             'title' => 'Manage appointments and walk-ins together',
             'description' => 'Coordinate staff schedules, appointment changes and waiting clients. Understand how walk-ins differ from requests for future openings.',
-            'definition' => 'The calendar brings scheduled visits, staff availability and walk-ins into one view.',
+            'definition' => 'The calendar brings scheduled visits, staff availability and walk-ins into one view. A walk-in queue is for people waiting now; a salon cancellation waitlist is for customers requesting a future opening. Keep the two workflows separate so a future request is never mistaken for a confirmed appointment.',
             'screens' => [
                 'calendar',
             ],
@@ -90,6 +90,10 @@ return [
                 'body' => 'Check the whole service window before assigning the next waiting client. A professional who is free now may have a booking before that service would finish. Keep staff hours, breaks and appointment changes in the same calendar.',
             ],
             'faqs' => [
+                [
+                    'question' => 'How can I test a salon waitlist without promising a filled appointment?',
+                    'answer' => 'Use a fictional customer and an available future opening. Review the customer request and time-limited offer, then confirm that accepting an offer rechecks availability. Check an expired offer too. Customers waiting at reception belong in the walk-in queue instead. ClipperDesk does not provide a general owner-facing waitlist dashboard, bulk campaigns or guaranteed slot filling.',
+                ],
                 [
                     'question' => 'Are waiting times guaranteed?',
                     'answer' => 'No. Queue times are estimates that can change with service delays and staff availability. Review the current schedule before promising a start.',
@@ -161,6 +165,10 @@ return [
                 'body' => 'Open the existing profile, review the previous visit and a permitted formula or preference note, then book the next service against that same client. Requested forms retain their submitted wording even after the template changes. This is client history, not a clinical planning system.',
             ],
             'faqs' => [
+                [
+                    'question' => 'What should salon record keeping software keep in one client profile?',
+                    'answer' => 'Start with contact details, past visits, service preferences and permitted consultation notes. In ClipperDesk, client profiles also hold forms and files, with role-based access. Before importing records, test a fictional returning client: reception should find the visit while restricted notes stay available only to authorised team members. This is not a medical record or compliance system.',
+                ],
                 [
                     'question' => 'Can I bring existing client records?',
                     'answer' => 'Client CSV imports let you review invalid rows and possible duplicates before adding valid records. Check the available fields and your responsibilities before moving personal information.',
@@ -379,6 +387,10 @@ return [
                 'body' => 'In your trial, build the sequence your salon actually sells. Add each service to one front-desk appointment and choose its stylist. Review processing and cleanup separately, then check the next booking. A processing period only frees the stylist when the configured service allows it.',
             ],
             'faqs' => [
+                [
+                    'question' => 'What does salon client management include between appointments?',
+                    'answer' => 'A returning client profile keeps past visits, preferences and permitted consultation notes together. Use the previous visit to prepare the next consultation, then record any useful changes for the next stylist. Review role permissions and test a fictional profile before importing records; client history does not provide memberships, automated marketing or clinical records.',
+                ],
                 [
                     'question' => 'How should I test salon scheduling software before switching?',
                     'answer' => 'Recreate one real service sequence with fictional clients: consultation, colour, processing, cleanup and a finish. Assign the stylists, try an overlapping booking, review the client notes and record a sample external payment. Use the product walkthrough and compare the current capacity-based price before importing customer data.',

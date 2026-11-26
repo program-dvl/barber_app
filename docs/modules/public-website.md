@@ -472,3 +472,8 @@ Retention duration and any future operator UI remain an explicit open decision.
 ### Search acquisition iteration — 2026-11-26
 
 FR-01/06/09/11/15: salon and barber solution FAQs now explain concrete purchase-evaluation scenarios rather than claim guaranteed results. Salon related reading includes the existing software-demo scorecard alongside publishable editorial articles. Shared configuration retains online deposit and membership limits and feeds existing public rendering. The homepage remains multi-industry. No ranking, deployment or Google indexing outcome is established by this local change.
+
+
+### Query-led follow-through — 2026-11-26
+
+FR-06/08/11: US Search Console query/page inspection informed three existing-page improvements: salon client history, role-aware record keeping and future-opening waitlist evaluation. The calendar page links the actual customer waitlist help journey. No new keyword-variant URLs or specialist feature claims were added. Historical US query samples are sparse and not evidence of stable rankings. The first content batch was observed live with mobile width 390 and no horizontal overflow; salon recrawl request was accepted. See the execution evidence for later release state.

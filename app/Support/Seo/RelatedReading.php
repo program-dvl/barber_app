@@ -30,6 +30,14 @@ class RelatedReading
             }
         }
 
+        if ($feature === 'calendar-and-walk-ins') {
+            $reading[] = [
+                'title' => 'How cancellation waitlists differ from walk-ins',
+                'description' => 'Review the customer request, expiring offer and availability recheck before promising a future opening.',
+                'href' => route('help.article', 'appointments-waitlist'),
+            ];
+        }
+
         return $reading;
     }
 }

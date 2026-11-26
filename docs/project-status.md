@@ -1,5 +1,20 @@
 # Project status
 
+## 2026-11-26 · Query-led search follow-through
+
+First SEO batch was verified on production, including salon/barber/scorecard mobile
+views at 390×844 without horizontal overflow. Google accepted salon and barber
+recrawl requests; request acceptance does not establish a new crawl or rank.
+Country/query inspection informed three existing-page improvements for salon
+client history, role-aware record keeping and cancellation waitlist evaluation,
+with an actual customer Help link. No extra keyword-variant pages were created.
+
+316 Marketing tests pass, two skipped (5,453 assertions); client/SSR build and
+all 27 route budgets pass. New batch release verification is recorded in the
+[evidence record](audits/2026-11-26-search-follow-through/README.md). Existing
+GA consent and private-route boundaries remain unchanged.
+
+
 ## 2026-11-26 · Organic search first implementation batch (local)
 
 Observed the owner's Search Console baseline (717 impressions, two clicks, average
